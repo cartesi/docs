@@ -1,7 +1,7 @@
 <!-- docs/_sidebar.md -->
 
 * [Introduction](/)
-* [Development Guide](/)
+* [Development Guide](/guid.md)
   * [Cartesi Machine](/cartesi-machine/README.md)
     * [Machine Emulator SDK](/cartesi-machine/machine-emulator-sdk/README.md)
     * [Machine Emulator](/cartesi-machine/machine-emulator/README.md)
@@ -12,7 +12,7 @@
       - [Image Root FS](/cartesi-machine/machine-emulator/image-rootfs/README.md)
     * [Machine Manager](/cartesi-machine/machine-manager/README.md)
     * [Machine Solidity Step](/cartesi-machine/machine-solidity-step/README.md)
-  * [GRPC Interface](/grpc-interface)
-  * [Arbitration DLib](/arbitration-dlib)
-  * [Dispatcher](/dispatcher)
-  * [Blockchain Node](/blockchain-node)
+  * [GRPC Interface](/grpc-interface/README.md)
+  * [Arbitration DLib](/arbitration-dlib/README.md)
+  * [Dispatcher](/dispatcher/README.md)
+  * [Blockchain Node](/blockchain-node/README.md)

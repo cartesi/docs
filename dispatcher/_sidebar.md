@@ -6,5 +6,6 @@
     * [GRPC Interface](/grpc-interface/README.md)
     * [Arbitration DLib](/arbitration-dlib/README.md)
     * [Dispatcher](/dispatcher/README.md)
+        * [API](/dispatcher/api.md)
     * [Blockchain Node](/blockchain-node/README.md)
 

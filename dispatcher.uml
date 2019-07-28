@@ -1,0 +1,33 @@
+@startuml
+box "Interface" #LightBlue
+  participant "Dispatcher" as D
+  participant "State Manager" as SM
+  participant "Tx Manager" as TM
+end box
+box "DApp" #LightGreen
+  participant "Conf. File" as CF
+  participant "DApp Callback" as DC
+end box
+box "File Manager and Emulator Manager" #LightYellow
+participant "File/Emulator" as others
+D -> CF : Read contracts and addresses
+CF -> D : List (contract, address)
+D -> SM : Get relevant instances
+note right
+  For each contract, obtain
+  instances involving user.
+  For each instance, obtain
+  current and ancestor nonce
+end note
+SM -> D : List (contract, instace)
+D -> DC : Get reaction to instance
+note right
+  For each instance that requires
+  a response, get the appropriate
+  transactions or emulator requests
+end note
+DC -> D : Transaction or emulations requested
+D -> others : Files/Emulations
+others -> D : Emulations hashes
+D -> TM : Submit transaction
+@enduml
