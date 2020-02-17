@@ -4,9 +4,9 @@ title: Creating the Greetings application
 
 Now, we are going to create a new machine that features I/O (input and output).
 
-The "Hello World" machine already takes inputs, in that it boots up with four files that are mapped to its memory addressing space: the ROM, Kernel, RootFS, and our own "Hello World File System" (let's call it "HelloFS"). What we are going to do in this section is create a new machine that features a third _flash drive_ that contains user input, and a fourth one to save our application's response to user input. These latter devices will be "raw" devices, that is, their backing files are not read by the emulator as a description of a filesystem to be mounted, but rather as a generic, flat byte array that can be read from or written to directly.
+The "Hello World" machine already takes inputs, in that it boots up with four files that are mapped to its memory addressing space: the ROM, Kernel, RootFS, and our own "Hello World File System" (let's call it "HelloFS"). What we are going to do in this section is create a new machine that features a third device (an emulated Linux machine flash drive) that contains user input, and a fourth one to save our application's response to user input. These latter devices will be "raw" devices, that is, their backing files are not read by the emulator as a description of a filesystem to be mounted, but rather as a generic, flat byte array that can be read from or written to directly.
 
-> **NOTE:** The ROM and Kernel files are not mounted as drives: they are just copied into the emulated machine's memory. The RootFS and HelloFS files are mounted by the emulated Linux OS as "flash drives" (I/O devices). The root file system is mounted at `/`, and all other flash drives are mounted as `/mnt/DEVICE-NAME`.
+> **NOTE:** The ROM and Kernel files are not mounted as drives: they are just copied into the emulated machine's memory. The RootFS and HelloFS files are mounted by the emulated Linux OS as emulated flash drives (I/O devices). The root file system is mounted at `/`, and all other flash drives are mounted as `/mnt/DEVICE-NAME`.
 
 We are going to create a new Greetings application as a shell script that reads a raw input drive that is preloaded with a null-terminated ASCII string that is encoded in at most 4,096 bytes, and writes a null-terminated ASCII string that says "Greetings, XXX!", where "XXX" is the input string, to the beginning of a raw output drive that has a backing file that we can inspect after the emulator exits.
 
@@ -17,7 +17,7 @@ Create a new project directory (e.g. `~\greetings-machine`) and enter it.
 Save the following in a file named `flashdevicebylabel`. It is a handy shell script that translates a flash drive name to its mounted path inside of the emulator.
 
 ```
-#!/bin/sh                                                                       
+#!/bin/sh
 for t in /dev/mtdblock*; do
         name=$(cat /sys/block/$(basename $t)/device/name)
         if [ "$name" = $1 ]; then
@@ -69,6 +69,8 @@ dd status=none if=/tmp/message of=$(./flashdevicebylabel dappout) bs=4k count=1
 ```
 
 As you see, our application code can still be written with shell scripts. Your production application, however, can be written in anything that is ultimately runnable by Cartesi's RISC-V-based machine. For example, the `rootfs.ext2` filesystem we are using, which is loaded inside of the emulator, already includes a Lua interpreter, so you can write your applications in Lua (use `#!/usr/bin/lua` as the first line of your executable script file).
+
+The `greetings.sh` application above makes use of the `dd` utility, which can perform raw byte stream writes and reads, in and out of mounted devices. The user input and user output files of our Greetings DApp will not be mounted as filesystems within the emulator, but as raw, flat I/O devices. Raw device access means the emulator sees the emulated device for what it is (a flat file), and then reads and writes directly from and to any low-level position of the device (which is always just a file). That gives us more direct control over the contents of computation inputs and outputs, at the price of the flexibility offered by mounting actual filesystems and working with emulated individual files that are packed within the backing filesystem files.
 
 ## Packaging the Greetings app
 

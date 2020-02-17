@@ -4,13 +4,15 @@ title: Introduction
 
 ## About this tutorial
 
-Cartesi Machines are a central component of every DApp built on top of the Cartesi system. Each one of your DApps will need at least one custom Cartesi Machine that you will create for them.
+_Cartesi Machines_ are a central component of every DApp built on top of the Cartesi system. Each one of your DApps will need at least one custom Cartesi Machine that you will create for them.
 
-In this tutorial, we will learn all of the essential concepts related to Cartesi Machines, and then we are going to create a trivial Cartesi Machine that runs a "Hello, World!" shell script. That machine will not be plugged into a complete DApp (we will leave that for later tutorials).
+The Cartesi Machine is technically part of the Core API. It is a central abstraction of the Cartesi software stack, and you have to understand what it is to be able to effectively use any application-layer API.
+
+In this tutorial, we will learn the basics of the Cartesi Machine by creating a handful of very simple machines. Those machines will not be assembled into a complete DApp: we will leave that for later tutorials.
 
 ## What are Cartesi Machines?
 
-There is an in-depth specification and explanation of Cartesi Machines in the [Cartesi Whitepaper](https://cartesi.io/cartesi_whitepaper.pdf). Although you will acquire a more deep understanding of what they are if you read the whitepaper, this tutorial does not assume that you know anything at all about them. Instead, we will at first offer a simplified view of what they are, upon which we will gradually expand as the tutorials progress.
+There is an in-depth specification and explanation of Cartesi Machines in the [Cartesi Whitepaper](https://cartesi.io/cartesi_whitepaper.pdf). Although you will acquire a more thorough understanding of what they are if you read the whitepaper, this tutorial does not assume that you know anything at all about them. Instead, we will at first offer a simplified view of what they are, upon which we will gradually expand as the tutorials progress.
 
 For the purposes of this tutorial, you can understand a Cartesi Machine as a software package that contains:
 
@@ -37,7 +39,7 @@ The idea is that any participant in a multi-party, decentralized, off-chain Cart
 1. Start up the Cartesi RISC-V machine emulator, supplying the required ROM, Kernel and Filesystem binaries. As a result, the emulated RISC-V machine will boot up and run a bare-bones Linux installation, thus creating a Linux-based, fully-emulated, deterministic virtual machine;
 1. Run a custom, deterministic computation (a component of your DApp) inside of the virtual machine.
 
-> **NOTE: ** These steps are managed automatically by the higher-level components of the Cartesi SDK. Outside of these tutorials, you do not actually need to write any code for your DApp to manage Cartesi Machines at runtime. However, knowing how to interact manually with Cartesi Machines (such as starting and stopping them) will help you in testing and in debugging any issues with machine creation that you may run into.
+> **NOTE: ** These steps are managed automatically by the application-layer components of the Cartesi SDK. DApp developers will not actually need to write any code to manage these machines at runtime. However, knowing how to interact manually with a Cartesi Machine (such as starting and stopping it) will help you in testing and in debugging any issues with it that you may run into.
 
 The running stack of a Cartesi Machine will look like this (if you have the emulator built for and installed in your host machine):
 

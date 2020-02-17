@@ -18,7 +18,7 @@ The `hello_world.sh` executable shell script file that has just appeared in your
 
 ## Packaging the application
 
-Cartesi's machine emulator does not accept input files or directories directly. To be able to pass our `hello_world.sh` file to it, we must package it inside an [ext2 filesystem](https://en.wikipedia.org/wiki/Ext2) file. To do that, we will use the `genext2fs` utility, which is included in the Cartesi RISC-V toolchain image [that you have just downloaded](setup).
+For our `hello_world.sh` file to appear inside of the emulator's filesystem, we must first package it inside an [ext2 filesystem](https://en.wikipedia.org/wiki/Ext2) file. To do that, we will use the `genext2fs` utility, which is included in the Cartesi RISC-V toolchain image [that you have just downloaded](setup).
 
 First, we need to move our shell script into a subdirectory for the filesystem contents to be packaged into an `ext2` file. We will call that subdirectory `fs`, and put the `hello_world.sh` file in it:
 

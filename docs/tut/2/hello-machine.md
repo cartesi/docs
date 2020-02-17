@@ -8,6 +8,8 @@ Now we are going to build a Cartesi Machine around the DApp code by creating a D
 - Our `hellofs.ext2` filesystem, which contains our `hello_world.sh` reproducible computation, and
 - Additional code for teaching the machine emulator about `hellofs.ext2` and what to do with it.
 
+The resulting Docker image, which will be referred to as `hello-dapp` below, will _be_ a Cartesi Machine. Since it is a Docker image, it carries all of its software dependencies within it, so you can just give the image to anybody and they will be able to easily use your machine to reproduce and verify any computation that uses that same machine.
+
 ## Create a Dockerfile for the Hello World app image
 
 Create a text file called `Dockerfile` in your project directory and put the following in it:
@@ -123,8 +125,8 @@ Hello, World!
 [    0.040000] reboot: Power down
 ```
 
-Tha "Hello, World!" line there is the output of our app, `hello_world.sh`, from within the emulator! It is printed as a side-effect of Docker running `run.lua`, and `run.lua` properly starting the emulator, and instructing it to run `hello_world.sh` (from the `hellofs.ext2` application input drive that is correctly mounted inside of the emulator thanks to `cartesi-machine.lua`'s interaction with the machine emulator's Lua scripting API) while redirecting the emulated application's output to its own standard output, which is captured by Docker, which finally ends up on your screen.
+Tha "Hello, World!" line there is the output of our app, `hello_world.sh`, from within the emulator! It is printed as a side-effect of Docker running `cartesi-machine.lua`, and `cartesi-machine.lua` properly starting the emulator, and instructing it to run `hello_world.sh` (from the `hellofs.ext2` application input drive that is correctly mounted inside of the emulator thanks to `cartesi-machine.lua`'s interaction with the machine emulator's Lua scripting API) while redirecting the emulated application's output to its own standard output, which is captured by Docker, which finally ends up on your screen.
 
-Our application always does the same thing, taking no input and producing no verifiable output based on that input. Useful computations will take at least one input file, and produce at least one output file.
+Our application always does the same thing, taking no input and producing no verifiable output based on that input. The "Hello, World!" line that is printed by the emulator does not count as verifiable output, and the application code itself (that is, `hello_world.sh`) does not really count as "user input," as it is not determined at run-time by the intended user, but rather the developer. Useful computations will take at least one input file (an input device for the emulator) that is provided by the application's intended user at run time, and produce at least one output file (an output device for the emulator) that is read by the application's user after the emulator finishes.
 
 It would be great if our "Hello, World!" application could take someone's name as input, and output a `Greetings, YOUR-NAME!` message not only in the emulator's standard output, but in an actual machine output file whose contents will be deterministic given the same inputs to the machine. Fortunately, the `cartesi-machine.lua` emulator launcher can also mount binary input and output files directly, as raw devices. Next, we will use that feature to implement a greeter app that outputs a customized message for an input name determined by the user at runtime.

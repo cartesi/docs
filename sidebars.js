@@ -38,14 +38,15 @@ module.exports = {
               "label": "1. Introduction",
               "items": [
                   "tut/1/welcome",
+                  "tut/1/cartesi-sdk",
                   "tut/1/install-docker",
                   "tut/1/try-docker",
-                  "tut/1/docker-compose"
+                  "tut/1/docker-compose",
               ]
           },
           {
               "type": "category",
-              "label": "2. Creating Cartesi machines",
+              "label": "2. Cartesi Machines",
               "items": [
                   "tut/2/introduction",
                   "tut/2/setup",
@@ -57,19 +58,20 @@ module.exports = {
           },
           {
               "type": "category",
-              "label": "3. Cartesi Tournament API",
+              "label": "3. Tournament API",
+              "items": [
+                  "tut/3/introduction",
+              ]
+          },
+          {
+              "type": "category",
+              "label": "4. Core API: Agreement",
               "items": [
               ]
           },
           {
               "type": "category",
-              "label": "4. Cartesi Core API, MVP",
-              "items": [
-              ]
-          },
-          {
-              "type": "category",
-              "label": "5. Cartesi Core API, MVP+VG",
+              "label": "5. Core API: Disputes",
               "items": [
               ]
           }
