@@ -14,10 +14,10 @@ module.exports = {
   organizationName: "cartesi", // Usually your GitHub org/user name.
   projectName: "cartesi", // Usually your repo name.
   themeConfig: {
+    defaultDarkMode: false,
     navbar: {
-      title: "",
       logo: {
-        alt: "My Site Logo",
+        alt: "Cartesi Logo",
         src: "img/logo-black.svg",
         srcDark: "img/logo.svg",
       },
@@ -63,8 +63,8 @@ module.exports = {
         },
       ],
       logo: {
-        alt: "Facebook Open Source Logo",
-        src: "https://docusaurus.io/img/oss_logo.png",
+        alt: "Cartesi Logo",
+        src: "https://cartesi.io/images/cartesi-logo.svg",
       },
       copyright: `Copyright © ${new Date().getFullYear()} Cartesi Ltd. Built with Docusaurus.`,
     },
