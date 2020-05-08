@@ -2,6 +2,7 @@
 id: intro
 title: Introduction
 ---
+
 Cartesi is a layer-2 platform for the development and deployment of scalable decentralized applications. 
 Cartesi DApps are composed of both blockchain and off-chain components. Off-chain components run inside Cartesi Nodes that represent the interests of each DApp user. 
 

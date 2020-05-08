@@ -2,6 +2,7 @@
 id: grpc
 title: Cartesi gRPC Interfaces
 ---
+
 The Cartesi GRPC Interfaces repository contains all GRPC and Protobuf definitions used in the GRPC interfaces of the Cartesi Project modules. Currently these comprehend:
 
 - A definition of basic message types used in multiple interfaces (cartesi-base.proto)

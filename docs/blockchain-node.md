@@ -2,6 +2,7 @@
 id: blockchain-node
 title: Blockchain Node
 ---
+
 The Cartesi Blockchain Node is a development/testing Ganache Ethereum node instance that runs inside a docker container and has all Cartesi blockchain contracts deployed. The contracts come from two different repositories that are submodules of this repository:
 
 - Contracts

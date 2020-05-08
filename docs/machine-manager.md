@@ -2,6 +2,7 @@
 id: machine-manager
 title: Machine Manager
 ---
+
 ## Introduction
 
 This repository contains the server responsible for managing different sessions of Cartesi Machines. It has a submodule dependency, the machine-emulator repository, that contains the emulator GRPC server.

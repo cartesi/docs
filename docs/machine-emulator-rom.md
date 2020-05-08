@@ -2,6 +2,7 @@
 id: machine-emulator-rom
 title: Emulator ROM
 ---
+
 The Cartesi Machine Emulator ROM is the reference software that boots a guest Operating System on the emulator.
 
 ## Getting Started

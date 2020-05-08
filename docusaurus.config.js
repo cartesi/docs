@@ -6,77 +6,77 @@
  */
 
 module.exports = {
-  title: 'Cartesi',
-  tagline: 'Bringing real world computations to the blockchain',
-  url: 'https://cartesi.io',
-  baseUrl: '/',
-  favicon: 'img/favicon.ico',
-  organizationName: 'cartesi', // Usually your GitHub org/user name.
-  projectName: 'cartesi', // Usually your repo name.
+  title: "Cartesi",
+  tagline: "Bringing real world computations to the blockchain",
+  url: "https://cartesi.io",
+  baseUrl: "/",
+  favicon: "img/favicon.ico",
+  organizationName: "cartesi", // Usually your GitHub org/user name.
+  projectName: "cartesi", // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: '',
+      title: "",
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: "My Site Logo",
+        src: "img/logo.svg",
       },
       links: [
-        {to: 'docs/intro', label: 'Docs', position: 'left'},
-        {to: 'blog', label: 'Blog', position: 'left'},
+        { to: "docs/intro", label: "Docs", position: "left" },
+        { to: "blog", label: "Blog", position: "left" },
         {
-          href: 'https://github.com/cartesi',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/cartesi",
+          label: "GitHub",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Docs',
+          title: "Docs",
           items: [
             {
-              label: 'Docs',
-              to: 'docs/intro',
+              label: "Docs",
+              to: "docs/intro",
             },
           ],
         },
         {
-          title: 'Community',
+          title: "Community",
           items: [
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/cartesi',
+              label: "Discord",
+              href: "https://discordapp.com/invite/cartesi",
             },
           ],
         },
         {
-          title: 'Social',
+          title: "Social",
           items: [
             {
-              label: 'Blog',
-              to: 'blog',
+              label: "Blog",
+              to: "blog",
             },
           ],
         },
       ],
       logo: {
-        alt: 'Facebook Open Source Logo',
-        src: 'https://docusaurus.io/img/oss_logo.png',
+        alt: "Facebook Open Source Logo",
+        src: "https://docusaurus.io/img/oss_logo.png",
       },
       copyright: `Copyright © ${new Date().getFullYear()} Cartesi Ltd. Built with Docusaurus.`,
     },
   },
   presets: [
     [
-      '@docusaurus/preset-classic',
+      "@docusaurus/preset-classic",
       {
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve("./sidebars.js"),
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
       },
     ],

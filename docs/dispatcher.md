@@ -2,6 +2,7 @@
 id: dispatcher
 title: Dispatcher
 ---
+
 This repository provides the infrastructure to support the development of dApps.
 Dapps that follow these guidelines and use our offered infrastructure will be safer, more robust and easier to develop.
 
