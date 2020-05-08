@@ -1,5 +1,6 @@
 ---
 title: Arbitration DLib
+sidebar_label: Introduction
 ---
 
 :::note Section Goal

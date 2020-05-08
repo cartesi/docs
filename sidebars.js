@@ -27,9 +27,7 @@ module.exports = {
             "sdk/machine/toolchain",
             "sdk/machine/kernel",
             "sdk/machine/rootfs",
-            "sdk/machine/sdk",
-            "sdk/machine/solidity",
-            "sdk/machine-manager",
+            "sdk/machine/sdk"
           ],
         },
         {
@@ -44,7 +42,15 @@ module.exports = {
             "sdk/dispatcher/http"
           ]
         },
-        "sdk/arbitration",
+        {
+          type: "category",
+          label: "Arbitration DLib",
+          items: [
+            "sdk/arbitration",
+            "sdk/machine/solidity",
+            "sdk/machine-manager"
+          ]
+        },
         "sdk/logger",
         "sdk/tournament",
       ],
