@@ -1,5 +1,4 @@
 ---
-id: machine-rootfs
 title: Root Filesystem
 ---
 

@@ -1,5 +1,4 @@
 ---
-id: machine-emulator
 title: Emulator
 ---
 

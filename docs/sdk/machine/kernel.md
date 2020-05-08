@@ -1,5 +1,4 @@
 ---
-id: machine-kernel
 title: Linux Kernel
 ---
 

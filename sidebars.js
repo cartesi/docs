@@ -6,75 +6,87 @@
  */
 
 module.exports = {
-  docs: {
-      "Getting Started": [
-          "intro",
-          "architecture"
+  docs: [
+    {
+      type: "category",
+      label: "Overview",
+      items: ["intro", "architecture", "node"],
+    },
+    {
+      type: "category",
+      label: "SDK",
+      items: [
+        "sdk/introduction",
+        {
+          type: "category",
+          label: "Cartesi Machine",
+          items: [
+            "sdk/machine",
+            "sdk/machine/emulator",
+            "sdk/machine/rom",
+            "sdk/machine/toolchain",
+            "sdk/machine/kernel",
+            "sdk/machine/rootfs",
+            "sdk/machine/sdk",
+            "sdk/machine/solidity",
+            "sdk/machine-manager",
+          ],
+        },
+        "contracts",
+        "sdk/dispatcher",
+        "sdk/arbitration",
+        "sdk/logger",
+        "sdk/tournament",
       ],
-      "Development Guide": [
-          {
-              "type": "category",
-              "label": "Cartesi Machine",
-              "items": [
-                  "machine",
-                  "machine-emulator",
-                  "machine-emulator-rom",
-                  "machine-toolchain",
-                  "machine-kernel",
-                  "machine-rootfs",
-                  "machine-emulator-sdk",
-                  "machine-manager",
-                  "machine-solidity"
-              ]
-          },
-          "grpc",
-          "arbitration-dlib",
-          "dispatcher",
-          "blockchain-node"
+    },
+    {
+      type: "category",
+      label: "Examples",
+      items: ["example/introduction", "example/creepts", "example/hello_world"],
+    },
+    {
+      type: "category",
+      label: "Tutorials",
+      items: [
+        "tutorials/introduction",
+        {
+          type: "category",
+          label: "Requirements",
+          items: [
+            "tutorials/1/cartesi-sdk",
+            "tutorials/1/install-docker",
+            "tutorials/1/try-docker",
+            "tutorials/1/docker-compose",
+          ],
+        },
+        {
+          type: "category",
+          label: "Cartesi Machines",
+          items: [
+            "tutorials/2/introduction",
+            "tutorials/2/setup",
+            "tutorials/2/hello-app",
+            "tutorials/2/hello-machine",
+            "tutorials/2/greetings-app",
+            "tutorials/2/greetings-machine",
+          ],
+        },
+        {
+          type: "category",
+          label: "Tournament API",
+          items: ["tutorials/3/introduction"],
+        },
+        {
+          type: "category",
+          label: "Core API: Agreement",
+          items: [],
+        },
+        {
+          type: "category",
+          label: "Core API: Disputes",
+          items: [],
+        },
       ],
-      "The Cartesi Tutorials" : [
-          {
-              "type": "category",
-              "label": "1. Introduction",
-              "items": [
-                  "tut/1/welcome",
-                  "tut/1/cartesi-sdk",
-                  "tut/1/install-docker",
-                  "tut/1/try-docker",
-                  "tut/1/docker-compose",
-              ]
-          },
-          {
-              "type": "category",
-              "label": "2. Cartesi Machines",
-              "items": [
-                  "tut/2/introduction",
-                  "tut/2/setup",
-                  "tut/2/hello-app",
-                  "tut/2/hello-machine",
-                  "tut/2/greetings-app",
-                  "tut/2/greetings-machine",
-              ]
-          },
-          {
-              "type": "category",
-              "label": "3. Tournament API",
-              "items": [
-                  "tut/3/introduction",
-              ]
-          },
-          {
-              "type": "category",
-              "label": "4. Core API: Agreement",
-              "items": [
-              ]
-          },
-          {
-              "type": "category",
-              "label": "5. Core API: Disputes",
-              "items": [
-              ]
-          }
-      ]
-  },
+    },
+  ],
 };

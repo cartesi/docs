@@ -1,5 +1,4 @@
 ---
-id: machine-toolchain
 title: Toolchain
 ---
 

@@ -1,5 +1,4 @@
 ---
-id: machine-emulator-sdk
 title: Emulator SDK
 ---
 

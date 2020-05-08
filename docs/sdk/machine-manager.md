@@ -1,5 +1,4 @@
 ---
-id: machine-manager
 title: Machine Manager
 ---
 

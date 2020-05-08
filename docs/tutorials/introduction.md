@@ -1,5 +1,5 @@
 ---
-title: Welcome!
+title: Introduction
 ---
 
 ## Welcome to The Cartesi Tutorials!

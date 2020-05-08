@@ -1,5 +1,4 @@
 ---
-id: machine-solidity
 title: Machine Solidity Emulator
 ---
 

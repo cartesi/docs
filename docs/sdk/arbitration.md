@@ -1,5 +1,4 @@
 ---
-id: arbitration-dlib
 title: Arbitration DLib
 ---
 
