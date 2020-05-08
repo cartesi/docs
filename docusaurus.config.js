@@ -27,7 +27,7 @@ module.exports = {
         {
           href: "https://github.com/cartesi",
           label: "GitHub",
-          position: "right",
+          position: "left",
         },
       ],
     },
