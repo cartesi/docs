@@ -2,6 +2,11 @@
 title: Introduction
 ---
 
+:::note Section Goal
+- risc-v and Linux Architectures
+- machine Architecture (boot, filesystem, drives)
+:::
+
 The Cartesi Machine is a self-contained and deterministic computational model that can host modern operating systems. 
 Real-world computations happen inside operating systems for good reasons. 
 Developers are trained to use toolchains that operate at the highest possible abstraction level for any given job. 

@@ -1,7 +1,11 @@
 ---
-id: intro
 title: Introduction
 ---
+
+:::note Section Goal
+- describe purpose
+- describe how the offchain computation is safe, the verification game idea, and link to whitepaper for deeper understanding
+:::
 
 Cartesi is a layer-2 platform for the development and deployment of scalable decentralized applications. 
 Cartesi DApps are composed of both blockchain and off-chain components. Off-chain components run inside Cartesi Nodes that represent the interests of each DApp user. 

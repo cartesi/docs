@@ -2,6 +2,13 @@
 title: Arbitration DLib
 ---
 
+:::note Section Goal
+- main goal of the DLib, VG
+- overview of contracts
+- API, how it can be used by the DApp developer (point out the tournament uses this API)
+- how it interacts with machine manager
+:::
+
 Arbritration DLib is the combination of the on-chain protocol and off-chain protocol that work together to resolve any disputes that might occur during the execution of a Cartesi Dapp. The behavior of the off-chain and on-chain code are very similar. The on-chain code is written in Solidity and the off-chain in Rust.
 
 Most of the Solidity contracts in this repository follow the Instantiator design pattern.

@@ -2,6 +2,10 @@
 title: Machine Solidity Emulator
 ---
 
+:::note Section Goal
+- explain its need in the VG
+:::
+
 The Cartesi RISC-V Solidity Emulator is the on-chain host implementation of the Cartesi Machine Specification. The libraries and contracts are written in Solidity, the migration script is written in Javascript (with the help of [Truffle](https://github.com/trufflesuite/truffle)), and the testing scripts are written in Python.
 
 For Cartesi's design to work, this implementation must have the exact transition function as the off-chain [Cartesi RISC-V Emulator](https://github.com/cartesi/core), meaning that if given the same initial state (s[i]) both implementation's step functions should reach a bit by bit consistent state s[i + 1].

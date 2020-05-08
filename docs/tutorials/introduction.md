@@ -2,6 +2,10 @@
 title: Introduction
 ---
 
+:::note Section Goal
+- give step by step instructions about how to build a DApp
+:::
+
 ## Welcome to The Cartesi Tutorials!
 
 *The Cartesi Tutorials* (this section of the documentation) is a knowledge base that exists to help you learn everything about the Cartesi SDK from the ground up, through easy step-by-step instructions.
