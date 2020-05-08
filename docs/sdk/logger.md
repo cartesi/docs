@@ -1,5 +1,5 @@
 ---
-title: Logger
+title: Logger DLib
 ---
 
 :::note Section Goal
