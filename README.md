@@ -26,8 +26,15 @@ This command generates static content into the `build` directory and can be serv
 
 ### Deployment
 
-```
-$ GIT_USER=<Your GitHub username> USE_SSH=1 yarn deploy
-```
+This repo build is automatically deployed using AWS Amplify.
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+The following branches and pull requests are deployed to the following URLs:
+
+| Branch  | URL                             |
+| ------- | ------------------------------- |
+| master  | https://docs.cartesi.io         |
+| develop | https://preview.docs.cartesi.io |
+
+Pull requests are deployed to an URL according to the PR number, in the following URL:
+
+`https://pr-<PR#>.d38mrjcerjd5by.amplifyapp.com`
