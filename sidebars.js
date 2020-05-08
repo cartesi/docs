@@ -32,8 +32,18 @@ module.exports = {
             "sdk/machine-manager",
           ],
         },
-        "contracts",
-        "sdk/dispatcher",
+        {
+          type: "category",
+          label: "Dispatcher",
+          items: [
+            "sdk/dispatcher/intro",
+            "sdk/dispatcher/architecture",
+            "sdk/dispatcher/contracts",
+            "sdk/dispatcher/services",
+            "sdk/dispatcher/configuration",
+            "sdk/dispatcher/http"
+          ]
+        },
         "sdk/arbitration",
         "sdk/logger",
         "sdk/tournament",

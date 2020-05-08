@@ -1,81 +1,10 @@
 ---
-title: Dispatcher
+title: Introduction
 ---
 
 :::note Section Goal
 - explain it as the central engine of communication with the blockchain, binding together offchain and onchain computation
-- explain the react pattern and how it evolves to a state machine style
-- explain the stateless trait and that it caches state
-- explain communication with other node services through gRPC, and how this relates to its own stateless trait. Services are assumed to be idempotent.
-- explain the provided communication links to the outside world through an HTTP interface, both for reading and writing data
-- do this chapter describing the dispatcher like a blockchain powered application server.
-- don't need to go into details of how it's implemented, or what the DApp developer needs to provide on top of it
-- at this point we would go to describe the other SDK components, in the following order: arbitration-dlib, tournament-dlib, logger-dlib, machine-manager
-- but it doesn't make sense to talk about arbitration if we don't introduce the machine emulator, which is also a core component
 :::
-
-This repository provides the infrastructure to support the development of dApps.
-Dapps that follow these guidelines and use our offered infrastructure will be safer, more robust and easier to develop.
-
-## Getting Started
-
-### Requirements
-
-Follow this instructions to compile protoc:
-
-    https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
-
-Install requirements:
-
-    sudo apt-get install autoconf automake libtool curl make g++ unzip
-
-Then compile:
-
-    git clone https://github.com/protocolbuffers/protobuf.git
-    cd protobuf
-    git submodule update --init --recursive
-    ./autogen.sh
-
-Generate `protoc`
-
-    ./configure
-    make
-    make check
-    sudo make install
-    sudo ldconfig # refresh shared library cache.
-
-Install rust
-
-    curl https://sh.rustup.rs -sSf | sh
-
-Add cargo to your path in `.bashrc`
-
-    export PATH=$PATH:/home/user/.cargo/bin
-
-## Compile hasher and emulator_interface
-
-Install requirements::
-
-    sudo apt-get install gcc libssl-dev pkg-config
-
-Install `protoc`.
-
-Enter the hasher folder and enter
-
-    cargo run --bin build-hasher
-
-Clone and install emulator_interface. Follow the instructions here:
-https://github.com/cartesi/grpc_interfaces
-
-## Install further dependencies
-
-    sudo apt-get install libssl-dev
-
-## Compile
-
-In the root folder
-
-    cargo build
 
 ## Goals
 
@@ -186,44 +115,6 @@ The main content of this file is the list of "concerns" as explained below.
 The DApp Callback then returns to the Dispatcher one (or more) transactions that should be sent to the blockchain or emulations that should be performed.
 1. In one of these cases, the Dispatcher requests emulations to be performed by the Emulator Manager.
 1. Otherwise, it sends the requested transactions to the Transaction Manager that will make sure they are inserted into the blockchain in a timely manner.
-
-## Configuration File
-
-The configuration file uses the `yaml` language to store its data.
-The most important element in this file is called `concerns` and it is a list of things that the dApp cares about.
-Each element of the `concerns` list is a dictionary describing its various parameters.
-
-An example of such file would be the following:
-
-    # This is a config file for a dApp
-    # starting with the list of concerns
-    concerns:
-      -
-        contract: 0xf778b86fa74e846c4f0a1fbd1335fe81c00a0c91
-        address: 0x6ac7ea33f8831ea9dcc53393aaa88b25a785dbf0
-      -
-        contract: 0xfffd933a0bc612844eaf0c6fe3e5b8e9b6c1d19c
-        address: 0x6ac7ea33f8831ea9dcc53393aaa88b25a785dbf0
-
-## Conformant Contracts
-
-Each contract that wants to benefit from Cartesi's infrastructure must be organized in a certain fashion to facilitate interactions with it.
-
-- `instances` The first aspect in this specification is that the smart contract should be organized around "instances".
-More precisely, each conformant smart contract needs to contain an array of instances, each of which contains a struct describing that whole instance.
-For example, in the partition smart contract, there is an array of instances, each of these instances represents a dispute between two players to find the point they disagree with.
-- `uint currentInstance()` This returns the number of the last used instance plus one (so that it coincides with the number of instances already initialized).
-- `bool isActive(uint instance)` These contracts should also implement a pure function, answering whether a given instance is still active or not.
-This helps trim out the instances that need no more attention.
-- `bool isConcerned(uint instance, address player)` There should be a pure function to determine if a certain player should be concerned with a certain instance.
-Typically, this can be achieved by simply storing a list of concerned users and checking against it.
-- `uint getNonce(uint instance)` Each instance should have a nonce that is incremented in every transaction (that is not reversed, of course).
-This nonce will be important in various moments for the off-chain component to decide on how to react.
-- `bytes getState(uint instance)` This pure function returns the current state of one particular instance.
-Note that all data which is necessary for players to react to this instance should be returned by this function, although not necessarily the full state of the contract.
-For example, in the case of partition, one possible return for this function would contain something like `[nonce: 5, state: 2, queryArray: [0, 200, 400, 600]]` encoded appropriately.
-- `getSubInstances(uint instance)` this function returns other pairs `(address, instance)` of other smart contracts and instances that are relevante for the user.
-For example, a verification game may depend on a partition instance stored in another contract.
 
 ## State Manager
 
@@ -382,10 +273,3 @@ After receiving this call, the DApp Callback should submit a response to the dis
 
 The first implementation of the File Manager will act very much like a key-value table.
 It receives a file, returning its Merkle-Tree Hash and stores the file for future retrieval.
-
-# TODOs
-
-- change this file to reflect changes in the design
-- improve error reporting by: adding more chain_err and inserting context inside the error messages
-- implement display for the structs we define and use them in logs
-
