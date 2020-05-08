@@ -46,29 +46,3 @@ During a Step execution, every necessary read or write (be it to memory, registe
 ## Memory Interactor
 
 The Memory Interactor contract is the middleman between the Step and the Memory Manager contracts. It's constructor must receive Memory Manager's address in order to operate on the correct deployed version. The Memory Interactor is responible for correcting the endianess of the information available in Memory Manager. The endianess swap is necessary because  RiscV treats its memory as little-endian while EVM uses big-endian order. The contract is also used to help step take care of partial reads and writes to memory, since Memory Manager only knows how to deal with entire words(64 bits).
-
-
-## Getting Started
-
-### Install
-
-Install dependencies
-
-    npm install
-
-Compile contracts with
-
-    ./node_modules/.bin/truffle compile
-
-Having a node listening to 8545, you can deploy using
-
-    ./node_modules/.bin/truffle deploy
-
-
-### Run tests
-Have an Ethereum node listening to port 8545
-    ./node_modules/.bin/truffle deploy
-
-Update data.json to match the access log of the step (or list of steps) that you would like to run.
-
-    python test_python.py.
