@@ -18,7 +18,8 @@ module.exports = {
       title: "",
       logo: {
         alt: "My Site Logo",
-        src: "img/logo.svg",
+        src: "img/logo-black.svg",
+        srcDark: "img/logo.svg",
       },
       links: [
         { to: "docs/intro", label: "Docs", position: "left" },
