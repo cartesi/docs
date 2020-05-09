@@ -31,6 +31,9 @@ module.exports = {
         },
       ],
     },
+    prism: {
+      additionalLanguages: ["lua"],
+    },
     footer: {
       style: "dark",
       links: [

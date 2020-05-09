@@ -1,5 +1,5 @@
 ---
-title: Root Filesystem
+title: Root file-system
 ---
 
 :::note Section Goal

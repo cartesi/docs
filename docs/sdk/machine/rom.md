@@ -1,5 +1,5 @@
 ---
-title: Emulator ROM
+title: ROM image
 ---
 
 :::note Section Goal

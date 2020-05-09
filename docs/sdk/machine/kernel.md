@@ -1,5 +1,5 @@
 ---
-title: Linux Kernel
+title: RAM image (Linux kernel)
 ---
 
 :::note Section Goal

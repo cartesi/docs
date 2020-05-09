@@ -20,4 +20,7 @@
   --ifm-color-primary-light: #5e5e5e;
   --ifm-color-primary-lighter: #626262;
   --ifm-color-primary-lightest: #6e6e6e;
+  --ifm-link-decoration: underline;
 }
+
+code { white-space: pre; }
