@@ -35,4 +35,4 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 EXPOSE 3000
 
-CMD ["/bin/bash", "-l"]
+CMD ["yarn", "start", "--no-open", "--host", "0.0.0.0"]

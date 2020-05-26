@@ -5,24 +5,20 @@ PLAYGROUND_IMG:=cartesi/playground
 
 build-server:
 	docker build -t $(IMG) server
-
-push-server: build-server
-	docker push $(IMG)
-
-pull-server:
-	docker pull $(IMG)
-
-run:
 	docker run \
 		 -e USER=$$(id -u -n) \
 		 -e GROUP=$$(id -g -n) \
 		 -e UID=$$(id -u) \
 		 -e GID=$$(id -g) \
 		 -v `pwd`:/home/$$(id -u -n) \
-		 -p 3000:3000 \
-		 -it \
 		 -w /home/$$(id -u -n) \
-		 --rm $(IMG)
+		 --rm $(IMG) "yarn"
+
+push-server: build-server
+	docker push $(IMG)
+
+pull-server:
+	docker pull $(IMG)
 
 run-server:
 	docker run \
@@ -32,9 +28,8 @@ run-server:
 		 -e GID=$$(id -g) \
 		 -v `pwd`:/home/$$(id -u -n) \
 		 -p 3000:3000 \
-		 -it \
 		 -w /home/$$(id -u -n) \
-		 --rm $(IMG) yarn start --no-open --host 0.0.0.0
+		 --rm $(IMG)
 
 build-playground:
 	docker build -t $(PLAYGROUND_IMG) playground
