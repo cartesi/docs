@@ -17,9 +17,35 @@ module.exports = {
       label: "Cartesi Machine",
       items: [
         "machine/intro",
-        "machine/host",
-        "machine/target",
-        "machine/blockchain"
+        {
+          type: "category",
+          label: "Host perspective",
+          items: [
+            "machine/host/intro",
+            "machine/host/cmdline",
+            "machine/host/lua",
+            "machine/host/grpc",
+          ],
+        },
+        {
+          type: "category",
+          label: "Target perspective",
+          items: [
+              "machine/target/intro",
+              "machine/target/processor",
+              "machine/target/board",
+              "machine/target/linux",
+          ],
+        },
+        {
+          type: "category",
+          label: "Blockchain perspective",
+          items: [
+              "machine/blockchain/intro",
+              "machine/blockchain/hash",
+              "machine/blockchain/vg",
+          ],
+        },
       ],
     },
     {

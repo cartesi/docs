@@ -42,7 +42,7 @@ run-playground:
 		 -e GID=$$(id -g) \
 		 -v `pwd`:/home/$$(id -u -n) \
 		 -it \
-		 -h cartesi-sdk \
+		 -h playground \
 		 -w /home/$$(id -u -n) \
 		 --rm $(PLAYGROUND_IMG) /bin/bash
 
