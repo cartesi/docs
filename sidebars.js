@@ -14,51 +14,23 @@ module.exports = {
     },
     {
       type: "category",
-      label: "SDK",
+      label: "Cartesi Machine",
       items: [
-        "sdk/introduction",
-        {
-          type: "category",
-          label: "Cartesi Machine",
-          items: [
-            "sdk/machine",
-            "sdk/machine/emulator",
-            "sdk/machine/rom",
-            "sdk/machine/toolchain",
-            "sdk/machine/kernel",
-            "sdk/machine/rootfs",
-            "sdk/machine/sdk"
-          ],
-        },
-        {
-          type: "category",
-          label: "Dispatcher",
-          items: [
-            "sdk/dispatcher/intro",
-            "sdk/dispatcher/architecture",
-            "sdk/dispatcher/contracts",
-            "sdk/dispatcher/services",
-            "sdk/dispatcher/configuration",
-            "sdk/dispatcher/http"
-          ]
-        },
-        {
-          type: "category",
-          label: "Arbitration DLib",
-          items: [
-            "sdk/arbitration",
-            "sdk/machine/solidity",
-            "sdk/machine-manager"
-          ]
-        },
-        "sdk/logger",
-        "sdk/tournament",
+        "machine/intro",
+        "machine/host",
+        "machine/target",
+        "machine/blockchain"
       ],
     },
     {
       type: "category",
-      label: "Examples",
-      items: ["example/introduction", "example/creepts", "example/hello_world"],
+      label: "Descartes SDK",
+      items: [
+        "descartes/introduction",
+        "descartes/instantiate",
+        "descartes/integer_drive",
+        "descartes/logger_drive"
+      ],
     },
     {
       type: "category",
@@ -85,23 +57,17 @@ module.exports = {
             "tutorials/2/hello-machine",
             "tutorials/2/greetings-app",
             "tutorials/2/greetings-machine",
-          ],
+          ]
         },
         {
           type: "category",
-          label: "Tournament API",
-          items: ["tutorials/3/introduction"],
-        },
-        {
-          type: "category",
-          label: "Core API: Agreement",
-          items: [],
-        },
-        {
-          type: "category",
-          label: "Core API: Disputes",
-          items: [],
-        },
+          label: "Descartes SDK",
+          items: [
+            "tutorials/descartes/hello",
+            "tutorials/descartes/dodgecoin_hash",
+            "tutorials/descartes/certificate_verification"
+          ]
+        }
       ],
     },
   ],
