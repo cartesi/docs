@@ -35,7 +35,7 @@ WORKDIR /opt/cartesi/hello
 
 RUN apt-get update
 RUN apt-get -y install wget
-RUN wget https://github.com/cartesi/image-kernel/releases/download/v0.2.0/kernel.bin
+RUN wget https://github.com/cartesi/image-kernel/releases/download/v0.2.0/linux.bin
 RUN wget https://github.com/cartesi/machine-emulator-rom/releases/download/v0.2.0/rom.bin
 RUN wget https://github.com/cartesi/image-rootfs/releases/download/v0.2.0/rootfs.ext2
 
@@ -62,7 +62,7 @@ A `Dockerfile` is a file used by Docker to build an image. Docker knows how to b
 
 We begin customizing our new, derived machine emulation image, with the command `WORKDIR /opt/cartesi/hello`, which creates that directory inside of the image, and sets it as the default (current) working directory for the following commands. All of our application files will be placed in that directory within the image.
 
-The following `RUN` commands will install [wget](https://en.wikipedia.org/wiki/Wget) and then download the `kernel.bin`, `rom.bin` and `rootfs.ext2` components from their respective Cartesi GitHub repository release pages, and put them in the image's `WORKDIR` directory that we have specified.
+The following `RUN` commands will install [wget](https://en.wikipedia.org/wiki/Wget) and then download the `linux.bin`, `rom.bin` and `rootfs.ext2` components from their respective Cartesi GitHub repository release pages, and put them in the image's `WORKDIR` directory that we have specified.
 
 The `COPY hellofs.ext2 .` command will copy the application filesystem file we have created in the previous tutorial step, which is sitting in your current directory of your local machine as `hellofs.ext2`, to the `.` (current) directory in the image (i.e. the `WORKDIR` we specified).
 

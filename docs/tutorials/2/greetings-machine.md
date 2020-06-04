@@ -17,7 +17,7 @@ WORKDIR /opt/cartesi/greetings
 
 RUN apt-get update
 RUN apt-get -y install wget
-RUN wget https://github.com/cartesi/image-kernel/releases/download/v0.2.0/kernel.bin
+RUN wget https://github.com/cartesi/image-kernel/releases/download/v0.2.0/linux.bin
 RUN wget https://github.com/cartesi/machine-emulator-rom/releases/download/v0.2.0/rom.bin
 RUN wget https://github.com/cartesi/image-rootfs/releases/download/v0.2.0/rootfs.ext2
 

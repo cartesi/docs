@@ -53,10 +53,10 @@ $ git clone https://github.com/cartesi/docs
 $ cd docs
 $ make build-playground
 $ make run-playground
-diego@playground:~$ ls -al /opt/cartesi/bin/cartesi-machine
--rwxr-xr-x 1 root root 130 Apr 27 20:27 /opt/cartesi/bin/cartesi-machine
+playground:~$ ls -al /opt/cartesi/bin/cartesi-machine
+-rwxr-xr-x 1 root root      130 Apr 27 20:27 /opt/cartesi/bin/cartesi-machine
+playground:~$ ls -al /opt/cartesi/share/images/*.*
+-rw-r--r-- 1 root root  6811648 Jun  2 23:32 /opt/cartesi/share/images/linux.bin
+-rw-r--r-- 1 root root    16413 Jun  2 23:32 /opt/cartesi/share/images/rom.bin
+-rw-r--r-- 1 root root 62914560 Jun  4 14:19 /opt/cartesi/share/images/rootfs.ext2
 ```
-
-<div class="alert alert--warning" role="alert">
-Waiting for changes to the `cartesi/playground` so I can work on further examples.
-</div>

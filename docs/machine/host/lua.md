@@ -2,10 +2,24 @@
 title: Lua interface
 ---
 
-Cartesi Machines are instantiated from a simple configuration structure.
-This structure defines both the *organization* of the machine (i.e., the amount of RAM, the number of flash drives, their starts and lengths) and the initial *contents* of the machine state (i.e, the value of each register, and the contents of ROM, RAM, and the flash drives).
+The Lua interface to Cartesi Machines is available from the `cartesi` Lua module.
+In a properly setup installation (such as what is available in the playground Docker image), the module can be loaded with the `require` function
+```lua
+-- Load the Cartesi module
+local cartesi = require"cartesi"
+```
 
-### Initialization
+The most important field in the module is the `cartesi.machine` &ldquo;class&rdquo;, used to instantiate new Cartesi Machines.
+
+A Cartesi Machine instance is defined by its *organization* and the *contents* of its state.
+The organization specifies the amount of RAM and the layout of a number of flash drives (between 0 and 8).
+To support Cartesi Machine's transparency, flash drives are mapped into the machine's 64-bit physical memory address space.
+The layout defines each flash drive's start and length in the address space.
+The contents of the state include the values stored in ROM, RAM, and in all flash drives, in addition to the values of all processor registers and device-specific state.
+
+Cartesi Machines can be instantiated directly from a configuration structure, or loaded from a persistent state stored as a directory on disk.
+
+## Instantiation by configuration
 
 <div class="row">
 <div class="col col--6">
@@ -13,66 +27,67 @@ This structure defines both the *organization* of the machine (i.e., the amount 
 <a name="machine_config"></a>
 
 ```lua
-machine_config = {
-  rom = rom_config,
-  ram = ram_config,
-  flash = {
-    flash_config, -- flash drive 0
-    flash_config, -- flash drive 1
+machine_config ::= {
+  rom ::= rom_config,
+  ram ::= ram_config,
+  flash ::= {
+    [1] ::= flash_config, -- flash drive 0
+    [2] ::= flash_config, -- flash drive 1
     ...
-    flash_config  -- flash drive n <= 7
+    [n] ::= flash_config  -- flash drive n <= 7
   },
-  processor = processor_config,
-  clint = clint_config,
-  htif = htif_config
+  processor ::= processor_config,
+  clint ::= clint_config,
+  htif ::= htif_config
 }
 ```
 
 <a name="rom_config"></a>
 
 ```lua
-rom_config = {
-    bootargs = string,
-    backing = string
+rom_config ::= {
+    bootargs ::= string,
+    image_filename ::= string
 }
 ```
 
 <a name="ram_config"></a>
 
 ```lua
-ram_config = {
-    length = number,
-    backing = string
+ram_config ::= {
+    length ::= number,
+    image_filename ::= string
 }
 ```
 
 <a name="flash_config"></a>
 
 ```lua
-flash_config = {
-  start = number,
-  length = number,
-  backing = string,
-  shared = boolean
+flash_config ::= {
+  start ::= number,
+  length ::= number,
+  image_filename ::= string,
+  shared ::= boolean
 }
 ```
 
 <a name="htif_config"></a>
 
 ```lua
-htif_config = {
-    interact = boolean,
-    yield = boolean
-    fromhost = number,
-    tohost = number,
+htif_config ::= {
+    fromhost ::= number,
+    tohost ::= number,
+    console_putchar ::= boolean,
+    yield_progress ::= boolean,
+    yield_rollup ::= boolean
 }
 ```
 
 <a name="clint_config"></a>
 
 ```lua
-clint_config = {
-    mtimecmp = number,
+clint_config ::= {
+    mtimecmp ::= number,
 }
 ```
 </div>
@@ -81,124 +96,111 @@ clint_config = {
 <a name="processor_config"></a>
 
 ```lua
-processor_config = {
+processor_config ::= {
   x = {
-    [1] = number, -- register x1
-    [2] = number, -- register x2
+    [1]  ::= number, -- register x1
+    [2]  ::= number, -- register x2
     ...
-    [31] = number, -- register x31
+    [31] ::= number, -- register x31
   },
-  pc = number,
-  mvendorid = number,
-  marchid = number,
-  mimpid = number,
-  mcycle = number,
-  minstret = number,
-  mstatus = number,
-  mtvec = number,
-  mscratch = number,
-  mepc = number,
-  mcause = number,
-  mtval = number,
-  misa = number,
-  mie = number,
-  mip = number,
-  medeleg = number,
-  mideleg = number,
-  mcounteren = number,
-  stvec = number,
-  sscratch = number,
-  sepc = number,
-  scause = number,
-  stval = number,
-  satp = number,
-  scounteren = number,
-  ilrsc = number,
-  iflags = number
+  pc ::= number,
+  mvendorid ::= number,
+  marchid ::= number,
+  mimpid ::= number,
+  mcycle ::= number,
+  minstret ::= number,
+  mstatus ::= number,
+  mtvec ::= number,
+  mscratch ::= number,
+  mepc ::= number,
+  mcause ::= number,
+  mtval ::= number,
+  misa ::= number,
+  mie ::= number,
+  mip ::= number,
+  medeleg ::= number,
+  mideleg ::= number,
+  mcounteren ::= number,
+  stvec ::= number,
+  sscratch ::= number,
+  sepc ::= number,
+  scause ::= number,
+  stval ::= number,
+  satp ::= number,
+  scounteren ::= number,
+  ilrsc ::= number,
+  iflags ::= number
 },
 ```
 </div>
 </div>
 
 The <a href="#rom_config">`rom`</a> entry in `machine_config` is a table with two fields.
-`Bootargs` gives a string of at most 2KiB that will be copied into the last 2KiB of ROM. `Backing` gives the file name of an image that will be loaded at start of ROM.
-This is where the [ROM image](machine/ROM.md) generated by the Emulator SDK is typically loaded, and it is here that the processor's `pc` (program counter) starts by default.
-This ROM image generates the [<i>devicetree</i>](http://devicetree.org/) that describes the hardware to Linux, passes the `bootargs` string as the kernel command-line parameters, then cedes control to the RAM image.
+Field `bootargs` gives a string of at most 2KiB that will be copied into the end (the last 2KiB) of ROM.
+Field `image_filename` gives the file name of an image that will be loaded into the beginning of ROM.
+This is where the ROM image `rom.bin` generated by the [Emulator SDK](http://github.com/cartesi/machine-emulator-sdk) is typically loaded.
+This is also where the machine starts execution, i.e., where the processor's program counter initially points to.
+This ROM image generates the [*devicetree*](http://devicetree.org/) that describes the hardware to Linux, passes the `bootargs` string as the kernel command-line parameters, then cedes control to the RAM image.
 
 The <a href="#ram_config">`ram`</a> entry in `machine_config` also has two fields.
-`Length` gives the RAM size in bytes (RAM always starts at offset `0x80000000`).
+Field `length` gives the amount of RAM in bytes (RAM always starts at offset `0x80000000`).
 This length should be a multiple of 4Ki, the length of a RISC-V memory page.
-`Backing` gives the file name of an image that will be loaded at offset `0x80000000` (i.e., the start of RAM).
-This is where the [RAM image](machine/kernel.md) generated by the Emulator SDK (which contains the Berkeley Boot Loader linked with the Linux kernel) is loaded.
+Field `image_filename` gives the filename of an image that will be loaded at the start of RAM.
+This is where the RAM image `linux.bin` generated by the [Emulator SDK](http://github.com/cartesi/machine-emulator-sdk) (which contains the Berkeley Boot Loader linked with the Linux kernel) is typically loaded.
 
 The <a href="#flash_config">`flash`</a> entry in `machine_config` is a list containing flash drive configurations.
 Each configuration contains four fields.
-Fields `start` and `length` give the start and length of the flash drive in the machine's address space. The length must be a
-multiple of 4Ki, the length of a memory page. `Backing` gives the file
-name of an image that will be <i>mapped</i> to this region. This is different
-from the ROM and RAM backing files, which are simply copied into the Cartesi Machine
-memory, which has been allocated from the host memory. Flash drives use memory mapping because the backing files can be very large.
-Mapping them instead of copying them saves host memory, as well as the time it
-would take to load the backing files from disk to host memory. Since flash drive backing files
-are mapped, their sizes on disk must exactly match the `length`
-of the flash drive they are `backing`.  `Shared` is a Boolean
-value that specifies whether changes to the flash drive that happen inside the target reflect
-in the backing file that resides in the host as well. If set to `true`, the backing file will be modified accordingly.
+Fields `start` and `length` give the start and length of the flash drive in the machine's address space.
+Once again, the length must be a multiple of 4Ki, the length of a memory page.
+Field `image_filename` gives the file name of an image that will be *mapped* to this region.
+This is different from the ROM and RAM image files, which are simply copied into the Cartesi Machine memory, which has been allocated from the host memory. Flash drives use memory mapping because their image files can be very large.
+Mapping them instead of copying them saves host memory, as well as the time it would take to load the files from disk to host memory.
+Since flash drive image files are mapped, their sizes on disk must exactly match the `length` of the flash drive they are *backing*. 
+Field `shared` contains a Boolean value that specifies whether changes to the flash drive that happen inside the target reflect in the image file that resides in the host file-system as well.
+If set to `true`, the image file will be modified accordingly.
 This is useful when a flash drive will hold the result of a computation.
-If set to `false` (the default), target modifications to the flash drive are <i>not</i> propagated to the
-backing file that resides in the host. I.e., even though the flash drives are
-read/write from the target perspective, the backing file in the host is left
-unmodified.
+If set to `false` (the default), target modifications to the flash drive are <i>not</i> propagated to the image file that resides in the host.
+I.e., even though the flash drives may be read/write from the target perspective, the image file in the host is left unmodified.
 
-The <a href="#htif_config">`htif`</a> entry in `machine_config`
-has four fields, two of which are used only in rare occasions.  The most
-commonly used field is the Boolean `interact`. When set to `true`
-(the default is `false`), it instructs the emulator to monitor terminal
-input in the host and make it available to the target via the HTIF device. This
-is useful in interactive sessions during prototyping, and should never be used
-when verifiability is needed. The `yield` Boolean instructs the emulator
-to honor commands by the Yield subdevice in HTIF, returning control to the host.
-This is used as a means for applications running in the target to inform the host about their progress.
-When set to `false` (the default), the emulator ignores yield commands
-and continues execution without returning control to the host.
+The <a href="#htif_config">`htif`</a> entry in `machine_config` has four fields, two of which are used only in rare occasions.
+The most commonly used field is the Boolean `console_getchar`.
+When set to `true` (the default is `false`), it instructs the emulator to monitor terminal input in the host and make it available to the target via the HTIF device.
+This is used in interactive sessions during prototyping, and should never be used when verifiability is needed.
+The `yield_progress` Boolean instructs the emulator to honor the progress command in the HTIF Yield subdevice.
+This is used as a means for applications running in the target to inform the host about the current progress in the computation they are performing.
+When set to `false` (the default), the emulator continues execution past yield commands without returning control to the host.
+Similarly, the `yield_rollup` causes the emulator to honor the rollup command in the HTIF Yield subdevice.
+This command is used by the applications running in the target to inform the host that they have processed all available input, produced the required output, and are therefore idle waiting for further instructions.
+This mechanism is used by stateful Cartesi Machines.
 
-The other entries in the `machine_config` are used only in rare
-occasions.
-The devices and processor have a variety of control and status registers (CSRs),
-in addition to processor's general-purpose registers.
-Most of these are defined in the RISC-V [user-level
-ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) and [privileged
-architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf) specifications.
-The Cartesi-specific additions are described under the [the target perspective](#the-target-perspective).
+The other entries in the `machine_config` are used only in rare occasions.
+The devices and processor have a variety of control and status registers (CSRs), in addition to processor's general-purpose registers.
+Most of these are defined in the RISC-V [user-level ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) and [privileged architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf) specifications.
+The Cartesi-specific additions are described under the target perspective [processor](../target/processor.md) and [board](./target/board.md) specifications.
 
-The fields `tohost` and `fromhost` in `htif`.
-allow for the overriding of the default initial values of these CSRs.
-The <a href="#clint_config">`clint`</a> entry has a single
-field, `mtimecmp`, which allows for the overriding of the default initial value
-of this CSR. Similarly, the fields in the <a href="#processor_config">`processor`</a> entry
-in `machine_config` allow for the overriding of the default initial value of all
-general-purpose registers and CSRs.
+The fields `tohost` and `fromhost` in `htif` allow for the overriding of the default initial values of these CSRs.
+The <a href="#clint_config">`clint`</a> entry has a single field, `mtimecmp`, which allows for the overriding of the default initial value of this CSR.
+Similarly, the fields in the <a href="#processor_config">`processor`</a> entry allow for the overriding of the default initial value of all general-purpose registers and CSRs in the processor.
 
-#### Using cartesi-machine to produce configurations
+### Configuration from command-line
 
-The command-line utility can be used to streamline the configuration of Cartesi Machines.
-Recall from an [earlier example](#first-cartesi-machine-example) that the `cartesi-machine` command
+The `cartesi-machine` command-line utility can be used to output machine configurations for Cartesi Machines that can be used directly by the Lua `cartesi.machine` constructor.
+Recall from an [earlier example](cmdline.md#first-cartesi-machine-example) that the `cartesi-machine` command
 ```bash
-$ cartesi-machine \
-    --rom-backing="rom.bin" \
-    --append-rom-bootargs="quiet -- /bin/ls /bin" \
-    --ram-backing="kernel.bin" \
+playground:~$ cartesi-machine \
+    --rom-image="/opt/cartesi/share/images/rom.bin" \
+    --append-rom-bootargs="quiet" \
     --ram-length=64Mi \
-    --root-backing="rootfs.ext2" \
+    --ram-image="/opt/cartesi/share/images/linux.bin" \
+    --flash-drive="label:root,filename:/opt/cartesi/share/images/rootfs.ext2"
     --max-mcycle=0 \
-    --dump-machine-config
+    --dump-machine-config \
+    -- /bin/ls /bin
 ```
-builds a Cartesi Machine with `rom.bin` as the [ROM image](machine/ROM.md), and to append the string `quiet -- /bin/ls /bin` to the automatically generated kernel command line.
-The machine has 64MiB of RAM, uses `kernel.bin` as the [RAM image](machine/kernel.md), and uses `rootfs.ext2` as the [root file-system](machine/rootfs.md).
-(These files are generated by the Emulator SDK.)
-The last two options instruct the utility to stop execution at cycle 0 (`mcycle` in `--max-mcycle` refers to the CSR that is advanced at every clock cycle), i.e., before the machine even starts and dump the resulting configuration.
-
-The output of the command is
+builds a Cartesi Machine that, when run, lists the contents of the `/bin/` directory before gracefully halting.
+The image files `rom.bin`, `linux.bin`, and `rootfs.ext2` are generated by the Emulator SDK, and are available in the playground Docker image in directory `/opt/cartesi/share/images/`.
+The command-line option `--max-mcycle=0` instructs the utility to stop execution at cycle 0 (`mcycle` is a CSR that starts at 0 and is advanced at every clock cycle), i.e., before the machine even starts running.
+The key command-line option is `--dump-machine-config`, which cases the emulator to dump the corresponding configuration to screen:
 ```lua
 Building machine: please wait
 machine_config = {
@@ -238,7 +240,7 @@ machine_config = {
     },
     iflags = 0x18, -- default
     ilrsc = 0xffffffffffffffff, -- default
-    marchid = 0x2, -- default
+    marchid = 0x3, -- default
     mcause = 0x0, -- default
     mcounteren = 0x0, -- default
     mcycle = 0x0, -- default
@@ -265,27 +267,28 @@ machine_config = {
     stvec = 0x0, -- default
   },
   ram = {
+    image_filename = "/opt/cartesi/share/images/linux.bin",
     length = 0x4000000,
-    backing = "kernel.bin",
   },
   rom = {
-    backing = "rom.bin",
+    image_filename = "/opt/cartesi/share/images/rom.bin",
     bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw mtdparts=flash.0:-(root) quiet -- /bin/ls /bin",
   },
   htif = {
     tohost = 0x0, -- default
     fromhost = 0x0, -- default
-    interact = false, -- default
-    yield = false, -- default
+    console_getchar = false, -- default
+    yield_progress = false, -- default
+    yield_rollup = false, -- default
   },
   clint = {
     mtimecmp = 0x0, -- default
   },
   flash = {
     {
+      image_filename = "/opt/cartesi/share/images/rootfs.ext2",
       start = 0x8000000000000000,
       length = 0x3c00000,
-      backing = "rootfs.ext2",
       shared = false, -- default
     },
   },
@@ -294,101 +297,484 @@ machine_config = {
 Cycles: 0
 ```
 
-This output includes a number of default values, conveniently marked as such by the `cartesi-machine` utility.
-Reduced to its essential, it is simply
-```lua
-Building machine: please wait
-machine_config = {
+The resulting configuration includes a number of default values, conveniently marked as such by the `cartesi-machine` utility.
+It can be edited down to its essential, and stored into a file, for example as a Lua module:
+```lua title="config/ls-bin.lua"
+return {
   processor = {
-    mvendorid = cartesi.machine.MVENDORID,
-    mimpid = cartesi.machine.MIMPID,
-    marchid = cartesi.machine.MARCHID,
+    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
+    mimpid = 0x1, -- cartesi.machine.MIMPID
+    marchid = 0x3, -- cartesi.machine.MARCHID
   },
   ram = {
+    image_filename = "/opt/cartesi/share/images/linux.bin",
     length = 0x4000000,
-    backing = "kernel.bin",
   },
   rom = {
-    backing = "rom.bin",
+    image_filename = "/opt/cartesi/share/images/rom.bin",
     bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw mtdparts=flash.0:-(root) quiet -- /bin/ls /bin",
   },
   flash = {
     {
+      image_filename = "/opt/cartesi/share/images/rootfs.ext2",
       start = 0x8000000000000000,
       length = 0x3c00000,
-      backing = "rootfs.ext2",
     },
   },
 }
 ```
 The only required values in the `processor` configuration are the `mvendorid`, `mimpid`, `marchid` CSRs.
-These are used to ensure the emulator matches the configuration.
-During prototyping, they can be filled out from values exposed by the emulator itself.
+These are used to ensure the emulator version matches the version the configuration was generated for.
+If the emulator detects a mismatch, instantiation fails.
+During prototyping, these fields can be filled out from values exposed by the `cartesi.machine` class itself.
 In production code, they should be hard-coded to match the release of the emulator in use.
 
 Note how the utility automatically sets the ROM `bootargs` to include several options in addition to what was requested by the `--append-rom-bootargs` option.
-In particular, the `mtdparts=flash.0:-(root)` section is a kernel command-line parameter that informs the kernel of flash drives partitioning information.
-The format for the option is documented in the [source-code](https://elixir.bootlin.com/linux/v5.5.4/source/drivers/mtd/parsers/cmdlinepart.c) for the kernel module that reads the parameter.
-Here, `(root)` gives the partition label.
+Most options are commonly found in typical Linux setups.
+Two of them deserve some elaboration.
+The `mtdparts=flash.0:-(root)` section is a kernel command-line argument that provides the kernel with partitioning information for the flash drives.
+The format for the option is documented in the [source-code](https://elixir.bootlin.com/linux/v5.5.4/source/drivers/mtd/parsers/cmdlinepart.c) for the kernel module that parses it.
+Here, `(root)` gives the partition label, and `flash.0` refers to the first flash drive.
+The `/bin/ls /bin` command appears in the ROM `bootargs` after the `--` separator.
+The Linux kernel passes anything that appears after the separator, verbatim, to `/sbin/init`.
+The Cartesi-provided `/sbin/init` then uses this information to run the desired command.
 
-Recall the command-line utility can run Cartesi Machines with additional drives.
-In that case, the resulting configuration automatically includes the appropriate value for `mtdparts`.
-Repeating another [earlier example](#cartesi-machine-with-foo-flash-drive), and again omitting default values,
+Recall the command-line utility can also run Cartesi Machines with additional drives.
+In that case, the resulting configuration automatically includes an entry for them in the `mtdparts` kernel command-line argument.
+Repeating another [earlier example](cmdline.md#cartesi-machine-with-foo-flash-drive), and again omitting default values,
 ```bash
-$ mkdir foo
-$ echo Hello world > foo/bar
-$ genext2fs -b 1024 -d foo foo.ext2
-$ cartesi-machine \
-    --append-rom-bootargs="quiet -- /bin/cat /mnt/foo/bar.txt" \
-    --flash-foo-backing="foo.ext2" \
+playground:~$ mkdir foo
+playground:~$ echo Hello world > foo/bar.txt
+playground:~$ genext2fs -b 1024 -d foo foo.ext2
+playground:~$ cartesi-machine \
+    --append-rom-bootargs="quiet" \
+    --flash-drive=label:"foo,filename:foo.ext2" \
     --max-mcycle=0 \
-    --dump-machine-config
+    --dump-machine-config \
+    -- "/bin/cat /mnt/foo/bar.txt"
 ```
-produces the configuration
-```lua
-machine_config = {
+produces the corresponding machine configuration.
+This can be edited down to its essential, and stored into a file, for example as a Lua module:
+```lua title="config/cat-foo-bar.lua"
+return {
   processor = {
-    mvendorid = cartesi.machine.MVENDORID,
-    mimpid = cartesi.machine.MIMPID,
-    marchid = cartesi.machine.MARCHID,
+    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
+    mimpid = 0x1, -- cartesi.machine.MIMPID
+    marchid = 0x3, -- cartesi.machine.MARCHID
   },
   ram = {
+    image_filename = "/opt/cartesi/share/images/linux.bin",
     length = 0x4000000,
-    backing = "kernel.bin",
   },
   rom = {
-    backing = "rom.bin",
     bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw mtdparts=flash.0:-(root);flash.1:-(foo) quiet -- /bin/cat /mnt/foo/bar.txt",
+    image_filename = "/opt/cartesi/share/images/rom.bin",
   },
   flash = {
     {
+      image_filename = "/opt/cartesi/share/images/rootfs.ext2",
       start = 0x8000000000000000,
       length = 0x3c00000,
-      backing = "rootfs.ext2",
     },
     {
+      image_filename = "foo.ext2",
       start = 0x9000000000000000,
       length = 0x100000,
-      backing = "foo.ext2",
     },
   },
 }
 ```
-Note the entry in `mtdparts` that causes `flash.1`, the flash drive containing the `foo.ext2` file-system to receive label `(foo)`.
+Note the entry in `mtdparts` that causes `flash.1`, the flash drive containing the `foo.ext2` file-system, to receive label `foo`.
+When the Cartesi-provided `/sbin/init` detects a valid file-system in the flash drive, it automatically uses the label to mount it as `/mnt/foo`.
+It is there that the command `/bin/cat /mnt/foo/bar.txt` finds the file to dump to the console.
 
-#### Instantiating, obtaining state hashes, and running Cartesi Machines
+### Additional sample configurations
 
-The Lua interface to `cartesi.machine` can be used to instantiat and run a Cartesi Machine based on any desired configuration.
-In particular, the configurations produced by the `cartesi-machine` utility, such as the configuration above.
+Here are the (simplified) configurations for the other examples from the documentation of the `cartesi-machine` command-line utility.
+
+A Cartesi Machine that has nothing to do:
+```bash
+playground:~$ cartesi-machine \
+    --append-rom-bootargs="quiet" \
+    --max-mcycle=0 \
+    --dump-machine-config
+```
+```lua title="config/nothing-to-do.lua"
+return {
+  processor = {
+    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
+    mimpid = 0x1, -- cartesi.machine.MIMPID
+    marchid = 0x3, -- cartesi.machine.MARCHID
+  },
+  ram = {
+    image_filename = "/opt/cartesi/share/images/linux.bin",
+    length = 0x4000000,
+  },
+  rom = {
+    image_filename = "/opt/cartesi/share/images/rom.bin",
+    bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw mtdparts=flash.0:-(root) quiet",
+  },
+  flash = {
+    {
+      image_filename = "/opt/cartesi/share/images/rootfs.ext2",
+      start = 0x8000000000000000,
+      length = 0x3c00000,
+    },
+  },
+}
+```
+
+A Cartesi Machine that periodically reports its progress using the HTIF Yield device:
+```bash
+playground:~$ cartesi-machine \
+    --append-rom-bootargs="quiet" \
+    --htif-yield-progress \
+    --max-mcycle=0 \
+    --dump-machine-config \
+    -- "/bin/ash -c 'for i in \$(seq 0 5 1000); do /opt/cartesi/bin/yield --progress=\$i; done'"
+```
+```lua title="config/progress.lua"
+return {
+  processor = {
+    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
+    mimpid = 0x1, -- cartesi.machine.MIMPID
+    marchid = 0x3, -- cartesi.machine.MARCHID
+  },
+  ram = {
+    image_filename = "/opt/cartesi/share/images/linux.bin",
+    length = 0x4000000,
+  },
+  rom = {
+    image_filename = "/opt/cartesi/share/images/rom.bin",
+    bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw mtdparts=flash.0:-(root) quiet -- /bin/ash -c 'for i in $(seq 0 5 1000); do /opt/cartesi/bin/yield --progress=$i; done'",
+  },
+  htif = {
+    yield_progress = true,
+  },
+  flash = {
+    {
+      image_filename = "/opt/cartesi/share/images/rootfs.ext2",
+      start = 0x8000000000000000,
+      length = 0x3c00000,
+    },
+  },
+}
+```
+
+A Cartesi Machine that computes the value of a generic mathematical expression:
+```bash
+playground:~$ cartesi-machine \
+    --append-rom-bootargs="quiet" \
+    --flash-drive="label:input,length:1<<12,filename:input.raw" \
+    --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \
+    --max-mcycle=0 \
+    --dump-machine-config \
+    "dd status=none if=/dev/mtdblock1 | lua -e 'print((string.unpack(\"z\", io.read(\"*a\"))))' | bc | dd status=none of=/dev/mtdblock2"
+```
+```lua title="config/calculator.lua"
+return {
+  processor = {
+    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
+    mimpid = 0x1, -- cartesi.machine.MIMPID
+    marchid = 0x3, -- cartesi.machine.MARCHID
+  },
+  ram = {
+    image_filename = "/opt/cartesi/share/images/linux.bin",
+    length = 0x4000000,
+  },
+  rom = {
+    image_filename = "/opt/cartesi/share/images/rom.bin",
+    bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw mtdparts=flash.0:-(root);flash.1:-(input);flash.2:-(output) quiet -- dd status=none if=/dev/mtdblock1 | lua -e 'print((string.unpack(\"z\", io.read(\"*a\"))))' | bc | dd status=none of=/dev/mtdblock2",
+  },
+  clint = {
+    mtimecmp = 0x0, -- default
+  },
+  flash = {
+    {
+      image_filename = "/opt/cartesi/share/images/rootfs.ext2",
+      start = 0x8000000000000000,
+      length = 0x3c00000,
+    },
+    {
+      start = 0x9000000000000000,
+      length = 0x1000,
+    },
+    {
+      start = 0xa000000000000000,
+      length = 0x1000,
+    },
+  },
+}
+```
+:::danger Editor note
+We should change this example to use the `flashdrive` utility.
+It would look something like
+
+```
+"dd status=none if=\$(flashdrive input) | lua -e 'print((string.unpack(\"z\", io.read(\"*a\"))))' | bc | dd status=none of=\$(flashdrive output)"`
+```
+:::
+
+## Loading and running machines
+
+The Lua interface to `cartesi.machine` can be used to instantiate Cartesi Machine based on any desired configuration.
+In particular, the configurations produced by the `cartesi-machine` utility, such as the examples above.
 This is, after all, the interface used internally by the `cartesi-machine` utility.
-The following script serves to illustrate the basic operation.
+
+For example, the script
+```lua title="run-config.lua"
+-- Load the Cartesi module
+local cartesi = require"cartesi"
+
+-- Instantiate machine from configuration
+local machine = cartesi.machine(require(arg[1]))
+
+-- Run machine until it halts
+while not machine:read_iflags_H() do
+    machine:run(math.maxinteger)
+end
+```
+loads a machine configuration from the Lua module specified in the command-line (using `require(arg[1])`), and then runs it.
+
+The `machine:run(<max_mcycle>)` method of the Cartesi Machine instance runs the corresponding machine until the CSR `mcycle` reaches at most `<max_mcycle>`.
+The value of `<max_mcycle>` used in the script is a very large integer, providing the machine with enough cycles to run until it halts.
+Note that the `machine:run()` method can return precociously for a variety of reasons (see below), so it should always be called inside a loop.
+The `iflags` CSR contains a bit `H` that is set to true whenever the machine is halted.
+The `machine:read_iflags_H()` method returns the value of this bit, which is used to break the loop.
+
+<a name="run-cat-foo-bar"></a>
+
+For example, to run the configuration stored in `./config/cat-foo-bar.lua` (assuming `./foo.ext2` is available) simply run
+
+```bash
+playground:~$ luapp5.3 run-config.lua config.cat-foo-bar
+```
+
+```
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+        \ /   MACHINE
+         '
+
+Hello world
+[    0.058908] reboot: Power down
+```
+
+The `machine:get_initial_config()` returns the configuration that was used to create a Cartesi Machine instance.
+
+## Instantiation from persistent state
+
+At any point in their execution, Cartesi Machines can be stored to disk.
+A stored machine can later be loaded to continue its execution from where it left off.
+
+:::note
+If the machine initialization involved large image files or a considerable amount of RAM, this operation may consume significant disk space.
+It will also take the time required by the copying of image files into the directory, and by the computation of the state hash.
+:::
+
+To store a machine at its current state, use the `machine:store(<directory>)` method of the Cartesi Machine instance.
 ```lua
--- Load the Cartesi Lua module
+-- Load the Cartesi module
+local cartesi = require"cartesi"
+
+-- Instantiate machine from configuration
+local machine = cartesi.machine(require"config.cat_foo_bar")
+
+-- Store persistent state to directory
+machine:store("cat-foo-bar")
+```
+To prevent persistent Cartesi Machines from being inadvertently overwritten, the function call fails when the directory already exists.
+
+After the execution of the script above, the directory `./cat-foo-bar/` contains all the information needed to instantiate the same machine, including copies of all necessary image files.
+There are no external dependencies.
+In fact, running the following script
+```lua
+-- Load the Cartesi module
+local cartesi = require"cartesi"
+
+-- Instantiate machine from persistent state directory
+local machine = cartesi.machine("cat-foo-bar")
+
+-- Run machine until it halts
+while not machine:read_iflags_H() do
+    machine:run(math.maxinteger)
+end
+```
+has exactly the same effect as the example [above](#run-cat-foo-bar), where the machine was instantiated from the configuration and directly run until it halted.
+
+As before, the configuration that was used to instantiate a Cartesi Machine can be obtained from the machine instance with the method `machine:get_initial_config()`.
+Note that this is *not* the configuration that was used to instantiate the machine for the first time, but rather the configuration used to instantiate a copy of the machine that was stored.
+More specifically, any image filenames point to modified copies that reside inside the storage directory.
+Likewise, the RAM image and the values of all registers will reflect the values as they were when stored.
+
+## Limiting execution
+
+The `machine:run(<max_mcycle>)` method of a Cartesi Machine instance always returns when the machine halts.
+From the outside, however, it is impossible to predict how many cycles the emulator will need until the machine finally halts.
+One of the uses for the `<max_mcycle>` argument in production code is to ensure the call returns at a desired frequency, rather than potentially blocking the caller indefinitely.
+
+The following script illustrates the process
+```lua title="run-config-in-chunks.lua"
+-- Load the Cartesi module
+local cartesi = require"cartesi"
+
+-- Instantiate machine from configuration
+local machine = cartesi.machine(require(arg[1]))
+
+local CHUNK = 1000000 -- 1 million cycles
+-- Loop until machine is halted
+while not machine:read_iflags_H() do
+    -- Execute at most CHUNK cycles
+    machine:run(machine:read_mcycle() + CHUNK)
+    -- Potentially perform other tasks
+end
+-- Machine is now halted
+```
+
+The loop conditional checks if the machine has yet to halt.
+If so, it runs the machine for at most an additional `CHUNK` cycles.
+The `machine:read_mcycle()` method returns the current value of the `mcycle` CSR.
+The current value of `mcycle` is used to set the new limit to `mcycle+CHUNK`.
+After the call to `machine:run()` returns, the application is free to perform other tasks.
+
+## Progress feedback
+
+When the computation running inside a Cartesi Machine is intensive, it may be desirable to inform users of the progress, so they can plan accordingly.
+On its own, the current value of `mcycle` does not give any information concerning how much of the computation still remains.
+What is needed is the value of `mcycle` when the machine halts.
+This is, unfortunately, difficult to estimate from the outside.
+The target application is in a much better position to estimate its own progress.
+However, it needs is a mechanism to communicate its progress back to the program controlling the emulator.
+
+The command-line utility `/opt/cartesi/bin/yield` can be used for this purpose.
+Internally, the tool uses an `ioctl` system-call on the Cartesi-specific `/dev/yield` device.
+The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF  Yield device are explained in detail under the [target perspective](../target/linux.md#yield-device).
+The focus here is on its effect on the host program controlling the emulator.
+
+A Cartesi Machine can be configured to accept HTIF yield progress commands by means of the `htif.yield_progress` Boolean field in the machine configuration.
+When set to true, a progress command will cause the emulator to precociously return from a call to `machine:run(<max_mcycle>)`.
+Otherwise, progress commands are ignored to the extent that execution of the `machine:run(<max_mcycle>)` continues unimpeded until the machine halts or `mcycle` hits `<max_mcycle>`.
+
+The following example illustrates how Lua scripts can receive progress information throughout a computation performed inside a Cartesi Machine:
+```lua title="run-config-in-chunks-with-progress.lua"
+-- Load the Cartesi module
 local cartesi = require"cartesi"
 
 -- Writes formatted text to stderr
 local function stderr(fmt, ...)
-	io.stderr:write(string.format(fmt, ...))
+    io.stderr:write(string.format(fmt, ...))
+end
+
+-- Code for progress command in the yield HTIF device
+local YIELD_COMMAND_PROGRESS = 0
+
+-- Extract command from HTIF tohost
+local function tohost_cmd(tohost)
+    return tohost << 8 >> 48
+end
+
+-- Extract data from HTIF tohost
+local function tohost_data(tohost)
+    return tohost << 16 >> 16
+end
+
+-- Instantiate machine from configuration
+local machine = cartesi.machine(require(arg[1]))
+
+local CHUNK = 1000000 -- 1 million cycles
+local max_mcycle = CHUNK
+-- Loop until machine is halted
+while not machine:read_iflags_H() do
+    -- Execute at most CHUNK cycles
+    machine:run(max_mcycle)
+    -- Check if machine yielded
+    if machine:read_iflags_Y() then
+        local tohost = machine:read_htif_tohost()
+        local cmd = tohost_cmd(tohost)
+        -- Check if yield was due to progress report
+        if cmd == YIELD_COMMAND_PROGRESS then
+            local permil = tohost_data(tohost)
+            -- Show progress feedback
+            stderr("Progress: %6.2f\r", permil/10)
+        end
+    end
+    if machine:read_mcycle() == max_mcycle then
+        max_mcycle = max_mcycle + CHUNK
+        -- Potentially perform other tasks
+    end
+end
+-- Machine is now halted
+stderr("\nCycles: %u\n", machine:read_mcycle())
+```
+The loop repeats until the machine halts.
+As before, the computation is performed in chunks.
+At each iteration, the script tries to advance the computation until the end of the next chunk.
+When the call to `machine:run()` returns, a set bit Y in CSR `iflags` means the reason for returning was the Yield device.
+That device accepts different commands, each potentially carrying data.
+The command and the associated data can be found in the HTIF `tohost` CSR.
+A command `0` corresponds to a progress report, and the data contains the progress in parts per mil.
+The loop is aborted if the bit H in `iflags` is set, which signals the machine is halted.
+Otherwise, the execution continues with the remaining of the current chunk, or a new chunk.
+In case of a new chunk, the script could perform any desired &ldquo;per-chunk&rdquo; tasks.
+
+:::danger Editor note
+Waiting for the new kernel device and the new command-line utility so we can run this example as written.
+Current output is for the old version.
+
+We should also use the new `machine:read_tohost_data()` and `machine:read_tohost_cmd()` methods once they are available.
+
+Maybe `YIELD_COMMAND_PROGRESS` should be a member of `cartesi.machine`?
+:::
+
+For example, running the script with the command-line
+```bash
+playground:~$ luapp5.3 run-config-in-chunks-with-progress.lua config.progress
+```
+produces the output (shown at 44% completion) below
+```
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+        \ /   MACHINE
+         '
+
+Progress:  44.00
+```
+
+This is similar to the `cartesi-machine` command-line
+```bash
+playground:~$ cartesi-machine \
+    --append-rom-bootargs="quiet" \
+    --htif-yield-progress \
+    -- "/bin/ash -c 'for i in \$(seq 0 5 1000); do /opt/cartesi/bin/yield --progress=\$i; done'"
+```
+which uses an equivalent mechanism for progress report.
+
+## State hashes
+
+State hashes are Merkle tree root hashes of the entire 64-bit address space of the Cartesi Machine, where the leaves are aligned 64-bit words.
+Since Cartesi Machines are transparent, the contents of this address space encompass the entire machine state, including the all processor's CSRs and general-purpose registers, the contents of RAM and ROM, of all flash drives, and of all other devices connected to the board.
+State hashes therefore work as cryptographic signatures of the machine, and implicitly of the computation they are about to execute.
+
+The following script shows how state hashes can be obtained from a Cartesi Machine instance:
+```lua title="run-config-with-hashes.lua"
+-- Load the Cartesi module
+local cartesi = require"cartesi"
+
+-- Writes formatted text to stderr
+local function stderr(fmt, ...)
+    io.stderr:write(string.format(fmt, ...))
 end
 
 -- Converts hash from binary to hexadecimal string
@@ -398,98 +784,56 @@ local function hexhash(hash)
     end))
 end
 
--- Machine configuration with the foo.ext2 flash drive
-local machine_config = {
-  processor = {
-    mvendorid = cartesi.machine.MVENDORID,
-    mimpid = cartesi.machine.MIMPID,
-    marchid = cartesi.machine.MARCHID,
-  },
-  ram = {
-    length = 0x4000000,
-    backing = "kernel.bin",
-  },
-  rom = {
-    backing = "rom.bin",
-    bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw mtdparts=flash.0:-(root);flash.1:-(foo) quiet -- /bin/cat /mnt/foo/bar.txt",
-  },
-  flash = {
-    {
-      start = 0x8000000000000000,
-      length = 0x3c00000,
-      backing = "rootfs.ext2",
-    },
-    {
-      start = 0x9000000000000000,
-      length = 0x100000,
-      backing = "foo.ext2",
-    },
-  },
-}
-
--- Instantiate the machine
+-- Instantiate machine from configuration
 stderr("Building machine: please wait\n")
-local m = cartesi.machine(machine_config)
+local machine = cartesi.machine(require(arg[1]))
 
 -- Print the initial hash
-stderr("Updating Merkle tree: please wait\n")
-m:update_merkle_tree()
-print(hexhash(m:get_root_hash()))
+machine:update_merkle_tree()
+stderr("%u: %s\n", machine:read_mcycle(), hexhash(machine:get_root_hash()))
 
--- Run machine util it halts (or the heat death of the universe)
-local max_mcycle = math.maxinteger
-m:run(max_mcycle)
-
--- Check if machine was halted and print actual cycle count
-if m:read_iflags_H() then
-	stderr("\nHalted!\n")
-	stderr("Cycles: %u\n", m:read_mcycle())
-else
-	stderr("\nNot halted yet!\n")
+-- Run machine until it halts
+while not machine:read_iflags_H() do
+    machine:run(math.maxinteger)
 end
 
--- Print the final hash
-stderr("Updating Merkle tree: please wait\n")
-m:update_merkle_tree()
-print(hexhash(m:get_root_hash()))
-```
-In the example above, the `cartesi.machine` constructor is invoked with the `machine_config` configuration table.
-This returns a machine instance `m`, ready to run.
-Before running the machine, however, the script computes and prints the state hash.
+-- Print cycle count
+stderr("\n\nCycles: %u\n", machine:read_mcycle())
 
+-- Print the final hash
+machine:update_merkle_tree()
+stderr("%u: %s\n", machine:read_mcycle(), hexhash(machine:get_root_hash()))
+```
 State hashes are maintained in a lazy fashion.
 If no state hashes are needed, negligible cost is incurred.
-The performance pentalty imposed on the emulator, should it be required to keep state hashes up-to-date, would be unacceptable (by several orders of magnitude).
-Before requesting a state hash, the method `m:update_merkle_tree()` must be called.
-It goes over all changes to the state that are still unnacounted for since the tree was last updated, and brings the tree in sync with the state.
-Immediately after the call to `m:update_merkle_tree()`, state hashes are valid.
-The script then obtains the root hash with the `m:get_root_hash()` method.
-This returns a 32-byte binary hash, which is converted to hexadecimal and printed to screen.
-The value can be used to ensure the machine created by the script indeed matches the machine created by the `cartesi-machine` utility.
+The performance penalty imposed on the emulator, were it required to keep state hashes up-to-date, would be unacceptable (by several orders of magnitude).
+Before requesting a state hash, the method `machine:update_merkle_tree()` must be called.
+It goes over all changes to the state that are still unaccounted for since the tree was last updated, bringing the tree in sync with the current state.
+Immediately after the call to `machine:update_merkle_tree()`, state hashes are valid.
+State hashes can be obtained with `machine:get_root_hash()` method, which returns the corresponding Keccak-256 hash as a 32-byte binary string.
 
-The script then executes the machine with the `m:run(<max_mcycle>)` method.
-The value of `<max_mcycle>` used in the example is a very large integer, providing the machine with enough cycles to run until it halts.
+Before running the machine, the script updates the Merkle tree, obtains the initial state hash, converts it to hexadecimal, and prints the result.
+The script then runs the machine until it halts.
+Once the machine is halted, the script once again updates the Merkle tree before obtaining and printing the final state hash.
 
-Once `m:run()` returns, the script checks the `H` bit in the `iflags` CSR.
-This bit is permanently set to `true` if and only if the machine halts.
-If indeed the machine is halted, the script then prints the total number of cycles executed, by reading the `mcycle` CSR.
-This register is advanced at every cycle and, according to the configuration, started at `0`.
-
-The output on the left was generated by the script.
+Initial state hashes can be used to ensure the machine created by the script indeed matches the machine created by the `cartesi-machine` utility, and final state hashes to verify that computations also agree.
+The output on the left was generated by the command
+```bash
+playground:~$ luapp5.3 run-config-with-hashes.lua config.nothing-to-do
+```
 The output on the right was produced by running the same Cartesi Machine via the `cartesi-machine` utility.
 ```bash
-$ cartesi-machine \
-    --append-rom-bootargs="quiet -- /bin/cat /mnt/foo/bar.txt" \
-    --flash-foo-backing="foo.ext2" \
-    --initial-hash
+playground:~$ cartesi-machine \
+    --append-rom-bootargs="quiet" \
+    --initial-hash \
+    --final-hash
 ```
 <div class="row">
 <div class="col col--6">
 
 ```
 Building machine: please wait
-Updating Merkle tree: please wait
-bda898196723afe437c8de8bcb8aebd08ca7f4e44452bcf58d2fc9e93a12dac3
+0: 8e4f7aa0d4a753f16d8430f30ca127b9ed87256f99b9276e29532d50d220c8c0
 
          .
         / \
@@ -501,13 +845,12 @@ bda898196723afe437c8de8bcb8aebd08ca7f4e44452bcf58d2fc9e93a12dac3
         \ /   MACHINE
          '
 
-Hello world!
-[    0.059265] reboot: Power down
+Nothing to do.
+[    0.051769] reboot: Power down
 
-Halted!
-Cycles: 64291620
-Updating Merkle tree: please wait
-c6c0e6fe92f443e6b17f34c0e4479f0b7c169242329d94a56955d39db0fb2463
+
+Cycles: 56623562
+56623562: d418e364fd29238c26dab1e9315b1c18469c764f57828bc4c01c376de39045e3
 ```
 
 </div>
@@ -515,8 +858,7 @@ c6c0e6fe92f443e6b17f34c0e4479f0b7c169242329d94a56955d39db0fb2463
 
 ```
 Building machine: please wait
-Updating Merkle tree: please wait
-bda898196723afe437c8de8bcb8aebd08ca7f4e44452bcf58d2fc9e93a12dac3
+0: 8e4f7aa0d4a753f16d8430f30ca127b9ed87256f99b9276e29532d50d220c8c0
 
          .
         / \
@@ -528,16 +870,778 @@ bda898196723afe437c8de8bcb8aebd08ca7f4e44452bcf58d2fc9e93a12dac3
         \ /   MACHINE
          '
 
-Hello world!
-[    0.059265] reboot: Power down
+Nothing to do.
+[    0.051769] reboot: Power down
 
 Halted with payload: 0
-Cycles: 64291620
-Updating Merkle tree: please wait
-c6c0e6fe92f443e6b17f34c0e4479f0b7c169242329d94a56955d39db0fb2463
+Cycles: 56623562
+56623562: d418e364fd29238c26dab1e9315b1c18469c764f57828bc4c01c376de39045e3
 ```
 
 </div>
 </div>
 
-Note that the initial and final hashes are the same, as expected.
+Note that the initial state hashes and the final state hashes match, as expected.
+
+## External state access
+
+The entire Cartesi Machine state is transparently exposed to the controlling program.
+A variety of methods can be used to query a machine instance for any value in its state.
+
+The method `machine:read_memory(<start>, <length>)` returns string with `<length>` bytes from any memory range in the machine, starting at the physical-memory address `<start>`.
+Memory ranges include the ROM, the RAM, and any of the flash drives.
+The selected range *must* reside entirely inside ROM, entirely inside RAM, or entirely inside one of the flash drives.
+
+There are also methods for reading individual registers.
+Most registers are part of the [RISC-V ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf), and its [privileged architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf).
+Cartesi-specific registers are described under the target perspective sections that cover the [processor](../target/processor.md) and [board](../target/board.md) of the Cartesi Machine architecture.
+
+The method `machine:read_x(<index>)`, where `<index>` is in 0&hellip;31 returns the value of one of the 32 general-purpose processor registers.
+
+The value of CSRs can be obtained by name, with the `machine:read_csr("<csr>")` method.
+Here, `<csr>` is any of the names
+`pc`
+`mvendorid`
+`marchid`
+`mimpid`
+`mcycle`
+`minstret`
+`mstatus`
+`mtvec`
+`mscratch`
+`mepc`
+`mcause`
+`mtval`
+`misa`
+`mie`
+`mip`
+`medeleg`
+`mideleg`
+`mcounteren`
+`stvec`
+`sscratch`
+`sepc`
+`scause`
+`stval`
+`satp`
+`scounteren`
+`ilrsc`
+`iflags`
+`clint_mtimecmp`
+`htif_tohost`
+`htif_fromhost`
+`htif_ihalt`
+`htif_iconsole`
+`htif_iyield`.
+The value of `<csr>` can also be obtained directly from method `machine:read_<csr>()`. (For example, the `machine:read_mcycle()` method already encountered several times.)
+
+As already described, convenience methods `machine:read_iflags_H()` and `machine:read_iflags_Y()` are provided to directly read the most useful bits in the `iflags` CSR.
+
+Conversely, any value in the state of a Cartesi Machine instance can be modified by the controlling program.
+In contrast to reading the state, writing to the state requires extreme care.
+First, for obvious reasons, external modifications to the state break the reproducibility of Cartesi Machines.
+Second, careless state modifications can easily panic the Linux kernel or crash any programs running under it.
+Nevertheless, there are a few scenarios where these modifications are safe and useful.
+
+The `machine:write_memory(<start>, <data>)` method writes the string `<data>` into any memory range in the state, starting at the physical-memory address `<start>`.
+Memory ranges include the ROM, the RAM, and any of the flash drives.
+Note that the bytes in the string `<data>` must entirely fit inside ROM, inside RAM, or inside one of the flash drives.
+
+The typical use case for `machine:write_memory()` is when an input flash drive was instantiated without an image file, and is thus filled with zeros in the initial machine state.
+Before running the machine for the first time, it is safe to replace the contents of the flash drive with the desired input.
+(Note, however, that if a flash drive does have an associated `shared` image file, the `machine:write_memory()` method *will* modify the associated image file on disk as well as its mapping in the Cartesi Machine state.)
+Another use case is in low-level debugging sessions.
+For example, the `gdb` remote serial protocol requires the ability to externally modify the state.
+
+General purpose registers can be written to with the method `machine:write_register(<index>, <value>)`, where `<index>` is in 0&hellip;31.
+
+The value of any CSR can be changed with the `machine:write_csr("<csr>", <value>)` method.
+(CSRs accept 64-bit integers as value.)
+Again, `<csr>` is any of the names
+`pc`
+`mvendorid`
+`marchid`
+`mimpid`
+`mcycle`
+`minstret`
+`mstatus`
+`mtvec`
+`mscratch`
+`mepc`
+`mcause`
+`mtval`
+`misa`
+`mie`
+`mip`
+`medeleg`
+`mideleg`
+`mcounteren`
+`stvec`
+`sscratch`
+`sepc`
+`scause`
+`stval`
+`satp`
+`scounteren`
+`ilrsc`
+`iflags`
+`clint_mtimecmp`
+`htif_tohost`
+`htif_fromhost`
+`htif_ihalt`
+`htif_iconsole`
+`htif_iyield`.
+The value of `<csr>` can also be changed directly with method `machine:write_<csr>(<value>)`.
+
+
+As an example, consider the following script, which uses the `bc` program running inside a Cartesi Machine to evaluate an arithmetic expression:
+```lua title="run-calculator.lua"
+-- Load the Cartesi module
+local cartesi = require"cartesi"
+
+-- Instantiate machine from calculator configuration
+local config = require"config.calculator"
+local machine = cartesi.machine(config)
+
+-- Write expression from command-line to input drive
+machine:write_memory(config.flash[2].start, table.concat(arg, " ") .. "\n")
+
+-- Run machine until it halts
+while not machine:read_iflags_H() do
+    machine:run(math.maxinteger)
+end
+
+-- Read contents of output drive and print results
+print((string.unpack("z", machine:read_memory(config.flash[3].start, config.flash[3].length))))
+```
+
+The script loads the `config` template from from its Lua module `./config/calculator.lua` and instantiates a Cartesi Machine from it.
+The pristine input and output flash drives are described in the configuration at `config.flash[2]` and `config.flash[3]`, respectively.
+(Entry `config.flash[1]` describes the flash drive with the root file-system for the embedded Linux distribution.)
+The script concatenates its command-line arguments, line-terminates them, and writes them at the start of the raw input flash drive.
+The script then runs the machine until it halts.
+Finally, it reads the output drive contents and extracts the first null-terminated string from it, and prints the results.
+
+Running the script with the command-line
+
+```bash
+playground:~$ luapp5.3 run-calculator.lua 6*2^1024 + 3*2^512
+```
+produces the output
+
+```
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+        \ /   MACHINE
+         '
+
+[    0.062665] reboot: Power down
+10786158809173895446375831144734148401707861873653839436405804869463\
+96054833005778796250863934445216126720683279228360145952738612886499\
+73495708458383684478649003115037698421037988831222501494715481595948\
+96901677837132352593468675094844090688678579236903861342030923488978\
+36036892526733668721977278692363075584
+```
+The number is indeed the value of the expression 6&times;2<sup>1024</sup>+3&times;2<sup>512</sup>.
+
+Finally, external state modifications are useful in the setup of artificial, unexpected conditions in regression tests.
+
+## State value proofs
+
+Value proofs concerning the state of the Cartesi Machine can be obtained from any instance using the method `machine:get_proof(<address>, <log2_size>)`.
+
+*State value proofs* are proofs that a given node in the Merkle tree of the Cartesi Machine state has a given hash.
+Each Merkle tree node covers a contiguous range of the machine's 64-bit address space.
+The size of a range is always a power of 2 (given by the `<log2_size>` parameter).
+Since the leaves have size 8 (for 64-bits), the valid values for `<log2_size>` are 3&hellip;64.
+The range corresponding to each node starts at an `<address>` that is a multiple of its size.
+
+Recall that the state Merkle is maintained in a lazy fashion.
+Therefore, just like with the `machine:get_root_hash()` method, the Merkle tree must be updated to account for state changes with a call to the `machine:update_merkle_tree()` method prior to any call to `machine:get_proof()` method.
+Otherwise, the reported results will contain garbage concerning stale state data.
+
+The `machine:get_proof()` method returns a table with the following structure:
+```lua
+proof ::= {
+  address ::= number,
+  log2_size ::= number,
+  root_hash ::= string,
+  target_hash ::= string,
+  sibling_hashes ::= {
+    [1] ::= string,
+    [2] ::= string,
+    ...
+    [64-log2_size] ::= string
+  }
+}
+```
+
+Fields `address` and `log2_size` come directly from the arguments passed to the method.
+Field `root_hash` has the same value as a call to `machine:get_root_hash()` would return, i.e., the value of the state hash.
+The `target_hash` field contains the hash of the node corresponding to `address` and `log2_size`.
+
+To understand its contents of the `sibling_hashes` array, consider a path from the root, down the Merkle tree, all the way to the target hash.
+When this path is traversed, a number of nodes are visited.
+The `sibling_hashes` array contains the hashes of the *siblings* of all nodes visited (excluding the root, which has no sibling).
+
+Using the data in a proof, it is possible to verify the claim that a Merkle tree with a given root hash contains a target node with a given hash at the position given by its address and size.
+The function `accept(<proof>)` exported by the `cartesi.proof` module performs exactly this task.
+
+:::danger Editor note
+This module has not yet been added to the `machine-emulator` repository.
+:::
+
+
+```lua title="cartesi/proof.lua"
+local cartesi = require"cartesi"
+
+local _M = {}
+
+function _M.roll_hash_up_tree(proof, target_hash)
+	local hash = target_hash
+	for log2_size = proof.log2_size, 63 do
+		local bit = (proof.address & (1 << log2_size)) ~= 0
+		local first, second
+		if bit then
+			first, second = proof.sibling_hashes[64-log2_size], hash
+		else
+			first, second = hash, proof.sibling_hashes[64-log2_size]
+		end
+		hash = cartesi.keccak(first, second)
+	end
+	return hash
+end
+
+function _M.accept(proof)
+	return roll_hash_up_tree(proof, proof.target_hash) == proof.root_hash
+end
+
+return _M
+```
+
+The bulk of work happens in the `roll_hash_up_tree(<proof>, <target_hash>)` function.
+In the first iteration of the loop, the function uses the bit with value 2<sup>`log2_size`</sup> in `address` to determine if the sibling of the target node comes before or after it in the address space of the Cartesi Machine.
+It then computes the hash of the concatenation of the target node's hash  and its sibling's hash (in the correct order).
+To do so, it uses the `cartesi.keccak(<first-string>, <second-string>)` function.
+The result must be the hash of the parent node to the target and its sibling.
+The loop then goes up the `sibling_hashes` array, and obtains the sibling of this parent node.
+This is again concatenated with the parent node (in the correct order) to obtain what must be the hash of the grandparent node.
+This process is repeated until the hash of what must be the root node is found and returned.
+Function `accept(<proof>)` then compares this to the hash that was expected in the root node.
+If they match, the proof passes.
+Otherwise, something is amiss.
+
+The function &ldquo;overload&rdquo; `cartesi.keccak(<word>)` can be used to obtain the hash for a 64-bit word (i.e., a tree leaf).
+
+The following script verifies the state value proof for the output drive in the calculator example discussed above.
+```lua title="run-calculator-with-proof.lua"
+-- Load the Cartesi module
+local cartesi = require"cartesi"
+
+-- Load the proof verifiction module
+local proof = require"cartesi.proof"
+
+-- Instantiate machine from configuration
+local config = require"config.calculator"
+local machine = cartesi.machine(config)
+
+-- Write expression to input drive
+machine:write_memory(config.flash[2].start, table.concat(arg, " ") .. "\n")
+
+-- Run machine until it halts
+while not machine:read_iflags_H() do
+    machine:run(math.maxinteger)
+end
+
+-- Obtain value proof for output flash drive
+machine:update_merkle_tree()
+local output_proof = machine:get_proof(config.flash[3].start, 12)
+
+-- Verify proof
+if proof.accept(output_proof) then
+    print("\nOutput drive proof accepted!\n")
+else
+    error("Output drive proof rejected!")
+end
+
+print((string.unpack("z", machine:read_memory(config.flash[3].start, config.flash[3].length))))
+```
+
+Running the script with the command-line
+
+```bash
+playground:~$ luapp5.3 run-calculator-with-proof.lua 6*2^1024 + 3*2^512
+```
+produces the output
+
+```
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+        \ /   MACHINE
+         '
+
+[    0.062665] reboot: Power down
+
+Output drive proof accepted!
+
+10786158809173895446375831144734148401707861873653839436405804869463\
+96054833005778796250863934445216126720683279228360145952738612886499\
+73495708458383684478649003115037698421037988831222501494715481595948\
+96901677837132352593468675094844090688678579236903861342030923488978\
+36036892526733668721977278692363075584
+```
+
+## State transition proofs
+
+:::warning
+This is an advanced section, not needed by regular users of the Cartesi platform.
+:::
+
+During verification, the blockchain mediates a *verification game* between the disputing parties.
+This process is explained in detail under the [the blockchain perspective](../blockchain/vg.md).
+In a nutshell, both parties started from a Cartesi Machine that has a known and agreed upon initial state hash.
+(E.g., an agreed upon template that was instantiated with an agreed upon input drive.)
+At the end of the computation, these parties now disagree on the state hash for the halted machine.
+The state hash evolves as the machine executes steps in its fetch-execute loop.
+The first stage of the verification game therefore searches for the *step of disagreement*: the particular cycle such that the parties agree on the state hash before the step, but disagree on the state hash after the step.
+Once this step of disagreement is identified, one of the parties sends to the blockchain a log of state accesses that happen along the step, including cryptographic proofs for every value read from or written to the state.
+This log proves to the blockchain that the execution of the step transitions the state in such a way that it finally reaches the state hash claimed by the submitting party.
+
+To obtain the access log for the next step in the execution of a Cartesi Machine instance, use the `machine:step(<log_type>)` function.
+Note that the function indeed performs the step, and therefore advances the state, in addition to collecting the access log.
+The `<log_type>` argument specifies if the access log is should include cryptographic proofs and annotations, or only the accesses themselves.
+It is a table in the format
+
+```lua
+log_type ::= {
+  proofs ::= boolean,
+  annotations ::= boolean
+}
+```
+
+The format of the access log returned is as follows:
+
+<div class="row">
+<div class="col col--6">
+
+```lua
+access_log ::= {
+  accesses ::= {
+    [1] ::= word_access,
+    [2] ::= word_access,
+    ...
+    [n] ::= word_access
+  },
+  notes ::= {
+    [1] ::= string,
+    [2] ::= string,
+    ...
+    [n] ::= string,
+  },
+  brackets ::= {
+    [1] ::= bracket,
+    [2] ::= bracket,
+    ...
+    [m] ::= bracket
+  },
+}
+```
+
+</div>
+
+<div class="col col--6">
+
+``` lua
+word_access ::= {
+  type ::= "read" | "write",
+  address ::= number,
+  read ::= number,
+  written ::= number
+  proof ::= proof
+}
+
+bracket ::= {
+  type ::= "begin" | "end",
+  where ::= number,
+  text ::= string
+}
+
+```
+</div>
+
+</div>
+
+The word `accesses` array records, in order, all accesses to the machine state performed during the execution the next step in the evolution of the Cartesi Machine state.
+Word accesses can be of `type` either `"read"` or `"write"`.
+The `address` field specifies the physical address of the corresponding (aligned) 64-bit word accessed.
+Read accesses contain the value `read` for the word.
+Write accesses contain, in the `read` field, the value that was in the state before it was overwritten by the value in the `written` field.
+
+### Inspecting access logs
+
+When the `log_type` includes the field `annotations = true`, the access log includes a annotations that help put each access into a larger context.
+
+The `notes` array contains a string corresponding to each entry in the `accesses` array, describing the word access.
+The `brackets` contains information that groups ranges of word accesses into *scopes*.
+Each bracket entry `type` field tells if the entry marks the `"begin"` or `"end"` of a scope.
+The `where` field gives the position in the `accesses` array where the bracket should be &ldquo;inserted&rdquo;.
+
+The `dump_log(<log>, <out>)` function in the `cartesi.util` module uses these annotations to dump a detailed description of the access `<log>` into file `<out>`:
+
+```lua title="cartesi/util.lua (excerpt)"
+-- Output formatted string with indentation
+local function indentout(f, indent, fmt, ...)
+    f:write(string.rep("  ", indent), string.format(fmt, ...))
+end
+
+-- Take first 8 characters in hexadecimal hash
+local function hexhash8(hash)
+    return string.sub(util.hexhash(hash), 1, 8)
+end
+
+-- Dump formatted log to file
+function _M.dump_log(log, out)
+    local indent = 0
+    local j = 1 -- Bracket index
+    local i = 1 -- Access index
+    local brackets = log.brackets or {}
+    local notes = log.notes or {}
+    local accesses = log.accesses
+    -- Loop until accesses and brackets are exhausted
+    while true do
+        local bj = brackets[j]
+        local ai = accesses[i]
+        if not bj and not ai then break end
+        -- If bracket points before current access, output bracket
+        if bj and bj.where <= i then
+            if bj.type == "begin" then
+                indentout(out, indent, "begin %s\n", bj.text)
+                indent = indent + 1 -- Increase indentation before bracket
+            elseif bj.type == "end" then
+                indent = indent - 1 -- Decrease indentation after bracket
+                indentout(out, indent, "end %s\n", bj.text)
+            end
+            j = j + 1
+        -- Otherwise, output access
+        elseif ai then
+            if ai.proof then
+                indentout(out, indent, "hash %s\n",
+                    hexhash8(ai.proof.root_hash))
+            end
+            if ai.type == "read" then
+                indentout(out, indent,
+                    "%d: read %s@0x%x(%u): 0x%x(%u)\n", i,
+                    notes[i] or "", ai.address, ai.address, ai.read, ai.read)
+            else
+                assert(ai.type == "write", "unknown access type")
+                indentout(out, indent,
+                    "%d: write %s@0x%x(%u): 0x%x(%u) -> 0x%x(%u)\n", i,
+                    notes[i] or "", ai.address, ai.address,
+                    ai.read, ai.read, ai.written, ai.written)
+            end
+            i = i + 1
+        end
+    end
+end
+```
+
+The function indents each access according to the number of enclosing scopes.
+It uses the notes to print the *meaning* of each word being accessed: Is it a register, a CSR, memory?
+Addresses and values are printed in hexadecimal and decimal.
+If the log was generated with the `proofs = true` option, then the current state hash before each access is also printed.
+
+Running the `dump-step.lua` program:
+
+```lua title="dump-step.lua"
+-- Load the Cartesi modules
+local cartesi = require"cartesi"
+local util = require"cartesi.util"
+
+-- Instantiate machine from configuration
+local machine = cartesi.machine(require"config.nothing-to-do")
+
+-- Run machine until it halts
+local max_mcycle = 695931
+while not machine:read_iflags_H() and machine:read_mcycle() < max_mcycle do
+    machine:run(max_mcycle)
+end
+assert(machine:read_mcycle() == max_mcycle, "Machine halted early!")
+
+-- Obtain state hash before step
+machine:update_merkle_tree()
+local step_log = machine:step{ annotations = true, proofs = true }
+
+-- Dump access log to screen
+io.stderr:write(string.format("\nContents of step %u access log:\n\n", max_mcycle))
+util.dump_log(step_log, io.stderr)
+```
+
+produces the output:
+
+```
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+
+
+Contents of step 695931 access log:
+
+begin step
+  hash 841eaf0e
+  1: read iflags.H@0x1d0(464): 0x18(24)
+  hash 841eaf0e
+  2: read iflags.Y (superfluous)@0x1d0(464): 0x18(24)
+  hash 841eaf0e
+  3: write iflags.Y@0x1d0(464): 0x18(24) -> 0x18(24)
+  begin raise_interrupt_if_any
+    hash 841eaf0e
+    4: read mip@0x170(368): 0x0(0)
+    hash 841eaf0e
+    5: read mie@0x168(360): 0x8(8)
+  end raise_interrupt_if_any
+  begin fetch_insn
+    hash 841eaf0e
+    6: read pc@0x100(256): 0x80002e8c(2147495564)
+    begin translate_virtual_address
+      hash 841eaf0e
+      7: read iflags.PRV@0x1d0(464): 0x18(24)
+      hash 841eaf0e
+      8: read mstatus@0x130(304): 0xa00001800(42949679104)
+    end translate_virtual_address
+    begin find_pma_entry
+      hash 841eaf0e
+      9: read pma.istart@0x800(2048): 0x800000f9(2147483897)
+      hash 841eaf0e
+      10: read pma.ilength@0x808(2056): 0x4000000(67108864)
+    end find_pma_entry
+    hash 841eaf0e
+    11: read memory@0x80002e88(2147495560): 0xa7b0231e47b783(47199985989040003)
+  end fetch_insn
+  begin sd
+    hash 841eaf0e
+    12: read x@0x78(120): 0x40008000(1073774592)
+    hash 841eaf0e
+    13: read x@0x50(80): 0x10100000000000a(72339069014638602)
+    begin translate_virtual_address
+      hash 841eaf0e
+      14: read iflags.PRV@0x1d0(464): 0x18(24)
+      hash 841eaf0e
+      15: read mstatus@0x130(304): 0xa00001800(42949679104)
+    end translate_virtual_address
+    begin find_pma_entry
+      hash 841eaf0e
+      16: read pma.istart@0x800(2048): 0x800000f9(2147483897)
+      hash 841eaf0e
+      17: read pma.ilength@0x808(2056): 0x4000000(67108864)
+      hash 841eaf0e
+      18: read pma.istart@0x810(2064): 0x1069(4201)
+      hash 841eaf0e
+      19: read pma.ilength@0x818(2072): 0xf000(61440)
+      hash 841eaf0e
+      20: read pma.istart@0x820(2080): 0x80000000000002d9(9223372036854776537)
+      hash 841eaf0e
+      21: read pma.ilength@0x828(2088): 0x3c00000(62914560)
+      hash 841eaf0e
+      22: read pma.istart@0x830(2096): 0x4000841a(1073775642)
+      hash 841eaf0e
+      23: read pma.ilength@0x838(2104): 0x1000(4096)
+    end find_pma_entry
+    hash 841eaf0e
+    24: write htif.tohost@0x40008000(1073774592): 0x10100000000000d(72339069014638605) -> 0x10100000000000a(72339069014638602)
+    hash d24bec21
+    25: write htif.fromhost@0x40008008(1073774600): 0x0(0) -> 0x101000000000000(72339069014638592)
+    hash 2f707645
+    26: write pc@0x100(256): 0x80002e8c(2147495564) -> 0x80002e90(2147495568)
+  end sd
+  hash d39b5b4d
+  27: read minstret@0x128(296): 0xa9e7a(695930)
+  hash d39b5b4d
+  28: write minstret@0x128(296): 0xa9e7a(695930) -> 0xa9e7b(695931)
+  hash a3294909
+  29: read mcycle@0x120(288): 0xa9e7b(695931)
+  hash a3294909
+  30: write mcycle@0x120(288): 0xa9e7b(695931) -> 0xa9e7c(695932)
+end step
+
+```
+Understanding these logs in detail is unnecessary for all but the most low-level internal development at Cartesi.
+It requires deep knowledge of not only RISC-V architecture, but also how Cartesi's emulator implements it.
+The material is beyond the scope of this document.
+In this particular example, however, was hand-picked for illustration purposes.
+The RISC-V instruction being executed, `sd`, writes the 64-bit word `0x010100000000000a` to address `0x40008000` (access&nbsp;#24).
+This is the memory-mapped address of HTIF's `tohost` CSR.
+The value refers to the console subdevice (`DEV=0x01`) , command `putchar` (`CMD=0x01`), and causes the device to output a line-feed (`DATA=0x0a`).
+I.e., the instruction is completing the row `       \    / CARTESI` in the splash screen.
+
+### Verifying state transitions
+
+When the `log_type` includes the field `proofs = true`, each word access comes with a `proof` field containing the proof for the value *read*.
+Using the known state hash before the access, it is possible to verify that the value reported `read` was indeed the value stored at the physical `address` in this the machine state.
+For a `"read"` access, the state hash does not change.
+However, for a `"write"` access, the `sibling_hashes` in the `proof` (which have just been verified to be truthful along with the value `read`) can be used to compute the new state hash.
+The new hash is simply
+```lua
+new_hash = util.roll_hash_up_tree(access.proof, cartesi.keccak(access.written))
+```
+
+In this way, the accesses can be processed one by one, until the new state hash at the end of the step has been obtained.
+
+The process described above can only verify that, should these accesses be performed starting from the state as it was before the step, a given state hash would obtain.
+To ensure that the accesses indeed correspond to the operation of a Cartesi Machine starting from that state, knowledge of the Cartesi Machine architecture as implemented by the emulator is needed.
+The function `cartesi.machine.verify_state_transition(<state_hash_before>, <access_log>, <state_hash_after>)` uses this knowledge to verify that the `<access_log>` transitions from `<state_hash_before>` to `<state_hash_after>`.
+Note there is no need for a Cartesi Machine instance to verify a transition.
+All required state information is in the access log.
+
+The following script illustrates the verification of a state transition.
+
+```lua title="verify-step.lua"
+-- Load the Cartesi modules
+local cartesi = require"cartesi"
+local util = require"cartesi.util"
+
+-- Instantiate machine from configuration
+local machine = cartesi.machine(require"config.nothing-to-do")
+
+-- Run machine until it halts
+local max_mcycle = 695931
+while not machine:read_iflags_H() and machine:read_mcycle() < max_mcycle do
+    machine:run(max_mcycle)
+end
+assert(machine:read_mcycle() == max_mcycle, "Machine halted early!")
+
+-- Obtain state hash before step
+machine:update_merkle_tree()
+local hash_before_step = machine:get_root_hash()
+-- Obtain access log
+local step_log = machine:step{ annotations = true, proofs = true }
+-- Obtain state hash after step
+machine:update_merkle_tree()
+local hash_after_step = machine:get_root_hash()
+
+-- Potentially mess with state access to cause a verification failure
+if #arg > 0 then
+    local env = { cartesi = cartesi, step_log = step_log }
+	local f = assert(load(arg[1], arg[1], "t", env))
+	f()
+end
+
+-- Verify step access log
+assert(cartesi.machine.verify_state_transition(hash_before_step, step_log, hash_after_step))
+io.stderr:write("State transition accepted!\n")
+```
+
+Running the script without arguments accepts the valid state transition.
+```bash
+playground:~$ luapp5.3 verify-step.lua
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+
+
+State transition accepted!
+```
+
+The script is much more interesting when the argument is used to &ldquo;mess&rdquo; with the access log before verification.
+For example, changing the address of access #24 
+```
+24: write htif.tohost@0x40008000(1073774592): 0x10100000000000d(72339069014638605) -> 0x10100000000000a(72339069014638602)
+```
+from `0x40008000` to `0x100` causes the program to reject the state transition proof:
+```bash
+playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].address = 0x100'
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+
+luapp5.3: verify-step.lua:31: expected access 24 to write htif.tohost at address 0x40008000(1073774592)
+stack traceback:
+	[C]: in function 'assert'
+	verify-step.lua:31: in main chunk
+	[C]: in ?
+```
+
+The error message states that, given the accesses 1&ndash;23 in the access log, a true Cartesi Machine would have written to address `0x40008000` (helpfully labelled as the CSR `htif.tohost`), rather than address `0x100` claimed by our corrupt access log.
+Changing the value written also causes the proof to fail, because the earlier entries completely determine the value a true Cartesi Machine would have written: 
+```bash
+playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].written = 0x1234'
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+
+luapp5.3: verify-step.lua:32: word value written in access 24 does not match log
+stack traceback:
+	[C]: in function 'assert'
+	verify-step.lua:32: in main chunk
+	[C]: in ?
+```
+
+Changing the value read also causes the proof to be rejected because it will not match the target hash:
+```bash
+playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].read = 0x1234'
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+
+luapp5.3: verify-step.lua:32: word value before write access 24 does not match target hash
+stack traceback:
+	[C]: in function 'assert'
+	verify-step.lua:32: in main chunk
+	[C]: in ?
+```
+Changing the target hash to match the false value read causes the proof to be rejected because rolling the target hash up the tree will not result in the expected root hash:
+```bash
+playground:~$ luapp5.3 verify-step.lua 'local access = step_log.accesses[24];access.read = 0x1234; access.proof.target_hash = cartesi.keccak(access.read);'
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+
+luapp5.3: verify-step.lua:32: word value before write access 24 fails proof
+stack traceback:
+	[C]: in function 'assert'
+	verify-step.lua:32: in main chunk
+	[C]: in ?
+```
+
+In a nutshell, only valid state transitions are accepted by the `cartesi.machine.verify_state_transition()` function.

@@ -27,7 +27,7 @@ However, for convenience, the Cartesi Project publishes a Docker image called `c
 Cartesi also releases binaries for the ROM, Kernel and Filesystem components, which can be obtained from the "Releases" section of their respective GitHub repositories (you do not need to download these files now):
 
 - ROM: <https://github.com/cartesi/machine-emulator-rom/releases> (usually named `rom.bin`)
-- Kernel: <https://github.com/cartesi/image-kernel/releases> (usually named `kernel.bin`)
+- Kernel: <https://github.com/cartesi/image-kernel/releases> (usually named `linux.bin`)
 - Filesystem: <https://github.com/cartesi/image-rootfs/releases> (usually named `rootfs.ext2`)
 
 Thus, all the software we need to develop for our first "Hello, World!" Cartesi Machine is our DApp code, which will be a simple shell script that prints the "Hello, World!" message from within the RISC-V-emulated Linux shell process. We will also need to write some script files to help us build and run our "Hello, World!" Cartesi Machine.

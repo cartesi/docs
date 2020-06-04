@@ -21,7 +21,7 @@ module.exports = {
           type: "category",
           label: "Host perspective",
           items: [
-            "machine/host/intro",
+            "machine/host/overview",
             "machine/host/cmdline",
             "machine/host/lua",
             "machine/host/grpc",
