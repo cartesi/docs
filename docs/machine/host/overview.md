@@ -8,8 +8,8 @@ It is written as a C++ library, but can be accessed in a variety of different wa
 
 When linked to a C++ application, the emulator can be controlled directly via the interface of the `cartesi::machine` class.
 The emulator can also be accessed from the Lua programming language, via a `cartesi` module that exposes a `cartesi.machine` interface to Lua programs, mirroring the C++ interface.
-Additionally, Cartesi provides a gRPC server that can be run to host a Cartesi Machine instance remotely.
-This server exposes a higher-level interface better suited for the verification process, including the ability to create in-memory snapshots of the current machine state so later modifications can be rolled back.
+Additionally, Cartesi provides a gRPC server that can be run to control a Cartesi Machine instance remotely.
+This server exposes a higher-level interface better suited for the verification process, including the ability to create in-memory snapshots of the current machine state so that later modifications can be rolled back.
 Finally, there is a command-line utility (written in Lua) that can configure and run Cartesi Machines for rapid prototyping.
 The [emulator repository](machine/emulator.md) in the Emulator SDK can be used to build and install the Cartesi Machine emulator.
 The emulator can then be used via any of these methods.
