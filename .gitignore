@@ -6,6 +6,7 @@
 
 # generated files
 .docusaurus
+.cache
 .cache-loader
 
 # misc
@@ -18,5 +19,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
 
 *~
