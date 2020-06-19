@@ -7,11 +7,8 @@
 
 module.exports = {
   docs: [
-    {
-      type: "category",
-      label: "Overview",
-      items: ["intro", "architecture", "node"],
-    },
+    "intro",
+    "architecture",
     {
       type: "category",
       label: "Cartesi Machine",
@@ -52,10 +49,21 @@ module.exports = {
       type: "category",
       label: "Descartes SDK",
       items: [
-        "descartes/introduction",
+        "descartes/overview",
+        "descartes/how",
+        "descartes/architecture",
+        "descartes/workflow",
+        "descartes/wallet",
+        "descartes/topologies",
+        "descartes/services",
+        "descartes/configurations",
+        "descartes/timeline",
+        "descartes/machine-offchain",
+        "descartes/machine-onchain",
+        "descartes/api",
         "descartes/instantiate",
         "descartes/integer_drive",
-        "descartes/logger_drive"
+        "descartes/logger_drive",
       ],
     },
     {

@@ -22,13 +22,6 @@ module.exports = {
         srcDark: "img/logo.svg",
       },
       links: [
-        { to: "docs/intro", label: "Docs", position: "left" },
-        { to: "blog", label: "Blog", position: "left" },
-        {
-          href: "https://github.com/cartesi",
-          label: "GitHub",
-          position: "left",
-        },
       ],
     },
     prism: {
@@ -37,33 +30,6 @@ module.exports = {
     footer: {
       style: "dark",
       links: [
-        {
-          title: "Docs",
-          items: [
-            {
-              label: "Docs",
-              to: "docs/intro",
-            },
-          ],
-        },
-        {
-          title: "Community",
-          items: [
-            {
-              label: "Discord",
-              href: "https://discordapp.com/invite/cartesi",
-            },
-          ],
-        },
-        {
-          title: "Social",
-          items: [
-            {
-              label: "Blog",
-              to: "blog",
-            },
-          ],
-        },
       ],
       logo: {
         alt: "Cartesi Logo",
