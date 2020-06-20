@@ -2,6 +2,26 @@
 title: Workflow
 ---
 
+:::warning Should this section exist?
+I am starting to consider if this section should be here.
+One alternative would be to move on to Wallets and so on.
+Then we have a *Simple Workflow* section, which does not involve providers.
+Later we add the *Full Workflow* including providers.
+My intuition is that such an organization would be much easier to read and probably to write as well.
+
+Augusto
+:::
+
+To understand how Descartes is used, consider a basic Cartesi DApp setup, with one claimer and one challenger. This could be, for instance, a skill-based game where players place their bets and challenge each other for the highest score over the blockchain. The winner takes the pot.
+
+Typically, a DApp is composed of a set of smart contracts and an off-chain client that interacts with these contracts through HTTP calls to the blockchain node, that is either locally or remotely hosted.
+
+DApps that use Descartes will work in a similar fashion, with two small differences:
+
+- The DApp smart contracts will request computations to Descartes contract through a simple smart contract API;
+- The off-chain DApp client will feed any additional data to the Descartes Node through HTTP request
+
+
 Imagine the hypothetical skill-base game described above. In the game, Alice and Bob are two players that will challenge each other, following some procedure that is specified by the DApp. The DApp smart contracts should implement the betting logic, collect deposits and finally make one single transaction call to Descartes smart contract. 
 
 The objective of this transaction is to distribute the roles of claimer and challenger to the nodes representing Alice and Bob and specify the Cartesi Machines that will calculate their scores and define the winner.
