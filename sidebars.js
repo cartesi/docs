@@ -21,17 +21,15 @@ module.exports = {
             "machine/host/overview",
             "machine/host/cmdline",
             "machine/host/lua",
-            "machine/host/grpc",
           ],
         },
         {
           type: "category",
           label: "Target perspective",
           items: [
-              "machine/target/intro",
-              "machine/target/processor",
-              "machine/target/board",
+              "machine/target/overview",
               "machine/target/linux",
+              "machine/target/architecture",
           ],
         },
         {

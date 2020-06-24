@@ -1,84 +1,508 @@
 ---
-title: Linux
+title: Linux environment
 ---
 
-Setting up a Linux system from scratch involves a variety of steps.
-Unlike stand-alone systems, embedded systems are not usually self-hosting.
-Instead, components are built in a separate host system, on which a cross-compiling toolchain for the target architecture has been installed.
-The key components are the GNU Compiler Collection and the GNU C Library.
+:::note
+The host perspective describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines.
+In order to avoid repetition, this section assumes familiarity with the material presented there.
+:::
+
+The most direct way for target developers to familiare themselves with the embedded Linux environment is to run the Cartesi Machine emulator in interactive mode.
+The `cartesi/playground` Docker image comes pre-installed with the emulator and all its support files.
+Inside the playground, the following command instructs the emulator to load the default machine configuration and run a shell in interactive mode
+
+```bash
+playground:~$ cartesi-machine -i -- sh
+```
+Once executed, the Cartesi Machine boots Linux and drops into an interactive shell (The `sh` argument in the command-line.)
+
+```
+Running in interactive mode!
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+        \ /   MACHINE
+         '
+
+~ # cd /usr/bin
+/usr/bin # ls
+7zr                fdtdump            lzcmp              strings
+[                  fdtget             lzdiff             svc
+[[                 fdtoverlay         lzegrep            svok
+ar                 fdtput             lzfgrep            tail
+attr               filecap            lzgrep             taskset
+awk                fincore            lzip               tee
+basename           find               lzless             telnet
+bc                 flock              lzma               test
+brotli             fold               lzmadec            tftp
+bunzip2            free               lzmainfo           time
+bzcat              fuser              lzmore             top
+bzcmp              genext2fs          lzop               tr
+bzdiff             getfattr           lzopcat            traceroute
+bzegrep            getopt             make               truncate
+bzfgrep            gpg                mcookie            ts
+bzgrep             gpg-agent          md5sum             tty
+bzip2              gpg-connect-agent  mesg               ul
+bzip2recover       gpg-error          microcom           uname26
+bzless             gpg-wks-server     mkfifo             uniq
+bzmore             gpgconf            mkpasswd           unix2dos
+captest            gpgparsemail       mpicalc            unlink
+ccat               gpgrt-config       namei              unlz4
+ccdecrypt          gpgscm             netcap             unlzma
+ccencrypt          gpgsm              newgrp             unlzop
+ccguess            gpgtar             nl                 unrar
+ccrypt             head               nohup              unshare
+choom              hexdump            nproc              unxz
+chrt               hexedit            npth-config        unzip
+chvt               hmac256            nsenter            uptime
+cksum              hostid             nslookup           utmpdump
+clear              id                 od                 uudecode
+cmp                install            openvt             uuencode
+col                ionice             passwd             uuidgen
+colcrt             ipcmk              paste              uuidparse
+colrm              ipcrm              patch              vlock
+column             ipcs               printf             w
+convert-dtsv0      isosize            prlimit            wall
+crontab            kbxutil            pscap              watchgnupg
+cut                killall            readlink           wc
+dc                 ksba-config        realpath           wget
+deallocvt          last               rename             whereis
+dhrystone          lastb              renice             whetstone
+diff               less               reset              which
+dirmngr            line               resize             who
+dirmngr-client     linux32            rev                whoami
+dirname            linux64            script             write
+dos2unix           logger             scriptlive         xargs
+dtc                logname            scriptreplay       xxd
+du                 look               seq                xz
+dumpsexp           lscpu              setarch            xzcat
+e2cp               lsipc              setfattr           xzcmp
+e2ln               lslocks            setkeycodes        xzdec
+e2ls               lsns               setpriv            xzdiff
+e2mkdir            lsof               setsid             xzegrep
+e2mv               lspci              setterm            xzfgrep
+e2rm               lsscsi             sha1sum            xzgrep
+e2tail             lsusb              sha256sum          xzless
+eject              lua                sha3sum            xzmore
+em                 luac               sha512sum          yes
+env                lz4                shred              zip
+expr               lz4c               sl                 zipcloak
+factor             lz4cat             sort               zipnote
+fallocate          lzcat              sqlite3            zipsplit
+/usr/bin # cd /bin
+/bin # ls
+arch           dmesg          linux32        netstat        setserial
+ash            dnsdomainname  linux64        nice           sh
+base64         dumpkmap       ln             nuke           sleep
+busybox        echo           login          pidof          stty
+cat            egrep          ls             ping           su
+chattr         false          lsattr         pipe_progress  sync
+chgrp          fdflush        lsblk          printenv       tar
+chmod          fgrep          mk_cmds        ps             touch
+chown          findmnt        mkdir          pwd            true
+compile_et     getopt         mknod          resume         umount
+cp             grep           mktemp         rm             uname
+cpio           gunzip         more           rmdir          usleep
+cttyhack       gzip           mount          run-parts      vi
+date           hostname       mountpoint     sed            watch
+dd             kill           mt             setarch        wdctl
+df             link           mv             setpriv        zcat
+/bin # exit
+
+Halted
+Cycles: 5842519958
+```
+The session shows a user changing the the working directory to `/usr/bin/` and listing its contents.
+The user then does the same with directory `/bin/`, before finally leaving the emulator with the `exit` command.
+The point of the exercise is that, from the inside, the environment will be familiar to any regular Unix user.
+
+One of the key differences is that, unlike stand-alone systems, most embedded systems are not self-hosting.
+None of the utilities visible inside the `/usr/bin/` and `/bin/` directores were built with a compiler that ran inside a Cartesi Machine.
+They were built in a separate host system, on which a cross-compiling toolchain for the target architecture has been installed.
+In the case of Linux, the key elements in the toolchain are the GNU Compiler Collection and the GNU C Library.
 Support for RISC-V is upstream in the official [GCC compiler collection](https://gcc.gnu.org/).
-The Emulator SDK includes a Docker image with the [toolchain](machine/toolchain.md) pre-installed.
-The toolchain is used to cross-compile the ROM image, the
-RAM image, and the root file-system.
+Nevertheless, building a cross-compiler is time-consuming, even with the help of specialized tools such as [crosstool-ng](https://crosstool-ng.github.io/).
+The [Emulator SDK](https://github.com/cartesi/machine-emulator-sdk) includes a Docker image `cartesi/toolchain` with the toolchain pre-installed.
+The same toolchain is available in the `cartesi/playground` Docker image.
 
-Before control reaches the RAM image (and ultimately the Linux kernel), a small program residing in ROM builds a [<i>devicetree</i>](http://devicetree.org/) describing the hardware.
-To do so, it goes over the PMA entries identifying the devices and their locations in the physical address space.
-It also looks for a null-terminated string containing the command-line for the Linux kernel starting at the last 4k of the ROM region.
-Once the devicetree is ready, the ROM program sets register&nbsp;<tt>x10</tt> to 0 (the value of&nbsp;<tt>mhartid</tt>), <tt>x11</tt> to point to the devicetree, and then jumps to RAM-base at&nbsp;<tt>0x80000000</tt>.
-This is where the entry point of the RAM image is expected to reside.
-The Emulator SDK includes a repository that uses toolchain to build the [ROM image](machine/ROM.md).
+## Target "Hello world!"
 
-Linux support for RISC-V is upstream in the [Linux kernel archives](https://www.kernel.org/).
-The kernel runs in supervisor mode, on top of a Supervisor Binary Interface (SBI) provided by a machine-mode shim: the Berkeley Boot Loader (BBL).
-BBL can be found in the [RISC-V Proxy Kernel repository](https://github.com/riscv/riscv-pk).
-The BBL is linked against the Linux kernel and this resulting RAM image is preloaded into RAM.
-The SBI provides a simple interface through which the kernel interacts with CLINT and HTIF.
-Besides implementing the SBI, the BBL also installs a trap that catches invalid instruction exceptions.
-This mechanism can be used, for example, to emulate floating-point instructions, although it is more efficient to setup the target toolchain to replace floating point instructions with calls to a soft-float implementation instead.
-After installing the trap, BBL switches to supervisor mode and cedes control to the kernel entry point.
-The Emulator SDK includes a Docker image that automates the building of a RAM image with the [Linux kernel](machine/kernel.md).
+Other than using a cross-compiler in the host to create executables for a different target platform, cross-development is not that different from hosted development.
+As an example, consider the simple task of compiling the ubiquitous &ldquo;Hello world!&rdquo; program in the C++ programming language to run in the target. (Printing 5 lines, to at least offer a taste of the programming language.)
+```c++ title="hello.cpp"
+#include <iostream>
 
-The final step is the creation of a root file-system.
-This process starts with a skeleton directory in the host system containing a few subdirectories (<tt>sbin</tt>, <tt>lib</tt>, <tt>var</tt>, etc) and text files (<tt>sbin/init</tt>, <tt>etc/fstab</tt>, <tt>etc/passwd</tt> etc).
-Tiny versions of many common UNIX utilities (<tt>ls</tt>, <tt>cd</tt>, <tt>rm</tt>, etc) can be combined into a single binary using [BusyBox](https://busybox.net/).
-Target executables often depend on shared libraries provided by the toolchain (<tt>lib/libm.so</tt>, <tt>lib/ld.so</tt>, and <tt>lib/libc.so</tt>).
-Naturally, these libraries must be copied to the root file-system.
-Once the root directory is ready, it is copied into an actual file-system image (e.g., using <tt>gene2fs</tt>).
-This process can be automated with tool for creating
-embedded Linux distributions, such as
-[Buildroot](https://buildroot.org/), which enables developers to customize the root file-system according to the needs of their applications.
-Thousands of packages are available for installation.
-The Emulator SDK includes a Docker image that automates the building of a [root file-system](machine/rootfs.md) using Buildroot.
-
-The root file-system image is installed as a flash drive.
-Additional flash devices can be used to store the inputs to the computation, or to receive its outputs.
-The devicetree created by the ROM program is used to inform Linux of the location of each flash device, the amount of RAM, and any kernel boot parameters.
-Here is an excerpt: <a name="devicetree"> </a>
-
-```
-memory@80000000 {
-  device_type = "memory";
-  reg = <0x0 0x80000000 0x0 0x8000000>;
-};
-
-flash@8000000000 {
-  #address-cells = <0x2>;
-  #size-cells = <0x2>;
-  compatible = "mtd-ram";
-  bank-width = <0x4>;
-  reg = <0x80 0x0 0x0 0x4000000>;
-  linux,mtd-name = "flash.0";
-};
-
-chosen {
-  bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw mtdparts=flash.0:-(root)";
-};
+int main(int argc, char *argv[]) {
+    for (int i = 0; i < 5; i++) {
+        printf("%d: Hello world from C++!\n", i+1);
+    }
+    return 0;
+}
 ```
 
-The first section specifies 128MiB of RAM starting at the 2GiB boundary.
-The middle section adds a 64MiB flash device, starting at the 512GiB boundary.
-The &ldquo;<tt>mtd-ram</tt>&rdquo; driver exposes the device as <tt>/dev/mtdblock0</tt> under Linux's virtual file-system.
-The last section, giving the kernel parameters&nbsp;<tt>bootargs</tt>, specifies the device to be mounted as root and the associated partition label.
+To produce the binary in the playground, run
+```bash
+playground:~$ riscv64-unknown-linux-gnu-g++ -O2 -o hello-cpp hello.cpp
+```
+Note the prefix `riscv64-unknown-linux-gnu-` to the typical `g++` command.
+This prefix identifies the cross-compiler.
+The resulting file is a RISC-V executable suitable for running on the target:
 
-After completing its own initialization, the kernel eventually cedes control to&nbsp;<tt>/sbin/init</tt>.
-The root file-system provided by the Cartesi Emulator SDK includes a simple init script that mounts the flash drives that contain valid file-systems and either drops into a shell (when in interactive mode) or executes a custom DApp script.
-The kernel passes to <tt>/sbin/init</tt> as command-line parameters all arguments after the separator&nbsp;<tt>--</tt>&nbsp;in <tt>bootargs</tt>.
-Cartesi's init script checks if the first argument executable and, if so, assumes this is the custom DApp script.
-It executes this script, passing the additional parameters unchanged.
-The custom DApp script typically invokes the appropriate sequence of commands for performing the desired computation.
-Upon completion, <tt>/sbin/init</tt> halts the machine.
-The DApp script can alternatively use HTIF to halt the machine with an optional exit code that can be used as part of the computation output.
-Arbitrarily complex inputs, parameters, and outputs can be passed as flash devices.
+```bash
+playground:~$ file hello-cpp
+hello: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-riscv64-lp64.so.1, for GNU/Linux 4.20.8, with debug_info, not stripped
+```
+If the bare `gcc` command was used instead, the resulting binary would be suitable for running on the host.
 
+The executable can now be placed inside a new `hello.ext2` file-system:
 
+```bash
+playground:~$ mkdir hello
+playground:~$ cp hello-cpp hello
+playground:~$ genext2fs -b 1024 -d hello hello.ext2
+```
+The `hello-cpp` program can then be run from using the `cartesi-machine`
+command-line utility as follows:
 
+```bash
+playground:~$ cartesi-machine \
+    --flash-drive=label:hello,filename:hello.ext2 \
+    -- /mnt/hello/hello-cpp
+```
+
+The output is
+
+```
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+        \ /   MACHINE
+         '
+
+1: Hello world from C++!
+2: Hello world from C++!
+3: Hello world from C++!
+4: Hello world from C++!
+5: Hello world from C++!
+
+Halted
+Cycles: 73665939
+```
+
+One of the advantages of running Linux is the large number of well-established software development tools available.
+By default, the `rootfs.ext2` root file-system includes the `ash` shell, and a Lua interpreter, both of which can be used for scripting.
+
+For example, to run the shell script version of the &ldquo;Hello world!&rdquo; program:
+
+```bash title="hello.sh"
+#!/bin/sh
+
+for i in $(seq 1 5); do
+    echo "$i: Hello world from sh!"
+done
+```
+
+```bash
+playground:~$ cp hello.sh hello
+playground:~$ chmod +x hello/hello.sh
+playground:~$ genext2fs -b 1024 -d hello hello.ext2
+playground:~$ cartesi-machine \
+    --flash-drive=label:fs,filename:fs.ext2 \
+    -- /mnt/hello/hello.sh
+```
+
+Running these commands produce an output that is very similar to the C++ version.
+
+## The root file-system
+
+The `fs/` submodule in the [Emulator SDK](https://github.com/cartesi/machine-emulator-sdk) uses the [Buildroot](https://buildroot.org/) tool to create the root file-system `rootfs.ext2` (mounted as `/`).
+Buildroot is a highly configurable tool, and an explanation of how to use it to its full potential is beyond the scope of this documentation.
+Please refer its [manual](https://buildroot.org/downloads/manual/manual.html).
+
+Even relative to other embedded Linux root file-systems, the Cartesi-provided `rootfs.ext2` is very simple.
+The only significant customization is the Cartesi-provided `/sbin/init` script, which performs a few initialization tasks before handing control to the application chosen by the developer to run inside the Cartesi Machine, and shutdown tasks after the application exits.
+
+As is typical in the field, `rootfs.ext2` uses [BusyBox](https://busybox.net/) to consolidate tiny versions of many common UNIX utilities (`ls`, `cd`, `rm`, etc) into a single binary.
+It also includes, a variety of typical command-line utilities, as can be seen in the listings of directories `/bin/` and `/usr/bin/` above.
+
+Using Buildroot, it is rather easy to add new packages, or to remove unecessary ones.
+Hundreds of packages are available for installation.
+To that end, from inside the Emulator SDK, change into the `fs/` directory and run `make config`.
+This will bring up a textual menu interface, from which the option `Target packages` can be selected.
+
+For example, additional scripting languages are available from the `Interpreter languages and scripting` section.
+After selecting the options for `4th`, `lua`, `qjs`, `perl`, `php`, `python3`, `ruby`, and `tcl` and replacing the old `rootfs.ext2` with the freshly generated one, all these scripting languages become available for use inside the Cartesi Machine.
+
+Here are &ldquo;Hello world!&rdquo; programs for each of these languages:
+
+```4th title="hello.4th"
+6 1 do i <# # #> type ." : Hello world from Forth!" cr loop
+```
+
+```js title="hello.js"
+#!/usr/bin/env qjs
+
+for (var i = 0; i < 5; i++) {
+    console.log((i+1) + ": Hello world!")
+}
+```
+
+```lua title="hello.lua"
+#!/usr/bin/env lua
+
+for i = 1, 5 do
+    print(i .. ": Hello world from Lua!")
+end
+```
+
+```perl title="hello.pl"
+#!/usr/bin/env perl
+
+for my $i (1..5){
+	print("$i: Hello from Perl!\n");
+}
+```
+
+```php title="hello.php"
+#!/usr/bin/env php
+<?php
+for ($i = 1; $i <= 5; $i++) {
+    print "$i: Hello world from PHP!\n";
+}
+?>
+```
+
+```python title="hello.py"
+#!/usr/bin/env python3
+
+for i in range(0,5):
+    print("{}: Hello world from Python3".format(i+1))
+```
+
+```ruby title="hello.rb"
+#!/usr/bin/env ruby
+
+for i in 1..5 do
+    puts "%d: Hello world from Ruby!" % i
+end
+```
+
+```tcl title="hello.tcl"
+#!/usr/bin/env tclsh
+
+for {set i 1} {$i <= 5} {incr i} {
+    puts "$i: Hello world from TCL!"
+}
+```
+
+The following shell script invokes all of them:
+```bash title="all.sh"
+#!/bin/sh
+
+cd $(dirname $0)
+
+./hello-cpp
+4th cxq hello.4th
+./hello.lua
+./hello.js
+./hello.pl
+./hello.php
+./hello.py
+./hello.rb
+./hello.sh
+./hello.tcl
+```
+
+After adding all these files to `hello.ext2` (with *execute* permissions), the result of the command line
+```bash
+playground:~$ cartesi-machine \
+    --flash-drive=label:hello,filename:hello.ext2 \
+    -- "/mnt/hello/all.sh"
+```
+is as follows:
+```
+
+         .
+        / \
+      /    \
+\---/---\  /----\
+ \       X       \
+  \----/  \---/---\
+       \    / CARTESI
+        \ /   MACHINE
+         '
+
+1: Hello world from C++!
+2: Hello world from C++!
+3: Hello world from C++!
+4: Hello world from C++!
+5: Hello world from C++!
+1: Hello world from Forth!
+2: Hello world from Forth!
+3: Hello world from Forth!
+4: Hello world from Forth!
+5: Hello world from Forth!
+1: Hello world from Lua!
+2: Hello world from Lua!
+3: Hello world from Lua!
+4: Hello world from Lua!
+5: Hello world from Lua!
+1: Hello world from JavaScript!
+2: Hello world from JavaScript!
+3: Hello world from JavaScript!
+4: Hello world from JavaScript!
+5: Hello world from JavaScript!
+1: Hello world from Perl!
+2: Hello world from Perl!
+3: Hello world from Perl!
+4: Hello world from Perl!
+5: Hello world from Perl!
+1: Hello world from PHP!
+2: Hello world from PHP!
+3: Hello world from PHP!
+4: Hello world from PHP!
+5: Hello world from PHP!
+1: Hello world from Python3
+2: Hello world from Python3
+3: Hello world from Python3
+4: Hello world from Python3
+5: Hello world from Python3
+1: Hello world from Ruby!
+2: Hello world from Ruby!
+3: Hello world from Ruby!
+4: Hello world from Ruby!
+5: Hello world from Ruby!
+1: Hello world from sh!
+2: Hello world from sh!
+3: Hello world from sh!
+4: Hello world from sh!
+5: Hello world from sh!
+1: Hello world from TCL!
+2: Hello world from TCL!
+3: Hello world from TCL!
+4: Hello world from TCL!
+5: Hello world from TCL!
+[    0.201887] reboot: Power down
+
+Halted
+Cycles: 206911576
+```
+The take-away message is that developers can use the tools they are most familiar with to accomplish the task at hand.
+
+## Flash drives
+
+Flash drives are simply regions of physical memory under the control of Linux's `mtd-ram` driver.
+The flash drives 0&ndash;8 receive device names `flash.0`&ndash;`flash.7`, and the drives makes them accessible as block devices `/dev/mtdblock0`&ndash;`/dev/mtdblock7`.
+
+The kernel command-line parameters `rootfstype=ext2 root=/dev/mtdblock0 rw` instruct that the root file-system is of type `ext2`, that it resides in device `/dev/mtdblock0`, i.e., flash drive 0, and that it should be mounted read-write.
+Partitioning information for flash drives and, in particular, custom labels can be specified with the `mtdparts` parameter in the Linux kernel command line.
+The format for the parameter is documented in the [source-code](https://elixir.bootlin.com/linux/v5.5.19/source/drivers/mtd/parsers/cmdlinepart.c) for the kernel module reponsible for parsing it.
+For example, the parameter `mtdparts=flash.0:-(root)` specifies a single partition with label `root` for `flash.0`.
+
+A flash drive holds whatever data is made available by the emulator in the corresponding target physical memory region.
+The data can come from an image file specified during machine instantiation, from an image file specified after instantiation via the `machine:replace_flash()`, or through external state access method `machine:write_memory()`.
+
+The Cartesi-provided `/sbin/init` script scans flash drives 1&ndash;7 for valid file-systems.
+When a valid file-system is detected, the script automatically mounts the file-system at `/mnt/<label>`, using the corresponding `<label>` from the `mtdparts` kernel parameter.
+In this fashion, file-systems present in all flash drives are available for use right after Linux boots.
+
+This was the case with the command
+```bash
+playground:~$ cartesi-machine \
+    --flash-drive=label:hello,filename:hello.ext2 \
+    -- "/mnt/hello/all.sh"
+```
+The `cartesi-machine` command-line utility instructed the emulator to add a new flash drive, initialized with the contents of the `hello.ext2` image file.
+It gave the label `hello` to that flash drive using the kernel command-line parameter `mtdparts=flash.0:-(root);flash.1:-(hello)`.
+The `/sbin/init` script identified a valid file-system in device, and used its label to mount it at `/mnt/hello`.
+It then executed the command `/mnt/hello/all.sh`, causing all the &ldquo;Hello world!&rdquo; messages to be printed to screen.
+
+### Raw flash drives
+
+Raw flash drives, i.e., flash drives containing free-format data, are not mounted.
+Instead, the data in raw flash drives are read from/written to by directly accessing the underlying block device.
+The layout and contents of data written to raw flash drives is completely up to application developers.
+
+Depending on the layout and contents, it may be simple or difficult to to read from/write to raw flash drives from the command line.
+The most popular tool for reading and writing block devices is the `dd` command-line utility.
+Another alternative is the `devio` tool.
+Some scripting languages, like the Lua programming language, have packing and unpacking libraries that can be very helpful.
+
+For example, consider the previously discussed Cartesi Machine that operates as an arbitrary-precision calculator
+```bash
+playground:~$ \rm -f output.raw
+playground:~$ truncate -s 4K output.raw
+playground:~$ echo "6*2^1024 + 3*2^512" > input.raw
+playground:~$ truncate -s 4K input.raw
+playground:~$ cartesi-machine \
+    --flash-drive="label:input,length:1<<12,filename:input.raw" \
+    --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \
+    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
+playground:~$ luapp5.3 -e 'print((string.unpack("z", io.read("a"))))' < output.raw
+```
+The input is a null-terminated string containing the expression to be evaluated.
+This string is stored inside a raw flash drive with label `input`.
+The output is once again a null-terminated string with the result, this time stored inside a raw flash drive with label `output`.
+
+The command executed inside the machine is
+```bash
+dd status=none if=$(flashdrive input) | \
+    lua -e 'print((string.unpack("z",  io.read("a"))))' | \
+    bc | \
+    dd status=none of=$(flashdrive output)
+```
+The `flashdrive` command-line utility produces the device corresponding to a given label.
+In this case, `flashdrive input` is `/dev/mtdblock1` and `flashdrive output` is `/dev/mtdblock2` (recall `/dev/mtdblock0` is the root file-system, defined by default to load the `rootfs.ext2` image).
+
+The first command, `dd status=none if=$(flashdrive input)` reads the entire 4KiB of the raw input flash drive and sends it to the standard output.
+The second command, `lua -e 'print((string.unpack("z",  io.read("a"))))'` extracts the firest null-terminated string and prints it to standard out.
+This is the meaning of the format `"z"` to the `string.unpack()` function.
+There are a variety of other formats available, including reading integers of different sizes, big- or little-endian etc.
+Please see the [documentation for the `string.unpack()`](https://www.lua.org/manual/5.3/manual.html#6.4.2) function for more details.
+The string is received by the `bc` command-line utility.
+In the example, that string is `6*2^1024 + 3*2^512\n`.
+The `bc` command-line utility computes the value of the expression and sends it to standard out.
+This is finally received by the last command, `dd status=none of=$(flashdrive output)`, which writes it to the raw output flash drive.
+(No need to null-terminate, since the drive is already completely filled with zeros.)
+
+## Initialization
+
+By default, a Cartesi Machine starts its execution from the image loaded into ROM.
+In order to boot Linux, the Cartesi-provided `rom.bin` image first builds a [<i>devicetree</i>](http://devicetree.org/) describing the hardware.
+The organization of a Cartesi Machine is defined during machine instantiation from its configuration.
+This includes the number, starts, and lengths of all flash drives, and the amount of RAM.
+The `rom.bin` program reads a Cartesi-specific low-level description of this organization from special machine registers and translates it into a devicetree that Linux can understand.
+The configuration also includes the initial contents of ROM, RAM, all flash drives, all registers, and the command-line parameters to be passed to the Linux kernel.
+The latter is also added to the devicetree.
+
+Once the devicetree is ready, `rom.bin` to the image loaded into RAM, passing the address of the devicetree (which resides at the end of RAM) in a register.
+The Cartesi-provided `linux.bin` image is composed of the Linux kernel linked with the Berkeley Boot Loader (BBL).
+BBL is a thin abstraction layer that isolates Linux from details of the particular RISC-V machine on which it is running.
+The abstraction layer gives Linux the ability to perform tasks such as powering the machine down and outputing a character to the console.
+Once this functionality has been installed, BBL jumps to the kernel entrypoint.
+The Linux kernel reads the devicetree to find out about the machine organization, loads the appropriate drivers, and performs its own initialization.
+
+When the kernel initialization is complete, it tries to mount a root file-system.
+The information of where this root file-system resides comes from the kernel command-line parameter.
+In normal situations, this will reside in `/dev/mtdblock0`.
+Once the root file-system is mounted, the kernel executes `/sbin/init`.
+
+The Cartesi-provided `/sbin/init` script in `rootfs.ext2` sets up a basic Linux environment on which applications can run.
+In particular, it goes over the available flash drive devices (`/dev/mtdblock1`&ndash;`/dev/mtdblock7`) looking for valid file-systems, and mounting them at the appropriate `/mnt/<label>` mount points.
+The Linux kernel passes to `/sbin/init`, unmodified, everything after the separator `--` in its own command-line.
+Once its initialization tasks are complete, the Cartesi-proviced `/sbin/init` concatenates all its arguments into a string and executes them in a shell.
+
+This is how the commands passed to `cartesi-machine` come to be executed in the Linux environment that runs inside the Cartesi Machine.
+Given a proper `rootfs.ext2` and an appropriate command-line, the applications can run any general computation, consuming input from any flash drives, and writing outputs to any flash drives.
+Once the application exists, control returns to `/sbin/init`.
+The script then unmount all file-systems and gracefully halts the machine.

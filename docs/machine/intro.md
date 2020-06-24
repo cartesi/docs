@@ -42,8 +42,13 @@ Smart contracts are developed using ad-hoc toolchains, and run directly on top o
 This arrangement deprives developers of the tools of their trade, severely reduces the expressive power at their disposal, and consequently decimates their productivity.
 
 In contrast, Cartesi Machines are based on a proven platform: [RISC-V](https://riscv.org/).
+RISC-V was born of research in academia at UC Berkeley.
+It is now maintained by its own independent foundation.
+Unlike many of its academic counterparts, it is important to keep in mind that RISC-V is not a toy architecture.
+It is suitable for direct native hardware implementation, which is indeed currently commercialized by SiFive Inc.
+This means that, in the future, Cartesi will not be limited to emulation or binary translation off-chain.
 The RISC-V platform is supported by a vibrant community of developers.
-Their efforts have produced an extensive software infrastructure, most notably ports of the Linux operating system and the GNU toolchain.
+Their efforts have produced an extensive software infrastructure, most notably ports of the Linux Operating System and the GNU toolchain.
 
 By moving most of their DApp logic to run inside Cartesi Machines, but on top of the Linux Operating System, developers are isolated not only from the limitations and idiosyncrasies of specific blockchains, but also from irrelevant details of the Cartesi Machine architecture itself.
 They regain access to all the tools they have come to rely on when writing applications.
