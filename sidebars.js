@@ -73,31 +73,19 @@ module.exports = {
           type: "category",
           label: "Requirements",
           items: [
-            "tutorials/1/cartesi-sdk",
-            "tutorials/1/install-docker",
-            "tutorials/1/try-docker",
-            "tutorials/1/docker-compose",
+            "tutorials/requirements/general",
+            "tutorials/requirements/descartes-env"
           ],
         },
         {
           type: "category",
-          label: "Cartesi Machines",
+          label: "Hello World DApp",
           items: [
-            "tutorials/2/introduction",
-            "tutorials/2/setup",
-            "tutorials/2/hello-app",
-            "tutorials/2/hello-machine",
-            "tutorials/2/greetings-app",
-            "tutorials/2/greetings-machine",
-          ]
-        },
-        {
-          type: "category",
-          label: "Descartes SDK",
-          items: [
-            "tutorials/descartes/hello",
-            "tutorials/descartes/dodgecoin_hash",
-            "tutorials/descartes/certificate_verification"
+            "tutorials/helloworld/cartesi-machine",
+            "tutorials/helloworld/create-project",
+            "tutorials/helloworld/instantiate",
+            "tutorials/helloworld/getresult",
+            "tutorials/helloworld/running"
           ]
         }
       ],
