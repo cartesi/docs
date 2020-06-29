@@ -8,7 +8,6 @@
 module.exports = {
   docs: [
     "intro",
-    "architecture",
     {
       type: "category",
       label: "Cartesi Machine",
