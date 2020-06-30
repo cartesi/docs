@@ -45,6 +45,5 @@ The node owned by the claimer will collect the content of each drive specified i
 In case of disputes, the nodes representing each of the parties will automatically engage in a dispute resolution algorithm to establish who misbehaving.
 The DApp developer will be informed of the result of the dispute.
 
-
 There is now only one argument left to explain in the `instantiate` call.
-It is the `Drive _inputDrives` parameter, that will be detailed in the next section.
+Namely the `Drive[] _inputDrives` parameter, that will be detailed in the next sections.

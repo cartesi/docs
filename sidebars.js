@@ -58,7 +58,7 @@ module.exports = {
         "descartes/api",
         "descartes/instantiate",
         "descartes/drives",
-        "descartes/integer_drive",
+        "descartes/provider",
         "descartes/logger_drive",
         "descartes/off-chain-api",
         "descartes/topologies",
