@@ -36,7 +36,3 @@ The following branches and pull requests are deployed to the following URLs:
 | ------- | ------------------------------- |
 | master  | https://docs.cartesi.io         |
 | develop | https://preview-docs.cartesi.io |
-
-Pull requests are deployed to an URL according to the PR number, in the following URL:
-
-`https://pr-<PR#>.d38mrjcerjd5by.amplifyapp.com`
