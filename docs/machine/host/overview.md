@@ -58,7 +58,7 @@ $ make run-playground
 playground:~$ cartesi-machine --help
 Usage:
 
-  ./cartesi-machine.lua [options] [command] [arguments]
+  /opt/cartesi/bin/cartesi-machine.lua [options] [command] [arguments]
 
 where options are:
 
@@ -186,8 +186,17 @@ and command and arguments:
 with a suffix multiplier (i.e., Ki, Mi, Gi for 2^10, 2^20, 2^30, respectively),
 or a left shift (e.g., 2 << 20).
 
-playground:~$ ls -al /opt/cartesi/share/images/*.*
--rw-r--r-- 1 root root  6811648 Jun  2 23:32 /opt/cartesi/share/images/linux.bin
--rw-r--r-- 1 root root    16413 Jun  2 23:32 /opt/cartesi/share/images/rom.bin
--rw-r--r-- 1 root root 62914560 Jun  4 14:19 /opt/cartesi/share/images/rootfs.ext2
+playground:~$ md5sum /opt/cartesi/share/images/linux.bin
+d8402b40fb9e1119a7c719a9167c91dd  /opt/cartesi/share/images/linux.bin
+playground:~$ md5sum /opt/cartesi/share/images/rom.bin
+8449f94464d6bd28b2d72c93f11ead19  /opt/cartesi/share/images/rom.bin
+playground:~$ md5sum /opt/cartesi/share/images/rootfs.ext2
+786689f70ea109d3d0762801c88f2fbb  /opt/cartesi/share/images/rootfs.ext2
+```
+
+Inside the container, which runs as the current user, the documentation directory is shared as the home directory.
+Alternatively, to download the images directly from Cartesi's repository (bypassing the build) and run the container as root with no sharing, use
+```bash
+$ docker pull cartesi/playground:0.1.0
+$ docker run -it -h playground cartesi/playground /bin/bash
 ```

@@ -419,7 +419,7 @@ The result is
 };
 
 Halted
-Cycles: 62776769
+Cycles: 64471257
 ```
 
 The `memory@80000000` section describes 64MiB of RAM starting at address `0x80000000`.
@@ -447,5 +447,5 @@ The Cartesi-provided `/sbin/init` script concatenates all arguments into a strin
 When the shell returns, `/sbin/init` unmount all file-systems and gracefully halts the machine.
 
 :::danger EDITOR NOTE
-We should add a section on the yield device driver, the `ioctl`, and how the `/opt/cartesi/bin/yield` utility uses it.
+There will be a section on the yield device driver, the `ioctl`, and how the `/opt/cartesi/bin/yield` utility uses it.
 :::

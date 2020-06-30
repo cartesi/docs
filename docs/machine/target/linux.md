@@ -29,73 +29,8 @@ Running in interactive mode!
         \ /   MACHINE
          '
 
-~ # cd /usr/bin
-/usr/bin # ls
-7zr                fdtdump            lzcmp              strings
-[                  fdtget             lzdiff             svc
-[[                 fdtoverlay         lzegrep            svok
-ar                 fdtput             lzfgrep            tail
-attr               filecap            lzgrep             taskset
-awk                fincore            lzip               tee
-basename           find               lzless             telnet
-bc                 flock              lzma               test
-brotli             fold               lzmadec            tftp
-bunzip2            free               lzmainfo           time
-bzcat              fuser              lzmore             top
-bzcmp              genext2fs          lzop               tr
-bzdiff             getfattr           lzopcat            traceroute
-bzegrep            getopt             make               truncate
-bzfgrep            gpg                mcookie            ts
-bzgrep             gpg-agent          md5sum             tty
-bzip2              gpg-connect-agent  mesg               ul
-bzip2recover       gpg-error          microcom           uname26
-bzless             gpg-wks-server     mkfifo             uniq
-bzmore             gpgconf            mkpasswd           unix2dos
-captest            gpgparsemail       mpicalc            unlink
-ccat               gpgrt-config       namei              unlz4
-ccdecrypt          gpgscm             netcap             unlzma
-ccencrypt          gpgsm              newgrp             unlzop
-ccguess            gpgtar             nl                 unrar
-ccrypt             head               nohup              unshare
-choom              hexdump            nproc              unxz
-chrt               hexedit            npth-config        unzip
-chvt               hmac256            nsenter            uptime
-cksum              hostid             nslookup           utmpdump
-clear              id                 od                 uudecode
-cmp                install            openvt             uuencode
-col                ionice             passwd             uuidgen
-colcrt             ipcmk              paste              uuidparse
-colrm              ipcrm              patch              vlock
-column             ipcs               printf             w
-convert-dtsv0      isosize            prlimit            wall
-crontab            kbxutil            pscap              watchgnupg
-cut                killall            readlink           wc
-dc                 ksba-config        realpath           wget
-deallocvt          last               rename             whereis
-dhrystone          lastb              renice             whetstone
-diff               less               reset              which
-dirmngr            line               resize             who
-dirmngr-client     linux32            rev                whoami
-dirname            linux64            script             write
-dos2unix           logger             scriptlive         xargs
-dtc                logname            scriptreplay       xxd
-du                 look               seq                xz
-dumpsexp           lscpu              setarch            xzcat
-e2cp               lsipc              setfattr           xzcmp
-e2ln               lslocks            setkeycodes        xzdec
-e2ls               lsns               setpriv            xzdiff
-e2mkdir            lsof               setsid             xzegrep
-e2mv               lspci              setterm            xzfgrep
-e2rm               lsscsi             sha1sum            xzgrep
-e2tail             lsusb              sha256sum          xzless
-eject              lua                sha3sum            xzmore
-em                 luac               sha512sum          yes
-env                lz4                shred              zip
-expr               lz4c               sl                 zipcloak
-factor             lz4cat             sort               zipnote
-fallocate          lzcat              sqlite3            zipsplit
-/usr/bin # cd /bin
-/bin # ls
+cartesi-machine:/ # cd /bin
+cartesi-machine:/bin # ls
 arch           dmesg          linux32        netstat        setserial
 ash            dnsdomainname  linux64        nice           sh
 base64         dumpkmap       ln             nuke           sleep
@@ -112,10 +47,77 @@ cttyhack       gzip           mount          run-parts      vi
 date           hostname       mountpoint     sed            watch
 dd             kill           mt             setarch        wdctl
 df             link           mv             setpriv        zcat
-/bin # exit
+cartesi-machine:/bin # cd /usr/bin
+cartesi-machine:/usr/bin # ls
+7zr                fdtget             lzdiff             strings
+[                  fdtoverlay         lzegrep            svc
+[[                 fdtput             lzfgrep            svok
+ar                 filecap            lzgrep             tail
+attr               fincore            lzip               taskset
+awk                find               lzless             tee
+basename           flock              lzma               telnet
+bc                 fold               lzmadec            test
+brotli             free               lzmainfo           tftp
+bunzip2            fuser              lzmore             time
+bzcat              genext2fs          lzop               top
+bzcmp              getfattr           lzopcat            tr
+bzdiff             getopt             make               traceroute
+bzegrep            gpg                mcookie            truncate
+bzfgrep            gpg-agent          md5sum             ts
+bzgrep             gpg-connect-agent  mesg               tty
+bzip2              gpg-error          microcom           ul
+bzip2recover       gpg-wks-server     mkfifo             uname26
+bzless             gpgconf            mkpasswd           uniq
+bzmore             gpgparsemail       mpicalc            unix2dos
+captest            gpgrt-config       namei              unlink
+ccat               gpgscm             netcap             unlz4
+ccdecrypt          gpgsm              newgrp             unlzma
+ccencrypt          gpgtar             nl                 unlzop
+ccguess            head               nohup              unrar
+ccrypt             hexdump            nproc              unshare
+choom              hexedit            npth-config        unxz
+chrt               hmac256            nsenter            unzip
+chvt               hostid             nslookup           uptime
+cksum              id                 od                 utmpdump
+clear              install            openvt             uudecode
+cmp                ionice             passwd             uuencode
+col                ipcmk              paste              uuidgen
+colcrt             ipcrm              patch              uuidparse
+colrm              ipcs               printf             vlock
+column             isosize            prlimit            w
+convert-dtsv0      jq                 pscap              wall
+crontab            kbxutil            qjs                watchgnupg
+cut                killall            readlink           wc
+dc                 ksba-config        realpath           wget
+deallocvt          last               rename             whereis
+devio              lastb              renice             whetstone
+dhrystone          ldd                reset              which
+diff               less               resize             who
+dirmngr            line               rev                whoami
+dirmngr-client     linux32            script             write
+dirname            linux64            scriptlive         xargs
+dos2unix           logger             scriptreplay       xxd
+dtc                logname            seq                xz
+du                 look               setarch            xzcat
+dumpsexp           lscpu              setfattr           xzcmp
+e2cp               lsipc              setkeycodes        xzdec
+e2ln               lslocks            setpriv            xzdiff
+e2ls               lsns               setsid             xzegrep
+e2mkdir            lsof               setterm            xzfgrep
+e2mv               lspci              sha1sum            xzgrep
+e2rm               lsscsi             sha256sum          xzless
+e2tail             lsusb              sha3sum            xzmore
+eject              lua                sha512sum          yes
+em                 luac               shred              zip
+env                lz4                sl                 zipcloak
+expr               lz4c               sort               zipnote
+factor             lz4cat             sqlite3            zipsplit
+fallocate          lzcat              strace
+fdtdump            lzcmp              strace-log-merge
+cartesi-machine:/usr/bin # exit
 
 Halted
-Cycles: 5842519958
+Cycles: 21274478193
 ```
 The session shows a user changing the the working directory to `/usr/bin/` and listing its contents.
 The user then does the same with directory `/bin/`, before finally leaving the emulator with the `exit` command.
@@ -196,7 +198,7 @@ The output is
 5: Hello world from C++!
 
 Halted
-Cycles: 73665939
+Cycles: 74465415
 ```
 
 One of the advantages of running Linux is the large number of well-established software development tools available.
@@ -217,7 +219,7 @@ playground:~$ cp hello.sh hello
 playground:~$ chmod +x hello/hello.sh
 playground:~$ genext2fs -b 1024 -d hello hello.ext2
 playground:~$ cartesi-machine \
-    --flash-drive=label:fs,filename:fs.ext2 \
+    --flash-drive=label:hello,filename:hello.ext2 \
     -- /mnt/hello/hello.sh
 ```
 
@@ -394,9 +396,13 @@ is as follows:
 5: Hello world from TCL!
 
 Halted
-Cycles: 206911576
+Cycles: 205939605
 ```
 The take-away message is that developers can use the tools they are most familiar with to accomplish the task at hand.
+
+:::note
+Note that your cycle count may vary, since your new `rootfs.ext2` may differ from the one used to produce the results above.
+:::
 
 ## Flash drives
 
@@ -446,7 +452,7 @@ playground:~$ truncate -s 4K input.raw
 playground:~$ cartesi-machine \
     --flash-drive="label:input,length:1<<12,filename:input.raw" \
     --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \
-    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
+    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z", io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
 playground:~$ luapp5.3 -e 'print((string.unpack("z", io.read("a"))))' < output.raw
 ```
 The input is a null-terminated string containing the expression to be evaluated.
@@ -456,7 +462,7 @@ The output is once again a null-terminated string with the result, this time sto
 The command executed inside the machine is
 ```bash
 dd status=none if=$(flashdrive input) | \
-    lua -e 'print((string.unpack("z",  io.read("a"))))' | \
+    lua -e 'print((string.unpack("z", io.read("a"))))' | \
     bc | \
     dd status=none of=$(flashdrive output)
 ```
@@ -464,7 +470,7 @@ The `flashdrive` command-line utility produces the device corresponding to a giv
 In this case, `flashdrive input` is `/dev/mtdblock1` and `flashdrive output` is `/dev/mtdblock2` (recall `/dev/mtdblock0` is the root file-system, defined by default to load the `rootfs.ext2` image).
 
 The first command, `dd status=none if=$(flashdrive input)` reads the entire 4KiB of the raw input flash drive and sends it to the standard output.
-The second command, `lua -e 'print((string.unpack("z",  io.read("a"))))'` extracts the firest null-terminated string and prints it to standard out.
+The second command, `lua -e 'print((string.unpack("z", io.read("a"))))'` extracts the firest null-terminated string and prints it to standard out.
 This is the meaning of the format `"z"` to the `string.unpack()` function.
 There are a variety of other formats available, including reading integers of different sizes, big- or little-endian etc.
 Please see the [documentation for the `string.unpack()`](https://www.lua.org/manual/5.3/manual.html#6.4.2) function for more details.
