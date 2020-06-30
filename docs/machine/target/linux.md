@@ -392,7 +392,6 @@ is as follows:
 3: Hello world from TCL!
 4: Hello world from TCL!
 5: Hello world from TCL!
-[    0.201887] reboot: Power down
 
 Halted
 Cycles: 206911576

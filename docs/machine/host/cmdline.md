@@ -391,7 +391,7 @@ Since Cartesi Machines are reproducible, the initial state hash also works as a 
 In other words, the &ldquo;final state hash&rdquo; `841eaf0e...` is the &ldquo;only&rdquo; possible outcome for the `--final-hash` at cycle 695931, given the result of the `--initial-hash` operation was `8e4f7aa0...`.
 
 :::info
-The quotes around &ldquo;only&rdquo; are pedantic.
+The scare quotes around &ldquo;only&rdquo; are pedantic.
 It is true that there are a multitude of machine states that produce the same state hash.
 After all, the Keccak-256 state hashes fit in 256-bits, whereas machine states can take gigabytes.
 There are therefore many more possible machine states than possible state hashes.

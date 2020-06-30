@@ -445,3 +445,7 @@ When a file-system is found, the script obtains the corresponding `<label>` (set
 The kernel passes to `/sbin/init` as command-line parameters all arguments after the separator&nbsp;`--`&nbsp;in the `bootargs` string it found in the devicetree.
 The Cartesi-provided `/sbin/init` script concatenates all arguments into a string and executes the command in this string in a shell.
 When the shell returns, `/sbin/init` unmount all file-systems and gracefully halts the machine.
+
+:::danger EDITOR NOTE
+We should add a section on the yield device driver, the `ioctl`, and how the `/opt/cartesi/bin/yield` utility uses it.
+:::

@@ -62,12 +62,12 @@ Cartesi Machines can be seen from 3 different perspectives:
 * *The host perspective* &mdash;
 This is the environment right outside the Cartesi Machine emulator.
 It is most relevant to developers setting up Cartesi Machines, running them, or manipulating their contents.
-It includes the emulator's API in all its flavors: C++, Lua, gRPC, and the command-line interface.
-It also includes the cross-compiling toolchain, and the tools used to build the Linux kernel and the embedded Linux root file-systems;
+It includes the emulator's API in all its flavors: C++, Lua, gRPC, and the command-line interface;
 * *The target perspective * &mdash;
 This is the environment inside the Cartesi Machine.
 It encompasses Cartesi's particular flavor of the RISC-V architecture, as well as the organization of the embedded Linux Operating System that runs on top of it.
-It is most relevant to programmers responsible for the DApp components that run off-chain but must be verifiable;
+It is most relevant to programmers responsible for the DApp components that run off-chain but must be verifiable.
+The cross-compiling toolchain, and the tools used to build the Linux kernel and the embedded Linux root file-systems are also important from this perpective, even though they are used in the host;
 * *The blockchain perspective* &mdash;
 This is the view smart contracts have of Cartesi Machines.
 It consists almost exclusively of the manipulation of cryptographic hashes of the state of Cartesi Machines and parts thereof.

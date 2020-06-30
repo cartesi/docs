@@ -176,7 +176,7 @@ This mechanism is used by stateful Cartesi Machines.
 The other entries in the `machine_config` are used only in rare occasions.
 The devices and processor have a variety of control and status registers (CSRs), in addition to processor's general-purpose registers.
 Most of these are defined in the RISC-V [user-level ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) and [privileged architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf) specifications.
-The Cartesi-specific additions are described under the target perspective [processor](../target/processor.md) and [board](./target/board.md) specifications.
+The Cartesi-specific additions are described under the target perspective [architecture](../target/architecture.md).
 
 The fields `tohost` and `fromhost` in `htif` allow for the overriding of the default initial values of these CSRs.
 The <a href="#clint_config">`clint`</a> entry has a single field, `mtimecmp`, which allows for the overriding of the default initial value of this CSR.
@@ -643,7 +643,7 @@ However, it needs is a mechanism to communicate its progress back to the program
 
 The command-line utility `/opt/cartesi/bin/yield` can be used for this purpose.
 Internally, the tool uses an `ioctl` system-call on the Cartesi-specific `/dev/yield` device.
-The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF  Yield device are explained in detail under the [target perspective](../target/linux.md#yield-device).
+The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF  Yield device are explained in detail under the [target perspective](../target/architecture.md).
 The focus here is on its effect on the host program controlling the emulator.
 
 A Cartesi Machine can be configured to accept HTIF yield progress commands by means of the `htif.yield_progress` Boolean field in the machine configuration.
@@ -1063,12 +1063,7 @@ The `sibling_hashes` array contains the hashes of the *siblings* of all nodes vi
 Using the data in a proof, it is possible to verify the claim that a Merkle tree with a given root hash contains a target node with a given hash at the position given by its address and size.
 The function `accept(<proof>)` exported by the `cartesi.proof` module performs exactly this task.
 
-:::danger Editor note
-This module has not yet been added to the `machine-emulator` repository.
-:::
-
-
-```lua title="cartesi/proof.lua"
+```lua title="cartesi/proof.lua (excerpt)"
 local cartesi = require"cartesi"
 
 local _M = {}
@@ -1088,8 +1083,10 @@ function _M.roll_hash_up_tree(proof, target_hash)
 	return hash
 end
 
-function _M.accept(proof)
-	return roll_hash_up_tree(proof, proof.target_hash) == proof.root_hash
+function _M.slice_assert(root_hash, proof)
+	assert(root_hash == proof.root_hash, "proof root_hash mismatch")
+	assert(_M.roll_hash_up_tree(proof, proof.target_hash) == root_hash,
+        "node not in tree")
 end
 
 return _M
@@ -1103,7 +1100,7 @@ The result must be the hash of the parent node to the target and its sibling.
 The loop then goes up the `sibling_hashes` array, and obtains the sibling of this parent node.
 This is again concatenated with the parent node (in the correct order) to obtain what must be the hash of the grandparent node.
 This process is repeated until the hash of what must be the root node is found and returned.
-Function `accept(<proof>)` then compares this to the hash that was expected in the root node.
+Function `splice_assert(<root_hash>, <proof>)` then compares this to the hash that was expected in the root node.
 If they match, the proof passes.
 Otherwise, something is amiss.
 
@@ -1115,7 +1112,7 @@ The following script verifies the state value proof for the output drive in the 
 local cartesi = require"cartesi"
 
 -- Load the proof verifiction module
-local proof = require"proof"
+local proof = require"cartesi.proof"
 
 -- Instantiate machine from configuration
 local config = require"config.calculator"
@@ -1132,15 +1129,13 @@ end
 
 -- Obtain value proof for output flash drive
 machine:update_merkle_tree()
+local output_state_hash = machine:get_root_hash()
 local output_drive = config.flash_drive[3]
 local output_proof = machine:get_proof(output_drive.start, 12)
 
 -- Verify proof
-if proof.accept(output_proof) then
-    print("\nOutput drive proof accepted!\n")
-else
-    error("Output drive proof rejected!")
-end
+proof.slice_assert(output_state_hash, output_proof)
+print("\nOutput drive proof accepted!\n")
 
 print((string.unpack("z", machine:read_memory(output_drive.start, output_drive.length))))
 ```
