@@ -41,14 +41,14 @@ At this point, we should have the following directory structure:
     └───test
 ```
 
-The `Ganache CLI` network instance spawned by the Descartes SDK Environment runs on port 8545. To ensure our project will connect to it, we need to edit the "networks" session in `truffle-config.js` and specify that we want to connect to that port:
+The `Ganache CLI` network instance spawned by the Descartes SDK Environment runs on port `8545` and has network ID `7777`. To ensure our project will connect to it, we need to edit the "networks" session in `truffle-config.js` and specify that we want to connect to that port:
 
 ```javascript
 networks: {
   development: {
    host: "127.0.0.1",     // Localhost (default: none)
    port: 8545,            // Ganache CLI port (default: none)
-   network_id: "*",       // Any network (default: none)
+   network_id: "7777",    // Environment network (default: none)
   },
 },
 ```
