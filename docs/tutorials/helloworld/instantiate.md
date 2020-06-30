@@ -8,9 +8,9 @@ title: Instantiating the computation
 :::
 
 
-After creating our [basic HelloWorld DApp project](create-project.md), we can now implement the method that actually instantiates and triggers the [Descartes computation we specified earlier](cartesi-machine.md).
+After creating our [basic HelloWorld DApp project](create-project.md) and building our [Hello World Cartesi Machine](./cartesi-machine.md), we can now implement the method that actually instantiates and triggers the specified computation.
 
-Open the `HelloWorld.sol` file and add the following code:
+To do that, open the `helloworld/contracts/HelloWorld.sol` file and add the following code:
 
 ```javascript
 bytes32 templateHash = 0x1697a8f2587ec67aafbfee38f8287c3ca5ce8b2822291ba9cfbfa6ffb37fdb53;

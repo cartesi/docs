@@ -8,7 +8,7 @@ title: Retrieving computation result
 
 Once the [Descartes computation has been instantiated](./instantiate.md), we need a means to effectively retrieve its result within our smart contract.
 
-To do so, we will simply implement the following `getResult` method.
+To do so, we will implement the following `getResult` method in the `HelloWorld.sol` file located within the `helloworld/contracts` directory.
 
 ```javascript
 function getResult(uint256 index) public view returns (bool, bool, address, bytes32) {

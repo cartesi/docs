@@ -6,14 +6,16 @@ title: Creating basic DApp
 - create and initialize a basic project for a Descartes DApp
 :::
 
- ## Introduction
+## Introduction
 
- Now that we have [built our Hello World Cartesi Machine](./cartesi-machine.md), we can shift our focus towards the on-chain part of the DApp. In this section, we will create a basic project for a Descartes DApp, which will include a smart contract capable of using the Descartes contract already deployed by the [Descartes SDK Environment](../descartes-env.md).
+In this section we are going to start building our first Descartes DApp. This *Hello World DApp* will consist of a trivial application, which simply instantiates an off-chain computation that always returns "Hello World!".
+
+In order to do that, we will start by creating a basic project with a smart contract capable of using the Descartes contract already deployed to the [Descartes SDK Environment](../descartes-env.md).
 
 
 ## Initializing the DApp project
 
-First of all, within the project's `helloworld` directory created last section, run the following command to initialize a new project using `truffle`:
+First of all, create a directory called `helloworld`, and run the following command to initialize a new project using Truffle:
 
 ```bash
 truffle init
@@ -21,7 +23,25 @@ truffle init
 
 This will create a basic project structure, with three subdirectories `contracts`, `migrations` and `test`, along with a `truffle-config.js` file.
 
-The `Ganache CLI` network instance spawned by the Descartes SDK Environment runs on port 8545. To ensure our project will connect to it, we need to edit the "networks" session in `truffle-config.js` and specify that we should connect to that port:
+At this point, we should have the following directory structure:
+
+```
+│
+└───descartes-env
+│   │   ...
+│   └───blockchain
+│   └───deployer
+│   └───ganache_data
+│   └───machines
+│   
+└───helloworld
+    │   truffle-config.js
+    └───contracts
+    └───migrations
+    └───test
+```
+
+The `Ganache CLI` network instance spawned by the Descartes SDK Environment runs on port 8545. To ensure our project will connect to it, we need to edit the "networks" session in `truffle-config.js` and specify that we want to connect to that port:
 
 ```javascript
 networks: {
@@ -39,7 +59,7 @@ Finally, let's add two dependencies to our project using Yarn. First, add a depe
 yarn add @cartesi/descartes-sdk
 ```
 
-Aside from that, let's also add a dependency to `@truffle/contract`, which will be used in the *migration* script later on to allow us to properly link our DApp to the Descartes contract already deployed to the local network.
+Aside from that, let's also add a dependency to `@truffle/contract`, which will be used later on in a script for [deploying our DApp](./deploy-run.md). This will allow us to properly link our DApp to the Descartes contract already deployed to the local development network.
 
 ```bash
 yarn add @truffle/contract
@@ -49,7 +69,7 @@ yarn add @truffle/contract
 
 At this point, we can start effectively writing our DApp's smart contract in Solidity.
 
-In order to do that, first create a file inside the `./contracts` directory, and call it `HelloWorld.sol`. Then place the following contents in it:
+In order to do that, first create a file inside the `./contracts` directory, and call it `HelloWorld.sol`. Then place the following contents into it:
 
 ```javascript
 pragma solidity >=0.4.25 <0.7.0;
@@ -66,4 +86,10 @@ contract HelloWorld {
 }
 ```
 
-The Solidity code above thus defines a smart contract called "HelloWorld", which imports the `DescartesInterface`. Moreover, its constructor receives as an argument the effective address of the deployed Descartes smart contract, which will enable our code to issue transactions and query results from it. We will explore that in more detail in the following sections.
+The Solidity code above defines a smart contract called "HelloWorld", which imports the `DescartesInterface`. Moreover, its constructor receives as an argument the effective address of the deployed Descartes smart contract, which will enable our code to issue transactions and query results from it. We will explore that in more detail in subsequent sections.
+
+For now, it suffices to check if our initial project is correctly set up. To do that, execute the following command and verify that it is successful.
+
+```
+truffle compile
+```

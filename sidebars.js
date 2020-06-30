@@ -75,8 +75,8 @@ module.exports = {
           type: "category",
           label: "Hello World DApp",
           items: [
-            "tutorials/helloworld/cartesi-machine",
             "tutorials/helloworld/create-project",
+            "tutorials/helloworld/cartesi-machine",
             "tutorials/helloworld/instantiate",
             "tutorials/helloworld/getresult",
             "tutorials/helloworld/deploy-run"

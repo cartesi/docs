@@ -10,9 +10,9 @@ title: Hello World Cartesi Machine
 
 ## Introduction
 
-In this section we are going to effectively start building our first Descartes DApp. This Hello World DApp will consist of a trivial application, which simply instantiates an off-chain computation that always returns "Hello World!".
+Now that we have [built our basic DApp project](./create-project.md), we will shift our focus towards the off-chain part of the DApp.
 
-In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template]("../machine/intro.md)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
+As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template]("../machine/intro.md)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
 
 ## Cartesi Playground
 
@@ -117,18 +117,10 @@ ls stored_machine/
 
 Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Descartes nodes running inside the [Descartes SDK Environment](../descartes-env.md).
 
-In order to do that, we'll code a handy shell script that wraps it all up, so that it's easy to make changes to the machine if desired.
-
-First, let's create a directory for our `helloworld` application, and `cd` into it:
+In order to do that, we'll code a handy shell script that wraps it all up, so that it's easy to make changes to the machine if desired. Create a file called `build-cartesi-machine.sh` inside our `helloworld` project home directory, and make sure it is executable:
 
 ```bash
-mkdir helloworld
-cd helloworld
-```
-
-Then, create a file called `build-cartesi-machine.sh` and make sure it is executable:
-
-```bash
+touch build-cartesi-machine.sh
 chmod +x build-cartesi-machine.sh
 ```
 

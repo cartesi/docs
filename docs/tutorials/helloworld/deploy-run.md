@@ -10,13 +10,13 @@ title: Deploying and Running
 
 ## Introduction
 
-By now, we have completed the implementation of our Hello World DApp. However, in order to effectively run it, we still need to *deploy* it to an Ethereum network that includes the Descartes smart contract. To that end, we'll make use of the local development network already running in our [Descartes SDK Environment](../descartes-env.md).
+By now, we have completed the implementation of our Hello World DApp. However, in order to effectively run it, we still need to *deploy* it to an Ethereum network that includes the Descartes smart contract. To that end, we'll make use of the local development network already running within our [Descartes SDK Environment](../descartes-env.md).
 
 ## Deployment
 
 To deploy our contract to the local development network, we'll use Truffle migrations. 
 
-First of all, let's create a *migration file* that specifies how the deployment should be done. In the `./migrations` directory, create a file called `2_deploy_contracts.js` with the following contents:
+First of all, let's create a *migration file* that specifies how the deployment should be done. In the `helloworld/migrations` directory, create a file called `2_deploy_contracts.js` with the following contents:
 
 ```javascript
 const contract = require("@truffle/contract");
