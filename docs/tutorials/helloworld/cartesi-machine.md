@@ -34,7 +34,6 @@ The result of such a command will look like this:
 
 ```
 Running as root
-Building machine: please wait
 
          .
         / \
@@ -46,19 +45,10 @@ Building machine: please wait
         \ /   MACHINE
          '
 
-[    0.000000] OF: fdt: Ignoring memory range 0x80000000 - 0x80200000
-[    0.000000] Linux version 5.5.4 (root@c3a04765fcba) (gcc version 9.2.0 (crosstool-NG 1.24.0.55-7bd6bb0)) #1 Wed May 20 18:07:30 UTC 2020
-...
-[    0.035907] VFS: Mounted root (ext2 filesystem) on device 31:0.
-[    0.035952] devtmpfs: mounted
-[    0.035993] Freeing unused kernel memory: 128K
-[    0.036005] This architecture does not have kernel memory protection.
-[    0.036021] Run /sbin/init as init process
 Hello World!
-[    0.053792] reboot: Power down
 
 Halted
-Cycles: 58672840
+Cycles: 63287719
 ```
 
 ## Cartesi Machine for the Hello World DApp
@@ -100,7 +90,7 @@ The console output when running the above command should be:
 
 ```
 Building machine: please wait
-0: 1697a8f2587ec67aafbfee38f8287c3ca5ce8b2822291ba9cfbfa6ffb37fdb53
+0: 67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451
 
 Cycles: 0
 Storing machine: please wait
@@ -183,9 +173,9 @@ The output should be the same as before, but now the contents will be neatly sto
 
 ```
 ls ../descartes-env/machines
-1697a8f2587ec67aafbfee38f8287c3ca5ce8b2822291ba9cfbfa6ffb37fdb53/
+67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451
 
-ls ../descartes-env/machines/1697a8f2587ec67aafbfee38f8287c3ca5ce8b2822291ba9cfbfa6ffb37fdb53/
+ls ../descartes-env/machines/67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451/
 0000000000001000-f000.bin  0000000080000000-4000000.bin  8000000000000000-3c00000.bin  9000000000000000-1000.bin  config  hash
 ```
 
