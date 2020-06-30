@@ -32,15 +32,11 @@ For each of the two actors, `alice` and `bob`, the environment provides a corres
 
 The Descartes SDK Environment is available on [Cartesi's Github repo](https://github.com/cartesi-corp/descartes-tutorials/).
 
-:::danger Editor's note
-Waiting on the exact procedure for downloading
-:::
-
-You can download and extract it by executing:
+You can download and extract a ready-to-use artifact by executing:
 
 ```bash
-wget ... / git clone ...
-tar -xzvf descartes-env-deployed.tar.gz
+wget https://github.com/cartesi/descartes-tutorials/releases/download/v0.1.0/descartes-env-0.1.0.tar.gz
+tar -xzvf descartes-env-0.1.0.tar.gz
 ```
 
 Then, start it up by running:
@@ -49,4 +45,3 @@ Then, start it up by running:
 cd descartes-env
 docker-compose up
 ```
-

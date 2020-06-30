@@ -79,7 +79,7 @@ module.exports = {
             "tutorials/helloworld/create-project",
             "tutorials/helloworld/instantiate",
             "tutorials/helloworld/getresult",
-            "tutorials/helloworld/running"
+            "tutorials/helloworld/deploy-run"
           ]
         }
       ],
