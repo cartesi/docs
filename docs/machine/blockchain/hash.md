@@ -36,7 +36,7 @@ In the command-line, the options `--initial-hash` and `--final-hash` of the `car
 The `cartesi.keccak(<word>)` function of the `cartesi` Lua module returns the hash of a 64-bit `<word>`.
 The `cartesi.keccak(<hash1>, <hash2>)` overload returns the hash of the concatenation of `<hash1>` and `<hash2>`.
 In theory, the Merkle tree of the entire machine state could be built from these primitives and [external state access](../host/lua#external-state-access) to the machine instance.
-In practice, most of the state is unused and implicitly filled with zeros, and this allows `machine:update_merkle_tree()` to skip large swaths of the state by using precomputed pristine hashes of all power-of-two sizes.
+In practice, most of the state is unused and implicitly filled with zeros, and this allows `machine:update_merkle_tree()` to skip large swaths of the state by using precomputed pristine hashes of all power-of-2 sizes.
 The `machine:update_merkle_tree()` method is also smart enough to only update the parts of the tree that changed between invocations.
 
 Tree hashes are used instead of a linear hashes because they support a variety of operations that are unavailable from linear hashes.
@@ -133,8 +133,8 @@ The most important use for the splicing operation is template instantiation.
 From the blockchain perspective, a [Cartesi Machine template](../host/cmdline#cartesi-machine-templates) is simply a state hash *M*.
 Instantiating the Cartesi Machine with a given input is simply the process of obtaining the state hash *M'* that results from replacing one or more of its input flash drives.
 Each replacement is the result of a splicing operation as described above.
-The splicing operation is particularly convenient if the flash drive length is a power of two, and its start is aligned according to its length.
-This is why, by default, the `cartesi-machine` command-line utility positions flash drives a multiples of very large powers of two.
+The splicing operation is particularly convenient if the flash drive length is a power of 2, and its start is aligned according to its length.
+This is why, by default, the `cartesi-machine` command-line utility positions flash drives a multiples of very large powers of 2.
 
 ### Result extraction
 

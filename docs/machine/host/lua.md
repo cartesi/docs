@@ -427,7 +427,7 @@ playground:~$ cartesi-machine \
     --htif-yield-progress \
     --max-mcycle=0 \
     --dump-machine-config \
-    -- $'for i in $(seq 0 5 1000); do yield --progress $i; done'
+    -- $'for i in $(seq 0 5 1000); do yield progress $i; done'
 ```
 ```lua title="config/progress.lua"
 return {
@@ -442,7 +442,7 @@ return {
   },
   rom = {
     image_filename = "/opt/cartesi/share/images/rom.bin",
-    bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw quiet mtdparts=flash.0:-(root) -- for i in $(seq 0 5 1000); do yield --progress $i; done",
+    bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw quiet mtdparts=flash.0:-(root) -- for i in $(seq 0 5 1000); do yield progress $i; done",
   },
   htif = {
     yield_progress = true,
@@ -726,7 +726,7 @@ This is similar to the `cartesi-machine` command-line
 ```bash
 playground:~$ cartesi-machine \
     --htif-yield-progress \
-    -- $'for i in $(seq 0 5 1000); do yield --progress $i; done'
+    -- $'for i in $(seq 0 5 1000); do yield progress $i; done'
 ```
 which uses an equivalent mechanism for progress report.
 

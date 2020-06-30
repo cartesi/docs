@@ -62,11 +62,16 @@ dd             kill           mt             setarch        wdctl
 df             link           mv             setpriv        zcat
 
 Halted
-Cycles: 60641033
+Cycles: 65535909
 ```
 It shows the Cartesi Machine splash screen, followed by the listing of directory `/bin/`.
 The listing was produced by the command that follows `--` separator in the command line.
 The Linux kernel passes this unmodified to `/sbin/init`, and the Cartesi-provided `/sbin/init` script executes the command before gracefully halting the machine.
+
+:::note
+In many of the documentation examples, the utilities invoked from the command-line executed by a Cartesi Machine are in the default search path for executables. (This is setup by the Cartesi-provided `/sbin/init` script itself.)
+When in doubt, or when using your own executables installed in custom locations, make sure to invoke them by using their full paths (e.g., `/bin/ls` or `/bin/sh` instead of simply `ls` and `sh`.)
+:::
 
 ## Interactive sessions
 
@@ -82,8 +87,7 @@ Exiting the shell returns control back to `/sbin/init`, which then gracefully ha
 
 For example, if an interactive session is started with the following command
 ```bash
-playground:~$ cartesi-machine \
-    -i -- sh
+playground:~$ cartesi-machine -i -- sh
 ```
 it drops into the shell.
 Running the command `ls /bin` causes the listing of directory `/bin` to appear.
@@ -102,7 +106,8 @@ Running in interactive mode!
         \ /   MACHINE
          '
 
-~ # ls /bin
+cartesi-machine:/ # ls /bin
+ls /bin
 arch           dmesg          linux32        netstat        setserial
 ash            dnsdomainname  linux64        nice           sh
 base64         dumpkmap       ln             nuke           sleep
@@ -119,10 +124,11 @@ cttyhack       gzip           mount          run-parts      vi
 date           hostname       mountpoint     sed            watch
 dd             kill           mt             setarch        wdctl
 df             link           mv             setpriv        zcat
-~ # exit
+cartesi-machine:/ # exit
+exit
 
 Halted
-Cycles: 2862361007
+Cycles: 5994261720
 ```
 Note that the final cycle count is meaningless, as the machine repeatedly skips cycles forward when idle, from one timer interrupt to the next.
 
@@ -195,7 +201,7 @@ The output is
 Hello world!
 
 Halted
-Cycles: 63942682
+Cycles: 68758825
 ```
 
 ## Persistent flash drives
@@ -235,13 +241,14 @@ produces the output
 /mnt/foo/bar.txt  /mnt/foo/baz.txt
 
 Halted
-Cycles: 65823435
+Cycles: 70492815
 ```
 indicating that the file-system was modified, at least from the perspective of the target.
 However, inspecting the `foo.ext2` image file from outside the emulator shows it is unchanged.
 ```
 playground:~$ e2ls -al foo.ext2:*.txt
-     12  100644   501    20       13 19-May-2020 14:48 bar.txt
+     12  100644   501    20       13 30-Jun-2020 19:40 bar.txt
+
 ```
 
 This behavior is appropriate when the flash drives will only be used as inputs.
@@ -257,8 +264,9 @@ produces exactly the same output as before.
 However, the backing file `foo.ext2` has now indeed been modified.
 ```
 playground:~$ e2ls -al foo.ext2:*.txt
-     12  100644   501    20       13 19-May-2020 14:48 bar.txt
-     13  100644     0     0       13 31-Dec-1969 21:00 baz.txt
+     12  100644   501    20       13 30-Jun-2020 19:40 bar.txt
+     13  100644     0     0       13  1-Jan-1970 00:00 baz.txt
+
 ```
 
 ## Limiting execution
@@ -283,17 +291,16 @@ produces the output
 Nothing to do.
 
 Halted
-Cycles: 56623562
+Cycles: 61730003
 ```
 Here, the Cartesi-provided `/sbin/init` simply reports there is nothing to do do before halting gracefully.
 This takes over 56M cycles to complete: time mostly spent initializing the Linux kernel.
 
 The machine's processor includes a control and status register (CSR), named `mcycle`, that starts at 0 and is incremented after every cycle.
 The maximum cycle can be specified with the command-line option `--max-mcycle=<number>`.
-For example, adding the `--max-mcycle=695931` command-line option
+For example, adding the `--max-mcycle=697842` command-line option
 ```bash
-playground:~$ cartesi-machine \
-    --max-mcycle=695931
+playground:~$ cartesi-machine --max-mcycle=697842
 ```
 produces the output
 ```
@@ -305,26 +312,27 @@ produces the output
  \       X       \
   \----/  \---/---\
        \    / CARTESI
-Cycles: 695931
+Cycles: 697842
 ```
 Note the execution was interrupted before the splash screen was even completed.
 
-The ability to limit computation to an arbitrary number of cycles is fundamental to the verifiability of Cartesi Machines, as is explained in detail under the [the blockchain perspective](#the-blockchain-perspective).
+The ability to limit computation to an arbitrary number of cycles is fundamental to the verifiability of Cartesi Machines, as is explained in detail under the [the blockchain perspective](../blockchain/vg.md).
 
 ## Progress feedback
 
 A target application can inform the host of its progress by using a Cartesi-specific `/dev/yield` Linux device.
 Within the target, the Linux device can be controlled in the command-line with the utility `/opt/cartesi/bin/yield`, pre-installed in the root file-system `rootfs.ext2`.
-The progress feedback is accessed via the `--progress=<permil>` command-line option.
+The progress feedback is accessed via the `progress <permil>` command-line option.
 
 For example, during the execution of the loop,
 ```bash
 playground:~$ cartesi-machine \
     --htif-yield-progress \
-    -- $'for i in $(seq 0 5 1000); do yield --progress $i; done'
+    -- $'for i in $(seq 0 5 1000); do yield progress $i; done'
 ```
 the `cartesi-machine` utility receives control back from the emulator every iteration, when the target executes the `yield` utility.
-(If the `--htif-yield-progress` command-line option to `cartesi-machine` is omitted, the emulator essentially ignores yield requests from the target.)
+(The directory `/opt/cartesi/bin/` is in the default search path for executable setup by `/sbin/init`.)
+If the `--htif-yield-progress` command-line option to `cartesi-machine` is omitted, the emulator essentially ignores yield requests from the target.
 Each time `cartesi-machine` receives control due to a yield, it prints a progress message (shown at 44% below) and resumes the emulator so it can continue working.
 ```
 
@@ -344,19 +352,9 @@ This feature is most useful when the emulator is controlled programmatically, vi
 In these situations, the progress device can be used to drive a dynamic user interface element that reassures users progress is being made during long, silent computations.
 Its handling by `cartesi-machine`, which does have access to the console, is simply to help with prototyping and debugging.
 
-The protocols followed by the `yield` utility to interact with the `/dev/yield` driver and by the driver itself to communicate with the HTIF device are explained in detail under the [target perspective](../target/linux.md#yield-device).
-
-:::danger Editor note
-Waiting for the new kernel device and the new command-line utility so we can run this example as written.
-Current output is for the old version that runs `htif --yield 0 $i` instead.
-:::
+The protocols followed by the `yield` utility to interact with the `/dev/yield` driver and by the driver itself to communicate with the HTIF device are explained in detail under the [target perspective](../target/architecture.md).
 
 ## State hashes
-
-:::danger Editor note
-We need to regenerate these hash values once we have settled on a release for `rom.bin`, `linux.bin`, and `rootfs.bin`.
-Otherwise readers will be confused.
-:::
 
 The `cartesi-machine` utility can also be used to output Cartesi Machine state hashes.
 State hashes are Merkle tree root hashes of the entire 64-bit address space of the Cartesi Machine, where the leaves are aligned 64-bit words.
@@ -368,13 +366,13 @@ Conversely, to obtain the state hash right after execution is done, use the opti
 For example,
 ```bash
 playground:~$ cartesi-machine \
-    --max-mcycle=695931 \
+    --max-mcycle=697842 \
     --initial-hash \
     --final-hash
 ```
 produces the output
 ```
-0: 8e4f7aa0d4a753f16d8430f30ca127b9ed87256f99b9276e29532d50d220c8c0
+0: f8ab363ec22d5ff59facfe346736a7f205c1ddedf1e81a46bbe3414a089e8bc6
 
          .
         / \
@@ -383,12 +381,12 @@ produces the output
  \       X       \
   \----/  \---/---\
        \    / CARTESI
-Cycles: 695931
-695931: 841eaf0e73aa6af6d18d93ebe3c5202604a3af33b512c9752a879dc65142312d
+Cycles: 697842
+697842: 71ea7fc25b30464245917364e3606c12cf6bd6d2b4f74e3a8142df932e5e921e
 ```
-The initial state hash `8e4f7aa0...` is the Merkle tree root hash for the initial Cartesi Machine state.
+The initial state hash `f8ab363e...` is the Merkle tree root hash for the initial Cartesi Machine state.
 Since Cartesi Machines are reproducible, the initial state hash also works as a *future* on the entire the computation itself.
-In other words, the &ldquo;final state hash&rdquo; `841eaf0e...` is the &ldquo;only&rdquo; possible outcome for the `--final-hash` at cycle 695931, given the result of the `--initial-hash` operation was `8e4f7aa0...`.
+In other words, the &ldquo;final state hash&rdquo; `71ea7fc2...` is the &ldquo;only&rdquo; possible outcome for the `--final-hash` at cycle 697842, given the result of the `--initial-hash` operation was `f8ab363e...`.
 
 :::info
 The scare quotes around &ldquo;only&rdquo; are pedantic.
@@ -410,7 +408,7 @@ playground:~$ cartesi-machine \
 ```
 produces instead the output
 ```
-0: 8e4f7aa0d4a753f16d8430f30ca127b9ed87256f99b9276e29532d50d220c8c0
+0: f8ab363ec22d5ff59facfe346736a7f205c1ddedf1e81a46bbe3414a089e8bc6
 
          .
         / \
@@ -425,12 +423,12 @@ produces instead the output
 Nothing to do.
 
 Halted
-Cycles: 56623562
-56623562: d418e364fd29238c26dab1e9315b1c18469c764f57828bc4c01c376de39045e3
+Cycles: 61730003
+61730003: bc07d7fa1b296b3b3d310395a375928b3bdeeb2eb86c2ccba4ac8f8ebc3732f9
 ```
 Naturally, the initial state hash is the same as before.
-However, the final state hash `d418e364...` now pertains to cycle 56623562, where the machine is halted.
-This is the &ldquo;only&rdquo; possible state hash for a *halted* machine that started from state hash `8e4f7aa0...`.
+However, the final state hash `bc07d7fa...` now pertains to cycle 61730003, where the machine is halted.
+This is the &ldquo;only&rdquo; possible state hash for a *halted* machine that started from state hash `f8ab363e...`.
 
 ## Persistent Cartesi Machines
 
@@ -438,13 +436,13 @@ At any point in their execution, Cartesi Machines can be stored to disk.
 A stored machine can later be loaded to continue its execution from where it left off.
 To store a machine to a given `<directory>`, use the command-line option `--store=<directory>`.
 The machine is stored as it was right before `cartesi-machine` returns to the command line.
-For example, to store the machine corresponding to state hash `841eaf0e...`
+For example, to store the machine corresponding to state hash `71ea7fc2...`
 ```bash
 playground:~$ cartesi-machine \
-    --max-mcycle=695931 \
-    --store="machine-841eaf0e"
+    --max-mcycle=697842 \
+    --store="machine-71ea7fc2"
 ```
-This command creates a directory `machine-841eaf0e/`, containing a variety of files that allow the Cartesi Machine emulator to recreate a machine state.
+This command creates a directory `machine-71ea7fc2/`, containing a variety of files that allow the Cartesi Machine emulator to recreate a machine state.
 Every image file is copied into the directory, so no external dependencies remain.
 
 :::note
@@ -459,14 +457,14 @@ To restore the corresponding Cartesi Machine, use the command-line option `--loa
 For example,
 ```bash
 playground:~$ cartesi-machine \
-    --load="machine-841eaf0e" \
+    --load="machine-71ea7fc2" \
     --initial-hash \
     --final-hash
 ```
 produces the output
 ```
 Loading machine: please wait
-695931: 841eaf0e73aa6af6d18d93ebe3c5202604a3af33b512c9752a879dc65142312d
+697842: 71ea7fc25b30464245917364e3606c12cf6bd6d2b4f74e3a8142df932e5e921e
 
         \ /   MACHINE
          '
@@ -474,22 +472,23 @@ Loading machine: please wait
 Nothing to do.
 
 Halted
-Cycles: 56623562
-56623562: d418e364fd29238c26dab1e9315b1c18469c764f57828bc4c01c376de39045e3
+Cycles: 61730003
+61730003: bc07d7fa1b296b3b3d310395a375928b3bdeeb2eb86c2ccba4ac8f8ebc3732f9
 ```
 Note that, other than `--load`, no initialization command-line options were used.
 These initializations were used to define the machine before it was stored: their values are implicitly encoded in the stored state.
-The machine continues from where it left off, and reaches the same final state hash `d418e364...`, as if it had never been interrupted.
+The machine continues from where it left off, and reaches the same final state hash `bc07d7fa...`, as if it had never been interrupted.
 
-Note also that the initial state hash `841eaf0e...` after `--load` matches the final state hash before `--store`.
+Note also that the initial state hash `71ea7fc2...` after `--load` matches the final state hash before `--store`.
 After all, they are state hashes concerning the state of the same machine at the same cycle.
 In fact, `--store` writes this state hash inside the directory, and `--load` verifies that the state hash of the restored machine matches what it found in the directory.
 
 The `cartesi-machine-stored-hash` command-line utility can be used to extract the state hash from a stored Cartesi Machine:
 
 ```bash
-playground:~$ cartesi-machine-stored-hash machine-841eaf0e
-841eaf0e73aa6af6d18d93ebe3c5202604a3af33b512c9752a879dc65142312d
+playground:~$
+cartesi-machine-stored-hash machine-71ea7fc2
+71ea7fc25b30464245917364e3606c12cf6bd6d2b4f74e3a8142df932e5e921e
 ```
 
 ## Cartesi Machine templates
@@ -504,11 +503,12 @@ Starting from the template hash, and in possession of the flash drive hashes, it
 
 As an example, consider a Cartesi Machine that operates as an arbitrary-precision arithmetic expression evaluator.
 The machine will take the expression in text format, inside a raw input flash drive labelled `input`, and will copy the output in text format into a raw output flash drive, labelled `output` (`shared`, of course, so the output persists after the emulator is done).
+
 Raw flash drives are flash drives that do not contain file-systems.
 Instead, they contain data in any application-specific format.
 The `dd` or `devio` command-line utilities can be used to read data from or write data to raw flash drives.
 
-The `bc` command-line utility is the perfect tool to perform the computations.
+The `bc` command-line utility is the perfect tool to evaluate the arithmetic expressions.
 The command passed to `cartesi-machine` below reads the contents of the raw input flash drive using the `dd` command-line utility, extracts a zero-terminated string from it using a tiny Lua script run by the `lua` interpreter, pipes the result to `bc`, and finally uses `dd` again to write its results to the raw output flash drive.
 Here is the sample playground session
 ```bash
@@ -542,7 +542,7 @@ The output of the `cartesi-machine` command is
 
 
 Halted
-Cycles: 67911528
+Cycles: 83992147
 ```
 Once the emulator returns, the session uses a tiny Lua script, run by the playground's `luapp5.3` Lua interpreter, to print the contents of the output drive, which reads
 ```
@@ -558,25 +558,30 @@ To create the template, simply omit the input and output image filenames.
 This will cause the Cartesi Machine to assume both drives are filled with zeros.
 Then, limit the computation with `--max-mcycle=0`, to prevent the Cartesi Machine from running.
 Finally, use the `--store="calculator-template"` command-line option to store the Cartesi Machine template.
-The `--initial-hash` command-line option prints the resulting template hash.
+The `--final-hash` command-line option prints the resulting template hash.
 ```
 playground:~$ cartesi-machine \
     --flash-drive="label:input,length:1<<12" \
     --flash-drive="label:output,length:1<<12" \
     --max-mcycle=0 \
-    --initial-hash \
+    --final-hash \
     --store="calculator-template" \
     -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z", io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
 ```
 The result is as follows
 ```
-0: fd9bf57a285b13fe64f9af7a2c69c649c3288b4a682eff126ae1d54ced73e53f
 
 Cycles: 0
+0: 20fd0a690ae6f506662c4692103b6949286a8c3cf256d4fc5305a7280c4122c9
 Storing machine: please wait
 ```
 The directory `calculator-template/` now contains the Cartesi Machine template.
+And indeed, the stored template hash is `20fd0a69...`.
 
+```bash
+playground:~$ cartesi-machine-stored-hash calculator-template/
+20fd0a690ae6f506662c4692103b6949286a8c3cf256d4fc5305a7280c4122c9
+```
 Templates are typically used by programs that control the emulator with the C++, Lua, or gRPC interfaces.
 This is how templates are created for use with the Descartes SDK.
 
@@ -617,21 +622,19 @@ In either case, the filename field is optional.
 When provided, the proof will be written to the corresponding file.
 Otherwise, the contents will be displayed on screen.
 
-*State value proofs* are proofs that a given node in the Merkle tree of the Cartesi Machine state has a given hash.
+*State value proofs* are proofs that a given node in the Merkle tree of the Cartesi Machine state has a given label (i.e., a given associated hash).
 Each Merkle tree node covers a contiguous range of the machine's 64-bit address space.
-The size of a range is always a power of 2 (i.e., the `<log2_size>` power).
+The size of a range is always a power of 2 (i.e., the `<log2_size>` power of 2).
 Since the leaves have size 8 (for 64-bits), the valid values for `<log2_size>` are 3&hellip;64.
 The range corresponding to each node starts at an `<address>` that is a multiple of its size.
 
 For example, to generate a proof that the Cartesi Machine template above indeed contains a pristine input drive, use the command line
 ```bash
 playground:~$ cartesi-machine \
-    --flash-drive="label:input,length:1<<12" \
-    --flash-drive="label:output,length:1<<12" \
+	--load="calculator-template" \
     --max-mcycle=0 \
     --initial-hash \
-    --initial-proof="address:0x9000000000000000,log2_size:12,filename:pristine-input-proof" \
-    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z", io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
+    --initial-proof="address:0x9000000000000000,log2_size:12,filename:pristine-input-proof"
 ```
 Recall the first flash drive, the one with the `rootfs.ext2` image file, is present by default, and is automatically placed at starting address `0x8000000000000000`.
 The input flash drive is the therefore the second drive.
@@ -639,7 +642,8 @@ It is automatically spaced by 2<sup>60</sup> bytes relative to the first drive, 
 
 The output of the command is
 ```
-0: fd9bf57a285b13fe64f9af7a2c69c649c3288b4a682eff126ae1d54ced73e53f
+Loading machine: please wait
+0: 20fd0a690ae6f506662c4692103b6949286a8c3cf256d4fc5305a7280c4122c9
 
 Cycles: 0
 ```
@@ -651,10 +655,10 @@ In addition, the `pristine-input-proof` file now contains a JSON structure with 
   "log2_size": 12,
   "target_hash": "d8b96e5b7f6f459e9cb6a2f41bf276c7b85c10cd4662c04cbbb365434726c0a0",
   "sibling_hashes": [
-    "a3fa5940165e45cc6dbbe759a2b72f66df2e85b72ebc86ced3d7d1e321f0df5b",
+    "6cdc3f2abb6a2c34ebe48b38634daff4df2f687c7b12ea012473855654a23974",
     "785b01e980fc82c7e3532ce81876b778dd9f1ceeba4478e86411fb6fdd790683",
     "41187451383460762c06d1c8a72b9cd718866ad4b689e10c9a8c38fe5ef045bd",
-    "c30604945ae77a7b78be6669f22f8585e4fb786156e768c7bdbb61f36bab6de7",
+    "29b282fc176f50a35d352e7350d012d1dfe3bc6089a5ca7c169db12250098f82",
     "6d4fe42ea8d1a120c03cf9c50622c2afe4acb0dad98fd62d07ab4e828a94495f",
     "ced9a87b2a6a87e70bf251bb5075ab222138288164b2eda727515ea7de12e249",
     "909efab43c42c0cb00695fc7f1ffe67c75ca894c3c51e1e5e731360199e600f6",
@@ -704,29 +708,28 @@ In addition, the `pristine-input-proof` file now contains a JSON structure with 
     "c9695393027fb106a8153109ac516288a88b28a93817899460d6310b71cf1e61",
     "d8b96e5b7f6f459e9cb6a2f41bf276c7b85c10cd4662c04cbbb365434726c0a0"
   ],
-  "root_hash": "fd9bf57a285b13fe64f9af7a2c69c649c3288b4a682eff126ae1d54ced73e53f"
+  "root_hash": "20fd0a690ae6f506662c4692103b6949286a8c3cf256d4fc5305a7280c4122c9"
 }
 ```
-The `root_hash` value `fd9bf57a...` is the expected initial state hash seen in the output of the `cartesi-machine` command.
+The `root_hash` value `20fd0a69...` is the expected initial state hash seen in the output of the `cartesi-machine` command.
 The `address` value `10376293541461622784` is the same as `0x9000000000000000` in decimal.
 The `log2_size` value `12` refers to the size of the 4KiB input drive.
 The `target_hash` value `d8b96e5b7...` in the proof gives the hash of the input drive.
 
 The hash of the input drive can be also computed externally with the `merkle-tree-hash` command-line utility.
-The utility can produce the hash of any file with a power-of-two size.
+The utility can produce the hash of any file with a power-of-2 size.
 The `--tree-log2-size=<log2_size>` option specifies the size.
 If an input file is smaller than the specified size, the utility assumes the missing data is composed entirely of bytes 0.
-The utility deals efficiently with zero paddings of any size because pristine hashes for all power-of-two sizes can be precomputed.
+The utility deals efficiently with zero paddings of any size because pristine hashes for all power-of-2 sizes can be precomputed.
 For example, to quickly generate the hash for a pristine input with 4KiB size, run
 ```bash
-playground:~$ head -c 0 | merkle-tree-hash --tree-log2-size=12 
+playground:~$ head -c 0 | merkle-tree-hash --tree-log2-size=12
 d8b96e5b7f6f459e9cb6a2f41bf276c7b85c10cd4662c04cbbb365434726c0a0
 ```
-Indeed, the hash values match. 
-
+As expected, the hash values match.
 
 The <a name="sibling-hashes"> `sibling_hashes` </a> array contains the hashes of the siblings to all nodes in the path from the root all the way down to the target node (excluding the root, which has no sibling).
-Using the `address` field, the `target_hash` hash, and the `sibling_hashes` array, it is possible to go up the tree computing the hashes along the path, until the root hash is produced.
+In a process explained in the [blockchain perspective](../blockchain/hash.md), using the `address` field, the `target_hash` hash, and the `sibling_hashes` array, it is possible to go up the tree computing the hashes along the path, until the root hash is produced.
 If the root hash obtained by this process matches the expected root hash, the proof is valid.
 Otherwise, something is amiss.
 (Incidentally, from the hash of its sibling, the last entry in `sibling_hashes`, it is possible to ascertain that the neighboring range to the input drive also contains 4KiB of bytes 0.)
@@ -743,12 +746,11 @@ The results is the initial state hash for the instantiated template: the same th
 playground:~$ echo "6*2^1024 + 3*2^512" > input.raw
 playground:~$ truncate -s 4K input.raw
 playground:~$ cartesi-machine \
-    --flash-drive="label:input,length:1<<12,filename:input.raw" \
-    --flash-drive="label:output,length:1<<12" \
+    --load="calculator-template" \
+    --replace-flash-drive="start:0x9000000000000000,length:1<<12,filename:input.raw" \
     --initial-hash \
     --initial-proof="address:0x9000000000000000,log2_size:12,filename:input-proof" \
-	--max-mcycle=0 \
-    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z", io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
+	--max-mcycle=0
 ```
 
 The contents of the `input-proof` are
@@ -759,10 +761,10 @@ The contents of the `input-proof` are
   "log2_size": 12,
   "target_hash": "2c92c99754e85e3e2a29edd84228a62b051f9f55a5563f8decc7c6d5d9d8ef64",
   "sibling_hashes": [
-    "a3fa5940165e45cc6dbbe759a2b72f66df2e85b72ebc86ced3d7d1e321f0df5b",
+    "6cdc3f2abb6a2c34ebe48b38634daff4df2f687c7b12ea012473855654a23974",
     "785b01e980fc82c7e3532ce81876b778dd9f1ceeba4478e86411fb6fdd790683",
     "41187451383460762c06d1c8a72b9cd718866ad4b689e10c9a8c38fe5ef045bd",
-    "c30604945ae77a7b78be6669f22f8585e4fb786156e768c7bdbb61f36bab6de7",
+    "29b282fc176f50a35d352e7350d012d1dfe3bc6089a5ca7c169db12250098f82",
     "6d4fe42ea8d1a120c03cf9c50622c2afe4acb0dad98fd62d07ab4e828a94495f",
     "ced9a87b2a6a87e70bf251bb5075ab222138288164b2eda727515ea7de12e249",
     "909efab43c42c0cb00695fc7f1ffe67c75ca894c3c51e1e5e731360199e600f6",
@@ -812,30 +814,31 @@ The contents of the `input-proof` are
     "c9695393027fb106a8153109ac516288a88b28a93817899460d6310b71cf1e61",
     "d8b96e5b7f6f459e9cb6a2f41bf276c7b85c10cd4662c04cbbb365434726c0a0"
   ],
-  "root_hash": "020b26ea903908b9a51f43e6f6fccdd37e777755bbcdd936b769397ed56bcfdd"
+  "root_hash": "6a2194060cf66024e0af9172763fb5953c404b22cac9f96835589a199c2ecbf5"
 }
 ```
-The `target_hash` value `2c92c997...` reflects the hash computed for the input, whereas `root_hash` value `020b26ea90...` differs from `fd9bf57a...` obtained for template, as expected.
+The `target_hash` value `2c92c997...` reflects the hash computed for the input, whereas `root_hash` value `6a219406...` differs from `fd9bf57a...` obtained for template, as expected.
 Moreover, the `sibling_hashes` entries in the template Cartesi Machine and in the instantiated Cartesi Machine remain the same, reflecting the fact that there were no other changes in the machine's initial state.
 
 Another useful proof is the one for the *output* drive, once the machine is halted.
-To obtain this proof, run 
+To obtain this proof, run
 ```bash
 playground:~$ \rm -f output.raw
 playground:~$ truncate -s 4K output.raw
 playground:~$ echo "6*2^1024 + 3*2^512" > input.raw
 playground:~$ truncate -s 4K input.raw
 playground:~$ cartesi-machine \
-    --flash-drive="label:input,length:1<<12,filename:input.raw" \
-    --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \
+    --load="calculator-template" \
+    --replace-flash-drive="start:0x9000000000000000,length:1<<12,filename:input.raw" \
+    --replace-flash-drive="start:0xa000000000000000,length:1<<12,filename:output.raw,shared" \
     --final-hash \
-    --final-proof="address:0xa000000000000000,log2_size:12,filename:output-proof" \
-    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z", io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
+    --final-proof="address:0xa000000000000000,log2_size:12,filename:output-proof"
 ```
 
 This produces the output
 
 ```
+Loading machine: please wait
 
          .
         / \
@@ -849,8 +852,8 @@ This produces the output
 
 
 Halted
-Cycles: 67912443
-67912443: 0578418ba773152848e4b1e40bc3cdfd405401fd4c7e7f12a842c0234e3d9e51
+Cycles: 83169293
+83169293: 990020265b581010229f977904ddbe38a4cc34afb07da6480c250428dd2f3c2a
 ```
 The contents of the `output-proof` are
 ```js title="output-proof"
@@ -859,9 +862,9 @@ The contents of the `output-proof` are
   "log2_size": 12,
   "target_hash": "b15a6b8aab8a423c725f9ad55fd46c4481ba91008f3a01593192de37a7a41565",
   "sibling_hashes": [
-    "9eed8e881bed0efa65156b0cd34ea70028d8947ead10e019d5396eb2316a3a6a",
+    "3db78eac77cf335243659797ff113993dcbead70421efabb4592940ea6c7071f",
     "785b01e980fc82c7e3532ce81876b778dd9f1ceeba4478e86411fb6fdd790683",
-    "cf9f855cbc756aa222b23cea3b9180c51375971c15d38be51961950157d20fdb",
+    "09932f582ff0965661e38916829238564c9ff97e4470de55b1186fd5feeb7a29",
     "6d1ab973982c7ccbe6c1fae02788e4422ae22282fa49cbdb04ba54a7a238c6fc",
     "6d4fe42ea8d1a120c03cf9c50622c2afe4acb0dad98fd62d07ab4e828a94495f",
     "ced9a87b2a6a87e70bf251bb5075ab222138288164b2eda727515ea7de12e249",
@@ -912,21 +915,21 @@ The contents of the `output-proof` are
     "c9695393027fb106a8153109ac516288a88b28a93817899460d6310b71cf1e61",
     "d8b96e5b7f6f459e9cb6a2f41bf276c7b85c10cd4662c04cbbb365434726c0a0"
   ],
-  "root_hash": "0578418ba773152848e4b1e40bc3cdfd405401fd4c7e7f12a842c0234e3d9e51"
+  "root_hash": "990020265b581010229f977904ddbe38a4cc34afb07da6480c250428dd2f3c2a"
 }
 ```
-Note how the `root_hash` field in the proof matches the final state hash `0578418b...` output by the `cartesi-machine` command-line utility.
+Note how the `root_hash` field in the proof matches the final state hash `99002026...` output by the `cartesi-machine` command-line utility.
 
 To see that the `target_hash` field matches the `output.raw` drive, use the `merkle-tree-hash` command-line utility:
 ```bash
-merkle-tree-hash --tree-log2-size=12 < output.raw
+playground:~$ merkle-tree-hash --tree-log2-size=12 < output.raw
 b15a6b8aab8a423c725f9ad55fd46c4481ba91008f3a01593192de37a7a41565
 ```
 
 The `cartesi-machine` command-line utility accepts an arbitrary number of `--initial-proof` and `--final-proof` parameters.
-They are computed one-by-one, and either printed or stored in the specified files.
+They are computed one-by-one, and either printed or stored in the specified files, as requested.
 
-To read more about proofs, go to [the blockchain perspective](../blockchain/hash.md).
+To read more about proofs, refer to the [the blockchain perspective](../blockchain/hash.md).
 
 ## Rarely used options
 
@@ -937,7 +940,7 @@ This is an advanced section, not needed by regular users of the Cartesi platform
 The command-line option `--append-rom-bootargs=<string>` can be used to append any `<string>` to the kernel command-line.
 A detailed description of all kernel command-line parameters is beyond the scope of this document.
 Please refer to the appropriate [section of the kernel documentation](https://www.kernel.org/doc/html/v5.5/admin-guide/kernel-parameters.html).
-As an example, to prevent clutter in the console, the `cartesi-machine` utility automatically adds the `quiet` option to the kernel command-line, disabling most log messges.
+As an example, to prevent clutter in the console, the `cartesi-machine` utility automatically adds the `quiet` option to the kernel command-line, disabling most log messages.
 To override this setting and see more of the log messages output to console, use the `loglevel=<n>` parameter.
 ```bash
 playground:~$ cartesi-machine --append-rom-bootargs="loglevel=8"
@@ -956,7 +959,7 @@ The output is
          '
 
 [    0.000000] OF: fdt: Ignoring memory range 0x80000000 - 0x80200000
-[    0.000000] Linux version 5.5.4 (root@c3a04765fcba) (gcc version 9.2.0 (crosstool-NG 1.24.0.55-7bd6bb0)) #1 Wed May 20 18:07:30 UTC 2020
+[    0.000000] Linux version 5.5.19-ctsi-1 (root@8c5eb43bfd5a) (gcc version 10.1.0 (crosstool-NG 1.24.0.55-7bd6bb0)) #1 Mon Jun 29 03:23:47 UTC 2020
 [    0.000000] Zone ranges:
 [    0.000000]   DMA32    [mem 0x0000000080200000-0x0000000083feffff]
 [    0.000000]   Normal   empty
@@ -978,52 +981,50 @@ The output is
 [    0.000000] Inode-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
 [    0.000000] Sorting __ex_table...
 [    0.000000] mem auto-init: stack:off, heap alloc:off, heap free:off
-[    0.000000] Memory: 57652K/63424K available (3419K kernel code, 202K rwdata, 595K rodata, 128K init, 246K bss, 5772K reserved, 0K cma-reserved)
+[    0.000000] Memory: 57496K/63424K available (3572K kernel code, 201K rwdata, 603K rodata, 128K init, 242K bss, 5928K reserved, 0K cma-reserved)
 [    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
 [    0.000000] NR_IRQS: 0, nr_irqs: 0, preallocated irqs: 0
 [    0.000000] riscv_timer_init_dt: Registering clocksource cpuid [0] hartid [0]
 [    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x24e6a1710, max_idle_ns: 440795202120 ns
 [    0.000003] sched_clock: 64 bits at 10MHz, resolution 100ns, wraps every 4398046511100ns
-[    0.000049] Console: colour dummy device 80x25
-[    0.000475] printk: console [hvc0] enabled
-[    0.000494] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=100000)
-[    0.000522] pid_max: default: 32768 minimum: 301
-[    0.000595] Mount-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
-[    0.000616] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
-[    0.000986] devtmpfs: initialized
-[    0.001234] random: get_random_u32 called from bucket_table_alloc.isra.0+0x6c/0x11c with crng_init=0
-[    0.001343] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
-[    0.001370] futex hash table entries: 256 (order: 0, 6144 bytes, linear)
-[    0.001525] NET: Registered protocol family 16
-[    0.003198] clocksource: Switched to clocksource riscv_clocksource
-[    0.005218] NET: Registered protocol family 2
-[    0.005492] tcp_listen_portaddr_hash hash table entries: 256 (order: 0, 4096 bytes, linear)
-[    0.005519] TCP established hash table entries: 512 (order: 0, 4096 bytes, linear)
-[    0.005545] TCP bind hash table entries: 512 (order: 0, 4096 bytes, linear)
-[    0.005569] TCP: Hash tables configured (established 512 bind 512)
-[    0.005606] UDP hash table entries: 256 (order: 1, 8192 bytes, linear)
-[    0.005631] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes, linear)
-[    0.005698] NET: Registered protocol family 1
-[    0.005905] workingset: timestamp_bits=62 max_order=14 bucket_order=0
-[    0.023566] io scheduler mq-deadline registered
-[    0.023578] io scheduler kyber registered
-[    0.035886] physmap-flash 8000000000000000.flash: physmap platform flash device: [mem 0x8000000000000000-0x8000000003bfffff]
-[    0.035915] 1 cmdlinepart partitions found on MTD device flash.0
-[    0.035931] Creating 1 MTD partitions on "flash.0":
-[    0.035946] 0x000000000000-0x000003c00000 : "root"
-[    0.036377] NET: Registered protocol family 17
-[    0.036644] VFS: Mounted root (ext2 filesystem) on device 31:0.
-[    0.036689] devtmpfs: mounted
-[    0.036730] Freeing unused kernel memory: 128K
-[    0.036742] This architecture does not have kernel memory protection.
-[    0.036758] Run /sbin/init as init process
-[    0.046422] random: crng init done
+[    0.000053] Console: colour dummy device 80x25
+[    0.000462] printk: console [hvc0] enabled
+[    0.000480] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=100000)
+[    0.000508] pid_max: default: 32768 minimum: 301
+[    0.000573] Mount-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.000593] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.000946] devtmpfs: initialized
+[    0.001171] random: get_random_u32 called from bucket_table_alloc.isra.0+0x6c/0x11c with crng_init=0
+[    0.001238] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    0.001283] futex hash table entries: 256 (order: 0, 6144 bytes, linear)
+[    0.001433] NET: Registered protocol family 16
+[    0.002989] clocksource: Switched to clocksource riscv_clocksource
+[    0.004958] NET: Registered protocol family 2
+[    0.005211] tcp_listen_portaddr_hash hash table entries: 256 (order: 0, 4096 bytes, linear)
+[    0.005236] TCP established hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.005262] TCP bind hash table entries: 512 (order: 0, 4096 bytes, linear)
+[    0.005285] TCP: Hash tables configured (established 512 bind 512)
+[    0.005321] UDP hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.005345] UDP-Lite hash table entries: 256 (order: 1, 8192 bytes, linear)
+[    0.005409] NET: Registered protocol family 1
+[    0.005565] workingset: timestamp_bits=62 max_order=14 bucket_order=0
+[    0.035323] physmap-flash 8000000000000000.flash: physmap platform flash device: [mem 0x8000000000000000-0x8000000003bfffff]
+[    0.035350] 1 cmdlinepart partitions found on MTD device flash.0
+[    0.035366] Creating 1 MTD partitions on "flash.0":
+[    0.035380] 0x000000000000-0x000003c00000 : "root"
+[    0.035712] Cartesi Machine yield device: Module loaded
+[    0.035826] NET: Registered protocol family 17
+[    0.036020] VFS: Mounted root (ext2 filesystem) on device 31:0.
+[    0.036054] devtmpfs: mounted
+[    0.036095] Freeing unused kernel memory: 128K
+[    0.036106] This architecture does not have kernel memory protection.
+[    0.036122] Run /sbin/init as init process
+[    0.045544] random: crng init done
 Nothing to do.
-[    0.056408] reboot: Power down
+[    0.055441] reboot: Power down
 
 Halted
-Cycles: 61320352
-
+Cycles: 62495541
 ```
 
 The command-line option `--periodic-hashes=<number-period>[,<number-start>]` causes the command-line utility to periodically obtain and print the state hash.
@@ -1031,20 +1032,18 @@ The `<number-period>` argument gives the distance between hashes in cycles. The 
 
 For example, to see the last 10 state hashes from the calculator machine computation, run the command
 ```bash
-playground:~$ \rm -f output.raw
-playground:~$ truncate -s 4K output.raw
 playground:~$ echo "6*2^1024 + 3*2^512" > input.raw
 playground:~$ truncate -s 4K input.raw
 playground:~$ cartesi-machine \
-    --flash-drive="label:input,length:1<<12,filename:input.raw" \
-    --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \
-    --periodic-hashes=1,67912433 \
-    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z", io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
+    --load="calculator-template" \
+    --replace-flash-drive="start:0x9000000000000000,length:1<<12,filename:input.raw" \
+    --periodic-hashes=1,83169293
 ```
 The output is
 
 ```
-0: 020b26ea903908b9a51f43e6f6fccdd37e777755bbcdd936b769397ed56bcfdd
+Loading machine: please wait
+0: 6a2194060cf66024e0af9172763fb5953c404b22cac9f96835589a199c2ecbf5
 
          .
         / \
@@ -1056,20 +1055,20 @@ The output is
         \ /   MACHINE
          '
 
-67912433: 9074fe4d9cd41dc6c818d2b02730b74a2fb13539f0878ccbb88b22c63d0e1908
-67912434: e8aa7eaa8a29214e72807d9ab66449549c74479d515e5f69c4e32902eba49663
-67912435: c66d390c88bab8699fa75c4f77ae717614af57767df3f27f4c27c38130fb2cd3
-67912436: 7e3b5d30faabd9573054d88c24fd2316596b3a5473cfa4a7c7b38962eeb765d5
-67912437: 2e3aa5c5febfca14794e4515ab562268e5bde480abee174b7c64182ed0bd566c
-67912438: 3739848465eeb5fa75321eafa77f213bd00a4dfec95e437677443bb12596870e
-67912439: 5dc29759c379760078ad8f8600f051991ea23bc8e6db33ea1e167414c0568529
-67912440: 5ddfccd7201aa89de634752ff421701255c153a4969a8ba6e095967f931d992c
-67912441: 649b060ec26de25d3d3951549856e145668804903937dbd859bd40c949c53fd4
-67912442: 37b8d4aec3bc3f17f4233927494144039c6171df455b1f5a61450b450cf236bd
+83169283: 1217b4e6b04aadb23db523e738a5d9ee001dfb4a254584e1f13d72f18179beac
+83169284: db470083043e20efe28c7b5e75d133dd1f2abd05ddfb928b1159fc30322b612a
+83169285: 1456606a8aefd7038162e52dabe2bdb8cf4d3d74eb0d1967267e3a417f742b38
+83169286: 2d8c052459eeb04a51843b94d4911ca37ff3c6c568dc7d495b1eea7564fa2413
+83169287: 6a02a6815d53d10b123896908d2a476383f125a2bf74a6d20d78cfd3a5ae74d8
+83169288: f1ac0ba6c5f0c4b1541a6d98fec650bfa154f8df0553fe943c0cd389ff92d8a5
+83169289: 0e5e1672cc4be62503fdeb52642c02a6dba07023933218b545436dd130635e84
+83169290: b45262a44bff71e173863976b22f4efd2e73c0370542c24ca911d489767377f7
+83169291: 7a65b2a291df286e010172de69e4c93fa2e0a5f7cb8be1d2cc8ccfaf51287bc9
+83169292: 99f5fe391f938e82a0dc30150642314207f36a6a47dd42eaec9362ef00510ca1
 
 Halted
-Cycles: 67912443
-67912443: 0578418ba773152848e4b1e40bc3cdfd405401fd4c7e7f12a842c0234e3d9e51
+Cycles: 83169293
+83169293: 990020265b581010229f977904ddbe38a4cc34afb07da6480c250428dd2f3c2a
 ```
 
 The command-line option `--dump-pmas` causes the emulator to dump the contents of all mapped spans in the address space to files.
@@ -1095,102 +1094,103 @@ This log proves to the blockchain that the execution of the step transitions the
 
 The `--step` command-line option instructs `cartesi-machine` to dump to screen an abridged, user-friendly version of this state access log.
 
-For the sake of completeness, consider the example in which we stopped the Cartesi Machine while it drew the splash screen.
+For the sake of completeness, consider the example in which the Cartesi Machine was stopped while it drew the splash screen.
 The example below shows the step it was about to execute
 ```bash
 playground:~$ cartesi-machine \
-    --max-mcycle=695931 \
+    --max-mcycle=697842 \
     --step > /dev/null
 ```
 and produces the log
 ```
 
-Cycles: 695931
+Cycles: 697842
 Gathering step proof: please wait
 begin step
-  hash 841eaf0e
+  hash 71ea7fc2
   1: read iflags.H@0x1d0(464): 0x18(24)
-  hash 841eaf0e
+  hash 71ea7fc2
   2: read iflags.Y (superfluous)@0x1d0(464): 0x18(24)
-  hash 841eaf0e
+  hash 71ea7fc2
   3: write iflags.Y@0x1d0(464): 0x18(24) -> 0x18(24)
   begin raise_interrupt_if_any
-    hash 841eaf0e
+    hash 71ea7fc2
     4: read mip@0x170(368): 0x0(0)
-    hash 841eaf0e
+    hash 71ea7fc2
     5: read mie@0x168(360): 0x8(8)
   end raise_interrupt_if_any
   begin fetch_insn
-    hash 841eaf0e
-    6: read pc@0x100(256): 0x80002e8c(2147495564)
+    hash 71ea7fc2
+    6: read pc@0x100(256): 0x80002fb0(2147495856)
     begin translate_virtual_address
-      hash 841eaf0e
+      hash 71ea7fc2
       7: read iflags.PRV@0x1d0(464): 0x18(24)
-      hash 841eaf0e
+      hash 71ea7fc2
       8: read mstatus@0x130(304): 0xa00001800(42949679104)
     end translate_virtual_address
     begin find_pma_entry
-      hash 841eaf0e
+      hash 71ea7fc2
       9: read pma.istart@0x800(2048): 0x800000f9(2147483897)
-      hash 841eaf0e
+      hash 71ea7fc2
       10: read pma.ilength@0x808(2056): 0x4000000(67108864)
     end find_pma_entry
-    hash 841eaf0e
-    11: read memory@0x80002e88(2147495560): 0xa7b0231e47b783(47199985989040003)
+    hash 71ea7fc2
+    11: read memory@0x80002fb0(2147495856): 0x7378300f6b023(2031360633384995)
   end fetch_insn
   begin sd
-    hash 841eaf0e
-    12: read x@0x78(120): 0x40008000(1073774592)
-    hash 841eaf0e
-    13: read x@0x50(80): 0x10100000000000a(72339069014638602)
+    hash 71ea7fc2
+    12: read x@0x68(104): 0x40008000(1073774592)
+    hash 71ea7fc2
+    13: read x@0x78(120): 0x10100000000000a(72339069014638602)
     begin translate_virtual_address
-      hash 841eaf0e
+      hash 71ea7fc2
       14: read iflags.PRV@0x1d0(464): 0x18(24)
-      hash 841eaf0e
+      hash 71ea7fc2
       15: read mstatus@0x130(304): 0xa00001800(42949679104)
     end translate_virtual_address
     begin find_pma_entry
-      hash 841eaf0e
+      hash 71ea7fc2
       16: read pma.istart@0x800(2048): 0x800000f9(2147483897)
-      hash 841eaf0e
+      hash 71ea7fc2
       17: read pma.ilength@0x808(2056): 0x4000000(67108864)
-      hash 841eaf0e
+      hash 71ea7fc2
       18: read pma.istart@0x810(2064): 0x1069(4201)
-      hash 841eaf0e
+      hash 71ea7fc2
       19: read pma.ilength@0x818(2072): 0xf000(61440)
-      hash 841eaf0e
+      hash 71ea7fc2
       20: read pma.istart@0x820(2080): 0x80000000000002d9(9223372036854776537)
-      hash 841eaf0e
+      hash 71ea7fc2
       21: read pma.ilength@0x828(2088): 0x3c00000(62914560)
-      hash 841eaf0e
+      hash 71ea7fc2
       22: read pma.istart@0x830(2096): 0x4000841a(1073775642)
-      hash 841eaf0e
+      hash 71ea7fc2
       23: read pma.ilength@0x838(2104): 0x1000(4096)
     end find_pma_entry
-    hash 841eaf0e
+    hash 71ea7fc2
     24: write htif.tohost@0x40008000(1073774592): 0x10100000000000d(72339069014638605) -> 0x10100000000000a(72339069014638602)
-    hash d24bec21
+    hash ada956d8
     25: write htif.fromhost@0x40008008(1073774600): 0x0(0) -> 0x101000000000000(72339069014638592)
-    hash 2f707645
-    26: write pc@0x100(256): 0x80002e8c(2147495564) -> 0x80002e90(2147495568)
+    hash fd2c5f9e
+    26: write pc@0x100(256): 0x80002fb0(2147495856) -> 0x80002fb4(2147495860)
   end sd
-  hash d39b5b4d
-  27: read minstret@0x128(296): 0xa9e7a(695930)
-  hash d39b5b4d
-  28: write minstret@0x128(296): 0xa9e7a(695930) -> 0xa9e7b(695931)
-  hash a3294909
-  29: read mcycle@0x120(288): 0xa9e7b(695931)
-  hash a3294909
-  30: write mcycle@0x120(288): 0xa9e7b(695931) -> 0xa9e7c(695932)
+  hash c55d3813
+  27: read minstret@0x128(296): 0xaa5f1(697841)
+  hash c55d3813
+  28: write minstret@0x128(296): 0xaa5f1(697841) -> 0xaa5f2(697842)
+  hash d66b55f0
+  29: read mcycle@0x120(288): 0xaa5f2(697842)
+  hash d66b55f0
+  30: write mcycle@0x120(288): 0xaa5f2(697842) -> 0xaa5f3(697843)
 end step
 ```
 Understanding these logs in detail is unnecessary for all but the most low-level internal development at Cartesi.
 It requires deep knowledge of not only RISC-V architecture, but also how Cartesi's emulator implements it.
-The material is beyond the scope of this document.
-In this particular example, however, was hand-picked for illustration purposes.
+The material is therefore beyond the scope of this document.
+
+This particular example, however, was hand-picked for illustration purposes.
 The RISC-V instruction being executed, `sd`, writes the 64-bit word `0x010100000000000a` to address `0x40008000` (access&nbsp;#24).
 This is the memory-mapped address of HTIF's `tohost` CSR.
-The value refers to the console subdevice (`DEV=0x01`) , command `putchar` (`CMD=0x01`), and causes the device to output a line-feed (`DATA=0x0a`).
+The value refers to the console subdevice (`DEV=0x01`) , command `putchar` (`CMD=0x01`), and causes the device to output a line-feed (`DATA=0x0a`) to the emulator's console.
 I.e., the instruction is completing the row `       \    / CARTESI` in the splash screen.
 
 The command-line option `--json-log=<filename>` outputs a machine-readable version of the step log *for each cycle* executed by the emulator.
