@@ -69,14 +69,8 @@ module.exports = {
       label: "Tutorials",
       items: [
         "tutorials/introduction",
-        {
-          type: "category",
-          label: "Requirements",
-          items: [
-            "tutorials/requirements/general",
-            "tutorials/requirements/descartes-env"
-          ],
-        },
+        "tutorials/requirements",
+        "tutorials/descartes-env",
         {
           type: "category",
           label: "Hello World DApp",

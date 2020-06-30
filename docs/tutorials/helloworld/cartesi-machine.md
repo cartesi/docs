@@ -115,7 +115,7 @@ ls stored_machine/
 
 ## Final implementation
 
-Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Descartes nodes running inside the [Descartes SDK Environment](../requirements/descartes-env.md).
+Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Descartes nodes running inside the [Descartes SDK Environment](../descartes-env.md).
 
 In order to do that, we'll code a handy shell script that wraps it all up, so that it's easy to make changes to the machine if desired.
 
@@ -181,7 +181,7 @@ mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
 
 This script accepts an optional parameter specifying where the stored machine contents should be moved to. This is useful to specify the directory where the Descartes nodes effectively read stored machines. Moreover, the nodes expect machine directories to be named after the machine's template hash, so the script makes use of the `cartesi-machine-stored-hash` tool, available within the playground Docker, to extract that hash from the stored contents and properly name the final directory name.
 
-Finally, if the [Descartes SDK Environment](../requirements/descartes-env.md) is running in a relative directory at `../descartes-env`, we can build the Hello World machine and make it available to the Descartes nodes by running:
+Finally, if the [Descartes SDK Environment](../descartes-env.md) is running in a relative directory at `../descartes-env`, we can build the Hello World machine and make it available to the Descartes nodes by running:
 
 ```
 ./build-cartesi-machine.sh ../descartes-env/machines
