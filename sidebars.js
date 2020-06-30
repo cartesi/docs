@@ -50,7 +50,6 @@ module.exports = {
         "descartes/how",
         "descartes/architecture",
         "descartes/wallet",
-        "descartes/workflow",
         "descartes/timeline",
         "descartes/machine-offchain",
         "descartes/machine-onchain",
@@ -60,9 +59,9 @@ module.exports = {
         "descartes/provider",
         "descartes/logger_drive",
         "descartes/off-chain-api",
+        "descartes/workflow",
         "descartes/topologies",
         "descartes/services",
-        "descartes/configurations",
       ],
     },
     {

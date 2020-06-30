@@ -32,9 +32,9 @@ The logger is used to input larger drives into the machine.
 Without enabling the logger, only drives of 32 bytes are supported.
 Since the logger will be described a later [section](./logger_drive), one can focus now on the `directValue` functionality of this field.
 
-Without using the logger, the drive is restricted to 32 byte and the field `directValueOrLoggerRoot` gives the content of this drive directly during the `instantiate` call.
+Without using the logger, the drive is restricted to 32 bytes and the field `directValueOrLoggerRoot` gives the content of this drive directly during the `instantiate` call.
 
-At this point, one can already specify input small input drives (of 32 bytes each) for a Cartesi Machine.
+At this point, one can already specify small input drives (of 32 bytes each) for a Cartesi Machine.
 This already greatly expands the range of applications of Descartes.
 To do this, one can simply not initialize the other fields of `Drive`, such as in this initialization example:
 ```
@@ -51,8 +51,7 @@ In the above example, a drive is specified at position `0x8000000000000000` and 
 
 
 But there are two limitations to this way of dealing with the content of the drives:
-- first, these contents have to be available right at the time of initialization;
-- second, the drives are currently limited to 32 bytes.
+- First, these contents have to be available right at the time of initialization;
+- Second, the drives are currently limited to 32 bytes.
 
 The two next sections describe how to overcome these limitations.
-

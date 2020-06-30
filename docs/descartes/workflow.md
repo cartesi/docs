@@ -1,8 +1,8 @@
 ---
-title: Workflow
+title: Putting Things Together
 ---
 
-To understand how Descartes is used, consider a basic Cartesi DApp setup, with one claimer and one challenger. The application can be, for instance, a skill-based game where players place their bets and challenge each other for the highest score over the blockchain. The winner takes the pot.
+To better understand how Descartes can be used, imagine the following simple Cartesi DApp with one claimer and one challenger. The DApp can be a skill-based game where players place their bets and challenge each other for the highest score over the blockchain. The winner takes the pot.
 
 Typically, a blockchain DApp is composed of a set of smart contracts and an off-chain client that interacts with these contracts through HTTP calls sent to the blockchain node, that is either locally or remotely hosted.
 

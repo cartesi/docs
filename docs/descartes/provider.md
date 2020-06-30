@@ -11,7 +11,7 @@ This section describes an alternative to this, in which some user (here called *
 This functionality will make use of two other fields of the `Drive` struct: `needsProvider` and `provider`.
 
 These fields are very intuitive to use:
-- `needsProvider` is a Boolean value indicating the need to have someone provide the value at a later time
+- `needsProvider` is a Boolean value indicating the need to have someone provide the value at a later time;
 - `provider` stands for the address of the provider who has the authorization to fill that value.
 
 When using the *provider* feature, the field `directValueOrLoggerRoot` will be ignored during instantiation and it is wise to leave it empty as in the following example.
