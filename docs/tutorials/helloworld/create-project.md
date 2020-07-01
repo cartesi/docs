@@ -15,7 +15,14 @@ In order to do that, we will start by creating a basic project with a smart cont
 
 ## Initializing the DApp project
 
-First of all, create a directory called `helloworld`, and run the following command to initialize a new project using Truffle:
+First of all, create a directory called `helloworld` and `cd` into it
+
+```
+mkdir helloworld
+cd helloworld
+```
+
+Then,  run the following command to initialize a new project using Truffle:
 
 ```bash
 truffle init
@@ -69,7 +76,7 @@ yarn add @truffle/contract
 
 At this point, we can start effectively writing our DApp's smart contract in Solidity.
 
-In order to do that, first create a file inside the `./contracts` directory, and call it `HelloWorld.sol`. Then place the following contents into it:
+In order to do that, first create a file inside the `helloworld/contracts` directory, and call it `HelloWorld.sol`. Then place the following contents into it:
 
 ```javascript
 pragma solidity >=0.4.25 <0.7.0;
