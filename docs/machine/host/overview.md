@@ -197,6 +197,6 @@ playground:~$ md5sum /opt/cartesi/share/images/rootfs.ext2
 Inside the container, which runs as the current user, the documentation directory is shared as the home directory.
 Alternatively, to download the images directly from Cartesi's repository (bypassing the build) and run the container as root with no sharing, use
 ```bash
-$ docker pull cartesi/playground:0.1.0
-$ docker run -it -h playground cartesi/playground /bin/bash
+$ docker pull cartesi/playground:0.1.1
+$ docker run -it -h playground cartesi/playground:0.1.1 /bin/bash
 ```

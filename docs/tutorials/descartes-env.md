@@ -35,8 +35,8 @@ The Descartes SDK Environment is available on [Cartesi's Github repo](https://gi
 You can download and extract a ready-to-use artifact by executing:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/releases/download/v0.1.0/descartes-env-0.1.0.tar.gz
-tar -xzvf descartes-env-0.1.0.tar.gz
+wget https://github.com/cartesi/descartes-tutorials/releases/download/v0.1.1/descartes-env-0.1.1.tar.gz
+tar -xzvf descartes-env-0.1.1.tar.gz
 ```
 
 Then, start it up by running:

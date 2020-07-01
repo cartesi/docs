@@ -22,7 +22,7 @@ To illustrate how we are going to use it, try executing the following command:
 
 ```bash
 docker run \
-  --rm cartesi/playground cartesi-machine \
+  --rm cartesi/playground:0.1.1 cartesi-machine \
     -- $'echo Hello World!'
 ```
 
@@ -69,7 +69,7 @@ docker run \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  --rm cartesi/playground cartesi-machine \
+  --rm cartesi/playground:0.1.1 cartesi-machine \
     --append-rom-bootargs="quiet" \
     --max-mcycle=0 \
     --initial-hash \
@@ -120,7 +120,7 @@ Edit the file and place the following contents in it:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.1.1
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
