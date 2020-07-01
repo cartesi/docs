@@ -12,11 +12,11 @@ title: Hello World Cartesi Machine
 
 Now that we have [built our basic DApp project](./create-project.md), we will shift our focus towards the off-chain part of the DApp.
 
-As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template]("../machine/intro.md)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
+As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template](../../machine/intro.md)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
 
 ## Cartesi Playground
 
-In order to specify and test our Cartesi Machine, we will make use of the `cartesi/playground` Docker image already showcased in the [Cartesi Machine host perspective section](../machine/host/overview.md). With the playground, we will take advantage of numerous [Cartesi Machine features available at the command line interface](../machine/host/cmdline.md).
+In order to specify and test our Cartesi Machine, we will make use of the `cartesi/playground` Docker image already showcased in the [Cartesi Machine host perspective section](../../machine/host/overview.md). With the playground, we will take advantage of numerous [Cartesi Machine features available at the command line interface](../../machine/host/cmdline.md).
 
 To illustrate how we are going to use it, try executing the following command:
 
@@ -96,7 +96,7 @@ Cycles: 0
 Storing machine: please wait
 ```
 
-This informs us that the machine's initial template hash is `1697a8f2...`, that the it did not run any cycles, and that it stored the machine specification. Looking within the specified `stored_machine` directory, we can indeed verify that the machine's contents were stored there:
+This informs us that the machine's initial template hash is `67713d54...`, that the it did not run any cycles, and that it stored the machine specification. Looking within the specified `stored_machine` directory, we can indeed verify that the machine's contents were stored there:
 
 ```
 ls stored_machine/

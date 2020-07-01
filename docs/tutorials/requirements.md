@@ -8,7 +8,7 @@ title: General Requirements
 
 In order to run the tutorials, we must first make sure that the packages listed in this section are all installed and working in your system.
 
-As we mentioned earlier, The Descartes Tutorials will provide _every single command_ that you need to run in your shell to turn an Ubuntu machine into a fully-fledged Cartesi development environment. That is, if you are starting with a fresh copy of the latest Ubuntu LTS installed in your machine, you should never need to leave this tutorial for an external website to get something installed. And if some tutorial step doesn't work for you, and you have tried it in a clean Ubuntu LTS installation, then that could be a bug in the tutorials, and you can discuss it in our [Discord channel](learning-resources#public-support-chat)).
+As we mentioned earlier, The Descartes Tutorials will provide _every single command_ that you need to run in your shell to turn an Ubuntu machine into a fully-fledged Cartesi development environment. That is, if you are starting with a fresh copy of the latest Ubuntu LTS installed in your machine, you should never need to leave this tutorial for an external website to get something installed. And if some tutorial step doesn't work for you, and you have tried it in a clean Ubuntu LTS installation, then that could be a bug in the tutorials, and you can discuss it in our [Discord channel](https://discordapp.com/invite/Pt2NrnS)).
 
 ## Docker
 
@@ -71,7 +71,7 @@ docker-compose --version
 
 ## Node.js and NPM
 
-[Node.js](https://nodejs.org/) is a very popular asynchronous event-driven JavaScript runtime, and is often distributed along with the [NPM package manager](npmjs.com). These are required for running [Yarn](#Yarn) and [Truffle](#Truffle).
+[Node.js](https://nodejs.org/) is a very popular asynchronous event-driven JavaScript runtime, and is often distributed along with the [NPM package manager](https://npmjs.com). These are required for running [Yarn](#yarn) and [Truffle](#truffle).
 
 To install Node.js, follow [the official instructions](https://nodejs.org/en/download/). Specifically for Ubuntu, you can perform the steps below:
 

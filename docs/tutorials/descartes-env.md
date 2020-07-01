@@ -9,7 +9,7 @@ title: Descartes SDK Environment
 
 ## Overview
 
-As described in detail in the [Descartes SDK section](../descartes/introduction.md), a Descartes DApp requires that a certain set of components and resources be available in order to effectively run. Moreover, there are numerous alternative [topologies](../descartes/topoligies.md) in which this architecture can be deployed depending on the users' interests and resources.
+As described in detail in the [Descartes SDK section](../descartes/overview.md), a Descartes DApp requires that a certain set of components and resources be available in order to effectively run. Moreover, there are numerous alternative [topologies](../descartes/topologies.md) in which this architecture can be deployed depending on the users' interests and resources.
 
 However, for the purposes of these tutorials (and general rapid Descartes DApp prototyping), the Cartesi team has provided a ready-to-use *Descartes SDK Environment* with all the on-chain and off-chain components necessary to build a Descartes DApp out-of-the-box. This environment is configured for a scenario with two actors, denominated `alice` and `bob`, who will respectively perform the roles of *claimer* and *challenger* for all Descartes computations.
 
@@ -30,7 +30,7 @@ For each of the two actors, `alice` and `bob`, the environment provides a corres
 
 ## Download and run
 
-The Descartes SDK Environment is available on [Cartesi's Github repo](https://github.com/cartesi-corp/descartes-tutorials/).
+The Descartes SDK Environment is available on [Cartesi's Github repo](https://github.com/cartesi/descartes-tutorials/).
 
 You can download and extract a ready-to-use artifact by executing:
 
