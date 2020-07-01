@@ -71,12 +71,13 @@ docker-compose --version
 
 ## Node.js and NPM
 
-[Node.js](https://nodejs.org/) is a very popular asynchronous event-driven JavaScript runtime, and is distributed along with the [NPM package manager](npmjs.com). These are required for running [Yarn](#Yarn) and [Truffle](#Truffle).
+[Node.js](https://nodejs.org/) is a very popular asynchronous event-driven JavaScript runtime, and is often distributed along with the [NPM package manager](npmjs.com). These are required for running [Yarn](#Yarn) and [Truffle](#Truffle).
 
 To install Node.js, follow [the official instructions](https://nodejs.org/en/download/). Specifically for Ubuntu, you can perform the steps below:
 
 ```bash
-sudo apt-get update && sudo apt-get install nodejs
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt-get install -y nodejs
 ```
 
 And then test them:
