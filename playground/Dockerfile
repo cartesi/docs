@@ -19,7 +19,7 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy emulator, toolchain, buildroot and kernel
-COPY --from=cartesi/machine-emulator:0.5.0 /opt/cartesi /opt/cartesi
+COPY --from=cartesi/machine-emulator:0.5.1 /opt/cartesi /opt/cartesi
 COPY --from=cartesi/toolchain:0.3.0 /opt/riscv /opt/riscv
 COPY --from=cartesi/linux-kernel:0.5.0 /opt/riscv/kernel/artifacts/linux-5.5.19-ctsi-1.bin /opt/cartesi/share/images/
 COPY --from=cartesi/rootfs:0.4.0 /opt/riscv/rootfs/artifacts/rootfs.ext2 /opt/cartesi/share/images/
