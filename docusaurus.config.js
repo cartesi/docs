@@ -15,6 +15,7 @@ module.exports = {
   projectName: "cartesi", // Usually your repo name.
   themeConfig: {
     defaultDarkMode: false,
+    disableDarkMode: true,
     navbar: {
       logo: {
         alt: "Cartesi Logo",

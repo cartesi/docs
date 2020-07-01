@@ -23,4 +23,18 @@
   --ifm-link-decoration: underline;
 }
 
+
+.navbar--fixed-top{
+    height: 90px;
+}
+
+.navbar__brand {
+    height: 3rem;
+    margin-left: 2rem;
+}
+
+.footer--dark {
+    background: linear-gradient(178.26deg,#060505 22.29%,#454545 104.81%);
+}
+
 code { white-space: pre; }
