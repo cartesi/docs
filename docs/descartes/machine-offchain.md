@@ -10,9 +10,7 @@ qemu linux-0.2.img
 ```
 where the `linux-0.2.img` file contains all the information describing this machine and how to run it. It also contains the Linux kernel itself and several utilities that were considered useful when building the machine.
 
-In the case of a Cartesi Machine, its specification is given through a folder [fill this paragraph with information from Diego’s part]. [give also a link for the reader to download a finished machine to play with].
-
-But contrary to the QEMU example above, Cartesi Machines are not interactive. Instead, they are supposed to boot, bring up the operating system, execute some predefined software and then halt. Therefore, instead of jumping to a bash session, running a Cartesi Machine does not produce any visual effect:
+Contrary to the QEMU example above, Cartesi Machines are not interactive. Instead, they are supposed to boot, bring up the operating system, execute some predefined software and then halt. Therefore, instead of jumping to a bash session, running a Cartesi Machine does not produce any visual effect:
 ```
 write example of running a Cartesi Machine.
 ```
