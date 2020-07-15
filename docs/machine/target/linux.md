@@ -3,11 +3,11 @@ title: Linux environment
 ---
 
 :::note
-The host perspective describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines.
+The host perspective describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines, as presented in the [host perspective section](../../host/overview/).
 In order to avoid repetition, this section assumes familiarity with the material presented there.
 :::
 
-The most direct way for target developers to familiare themselves with the embedded Linux environment is to run the Cartesi Machine emulator in interactive mode.
+The most direct way for target developers to familiarize themselves with the embedded Linux environment is to run the Cartesi Machine emulator in interactive mode.
 The `cartesi/playground` Docker image comes pre-installed with the emulator and all its support files.
 Inside the playground, the following command instructs the emulator to load the default machine configuration and run a shell in interactive mode
 
@@ -119,8 +119,8 @@ cartesi-machine:/usr/bin # exit
 Halted
 Cycles: 21274478193
 ```
-The session shows a user changing the the working directory to `/usr/bin/` and listing its contents.
-The user then does the same with directory `/bin/`, before finally leaving the emulator with the `exit` command.
+The session shows a user changing the working directory to `/bin/` and listing its contents.
+The user then does the same with directory `/usr/bin/`, before finally leaving the emulator with the `exit` command.
 The point of the exercise is that, from the inside, the environment will be familiar to any regular Unix user.
 
 One of the key differences is that, unlike stand-alone systems, most embedded systems are not self-hosting.
@@ -157,7 +157,7 @@ The resulting file is a RISC-V executable suitable for running on the target:
 
 ```bash
 playground:~$ file hello-cpp
-hello: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-riscv64-lp64.so.1, for GNU/Linux 4.20.8, with debug_info, not stripped
+hello-cpp: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-riscv64-lp64.so.1, for GNU/Linux 5.5.19, with debug_info, not stripped
 ```
 If the bare `gcc` command was used instead, the resulting binary would be suitable for running on the host.
 
@@ -198,7 +198,7 @@ The output is
 5: Hello world from C++!
 
 Halted
-Cycles: 74465415
+Cycles: 73801178
 ```
 
 One of the advantages of running Linux is the large number of well-established software development tools available.
