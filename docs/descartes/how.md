@@ -10,7 +10,7 @@ Cartesi offers developers all the power of Linux when implementing the logic of 
 
 The Cartesi Machine is similar in spirit to a virtualization solution like VirtualBox, KVM or VMWare. Inside of it, there is an operating system, hard drives, programs and data. Moreover, Cartesi machines come with the important feature of being fully reproducible, which is an essential ingredient for consensus and dispute resolutions.
 
-A reference documentation on this component is available [here](../machine/intro.md), which includes several examples and use cases. Moreover, a tutorial on how to build a simple machine can be found [here](../tutorials/helloworld/cartesi-machine.md).
+A reference documentation on this component is available [here](../../machine/intro/), which includes several examples and use cases. Moreover, a tutorial on how to build a simple machine can be found [here](../../tutorials/helloworld/cartesi-machine/).
 
 For the purpose of this section, one can think of a Cartesi Machine as a black box. A Virtual Machine with a set of input drives and a single output drive. When switched on, the machine boots a Linux operating system and passes the control to the software coded by the developer. This program is able to read the content of the input drives using traditional file operations available in any major programming language, process them and write results to the output drive.
 

@@ -39,7 +39,7 @@ It can be built in the `fs/` directory in the Emulator SDK.
 The DApp components can reside in the root file-system itself, or in their own, separate file-system.
 Additional flash drives can be used as the DApp input and output, either containing file-systems or containing raw data.
 The emulator can be instructed to execute whatever computation the DApp wishes to perform inside the Cartesi Machine.
-For a complete description of the Cartesi Machine architecture and the boot process, see the documentation for [the target perspective](../target/overview.md).
+For a complete description of the Cartesi Machine architecture and the boot process, see the documentation for [the target perspective](../../target/overview/).
 
 ## Machine playground
 

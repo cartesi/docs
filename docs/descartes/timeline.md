@@ -15,7 +15,7 @@ Instantiate
 The `instantiate` call requests the Descartes infrastructure to perform an off-chain computation.
 
 This function call includes all the necessary data to specify the computation, as well as the interested parties.
-The details of the `instantiate` parameters and usage are specified in the [Instantiate Section](./instantiate.md).
+The details of the `instantiate` parameters and usage are specified in the [Instantiate Section](../instantiate/).
 
 For now, it is sufficient to understand in broad terms the parameters specified in the `instantiate` call:
 - Who are the parties involved in the requested computation (claimer and challenger);

@@ -10,13 +10,13 @@ title: Hello World Cartesi Machine
 
 ## Introduction
 
-Now that we have [built our basic DApp project](./create-project.md), we will shift our focus towards the off-chain part of the DApp.
+Now that we have [built our basic DApp project](../create-project/), we will shift our focus towards the off-chain part of the DApp.
 
-As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template](../../machine/intro.md)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
+As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template](../../../machine/intro/)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
 
 ## Cartesi Playground
 
-In order to specify and test our Cartesi Machine, we will make use of the `cartesi/playground` Docker image already showcased in the [Cartesi Machine host perspective section](../../machine/host/overview.md). With the playground, we will take advantage of numerous [Cartesi Machine features available at the command line interface](../../machine/host/cmdline.md).
+In order to specify and test our Cartesi Machine, we will make use of the `cartesi/playground` Docker image already showcased in the [Cartesi Machine host perspective section](../../../machine/host/overview/). With the playground, we will take advantage of numerous [Cartesi Machine features available at the command line interface](../../../machine/host/cmdline/).
 
 To illustrate how we are going to use it, try executing the following command:
 
@@ -105,7 +105,7 @@ ls stored_machine/
 
 ## Final implementation
 
-Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Descartes nodes running inside the [Descartes SDK Environment](../descartes-env.md).
+Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Descartes nodes running inside the [Descartes SDK Environment](../../descartes-env).
 
 In order to do that, we'll code a handy shell script that wraps it all up, so that it's easy to make changes to the machine if desired. Create a file called `build-cartesi-machine.sh` inside our `helloworld` project home directory, and make sure it is executable:
 
@@ -163,7 +163,7 @@ mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
 
 This script accepts an optional parameter specifying where the stored machine contents should be moved to. This is useful to specify the directory where the Descartes nodes effectively read stored machines. Moreover, the nodes expect machine directories to be named after the machine's template hash, so the script makes use of the `cartesi-machine-stored-hash` tool, available within the playground Docker, to extract that hash from the stored contents and properly name the final directory name.
 
-Finally, if the [Descartes SDK Environment](../descartes-env.md) is running in a relative directory at `../descartes-env`, we can build the Hello World machine and make it available to the Descartes nodes by running:
+Finally, if the [Descartes SDK Environment](../../descartes-env/) is running in a relative directory at `../descartes-env`, we can build the Hello World machine and make it available to the Descartes nodes by running:
 
 ```
 ./build-cartesi-machine.sh ../descartes-env/machines

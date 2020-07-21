@@ -176,7 +176,7 @@ This mechanism is used by stateful Cartesi Machines.
 The other entries in the `machine_config` are used only in rare occasions.
 The devices and processor have a variety of control and status registers (CSRs), in addition to processor's general-purpose registers.
 Most of these are defined in the RISC-V [user-level ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) and [privileged architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf) specifications.
-The Cartesi-specific additions are described under the target perspective [architecture](../target/architecture.md).
+The Cartesi-specific additions are described under the target perspective [architecture](../../target/architecture/).
 
 The fields `tohost` and `fromhost` in `htif` allow for the overriding of the default initial values of these CSRs.
 The <a href="#clint_config">`clint`</a> entry has a single field, `mtimecmp`, which allows for the overriding of the default initial value of this CSR.
@@ -640,7 +640,7 @@ However, it needs is a mechanism to communicate its progress back to the program
 
 The command-line utility `/opt/cartesi/bin/yield` can be used for this purpose.
 Internally, the tool uses an `ioctl` system-call on the Cartesi-specific `/dev/yield` device.
-The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF  Yield device are explained in detail under the [target perspective](../target/architecture.md).
+The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF  Yield device are explained in detail under the [target perspective](../../target/architecture/).
 The focus here is on its effect on the host program controlling the emulator.
 
 A Cartesi Machine can be configured to accept HTIF yield progress commands by means of the `htif.yield_progress` Boolean field in the machine configuration.
@@ -855,7 +855,7 @@ The selected range *must* reside entirely inside ROM, entirely inside RAM, or en
 
 There are also methods for reading individual registers.
 Most registers are part of the [RISC-V ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf), and its [privileged architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf).
-Cartesi-specific registers are described under the target perspective sections that cover the [processor](../target/processor.md) and [board](../target/board.md) of the Cartesi Machine architecture.
+Cartesi-specific registers are described under the target perspective sections that cover the [processor](../../target/processor/) and [board](../../target/board/) of the Cartesi Machine architecture.
 
 The method `machine:read_x(<index>)`, where `<index>` is in 0&hellip;31 returns the value of one of the 32 general-purpose processor registers.
 
@@ -1167,7 +1167,7 @@ This is an advanced section, not needed by regular users of the Cartesi platform
 :::
 
 During verification, the blockchain mediates a *verification game* between the disputing parties.
-This process is explained in detail under the [the blockchain perspective](../blockchain/vg.md).
+This process is explained in detail under the [the blockchain perspective](../../blockchain/vg/).
 In a nutshell, both parties started from a Cartesi Machine that has a known and agreed upon initial state hash.
 (E.g., an agreed upon template that was instantiated with an agreed upon input drive.)
 At the end of the computation, these parties now disagree on the state hash for the halted machine.

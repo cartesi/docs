@@ -47,7 +47,7 @@ docker --version
 
 ## Docker Compose
 
-[Docker Compose](https://docs.docker.com/compose/) is a tool that allows us to start multiple Docker containers simultaneously and set up communication between them. With Compose, we can emulate the entire [Descartes SDK environment](./descartes-env.md) (both of all off-chain and on-chain components, including the local "testnet" blockchain itself), and thus test our Descartes DApps using only your physical development machine.
+[Docker Compose](https://docs.docker.com/compose/) is a tool that allows us to start multiple Docker containers simultaneously and set up communication between them. With Compose, we can emulate the entire [Descartes SDK environment](../descartes-env/) (both of all off-chain and on-chain components, including the local "testnet" blockchain itself), and thus test our Descartes DApps using only your physical development machine.
 
 Follow the [official instructions for installing Compose](https://docs.docker.com/compose/install/) from the Docker website. To make the official site display the instructions for installing on Ubuntu, click on the `Linux` tab under the `Install Compose` section. A subsection named `Install Compose on Linux systems` should appear, and you can follow those. The Docker Compose Linux installation instructions boil down to running the following commands.
 

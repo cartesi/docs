@@ -11,5 +11,5 @@ title: Introduction
 
 All of the tutorials and their suggested steps have been applied, in the order suggested by the navigation bar on the left, to a fresh [Ubuntu 18.04.3 LTS](http://releases.ubuntu.com/18.04/) installation. As such, if you follow the tutorials in the suggested order and correctly reproduce all of the steps in your local development environment, then every step should work, unchanged. However, if you're not running an Ubuntu LTS, or if you're not starting a development environment from scratch, you may need to do a bit of adaptation or maintenance to get the Descartes development environment working with what you have in your development machine.
 
-In the following sections, we will first go through [general requirements](./requirements.md) needed to run the tutorials. Then, we will get a full [Descartes SDK Environment](./descartes-env.md) up and running, before we dive into our first [Hello World DApp tutorial](./helloworld/create-project.md)
+In the following sections, we will first go through [general requirements](../requirements/) needed to run the tutorials. Then, we will get a full [Descartes SDK Environment](../descartes-env/) up and running, before we dive into our first [Hello World DApp tutorial](../helloworld/create-project/)
 

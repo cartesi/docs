@@ -158,7 +158,7 @@ When the `length` of a drive is specified, the `filename` parameter can be omitt
 In that case, the drive starts in a *pristine* state: i.e., filled with zeros.
 If, however, both `length` and `filename` are specified, then the `length` must exactly match the size of image file referred to by the `filename` parameter.
 
-The positioning of flash drives in the machine's address space has implications on certain operations, discussed in detail under [the blockchain perspective](../blockchain/hash.md), that involve the manipulation of hashes of the Cartesi Machine state.
+The positioning of flash drives in the machine's address space has implications on certain operations, discussed in detail under [the blockchain perspective](../../blockchain/hash/), that involve the manipulation of hashes of the Cartesi Machine state.
 
 The preferred file-system type is `ext2`.
 These file-systems can be easily created with the `genext2fs` command-line utility (available in Ubuntu as its own package), and inspected or modified with the `e2ls`, `e2cp` command-line utilities (available in Ubuntu as the `e2tools` package). <a name="cartesi-machine-with-foo-flash-drive"></a>
@@ -316,7 +316,7 @@ Cycles: 697842
 ```
 Note the execution was interrupted before the splash screen was even completed.
 
-The ability to limit computation to an arbitrary number of cycles is fundamental to the verifiability of Cartesi Machines, as is explained in detail under the [the blockchain perspective](../blockchain/vg.md).
+The ability to limit computation to an arbitrary number of cycles is fundamental to the verifiability of Cartesi Machines, as is explained in detail under the [the blockchain perspective](../../blockchain/vg/).
 
 ## Progress feedback
 
@@ -352,7 +352,7 @@ This feature is most useful when the emulator is controlled programmatically, vi
 In these situations, the progress device can be used to drive a dynamic user interface element that reassures users progress is being made during long, silent computations.
 Its handling by `cartesi-machine`, which does have access to the console, is simply to help with prototyping and debugging.
 
-The protocols followed by the `yield` utility to interact with the `/dev/yield` driver and by the driver itself to communicate with the HTIF device are explained in detail under the [target perspective](../target/architecture.md).
+The protocols followed by the `yield` utility to interact with the `/dev/yield` driver and by the driver itself to communicate with the HTIF device are explained in detail under the [target perspective](../../target/architecture/).
 
 ## State hashes
 
@@ -497,7 +497,7 @@ cartesi-machine-stored-hash machine-71ea7fc2
 Cartesi Machine templates are machines in which the contents of one or more flash drives are still unknown.
 To put it another way, Cartesi Machine templates behave like functions whose parameters are the yet-to-be-defined contents of one or more flash drives.
 
-As discussed in detail under [the blockchain perspective](../blockchain/hash.md), starting from template hashes, the hashes of the flash drives, and a small amount of [additional information](#sibling-hashes), it is possible to obtain the state hash of the *instantiated template*&mdash;the state hash for a Cartesi Machine with drives replaced by their actual content.
+As discussed in detail under [the blockchain perspective](../../blockchain/hash/), starting from template hashes, the hashes of the flash drives, and a small amount of [additional information](#sibling-hashes), it is possible to obtain the state hash of the *instantiated template*&mdash;the state hash for a Cartesi Machine with drives replaced by their actual content.
 This is how a smart contract can specify a computation to be performed off-chain over arbitrary input.
 Starting from the template hash, and in possession of the flash drive hashes, it instantiates the template, generating the initial state hash for the corresponding Cartesi Machine.
 
@@ -729,7 +729,7 @@ d8b96e5b7f6f459e9cb6a2f41bf276c7b85c10cd4662c04cbbb365434726c0a0
 As expected, the hash values match.
 
 The <a name="sibling-hashes"> `sibling_hashes` </a> array contains the hashes of the siblings to all nodes in the path from the root all the way down to the target node (excluding the root, which has no sibling).
-In a process explained in the [blockchain perspective](../blockchain/hash.md), using the `address` field, the `target_hash` hash, and the `sibling_hashes` array, it is possible to go up the tree computing the hashes along the path, until the root hash is produced.
+In a process explained in the [blockchain perspective](../../blockchain/hash/), using the `address` field, the `target_hash` hash, and the `sibling_hashes` array, it is possible to go up the tree computing the hashes along the path, until the root hash is produced.
 If the root hash obtained by this process matches the expected root hash, the proof is valid.
 Otherwise, something is amiss.
 (Incidentally, from the hash of its sibling, the last entry in `sibling_hashes`, it is possible to ascertain that the neighboring range to the input drive also contains 4KiB of bytes 0.)
@@ -929,7 +929,7 @@ b15a6b8aab8a423c725f9ad55fd46c4481ba91008f3a01593192de37a7a41565
 The `cartesi-machine` command-line utility accepts an arbitrary number of `--initial-proof` and `--final-proof` parameters.
 They are computed one-by-one, and either printed or stored in the specified files, as requested.
 
-To read more about proofs, refer to the [the blockchain perspective](../blockchain/hash.md).
+To read more about proofs, refer to the [the blockchain perspective](../../blockchain/hash/).
 
 ## Rarely used options
 
@@ -1083,7 +1083,7 @@ The remaining options in the command-line utility `cartesi-machine` are mostly u
 As such, they require some context.
 
 During verification, the blockchain mediates a *verification game* between the disputing parties.
-This process is explained in detail under the [the blockchain perspective](../blockchain/vg.md).
+This process is explained in detail under the [the blockchain perspective](../../blockchain/vg/).
 In a nutshell, both parties started from a Cartesi Machine that has a known and agreed upon initial state hash.
 (E.g., an agreed upon template that was instantiated with an agreed upon input drive.)
 At the end of the computation, these parties now disagree on the state hash for the halted machine.

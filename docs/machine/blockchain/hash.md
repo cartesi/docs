@@ -9,7 +9,7 @@ The key to solving these seemingly contradictory goals is the clever use of cryp
 Cartesi Machines are transparent in the sense that their entire state is exposed for external inspection.
 This includes the ROM, the RAM, all flash drives, general purpose registers, control and status registers, and even the internal state of all devices.
 In fact, the entire machine state is mapped into the 64-bit physical memory address space of the Cartesi Machine.
-(The exact mapping is given in the [system architecture](../target/architecture.md) section of the target perspective.)
+(The exact mapping is given in the [system architecture](../../target/architecture/) section of the target perspective.)
 This means that, right before a machine is executed, a cryptographic hash of its entire state can be generated.
 A cryptographic hash of the state of a Cartesi Machine &ldquo;completely&rdquo; specifies the computation it is about to perform.
 This is because a given state always evolve in exactly the same way (because Cartesi Machines are self-contained and reproducible) and it is infeasible to find a different machine state that produces the same cryptographic state hash.
@@ -35,7 +35,7 @@ In the command-line, the options `--initial-hash` and `--final-hash` of the `car
 
 The `cartesi.keccak(<word>)` function of the `cartesi` Lua module returns the hash of a 64-bit `<word>`.
 The `cartesi.keccak(<hash1>, <hash2>)` overload returns the hash of the concatenation of `<hash1>` and `<hash2>`.
-In theory, the Merkle tree of the entire machine state could be built from these primitives and [external state access](../host/lua#external-state-access) to the machine instance.
+In theory, the Merkle tree of the entire machine state could be built from these primitives and [external state access](../../host/lua/#external-state-access) to the machine instance.
 In practice, most of the state is unused and implicitly filled with zeros, and this allows `machine:update_merkle_tree()` to skip large swaths of the state by using precomputed pristine hashes of all power-of-2 sizes.
 The `machine:update_merkle_tree()` method is also smart enough to only update the parts of the tree that changed between invocations.
 
@@ -63,7 +63,7 @@ This must match the value *M* known to the smart contract.
 In fact, due to the properties of cryptographic hashes, it is infeasible for the label so obtained to match *M* *unless all the data provided is true*.
 
 The data needed for the proofs can be produced by the `machine:get_proof(<address>, <log2-size>)` method of a Cartesi Machine instance.
-The contents of the proof returned are described in the [host perspective](../host/lua#state-value-proofs).
+The contents of the proof returned are described in the [host perspective](../../host/lua/#state-value-proofs).
 The same section gives the source-code for a simple function, `roll_hash_up(<proof>, <target-hash>)`,  that implements the process described above.
 Here, `<proof>` is the structure returned by the `machine:get_proof()` method.
 The source-code is repeated below for convenience.
@@ -130,7 +130,7 @@ The resulting root hash is the hash of a tree with the old node replaced by the 
 ### Template instantiation
 
 The most important use for the splicing operation is template instantiation.
-From the blockchain perspective, a [Cartesi Machine template](../host/cmdline#cartesi-machine-templates) is simply a state hash *M*.
+From the blockchain perspective, a [Cartesi Machine template](../../host/cmdline/#cartesi-machine-templates) is simply a state hash *M*.
 Instantiating the Cartesi Machine with a given input is simply the process of obtaining the state hash *M'* that results from replacing one or more of its input flash drives.
 Each replacement is the result of a splicing operation as described above.
 The splicing operation is particularly convenient if the flash drive length is a power of 2, and its start is aligned according to its length.

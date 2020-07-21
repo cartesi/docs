@@ -17,7 +17,7 @@ write example of running a Cartesi Machine.
 
 At this point, one might ask what the purpose of running a Cartesi Machine is, if it does not produce any visual effect. Or in other words, where the results of such execution are stored. This is the point where the concept of input/output drives come into play.
 
-The specification folder of a Cartesi Machine includes metadata which describes its input drives (there could be none or many of them, but always a single output drive). Thus, when executed, the software contained inside the Cartesi Machine is free to read the contents of the input drives and write to the output using the typical interface offered by the operating system. See [here](../machine/host/cmdline#cartesi-machine-templates) an example of a Cartesi Machine that reads a mathematical expression from an input drive, evaluates it, and writes the result to the output drive.
+The specification folder of a Cartesi Machine includes metadata which describes its input drives (there could be none or many of them, but always a single output drive). Thus, when executed, the software contained inside the Cartesi Machine is free to read the contents of the input drives and write to the output using the typical interface offered by the operating system. See [here](../../machine/host/cmdline/#cartesi-machine-templates) an example of a Cartesi Machine that reads a mathematical expression from an input drive, evaluates it, and writes the result to the output drive.
 
 Although this black-box analogy is a very simplified picture of what Cartesi Machines are, this basic understanding is sufficient for the purposes of running Descartes:
 

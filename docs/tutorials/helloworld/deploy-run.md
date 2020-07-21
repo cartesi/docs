@@ -31,7 +31,7 @@ module.exports = function(deployer) {
 
 This JavaScript code first loads Truffle's `contract` wrapper along with an abstraction of our `HelloWorld` smart contract. It then uses the wrapper to also create an abstraction for the `Descartes` smart contract. Here, we need to point to a `Descartes.json` file that contains the address of the Descartes contract within our SDK Environment's development network. For that reason, we use a specific path that assumes the directory structure used in this tutorial. Namely, we assume that the SDK Environment is running in a directory called `descartes-env`, located at the same level as this DApp project's home directory.
 
-After that, the migration script defines the function that actually performs the deployment. This function first retrieves the network ID currently known to Truffle and sets it in the Descartes abstraction, so that we can access the contract's appropriate address for that network. It then uses Truffle's `deployer` object to deploy our HelloWorld contract, passing the Descartes address as a parameter. Truffle will use this parameter as an argument when calling the [HelloWorld's constructor we defined before](./create-project.md#creating-the-smart-contract).
+After that, the migration script defines the function that actually performs the deployment. This function first retrieves the network ID currently known to Truffle and sets it in the Descartes abstraction, so that we can access the contract's appropriate address for that network. It then uses Truffle's `deployer` object to deploy our HelloWorld contract, passing the Descartes address as a parameter. Truffle will use this parameter as an argument when calling the [HelloWorld's constructor we defined before](../create-project/#creating-the-smart-contract).
 
 With this all set up, move back to the project's home directory and execute the following command to deploy our DApp:
 
@@ -80,7 +80,7 @@ Result {
 }
 ```
 
-As noted in [the previous section](./getresult.md), the first `false` boolean value indicates that the results are not ready yet, while the second `true` boolean value confirms that the computation is still running. Furthermore, the value at index `2` corresponds to an empty address, meaning that there is no user to blame for any abnormal interruption of the computation. Finally, the last entry corresponds to the result value itself, which is still empty as expected.
+As noted in [the previous section](../getresult/), the first `false` boolean value indicates that the results are not ready yet, while the second `true` boolean value confirms that the computation is still running. Furthermore, the value at index `2` corresponds to an empty address, meaning that there is no user to blame for any abnormal interruption of the computation. Finally, the last entry corresponds to the result value itself, which is still empty as expected.
 
 After a while, we can query again the results and get a different response:
 

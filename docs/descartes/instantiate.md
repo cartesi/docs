@@ -23,7 +23,7 @@ If this maximum is reached and the computation is not yet finished, the machine 
 `_templateHash` is the Merkle-tree root hash that represents the full content of the *template machine*.
 The machine represented by this hash has all input drives filled with zeros (pristine drives) and therefore it can be understood as a *template machine* that still needs the contents of the drives before it can be run.
 The next section will describe the methods employed to fill the input drives with actual data.
-Pragmatically, the `_templateHash` will be calculated by the developer during the phase of constructing the off-chain machine (target development), see the details in the relevant [Section](/machine/host/lua#state-hashes).
+Pragmatically, the `_templateHash` will be calculated by the developer during the phase of constructing the off-chain machine (target development), see the details in the relevant [Section](../../machine/host/lua/#state-hashes).
 
 `_outputPosition` when constructing the off-chain machine, the developer has freedom to chose where the output drive will be positioned in the address space. This variable should contain this exact position for the blockchain code to be able to do a result retrieval.
 
