@@ -76,7 +76,7 @@ Result {
   '0': false,
   '1': true,
   '2': '0x0000000000000000000000000000000000000000',
-  '3': '0x0000000000000000000000000000000000000000000000000000000000000000'
+  '3': null
 }
 ```
 
@@ -94,7 +94,7 @@ Result {
 }
 ```
 
-This response confirms that the computation has completed and that results are available. The last entry contains a `bytes32` value that corresponds to the result contents. We can inspect it by using a `web3` utility method to interpret those bytes as a string:
+This response confirms that the computation has completed and that results are available. The last entry contains a `bytes` value that corresponds to the result contents. We can inspect it by using a `web3` utility method to interpret those bytes as a string:
 
 ```
 truffle(development)> res = await hw.getResult(0)

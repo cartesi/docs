@@ -11,7 +11,7 @@ Once the [Descartes computation has been instantiated](../instantiate/), we need
 To do so, we will implement the following `getResult` method in the `HelloWorld.sol` file located within the `helloworld/contracts` directory.
 
 ```javascript
-function getResult(uint256 index) public view returns (bool, bool, address, bytes32) {
+function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
     return descartes.getResult(index);
 }
 ```
@@ -23,6 +23,49 @@ The body of the function simply calls the corresponding method in the Descartes 
 - the first `bool` value indicates whether the result is ready;
 - the second `bool` value indicates if the computation is still running or not;
 - `address` corresponds to the address of the user to blame if the computation stops abnormally;
-- `bytes32` contains the actual result of the computation.
+- `bytes` contains the actual result of the computation.
+
+With all of that set, our complete smart contract should look like this:
+
+```javascript
+pragma solidity >=0.4.25 <0.7.0;
+pragma experimental ABIEncoderV2;
+
+import "@cartesi/descartes-sdk/contracts/DescartesInterface.sol";
+
+
+contract HelloWorld {
+
+    DescartesInterface descartes;
+
+    bytes32 templateHash = 0x67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451;
+    uint64 outputPosition = 0x9000000000000000;
+    uint64 outputLog2Size = 5;
+    uint256 finalTime = 1e8;
+    uint256 roundDuration = 45;
+    DescartesInterface.Drive[] drives;
+
+    constructor(address descartesAddress) public {
+        descartes = DescartesInterface(descartesAddress);
+    }
+
+    function instantiate(address claimer, address challenger) public returns (uint256) {
+        return descartes.instantiate(
+            finalTime,
+            templateHash,
+            outputPosition,
+            outputLog2Size,
+            roundDuration,
+            claimer,
+            challenger,
+            drives
+        );
+    }
+
+    function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
+        return descartes.getResult(index);
+    }
+}
+```
 
 In the [next section](../deploy-run/), we'll finally deploy and run our DApp, and then we'll explore actual examples of return values for the `getResult` method.
