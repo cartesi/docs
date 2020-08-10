@@ -2,13 +2,13 @@
 title: How it works
 ---
 
-Descartes SDK allows Cartesi DApps to specify and request verifiable computations to Cartesi Machines. Additionally, the SDK also provides tools to facilitate and reduce the cost of inputing data into Cartesi Machines.
+Descartes SDK allows Cartesi DApps to specify and request verifiable computations to Cartesi Machines. Additionally, the SDK provides tools to facilitate and reduce the cost of inputing data into Cartesi Machines.
 
 ## Cartesi computations
 
 Cartesi offers developers all the power of Linux when implementing the logic of their DApps. This statement becomes clear as the developer understands the Cartesi Machine, which is the main component of the Descartes Node.
 
-The Cartesi Machine is similar in spirit to a virtualization solution like VirtualBox, KVM or VMWare. Inside of it, there is an operating system, hard drives, programs and data. Moreover, Cartesi machines come with the important feature of being fully reproducible, which is an essential ingredient for consensus and dispute resolutions.
+The Cartesi Machine is similar in spirit to a virtualization solution like VirtualBox, KVM or VMWare. Inside of it, there is an operating system, hard drives, programs and data. Moreover, Cartesi Machines come with the important feature of being fully reproducible, which is an essential ingredient for consensus and dispute resolutions.
 
 A reference documentation on this component is available [here](../../machine/intro/), which includes several examples and use cases. Moreover, a tutorial on how to build a simple machine can be found [here](../../tutorials/helloworld/cartesi-machine/).
 
@@ -16,10 +16,10 @@ For the purpose of this section, one can think of a Cartesi Machine as a black b
 
 To make this description more concrete, here are but a few examples of computations that can be performed inside a Cartesi Machine:
 - Checking who won a match of chess or another complex game involving two players who wrote their moves into input drives;
-- Verify that someone has successfully solved a puzzle, a major optimization problem or some artificial intelligence task;
-- Calculate the hash of a certain input using some costly algorithm, such as scrypt;
-- Verify a cryptographic signature using some algorithm not yet implemented on the blockchain;
-- Run a complex query on a large database contained inside the machine specification.
+- Verifying that someone has successfully solved a puzzle, a major optimization problem or some artificial intelligence task;
+- Calculating the hash of a certain input using some costly algorithm, such as scrypt;
+- Verifying a cryptographic signature using some algorithm not yet implemented on the blockchain;
+- Running a complex query on a large database contained inside the machine specification.
 
 ## Involved Parties
 

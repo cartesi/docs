@@ -8,7 +8,7 @@ Alternatively, users can manage and run their own Ethereum node if they want. In
 
 With Cartesi DApps, users can always run their own Descartes Node if they want to. In that way, they fully represent themselves and defend their own interests throughout possible dispute resolutions. However, we expect that Nodes will be instead typically run by service providers trusted by users and who can guarantee non-stop connectivity and reliability of their services. Just as in the case of running a blockchain node, running a Descartes Node may not be convenient enough for the regular user. Besides, users normally prime for simplicity of usability of the DApp above anything.
 
-There are, in fact, different ways a user can relate to a Nodes. Here are some examples:
+There are, in fact, different ways a user can relate to a Node. Here are some examples:
 
 1. The user runs their own Node on their own desktop or server;
 2. The user runs their own Node remotely, on a trusted cloud service;

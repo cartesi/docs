@@ -4,7 +4,7 @@ title: Overview
 
 Descartes SDK is the simplest infrastructure that DApps can use to run computations that would be impossible or too expensive to execute on-chain, either due to their complexity or to the amount of data to be processed.
 
-With the SDK, DApps run these computations off-chain, on a full fledged Linux environment without compromising decentralization, in a way that is verifiable by the DApp participants.
+With the SDK, DApps run these computations off-chain, on a full-fledged Linux environment without compromising decentralization, in a way that is verifiable by the DApp participants.
 
 On blockchain smart contracts, computations need to be run by all full-nodes participating in its network or shard. Because the block limit imposes a maximum computational throughput on the network, every DApp using blockchains' native computation competes for this global and scarce resource, thus remaining severely restricted.
 
