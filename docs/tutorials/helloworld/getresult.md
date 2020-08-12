@@ -41,7 +41,7 @@ contract HelloWorld {
     bytes32 templateHash = 0x67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451;
     uint64 outputPosition = 0x9000000000000000;
     uint64 outputLog2Size = 5;
-    uint256 finalTime = 1e8;
+    uint256 finalTime = 1e13;
     uint256 roundDuration = 45;
     DescartesInterface.Drive[] drives;
 

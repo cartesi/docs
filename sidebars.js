@@ -19,8 +19,8 @@ module.exports = {
           items: [
             "machine/host/overview",
             "machine/host/cmdline",
-            "machine/host/lua",
-          ],
+            "machine/host/lua"
+          ]
         },
         {
           type: "category",
@@ -28,8 +28,8 @@ module.exports = {
           items: [
               "machine/target/overview",
               "machine/target/linux",
-              "machine/target/architecture",
-          ],
+              "machine/target/architecture"
+          ]
         },
         {
           type: "category",
@@ -37,10 +37,10 @@ module.exports = {
           items: [
               "machine/blockchain/intro",
               "machine/blockchain/hash",
-              "machine/blockchain/vg",
-          ],
-        },
-      ],
+              "machine/blockchain/vg"
+          ]
+        }
+      ]
     },
     {
       type: "category",
@@ -61,8 +61,8 @@ module.exports = {
         //"descartes/off-chain-api",
         //"descartes/workflow",
         "descartes/topologies",
-        "descartes/services",
-      ],
+        "descartes/services"
+      ]
     },
     {
       type: "category",
@@ -81,8 +81,17 @@ module.exports = {
             "tutorials/helloworld/getresult",
             "tutorials/helloworld/deploy-run"
           ]
+        },
+        {
+          type: "category",
+          label: "Calculator DApp",
+          items: [
+            "tutorials/calculator/create-project",
+            "tutorials/calculator/cartesi-machine",
+            "tutorials/calculator/full-dapp"
+          ]
         }
-      ],
-    },
-  ],
+      ]
+    }
+  ]
 };

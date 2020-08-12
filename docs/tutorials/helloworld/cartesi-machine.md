@@ -1,5 +1,5 @@
 ---
-title: Hello World Cartesi Machine
+title: Hello World Machine
 ---
 
 :::note Section Goal
@@ -170,13 +170,13 @@ This script accepts an optional parameter specifying where the stored machine co
 
 Finally, if the [Descartes SDK Environment](../../descartes-env/) is running in a relative directory at `../../descartes-env`, we can build the Hello World machine and make it available to the Descartes nodes by running:
 
-```
+```bash
 ./build-cartesi-machine.sh ../../descartes-env/machines
 ```
 
 The output should be the same as before, but now the contents will be neatly stored in the expected form within the Descartes environment's `machines` directory:
 
-```
+```bash
 ls ../../descartes-env/machines
 67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451
 

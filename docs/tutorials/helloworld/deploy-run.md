@@ -98,8 +98,10 @@ This response confirms that the computation has completed and that results are a
 
 ```
 truffle(development)> res = await hw.getResult(0)
-truffle(development)> web3.utils.toAscii(res['3'])
-'Hello World!\n\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+truffle(development)> console.log(web3.utils.hexToAscii(res['3']))
+'Hello World!'
 ```
 
 And there it is! We have successfully used Descartes to execute an off-chain computation, validate it, and make its results available to on-chain code.
+
+In the subsequent sections, we will explore additional features of the Descartes SDK and build more sophisticated and useful DApps.
