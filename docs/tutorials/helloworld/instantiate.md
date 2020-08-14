@@ -1,5 +1,5 @@
 ---
-title: Instantiating the computation
+title: Instantiating computation
 ---
 
 :::note Section Goal

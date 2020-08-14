@@ -1,5 +1,5 @@
 ---
-title: Creating Calculator DApp
+title: Calculator project
 ---
 
 :::note Section Goal

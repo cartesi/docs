@@ -90,6 +90,16 @@ module.exports = {
             "tutorials/calculator/cartesi-machine",
             "tutorials/calculator/full-dapp"
           ]
+        },
+        {
+          type: "category",
+          label: "Generic Script DApp",
+          items: [
+            "tutorials/generic-script/create-project",
+            "tutorials/generic-script/custom-rootfs",
+            "tutorials/generic-script/cartesi-machine",
+            "tutorials/generic-script/full-dapp"
+          ]
         }
       ]
     }

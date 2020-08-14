@@ -1,5 +1,5 @@
 ---
-title: Retrieving computation result
+title: Retrieving result
 ---
 
 :::note Section Goal
