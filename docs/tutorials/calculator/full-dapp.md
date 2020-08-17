@@ -44,7 +44,7 @@ contract Calculator {
         // specifies an input drive containing the mathematical expression
         DescartesInterface.Drive[] memory drives = new DescartesInterface.Drive[](1);
         drives[0] = DescartesInterface.Drive(
-            0x9000000000000000,    // 2nd drive position: 1st is the root filesystem (0x80..0)
+            0x9000000000000000,    // 2nd drive position: 1st is the root file-system (0x8000..)
             expressionLog2Size,    // driveLog2Size
             expression,            // directValue
             0x00,                  // loggerRootHash

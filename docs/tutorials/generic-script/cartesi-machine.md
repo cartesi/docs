@@ -1,5 +1,5 @@
 ---
-title: Generic Script Machine
+title: Generic Script machine
 ---
 
 :::note Section Goal

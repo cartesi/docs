@@ -100,6 +100,16 @@ module.exports = {
             "tutorials/generic-script/cartesi-machine",
             "tutorials/generic-script/full-dapp"
           ]
+        },
+        {
+          type: "category",
+          label: "GPG Verify DApp",
+          items: [
+            "tutorials/gpg-verify/create-project",
+            "tutorials/gpg-verify/ext2-gpg",
+            "tutorials/gpg-verify/cartesi-machine",
+            "tutorials/gpg-verify/full-dapp"
+          ]
         }
       ]
     }

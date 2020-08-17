@@ -51,7 +51,7 @@ print(payload)\n\
         // specifies an input drive containing the script
         DescartesInterface.Drive[] memory drives = new DescartesInterface.Drive[](1);
         drives[0] = DescartesInterface.Drive(
-            0x9000000000000000,    // 2nd drive position: 1st is the root filesystem (0x80..0)
+            0x9000000000000000,    // 2nd drive position: 1st is the root file-system (0x8000..)
             scriptLog2Size,        // driveLog2Size
             script,                // directValue
             0x00,                  // loggerRootHash
@@ -176,7 +176,7 @@ truffle(development)> console.log(web3.utils.hexToAscii(res['3']))
 
 Which is indeed the result of `20!`. As a side note, although in this tutorial we directly updated our smart contract with a new script definition, it is always a good idea to test computations off-chain first, as we did for the Python code in the [previous section](../cartesi-machine).
 
-Needless to say, other scripts and interpreters can be used. As a matter of fact, any *shell script* can be executed (i.e., using `/bin/sh` as the interpreter), which means that all the previous tutorial computations can also be performed by our generic machine. For instance, the same computation executed by our [Calculator DApp](../../calculator/full-dapp) can be executed by defining our `script` variable as:
+Needless to say, other scripts and interpreters can be used. As a matter of fact, any *shell script* can be executed (i.e., using `/bin/sh` as the interpreter), which means that all the previous tutorial computations can also be performed by our generic machine. For instance, the same computation performed by our [Calculator DApp](../../calculator/full-dapp) can be specified by defining our `script` variable as:
 
 ```javascript
 bytes script = "#!/bin/sh\n\
@@ -184,8 +184,8 @@ bytes script = "#!/bin/sh\n\
 ";
 ```
 
-With this definition, after replicating the steps above, we will get the expected result of `2365921622773144223744`.
+With this definition, after replicating the steps above we will get the expected result of `2365921622773144223744`.
 
-As we can see from the examples above, the bottom line here is that Descartes allows smart contracts to have easy and flexible access to all sorts of complex computational processes, using any tools available for the Linux operating system.
+As we can see from the examples presented in this section, the bottom line here is that Descartes allows smart contracts to have easy and flexible access to all sorts of complex computational processes, using any tools available for the Linux operating system.
 
 In the following sections, we will present additional ways in which data and resources can be used by Cartesi Machines, and take advantage of those to explore some more realistic use cases.

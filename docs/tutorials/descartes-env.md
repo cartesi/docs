@@ -30,7 +30,7 @@ For each of the two actors, `alice` and `bob`, the environment provides a corres
 
 ## Download and run
 
-The Descartes SDK Environment is available on the [Descartes Tutorials Github repo](https://github.com/cartesi/descartes-tutorials/).
+The Descartes SDK Environment is available on the [Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/).
 
 You can download and extract a ready-to-use artifact by executing:
 

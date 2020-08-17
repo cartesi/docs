@@ -1,5 +1,5 @@
 ---
-title: Calculator Machine
+title: Calculator machine
 ---
 
 :::note Section Goal

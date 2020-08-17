@@ -14,7 +14,7 @@ As interesting as it is, this first application serves more as an introduction t
 
 In this section, we will start building a *Calculator DApp* capable of evaluating an arbitrary mathematical expression. As such, this application actually enables smart contracts to perform calculations that would otherwise be very hard to perform on-chain.
 
-As before, the complete implementation of this example can be found in the [Descartes Tutorials Github repo](https://github.com/cartesi/descartes-tutorials/tree/master/calculator).
+As before, the complete implementation of this example can be found in the [Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/calculator).
 
 
 ## Initializing the DApp project

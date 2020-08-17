@@ -14,7 +14,7 @@ In the [previous tutorial](../../calculator/create-project/), we learned how to 
 Despite being included as a tutorial, it should be noted that this is **NOT** the recommended way of implementing a DApp using Descartes. It usually makes little sense to waste resources building a full script on-chain - all possible logic should rather be moved over to the off-chain Cartesi Machine. However, this strategy is used here for the purposes of illustrating Descartes' potential for running any generic computation in a verifiable way. Furthermore, this approach allows us to play with the possibilities without the need of building a different machine for every script we want to try out.
 :::
 
-As always, a full implementation of this tutorial is available in the [Descartes Tutorials Github repo](https://github.com/cartesi/descartes-tutorials/tree/master/generic-script).
+As always, a full implementation of this tutorial is available in the [Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/generic-script).
 
 
 ## Initializing the DApp project

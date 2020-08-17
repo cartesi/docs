@@ -1,5 +1,5 @@
 ---
-title: Hello World Machine
+title: Hello World machine
 ---
 
 :::note Section Goal
