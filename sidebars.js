@@ -110,6 +110,16 @@ module.exports = {
             "tutorials/gpg-verify/cartesi-machine",
             "tutorials/gpg-verify/full-dapp"
           ]
+        },
+        {
+          type: "category",
+          label: "Dogecoin Hash DApp",
+          items: [
+            "tutorials/dogecoin-hash/create-project",
+            "tutorials/dogecoin-hash/scrypt-c",
+            "tutorials/dogecoin-hash/cartesi-machine",
+            "tutorials/dogecoin-hash/full-dapp"
+          ]
         }
       ]
     }
