@@ -154,13 +154,17 @@ Cycles: 0
 Storing machine: please wait
 ```
 
-It is important to note here that, contrary to our other tutorials, the resulting template hash produced will be different from the one presented above, even though the machine specification and input contents are apparently identical. This happens because the hash captures the *complete initial state* of the machine and, as noted in the beginning of this section and explained in the [Cartesi Machine host perspective](../../../machine/host/cmdline#flash-drives), using the `genext2fs` tool to build a new `ext2` file with the *same contents* will actually always lead to a slightly *different* file.
-
-As such, to get the exact same result you will need to download the very same `ext2` file that was used to build the machine when this tutorial was written, which is actually [available in the Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine). Thus, we can finish off this section by executing the following commands to retrieve that file and then rebuild the machine template using it:
+Similar to the issue discussed in the [GenericScript tutorial](../../generic-script/cartesi-machine/#final-cartesi-machine-implementation), the template hash generated for your machine will certainly differ from the one seen here. This is because, as noted in the beginning of this section and explained in the [Cartesi Machine host perspective](../../../machine/host/cmdline#flash-drives), using the `genext2fs` tool to build a new `ext2` file with the *same contents* will actually always lead to a slightly *different* file, which as a consequence changes the initial state of the machine. Therefore, to produce the same hash `368aca58..` presented above, you should have the exact same `ext2` file used when writing this tutorial. This file is [available in the Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine), and as such you can download it and rebuild the machine template with the following commands:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine/dapp-data.ext2
+wget https://github.com/cartesi/descartes-tutorials/blob/master/gpg-verify/cartesi-machine/dapp-data.ext2
 ./build-cartesi-machine.sh ../../descartes-env/machines
 ```
 
-Which should now yield the exact same output as above.
+Which should now produce the expected hash `368aca58..`.
+
+With all of this done, move back to the `gpg-verify` home directory before proceeding to the next section:
+
+```bash
+cd ..
+```

@@ -10,7 +10,7 @@ title: Creating basic DApp
 
 In this section we are going to start building our first Descartes DApp. This *Hello World DApp* will consist of a trivial application, which simply instantiates an off-chain computation that always returns "Hello World!". A complete implementation of this example can be found in the [Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/helloworld).
 
-In order to do that, we will start by creating a basic project with a smart contract capable of using the Descartes contract already deployed to the [Descartes SDK Environment](../../descartes-env/).
+In order to build this DApp, we will start by creating a basic project with a smart contract capable of using the Descartes contract already deployed to the [Descartes SDK Environment](../../descartes-env/).
 
 
 ## Initializing the DApp project
@@ -63,13 +63,13 @@ networks: {
 Finally, let's add two dependencies to our project using Yarn. First, add a dependency to the Descartes SDK itself through the `@cartesi/descartes-sdk` package. This will allow our DApp code to refer to the Descartes smart contract and instantiate computations.
 
 ```bash
-yarn add @cartesi/descartes-sdk
+yarn add @cartesi/descartes-sdk@0.2.0
 ```
 
-Aside from that, let's also add a dependency to `@truffle/contract`, which will be used later on in a script for [deploying our DApp](../deploy-run/). This will allow us to properly link our DApp to the Descartes contract already deployed to the local development network.
+Aside from that, let's also add a development dependency to `@truffle/contract`, which will later be used in a script for [deploying our DApp](../deploy-run/). This will allow us to properly link our DApp to the Descartes contract already deployed to the local development network.
 
 ```bash
-yarn add @truffle/contract
+yarn add @truffle/contract --dev
 ```
 
 ##  Creating the smart contract

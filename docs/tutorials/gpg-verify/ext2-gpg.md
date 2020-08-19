@@ -21,7 +21,7 @@ echo "My public statement" > document
 An appropriate signature for that document has been created using the tutorial's [private key](https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine/descartes-private.key). That signature can be directly downloaded from Github by typing:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine/signature
+wget https://github.com/cartesi/descartes-tutorials/blob/master/gpg-verify/cartesi-machine/signature
 ```
 
 Alternatively, you can use the tutorial's [private key](https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine/descartes-private.key) and sign it yourself using the GnuPG `gpg` tool (the private key's passphrase is "Descartes rocks!").

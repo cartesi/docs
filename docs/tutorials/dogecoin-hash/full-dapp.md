@@ -129,15 +129,16 @@ Once this process completes, we are finally ready to start playing with our full
 ```bash
 truffle console
 truffle(development)> dh = await DogecoinHash.deployed()
-truffle(development)> dh.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+truffle(development)> tx = await dh.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
 ```
 
 At this point, Descartes will trigger the Cartesi Machine in `alice`'s Descartes node, so that it computes the adequate `scrypt` hash for the specified data referring to Dogecoin block #100000. Descartes will also automatically validate the result by running the same computation on `bob`'s node and verifying that the outputs match. Should any of the two actors cheat, Descartes would be able to guarantee that the honest side wins the dispute, thus the provided result can be trusted by all parties involved.
 
-The final computed hash can then be retrieved by calling the `getResult` method:
+The final computed hash can then be retrieved by calling the `getResult` method, using the appropriate index as returned in the transaction data:
 
 ```bash
-truffle(development)> dh.getResult(0)
+truffle(development)> index = tx.receipt.rawLogs[0].data
+truffle(development)> dh.getResult(index)
 Result {
   '0': true,
   '1': false,
@@ -175,13 +176,14 @@ Next, let's trigger the new hash computation by calling the `instantiate` method
 
 ```bash
 truffle(development)> dh2 = await DogecoinHash.deployed()
-truffle(development)> dh2.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+truffle(development)> tx = await dh2.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
 ```
 
 Once again, after some time we will be able to check the result:
 
 ```bash
-truffle(development)> dh.getResult(0)
+truffle(development)> index = tx.receipt.rawLogs[0].data
+truffle(development)> dh2.getResult(index)
 Result {
   '0': true,
   '1': false,

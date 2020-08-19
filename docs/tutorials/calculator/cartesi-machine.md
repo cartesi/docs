@@ -145,3 +145,9 @@ Storing machine: please wait
 ```
 
 After executing this command, the machine's specification will be stored in the appropriate directory within our Descartes environment. Moreover, we are informed that its initial template hash is `88040f91...`, which serves as an identifier of this machine and will thus be necessary to instantiate the computation from a smart contract, as will be explored in the next section.
+
+Finally, move back to the `calculator` home directory:
+
+```bash
+cd ..
+```

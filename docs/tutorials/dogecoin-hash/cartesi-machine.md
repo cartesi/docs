@@ -144,7 +144,7 @@ Following the same strategy used for the [other tutorials](../../helloworld/cart
 It should also be noted that, as discussed in the [GPG Verify tutorial](../../gpg-verify/cartesi-machine/#full-machine-implementation), the process of creating `ext2` file-systems using the `genext2fs` tool is *not reproducible*. This means that each generated `ext2` file leads to a different Cartesi Machine template hash, even if the file-system's contents are identical. For this reason, to exactly reproduce this tutorial's results, you can download the actual [scrypt-hash.ext2](https://github.com/cartesi/descartes-tutorials/tree/master/dogecoin-hash/cartesi-machine) file used when writing this documentation. To do that, run the following command:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/tree/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
+wget https://github.com/cartesi/descartes-tutorials/blob/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
 ```
 
 After that, let's create the `build-cartesi-machine.sh` file inside the `cartesi-machine` directory:
@@ -211,11 +211,17 @@ With this script ready, the final Cartesi Machine template can finally be built 
 ./build-cartesi-machine.sh ../../descartes-env/machines
 ```
 
-Which should give you the following output:
+Running the above command should give you the following output, which includes the appropriate `templateHash` value to use when instantiating this computation from a smart contract:
 
 ```
 0: 8bc459031809fcb366953f8373b3f202450ecbae51f3f724354480638725ff38
 
 Cycles: 0
 Storing machine: please wait
+```
+
+Finally, we can `cd` back to the `dogecoin-hash` home directory:
+
+```bash
+cd ..
 ```

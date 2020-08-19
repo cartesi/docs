@@ -138,7 +138,7 @@ mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
 ```
 
-As in our previous test, we specify the `rootfs-python-jwt.ext2` file as the root file-system, along with an input drive. This time, however, we also define an output drive, where the resulting data is to be written. Moreover, the input drive is  no longer mapped to the `input.py` file, since Descartes will take care of inserting data into it, as well as retrieving data from the output drive. Aside from that, we changed the command line to save the input script to a file, make that file executable, and then run it using the Linux shell. The shell will automatically interpret the first *shebang line* and fire the appropriate interpreter by itself.
+As in our previous test, we specify the `rootfs-python-jwt.ext2` file as the root file-system, along with an input drive. This time, however, we also define an output drive, where the resulting data should be written to. Moreover, the input drive is  no longer mapped to the `input.py` file, since Descartes will take care of inserting data into it, as well as retrieving data from the output drive. Aside from that, we changed the command line to save the input script to a file, make that file executable, and then run it using the Linux shell. The shell will automatically interpret the first *shebang line* and fire the appropriate interpreter by itself.
 
 Now we can build the machine template and store it by executing:
 
@@ -146,7 +146,7 @@ Now we can build the machine template and store it by executing:
 ./build-cartesi-machine.sh ../../descartes-env/machines
 ```
 
-The output of which should be:
+The output of which should be something like this:
 
 ```
 0: 86374a11e83ac937078f753332e90966fb358fbf229040d2b17a08a476a6a54d
@@ -155,4 +155,19 @@ Cycles: 0
 Storing machine: please wait
 ```
 
-This means that the machine template is stored and that the template hash `86374a...`  can be used as its identifier when instantiating this Generic Script computation from a smart contract. We will implement such a contract in the next section.
+It is important to note here that, contrary to our previous tutorials, the resulting template hash produced will be different from the one presented above, even though the machine specification and input contents are apparently the same. This happens because the hash captures the *complete initial state* of the machine, and the process of generating a customized `rootfs-python-jwt.ext2` will always lead to a slightly different file.
+
+As such, to get the exact same result you will need to download the very same `ext2` file that was used to build the machine when this tutorial was written, which is actually [available in the Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/generic-script/cartesi-machine). Thus, we can finish off this section by executing the following commands to retrieve that file and then rebuild the machine template using it:
+
+```bash
+wget https://github.com/cartesi/descartes-tutorials/blob/master/generic-script/cartesi-machine/rootfs-python-jwt.ext2
+./build-cartesi-machine.sh ../../descartes-env/machines
+```
+
+Which should now yield the exact same output as above.
+
+With the correct machine template appropriately stored, the template hash `86374a11...`  can now be used as its identifier when instantiating this Generic Script computation from a smart contract. We will implement such a contract in the next section, but before that let's switch back to the `generic-script` home directory:
+
+```bash
+cd ..
+```

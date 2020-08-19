@@ -63,15 +63,23 @@ At this point, we can acquire a reference to our deployed HelloWorld DApp and in
 
 ```bash
 truffle(development)> hw = await HelloWorld.deployed()
-truffle(development)> hw.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+truffle(development)> tx = await hw.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
 ```
 
 This will trigger the computation, which can take a couple of minutes to run with Descartes's default settings.
 
-We can immediately query our Hello World DApp to ask for current results:
+As can be seen by the `getResult` implementation discussed in the [previous section](../getresult), to query a computation's results we should use the `index` value returned by the `instantiate` method. This is straightforward when calling that method from another contract, but clients such as `web3` [cannot immediately retrieve return values from transactions](https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts#transactions). Fortunately, Descartes emits events for each computation step, and thus it is  possible to retrieve our index from the creation event.
+
+In Truffle, the events emitted by a transaction are included in the returned transaction metadata. Since the payload of the Descartes creation event in the `index` value itself, we can retrieved it by simply executing the following command within the console:
 
 ```bash
-truffle(development)> hw.getResult(0)
+truffle(development)> index = tx.receipt.rawLogs[0].data
+```
+
+In possession of that index, we can then immediately query our Hello World DApp to ask for current results:
+
+```bash
+truffle(development)> hw.getResult(index)
 Result {
   '0': false,
   '1': true,
@@ -80,12 +88,12 @@ Result {
 }
 ```
 
-As noted in [the previous section](../getresult/), the first `false` boolean value indicates that the results are not ready yet, while the second `true` boolean value confirms that the computation is still running. Furthermore, the value at index `2` corresponds to an empty address, meaning that there is no user to blame for any abnormal interruption of the computation. Finally, the last entry corresponds to the result value itself, which is still empty as expected.
+As noted in the [previous section](../getresult/), the first `false` boolean value indicates that the results are not ready yet, while the second `true` boolean value confirms that the computation is still running. Furthermore, the value at index `2` corresponds to an empty address, meaning that there is no user to blame for any abnormal interruption of the computation. Finally, the last entry corresponds to the result value itself, which is still empty as expected.
 
 After a while, we can query again the results and get a different response:
 
 ```bash
-truffle(development)> hw.getResult(0)
+truffle(development)> hw.getResult(index)
 Result {
   '0': true,
   '1': false,
@@ -96,12 +104,18 @@ Result {
 
 This response confirms that the computation has completed and that results are available. The last entry contains a `bytes` value that corresponds to the result contents. We can inspect it by using a `web3` utility method to interpret those bytes as a string:
 
-```
-truffle(development)> res = await hw.getResult(0)
-truffle(development)> console.log(web3.utils.hexToAscii(res['3']))
+```bash
+truffle(development)> result = await hw.getResult(index)
+truffle(development)> console.log(web3.utils.hexToAscii(result['3']))
 'Hello World!'
 ```
 
 And there it is! We have successfully used Descartes to execute an off-chain computation, validate it, and make its results available to on-chain code.
+
+We can exit the truffle console now by typing:
+
+```bash
+truffle(development)> .exit
+```
 
 In the subsequent sections, we will explore additional features of the Descartes SDK and build more sophisticated and useful DApps.

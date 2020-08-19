@@ -42,6 +42,6 @@ networks: {
 And finally, let's add the necessary dependencies to the Descartes SDK and Truffle:
 
 ```bash
-yarn add @cartesi/descartes-sdk
-yarn add @truffle/contract
+yarn add @cartesi/descartes-sdk@0.2.0
+yarn add @truffle/contract --dev
 ```

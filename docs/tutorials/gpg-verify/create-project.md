@@ -41,8 +41,8 @@ networks: {
 Finally, add these required project dependencies to Truffle and the Descartes SDK:
 
 ```bash
-yarn add @cartesi/descartes-sdk
-yarn add @truffle/contract
+yarn add @cartesi/descartes-sdk@0.2.0
+yarn add @truffle/contract --dev
 ```
 
 ## Public key file
@@ -60,7 +60,7 @@ cd cartesi-machine
 
 Then, download the public key by typing:
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine/descartes-pub.key
+wget https://github.com/cartesi/descartes-tutorials/blob/master/gpg-verify/cartesi-machine/descartes-pub.key
 ```
 
 With that set, in the next section we will learn how to supply this key to a Cartesi Machine using an `ext2` file-system, so that we can experiment with GPG signature verification inside a Cartesi Machine.

@@ -185,3 +185,9 @@ ls ../../descartes-env/machines/67713d54d15ab1f24ce34e2d89b480ba58200684740ed69b
 ```
 
 And that's it, we now have running Descartes nodes that are capable of performing our Hello World computation!
+
+Let's finish off by returning to the `helloworld` home directory:
+
+```bash
+cd ..
+```

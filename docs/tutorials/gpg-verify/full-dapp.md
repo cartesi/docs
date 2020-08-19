@@ -153,13 +153,14 @@ After the contract is compiled and deployed, we can enter Truffle's console and 
 ```bash
 truffle console
 truffle(development)> gpg = await GpgVerify.deployed()
-truffle(development)> gpg.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+truffle(development)> tx = await gpg.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
 ```
 
-Finally, after some time it will possible to query the GPG verification result by calling the `getResult` method:
+Finally, after some time it will possible to query the GPG verification result by calling the `getResult` method for the computation's index:
 
 ```bash
-truffle(development)> gpg.getResult(0)
+truffle(development)> index = tx.receipt.rawLogs[0].data
+truffle(development)> gpg.getResult(index)
 Result {
   '0': true,
   '1': false,
@@ -170,9 +171,9 @@ Result {
 
 Recalling that the output of the Cartesi Machine's [execution script](../cartesi-machine/#final-execution-script) corresponds to the `gpg` tool's exit status, we must interpret the result data as an ASCII value that can represent success (`"0"`), failure (`"1"`), or other values for errors. This can be done by using `web3` to print the output data as a string:
 
-```
-truffle(development)> res = await gpg.getResult(0)
-truffle(development)> console.log(web3.utils.hexToAscii(res['3']))
+```bash
+truffle(development)> result = await gpg.getResult(index)
+truffle(development)> console.log(web3.utils.hexToAscii(result['3']))
 0
 ```
 

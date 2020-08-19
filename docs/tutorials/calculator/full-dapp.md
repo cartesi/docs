@@ -106,13 +106,14 @@ Once this is completed successfully, we can use Truffle's console to instantiate
 ```bash
 truffle console
 truffle(development)> calc = await Calculator.deployed()
-truffle(development)> calc.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+truffle(development)> tx = await calc.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
 ```
 
-After a while, the computation will be completed and we will be able to query the results by calling the smart contract's `getResult` method:
+After a while, the computation will be completed and we will be able to query the results by calling the smart contract's `getResult` method with the appropriate index:
 
 ```bash
-truffle(development)> calc.getResult(0)
+truffle(development)> index = tx.receipt.rawLogs[0].data
+truffle(development)> calc.getResult(index)
 Result {
   '0': true,
   '1': false,
@@ -123,12 +124,12 @@ Result {
 
 Notice that the response data (at index '3') is quite large. This is because we specified a log<sub>2</sub> size of `10` for the `outputLog2Size` in our smart contract, meaning that the output drive will have 1024 bytes. We can better inspect this output data by executing the following commands:
 
-```
-truffle(development)> res = await calc.getResult(0)
-truffle(development)> console.log(web3.utils.hexToAscii(res['3']))
-'2365921622773144223744'
+```bash
+truffle(development)> result = await calc.getResult(index)
+truffle(development)> console.log(web3.utils.hexToAscii(result['3']))
+2365921622773144223744
 ```
 
 Which gives us the expected result, as we saw earlier when [testing the Cartesi Machine](../cartesi-machine#performing-calculations-with-a-cartesi-machine). This means that our smart contract is now indeed capable of computing any arbitrary mathematical expression using the Linux `bc` tool!
 
-In the next section, we will see how we can easily extend this idea to perform not only mathematical calculations but *any arbitrary computation* using standard script languages such as Python  or Lua.
+In the next section, we will see how we can easily extend this idea to perform not only mathematical calculations but *any arbitrary computation* using standard script languages such as Python or Lua.

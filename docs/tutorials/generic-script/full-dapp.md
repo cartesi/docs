@@ -108,14 +108,15 @@ Finally, let's hop inside Truffle's console to play with our DApp. Recalling tha
 
 ```bash
 truffle console
-truffle(development)> gen = await GenericScript.deployed()
-truffle(development)> gen.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+truffle(development)> gs = await GenericScript.deployed()
+truffle(development)> tx = await gs.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
 ```
 
-When the computation completes, we can retrieve its output using the `getResult` method:
+When the computation completes, we can retrieve its output using the `getResult` method with the instantiation's index:
 
 ```bash
-truffle(development)> gen.getResult(0)
+truffle(development)> index = tx.receipt.rawLogs[0].data
+truffle(development)> gs.getResult(index)
 Result {
   '0': true,
   '1': false,
@@ -126,9 +127,9 @@ Result {
 
 Then, we can use a `web3` utility method to print the output data as a string:
 
-```
-truffle(development)> res = await gen.getResult(0)
-truffle(development)> console.log(web3.utils.hexToAscii(res['3']))
+```bash
+truffle(development)> result = await gs.getResult(index)
+truffle(development)> console.log(web3.utils.hexToAscii(result['3']))
 {'some': 'payload'}
 ```
 
@@ -162,15 +163,16 @@ truffle(development)> migrate --reset
 And then, we can instantiate a new computation using the updated deployed contract by executing:
 
 ```bash
-truffle(development)> gen2 = await GenericScript.deployed()
-truffle(development)> gen2.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+truffle(development)> gs2 = await GenericScript.deployed()
+truffle(development)> tx = await gs2.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
 ```
 
-After some time, we can query and print the result:
+After some time, we can query and print the result using the new computation's index:
 
-```
-truffle(development)> res = await gen2.getResult(1)
-truffle(development)> console.log(web3.utils.hexToAscii(res['3']))
+```bash
+truffle(development)> index = tx.receipt.rawLogs[0].data
+truffle(development)> result = await gs2.getResult(index)
+truffle(development)> console.log(web3.utils.hexToAscii(result['3']))
 2432902008176640000
 ```
 
