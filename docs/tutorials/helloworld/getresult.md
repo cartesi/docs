@@ -38,7 +38,7 @@ contract HelloWorld {
 
     DescartesInterface descartes;
 
-    bytes32 templateHash = 0x67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451;
+    bytes32 templateHash = 0xc675d0eb9110a446b8873cce9f6551b9ab3e506eea71729c8ebe561278da0ead;
     uint64 outputPosition = 0x9000000000000000;
     uint64 outputLog2Size = 5;
     uint256 finalTime = 1e13;

@@ -95,7 +95,7 @@ Another essential argument is `flash-drive="label:output,length:1<<12"`, which s
 The console output when running the above command should be:
 
 ```
-0: 67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451
+0: c675d0eb9110a446b8873cce9f6551b9ab3e506eea71729c8ebe561278da0ead
 
 Cycles: 0
 Storing machine: please wait
@@ -148,11 +148,10 @@ docker run \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine \
-    --append-rom-bootargs="quiet" \
-    --flash-drive="label:output,length:1<<12" \
     --max-mcycle=0 \
     --initial-hash \
     --store="$MACHINE_TEMP_DIR" \
+    --flash-drive="label:output,length:1<<12" \
     -- $'echo Hello World! | dd status=none of=$(flashdrive output)'
 
 # moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
@@ -178,9 +177,9 @@ The output should be the same as before, but now the contents will be neatly sto
 
 ```bash
 ls ../../descartes-env/machines
-67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451
+c675d0eb9110a446b8873cce9f6551b9ab3e506eea71729c8ebe561278da0ead
 
-ls ../../descartes-env/machines/67713d54d15ab1f24ce34e2d89b480ba58200684740ed69be236e4ba3d6dd451/
+ls ../../descartes-env/machines/c675d0eb9110a446b8873cce9f6551b9ab3e506eea71729c8ebe561278da0ead/
 0000000000001000-f000.bin  0000000080000000-4000000.bin  8000000000000000-3c00000.bin  9000000000000000-1000.bin  config  hash
 ```
 
