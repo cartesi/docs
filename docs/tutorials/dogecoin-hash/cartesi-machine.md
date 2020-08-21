@@ -144,7 +144,7 @@ Following the same strategy used for the [other tutorials](../../helloworld/cart
 It should also be noted that, as discussed in the [GPG Verify tutorial](../../gpg-verify/cartesi-machine/#full-machine-implementation), the process of creating `ext2` file-systems using the `genext2fs` tool is *not reproducible*. This means that each generated `ext2` file leads to a different Cartesi Machine template hash, even if the file-system's contents are identical. For this reason, to exactly reproduce this tutorial's results, you can download the actual [scrypt-hash.ext2](https://github.com/cartesi/descartes-tutorials/tree/master/dogecoin-hash/cartesi-machine) file used when writing this documentation. To do that, run the following command:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/blob/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
+wget https://github.com/cartesi/descartes-tutorials/raw/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
 ```
 
 After that, let's create the `build-cartesi-machine.sh` file inside the `cartesi-machine` directory:

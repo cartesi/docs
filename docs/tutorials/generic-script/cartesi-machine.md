@@ -157,10 +157,10 @@ Storing machine: please wait
 
 It is important to note here that, contrary to our previous tutorials, the resulting template hash produced will be different from the one presented above, even though the machine specification and input contents are apparently the same. This happens because the hash captures the *complete initial state* of the machine, and the process of generating a customized `rootfs-python-jwt.ext2` will always lead to a slightly different file.
 
-As such, to get the exact same result you will need to download the very same `ext2` file that was used to build the machine when this tutorial was written, which is actually [available in the Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/generic-script/cartesi-machine). Thus, we can finish off this section by executing the following commands to retrieve that file and then rebuild the machine template using it:
+As such, to get the exact same result you will need to download the very same `ext2` file that was used to build the machine when this tutorial was written, which is actually [available in the Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials). Thus, we can finish off this section by executing the following commands to retrieve that file and then rebuild the machine template using it:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/blob/master/generic-script/cartesi-machine/rootfs-python-jwt.ext2
+wget https://github.com/cartesi/descartes-tutorials/releases/download/v0.2.0/rootfs-python-jwt.ext2
 ./build-cartesi-machine.sh ../../descartes-env/machines
 ```
 

@@ -18,13 +18,13 @@ First of all, let's create our fictional document inside the `gpg-verify/cartesi
 echo "My public statement" > document
 ```
 
-An appropriate signature for that document has been created using the tutorial's [private key](https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine/descartes-private.key). That signature can be directly downloaded from Github by typing:
+An appropriate signature for that document has been created using the tutorial's [private key](https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartesi-machine/descartes-private.key). That signature can be directly downloaded from Github by typing:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/blob/master/gpg-verify/cartesi-machine/signature
+wget https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartesi-machine/signature
 ```
 
-Alternatively, you can use the tutorial's [private key](https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine/descartes-private.key) and sign it yourself using the GnuPG `gpg` tool (the private key's passphrase is "Descartes rocks!").
+Alternatively, you can use the tutorial's [private key](https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartesi-machine/descartes-private.key) and sign it yourself using the GnuPG `gpg` tool (the private key's passphrase is "Descartes rocks!").
 
 :::note
 Although not necessary, it may be fun to use the GnuPG tool to play around with your own keypairs and document signatures. If you do not already have it installed, you can do that in an Ubuntu distribution by typing:
@@ -34,9 +34,10 @@ sudo apt-get update
 sudo apt-get install gnupg
 ```
 
-You can then import the private key and create a detached document signature by executing the following `gpg` commands:
+You can then download and import the private key, and create a detached document signature by executing the following commands:
 
 ```bash
+wget https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartesi-machine/descartes-private.key
 gpg --import descartes-private.key
 gpg --detach-sig -u descartes --output signature document
 ```
