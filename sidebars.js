@@ -61,7 +61,8 @@ module.exports = {
         //"descartes/off-chain-api",
         //"descartes/workflow",
         "descartes/topologies",
-        "descartes/services"
+        "descartes/services",
+        "descartes/supported-networks"
       ]
     },
     {
