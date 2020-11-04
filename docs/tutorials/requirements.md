@@ -28,8 +28,8 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 And then install Docker itself:
 
 ```bash
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
 ```
 
 Finally, it is a good idea to allow non-root users to manage Docker, so as to avoid having to type `sudo` for every Docker command:
