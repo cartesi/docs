@@ -34,5 +34,5 @@ The following branches and pull requests are deployed to the following URLs:
 
 | Branch  | URL                             |
 | ------- | ------------------------------- |
-| master  | https://docs.cartesi.io         |
-| develop | https://preview-docs.cartesi.io |
+| master  | https://cartesi.io/en/docs  |
+| develop | https://preview.cartesi.io/en/docs |
