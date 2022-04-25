@@ -75,24 +75,7 @@ cartesi-machine \
 This should yield the following output, showing that our code is being successfully executed within the Cartesi Machine:
 
 ```bash
-
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-Reading input data...
-Computing scrypt hash...
-Writing computed scrypt hash to output...
-DONE!
-
-Halted
-Cycles: 93900334
+%tutorials.dogecoin-hash.run-valid
 ```
 
 After the execution, we can use the `xxd` tool again to verify the result written to the first 32 bytes of the output drive:
@@ -144,6 +127,7 @@ Following the same strategy used for the [other tutorials](../../helloworld/cart
 It should also be noted that, as discussed in the [GPG Verify tutorial](../../gpg-verify/cartesi-machine/#full-machine-implementation), the process of creating `ext2` file-systems using the `genext2fs` tool is *not reproducible*. This means that each generated `ext2` file leads to a different Cartesi Machine template hash, even if the file-system's contents are identical. For this reason, to exactly reproduce this tutorial's results, you can download the actual [scrypt-hash.ext2](https://github.com/cartesi/descartes-tutorials/tree/master/dogecoin-hash/cartesi-machine) file used when writing this documentation. To do that, run the following command:
 
 ```bash
+rm scrypt-hash.ext2
 wget https://github.com/cartesi/descartes-tutorials/raw/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
 ```
 
@@ -162,7 +146,7 @@ Then, edit the file and insert the following contents:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.1.1
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
@@ -193,8 +177,8 @@ docker run \
     --flash-drive="label:output,length:1<<12" \
     -- $'cd /mnt/scrypt-hash ; ./scrypt-hash $(flashdrive input) $(flashdrive output)'
 
-# moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
-mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
+# defines target directory as being within $MACHINES_DIR and named after the stored machine's hash
+MACHINE_TARGET_DIR=$MACHINES_DIR/$(docker run \
   -e USER=$(id -u -n) \
   -e GROUP=$(id -g -n) \
   -e UID=$(id -u) \
@@ -203,6 +187,12 @@ mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
   -h playground \
   -w /home/$(id -u -n) \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+
+# moves stored machine to the target directory
+if [ -d "$MACHINE_TARGET_DIR" ]; then
+  rm -r $MACHINE_TARGET_DIR
+fi
+mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
 With this script ready, the final Cartesi Machine template can finally be built and stored in the appropriate location within the [Descartes SDK environment](../../descartes-env) by executing the following command:
@@ -214,10 +204,7 @@ With this script ready, the final Cartesi Machine template can finally be built 
 Running the above command should give you the following output, which includes the appropriate `templateHash` value to use when instantiating this computation from a smart contract:
 
 ```
-0: 8bc459031809fcb366953f8373b3f202450ecbae51f3f724354480638725ff38
-
-Cycles: 0
-Storing machine: please wait
+%tutorials.dogecoin-hash.store
 ```
 
 Finally, we can `cd` back to the `dogecoin-hash` home directory:

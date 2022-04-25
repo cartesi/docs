@@ -12,7 +12,7 @@ title: Hello World machine
 
 Now that we have [built our basic DApp project](../create-project/), we will shift our focus towards the off-chain part of the DApp.
 
-As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template](../../../machine/intro/)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
+As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template](../../../machine/overview/)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
 
 ## Cartesi Playground
 
@@ -29,7 +29,7 @@ To illustrate how we are going to use the playground, try executing the followin
 
 ```bash
 docker run \
-  --rm cartesi/playground:0.1.1 cartesi-machine \
+  --rm cartesi/playground:0.3.0 cartesi-machine \
     -- $'echo Hello World!'
 ```
 
@@ -41,21 +41,7 @@ The result of such a command will look like this:
 
 ```
 Running as root
-
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-Hello World!
-
-Halted
-Cycles: 63287719
+%tutorials.helloworld.run
 ```
 
 ## Cartesi Machine for the Hello World DApp
@@ -76,7 +62,7 @@ docker run \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  --rm cartesi/playground:0.1.1 cartesi-machine \
+  --rm cartesi/playground:0.3.0 cartesi-machine \
     --max-mcycle=0 \
     --initial-hash \
     --store=stored_machine \
@@ -95,13 +81,10 @@ Another essential argument is `flash-drive="label:output,length:1<<12"`, which s
 The console output when running the above command should be:
 
 ```
-0: c675d0eb9110a446b8873cce9f6551b9ab3e506eea71729c8ebe561278da0ead
-
-Cycles: 0
-Storing machine: please wait
+%tutorials.helloworld.store
 ```
 
-This informs us that the machine's initial template hash is `67713d54...`, that it did not run any cycles, and that it stored the machine specification. Looking within the specified `stored_machine` directory, we can indeed verify that the machine's contents were stored there:
+This informs us that the machine's initial template hash is `%tutorials.helloworld.hash-trunc...`, that it did not run any cycles, and that it stored the machine specification. Looking within the specified `stored_machine` directory, we can indeed verify that the machine's contents were stored there:
 
 ```
 ls stored_machine/
@@ -125,7 +108,7 @@ Edit the file and place the following contents into it:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.1.1
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
@@ -154,15 +137,22 @@ docker run \
     --flash-drive="label:output,length:1<<12" \
     -- $'echo Hello World! | dd status=none of=$(flashdrive output)'
 
-# moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
-mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
+# defines target directory as being within $MACHINES_DIR and named after the stored machine's hash
+MACHINE_TARGET_DIR=$MACHINES_DIR/$(docker run \
   -e USER=$(id -u -n) \
   -e GROUP=$(id -g -n) \
   -e UID=$(id -u) \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
+  -h playground \
   -w /home/$(id -u -n) \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+
+# moves stored machine to the target directory
+if [ -d "$MACHINE_TARGET_DIR" ]; then
+  rm -r $MACHINE_TARGET_DIR
+fi
+mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
 This script accepts an optional parameter specifying where the stored machine contents should be moved to. This is useful to specify the directory where the Descartes nodes effectively read stored machines. Moreover, the nodes expect machine directories to be named after the machine's template hash, so the script makes use of the `cartesi-machine-stored-hash` tool, available within the playground Docker, to extract that hash from the stored contents and properly name the final directory name.
@@ -177,9 +167,9 @@ The output should be the same as before, but now the contents will be neatly sto
 
 ```bash
 ls ../../descartes-env/machines
-c675d0eb9110a446b8873cce9f6551b9ab3e506eea71729c8ebe561278da0ead
+%tutorials.helloworld.hash-full
 
-ls ../../descartes-env/machines/c675d0eb9110a446b8873cce9f6551b9ab3e506eea71729c8ebe561278da0ead/
+ls ../../descartes-env/machines/%tutorials.helloworld.hash-full/
 0000000000001000-f000.bin  0000000080000000-4000000.bin  8000000000000000-3c00000.bin  9000000000000000-1000.bin  config  hash
 ```
 

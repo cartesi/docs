@@ -1,5 +1,5 @@
 ---
-title: Supported Networks
+title: Supported networks
 ---
 
 Broadly speaking, the Cartesi layer-2 platform architecture should be perceived as *blockchain-agnostic*, given that in principle any network could use Cartesi Machines to move complex computations off-chain without compromising on decentralization.
@@ -12,18 +12,19 @@ Effectively, the API is currently available in the following test networks:
 
 ## Ethereum Testnets
 
-- [Ropsten](https://ropsten.etherscan.io/)
 - [Rinkeby](https://rinkeby.etherscan.io/)
 - [Kovan](https://kovan.etherscan.io/)
 - [Goerli](https://goerli.etherscan.io/)
 
-## Matic Testnet
+## Polygon's Matic Mumbai Testnet
 
-[Matic](https://matic.network/) is an Ethereum sidechain that provides an adapted version of the Plasma framework for faster and extremely low-cost transactions with finality on the main chain.
+[Polygon's](https://polygon.technology/) [Matic Network](https://matic.network/) is an Ethereum Layer 2 scaling solution that achieves scale by utilizing sidechains for off-chain computation while ensuring asset security using the Plasma framework and a decentralized network of Proof-of-Stake (PoS) validators. The Mumbai Testnet is mapped to the Goerli Ethereum testnet.
 
+## BNB Smart Chain Testnet
 
-## Binance Smart Chain Testnet
+[BNB Smart Chain](https://www.bnbchain.world/en/smartChain), formerly Binance Smart Chain (BSC), is an EVM-compatible blockchain aimed at bringing programmability and interoperability to the [BNB Chain (Binance Chain)](https://docs.binance.org/guides/intro.html). It relies on a system of 21 validators with Proof of Staked Authority (PoSA) consensus that can support short block time and lower fees.
 
-[Binance Smart Chain](https://www.binance.org/en/smartChain) is an EVM-compatible blockchain aimed at bringing programmability and interoperability to the [Binance Chain](https://docs.binance.org/guides/intro.html). It relies on a system of 21 validators with Proof of Staked Authority (PoSA) consensus that can support short block time and lower fees.
+## Avalanche FUJI C-Chain Testnet
 
+[Avalanche](https://www.avalabs.org/) is an open-source platform for launching decentralized applications and enterprise blockchain deployments in one interoperable, highly scalable ecosystem. Avalanche's Primary Network is a subnet that includes the C-Chain, which is an instance of the Ethereum Virtual Machine powered by Avalanche’s Snowman consensus protocol.
 

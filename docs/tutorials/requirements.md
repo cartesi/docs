@@ -1,5 +1,5 @@
 ---
-title: General Requirements
+title: General requirements
 ---
 
 :::note Section Goal
@@ -10,6 +10,22 @@ In order to run the tutorials, we must first make sure that the packages listed 
 
 As we mentioned earlier, The Descartes Tutorials will provide _every single command_ that you need to run in your shell to turn an Ubuntu machine into a fully fledged Cartesi development environment. That is, if you are starting with a fresh copy of the latest Ubuntu LTS installed in your machine, you should never need to leave this tutorial for an external website to get something installed. And if some tutorial step doesn't work for you, and you have tried it in a clean Ubuntu LTS installation, then that could be a bug in the tutorials, and you can discuss it in our [Discord channel](https://discordapp.com/invite/Pt2NrnS).
 
+## Basic tools
+
+Before installing any package specifically needed for our tutorials, we must first make sure that some basic tools are available.
+
+First of all, let's install the `curl` tool for transferring data using a number of supported protocols:
+
+```bash
+sudo apt-get update
+sudo apt-get install curl
+```
+
+Now, let's also install the `wget` tool for non-interactive download of files from the Web:
+
+```bash
+sudo apt-get install wget
+```
 ## Docker
 
 [Docker](https://docker.io) is a widely used platform for users to build, run, and share applications with containers, and is a great way of distributing the Descartes SDK and all of its dependencies.
@@ -71,7 +87,7 @@ docker-compose --version
 
 ## Node.js and NPM
 
-[Node.js](https://nodejs.org/) is a very popular asynchronous event-driven JavaScript runtime, and is often distributed along with the [NPM package manager](https://npmjs.com). These are required for running [Yarn](#yarn) and [Truffle](#truffle).
+[Node.js](https://nodejs.org/) is a very popular asynchronous event-driven JavaScript runtime, and is often distributed along with the [NPM package manager](https://npmjs.com). These are required for running [Yarn](#yarn).
 
 To install Node.js, follow [the official instructions](https://nodejs.org/en/download/). Specifically for Ubuntu, you can perform the steps below:
 
@@ -108,20 +124,4 @@ And finally, test that Yarn is installed and working property:
 
 ```bash
 yarn --version
-```
-
-## Truffle
-
-[Truffle](https://www.trufflesuite.com/truffle) is a popular development framework for blockchains using the Ethereum Virtual Machine (EVM). In these tutorials, we'll use Truffle to compile our DApp smart contracts, deploy them to the local test blockchain network, and finally interact with them using its command line console.
-
-The [official installation instructions](https://www.trufflesuite.com/docs/truffle/getting-started/installation) use NPM and are straightforward for all operating systems:
-
-```bash
-npm install -g truffle
-```
-
-You can check if it is correctly installed by typing the following:
-
-```bash
-truffle version
 ```

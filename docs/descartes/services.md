@@ -1,5 +1,5 @@
 ---
-title: Platform Services
+title: Platform services
 ---
 
 Platform Services is a new product developed and maintained by the Cartesi team that hosts Cartesi Node infrastructure for DApps. The service is elastic, making resources available to DApps upon demand. Developers deploy their Cartesi DApps on Platform Services and it automatically allocates resources according to user activity.

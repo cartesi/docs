@@ -9,7 +9,7 @@ title: Custom root file-system
 
 ## Introduction
 
-As explained before, Descartes off-chain processing is performed by a [Cartesi Machine](../../../machine/intro), which is capable of running a Linux operating system and executing arbitrary computations in a verifiable and reproducible way. Up to this point, the machines we have built have always used the default Linux kernel and root file-system provided by Cartesi, which is more than sufficient for executing a wide variety of tasks. Indeed, several common Linux tools are already included in this distribution, such as the `bc` calculator tool used in the [previous tutorial](../../calculator/create-project) or the `sh` command interpreter. Even a Lua interpreter is already included in the package.
+As explained before, Descartes off-chain processing is performed by a [Cartesi Machine](../../../machine/overview), which is capable of running a Linux operating system and executing arbitrary computations in a verifiable and reproducible way. Up to this point, the machines we have built have always used the default Linux kernel and root file-system provided by Cartesi, which is more than sufficient for executing a wide variety of tasks. Indeed, several common Linux tools are already included in this distribution, such as the `bc` calculator tool used in the [previous tutorial](../../calculator/create-project) or the `sh` command interpreter. Even a Lua interpreter is already included in the package.
 
 Nevertheless, in real-world scenarios it is expected that specific tools and libraries will be required, and in such cases we will need to use a mechanism to *include* those additional resources in the Cartesi Machine.
 
@@ -22,20 +22,19 @@ Essentially, our goal is to create an `ext2` file with the customized full root 
 
 The process of building a custom root file-system is fully documented in the [Cartesi Machine target perspective section](../../../machine/target/linux#the-root-file-system). However, we can speed things up by taking advantage of the default `cartesi/rootfs` Docker image provided by Cartesi, and building on top of it.
 
-First of all, let's create a `cartesi-machine` subdirectory and `cd` into it, as we did for the previous DApp tutorials:
+First of all, let's switch to the `cartesi-machine` subdirectory:
 
 ```bash
-mkdir cartesi-machine
 cd cartesi-machine
 ```
 
 Then, pull the `cartesi/rootfs` Docker image and tag it as `cartesi/rootfs:devel`:
 
 ```bash
-docker pull cartesi/rootfs:0.4.0
-docker tag cartesi/rootfs:0.4.0 cartesi/rootfs:devel
+docker pull cartesi/rootfs:0.6.0
+docker tag cartesi/rootfs:0.6.0 cartesi/rootfs:devel
 ```
- 
+
 After that, clone Cartesi's [machine-emulator-sdk](https://github.com/cartesi/machine-emulator-sdk) repository along with its submodules:
 
 ```bash
@@ -55,12 +54,12 @@ make config
 
 For this project, select `Target packages` and then `Interpreter languages and scripting`. Select the `python3` entry, then navigate into `External python modules` and select `python-pyjwt`.
 
-After that, simply exit the configuration interface and answer `y` when prompted to build the root file-system. This process may take some minutes to complete, after which a file called `rootfs.ext` will be generated.
+After that, simply exit the configuration interface and answer `y` when prompted to build the root file-system. This process may take some minutes to complete, after which a file called `rootfs.ext2` will be generated.
 
 Finally, move the generated root file-system file back to our project's `cartesi-machine` directory:
 
 ```bash
-mv rootfs.ext2 ../../rootfs-python-jwt.ext2 
+mv rootfs.ext2 ../../rootfs-python-jwt.ext2
 cd ../../
 ```
 

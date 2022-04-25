@@ -16,7 +16,8 @@ Following the same procedure of the [previous tutorials](../../calculator/full-d
 Inside the `generic-script/contracts` directory, create a file called `GenericScript.sol` with these contents:
 
 ```javascript
-pragma solidity >=0.4.25 <0.7.0;
+// SPDX-License-Identifier: GPL-3.0-only
+pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
 import "@cartesi/descartes-sdk/contracts/DescartesInterface.sol";
@@ -26,11 +27,11 @@ contract GenericScript {
 
     DescartesInterface descartes;
 
-    bytes32 templateHash = 0x86374a11e83ac937078f753332e90966fb358fbf229040d2b17a08a476a6a54d;
+    bytes32 templateHash = 0x%tutorials.generic-script.hash-full;
     uint64 outputPosition = 0xa000000000000000;
-    uint64 outputLog2Size = 10;
-    uint256 finalTime = 1e13;
-    uint256 roundDuration = 45;
+    uint8 outputLog2Size = 10;
+    uint256 finalTime = 1e11;
+    uint256 roundDuration = 51;
 
     // generic script to execute (python cares about identation)
     bytes script = "#!/usr/bin/python3\n\
@@ -40,13 +41,13 @@ print(payload)\n\
 ";
 
     // defines script size as 1024 bytes
-    uint64 scriptLog2Size = 10;
+    uint8 scriptLog2Size = 10;
 
-    constructor(address descartesAddress) public {
+    constructor(address descartesAddress) {
         descartes = DescartesInterface(descartesAddress);
     }
 
-    function instantiate(address claimer, address challenger) public returns (uint256) {
+    function instantiate(address[] memory parties) public returns (uint256) {
 
         // specifies an input drive containing the script
         DescartesInterface.Drive[] memory drives = new DescartesInterface.Drive[](1);
@@ -54,8 +55,9 @@ print(payload)\n\
             0x9000000000000000,    // 2nd drive position: 1st is the root file-system (0x8000..)
             scriptLog2Size,        // driveLog2Size
             script,                // directValue
+            "",                    // loggerIpfsPath
             0x00,                  // loggerRootHash
-            claimer,               // provider
+            parties[0],            // provider
             false,                 // waitsProvider
             false                  // needsLogger
         );
@@ -67,8 +69,7 @@ print(payload)\n\
             outputPosition,
             outputLog2Size,
             roundDuration,
-            claimer,
-            challenger,
+            parties,
             drives
         );
     }
@@ -82,54 +83,62 @@ print(payload)\n\
 When compared to the smart contract of the [Calculator DApp](../../calculator/full-dapp#calculator-smart-contract), it can be readily noted that this implementation is virtually identical to that one. Indeed, the only relevant changes are the `templateHash`, which obviously must identify a different machine template, and the input data, now represented by a `script` variable that specifies generic code instead of a mathematical expression. This illustrates how the Descartes API provides a useful and practical abstraction for instantiating complex computations from on-chain code, with the majority of the complexity and heavy-lifting moved off-chain.
 
 
-## Deployment and Execution
+## Deployment and execution
 
-Now that we have the contract ready, let's build the migration file necessary to deploy it to the local [development environment](../../descartes-env) using Truffle. As explained in the [previous tutorials](../../helloworld/deploy-run#deployment), we need to create a file called `2_deploy_contracts.js` inside the `generic-script/migrations` directory with the following content:
+Now that we have the contract ready, let's build the migration file necessary to deploy it to the local [development environment](../../descartes-env) using Hardhat. As explained in the [previous tutorials](../../helloworld/deploy-run#deployment), we need to create a file called `01_contracts.ts` inside the `generic-script/deploy` directory with the following content:
 
 ```javascript
-const contract = require("@truffle/contract");
-const Descartes = contract(require("../../descartes-env/blockchain/node_modules/@cartesi/descartes-sdk/build/contracts/Descartes.json"));
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeployFunction } from "hardhat-deploy/types";
 
-const GenericScript = artifacts.require("GenericScript");
+const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+  const { deployments, getNamedAccounts } = hre;
+  const { deploy, get } = deployments;
+  const { deployer } = await getNamedAccounts();
 
-module.exports = function(deployer) {
-  Descartes.setNetwork(deployer.network_id);
-  deployer.deploy(GenericScript, Descartes.address);
+  const Descartes = await get("Descartes");
+  await deploy("GenericScript", {
+    from: deployer,
+    log: true,
+    args: [Descartes.address],
+  });
 };
+
+export default func;
 ```
 
-Then, use Truffle to compile and deploy the contract:
+Then, use Hardhat to compile and deploy the contract:
 
 ```bash
-truffle migrate
+npx hardhat deploy --network localhost
 ```
 
-Finally, let's hop inside Truffle's console to play with our DApp. Recalling that we have two accounts in our development environment, with addresses `0xe9bE0C1...` and `0x91472C...`, we can instantiate our Generic Script computation with the following commands:
+Finally, let's hop inside Hardhat's console to play with our DApp. Recalling that we have two named accounts in our development environment, we can instantiate our Generic Script computation with the following commands:
 
-```bash
-truffle console
-truffle(development)> gs = await GenericScript.deployed()
-truffle(development)> tx = await gs.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+```javascript
+npx hardhat console --network localhost
+> { alice, bob } = await getNamedAccounts()
+> gs = await ethers.getContract("GenericScript")
+> tx = await gs.instantiate([alice, bob])
 ```
 
 When the computation completes, we can retrieve its output using the `getResult` method with the instantiation's index:
 
-```bash
-truffle(development)> index = tx.receipt.rawLogs[0].data
-truffle(development)> gs.getResult(index)
-Result {
-  '0': true,
-  '1': false,
-  '2': '0x0000000000000000000000000000000000000000',
-  '3': '0x7b27736f6d65273a20277061796c6f6164277d0a000000000000000000...'  
-}
+```javascript
+> index = (await tx.wait()).events[0].data
+> result = await gs.getResult(index)
+[
+  true,
+  false,
+  '0x0000000000000000000000000000000000000000',
+  '0x7b27736f6d65273a20277061796c6f6164277d0a000000000000000000...'  
+]
 ```
 
-Then, we can use a `web3` utility method to print the output data as a string:
+Then, we can use an `ethers` utility method to print the output data as a string:
 
-```bash
-truffle(development)> result = await gs.getResult(index)
-truffle(development)> console.log(web3.utils.hexToAscii(result['3']))
+```javascript
+> console.log(ethers.utils.toUtf8String(result[3]))
 {'some': 'payload'}
 ```
 
@@ -154,25 +163,25 @@ bytes script = "#!/usr/bin/lua\n\
 
 This code starts with a *shebang line* indicating that the Lua interpreter should be used. It then computes `20!` using a recursive factorial function defined within the script itself.
 
-After saving the contract file, we can use our open Truffle console session to immediately redeploy it:
+After saving the contract file, we can use our open Hardhat console session to immediately redeploy it:
 
-```bash
-truffle(development)> migrate --reset
+```javascript
+> await run("deploy")
 ```
 
 And then, we can instantiate a new computation using the updated deployed contract by executing:
 
 ```bash
-truffle(development)> gs2 = await GenericScript.deployed()
-truffle(development)> tx = await gs2.instantiate('0xe9bE0C14D35c5fA61B8c0B34f4c4e2891eC12e7E', '0x91472CCE70B1080FdD969D41151F2763a4A22717')
+> gs2 = await ethers.getContract("GenericScript")
+> tx = await gs2.instantiate([alice, bob])
 ```
 
 After some time, we can query and print the result using the new computation's index:
 
 ```bash
-truffle(development)> index = tx.receipt.rawLogs[0].data
-truffle(development)> result = await gs2.getResult(index)
-truffle(development)> console.log(web3.utils.hexToAscii(result['3']))
+> index = (await tx.wait()).events[0].data
+> result = await gs2.getResult(index)
+> console.log(ethers.utils.toUtf8String(result[3]))
 2432902008176640000
 ```
 

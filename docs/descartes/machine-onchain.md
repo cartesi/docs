@@ -2,14 +2,14 @@
 title: Machines on-chain
 ---
 
-Having discussed the concept of [Cartesi Machines off-chain](../machine-offchain/), capable of booting a Linux operating system and loading heavy weight libraries, one naturally wonders how this will ever be stored or executed on the limited environment of a blockchain. The simple answer is that it won’t be.
+Having discussed the concept of [Cartesi Machines off-chain](../machine-offchain/), capable of booting a Linux operating system and loading heavy-weight libraries, one naturally wonders how this will ever be stored or executed on the limited environment of a blockchain. The simple answer is that it won’t be.
 
 For the blockchain, the whole machine is represented by a single 32-bytes hash (more precisely a Merkle-tree hash). This may sound surprising, because Cartesi claims to give the blockchain the full power to adjudicate in a secure and decentralized way any disputes that may arise as to what the output of such execution is. One may wonder how this is even possible if the blockchain does not have access to the full contents of the machine, but rather a single hash? This is a good question that is explained in detail [here](../../machine/blockchain/hash), but for the purpose of this document, it is sufficient to believe that there is an *interactive verification* algorithm that makes this possible.
 
 Given that machines will be stored on-chain as a single hash, it is clearly important for the developer to be able to retrieve that value. This can be done with the following instruction, as explained in greater detail [here](../../machine/host/cmdline/#persistent-cartesi-machines):
 ```
 playground:~$ cartesi-machine-stored-hash <stored-machine-dir>
-71ea7fc25b30464245917364e3606c12cf6bd6d2b4f74e3a8142df932e5e921e
+%machine.host.cmdline.persistent-stored-hash
 ```
 Take note of this hash, it will be important later as the machine is set on-chain.
 

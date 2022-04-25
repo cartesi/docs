@@ -67,7 +67,7 @@ docker run -it --rm \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  cartesi/playground:0.1.1 /bin/bash
+  cartesi/playground:0.3.0 /bin/bash
 ```
 
 Inside the playground, let's first create a directory with the files that should be included in the `ext2` file-system (i.e., the public key and the test data):
@@ -110,34 +110,7 @@ After setting the date, the ensuing `gpg` command imports the `descartes-pub.key
 The output of running this machine is the following:
 
 ```
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-Fri Jan  1 00:00:00 UTC 2100
-gpg: directory '//.gnupg' created
-gpg: keybox '//.gnupg/pubring.kbx' created
-gpg: //.gnupg/trustdb.gpg: trustdb created
-gpg: key A86D9CB964EB527E marked as ultimately trusted
-gpg: key A86D9CB964EB527E: public key "Descartes Tutorials <descartes.tutorials@cartesi.io>" imported
-gpg: Total number processed: 1
-gpg:               imported: 1
-gpg: marginals needed: 3  completes needed: 1  trust model: pgp
-gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-gpg: Signature made Thu Jul 23 20:59:47 2020 UTC
-gpg:                using RSA key DBBBB50DDC0910795F7C0B48A86D9CB964EB527E
-gpg:                issuer "descartes.tutorials@cartesi.io"
-gpg: Good signature from "Descartes Tutorials <descartes.tutorials@cartesi.io>" [ultimate]
-0
-
-Halted
-Cycles: 97797226
+%tutorials.gpg-verify.run-valid
 ```
 
 As we can see, the output confirms that the date was set, the public key was marked as trusted and imported, and finally the signature was considered valid for the given document. The final `0` value printed just before halting the machine is the exit status for the `gpg` signature verification command, signaling that it has reported success.
@@ -153,34 +126,7 @@ cartesi-machine \
 Which will yield the following output:
 
 ```
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-Fri Jan  1 00:00:00 UTC 2100
-gpg: directory '//.gnupg' created
-gpg: keybox '//.gnupg/pubring.kbx' created
-gpg: //.gnupg/trustdb.gpg: trustdb created
-gpg: key A86D9CB964EB527E marked as ultimately trusted
-gpg: key A86D9CB964EB527E: public key "Descartes Tutorials <descartes.tutorials@cartesi.io>" imported
-gpg: Total number processed: 1
-gpg:               imported: 1
-gpg: marginals needed: 3  completes needed: 1  trust model: pgp
-gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-gpg: Signature made Thu Jul 23 20:59:47 2020 UTC
-gpg:                using RSA key DBBBB50DDC0910795F7C0B48A86D9CB964EB527E
-gpg:                issuer "descartes.tutorials@cartesi.io"
-gpg: BAD signature from "Descartes Tutorials <descartes.tutorials@cartesi.io>" [ultimate]
-1
-
-Halted
-Cycles: 96998151
+%tutorials.gpg-verify.run-invalid
 ```
 
 This informs us that the signature is now invalid for the given document, and that the reported exit status is now `1`, indicating failure. We are now indeed capable of verifying document signatures with a Cartesi Machine!

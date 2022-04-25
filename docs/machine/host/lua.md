@@ -21,8 +21,8 @@ Cartesi Machines can be instantiated directly from a configuration structure, or
 
 ## Instantiation by configuration
 
-<div class="row">
-<div class="col col--6">
+<div class="grid md:grid-cols-2 gap-4">
+<div>
 
 <a name="machine_config"></a>
 
@@ -91,7 +91,7 @@ clint_config ::= {
 }
 ```
 </div>
-<div class="col col--6">
+<div>
 
 <a name="processor_config"></a>
 
@@ -155,7 +155,7 @@ Once again, the length must be a multiple of 4Ki, the length of a memory page.
 Field `image_filename` gives the file name of an image that will be *mapped* to this region.
 This is different from the ROM and RAM image files, which are simply copied into the Cartesi Machine memory, which has been allocated from the host memory. Flash drives use memory mapping because their image files can be very large.
 Mapping them instead of copying them saves host memory, as well as the time it would take to load the files from disk to host memory.
-Since flash drive image files are mapped, their sizes on disk must exactly match the `length` of the flash drive they are *backing*. 
+Since flash drive image files are mapped, their sizes on disk must exactly match the `length` of the flash drive they are *backing*.
 Field `shared` contains a Boolean value that specifies whether changes to the flash drive that happen inside the target reflect in the image file that resides in the host file-system as well.
 If set to `true`, the image file will be modified accordingly.
 This is useful when a flash drive will hold the result of a computation.
@@ -176,7 +176,7 @@ This mechanism is used by stateful Cartesi Machines.
 The other entries in the `machine_config` are used only in rare occasions.
 The devices and processor have a variety of control and status registers (CSRs), in addition to processor's general-purpose registers.
 Most of these are defined in the RISC-V [user-level ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) and [privileged architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf) specifications.
-The Cartesi-specific additions are described under the target perspective [architecture](../../target/architecture/).
+The Cartesi-specific additions are described under the target perspective [architecture](../target/architecture).
 
 The fields `tohost` and `fromhost` in `htif` allow for the overriding of the default initial values of these CSRs.
 The <a href="#clint_config">`clint`</a> entry has a single field, `mtimecmp`, which allows for the overriding of the default initial value of this CSR.
@@ -241,7 +241,7 @@ machine_config = {
     },
     iflags = 0x18, -- default
     ilrsc = 0xffffffffffffffff, -- default
-    marchid = 0x3, -- default
+    marchid = %machine.host.lua.config-marchid, -- default
     mcause = 0x0, -- default
     mcounteren = 0x0, -- default
     mcycle = 0x0, -- default
@@ -249,7 +249,7 @@ machine_config = {
     mepc = 0x0, -- default
     mideleg = 0x0, -- default
     mie = 0x0, -- default
-    mimpid = 0x1, -- default
+    mimpid = %machine.host.lua.config-mimpid, -- default
     minstret = 0x0, -- default
     mip = 0x0, -- default
     misa = 0x8000000000141101, -- default
@@ -257,7 +257,7 @@ machine_config = {
     mstatus = 0xa00000000, -- default
     mtval = 0x0, -- default
     mtvec = 0x0, -- default
-    mvendorid = 0x6361727465736920, -- default
+    mvendorid = %machine.host.lua.config-mvendorid, -- default
     pc = 0x1000, -- default
     satp = 0x0, -- default
     scause = 0x0, -- default
@@ -301,9 +301,9 @@ It can be edited down to its essential, and stored into a file, for example as a
 ```lua title="config/ls-bin.lua"
 return {
   processor = {
-    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
-    mimpid = 0x1, -- cartesi.machine.MIMPID
-    marchid = 0x3, -- cartesi.machine.MARCHID
+    mvendorid = %machine.host.lua.config-mvendorid, -- cartesi.machine.MVENDORID
+    mimpid = %machine.host.lua.config-mimpid, -- cartesi.machine.MIMPID
+    marchid = %machine.host.lua.config-marchid, -- cartesi.machine.MARCHID
   },
   ram = {
     length = 0x4000000,
@@ -340,7 +340,7 @@ The Cartesi-provided `/sbin/init` then uses this information to run the desired 
 
 Recall the command-line utility can also run Cartesi Machines with additional drives.
 In that case, the resulting configuration automatically includes an entry for them in the `mtdparts` kernel command-line argument.
-Repeating another [earlier example](cmdline.md#cartesi-machine-with-foo-flash-drive), and again omitting default values,
+Repeating another earlier example and again omitting default values,
 ```bash
 playground:~$ mkdir foo
 playground:~$ echo Hello world > foo/bar.txt
@@ -356,9 +356,9 @@ This can be edited down to its essential, and stored into a file, for example as
 ```lua title="config/cat-foo-bar.lua"
 return {
   processor = {
-    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
-    mimpid = 0x1, -- cartesi.machine.MIMPID
-    marchid = 0x3, -- cartesi.machine.MARCHID
+    mvendorid = %machine.host.lua.config-mvendorid, -- cartesi.machine.MVENDORID
+    mimpid = %machine.host.lua.config-mimpid, -- cartesi.machine.MIMPID
+    marchid = %machine.host.lua.config-marchid, -- cartesi.machine.MARCHID
   },
   ram = {
     image_filename = "/opt/cartesi/share/images/linux.bin",
@@ -399,9 +399,9 @@ playground:~$ cartesi-machine \
 ```lua title="config/nothing-to-do.lua"
 return {
   processor = {
-    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
-    mimpid = 0x1, -- cartesi.machine.MIMPID
-    marchid = 0x3, -- cartesi.machine.MARCHID
+    mvendorid = %machine.host.lua.config-mvendorid, -- cartesi.machine.MVENDORID
+    mimpid = %machine.host.lua.config-mimpid, -- cartesi.machine.MIMPID
+    marchid = %machine.host.lua.config-marchid, -- cartesi.machine.MARCHID
   },
   ram = {
     image_filename = "/opt/cartesi/share/images/linux.bin",
@@ -432,9 +432,9 @@ playground:~$ cartesi-machine \
 ```lua title="config/progress.lua"
 return {
   processor = {
-    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
-    mimpid = 0x1, -- cartesi.machine.MIMPID
-    marchid = 0x3, -- cartesi.machine.MARCHID
+    mvendorid = %machine.host.lua.config-mvendorid, -- cartesi.machine.MVENDORID
+    mimpid = %machine.host.lua.config-mimpid, -- cartesi.machine.MIMPID
+    marchid = %machine.host.lua.config-marchid, -- cartesi.machine.MARCHID
   },
   ram = {
     image_filename = "/opt/cartesi/share/images/linux.bin",
@@ -469,9 +469,9 @@ playground:~$ cartesi-machine \
 ```lua title="config/calculator.lua"
 return {
   processor = {
-    mvendorid = 0x6361727465736920, -- cartesi.machine.MVENDORID
-    mimpid = 0x1, -- cartesi.machine.MIMPID
-    marchid = 0x3, -- cartesi.machine.MARCHID
+    mvendorid = %machine.host.lua.config-mvendorid, -- cartesi.machine.MVENDORID
+    mimpid = %machine.host.lua.config-mimpid, -- cartesi.machine.MIMPID
+    marchid = %machine.host.lua.config-marchid, -- cartesi.machine.MARCHID
   },
   ram = {
     image_filename = "/opt/cartesi/share/images/linux.bin",
@@ -480,9 +480,6 @@ return {
   rom = {
     image_filename = "/opt/cartesi/share/images/rom.bin",
     bootargs = "console=hvc0 rootfstype=ext2 root=/dev/mtdblock0 rw quiet mtdparts=flash.0:-(root);flash.1:-(input);flash.2:-(output) -- dd status=none if=$(flashdrive input) | lua -e 'print((string.unpack(\"z\", io.read(\"a\"))))' | bc | dd status=none of=$(flashdrive output)",
-  },
-  clint = {
-    mtimecmp = 0x0, -- default
   },
   flash_drive = {
     {
@@ -640,7 +637,7 @@ However, it needs is a mechanism to communicate its progress back to the program
 
 The command-line utility `/opt/cartesi/bin/yield` can be used for this purpose.
 Internally, the tool uses an `ioctl` system-call on the Cartesi-specific `/dev/yield` device.
-The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF  Yield device are explained in detail under the [target perspective](../../target/architecture/).
+The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF  Yield device are explained in detail under the [target perspective](../target/architecture).
 The focus here is on its effect on the host program controlling the emulator.
 
 A Cartesi Machine can be configured to accept HTIF yield progress commands by means of the `htif.yield_progress` Boolean field in the machine configuration.
@@ -788,51 +785,18 @@ playground:~$ cartesi-machine \
     --initial-hash \
     --final-hash
 ```
-<div class="row">
-<div class="col col--6">
+<div class="grid md:grid-cols-2 gap-4">
+<div>
 
 ```
-Building machine: please wait
-0: f8ab363ec22d5ff59facfe346736a7f205c1ddedf1e81a46bbe3414a089e8bc6
-
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-Nothing to do.
-
-
-Cycles: 61730003
-61730003: bc07d7fa1b296b3b3d310395a375928b3bdeeb2eb86c2ccba4ac8f8ebc3732f9
+%machine.host.lua.state-hashes-lua
 ```
 
 </div>
-<div class="col col--6">
+<div>
 
 ```
-0: f8ab363ec22d5ff59facfe346736a7f205c1ddedf1e81a46bbe3414a089e8bc6
-
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-Nothing to do.
-
-Halted
-Cycles: 61730003
-61730003: bc07d7fa1b296b3b3d310395a375928b3bdeeb2eb86c2ccba4ac8f8ebc3732f9
+%machine.host.lua.state-hashes-utility
 ```
 
 </div>
@@ -855,7 +819,7 @@ The selected range *must* reside entirely inside ROM, entirely inside RAM, or en
 
 There are also methods for reading individual registers.
 Most registers are part of the [RISC-V ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf), and its [privileged architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf).
-Cartesi-specific registers are described under the target perspective sections that cover the [processor](../../target/processor/) and [board](../../target/board/) of the Cartesi Machine architecture.
+Cartesi-specific registers are described under the target perspective sections that cover the [processor](../target/architecture) and [board](../target/architecture) of the Cartesi Machine architecture.
 
 The method `machine:read_x(<index>)`, where `<index>` is in 0&hellip;31 returns the value of one of the 32 general-purpose processor registers.
 
@@ -1167,7 +1131,7 @@ This is an advanced section, not needed by regular users of the Cartesi platform
 :::
 
 During verification, the blockchain mediates a *verification game* between the disputing parties.
-This process is explained in detail under the [the blockchain perspective](../../blockchain/vg/).
+This process is explained in detail under the [the blockchain perspective](../blockchain/vg/).
 In a nutshell, both parties started from a Cartesi Machine that has a known and agreed upon initial state hash.
 (E.g., an agreed upon template that was instantiated with an agreed upon input drive.)
 At the end of the computation, these parties now disagree on the state hash for the halted machine.
@@ -1190,8 +1154,8 @@ log_type ::= {
 
 The format of the access log returned is as follows:
 
-<div class="row">
-<div class="col col--6">
+<div class="grid md:grid-cols-2 gap-4">
+<div>
 
 ```lua
 access_log ::= {
@@ -1218,7 +1182,7 @@ access_log ::= {
 
 </div>
 
-<div class="col col--6">
+<div>
 
 ``` lua
 word_access ::= {
@@ -1330,7 +1294,7 @@ local util = require"cartesi.util"
 local machine = cartesi.machine(require"config.nothing-to-do")
 
 -- Run machine until it halts
-local max_mcycle = 695931
+local max_mcycle = %machine.host.cmdline.cycles-limit-exec
 while not machine:read_iflags_H() and machine:read_mcycle() < max_mcycle do
     machine:run(max_mcycle)
 end
@@ -1348,100 +1312,13 @@ util.dump_log(step_log, io.stderr)
 produces the output:
 
 ```
-
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-
-
-Contents of step 697842 access log:
-
-begin step
-  hash 71ea7fc2
-  1: read iflags.H@0x1d0(464): 0x18(24)
-  hash 71ea7fc2
-  2: read iflags.Y (superfluous)@0x1d0(464): 0x18(24)
-  hash 71ea7fc2
-  3: write iflags.Y@0x1d0(464): 0x18(24) -> 0x18(24)
-  begin raise_interrupt_if_any
-    hash 71ea7fc2
-    4: read mip@0x170(368): 0x0(0)
-    hash 71ea7fc2
-    5: read mie@0x168(360): 0x8(8)
-  end raise_interrupt_if_any
-  begin fetch_insn
-    hash 71ea7fc2
-    6: read pc@0x100(256): 0x80002fb0(2147495856)
-    begin translate_virtual_address
-      hash 71ea7fc2
-      7: read iflags.PRV@0x1d0(464): 0x18(24)
-      hash 71ea7fc2
-      8: read mstatus@0x130(304): 0xa00001800(42949679104)
-    end translate_virtual_address
-    begin find_pma_entry
-      hash 71ea7fc2
-      9: read pma.istart@0x800(2048): 0x800000f9(2147483897)
-      hash 71ea7fc2
-      10: read pma.ilength@0x808(2056): 0x4000000(67108864)
-    end find_pma_entry
-    hash 71ea7fc2
-    11: read memory@0x80002fb0(2147495856): 0x7378300f6b023(2031360633384995)
-  end fetch_insn
-  begin sd
-    hash 71ea7fc2
-    12: read x@0x68(104): 0x40008000(1073774592)
-    hash 71ea7fc2
-    13: read x@0x78(120): 0x10100000000000a(72339069014638602)
-    begin translate_virtual_address
-      hash 71ea7fc2
-      14: read iflags.PRV@0x1d0(464): 0x18(24)
-      hash 71ea7fc2
-      15: read mstatus@0x130(304): 0xa00001800(42949679104)
-    end translate_virtual_address
-    begin find_pma_entry
-      hash 71ea7fc2
-      16: read pma.istart@0x800(2048): 0x800000f9(2147483897)
-      hash 71ea7fc2
-      17: read pma.ilength@0x808(2056): 0x4000000(67108864)
-      hash 71ea7fc2
-      18: read pma.istart@0x810(2064): 0x1069(4201)
-      hash 71ea7fc2
-      19: read pma.ilength@0x818(2072): 0xf000(61440)
-      hash 71ea7fc2
-      20: read pma.istart@0x820(2080): 0x80000000000002d9(9223372036854776537)
-      hash 71ea7fc2
-      21: read pma.ilength@0x828(2088): 0x3c00000(62914560)
-      hash 71ea7fc2
-      22: read pma.istart@0x830(2096): 0x4000841a(1073775642)
-      hash 71ea7fc2
-      23: read pma.ilength@0x838(2104): 0x1000(4096)
-    end find_pma_entry
-    hash 71ea7fc2
-    24: write htif.tohost@0x40008000(1073774592): 0x10100000000000d(72339069014638605) -> 0x10100000000000a(72339069014638602)
-    hash ada956d8
-    25: write htif.fromhost@0x40008008(1073774600): 0x0(0) -> 0x101000000000000(72339069014638592)
-    hash fd2c5f9e
-    26: write pc@0x100(256): 0x80002fb0(2147495856) -> 0x80002fb4(2147495860)
-  end sd
-  hash c55d3813
-  27: read minstret@0x128(296): 0xaa5f1(697841)
-  hash c55d3813
-  28: write minstret@0x128(296): 0xaa5f1(697841) -> 0xaa5f2(697842)
-  hash d66b55f0
-  29: read mcycle@0x120(288): 0xaa5f2(697842)
-  hash d66b55f0
-  30: write mcycle@0x120(288): 0xaa5f2(697842) -> 0xaa5f3(697843)
-end step
+%machine.host.lua.state-transition-dump-step
 ```
 Understanding these logs in detail is unnecessary for all but the most low-level internal development at Cartesi.
 It requires deep knowledge of not only RISC-V architecture, but also how Cartesi's emulator implements it.
 The material is beyond the scope of this document.
 In this particular example, however, was hand-picked for illustration purposes.
-The RISC-V instruction being executed, `sd`, writes the 64-bit word `0x010100000000000a` to address `0x40008000` (access&nbsp;#24).
+The RISC-V instruction being executed, `sd`, writes the 64-bit word `0x010100000000000a` to address `0x40008000` (access&nbsp;#23).
 This is the memory-mapped address of HTIF's `tohost` CSR.
 The value refers to the console subdevice (`DEV=0x01`) , command `putchar` (`CMD=0x01`), and causes the device to output a line-feed (`DATA=0x0a`).
 I.e., the instruction is completing the row `       \    / CARTESI` in the splash screen.
@@ -1476,7 +1353,7 @@ local util = require"cartesi.util"
 local machine = cartesi.machine(require"config.nothing-to-do")
 
 -- Run machine until it halts
-local max_mcycle = 695931
+local max_mcycle = %machine.host.cmdline.cycles-limit-exec
 while not machine:read_iflags_H() and machine:read_mcycle() < max_mcycle do
     machine:run(max_mcycle)
 end
@@ -1520,13 +1397,13 @@ State transition accepted!
 ```
 
 The script is much more interesting when the argument is used to &ldquo;mess&rdquo; with the access log before verification.
-For example, changing the address of access #24 
+For example, changing the address of access #23
 ```
-24: write htif.tohost@0x40008000(1073774592): 0x10100000000000d(72339069014638605) -> 0x10100000000000a(72339069014638602)
+23: write htif.tohost@0x40008000(1073774592): 0x10100000000000d(72339069014638605) -> 0x10100000000000a(72339069014638602)
 ```
 from `0x40008000` to `0x100` causes the program to reject the state transition proof:
 ```bash
-playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].address = 0x100'
+playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[23].address = 0x100'
 
          .
         / \
@@ -1536,7 +1413,7 @@ playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].address = 0x100'
   \----/  \---/---\
        \    / CARTESI
 
-luapp5.3: verify-step.lua:31: expected access 24 to write htif.tohost at address 0x40008000(1073774592)
+luapp5.3: verify-step.lua:31: expected access 23 to write htif.tohost at address 0x40008000(1073774592)
 stack traceback:
 	[C]: in function 'assert'
 	verify-step.lua:31: in main chunk
@@ -1547,7 +1424,7 @@ The error message states that, starting from the `<state_hash_before>` and given
 
 Changing the value written also causes the proof to fail, because the earlier entries completely determine the value a true Cartesi Machine would have written:
 ```bash
-playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].written = 0x1234'
+playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[23].written = 0x1234'
 
          .
         / \
@@ -1557,7 +1434,7 @@ playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].written = 0x1234'
   \----/  \---/---\
        \    / CARTESI
 
-luapp5.3: verify-step.lua:32: word value written in access 24 does not match log
+luapp5.3: verify-step.lua:32: word value written in access 23 does not match log
 stack traceback:
 	[C]: in function 'assert'
 	verify-step.lua:32: in main chunk
@@ -1566,7 +1443,7 @@ stack traceback:
 
 Changing the value read also causes the proof to be rejected because it will not match the target hash:
 ```bash
-playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].read = 0x1234'
+playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[23].read = 0x1234'
 
          .
         / \
@@ -1576,7 +1453,7 @@ playground:~$ luapp5.3 verify-step.lua 'step_log.accesses[24].read = 0x1234'
   \----/  \---/---\
        \    / CARTESI
 
-luapp5.3: verify-step.lua:32: word value before write access 24 does not match target hash
+luapp5.3: verify-step.lua:32: word value before write access 23 does not match target hash
 stack traceback:
 	[C]: in function 'assert'
 	verify-step.lua:32: in main chunk
@@ -1584,7 +1461,7 @@ stack traceback:
 ```
 Changing the target hash to match the false value read causes the proof to be rejected because rolling the target hash up the tree will not result in the expected root hash:
 ```bash
-playground:~$ luapp5.3 verify-step.lua 'local access = step_log.accesses[24];access.read = 0x1234; access.proof.target_hash = cartesi.keccak(access.read);'
+playground:~$ luapp5.3 verify-step.lua 'local access = step_log.accesses[23];access.read = 0x1234; access.proof.target_hash = cartesi.keccak(access.read);'
 
          .
         / \
@@ -1594,7 +1471,7 @@ playground:~$ luapp5.3 verify-step.lua 'local access = step_log.accesses[24];acc
   \----/  \---/---\
        \    / CARTESI
 
-luapp5.3: verify-step.lua:32: word value before write access 24 fails proof
+luapp5.3: verify-step.lua:32: word value before write access 23 fails proof
 stack traceback:
 	[C]: in function 'assert'
 	verify-step.lua:32: in main chunk

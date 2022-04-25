@@ -19,29 +19,64 @@ As always, a full implementation of this tutorial is available in the [Descartes
 
 ## Initializing the DApp project
 
-As we did for the [other DApps](../../helloworld/create-project/), we will first initialize our project by creating an appropriate directory and using Truffle to create its basic structure:
+As we did for the [other DApps](../../helloworld/create-project/), we will first initialize our project by creating an appropriate directory along with its basic internal structure:
 
 ```bash
 mkdir generic-script
 cd generic-script
-truffle init
+mkdir contracts
+mkdir deploy
+mkdir cartesi-machine
 ```
 
-We should not forget to edit the generated `truffle-config.js` file, so that we can properly interact with our [development environment's](../../descartes-env) `Ganache CLI` instance, which is running on port `8545` and has network ID `7777`:
-
-```javascript
-networks: {
-  development: {
-   host: "127.0.0.1",     // Localhost (default: none)
-   port: 8545,            // Ganache CLI port (default: none)
-   network_id: "7777",    // Environment network (default: none)
-  },
-},
-```
-
-Last but not least, let's add the necessary dependencies to the Descartes SDK and Truffle:
+We should not forget to add the necessary dependencies to the Descartes SDK, Hardhat, Ethers and TypeScript:
 
 ```bash
-yarn add @cartesi/descartes-sdk@0.2.0
-yarn add @truffle/contract --dev
+yarn add @cartesi/descartes-sdk@1.1.1
+yarn add ethers hardhat hardhat-deploy hardhat-deploy-ethers --dev
+yarn add typescript ts-node --dev
+```
+
+Last but not least, let's create a `hardhat.config.ts` file, so that we can properly interact with our [development environment's](../../descartes-env) Ethereum instance and leverage Descartes' deployment resources:
+
+```javascript
+import { HardhatUserConfig } from "hardhat/config";
+
+import "hardhat-deploy";
+import "hardhat-deploy-ethers";
+
+const config: HardhatUserConfig = {
+  networks: {
+    localhost: {
+      url: "http://localhost:8545",
+    },
+  },
+  solidity: {
+    version: "0.7.4",
+  },
+  external: {
+    contracts: [
+      {
+        artifacts: "node_modules/@cartesi/descartes-sdk/export/artifacts",
+        deploy: "node_modules/@cartesi/descartes-sdk/dist/deploy",
+      },
+    ],
+    deployments: {
+      localhost: ["../descartes-env/deployments/localhost"],
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    alice: {
+      default: 0,
+    },
+    bob: {
+      default: 1,
+    },
+  },
+};
+
+export default config;
 ```

@@ -12,10 +12,9 @@ title: Calculator machine
 
 Now that we have the [basic project structure](../create-project) ready, let's focus on the main part of our DApp, which is the off-chain computation to be performed by the Cartesi Machine. 
 
-First of all, create a `cartesi-machine` subdirectory and `cd` into it, as we did for the previous DApp tutorial:
+First of all, let's `cd` into the `cartesi-machine` subdirectory:
 
 ```bash
-mkdir cartesi-machine
 cd cartesi-machine
 ```
 
@@ -24,7 +23,7 @@ For this computation, we will use the [Linux bc tool](https://www.gnu.org/softwa
 We can use the playground to help us configure and test an appropriate machine. To do that, let's run it in interactive mode:
 
 ```bash
-docker run -it --rm cartesi/playground:0.1.1 /bin/bash
+docker run -it --rm cartesi/playground:0.3.0 /bin/bash
 ```
 
 Now, let's create some test input data:
@@ -85,7 +84,7 @@ Now, edit the file and place the following contents into it:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.1.1
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
@@ -115,8 +114,8 @@ docker run \
     --flash-drive="label:output,length:1<<12" \
     -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
 
-# moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
-mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
+# defines target directory as being within $MACHINES_DIR and named after the stored machine's hash
+MACHINE_TARGET_DIR=$MACHINES_DIR/$(docker run \
   -e USER=$(id -u -n) \
   -e GROUP=$(id -g -n) \
   -e UID=$(id -u) \
@@ -125,6 +124,12 @@ mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
   -h playground \
   -w /home/$(id -u -n) \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+
+# moves stored machine to the target directory
+if [ -d "$MACHINE_TARGET_DIR" ]; then
+  rm -r $MACHINE_TARGET_DIR
+fi
+mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
 As explained in more detail in the [Hello World tutorial](../../helloworld/cartesi-machine), this script will create a *template machine* to be executed upon request, and store its contents in a directory specified by the user. In order to do that, we have specified `max-mcycle=0`, so that the machine halts without running any cycles. Then, we added the parameter `--store="$MACHINE_TEMP_DIR"` to specify that the machine's specification should be stored in the specified directory. Finally, we have removed the `filename` configurations from the flash drives, since the input and output data will now be handled automatically by Descartes.
@@ -138,13 +143,10 @@ With all of this set, build the machine by executing:
 The output of the above command should then be:
 
 ```
-0: 88040f919276854d14efb58967e5c0cb2fa637ae58539a1c71c7b98b4f959baa
-
-Cycles: 0
-Storing machine: please wait
+%tutorials.calculator.store
 ```
 
-After executing this command, the machine's specification will be stored in the appropriate directory within our Descartes environment. Moreover, we are informed that its initial template hash is `88040f91...`, which serves as an identifier of this machine and will thus be necessary to instantiate the computation from a smart contract, as will be explored in the next section.
+After executing this command, the machine's specification will be stored in the appropriate directory within our Descartes environment. Moreover, we are informed that its initial template hash is `%tutorials.calculator.hash-trunc...`, which serves as an identifier of this machine and will thus be necessary to instantiate the computation from a smart contract, as will be explored in the next section.
 
 Finally, move back to the `calculator` home directory:
 

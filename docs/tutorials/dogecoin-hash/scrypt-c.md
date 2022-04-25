@@ -12,14 +12,13 @@ title: Computing scrypt using C
 
 As discussed in the [technical background](../create-project/#technical-background), the Dogecoin/Litecoin proof-of-work hash must be computed using the `scrypt` algorithm. In this tutorial, we will implement this computation in C, making use of the well-established [libscrypt](https://github.com/technion/libscrypt) library.
 
-Before we begin, let's first create a `dogecoin-hash/cartesi-machine` directory:
+Before we begin, let's first switch to the `dogecoin-hash/cartesi-machine` directory:
 
 ```bash
-mkdir cartesi-machine
 cd cartesi-machine
 ```
 
-Inside the newly created directory, download the library source code into a subdirectory called `libscrypt`. The easiest way to do that is by cloning the library's GitHub repository using `git`. In case you don't already have `git` installed, run:
+Now, download the library source code into a subdirectory called `libscrypt`. The easiest way to do that is by cloning the library's GitHub repository using `git`. In case you don't already have `git` installed, run:
 
 ```bash
 sudo apt-get update
@@ -44,18 +43,18 @@ docker run -it --rm \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  cartesi/playground:0.1.1 /bin/bash
+  cartesi/playground:0.3.0 /bin/bash
 ```
 
 As usual for C projects, the `libscrypt` library is intended to be built using the `make` command, which will follow the specifications layed out in its `Makefile`. In this context, we need to set up some changes to the environment, so that the library is built with the intended cross-compiler for RISC-V, using adequate parameters:
 
 ```bash
-export CC=riscv64-unknown-linux-gnu-gcc
+export CC=riscv64-cartesi-linux-gnu-gcc
 export CFLAGS_EXTRA="-Wl,-rpath=. -O2 -Wall -g"
 export PATH=$PATH:~/
 ```
 
-The `CC` environment variable above stands for "C compiler", and is actually used inside the `Makefile` to allow a specific compiler to be configured instead of the standard `gcc` tool. In this context, `riscv64-unknown-linux-gnu-gcc` is the name of the appropriate cross-compiler available in the playground, which is capable of producing output targeting the Cartesi Machine's RISC-V architecture.
+The `CC` environment variable above stands for "C compiler", and is actually used inside the `Makefile` to allow a specific compiler to be configured instead of the standard `gcc` tool. In this context, `riscv64-cartesi-linux-gnu-gcc` is the name of the appropriate cross-compiler available in the playground, which is capable of producing output targeting the Cartesi Machine's RISC-V architecture.
 Aside from that, we also define the `CFLAGS_EXTRA` variable exactly as it is already specified in `libscrypt`'s Makefile, but removing the unsupported flag "-fstack-protector". Finally, we set the `PATH` to include the playground's home directory, which is mapped to the `dogecoin-hash/cartesi-machine` directory outside of the playground Docker.
 
 The `PATH` setting is actually done just to help us work around a limitation in `libscrypt`'s Makefile, which unfortunately does not provide an environment variable to configure which *archiver* tool to use. Since the `Makefile` forcibly always uses the command `ar`, we will fix this limitation by creating an executable script called `ar` in the current home directory (now included in the `PATH`) that simply calls the appropriate RISC-V utility instead.
@@ -71,7 +70,7 @@ And now place the following contents into it:
 
 ```bash
 #!/bin/bash
-/opt/riscv/riscv64-unknown-linux-gnu/bin/riscv64-unknown-linux-gnu-ar "$@"
+/opt/riscv/riscv64-cartesi-linux-gnu/bin/riscv64-cartesi-linux-gnu-ar "$@"
 ```
 
 With that set, we are at last ready to build the library. This can now be done by simply switching into the `libscrypt` directory and running the `make` command:
@@ -225,7 +224,7 @@ As documented in file `libscrypt/libscrypt.h`, the above method call passes the 
 Once the code is ready, we can finally *cross-compile* it to the RISC-V target architecture, linking it to the `libscrypt` shared library:
 
 ```bash
-riscv64-unknown-linux-gnu-gcc -O2 -o scrypt-hash scrypt-hash.c -Wl,-rpath=. -Llibscrypt -lscrypt
+riscv64-cartesi-linux-gnu-gcc -O2 -o scrypt-hash scrypt-hash.c -Wl,-rpath=. -Llibscrypt -lscrypt
 ```
 
 The above command will generate an executable file called `scrypt-hash` in the current directory. However, since it has been built for the RISC-V architecture, this program *cannot* be executed directly from the command line, but rather from inside a Cartesi Machine, as we'll see in the [next section](../cartesi-machine).

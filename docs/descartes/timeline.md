@@ -1,5 +1,5 @@
 ---
-title: Execution Timeline
+title: Execution timeline
 ---
 
 At this point, an overview has been given of what constitutes a Cartesi computation, who are the parties involved, and what the software components of Descartes are. It is important to understand better what events happen during the execution of a Cartesi Machine.
@@ -41,7 +41,7 @@ If a machine does not require *Provided drives*, or after all of them are proper
 This is done automatically by the Descartes Node running on behalf of the users.
 After the execution, the node representing the claimer will submit the result of the computation to the blockchain and the challenger will verify the claim for correctness.
 
-After the verification, the challenger's node will automatically accept the result of the computation (notifying the DApp of the final result), or raise a dispute, which is briefly described in the next subsection.
+After the verification, the challenger nodes will automatically accept the result of the computation (notifying the DApp of the final result), or raise a dispute, which is briefly described in the next subsection.
 
 Disputes
 --------

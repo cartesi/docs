@@ -33,7 +33,7 @@ docker run -it --rm \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  cartesi/playground:0.1.1 /bin/bash
+  cartesi/playground:0.3.0 /bin/bash
 ```
 
 Inside the playground, let's run the truncate tool to ensure the input file has an adequate size, as we did before for the [Calculator Cartesi Machine](../../calculator/cartesi-machine#performing-calculations-with-a-cartesi-machine):
@@ -54,20 +54,7 @@ cartesi-machine \
 In the machine above, the `rootfs-python-jwt.ext2` file is mapped to the `root` drive (and hence mounted as `/mnt/root`). The final command line will read the input script from file `input.py`, use a tiny Lua script to ensure data is read as a null-terminated string, and pipe that string into the `python3` interpreter, producing the following output:
 
 ```
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-{'some': 'payload'}
-
-Halted
-Cycles: 221650687
+%tutorials.generic-script.run
 ```
 
 Where `{'some': 'payload'}` is the actual payload encoded in the JWT token described in the input script. This assures us that the machine is now indeed capable of running arbitrary Python scripts, thanks to our customized root file-system.
@@ -99,7 +86,7 @@ Then, add the following contents:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.1.1
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
@@ -127,15 +114,22 @@ docker run \
     --flash-drive="label:output,length:1<<12" \
     -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' > /input_script ; chmod +x /input_script ; /input_script | dd status=none of=$(flashdrive output)'
 
-# moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
-mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
+# defines target directory as being within $MACHINES_DIR and named after the stored machine's hash
+MACHINE_TARGET_DIR=$MACHINES_DIR/$(docker run \
   -e USER=$(id -u -n) \
   -e GROUP=$(id -g -n) \
   -e UID=$(id -u) \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
+  -h playground \
   -w /home/$(id -u -n) \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+
+# moves stored machine to the target directory
+if [ -d "$MACHINE_TARGET_DIR" ]; then
+  rm -r $MACHINE_TARGET_DIR
+fi
+mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
 As in our previous test, we specify the `rootfs-python-jwt.ext2` file as the root file-system, along with an input drive. This time, however, we also define an output drive, where the resulting data should be written to. Moreover, the input drive is  no longer mapped to the `input.py` file, since Descartes will take care of inserting data into it, as well as retrieving data from the output drive. Aside from that, we changed the command line to save the input script to a file, make that file executable, and then run it using the Linux shell. The shell will automatically interpret the first *shebang line* and fire the appropriate interpreter by itself.
@@ -149,10 +143,7 @@ Now we can build the machine template and store it by executing:
 The output of which should be something like this:
 
 ```
-0: 86374a11e83ac937078f753332e90966fb358fbf229040d2b17a08a476a6a54d
-
-Cycles: 0
-Storing machine: please wait
+%tutorials.generic-script.store
 ```
 
 It is important to note here that, contrary to our previous tutorials, the resulting template hash produced will be different from the one presented above, even though the machine specification and input contents are apparently the same. This happens because the hash captures the *complete initial state* of the machine, and the process of generating a customized `rootfs-python-jwt.ext2` will always lead to a slightly different file.
@@ -160,13 +151,14 @@ It is important to note here that, contrary to our previous tutorials, the resul
 As such, to get the exact same result you will need to download the very same `ext2` file that was used to build the machine when this tutorial was written, which is actually [available in the Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials). Thus, we can finish off this section by executing the following commands to retrieve that file and then rebuild the machine template using it:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/releases/download/v0.2.0/rootfs-python-jwt.ext2
+rm rootfs-python-jwt.ext2
+wget https://github.com/cartesi/descartes-tutorials/releases/download/v1.1.0/rootfs-python-jwt.ext2
 ./build-cartesi-machine.sh ../../descartes-env/machines
 ```
 
 Which should now yield the exact same output as above.
 
-With the correct machine template appropriately stored, the template hash `86374a11...`  can now be used as its identifier when instantiating this Generic Script computation from a smart contract. We will implement such a contract in the next section, but before that let's switch back to the `generic-script` home directory:
+With the correct machine template appropriately stored, the template hash `%tutorials.generic-script.hash-trunc...`  can now be used as its identifier when instantiating this Generic Script computation from a smart contract. We will implement such a contract in the next section, but before that let's switch back to the `generic-script` home directory:
 
 ```bash
 cd ..

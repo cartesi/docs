@@ -18,31 +18,66 @@ The [GNU Privacy Guard (GnuPG)](https://www.gnupg.org/) is a widely used tool fo
 
 ## Initializing the DApp project
 
-To begin with, let's create a directory for our project and initialize it using Truffle, as [discussed before](../../helloworld/create-project/): 
+To begin with, let's create a directory for our project and set up some subdirectories inside it, as [discussed before](../../helloworld/create-project/): 
 
 ```bash
 mkdir gpg-verify
 cd gpg-verify
-truffle init
+mkdir contracts
+mkdir deploy
+mkdir cartesi-machine
 ```
 
-As always, we need to edit the generated `truffle-config.js` file in order to match the port and network ID of the `Ganache CLI` instance running inside our [development environment](../../descartes-env):
-
-```javascript
-networks: {
-  development: {
-   host: "127.0.0.1",     // Localhost (default: none)
-   port: 8545,            // Ganache CLI port (default: none)
-   network_id: "7777",    // Environment network (default: none)
-  },
-},
-```
-
-Finally, add these required project dependencies to Truffle and the Descartes SDK:
+As always, we need to add the required project dependencies to Hardhat/Ethers and the Descartes SDK, as well as TypeScript:
 
 ```bash
-yarn add @cartesi/descartes-sdk@0.2.0
-yarn add @truffle/contract --dev
+yarn add @cartesi/descartes-sdk@1.1.1
+yarn add ethers hardhat hardhat-deploy hardhat-deploy-ethers --dev
+yarn add typescript ts-node --dev
+```
+
+Finally, we need to create the `hardhat.config.ts` file to indicate the location of the Ethereum instance running inside our [development environment](../../descartes-env), in addition to the dependency on Descartes' artifacts and deployments scripts and other configurations:
+
+```javascript
+import { HardhatUserConfig } from "hardhat/config";
+
+import "hardhat-deploy";
+import "hardhat-deploy-ethers";
+
+const config: HardhatUserConfig = {
+  networks: {
+    localhost: {
+      url: "http://localhost:8545",
+    },
+  },
+  solidity: {
+    version: "0.7.4",
+  },
+  external: {
+    contracts: [
+      {
+        artifacts: "node_modules/@cartesi/descartes-sdk/export/artifacts",
+        deploy: "node_modules/@cartesi/descartes-sdk/dist/deploy",
+      },
+    ],
+    deployments: {
+      localhost: ["../descartes-env/deployments/localhost"],
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    alice: {
+      default: 0,
+    },
+    bob: {
+      default: 1,
+    },
+  },
+};
+
+export default config;
 ```
 
 ## Public key file
@@ -51,10 +86,9 @@ As explained above, the idea of signing documents is that any party can use an o
 
 In fact, a specific *keypair* for a fictional user `descartes.tutorials@cartesi.io` was created just for the purposes of this tutorial, and both its public and private keys are available in the [Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine).
 
-To download the public key to an appropriate location, first create a `cartesi-machine` directory and `cd` into it:
+To download the public key to an appropriate location, first `cd` into the `cartesi-machine` subdirectory:
 
 ```bash
-mkdir cartesi-machine
 cd cartesi-machine
 ```
 

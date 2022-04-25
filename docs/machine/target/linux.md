@@ -3,7 +3,7 @@ title: Linux environment
 ---
 
 :::note
-The host perspective describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines, as presented in the [host perspective section](../../host/overview/).
+The host perspective describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines, as presented in the [host perspective section](../host/overview).
 In order to avoid repetition, this section assumes familiarity with the material presented there.
 :::
 
@@ -149,9 +149,9 @@ int main(int argc, char *argv[]) {
 
 To produce the binary in the playground, run
 ```bash
-playground:~$ riscv64-unknown-linux-gnu-g++ -O2 -o hello-cpp hello.cpp
+playground:~$ riscv64-cartesi-linux-gnu-g++ -O2 -o hello-cpp hello.cpp
 ```
-Note the prefix `riscv64-unknown-linux-gnu-` to the typical `g++` command.
+Note the prefix `riscv64-cartesi-linux-gnu-` to the typical `g++` command.
 This prefix identifies the cross-compiler.
 The resulting file is a RISC-V executable suitable for running on the target:
 
@@ -180,25 +180,7 @@ playground:~$ cartesi-machine \
 The output is
 
 ```
-
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-1: Hello world from C++!
-2: Hello world from C++!
-3: Hello world from C++!
-4: Hello world from C++!
-5: Hello world from C++!
-
-Halted
-Cycles: 73801178
+%machine.target.linux.hello-cpp
 ```
 
 One of the advantages of running Linux is the large number of well-established software development tools available.
@@ -411,7 +393,7 @@ The flash drives 0&ndash;8 receive device names `flash.0`&ndash;`flash.7`, and t
 
 The kernel command-line parameters `rootfstype=ext2 root=/dev/mtdblock0 rw` instruct that the root file-system is of type `ext2`, that it resides in device `/dev/mtdblock0`, i.e., flash drive 0, and that it should be mounted read-write.
 Partitioning information for flash drives and, in particular, custom labels can be specified with the `mtdparts` parameter in the Linux kernel command line.
-The format for the parameter is documented in the [source-code](https://elixir.bootlin.com/linux/v5.5.19/source/drivers/mtd/parsers/cmdlinepart.c) for the kernel module reponsible for parsing it.
+The format for the parameter is documented in the [source-code](https://elixir.bootlin.com/linux/v5.5.19/source/drivers/mtd/parsers/cmdlinepart.c) for the kernel module responsible for parsing it.
 For example, the parameter `mtdparts=flash.0:-(root)` specifies a single partition with label `root` for `flash.0`.
 
 A flash drive holds whatever data is made available by the emulator in the corresponding target physical memory region.

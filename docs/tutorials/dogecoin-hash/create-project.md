@@ -48,29 +48,64 @@ In this tutorial, we will implement a DApp that allows a smart contract to produ
 
 ## Initializing the DApp project
 
-Now that we have a better understanding of the project's goal, let's start our implementation by initializing the project's structure using Truffle, as we have done for the [other tutorials](../../helloworld/create-project/): 
+Now that we have a better understanding of the project's goal, let's start our implementation by initializing the project's structure, as we have done for the [other tutorials](../../helloworld/create-project/): 
 
 ```bash
 mkdir dogecoin-hash
 cd dogecoin-hash
-truffle init
+mkdir contracts
+mkdir deploy
+mkdir cartesi-machine
 ```
 
-Once the project is initialized, open up the `truffle-config.js` file that was created and change its contents to match the configuration of the `Ganache CLI` instance running inside our [development environment](../../descartes-env), which is using port `8545` and network ID `7777`:
-
-```javascript
-networks: {
-  development: {
-   host: "127.0.0.1",     // Localhost (default: none)
-   port: 8545,            // Ganache CLI port (default: none)
-   network_id: "7777",    // Environment network (default: none)
-  },
-},
-```
-
-After that, ensure that the project has the adequate dependencies to Descartes SDK and Truffle:
+Once the project is initialized, ensure that it has the adequate dependencies to the Descartes SDK, Hardhat, Ethers and TypeScript:
 
 ```bash
-yarn add @cartesi/descartes-sdk@0.2.0
-yarn add @truffle/contract --dev
+yarn add @cartesi/descartes-sdk@1.1.1
+yarn add ethers hardhat hardhat-deploy hardhat-deploy-ethers --dev
+yarn add typescript ts-node --dev
+```
+
+After that, create a `hardhat.config.ts` file with the configuration of the local Ethereum instance running inside our [development environment](../../descartes-env), which is using port `8545`, along with the project's dependencies on Descartes' artifacts and deployments scripts and other settings such as named accounts and Solidity version:
+
+```javascript
+import { HardhatUserConfig } from "hardhat/config";
+
+import "hardhat-deploy";
+import "hardhat-deploy-ethers";
+
+const config: HardhatUserConfig = {
+  networks: {
+    localhost: {
+      url: "http://localhost:8545",
+    },
+  },
+  solidity: {
+    version: "0.7.4",
+  },
+  external: {
+    contracts: [
+      {
+        artifacts: "node_modules/@cartesi/descartes-sdk/export/artifacts",
+        deploy: "node_modules/@cartesi/descartes-sdk/dist/deploy",
+      },
+    ],
+    deployments: {
+      localhost: ["../descartes-env/deployments/localhost"],
+    },
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    alice: {
+      default: 0,
+    },
+    bob: {
+      default: 1,
+    },
+  },
+};
+
+export default config;
 ```
