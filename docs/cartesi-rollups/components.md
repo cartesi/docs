@@ -3,18 +3,18 @@ id: components
 title: Components
 ---
 
-As explained in the [previous section](../overview), the Cartesi Rollups framework achieves scalability by moving the bulk of the computation outside the blockchain, using the ledger as a data source but not as an execution environment. As such, the solution contains both on-chain (layer-1) and off-chain (layer-2) components.
+As explained in the [previous section](../cartesi-rollups/overview), the Cartesi Rollups framework achieves scalability by moving the bulk of the computation outside the blockchain, using the ledger as a data source but not as an execution environment. As such, the solution contains both on-chain (layer-1) and off-chain (layer-2) components.
 
 :::note
-In this section, we describe the internal components of the Cartesi Rollups framework in more detail, to clarify how the system works inside. DApp developers may chose to skip directly to the [DApp architecture](../dapp-architecture) section to understand how to build applications.
+In this section, we describe the internal components of the Cartesi Rollups framework in more detail, to clarify how the system works inside. DApp developers may chose to skip directly to the [DApp architecture](../cartesi-rollups/dapp-architecture) section to understand how to build applications.
 :::
 
 ## Main concepts
 ### Cartesi Nodes
 
-As explained before, [Cartesi Machines](../../machine/overview) provide DApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the layer-1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
+As explained before, [Cartesi Machines](../machine/overview) provide DApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the layer-1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
 
-The _Cartesi Node_ is the layer-2 component that consists of the combination of the Cartesi Machine and this middleware, and can be used by anyone interested in the rollups state of affairs. Put simply, Cartesi Nodes play a role that is similar to what Geth does on the Ethereum ecosystem: execution and retrieval of information. 
+The _Cartesi Node_ is the layer-2 component that consists of the combination of the Cartesi Machine and this middleware, and can be used by anyone interested in the rollups state of affairs. Put simply, Cartesi Nodes play a role that is similar to what Geth does on the Ethereum ecosystem: execution and retrieval of information.
 
 In practice, there are two distinct kinds of agents that run Cartesi Nodes: _users_ and _validators_. Each of them interacts with the on-chain rollups in different ways, and thus run different types of Cartesi Nodes:
 
@@ -78,7 +78,7 @@ The [Cartesi Rollups Manager](https://github.com/cartesi/rollups/blob/main/contr
 
 ### Input contract
 
-As discussed above, the on-chain contracts often have two concurrent epochs: a sealed but unfinalized epoch, and an accumulating one. The [Input contract](https://github.com/cartesi/rollups/blob/main/contracts/InputImpl.sol) keeps one inbox for each of those epochs, switching between them depending on the Cartesi Rollups Manager's notifications. 
+As discussed above, the on-chain contracts often have two concurrent epochs: a sealed but unfinalized epoch, and an accumulating one. The [Input contract](https://github.com/cartesi/rollups/blob/main/contracts/InputImpl.sol) keeps one inbox for each of those epochs, switching between them depending on the Cartesi Rollups Manager's notifications.
 
 For anyone to be able to synchronize the machine from its beginning without needing to trust a data provider, the full content of inputs is always present in calldata on the blockchain. In on-chain storage, which needs to be used in a more parsimonious way, we keep a single hash for each input of an active epoch.
 This input hash summarizes both the input itself and its metadata, which corresponds to the sender's address and the time of reception. Notice that this input implementation is permissionless: the permission layer is delegated to the off-chain machine which will, for example, judge if a sender is allowed to do what their input wants to do.
@@ -104,7 +104,7 @@ Anyone can deposit assets there but only the DApp — through its Output contrac
 
 ### Validator Manager
 
-The [Validator Manager](https://github.com/cartesi/rollups/blob/main/contracts/ValidatorManagerImpl.sol) module was created to help DApps manage their claims, claim permissions, and punishments for bad behavior. Initially, our suggested implementation for this module includes the following characteristics: the set of payable validators is defined in construction time, validators send a claim for every epoch and those that lose a dispute are kicked off the validators set. 
+The [Validator Manager](https://github.com/cartesi/rollups/blob/main/contracts/ValidatorManagerImpl.sol) module was created to help DApps manage their claims, claim permissions, and punishments for bad behavior. Initially, our suggested implementation for this module includes the following characteristics: the set of payable validators is defined in construction time, validators send a claim for every epoch and those that lose a dispute are kicked off the validators set.
 
 The [Cartesi Rollups Manager](#cartesi-rollups-manager) receives claims and redirects them to the Validator Manager. When receiving a claim, the Validator Manager checks which other claims have arrived at that epoch and returns the information that Cartesi Rollups Manager needs to continue. The module can respond to received claims in one of the following ways:
 
@@ -127,7 +127,7 @@ These consist of the internal modules of the [Cartesi Node](#cartesi-node). As e
 
 ### State Server
 
-This service is responsible for ensuring that the remaining modules have access to a consistent view of the state of the blockchain. The service is an instance of  Cartesi's [State Fold tool](https://github.com/cartesi/state-fold) and monitors all relevant activity from the Cartesi Rollups smart contracts, consolidating the information that gets emitted by the blockchain. 
+This service is responsible for ensuring that the remaining modules have access to a consistent view of the state of the blockchain. The service is an instance of  Cartesi's [State Fold tool](https://github.com/cartesi/state-fold) and monitors all relevant activity from the Cartesi Rollups smart contracts, consolidating the information that gets emitted by the blockchain.
 
 ### Rollups Dispatcher
 
@@ -137,7 +137,7 @@ Responsible for interpreting the current state of the Cartesi Rollups smart cont
 
 This module manages the Cartesi Machine, sending inputs to it and reading the produced outputs. It is responsible for starting and stopping the machine as appropriate, as well as providing an API for the other modules to query the machine's state.
 
-The [**Host Server Manager**](https://github.com/cartesi/host-server-manager) is an alternative implementation of the Server Manager for development purposes. It implements the same API and mimics the behavior of an actual Server Manager, but does not in fact instantiate a Cartesi Machine. Instead, it makes HTTP requests directly to a DApp running in the host computer. The Host Server Manager is intended to be used in the [implementation stage of the DApp Life Cycle](../dapp-life-cycle#stage-3-implementation).
+The [**Host Server Manager**](https://github.com/cartesi/host-server-manager) is an alternative implementation of the Server Manager for development purposes. It implements the same API and mimics the behavior of an actual Server Manager, but does not in fact instantiate a Cartesi Machine. Instead, it makes HTTP requests directly to a DApp running in the host computer. The Host Server Manager is intended to be used in the [implementation stage of the DApp Life Cycle](../cartesi-rollups/dapp-life-cycle#stage-3-implementation).
 
 ### Rollups Indexer
 

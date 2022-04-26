@@ -15,7 +15,7 @@ Instantiate
 The `instantiate` call requests the Descartes infrastructure to perform an off-chain computation.
 
 This function call includes all the necessary data to specify the computation, as well as the interested parties.
-The details of the `instantiate` parameters and usage are specified in the [Instantiate section](../instantiate/).
+The details of the `instantiate` parameters and usage are specified in the [Instantiate section](../descartes/instantiate/).
 
 For now, it is sufficient to understand in broad terms the parameters specified in the `instantiate` call:
 - Who are the parties involved in the requested computation (claimer and challenger);
@@ -28,10 +28,10 @@ For now, it is sufficient to understand in broad terms the parameters specified 
 Provided drives
 ---------------
 
-As explained in detail in the [Provider section](../provider/), some machines will require one or more users to fill in the contents of the input drives.
+As explained in detail in the [Provider section](../descartes/provider/), some machines will require one or more users to fill in the contents of the input drives.
 If this is the case, there will be a time interval between the instantiation of a Cartesi Machine and its execution.
 This time is given exactly for the involved parties to submit such required data.
-The [Provider section](provider.md) also explains how (and in which format) such data is sent by the users to their Descartes Nodes for further processing.
+The [Provider section](../descartes/provider/) also explains how (and in which format) such data is sent by the users to their Descartes Nodes for further processing.
 
 Machine execution
 -----------------

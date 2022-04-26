@@ -48,7 +48,7 @@ In this tutorial, we will implement a DApp that allows a smart contract to produ
 
 ## Initializing the DApp project
 
-Now that we have a better understanding of the project's goal, let's start our implementation by initializing the project's structure, as we have done for the [other tutorials](../../helloworld/create-project/): 
+Now that we have a better understanding of the project's goal, let's start our implementation by initializing the project's structure, as we have done for the [other tutorials](../helloworld/create-project/):
 
 ```bash
 mkdir dogecoin-hash
@@ -66,7 +66,7 @@ yarn add ethers hardhat hardhat-deploy hardhat-deploy-ethers --dev
 yarn add typescript ts-node --dev
 ```
 
-After that, create a `hardhat.config.ts` file with the configuration of the local Ethereum instance running inside our [development environment](../../descartes-env), which is using port `8545`, along with the project's dependencies on Descartes' artifacts and deployments scripts and other settings such as named accounts and Solidity version:
+After that, create a `hardhat.config.ts` file with the configuration of the local Ethereum instance running inside our [development environment](../descartes-env), which is using port `8545`, along with the project's dependencies on Descartes' artifacts and deployments scripts and other settings such as named accounts and Solidity version:
 
 ```javascript
 import { HardhatUserConfig } from "hardhat/config";

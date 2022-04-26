@@ -7,16 +7,16 @@ The combination of [an Optimistic Rollups framework](https://github.com/cartesi/
 
 A DApp running on Cartesi Rollups consists of the following main components:
 
-* [**Cartesi Rollups**](../components), a set of on-chain and off-chain components that implement an Optimistic Rollups solution and provide the general framework for building DApps.
-* [**Cartesi Machine**](../../machine/overview), a virtual machine (VM) that runs an entire Linux OS, in which each DApp's [back-end](../dapp-architecture/#back-end) is executed.
-* [**DApp Back-end**](../dapp-architecture/#back-end), the application's state and verifiable logic, which corresponds to the DApp's smart contract. The back-end runs inside the Cartesi Machine as a regular Linux application.
-* [**DApp Front-end**](../dapp-architecture/#front-end), the application's user-facing interface, such as a web app.
+* [**Cartesi Rollups**](../cartesi-rollups/components), a set of on-chain and off-chain components that implement an Optimistic Rollups solution and provide the general framework for building DApps.
+* [**Cartesi Machine**](../machine/overview), a virtual machine (VM) that runs an entire Linux OS, in which each DApp's [back-end](../cartesi-rollups/dapp-architecture/#back-end) is executed.
+* [**DApp Back-end**](../cartesi-rollups/dapp-architecture/#back-end), the application's state and verifiable logic, which corresponds to the DApp's smart contract. The back-end runs inside the Cartesi Machine as a regular Linux application.
+* [**DApp Front-end**](../cartesi-rollups/dapp-architecture/#front-end), the application's user-facing interface, such as a web app.
 
 The diagram below explains the overall architecture:
 ![img](./core-components.png)
 
 :::note
-You can [**run a simple DApp**](../../build-dapps/run-dapp) that we already built using Python
+You can [**run a simple DApp**](../build-dapps/run-dapp) that we already built using Python
 :::
 
 ## What is a blockchain rollup?
@@ -54,7 +54,7 @@ Non-interactive refers to the fact that the challengers can prove that a state u
 
 **Cartesi’s version of Optimistic Rollups** uses interactive fraud proofs. The model was chosen because it imposes a higher ceiling to the size of computations that can be executed. In other words, with this model the blockchain base layer is never responsible for executing entire computations: either there are no disputes and no computation takes place there, or, if a dispute occurs, it only needs to compute a single instruction to distinguish between misbehavior and honesty. In either case, the results themselves are always computed off-chain, and as a consequence the computation involved can be massive.
 
-In the next sections, we will first describe [Cartesi Rollups' internal components](../components) and how they work. Then, we will explain in detail the [architecture of DApps](../dapp-architecture) that run on our rollups framework, as well as the [APIs that developers can use](../http-api) to communicate with it. Finally, we share our vision of a [step-by-step process for developing applications](../dapp-life-cycle) on Cartesi Rollups, from the initial design stage up to its final deployment.
+In the next sections, we will first describe [Cartesi Rollups' internal components](../cartesi-rollups/components) and how they work. Then, we will explain in detail the [architecture of DApps](../cartesi-rollups/dapp-architecture) that run on our rollups framework, as well as the [APIs that developers can use](../cartesi-rollups/http-api) to communicate with it. Finally, we share our vision of a [step-by-step process for developing applications](../cartesi-rollups/dapp-life-cycle) on Cartesi Rollups, from the initial design stage up to its final deployment.
 
 :::note
 You can read the article [Everything you need to know about Optimistic Rollup](https://research.paradigm.xyz/rollups) to get more information about optimistic rollups in general.

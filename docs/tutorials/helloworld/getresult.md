@@ -6,7 +6,7 @@ title: Retrieving result
 - implement smart contract `getResult` method to retrieve computation results from Descartes
 :::
 
-Once the [Descartes computation has been instantiated](../instantiate/), we need a means to effectively retrieve its result within our smart contract.
+Once the [Descartes computation has been instantiated](../helloworld/instantiate/), we need a means to effectively retrieve its result within our smart contract.
 
 To do so, we will implement the following `getResult` method in the `HelloWorld.sol` file located within the `helloworld/contracts` directory.
 
@@ -67,4 +67,4 @@ contract HelloWorld {
 }
 ```
 
-In the [next section](../deploy-run/), we'll finally deploy and run our DApp, and then we'll explore actual examples of return values for the `getResult` method.
+In the [next section](../helloworld/deploy-run/), we'll finally deploy and run our DApp, and then we'll explore actual examples of return values for the `getResult` method.

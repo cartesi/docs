@@ -103,6 +103,8 @@ const sidebars = {
         'build-dapps/overview',
         'build-dapps/requirements',
         'build-dapps/run-dapp',
+        'build-dapps/create-dapp'
+
       ],
     },
     // {

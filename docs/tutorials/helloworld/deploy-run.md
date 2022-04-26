@@ -10,7 +10,7 @@ title: Deploying and running
 
 ## Introduction
 
-By now, we have completed the implementation of our Hello World DApp. However, in order to effectively run it, we still need to *deploy* it to an Ethereum network that includes the Descartes smart contract. To that end, we'll make use of the local development network already running within our [Descartes SDK Environment](../descartes-env.md).
+By now, we have completed the implementation of our Hello World DApp. However, in order to effectively run it, we still need to *deploy* it to an Ethereum network that includes the Descartes smart contract. To that end, we'll make use of the local development network already running within our [Descartes SDK Environment](../descartes-env).
 
 ## Deployment
 
@@ -44,7 +44,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 export default func;
 ```
 
-This TypeScript code uses the `hardhat-deploy` plugin to publish our contract to the local Ethereum network specified by the [`hardhat.config.ts`](../create-project/#initializing-the-dapp-project) file. Note that Hardhat allows this script to easily retrieve the Descartes contract already deployed there, so as to pass its address as a parameter to the `deploy` method. Hardhat will use this parameter as an argument when calling the [HelloWorld's constructor we defined before](../create-project/#creating-the-smart-contract). As a final observation, we specify the `deployer` named account (also defined in `hardhat.config.ts`) to be used for submitting the deployment transaction.
+This TypeScript code uses the `hardhat-deploy` plugin to publish our contract to the local Ethereum network specified by the [`hardhat.config.ts`](../helloworld/create-project/#initializing-the-dapp-project) file. Note that Hardhat allows this script to easily retrieve the Descartes contract already deployed there, so as to pass its address as a parameter to the `deploy` method. Hardhat will use this parameter as an argument when calling the [HelloWorld's constructor we defined before](../helloworld/create-project/#creating-the-smart-contract). As a final observation, we specify the `deployer` named account (also defined in `hardhat.config.ts`) to be used for submitting the deployment transaction.
 
 With this all set up, move back to the project's home directory and execute the following command to deploy our DApp:
 
@@ -82,7 +82,7 @@ At this point, we can acquire a reference to our deployed HelloWorld DApp and in
 
 This will trigger the computation, which can take a couple of minutes to run with Descartes's default settings.
 
-As can be seen by the `getResult` implementation discussed in the [previous section](../getresult), to query a computation's results we should use the `index` value returned by the `instantiate` method. This is straightforward when calling that method from another contract, but clients such as `ethers` and `web3` [cannot immediately retrieve return values from transactions](https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts#transactions). Fortunately, Descartes emits events for each computation step, and thus it is possible to retrieve our index from the creation event.
+As can be seen by the `getResult` implementation discussed in the [previous section](../helloworld/getresult), to query a computation's results we should use the `index` value returned by the `instantiate` method. This is straightforward when calling that method from another contract, but clients such as `ethers` and `web3` [cannot immediately retrieve return values from transactions](https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts#transactions). Fortunately, Descartes emits events for each computation step, and thus it is possible to retrieve our index from the creation event.
 
 In Ethers, the events emitted by a transaction are included in the returned transaction receipt after its `wait()` method is called. Since the payload of the Descartes creation event is the index value itself, we can retrieve it by simply executing the following command within the console:
 
@@ -97,7 +97,7 @@ In possession of that index, we can then immediately query our Hello World DApp 
 [ false, true, '0x0000000000000000000000000000000000000000', '0x' ]
 ```
 
-As noted in the [previous section](../getresult/), the first `false` boolean value indicates that the results are not ready yet, while the second `true` boolean value confirms that the computation is still running. Furthermore, the third entry corresponds to an empty address, meaning that there is no user to blame for any abnormal interruption of the computation. Finally, the last entry corresponds to the result value itself, which is still empty as expected.
+As noted in the [previous section](../helloworld/getresult/), the first `false` boolean value indicates that the results are not ready yet, while the second `true` boolean value confirms that the computation is still running. Furthermore, the third entry corresponds to an empty address, meaning that there is no user to blame for any abnormal interruption of the computation. Finally, the last entry corresponds to the result value itself, which is still empty as expected.
 
 After a while, we can query again the results and get a different response:
 

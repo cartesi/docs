@@ -10,7 +10,7 @@ title: Creating basic DApp
 
 In this section we are going to start building our first Descartes DApp. This *Hello World DApp* will consist of a trivial application, which simply instantiates an off-chain computation that always returns "Hello World!". A complete implementation of this example can be found in the [Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/helloworld).
 
-In order to build this DApp, we will start by creating a basic project with a smart contract capable of using the Descartes contract already deployed to the [Descartes SDK Environment](../../descartes-env/).
+In order to build this DApp, we will start by creating a basic project with a smart contract capable of using the Descartes contract already deployed to the [Descartes SDK Environment](../descartes-env/).
 
 
 ## Initializing the DApp project

@@ -9,11 +9,11 @@ title: Processing larger files
 
 ## General approach
 
-As discussed in the [documentation](../../../descartes/logger_drive), Descartes provides a *Logger service* that is capable of publishing and retrieving data more efficiently to and from the blockchain. More specifically, this service stores the information as *call data* and allows it to be split into smaller chunks, thus enabling storage of data that is larger than a single block's limit. Although not suitable for direct usage within smart contracts themselves, this strategy is perfect for passing along on-chain data *references* to off-chain components, which can then download it from the blockchain for processing.
+As discussed in the [documentation](/docs/descartes/logger_drive), Descartes provides a *Logger service* that is capable of publishing and retrieving data more efficiently to and from the blockchain. More specifically, this service stores the information as *call data* and allows it to be split into smaller chunks, thus enabling storage of data that is larger than a single block's limit. Although not suitable for direct usage within smart contracts themselves, this strategy is perfect for passing along on-chain data *references* to off-chain components, which can then download it from the blockchain for processing.
 
-On top of the Logger service, Descartes also features integrated IPFS support in its nodes. As also explained in the [documentation](../../../descartes/logger_drive/#ipfs-integrated-support), generally speaking IPFS alone is not sufficient to ensure data availability for verifying a computation, since it cannot guarantee that the validator nodes will be able to access the data when needed. However, in Descartes it is possible to upload the data to IPFS, and then trigger the Logger service automatically as a fallback should any node fail to retrieve it. As such, for the vast majority of cases in which actors do not misbehave, and for specific scenarios for which IPFS data availability is not an issue, using IPFS can prevent data from ever having to be published to the blockchain, with obvious benefits in terms of cost and performance.
+On top of the Logger service, Descartes also features integrated IPFS support in its nodes. As also explained in the [documentation](/docs/descartes/logger_drive/#ipfs-integrated-support), generally speaking IPFS alone is not sufficient to ensure data availability for verifying a computation, since it cannot guarantee that the validator nodes will be able to access the data when needed. However, in Descartes it is possible to upload the data to IPFS, and then trigger the Logger service automatically as a fallback should any node fail to retrieve it. As such, for the vast majority of cases in which actors do not misbehave, and for specific scenarios for which IPFS data availability is not an issue, using IPFS can prevent data from ever having to be published to the blockchain, with obvious benefits in terms of cost and performance.
 
-In this context, we will now build upon our [previous DApp implementation](../full-dapp) and add a method that uses the Logger and IPFS services to allow a larger file's signature to be verified using Descartes.
+In this context, we will now build upon our [previous DApp implementation](../gpg-verify/full-dapp) and add a method that uses the Logger and IPFS services to allow a larger file's signature to be verified using Descartes.
 ## Implementation
 
 Open the `GpgVerify.sol` file in the `gpg-verify/contracts` directory and add the following code right after the `instantiate` method:
@@ -66,7 +66,7 @@ public
 }
 ```
 
-Similarly to the `instantiate` method implemented [in the previous section](../full-dapp), this code also defines two input drives in order to call Descartes to instantiate the computation. However, instead of providing the `directValue` drive fields, this time around user-provided indirect information about the data is given. First of all, the `loggerRootHash` parameter corresponds to the Merkle root hash of the data being submitted. This information can be used both for retrieving the data from the Logger service and for validating that downloaded data matches the previously advertised drive contents. Furthermore, the `loggerIpfsPath`, if provided, will be used to attempt to first download the data via IPFS.
+Similarly to the `instantiate` method implemented [in the previous section](../gpg-verify/full-dapp), this code also defines two input drives in order to call Descartes to instantiate the computation. However, instead of providing the `directValue` drive fields, this time around user-provided indirect information about the data is given. First of all, the `loggerRootHash` parameter corresponds to the Merkle root hash of the data being submitted. This information can be used both for retrieving the data from the Logger service and for validating that downloaded data matches the previously advertised drive contents. Furthermore, the `loggerIpfsPath`, if provided, will be used to attempt to first download the data via IPFS.
 
 With the code in place, redeploy the DApp by executing the following command:
 
@@ -93,7 +93,7 @@ wget https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartes
 
 In order to use the Logger and IPFS services, the first step is to compute the Merkle root hash of the data that is going to be processed. This hash will serve as an identifier when retrieving the corresponding data from the Cartesi `Logger` smart contract deployed on the blockchain.
 
-Within the specific context of this DApp, the Cartesi Machine expects the input data to have its content length encoded in each drive's four initial bytes, as [previously discussed](../cartesi-machine). Thus, before computing any hash we must first prepare our data by prepending each file with its content length. This is a simple operation that can be implemented using a tiny Lua script, as follows.
+Within the specific context of this DApp, the Cartesi Machine expects the input data to have its content length encoded in each drive's four initial bytes, as [previously discussed](../gpg-verify/cartesi-machine). Thus, before computing any hash we must first prepare our data by prepending each file with its content length. This is a simple operation that can be implemented using a tiny Lua script, as follows.
 
 First, hop into the playground mapping the current directory:
 
@@ -115,7 +115,7 @@ cat portrait.jpg | luapp5.3 -e 'io.write((string.pack(">s4", io.read("a"))))' > 
 cat portrait.sig | luapp5.3 -e 'io.write((string.pack(">s4", io.read("a"))))' > portrait.sig.prepended
 ```
 
-The Lua expression used here is basically the opposite of the code used in the `gpg-verify.sh` script to read the input data within the Cartesi Machine, as discussed in the [GpgVerify machine section](../cartesi-machine). The commands will generate `*.prepended` files 4 bytes larger than the original ones.
+The Lua expression used here is basically the opposite of the code used in the `gpg-verify.sh` script to read the input data within the Cartesi Machine, as discussed in the [GpgVerify machine section](../gpg-verify/cartesi-machine). The commands will generate `*.prepended` files 4 bytes larger than the original ones.
 
 
 ## Using the Logger service
@@ -133,7 +133,7 @@ merkle-tree-hash --input=portrait.sig.prepended --tree-log2-size=10 | tr -d "\n"
 
 In which we define the total portrait document tree size as 64KiB (2<sup>16</sup>), while its signature has tree size 1KiB (2<sup>10</sup>). The resulting hashes will be stored in corresponding `*.merkle` files.
 
-The next step is to make the data and their corresponding Merkle root hashes available to the Logger service. As discussed in the [Logger section of the documentation](../../../descartes/logger_drive), one option is to directly submit the data to the Logger smart contract deployed on-chain. However, if you have access to the Descartes node serving as the drive's *provider*, as we do, a more practical option is to simply copy the contents to the appropriate directory mapped by the Logger service, naming each file after its corresponding Merkle root hash. From there, the node's Logger service will be able to publish the data on-chain when requested by a Descartes computation instantiation.
+The next step is to make the data and their corresponding Merkle root hashes available to the Logger service. As discussed in the [Logger section of the documentation](/docs/descartes/logger_drive), one option is to directly submit the data to the Logger smart contract deployed on-chain. However, if you have access to the Descartes node serving as the drive's *provider*, as we do, a more practical option is to simply copy the contents to the appropriate directory mapped by the Logger service, naming each file after its corresponding Merkle root hash. From there, the node's Logger service will be able to publish the data on-chain when requested by a Descartes computation instantiation.
 
 Let's first leave the playground:
 
@@ -143,8 +143,8 @@ exit
 In our DApp, `alice` is serving as the drive's provider, since that is the address given by `parties[0]`. As such, we can make the files available by executing the following commands:
 
 ```bash
-cp portrait.jpg.prepended ../../descartes-env/alice_data/$(cat portrait.jpg.prepended.merkle)
-cp portrait.sig.prepended ../../descartes-env/alice_data/$(cat portrait.sig.prepended.merkle)
+cp portrait.jpg.prepended ../descartes-env/alice_data/$(cat portrait.jpg.prepended.merkle)
+cp portrait.sig.prepended ../descartes-env/alice_data/$(cat portrait.sig.prepended.merkle)
 ```
 
 Now, with everything set up for the Logger service, it would already be possible to instantiate our signature verification computation using only the data's Merkle root hashes. However, before doing that, let's take a look at Descartes' IPFS functionality.
@@ -226,7 +226,7 @@ After a while, we should be able to obtain the signature verification result, as
 0
 ```
 
-Which, as noted in the [previous section](../full-dapp), represents that the computation successfully identified the document's signature as valid.
+Which, as noted in the [previous section](../gpg-verify/full-dapp), represents that the computation successfully identified the document's signature as valid.
 
 With this setup, the Descartes nodes have downloaded the data from IPFS, computed the Merkle root hashes locally, and checked them against the drive's advertised hashes. As such, the data was *never* uploaded to the blockchain. However, should the data be removed from IPFS, which cannot be verified by on-chain code, any node that cannot retrieve it will request the drive's provider to post the data. This process is done automatically by Descartes, and it can be reproduced here by simply instantiating the same computation using the correct Merkle root hashes but invalid IPFS paths.
 

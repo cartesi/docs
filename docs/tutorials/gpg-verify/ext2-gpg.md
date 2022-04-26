@@ -42,7 +42,7 @@ gpg --import descartes-private.key
 gpg --detach-sig -u descartes --output signature document
 ```
 
-Please refer to the [GnuPG manual](https://www.gnupg.org/gph/en/manual.html) for more information on how to use `gpg`, such as creating your own keypairs. 
+Please refer to the [GnuPG manual](https://www.gnupg.org/gph/en/manual.html) for more information on how to use `gpg`, such as creating your own keypairs.
 :::
 
 As a final touch, let's also produce a "tampered" version of our document, so that we can check if we are able to detect a "fraud":
@@ -53,7 +53,7 @@ echo "My public statement was tampered!" > document-tampered
 
 ## Building an `ext2` file-system
 
-As thoroughly discussed in the [Cartesi Machine host perspective section](../../../machine/host/cmdline/#flash-drives), `ext2` is a file-system format that can be easily created and manipulated with command-line utilities available in Linux distributions. It is the preferred file-system type used in Cartesi Machines, and we have actually already used it when building our [custom root file-system](../../generic-script/custom-rootfs) for the Generic Script tutorial.
+As thoroughly discussed in the [Cartesi Machine host perspective section](/docs/machine/host/cmdline/#flash-drives), `ext2` is a file-system format that can be easily created and manipulated with command-line utilities available in Linux distributions. It is the preferred file-system type used in Cartesi Machines, and we have actually already used it when building our [custom root file-system](../generic-script/custom-rootfs) for the Generic Script tutorial.
 
 In the context of this project, we will thus build an `ext2` file that contains our public key, so as to make it available to our GPG signature verification Cartesi Machine. We can also conveniently include other pre-defined resources in this file-system, such as the test data we have just created.
 
@@ -81,7 +81,7 @@ Next, use the `genext2fs` tool to create the `ext2` file with the contents of th
 
 ```bash
 genext2fs -b 1024 -d ext2-test dapp-data-test.ext2
-``` 
+```
 
 After the file is created, you can actually inspect its contents by running the following command, also available inside the playground:
 
@@ -136,5 +136,3 @@ Finally, you can exit the playground by typing:
 ```bash
 exit
 ```
-
-

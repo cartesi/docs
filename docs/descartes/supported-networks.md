@@ -4,7 +4,7 @@ title: Supported networks
 
 Broadly speaking, the Cartesi layer-2 platform architecture should be perceived as *blockchain-agnostic*, given that in principle any network could use Cartesi Machines to move complex computations off-chain without compromising on decentralization.
 
-In practice, in order to effectively run, a Cartesi-powered DApp needs to call an *existing API* that is available on-chain, so as to instantiate the desired computation off-chain. As described in the preceding sections, the Descartes SDK provides such an [on-chain API](../api), thus enabling real DApps to leverage on Cartesi.
+In practice, in order to effectively run, a Cartesi-powered DApp needs to call an *existing API* that is available on-chain, so as to instantiate the desired computation off-chain. As described in the preceding sections, the Descartes SDK provides such an [on-chain API](../descartes/api), thus enabling real DApps to leverage on Cartesi.
 
 At the moment, the Descartes API only supports the Ethereum Virtual Machine, and as such can only be deployed on Ethereum and EVM-compatible networks.
 
@@ -27,4 +27,3 @@ Effectively, the API is currently available in the following test networks:
 ## Avalanche FUJI C-Chain Testnet
 
 [Avalanche](https://www.avalabs.org/) is an open-source platform for launching decentralized applications and enterprise blockchain deployments in one interoperable, highly scalable ecosystem. Avalanche's Primary Network is a subnet that includes the C-Chain, which is an instance of the Ethereum Virtual Machine powered by Avalanche’s Snowman consensus protocol.
-

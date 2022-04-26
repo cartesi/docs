@@ -9,7 +9,7 @@ title: GPG Verify project
 
 ## Introduction
 
-In this tutorial, we will explore how Descartes can be used to implement a solution for a more realistic use case: verifying document signatures using GPG. 
+In this tutorial, we will explore how Descartes can be used to implement a solution for a more realistic use case: verifying document signatures using GPG.
 
 Oftentimes, a smart contract needs to validate that a given set of data is indeed authentic, in the sense that it can be trusted to have been provided by a specified agent, and that it has not been tampered. *Digital signatures* are a great way of achieving that goal. The general idea is that a given user or organization employs a *private key* to generate a signature for a specific document. Any party that receives a copy of that document and the associated signature can then use the organization's corresponding *public key*, which is openly distributed, to check the integrity and authenticity of the data.
 
@@ -18,7 +18,7 @@ The [GNU Privacy Guard (GnuPG)](https://www.gnupg.org/) is a widely used tool fo
 
 ## Initializing the DApp project
 
-To begin with, let's create a directory for our project and set up some subdirectories inside it, as [discussed before](../../helloworld/create-project/): 
+To begin with, let's create a directory for our project and set up some subdirectories inside it, as [discussed before](../helloworld/create-project/):
 
 ```bash
 mkdir gpg-verify
@@ -36,7 +36,7 @@ yarn add ethers hardhat hardhat-deploy hardhat-deploy-ethers --dev
 yarn add typescript ts-node --dev
 ```
 
-Finally, we need to create the `hardhat.config.ts` file to indicate the location of the Ethereum instance running inside our [development environment](../../descartes-env), in addition to the dependency on Descartes' artifacts and deployments scripts and other configurations:
+Finally, we need to create the `hardhat.config.ts` file to indicate the location of the Ethereum instance running inside our [development environment](../descartes-env), in addition to the dependency on Descartes' artifacts and deployments scripts and other configurations:
 
 ```javascript
 import { HardhatUserConfig } from "hardhat/config";

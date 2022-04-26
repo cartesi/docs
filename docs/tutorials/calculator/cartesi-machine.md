@@ -10,7 +10,7 @@ title: Calculator machine
 
 ## Performing calculations with a Cartesi Machine
 
-Now that we have the [basic project structure](../create-project) ready, let's focus on the main part of our DApp, which is the off-chain computation to be performed by the Cartesi Machine. 
+Now that we have the [basic project structure](../calculator/create-project) ready, let's focus on the main part of our DApp, which is the off-chain computation to be performed by the Cartesi Machine.
 
 First of all, let's `cd` into the `cartesi-machine` subdirectory:
 
@@ -18,7 +18,7 @@ First of all, let's `cd` into the `cartesi-machine` subdirectory:
 cd cartesi-machine
 ```
 
-For this computation, we will use the [Linux bc tool](https://www.gnu.org/software/bc/manual/html_mono/bc.html), which is capable of calculating the result of an arbitrary mathematical expression given as a string. This is illustrated in detail in the [Cartesi Machine host section](../../../machine/host/cmdline#cartesi-machine-templates). 
+For this computation, we will use the [Linux bc tool](https://www.gnu.org/software/bc/manual/html_mono/bc.html), which is capable of calculating the result of an arbitrary mathematical expression given as a string. This is illustrated in detail in the [Cartesi Machine host section](/docs/machine/host/cmdline#cartesi-machine-templates).
 
 We can use the playground to help us configure and test an appropriate machine. To do that, let's run it in interactive mode:
 
@@ -32,7 +32,7 @@ Now, let's create some test input data:
 echo "2^71 + 36^12" > input.raw
 ```
 
-As explained in the [Cartesi Machine section](../../../machine/host/cmdline#flash-drives), the underlying RISC-V technology requires all drives to have a size that is a multiple of 4KiB. Descartes normally takes care of this, but for our tests we will need to ensure it by using the handy `truncate` tool available within the playground. This tool will pad the file with zeros in case it is smaller than the specified size:
+As explained in the [Cartesi Machine section](/docs/machine/host/cmdline#flash-drives), the underlying RISC-V technology requires all drives to have a size that is a multiple of 4KiB. Descartes normally takes care of this, but for our tests we will need to ensure it by using the handy `truncate` tool available within the playground. This tool will pad the file with zeros in case it is smaller than the specified size:
 
 ```bash
 truncate -s 4K input.raw
@@ -48,7 +48,7 @@ cartesi-machine \
   -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
 ```
 
-Here, we have two `flash-drive` declarations, one for the input and one for the output, both with a specified size of 4KiB. The command to be executed will use the `dd` tool to read the raw data from the input drive, pipe it through a tiny Lua script to ensure it is read as a null-terminated string, give it as input to the `bc` tool, and finally write the result to the output drive. Additionally, we include `filename:input.raw` and `filename:output.raw,shared`, which instructs the machine to read from our test input file and write to the test output file in a persistent manner. Full details about these parameters and how to use them are given in the [Cartesi Machine host section](../../../machine/host/cmdline#flash-drives).
+Here, we have two `flash-drive` declarations, one for the input and one for the output, both with a specified size of 4KiB. The command to be executed will use the `dd` tool to read the raw data from the input drive, pipe it through a tiny Lua script to ensure it is read as a null-terminated string, give it as input to the `bc` tool, and finally write the result to the output drive. Additionally, we include `filename:input.raw` and `filename:output.raw,shared`, which instructs the machine to read from our test input file and write to the test output file in a persistent manner. Full details about these parameters and how to use them are given in the [Cartesi Machine host section](/docs/machine/host/cmdline#flash-drives).
 
 After executing the above command, we can inspect the results written to the `output.raw` file:
 
@@ -67,9 +67,9 @@ exit
 
 ## Final Cartesi Machine implementation
 
-Having exercised how our machine will work, we can now turn to building a final version of it that will be used by the Descartes nodes in our [development environment](../../descartes-env).
+Having exercised how our machine will work, we can now turn to building a final version of it that will be used by the Descartes nodes in our [development environment](../descartes-env).
 
-Recalling the previous machine built for the [Hello World DApp](../../helloworld/cartesi-machine#cartesi-machine-for-the-hello-world-dapp), let's create a bash script called `build-cartesi-machine.sh` back in our `calculator/cartesi-machine` directory:
+Recalling the previous machine built for the [Hello World DApp](../helloworld/cartesi-machine#cartesi-machine-for-the-hello-world-dapp), let's create a bash script called `build-cartesi-machine.sh` back in our `calculator/cartesi-machine` directory:
 
 ```bash
 touch build-cartesi-machine.sh
@@ -132,12 +132,12 @@ fi
 mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
-As explained in more detail in the [Hello World tutorial](../../helloworld/cartesi-machine), this script will create a *template machine* to be executed upon request, and store its contents in a directory specified by the user. In order to do that, we have specified `max-mcycle=0`, so that the machine halts without running any cycles. Then, we added the parameter `--store="$MACHINE_TEMP_DIR"` to specify that the machine's specification should be stored in the specified directory. Finally, we have removed the `filename` configurations from the flash drives, since the input and output data will now be handled automatically by Descartes.
+As explained in more detail in the [Hello World tutorial](../helloworld/cartesi-machine), this script will create a *template machine* to be executed upon request, and store its contents in a directory specified by the user. In order to do that, we have specified `max-mcycle=0`, so that the machine halts without running any cycles. Then, we added the parameter `--store="$MACHINE_TEMP_DIR"` to specify that the machine's specification should be stored in the specified directory. Finally, we have removed the `filename` configurations from the flash drives, since the input and output data will now be handled automatically by Descartes.
 
 With all of this set, build the machine by executing:
 
 ```bash
-./build-cartesi-machine.sh ../../descartes-env/machines
+./build-cartesi-machine.sh ../descartes-env/machines
 ```
 
 The output of the above command should then be:

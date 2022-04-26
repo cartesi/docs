@@ -10,7 +10,7 @@ title: Full Calculator DApp
 
 ## Calculator smart contract
 
-Given the Cartesi Machine implemented in the [previous section](../cartesi-machine) and the project structure [initialized before](../create-project), we will now complete the implementation of our Calculator DApp by creating and deploying its smart contract.
+Given the Cartesi Machine implemented in the [previous section](../calculator/cartesi-machine) and the project structure [initialized before](../calculator/create-project), we will now complete the implementation of our Calculator DApp by creating and deploying its smart contract.
 
 In order to do that, create a file called `Calculator.sol` inside the `calculator/contracts` directory, and then place the following contents into it:
 
@@ -73,16 +73,16 @@ contract Calculator {
 }
 ```
 
-This contract is actually very similar to the one created for the [Hello World DApp](../../helloworld/get-result), with a few relevant changes and additions. The most important of these is the specification of the *input drive* within the `instantiate` method. First of all, the drive's position in the address space is defined as `0x9000000000000000`. As explained in the [Descartes drives section](../../../descartes/drives) and in the [Hello World instantiation section](../../helloworld/instantiate), this actually corresponds to the default position for the machine's second drive, the first one being the machine's root file-system itself. Furthermore, the drive's definition includes its data as a string representing the mathematical expression of interest (in this case, `"2^71 + 36^12"`), along with the log<sub>2</sub> of the drive's total size (which in practice is not allowed to be smaller than `5`, or 32 bytes).
+This contract is actually very similar to the one created for the [Hello World DApp](../helloworld/getresult), with a few relevant changes and additions. The most important of these is the specification of the *input drive* within the `instantiate` method. First of all, the drive's position in the address space is defined as `0x9000000000000000`. As explained in the [Descartes drives section](/docs/descartes/drives) and in the [Hello World instantiation section](../helloworld/instantiate), this actually corresponds to the default position for the machine's second drive, the first one being the machine's root file-system itself. Furthermore, the drive's definition includes its data as a string representing the mathematical expression of interest (in this case, `"2^71 + 36^12"`), along with the log<sub>2</sub> of the drive's total size (which in practice is not allowed to be smaller than `5`, or 32 bytes).
 
-Aside from the input drive, we should also note the declaration of the appropriate `templateHash` value `0x%tutorials.calculator.hash-trunc...`, which identifies the computation to execute and must thus correspond to the hash reported when we built the [Cartesi Machine](../cartesi-machine#final-cartesi-machine-implementation). Finally, the `outputPosition` value acknowledges that the output drive is now the 3rd drive in the Cartesi Machine specification, thus located by default at address `0xa000000000000000`.
+Aside from the input drive, we should also note the declaration of the appropriate `templateHash` value `0x%tutorials.calculator.hash-trunc...`, which identifies the computation to execute and must thus correspond to the hash reported when we built the [Cartesi Machine](../calculator/cartesi-machine#final-cartesi-machine-implementation). Finally, the `outputPosition` value acknowledges that the output drive is now the 3rd drive in the Cartesi Machine specification, thus located by default at address `0xa000000000000000`.
 
 
 ## Deployment and execution
 
-With the contract implemented, we are now ready to compile and deploy it to the local development network using Hardhat. 
+With the contract implemented, we are now ready to compile and deploy it to the local development network using Hardhat.
 
-First, create a deployment script called `01_contracts.ts` inside the `calculator/deploy` directory. This file will be almost identical to the one created before for the [Hello World DApp](../../helloworld/deploy-run#deployment), and should contain the following TypeScript code:
+First, create a deployment script called `01_contracts.ts` inside the `calculator/deploy` directory. This file will be almost identical to the one created before for the [Hello World DApp](../helloworld/deploy-run#deployment), and should contain the following TypeScript code:
 
 ```javascript
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -139,6 +139,6 @@ Notice that the response data (last entry at index `3`) is quite large. This is 
 2365921622773144223744
 ```
 
-Which gives us the expected result, as we saw earlier when [testing the Cartesi Machine](../cartesi-machine#performing-calculations-with-a-cartesi-machine). This means that our smart contract is now indeed capable of computing any arbitrary mathematical expression using the Linux `bc` tool!
+Which gives us the expected result, as we saw earlier when [testing the Cartesi Machine](../calculator/cartesi-machine#performing-calculations-with-a-cartesi-machine). This means that our smart contract is now indeed capable of computing any arbitrary mathematical expression using the Linux `bc` tool!
 
 In the next section, we will see how we can easily extend this idea to perform not only mathematical calculations but *any arbitrary computation* using standard script languages such as Python or Lua.
