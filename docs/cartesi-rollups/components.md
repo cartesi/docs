@@ -10,6 +10,7 @@ In this section, we describe the internal components of the Cartesi Rollups fram
 :::
 
 ## Main concepts
+
 ### Cartesi Nodes
 
 As explained before, [Cartesi Machines](../../machine/overview) provide DApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the layer-1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
@@ -99,7 +100,7 @@ Anyone can deposit assets there but only the DApp — through its Output contrac
 
 - [Ether (ETH)](https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/interfaces/IEtherPortal.sol)
 - [ERC-20](https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/interfaces/IERC20Portal.sol)
-- ERC-721 (NFTs) (https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/interfaces/IERC721Portal.sol)
+- [ERC-721 (NFTs)](https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/interfaces/IERC721Portal.sol)
 
 
 ### Validator Manager

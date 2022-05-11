@@ -5,13 +5,14 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import styles from './index.module.css';
+import SearchBar from '@theme-original/SearchBar';
 
 const features = [
   {
-    title: <>New to the Blockchain OS</>,
+    title: <>Basics of Blockchain OS</>,
     imageUrl: 'docs/category/new-to-cartesi',
     description: (
-      <>Learn the basics of the Blockchain OS</>
+      <>A layer-2 platform for the development and deployment of scalable decentralized applications.</>
     ),
   },
 
@@ -19,7 +20,7 @@ const features = [
     title: <>Build DApps</>,
     imageUrl: 'docs/category/build-dapps',
     description: (
-      <>Learn how to create your first Python DApp</>
+      <>Cartesi's vision is that creating a DApp should not be too different from the general development of desktop, web, and mobile applications.</>
     ),
   },
 
@@ -27,7 +28,7 @@ const features = [
     title: <>Cartesi Rollups</>,
     imageUrl: 'docs/category/cartesi-rollups',
     description: (
-      <>Learn how to use Cartesi Optimistic Rollups to build your DApp</>
+      <>Cartesi’s version of Optimistic Rollups uses interactive fraud proofs.</>
     ),
   },
 
@@ -35,15 +36,16 @@ const features = [
     title: <>Cartesi Machine</>,
     imageUrl: 'docs/category/cartesi-machine',
     description: (
-      <>Learn how Catesi Machine works and what advantages you can get from it</>
+      <>A solution for verifiable computation to bring mainstream scalability to DApp developers.</>
     ),
   },
+
 
 {
   title: <>Descartes SDK</>,
   imageUrl: 'docs/category/descartes-sdk',
   description: (
-    <>Use the SDK without performing any logic on the blockchain itself</>
+    <>DApps can run heavy computations off-chain on a fully fledged Linux environment without compromising decentralization.</>
   ),
 },
 
@@ -57,10 +59,11 @@ function Feature({ imageUrl, title, description }) {
         <Link className="navbar__link" to={imgUrl}>
           <div className="card">
             <div className="card__header">
-              <h3>{title}</h3>
+              <h2>{title}</h2>
             </div>
             <div className="card__body">
               <p>{description}</p>
+              <br/>
             </div>
           </div>
         </Link>
@@ -73,41 +76,27 @@ function Home() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
   return (
-    <Layout title="Homepage" description="Cudos">
-      {/* <header className={clsx("hero hero--primary", styles.heroBanner)}> */}
-      {/* <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p> */}
-      {/* <div className={styles.buttons}>
-            <Link
-              className={clsx(
-                'button button--outline button--secondary button--lg',
-                styles.getStarted,
-              )}
-              to={useBaseUrl('docs/')}>
-              Get Started
-            </Link>
-          </div> */}
-      {/* </div> */}
-      {/* </header> */}
+    <Layout title="Homepage" description="Cartesi">
+      <br/>
+      <center>
+      <h1 align="center" style={{ fontWeight: '650' }}>Welcome to the Blockchain OS Docs</h1></center>
+      <center>
+      <br/>
+      <SearchBar/>{' '}
+      </center>
       <main>
-        {features && features.length > 0 && (
-          <section className={styles.features}>
-            <div className="container">
-            <div class="alert alert--primary" role="alert">
-                        <center>
-                        <h2> Welcome to Cartesi Documentation</h2></center>
-                        </div>
-                        &nbsp;
-              <div className="row cards__container">
-                {features.map((props, idx) => (
-                  <Feature key={idx} {...props} />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-      </main>
+              {features && features.length > 0 && (
+                <section className={styles.features}>
+                  <div className="container">
+                    <div className="row">
+                      {features.map((props, idx) => (
+                        <Feature key={idx} {...props} />
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              )}
+            </main>
     </Layout>
   );
 }
