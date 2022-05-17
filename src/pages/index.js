@@ -5,7 +5,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import styles from './index.module.css';
-import SearchBar from '@theme-original/SearchBar';
+
 
 const features = [
   {
@@ -17,22 +17,6 @@ const features = [
   },
 
   {
-    title: <>Build DApps</>,
-    imageUrl: 'docs/category/build-dapps',
-    description: (
-      <>Cartesi's vision is that creating a DApp should not be too different from the general development of desktop, web, and mobile applications.</>
-    ),
-  },
-
-  {
-    title: <>Cartesi Rollups</>,
-    imageUrl: 'docs/category/cartesi-rollups',
-    description: (
-      <>Cartesi’s version of Optimistic Rollups uses interactive fraud proofs.</>
-    ),
-  },
-
-  {
     title: <>Cartesi Machine</>,
     imageUrl: 'docs/category/cartesi-machine',
     description: (
@@ -40,6 +24,21 @@ const features = [
     ),
   },
 
+  {
+    title: <>Cartesi Rollups</>,
+    imageUrl: 'docs/category/cartesi-rollups',
+    description: (
+      <>Cartesi’s version of Optimistic Rollups uses interactive fraud proofs. Develop DApps using any library for Linux.</>
+    ),
+  },
+
+  {
+    title: <>Build DApps</>,
+    imageUrl: 'docs/category/build-dapps',
+    description: (
+      <>Cartesi's vision is that creating a DApp should not be too different from the general development of desktop, web, and mobile applications.</>
+    ),
+  },
 
 {
   title: <>Descartes SDK</>,
@@ -80,10 +79,7 @@ function Home() {
       <br/>
       <center>
       <h1 align="center" style={{ fontWeight: '650' }}>Welcome to the Blockchain OS Docs</h1></center>
-      <center>
-      <br/>
-      <SearchBar/>{' '}
-      </center>
+
       <main>
               {features && features.length > 0 && (
                 <section className={styles.features}>

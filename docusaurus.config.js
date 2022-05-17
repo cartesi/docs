@@ -39,11 +39,10 @@ const config = {
         appId: "6QH8YVQX",
         apiKey: "6033c09f3af6454c8c25efce0460",
         indexName: "cartesi",
-        contextualSearch: false,
-        },
+        contextualSearch: true,
+      },
 
       navbar: {
-        title: 'Cartesi Documentation',
         logo: {
           alt: 'Cartesi Logo',
           src: 'img/logo.png',
@@ -51,27 +50,22 @@ const config = {
         },
         items: [
           {
-            href: 'https://github.com/cartesi/rollups-examples',
-            label: 'DApp Examples',
-            position: 'left',
-          },
-          {
-            href: 'https://youtu.be/8kEBwJt2YLM',
+            to: 'https://youtu.be/8kEBwJt2YLM',
             label: 'Blockchain Course',
-            position: 'left',
+            position: 'right',
           },
           {
-            href: 'https://cartesi.io/en/labs',
+            to: 'https://cartesi.io/en/labs',
             label: 'Cartesi Labs',
-            position: 'left',
+            position: 'right',
           },
           {
-            href: 'https://cartesi.io/en/ctsi-token',
-            label: 'CTSI Token',
-            position: 'left',
+            to: 'https://github.com/cartesi/rollups-examples',
+            label: 'DApp Examples',
+            position: 'right',
           },
           {
-            href: 'https://github.com/facebook/docusaurus',
+            to: 'https://github.com/cartesi-corp/docs/tree/develop',
             label: 'GitHub',
             position: 'right',
           },
@@ -85,27 +79,27 @@ const config = {
           items: [
             {
               label: "Template DApp",
-              href: "https://github.com/cartesi/rollups-examples/tree/main/custom-dapps",
+              to: "https://github.com/cartesi/rollups-examples/tree/main/custom-dapps",
             },
             {
               label: "Chat with Developers",
-              href: "https://discord.com/invite/SgybPuhX",
+              to: "https://discord.com/invite/SgybPuhX",
             },
             {
               label: "Run a Node",
-              href: "https://explorer.cartesi.io/staking",
+              to: "https://explorer.cartesi.io/staking",
             },
             {
               label: "CIP Process",
-              href: "https://github.com/cartesi/cips",
+              to: "https://github.com/cartesi/cips",
             },
             {
               label: "Cartesi Bug Bounty",
-              href: "https://immunefi.com/bounty/cartesi/",
+              to: "https://immunefi.com/bounty/cartesi/",
             },
             {
               label: "Tech Articles",
-              href: "https://medium.com/cartesi/tagged/tech",
+              to: "https://medium.com/cartesi/tagged/tech",
             }
           ],
         },
@@ -114,19 +108,19 @@ const config = {
           items: [
             {
               label: "rollups-examples",
-              href: "https://github.com/cartesi/rollups-examples",
+              to: "https://github.com/cartesi/rollups-examples",
             },
             {
               label: "machine-emulator-tools",
-              href: "https://github.com/cartesi/machine-emulator-tools",
+              to: "https://github.com/cartesi/machine-emulator-tools",
             },
             {
               label: "nother-node",
-              href: "https://github.com/cartesi/noether",
+              to: "https://github.com/cartesi/noether",
             },
             {
               label: "descartes-tutorials",
-              href: "https://github.com/cartesi/descartes-tutorials",
+              to: "https://github.com/cartesi/descartes-tutorials",
             },
           ],
         },
@@ -135,15 +129,15 @@ const config = {
           items: [
             {
               label: "Blockchain OS",
-              href: "https://cartesi.io/en/blockchain-os",
+              to: "https://cartesi.io/en/blockchain-os",
             },
             {
               label: "Our Whitepaper",
-              href: "https://cartesi.io/cartesi_whitepaper.pdf",
+              to: "https://cartesi.io/cartesi_whitepaper.pdf",
             },
             {
               label: "Foundation Notice",
-              href: "https://cartesi.io/foundation_notice.pdf",
+              to: "https://cartesi.io/foundation_notice.pdf",
             },
           ],
         },
@@ -152,27 +146,27 @@ const config = {
           items: [
             {
               label: "Youtube",
-              href: "https://www.youtube.com/c/Cartesiproject/videos",
+              to: "https://www.youtube.com/c/Cartesiproject/videos",
             },
             {
               label: "Discord",
-              href: "https://discord.gg/Pt2NrnS",
+              to: "https://discord.gg/Pt2NrnS",
             },
             {
               label: "Meduim",
-              href: "https://www.medium.com/cartesi",
+              to: "https://www.medium.com/cartesi",
             },
             {
               label: "Twitter",
-              href: "https://www.twitter.com/cartesiproject",
+              to: "https://www.twitter.com/cartesiproject",
             },
             {
               label: "Telegram",
-              href: "https://t.me/cartesiannouncements",
+              to: "https://t.me/cartesiannouncements",
             },
             {
               label: "Reditt",
-              href: "https://www.reddit.com/r/cartesi/",
+              to: "https://www.reddit.com/r/cartesi/",
             },
           ],
         },

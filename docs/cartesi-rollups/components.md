@@ -3,17 +3,17 @@ id: components
 title: Components
 ---
 
-As explained in the [previous section](../overview), the Cartesi Rollups framework achieves scalability by moving the bulk of the computation outside the blockchain, using the ledger as a data source but not as an execution environment. As such, the solution contains both on-chain (layer-1) and off-chain (layer-2) components.
+As explained in the [previous section](../cartesi-rollups/overview), the Cartesi Rollups framework achieves scalability by moving the bulk of the computation outside the blockchain, using the ledger as a data source but not as an execution environment. As such, the solution contains both on-chain (layer-1) and off-chain (layer-2) components.
 
 :::note
-In this section, we describe the internal components of the Cartesi Rollups framework in more detail, to clarify how the system works inside. DApp developers may chose to skip directly to the [DApp architecture](../dapp-architecture) section to understand how to build applications.
+In this section, we describe the internal components of the Cartesi Rollups framework in more detail, to clarify how the system works inside. DApp developers may chose to skip directly to the [DApp architecture](../cartesi-rollups/dapp-architecture) section to understand how to build applications.
 :::
 
 ## Main concepts
 
 ### Cartesi Nodes
 
-As explained before, [Cartesi Machines](../../machine/overview) provide DApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the layer-1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
+As explained before, [Cartesi Machines](../machine/overview) provide DApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the layer-1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
 
 The _Cartesi Node_ is the layer-2 component that consists of the combination of the Cartesi Machine and this middleware, and can be used by anyone interested in the rollups state of affairs. Put simply, Cartesi Nodes play a role that is similar to what Geth does on the Ethereum ecosystem: execution and retrieval of information.
 
@@ -138,7 +138,7 @@ Responsible for interpreting the current state of the Cartesi Rollups smart cont
 
 This module manages the Cartesi Machine, sending inputs to it and reading the produced outputs. It is responsible for starting and stopping the machine as appropriate, as well as providing an API for the other modules to query the machine's state.
 
-The [**Host Server Manager**](https://github.com/cartesi/host-server-manager) is an alternative implementation of the Server Manager for development purposes. It implements the same API and mimics the behavior of an actual Server Manager, but does not in fact instantiate a Cartesi Machine. Instead, it makes HTTP requests directly to a DApp running in the host computer. The Host Server Manager is intended to be used in the [implementation stage of the DApp Life Cycle](../dapp-life-cycle#stage-3-implementation).
+The [**Host Server Manager**](https://github.com/cartesi/host-server-manager) is an alternative implementation of the Server Manager for development purposes. It implements the same API and mimics the behavior of an actual Server Manager, but does not in fact instantiate a Cartesi Machine. Instead, it makes HTTP requests directly to a DApp running in the host computer. The Host Server Manager is intended to be used in the [implementation stage of the DApp Life Cycle](../cartesi-rollups/dapp-life-cycle#stage-3-implementation).
 
 ### Rollups Indexer
 
