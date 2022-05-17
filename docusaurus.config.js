@@ -65,9 +65,11 @@ const config = {
             position: 'right',
           },
           {
-            to: 'https://github.com/cartesi-corp/docs/tree/develop',
-            label: 'GitHub',
+            to: 'https://github.com/cartesi-corp/docs/',
             position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
+
           },
         ],
       },
