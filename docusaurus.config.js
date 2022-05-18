@@ -23,7 +23,7 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/cartesi-corp/docs/tree/develop',
+          editUrl: 'https://github.com/cartesi/docs/tree/develop',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -36,8 +36,8 @@ const config = {
     ({
       // Algolia Search
       algolia: {
-        appId: "6QH8YVQX",
-        apiKey: "6033c09f3af6454c8c25efce0460",
+        appId: "TY3GBOKWK6",
+        apiKey: "86e9395f75d2a5e826c472f6f8498b40",
         indexName: "cartesi",
         contextualSearch: true,
       },
@@ -65,7 +65,7 @@ const config = {
             position: 'right',
           },
           {
-            to: 'https://github.com/cartesi-corp/docs/',
+            to: 'https://github.com/cartesi/docs/',
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository',
