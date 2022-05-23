@@ -5,68 +5,50 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import styles from './index.module.css';
+import { firstRow, secondRow, networkBanner } from "../data/features";
 
 
-const features = [
-  {
-    title: <>Basics of Blockchain OS</>,
-    imageUrl: 'docs/category/new-to-cartesi',
-    description: (
-      <>A layer-2 platform for the development and deployment of scalable decentralized applications.</>
-    ),
-  },
-
-  {
-    title: <>Cartesi Machine</>,
-    imageUrl: 'docs/category/cartesi-machine',
-    description: (
-      <>A solution for verifiable computation to bring mainstream scalability to DApp developers.</>
-    ),
-  },
-
-  {
-    title: <>Cartesi Rollups</>,
-    imageUrl: 'docs/category/cartesi-rollups',
-    description: (
-      <>Cartesi’s version of Optimistic Rollups uses interactive fraud proofs. Develop DApps using any library for Linux.</>
-    ),
-  },
-
-  {
-    title: <>Build DApps</>,
-    imageUrl: 'docs/category/build-dapps',
-    description: (
-      <>Cartesi's vision is that creating a DApp should not be too different from the general development of desktop, web, and mobile applications.</>
-    ),
-  },
-
-{
-  title: <>Descartes SDK</>,
-  imageUrl: 'docs/category/descartes-sdk',
-  description: (
-    <>DApps can run heavy computations off-chain on a fully fledged Linux environment without compromising decentralization.</>
-  ),
-},
-
-];
-
-function Feature({ imageUrl, title, description }) {
-  const imgUrl = useBaseUrl(imageUrl);
+function NetworkBanner({title, class_name, description, linkUrl}) {
   return (
-    <div className={clsx("col col--4", styles.feature)}>
-      {imgUrl && (
-        <Link className="navbar__link" to={imgUrl}>
-          <div className="card">
-            <div className="card__header">
-              <h2>{title}</h2>
-            </div>
-            <div className="card__body">
-              <p>{description}</p>
-              <br/>
-            </div>
+    <div className="col-md-4 p-8">
+      <Link to={useBaseUrl(linkUrl)} activeClassName="active">
+        <div className={`banner d-flex ${ class_name }`}>
+          <div className="details col-10">
+            <div className="title">{title}</div>
+            <div className="description">{description}</div>
           </div>
-        </Link>
-      )}
+        </div>
+      </Link>
+    </div>
+  );
+}
+
+function FirstRow({ title, description, linkUrl, imageUrl }) {
+  // const imgUrl = useBaseUrl(imageUrl);
+  return (
+
+    <div className="col-md-4 p-8">
+      <Link to={useBaseUrl(linkUrl)} activeClassName="active">
+        <div className="show-card">
+          <div className="title">{title}</div>
+          <div className="descriptions">{description}</div>
+        </div>
+      </Link>
+    </div>
+
+  );
+}
+
+function SecondRow({ title, description, linkUrl, imageUrl }) {
+  // const imgUrl = useBaseUrl(imageUrl);
+  return (
+    <div className="col-md-4 p-8">
+      <Link to={useBaseUrl(linkUrl)}>
+        <div className="show-card">
+          <div className="title">{title}</div>
+          <div className="descriptions">{description}</div>
+        </div>
+      </Link>
     </div>
   );
 }
@@ -79,20 +61,34 @@ function Home() {
       <br/>
       <center>
       <h1 align="center" style={{ fontWeight: '650' }}>Welcome to the Blockchain OS Docs</h1></center>
+      <div
+        className="bootstrap-wrapper"
+      >
 
-      <main>
-              {features && features.length > 0 && (
-                <section className={styles.features}>
-                  <div className="container">
-                    <div className="row">
-                      {features.map((props, idx) => (
-                        <Feature key={idx} {...props} />
-                      ))}
-                    </div>
-                  </div>
-                </section>
-              )}
-            </main>
+        <div className="container">
+          <div className="row pt-40">
+            {networkBanner &&
+              networkBanner.length &&
+              networkBanner.map((props, idx) => (
+                <NetworkBanner key={idx} {...props} />
+              ))}{" "}
+          </div>
+          <div className="row">
+            {firstRow &&
+              firstRow.length &&
+              firstRow.map((props, idx) => (
+                <FirstRow key={idx} {...props} />
+              ))}{" "}
+          </div>
+          <div className="row">
+            {secondRow &&
+              secondRow.length &&
+              secondRow.map((props, idx) => (
+                <SecondRow key={idx} {...props} />
+              ))}{" "}
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 }
