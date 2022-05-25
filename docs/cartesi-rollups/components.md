@@ -114,6 +114,20 @@ The [Cartesi Rollups Manager](#cartesi-rollups-manager) receives claims and redi
 - If the claim is valid but disagrees with another claim for that epoch, it warns the Cartesi Rollups Manager that a conflict is happening and what are the conflicting claims and claimants involved. When that dispute is resolved the Validator Manager module gets notified so it can deal however it likes with the validators involved. In our initially suggested implementation, the loser of a dispute gets removed from the validator set.
 - If the claim is valid, agrees with all other claims in that epoch, and is the last claim to be received, it lets Cartesi Rollups know that consensus was reached. This allows the rollups DApp to finalize the epoch and allow for the execution of its vouchers. Regardless of what the name might suggest, validators do not interact with this module at all.
 
+### Fee Manager and Bank
+
+The [Fee Manager facet](https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/interfaces/IFeeManager.sol) and [Bank contract](https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/IBank.sol) aim to create an economical incentive for validators to run a given DApp. When you develop an application, you will need to define two parameters:
+* A fee to be paid to the validators each time they submit a claim. This fee will be debited from the funds stored in the DApp's Bank contract.
+* An owner for the Fee Manager facet, who has the option to change the fee value, if needed.
+
+Entities running validator nodes should configure them to either be *altruistic* or require a minimum retainer (i.e., a minimum fee to process inputs for the DApp). If they are altruistic, they will work regardless of any financial compensation. On the other hand, non-altruistic validators must ensure that the following two conditions are met before processing inputs and submitting claims:
+1. The fee paid by the DApp must be bigger than their required retainer
+2. The DApp's Bank must have enough funds to pay the validator
+
+The fee value is given in CTSI and is reserved for a validator every time a claim is made. The validator is free to withdraw received CTSI fees at any time of its convenience. While the Fee Manager controls the fee value and the amount of claims made by each validator, the Bank stores - on a separate contract - the CTSI tokens that will be distributed to them.
+
+The code does not enforce a way for the Bank to be funded. Therefore, DApps and communities are free to choose their preferred procedures, such as direct transfer, charging per input, creating a tax system on top of the Portal, or other methods. For convenience, a *FundBank* hardhat task is provided which transfers money from the signer to a DApp's Bank.
+
 ### Dispute Resolution
 
 Disputes occur when two validators claim different state updates to the same epoch. Because of the deterministic nature of our virtual machine and the fact that the inputs that constitute an epoch are agreed upon beforehand, conflicting claims imply dishonest behavior. When a conflict occurs, the module that mediates the interactions between both validators is the Dispute Resolution contract.
