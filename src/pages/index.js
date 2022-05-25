@@ -59,8 +59,10 @@ function Home() {
   return (
     <Layout title="Homepage" description="Cartesi">
       <br/>
+      <br/>
+      <br/>
       <center>
-      <h1 align="center" style={{ fontWeight: '650' }}>Welcome to the Blockchain OS Docs</h1></center>
+      <h1 align="center" style={{ fontWeight: '650' }}>Hello, developer,</h1></center>
       <div
         className="bootstrap-wrapper"
       >

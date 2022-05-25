@@ -65,6 +65,11 @@ const config = {
             position: 'right',
           },
           {
+            to: 'https://discord.com/invite/SgybPuhX',
+            label: 'Chat',
+            position: 'right',
+          },
+          {
             to: 'https://github.com/cartesi/docs/',
             position: 'right',
             className: 'header-github-link',
@@ -76,56 +81,6 @@ const config = {
 
       footer: {
       links: [
-        {
-          title: "Developers",
-          items: [
-            {
-              label: "Template DApp",
-              to: "https://github.com/cartesi/rollups-examples/tree/main/custom-dapps",
-            },
-            {
-              label: "Chat with Developers",
-              to: "https://discord.com/invite/SgybPuhX",
-            },
-            {
-              label: "Run a Node",
-              to: "https://explorer.cartesi.io/staking",
-            },
-            {
-              label: "CIP Process",
-              to: "https://github.com/cartesi/cips",
-            },
-            {
-              label: "Cartesi Bug Bounty",
-              to: "https://immunefi.com/bounty/cartesi/",
-            },
-            {
-              label: "Tech Articles",
-              to: "https://medium.com/cartesi/tagged/tech",
-            }
-          ],
-        },
-        {
-          title: "Github",
-          items: [
-            {
-              label: "rollups-examples",
-              to: "https://github.com/cartesi/rollups-examples",
-            },
-            {
-              label: "machine-emulator-tools",
-              to: "https://github.com/cartesi/machine-emulator-tools",
-            },
-            {
-              label: "nother-node",
-              to: "https://github.com/cartesi/noether",
-            },
-            {
-              label: "descartes-tutorials",
-              to: "https://github.com/cartesi/descartes-tutorials",
-            },
-          ],
-        },
         {
           title: "Ecosystem",
           items: [
@@ -140,6 +95,52 @@ const config = {
             {
               label: "Foundation Notice",
               to: "https://cartesi.io/foundation_notice.pdf",
+            },
+          ],
+        },
+        {
+          title: "Developers",
+          items: [
+            {
+              label: "Template DApp",
+              to: "https://github.com/cartesi/rollups-examples/tree/main/custom-dapps",
+            },
+            {
+              label: "Tech Articles",
+              to: "https://medium.com/cartesi/tagged/tech",
+            },
+            {
+              label: "Bug Bounty",
+              to: "https://immunefi.com/bounty/cartesi/",
+            },
+            {
+              label: "Run a Node",
+              to: "https://explorer.cartesi.io/staking",
+            },
+            {
+              label: "CIP Process",
+              to: "https://github.com/cartesi/cips",
+            },
+          ],
+        },
+        {
+          title: "Github",
+          items: [
+            {
+              label: "Rollups Examples",
+              to: "https://github.com/cartesi/rollups-examples",
+            },
+            {
+              label: "Machine Emulator",
+              to: "https://github.com/cartesi/machine-emulator-tools",
+            },
+            {
+              label: "Nother Node",
+              to: "https://github.com/cartesi/noether",
+            },
+            {
+              label: "Descartes Tutorials",
+              to: "https://github.com/cartesi/descartes-tutorials",
             },
           ],
         },
