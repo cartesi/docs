@@ -19,12 +19,15 @@
     "@docusaurus/core": "^2.0.0-beta.20",
     "@docusaurus/preset-classic": "^2.0.0-beta.20",
     "@mdx-js/react": "^1.6.21",
+    "autoprefixer": "^10.4.7",
     "classnames": "^2.3.1",
     "clsx": "^1.1.1",
     "docsearch.js": "^2.6.3",
+    "postcss": "^8.4.14",
     "prism-react-renderer": "^1.2.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "tailwindcss": "^3.0.24"
   },
   "browserslist": {
     "production": [
@@ -37,5 +40,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {}
 }
