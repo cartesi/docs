@@ -86,7 +86,7 @@ const config = {
             items: [
               {
                 label: "Blockchain OS",
-                to: "https://cartesi.io/en/blockchain-os",
+                to: "https://cartesi.io/",
               },
               {
                 label: "Our Whitepaper",
@@ -135,7 +135,7 @@ const config = {
                 to: "https://github.com/cartesi/machine-emulator-tools",
               },
               {
-                label: "Nother Node",
+                label: "Noether Node",
                 to: "https://github.com/cartesi/noether",
               },
               {
@@ -156,7 +156,7 @@ const config = {
                 to: "https://discord.gg/Pt2NrnS",
               },
               {
-                label: "Meduim",
+                label: "Medium",
                 to: "https://www.medium.com/cartesi",
               },
               {

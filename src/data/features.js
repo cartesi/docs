@@ -20,7 +20,7 @@ export const features = [
     linkUrl: "docs/category/cartesi-rollups",
     description:
       "Cartesi’s version of Optimistic Rollups uses interactive fraud proofs. Develop DApps using any library for Linux.",
-    bgColor: "#2D5ABE",
+    bgColor: "#ffe95a",
   },
   {
     title: "Build DApps",
@@ -34,6 +34,6 @@ export const features = [
     linkUrl: "docs/category/descartes-sdk",
     description:
       "DApps can run heavy computations off-chain on a fully fledged Linux environment without compromising decentralization.",
-    bgColor: "#FFDC30",
+    bgColor: "#FFD700",
   },
 ];

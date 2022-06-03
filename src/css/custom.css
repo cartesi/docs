@@ -48,6 +48,9 @@
   --ifm-h4-font-size: 1rem;
   --ifm-h5-font-size: 0.875rem;
   --ifm-h6-font-size: 0.85rem;
+
+  --ifm-heading-font-family: "FK Roman Display", "serif";
+  --ifm-heading-font-weight: 500;
 }
 
 /* Dark Theme var */
@@ -141,9 +144,9 @@ html[data-theme="dark"] {
 .markdown > h4,
 .markdown > h5,
 .markdown > h6 {
-  --ifm-h1-font-size: 2rem;
-  --ifm-h2-font-size: 1.5rem;
-  --ifm-h3-font-size: 1.25rem;
+  --ifm-h1-font-size: 2.5rem;
+  --ifm-h2-font-size: 2rem;
+  --ifm-h3-font-size: 1.5rem;
   --ifm-h4-font-size: 1rem;
   --ifm-h5-font-size: 0.875rem;
   --ifm-h6-font-size: 0.85rem;
@@ -177,9 +180,9 @@ html[data-theme="dark"] {
 .card {
   --bg-1: #e1ebff;
   --bg-2: #85b4ff;
-  --bg-3: #2d5abe;
+  --bg-3: #ffe95a;
   --bg-4: #ffe3a3;
-  --bg-5: #ffdc30;
+  --bg-5: #ffd700;
 
   border: 0 !important;
   border-radius: 0 !important;
@@ -194,6 +197,10 @@ html[data-theme="dark"] {
   color: #1e1941;
 
   @apply transition-transform lg:scale-105;
+}
+
+.card h2 {
+  @apply text-2xl;
 }
 
 .row > article:nth-child(5n + 1) .card {
