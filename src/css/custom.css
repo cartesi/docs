@@ -7,8 +7,8 @@
 :root {
   --ifm-font-color-base: #1e1941;
   --ifm-color-primary: #2d5abe;
-  --ifm-background-surface-color: #fffae6;
-  --ifm-background-color: #fffae6;
+  --ifm-background-surface-color: #fffdf5;
+  --ifm-background-color: #fffdf5;
 
   --ifm-color-secondary-contrast-background: #ffe3a3;
   --ifm-color-secondary-dark: #ffc966;
@@ -55,7 +55,7 @@
 
 /* Dark Theme var */
 html[data-theme="dark"] {
-  --ifm-font-color-base: #fffae6;
+  --ifm-font-color-base: #fffdf5;
   --ifm-color-primary: #85b4ff;
   --ifm-background-surface-color: #1e1941;
   --ifm-background-color: #1e1941;
@@ -65,9 +65,9 @@ html[data-theme="dark"] {
 
   --ifm-card-background-color: #2d5abe;
 
-  --ifm-menu-color: #fffae6;
+  --ifm-menu-color: #fffdf5;
   --ifm-menu-color-background-active: #85b4ff;
-  --ifm-menu-color-active: #fffae6;
+  --ifm-menu-color-active: #fffdf5;
   --ifm-menu-color-background-hover: #85b4ff;
 }
 /* Fonts */
