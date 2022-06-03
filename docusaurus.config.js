@@ -7,7 +7,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Cartesi Docs",
-  tagline: "Blockchain OS",
+  tagline: "The Blockchain OS",
   url: "https://cartesi.io",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -85,7 +85,7 @@ const config = {
             title: "Ecosystem",
             items: [
               {
-                label: "Blockchain OS",
+                label: "The Blockchain OS",
                 to: "https://cartesi.io/",
               },
               {
@@ -168,7 +168,7 @@ const config = {
                 to: "https://t.me/cartesiannouncements",
               },
               {
-                label: "Reditt",
+                label: "Reddit",
                 to: "https://www.reddit.com/r/cartesi/",
               },
             ],

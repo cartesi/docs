@@ -1,6 +1,6 @@
 export const features = [
   {
-    title: "Basics of Blockchain OS",
+    title: "The Blockchain OS Basics",
     linkUrl: "docs/category/new-to-cartesi",
     description:
       "A layer-2 platform for the development and deployment of scalable decentralized applications.",
