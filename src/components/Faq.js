@@ -48,7 +48,7 @@ export const Faq = () => {
               Feeling stuck? Don’t worry, come join us over on Discord or StackOverflow and connect with our core developers who’ll be happy to help.
               <br/>
               <br/>
-              Describe your issue or learn from others:
+              Ask a question or learn from others:
             </p>
           </div>
           <div>
