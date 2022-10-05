@@ -6,9 +6,9 @@ tags: [blockchain os, quickstart, beginner, low-level developer, researcher, lea
 
 The scalability issue is one of the three parts of the [Blockchain Trilemma](https://www.gemini.com/cryptopedia/blockchain-trilemma-decentralization-scalability-definition), along with security and decentralization. Solving the scalability issue refers to any type of improvement within a blockchain system in terms of computational power, throughput, latency, bootstrap time, or cost per transaction. For example, high gas fees make it expensive for users to pay for their transactions within the Ethereum blockchain.
 
-Given that scalability has many different aspects, there are numerous alternative and often complementary solutions for tackling it. For instance, scaling the blockchain throughput (i.e., the amount of transactions that can be processed over a period of the time) can be achieved by increasing the block size, reducing the block interval, or other improvements to the consensus protocol such as breaking down transactions into smaller partitions (shards) to process them in parallel.
+Given scalability has many different aspects, there are numerous alternative and often complementary solutions for tackling it. For instance, scaling the blockchain throughput (i.e., the number of transactions that can be processed over a period of time) can be achieved by increasing block size, reducing block interval, or other improvements to the consensus protocol such as breaking down transactions into smaller partitions (shards) to process them in parallel.
 
-Proposed blockchain scaling solutions include Lightning Network, Ethereum Plasma, sharding and off-chain (layer-2) protocols.
+Proposed blockchain scaling solutions include Lightning Network, Ethereum Plasma, sharding, and off-chain (layer-2) protocols.
 
 :::note
 You can read the article [Layer-1 and Layer-2 Blockchain Scaling Solutions](https://www.gemini.com/cryptopedia/blockchain-layer-2-network-layer-1-network) to explore more scaling solutions.
@@ -22,7 +22,7 @@ A layer-2 protocol inherits two properties from the blockchain layer (layer-1):
 * Integrity that guarantees only valid transactions to be added to the blockchain ledger
 * Eventual synchronicity with an upper time-bound. For example, a valid transaction is eventually added to the blockchain ledger, before a critical timeout.
 
-In general, off-chain protocols belong to one of the following four categories:
+In general, layer-2 protocols belong to one of the following four categories:
 
 1. **Channels** that are fully secured by a blockchain system such as Ethereum and work only for a specific set of applications.
 2. **Commit-chains** that rely on one central intermediary who is trusted regarding availability
