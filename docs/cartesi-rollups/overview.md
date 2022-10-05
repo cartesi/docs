@@ -13,7 +13,7 @@ A DApp running on Cartesi Rollups consists of the following main components:
 * [**DApp Back-end**](../cartesi-rollups/dapp-architecture.md#back-end), the application's state and verifiable logic, which corresponds to the DApp's smart contract. The back-end runs inside the Cartesi Machine as a regular Linux application.
 * [**DApp Front-end**](../cartesi-rollups/dapp-architecture.md#front-end), the application's user-facing interface, such as a web app.
 
-The diagram below explains the overall architecture:
+The diagram below shows the overall architecture:
 ![img](./core-components.png)
 
 :::note
@@ -22,15 +22,15 @@ You can [**run a simple DApp**](../build-dapps/run-dapp.md) that we already buil
 
 ## What is a blockchain rollup?
 
-Rollups are blockchain scalability solutions that push complex computations "off-chain", meaning that they run on a separate computing environment (layer-2) outside of the main network (layer-1, such as the Ethereum network). When employing rollups, the blockchain's role becomes solely to receive transactions and log them. On rare occasions in which parties disagree with the outcomes of a computation, the blockchain also gets involved in resolving these disputes.
+A rollup is a blockchain scalability solution that pushes complex computations "off-chain", meaning that they run on a separate computing environment (layer-2) outside of the main network (layer 1, such as the Ethereum network). When employing rollups, the blockchain's role becomes solely to receive transactions and log them. On rare occasions in which parties disagree with the outcomes of a computation, the blockchain also gets involved in resolving these disputes.
 
-Offloading the blockchain from these complex computations, together with the aggregation and compression of data, is expected to increase the number of transactions that a blockchain can process by a factor of at least 40x. Additionally, these transactions can now involve much more complex logic since applications are allowed to perform virtually any amount of computation they want, and can also take advantage of more powerful virtual machines (VMs) running on layer-2.
+Offloading the blockchain from complex computations along with aggregating and compressing data is expected to increase the number of transactions a blockchain can process by a factor of at least 40x. Additionally, transactions can now involve much more complex logic since applications running in a rollup are able to perform virtually any computation and can also take advantage of more powerful virtual machines (VMs) running on layer-2.
 
 ## How does a rollup work?
 
-Users interact with a rollup through transactions on the base layer (layer-1). They send messages (inputs) to the rollup on-chain smart contracts to define a computation to be processed, and as such advance the state of the computing environment on layer-2. Interested parties run an off-chain component (a layer-2 node) that watches the blockchain for inputs, understanding and executing the state updates.
+Users interact with a rollup through transactions on the base layer (layer 1). They send messages (inputs) to the rollup on-chain smart contracts to define a computation to be processed, and as such advance the state of the computing environment on layer-2. Interested parties run an off-chain component (a layer-2 node) that watches the blockchain for inputs, understanding and executing the state updates.
 
-Once in a while, the state of the machine is checkpointed on-chain, at which point the state is considered to be *finalized* and can thus be accepted by any smart contract on layer-1. It is of course vital to ensure this operation is secure, meaning that the layer-2 node needs to somehow *prove* the new state to the base layer.
+Once in a while, the state of the machine is checkpointed on-chain, at which point the state is considered to be *finalized* and can thus be accepted by any smart contract on layer 1. It is of course vital to ensure this operation is secure, meaning that the layer-2 node needs to somehow *prove* the new state to the base layer.
 
 Let’s think about this question:
 **"How does a blockchain system, such as Ethereum, know that the data posted by an off-chain layer-2 node is valid and was not submitted in a malicious way?"**
