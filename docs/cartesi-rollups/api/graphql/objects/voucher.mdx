@@ -1,0 +1,55 @@
+---
+id: voucher
+title: Voucher
+hide_table_of_contents: false
+---
+
+
+Representation of a transaction that can be carried out on the base layer blockchain, such as a transfer of assets
+
+```graphql
+type Voucher {
+  id: ID!
+  index: Int!
+  input: Input!
+  proof: Proof
+  destination: String!
+  payload: String!
+}
+```
+
+
+### Fields
+
+#### [`id`](#) ([`ID!`](/cartesi-rollups/api/graphql/scalars/id))
+
+Voucher identifier
+
+
+#### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+Voucher index within the context of the input that produced it
+
+
+#### [`input`](#) ([`Input!`](/cartesi-rollups/api/graphql/objects/input))
+
+Input whose processing produced the notice
+
+
+#### [`proof`](#) ([`Proof`](/cartesi-rollups/api/graphql/objects/proof))
+
+Proof object that allows this voucher to be validated and executed in the base layer blockchain
+
+
+#### [`destination`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Transaction destination address in Ethereum hex binary format (20 bytes), starting with '0x'
+
+
+#### [`payload`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Transaction payload in Ethereum hex binary format, starting with '0x'
+
+
+
+

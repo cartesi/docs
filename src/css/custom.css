@@ -1,0 +1,389 @@
+/* Added Tailwind - note: preflight is disabled in otder the Docusaurus global styles to be applied */
+
+@tailwind base;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@tailwind components;
+
+/* Docusaurus vars */
+:root {
+  --ifm-font-color-base: #1e1941;
+  --ifm-color-primary: #2d5abe;
+  --ifm-background-surface-color: #fffdf5;
+  --ifm-background-color: #fffdf5;
+
+  --ifm-color-secondary-contrast-background: #ffe3a3;
+  --ifm-color-secondary-dark: #ffc966;
+
+  --ifm-font-family-base: "FK Grotesk", sans-serif;
+  --ifm-navbar-height: 5rem;
+
+  --ifm-pagination-nav-border-radius: 0;
+
+  /* --ifm-color-primary: #0042aa;
+  --ifm-color-primary-dark: #003b99;
+  --ifm-color-primary-darker: #003890;
+  --ifm-color-primary-darkest: #002e77;
+  --ifm-color-primary-light: #0049bb;
+  --ifm-color-primary-lighter: #004cc3;
+  --ifm-color-primary-lightest: #0056dd; */
+
+  --ifm-code-font-size: 95%;
+
+  --ifm-card-background-color: #ffe3a3;
+  --ifm-card-border-radius: 0rem;
+
+  --ifm-menu-color: #1e1941;
+  --ifm-menu-color-background-active: #ffe3a3;
+  --ifm-menu-color-active: #1e1941;
+  --ifm-menu-color-background-hover: #ffe3a3;
+
+  --ifm-footer-background-color: #1e1941;
+  --ifm-footer-color: #fff;
+  --ifm-footer-link-color: rgb(225, 235, 255);
+  --ifm-footer-link-hover-color: #fff;
+  --ifm-footer-padding-vertical: 4rem;
+
+  --ifm-h1-font-size: 2rem;
+  --ifm-h2-font-size: 1.5rem;
+  --ifm-h3-font-size: 1.25rem;
+  --ifm-h4-font-size: 1rem;
+  --ifm-h5-font-size: 0.875rem;
+  --ifm-h6-font-size: 0.85rem;
+
+  --ifm-heading-font-family: "FK Roman Display", "serif";
+  --ifm-heading-font-weight: 500;
+}
+
+/* Dark Theme var */
+html[data-theme="dark"] {
+  --ifm-font-color-base: #fffdf5;
+  --ifm-color-primary: #85b4ff;
+  --ifm-background-surface-color: #1e1941;
+  --ifm-background-color: #1e1941;
+
+  --ifm-color-secondary-contrast-background: rgba(0, 0, 0, 0.2);
+  --ifm-color-secondary-dark: #85b4ff;
+
+  --ifm-card-background-color: #2d5abe;
+
+  --ifm-menu-color: #fffdf5;
+  --ifm-menu-color-background-active: #85b4ff;
+  --ifm-menu-color-active: #fffdf5;
+  --ifm-menu-color-background-hover: #85b4ff;
+}
+/* Fonts */
+
+@font-face {
+  font-family: "FK Grotesk";
+  src: local("FK Grotesk Light Italic"), local("FKGrotesk-LightItalic"),
+    url("/fonts/FKGrotesk-LightItalic.woff2") format("woff2"),
+    url("/fonts/FKGrotesk-LightItalic.woff") format("woff");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FK Grotesk";
+  src: local("FK Grotesk Italic"), local("FKGrotesk-Italic"),
+    url("/fonts/FKGrotesk-Italic.woff2") format("woff2"),
+    url("/fonts/FKGrotesk-Italic.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FK Grotesk";
+  src: local("FK Grotesk Light"), local("FKGrotesk-Light"),
+    url("/fonts/FKGrotesk-Light.woff2") format("woff2"),
+    url("/fonts/FKGrotesk-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FK Grotesk";
+  src: local("FK Grotesk Regular"), local("FKGrotesk-Regular"),
+    url("/fonts/FKGrotesk-Regular.woff2") format("woff2"),
+    url("/fonts/FKGrotesk-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FK Roman Display";
+  src: local("FK Roman Display Medium"), local("FKRomanDisplay-Medium"),
+    url("/fonts/FKRomanDisplay-Medium.woff2") format("woff2"),
+    url("/fonts/FKRomanDisplay-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@-ms-viewport {
+  width: device-width;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  @apply flex flex-wrap items-center leading-none mb-6;
+}
+
+.breadcrumbs__item {
+  @apply flex items-center;
+}
+
+/* Markdown */
+
+.markdown,
+.markdown > h1,
+.markdown > h2,
+.markdown > h3,
+.markdown > h4,
+.markdown > h5,
+.markdown > h6 {
+  --ifm-h1-font-size: 2.5rem;
+  --ifm-h2-font-size: 2rem;
+  --ifm-h3-font-size: 1.5rem;
+  --ifm-h4-font-size: 1rem;
+  --ifm-h5-font-size: 0.875rem;
+  --ifm-h6-font-size: 0.85rem;
+}
+
+/* Header */
+
+.navbar__logo {
+  height: 3rem;
+}
+
+.header-discord-link:hover {
+  opacity: 0.6;
+}
+
+.header-discord-link::before {
+  content: "";
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'%3E%3C/path%3E%3Cpath d='M10.076 11c.6 0 1.086.45 1.075 1 0 .55-.474 1-1.075 1C9.486 13 9 12.55 9 12s.475-1 1.076-1zm3.848 0c.601 0 1.076.45 1.076 1s-.475 1-1.076 1c-.59 0-1.075-.45-1.075-1s.474-1 1.075-1zm4.967-9C20.054 2 21 2.966 21 4.163V23l-2.211-1.995-1.245-1.176-1.317-1.25.546 1.943H5.109C3.946 20.522 3 19.556 3 18.359V4.163C3 2.966 3.946 2 5.109 2H18.89zm-3.97 13.713c2.273-.073 3.148-1.596 3.148-1.596 0-3.381-1.482-6.122-1.482-6.122-1.48-1.133-2.89-1.102-2.89-1.102l-.144.168c1.749.546 2.561 1.334 2.561 1.334a8.263 8.263 0 0 0-3.096-1.008 8.527 8.527 0 0 0-2.077.02c-.062 0-.114.011-.175.021-.36.032-1.235.168-2.335.662-.38.178-.607.305-.607.305s.854-.83 2.705-1.376l-.103-.126s-1.409-.031-2.89 1.103c0 0-1.481 2.74-1.481 6.121 0 0 .864 1.522 3.137 1.596 0 0 .38-.472.69-.871-1.307-.4-1.8-1.24-1.8-1.24s.102.074.287.179c.01.01.02.021.041.031.031.022.062.032.093.053.257.147.514.262.75.357.422.168.926.336 1.513.452a7.06 7.06 0 0 0 2.664.01 6.666 6.666 0 0 0 1.491-.451c.36-.137.761-.337 1.183-.62 0 0-.514.861-1.862 1.25.309.399.68.85.68.85z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat;
+}
+
+[data-theme="dark"] .header-discord-link:before {
+  background: url("data:image/svg+xml,%0A%3Csvg width='24px' height='24px' viewBox='0 0 24 24' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='test'%3E%3Cpolygon id='Path' points='0 0 24 0 24 24 0 24'%3E%3C/polygon%3E%3Cpath d='M10.076,11 C10.676,11 11.162,11.45 11.151,12 C11.151,12.55 10.677,13 10.076,13 C9.486,13 9,12.55 9,12 C9,11.45 9.475,11 10.076,11 Z M13.924,11 C14.525,11 15,11.45 15,12 C15,12.55 14.525,13 13.924,13 C13.334,13 12.849,12.55 12.849,12 C12.849,11.45 13.323,11 13.924,11 Z M18.891,2 C20.054,2 21,2.966 21,4.163 L21,23 L18.789,21.005 L17.544,19.829 L16.227,18.579 L16.773,20.522 L5.109,20.522 C3.946,20.522 3,19.556 3,18.359 L3,4.163 C3,2.966 3.946,2 5.109,2 L18.89,2 L18.891,2 Z M14.921,15.713 C17.194,15.64 18.069,14.117 18.069,14.117 C18.069,10.736 16.587,7.995 16.587,7.995 C15.107,6.862 13.697,6.89291655 13.697,6.89291655 L13.553,7.061 C15.302,7.607 16.114,8.395 16.114,8.395 C15.1590681,7.85698797 14.1066401,7.51433698 13.018,7.387 C12.3274384,7.30900379 11.6299316,7.31572027 10.941,7.407 C10.879,7.407 10.827,7.418 10.766,7.428 C10.406,7.46 9.531,7.596 8.431,8.09 C8.051,8.268 7.824,8.395 7.824,8.395 C7.824,8.395 8.678,7.565 10.529,7.019 L10.426,6.89291655 C10.426,6.89291655 9.017,6.862 7.536,7.996 C7.536,7.996 6.055,10.736 6.055,14.117 C6.055,14.117 6.919,15.639 9.192,15.713 C9.192,15.713 9.572,15.241 9.882,14.842 C8.575,14.442 8.082,13.602 8.082,13.602 C8.082,13.602 8.184,13.676 8.369,13.781 C8.379,13.791 8.389,13.802 8.41,13.812 C8.441,13.834 8.472,13.844 8.503,13.865 C8.76,14.012 9.017,14.127 9.253,14.222 C9.675,14.39 10.179,14.558 10.766,14.674 C11.6453192,14.8463601 12.5494116,14.8497538 13.43,14.684 C13.9429175,14.5924525 14.4433333,14.441086 14.921,14.233 C15.281,14.096 15.682,13.896 16.104,13.613 C16.104,13.613 15.59,14.474 14.242,14.863 C14.551,15.262 14.922,15.713 14.922,15.713 L14.921,15.713 Z' id='Shape' fill='%23FFFFFF' fill-rule='nonzero'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+    no-repeat;
+}
+
+.header-github-link:hover {
+  opacity: 0.6;
+}
+
+.header-github-link::before {
+  content: "";
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
+}
+
+[data-theme="dark"] .header-github-link:before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23fff' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
+}
+
+/* Theme card */
+.card {
+  --bg-1: #e1ebff;
+  --bg-2: #85b4ff;
+  --bg-3: #ffe95a;
+  --bg-4: #ffe3a3;
+  --bg-5: #ffd700;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background-color: var(--bg);
+  color: #1e1941;
+
+  @apply transition-transform;
+}
+
+.card:hover {
+  color: #1e1941;
+
+  @apply transition-transform lg:scale-105;
+}
+
+.card h2 {
+  @apply text-2xl;
+}
+
+.row > article:nth-child(5n + 1) .card {
+  --bg: var(--bg-1);
+}
+
+.row > article:nth-child(5n + 2) .card {
+  --bg: var(--bg-2);
+}
+
+.row > article:nth-child(5n + 3) .card {
+  --bg: var(--bg-3);
+}
+
+.row > article:nth-child(5n + 4) .card {
+  --bg: var(--bg-4);
+}
+
+.row > article:nth-child(5n + 5) .card {
+  --bg: var(--bg-5);
+}
+
+/* Theme Menu adjustments */
+.menu__caret::before {
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1.5rem 1.5rem;
+}
+
+.menu__list .menu__list {
+  @apply text-sm;
+}
+
+/* Theme Footer adjustments */
+.footer {
+  @apply text-sm;
+}
+
+/* Theme Main content */
+.main-wrapper {
+  @apply flex flex-col;
+}
+
+/* Theme Layout Misc */
+.docPage_node_modules-\@docusaurus-theme-classic-lib-next-theme-DocPage-Layout-index-module {
+  flex: 1;
+}
+
+/* Tabs */
+
+.tabs--tabs-only {
+  justify-content: left;
+  @apply mb-0 text-current;
+
+  --ifm-tabs-color-active: var(--ifm-background-color);
+  --ifm-tabs-bg-active: var(--ifm-color-gray-900);
+  --ifm-tabs-border: var(--ifm-color-gray-900);
+}
+
+[data-theme="dark"] .tabs--tabs-only {
+  --ifm-tabs-color-active: var(--ifm-color-gray-900);
+  --ifm-tabs-bg-active: #fff;
+  --ifm-tabs-border: #fff;
+}
+
+[class*="bg-"] .tabs--tabs-only {
+  --ifm-tabs-color-active: #fff;
+  --ifm-tabs-bg-active: var(--ifm-color-gray-900);
+  --ifm-tabs-border: var(--ifm-color-gray-900);
+}
+
+.tabs--tabs-only {
+  @apply mb-0;
+}
+
+.tabs--tabs-only + .margin-top--md {
+  @apply hidden;
+}
+
+.tabs--content-only {
+  @apply mb-0;
+}
+
+.tabs--content-only > li {
+  @apply hidden;
+}
+
+.tabs--tabs-only .tabs__item {
+  @apply rounded-none px-4 py-2 -ml-px font-normal;
+
+  border: 1px solid var(--ifm-tabs-border);
+}
+
+.tabs--tabs-only .tabs__item:first-of-type {
+  @apply -ml-0;
+}
+
+.tabs--tabs-only .tabs__item:hover {
+  @apply bg-gray-900/5;
+}
+
+.tabs--tabs-only .tabs__item--active,
+.tabs--tabs-only .tabs__item--active:hover {
+  background-color: var(--ifm-tabs-bg-active);
+  border: 1px solid var(--ifm-tabs-bg-active);
+  color: var(--ifm-tabs-color-active);
+}
+
+/* Details */
+
+.details {
+  border: 0 !important;
+  border-bottom: 1px solid currentColor !important;
+  padding: 1rem 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  color: inherit;
+}
+
+.details > summary {
+  padding-left: 0 !important;
+  padding-right: 2rem !important;
+}
+
+.details > summary::before,
+.details > summary::after {
+  content: "";
+  left: auto !important;
+  border: 0 !important;
+  top: calc(50% - 2px) !important;
+  background: currentColor !important;
+
+  @apply transition-transform w-[1rem] h-[2px] absolute right-0 block;
+}
+
+.details > summary::after {
+  @apply rotate-90 origin-center;
+}
+
+.details[open] > summary::after {
+  @apply rotate-0;
+}
+
+.details[open] > summary::before {
+  transform: none !important;
+}
+
+.details ul li a {
+  @apply text-current no-underline border-0 hover:text-blue-500;
+}
+
+[class^="collapsibleContent"] {
+  border: 0 !important;
+  padding: 1rem 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+}
+
+.theme-api-markdown code {
+  max-height: none !important;
+}
+
+@tailwind utilities;

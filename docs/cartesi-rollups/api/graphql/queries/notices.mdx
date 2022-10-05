@@ -1,0 +1,56 @@
+---
+id: notices
+title: notices
+hide_table_of_contents: false
+---
+
+
+Get notices with support for pagination (filtering not implemented at the moment)
+
+```graphql
+notices(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: NoticeFilter
+): NoticeConnection!
+```
+
+
+### Arguments
+
+#### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+#### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+#### [`where`](#) ([`NoticeFilter`](/cartesi-rollups/api/graphql/inputs/notice-filter))
+
+
+
+
+### Type
+
+#### [`NoticeConnection`](/cartesi-rollups/api/graphql/objects/notice-connection)
+
+Notice pagination result
+
+
+
+

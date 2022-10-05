@@ -1,0 +1,20 @@
+{
+  "name": "docs-replacements",
+  "private": true,
+  "version": "0.1.0",
+  "author": "Milton Jonathan <milton.jonathan@cartesi.io>",
+  "dependencies": {
+    "find": "0.3.0"
+  },
+  "keywords": [
+    "cartesi"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cartesi/docs"
+  },
+  "bugs": {
+    "url": "https://github.com/cartesi/docs/issues"
+  }
+}

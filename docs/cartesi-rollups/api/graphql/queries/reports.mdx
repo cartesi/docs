@@ -1,0 +1,56 @@
+---
+id: reports
+title: reports
+hide_table_of_contents: false
+---
+
+
+Get reports with support for pagination (filtering not implemented at the moment)
+
+```graphql
+reports(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: ReportFilter
+): ReportConnection!
+```
+
+
+### Arguments
+
+#### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+#### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+#### [`where`](#) ([`ReportFilter`](/cartesi-rollups/api/graphql/inputs/report-filter))
+
+
+
+
+### Type
+
+#### [`ReportConnection`](/cartesi-rollups/api/graphql/objects/report-connection)
+
+Report pagination result
+
+
+
+

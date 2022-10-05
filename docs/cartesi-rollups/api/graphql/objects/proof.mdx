@@ -1,0 +1,55 @@
+---
+id: proof
+title: Proof
+hide_table_of_contents: false
+---
+
+
+Data that can be used as proof to validate notices and execute vouchers on the base layer blockchain
+
+```graphql
+type Proof {
+  outputHashesRootHash: String!
+  vouchersEpochRootHash: String!
+  noticesEpochRootHash: String!
+  machineStateHash: String!
+  keccakInHashesSiblings: [String!]!
+  outputHashesInEpochSiblings: [String!]!
+}
+```
+
+
+### Fields
+
+#### [`outputHashesRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Merkle root of all input's output metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`vouchersEpochRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Merkle root of all epoch's voucher metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`noticesEpochRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Merkle root of all epoch's notice metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`machineStateHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Hash of the machine state claimed for this epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`keccakInHashesSiblings`](#) ([`[String!]!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Array of hashes representing a proof that this output metadata is in the metadata memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`outputHashesInEpochSiblings`](#) ([`[String!]!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Array of hashes representing a proof that this output metadata is in the epoch's output memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+
+

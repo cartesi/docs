@@ -1,0 +1,193 @@
+---
+id: input
+title: Input
+hide_table_of_contents: false
+---
+
+
+Request submitted to the application to advance its state
+
+```graphql
+type Input {
+  id: ID!
+  index: Int!
+  epoch: Epoch!
+  msgSender: String!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  voucher(
+  index: Int!
+): Voucher!
+  notice(
+  index: Int!
+): Notice!
+  report(
+  index: Int!
+): Report!
+  vouchers(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: VoucherFilter
+): VoucherConnection!
+  notices(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: NoticeFilter
+): NoticeConnection!
+  reports(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: ReportFilter
+): ReportConnection!
+}
+```
+
+
+### Fields
+
+#### [`id`](#) ([`ID!`](/cartesi-rollups/api/graphql/scalars/id))
+
+Input identifier
+
+
+#### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+Input index within its containing epoch
+
+
+#### [`epoch`](#) ([`Epoch!`](/cartesi-rollups/api/graphql/objects/epoch))
+
+Epoch in which the input is contained
+
+
+#### [`msgSender`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+
+Address responsible for submitting the input
+
+
+#### [`timestamp`](#) ([`BigInt!`](/cartesi-rollups/api/graphql/scalars/big-int))
+
+Timestamp associated with the input submission, as defined by the base layer's block in which it was recorded
+
+
+#### [`blockNumber`](#) ([`BigInt!`](/cartesi-rollups/api/graphql/scalars/big-int))
+
+Number of the base layer block in which the input was recorded
+
+
+#### [`voucher`](#) ([`Voucher!`](/cartesi-rollups/api/graphql/objects/voucher))
+
+Get voucher from this particular input given the voucher's index
+- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`notice`](#) ([`Notice!`](/cartesi-rollups/api/graphql/objects/notice))
+
+Get notice from this particular input given the notice's index
+- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`report`](#) ([`Report!`](/cartesi-rollups/api/graphql/objects/report))
+
+Get report from this particular input given report's index
+- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`vouchers`](#) ([`VoucherConnection!`](/cartesi-rollups/api/graphql/objects/voucher-connection))
+
+Get vouchers from this particular input with support for pagination (filtering not implemented at the moment)
+- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`where`](#) ([`VoucherFilter`](/cartesi-rollups/api/graphql/inputs/voucher-filter))
+
+
+
+
+#### [`notices`](#) ([`NoticeConnection!`](/cartesi-rollups/api/graphql/objects/notice-connection))
+
+Get notices from this particular input with support for pagination (filtering not implemented at the moment)
+- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`where`](#) ([`NoticeFilter`](/cartesi-rollups/api/graphql/inputs/notice-filter))
+
+
+
+
+#### [`reports`](#) ([`ReportConnection!`](/cartesi-rollups/api/graphql/objects/report-connection))
+
+Get reports from this particular input with support for pagination (filtering not implemented at the moment)
+- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`where`](#) ([`ReportFilter`](/cartesi-rollups/api/graphql/inputs/report-filter))
+
+
+
+
+
+

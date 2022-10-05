@@ -1,0 +1,182 @@
+---
+id: epoch
+title: Epoch
+hide_table_of_contents: false
+---
+
+
+Represents the period of time for which a rollup claim is made, encapsulating a batch of inputs and its corresponding outputs
+
+```graphql
+type Epoch {
+  id: ID!
+  index: Int!
+  input(
+  index: Int!
+): Input!
+  inputs(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: InputFilter
+): InputConnection!
+  vouchers(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: VoucherFilter
+): VoucherConnection!
+  notices(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: NoticeFilter
+): NoticeConnection!
+  reports(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: ReportFilter
+): ReportConnection!
+}
+```
+
+
+### Fields
+
+#### [`id`](#) ([`ID!`](/cartesi-rollups/api/graphql/scalars/id))
+
+Epoch identifier
+
+
+#### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+Epoch index
+
+
+#### [`input`](#) ([`Input!`](/cartesi-rollups/api/graphql/objects/input))
+
+Get input from this particular epoch given the input's index
+- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`inputs`](#) ([`InputConnection!`](/cartesi-rollups/api/graphql/objects/input-connection))
+
+Get inputs from this particular epoch with support for pagination (filtering not implemented at the moment)
+- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`where`](#) ([`InputFilter`](/cartesi-rollups/api/graphql/inputs/input-filter))
+
+
+
+
+#### [`vouchers`](#) ([`VoucherConnection!`](/cartesi-rollups/api/graphql/objects/voucher-connection))
+
+Get vouchers from this particular epoch with support for pagination (filtering not implemented at the moment)
+- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`where`](#) ([`VoucherFilter`](/cartesi-rollups/api/graphql/inputs/voucher-filter))
+
+
+
+
+#### [`notices`](#) ([`NoticeConnection!`](/cartesi-rollups/api/graphql/objects/notice-connection))
+
+Get notices from this particular input with support for pagination (filtering not implemented at the moment)
+- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`where`](#) ([`NoticeFilter`](/cartesi-rollups/api/graphql/inputs/notice-filter))
+
+
+
+
+#### [`reports`](#) ([`ReportConnection!`](/cartesi-rollups/api/graphql/objects/report-connection))
+
+Get reports from this particular epoch with support for pagination (filtering not implemented at the moment)
+- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+- ##### [`where`](#) ([`ReportFilter`](/cartesi-rollups/api/graphql/inputs/report-filter))
+
+
+
+
+
+

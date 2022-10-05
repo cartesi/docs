@@ -1,0 +1,61 @@
+@startuml
+skinparam dpi 300
+
+package "Blockchain" {
+  [dApp Contract] as dappContract
+  [Compute] as C
+  [Verification Game] as VG
+  [(Partition, MM, Step)] as Aux
+  dappContract -> C : request
+  C -> VG : challenge
+  VG -> Aux
+}
+
+component [Etherem Node] as geth
+
+dappContract <- geth : conformant
+C <- geth : conformant
+
+package "Docker container for DApp" {
+
+package "Interface" {
+  [Transaction Manager] as tx
+  [State Manager] as S
+  [Dispatcher] as D
+  tx <-down- D
+  S <-down- D
+}
+
+geth <- tx
+geth <- S
+
+package "DApp" {
+  component [Dapp Callback] as callback
+  component [Config File] as config
+}
+
+D -right-> config
+
+D -down-> callback
+
+package "Emulator" {
+  [Emulator Manager] as EM
+  [Emu1] as E1
+  [Emu2] as E2
+  [Emu3] as E3
+  EM -down-> E1
+  EM -down-> E2
+  EM -down-> E3
+}
+
+database "Files" {
+  component [File Manager] as FM
+}
+
+EM -up-> FM
+D -right-> FM
+D -down-> EM
+
+}
+
+@enduml

@@ -1,0 +1,43 @@
+---
+id: input-connection
+title: InputConnection
+hide_table_of_contents: false
+---
+
+
+Input pagination result
+
+```graphql
+type InputConnection {
+  totalCount: Int!
+  edges: [InputEdge!]!
+  nodes: [Input!]!
+  pageInfo: PageInfo!
+}
+```
+
+
+### Fields
+
+#### [`totalCount`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+Total number of entries that match the query
+
+
+#### [`edges`](#) ([`[InputEdge!]!`](/cartesi-rollups/api/graphql/objects/input-edge))
+
+Pagination entries returned for the current page
+
+
+#### [`nodes`](#) ([`[Input!]!`](/cartesi-rollups/api/graphql/objects/input))
+
+Input instances returned for the current page
+
+
+#### [`pageInfo`](#) ([`PageInfo!`](/cartesi-rollups/api/graphql/objects/page-info))
+
+Pagination metadata
+
+
+
+

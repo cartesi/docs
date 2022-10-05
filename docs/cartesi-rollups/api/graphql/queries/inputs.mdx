@@ -1,0 +1,56 @@
+---
+id: inputs
+title: inputs
+hide_table_of_contents: false
+---
+
+
+Get inputs with support for pagination (filtering not implemented at the moment)
+
+```graphql
+inputs(
+  first: Int
+  last: Int
+  after: String
+  before: String
+  where: InputFilter
+): InputConnection!
+```
+
+
+### Arguments
+
+#### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+
+
+
+
+#### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+#### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+
+
+
+#### [`where`](#) ([`InputFilter`](/cartesi-rollups/api/graphql/inputs/input-filter))
+
+
+
+
+### Type
+
+#### [`InputConnection`](/cartesi-rollups/api/graphql/objects/input-connection)
+
+Input pagination result
+
+
+
+
