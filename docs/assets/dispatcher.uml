@@ -19,7 +19,7 @@ note right
   For each instance, obtain
   current and ancestor nonce
 end note
-SM -> D : List (contract, instace)
+SM -> D : List (contract, instance)
 D -> DC : Get reaction to instance
 note right
   For each instance that requires

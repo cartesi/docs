@@ -19,7 +19,7 @@ Our onboarding paths answer the following questions:
   values={[
     { label: 'Beginner', value: 'beginner', },
     { label: 'Developer', value: 'developer', },
-    { label: 'Reseacher & Low-level developer', value: 'researcher', },
+    { label: 'Researcher & Low-level developer', value: 'researcher', },
   ]
 }>
 <TabItem value="beginner">

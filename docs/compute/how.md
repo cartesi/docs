@@ -3,7 +3,7 @@ title: How it works
 tags: [maintain, sdk, off-chain, low-level developer]
 ---
 
-Cartesi Compute SDK allows Cartesi DApps to specify and request verifiable computations to Cartesi Machines. Additionally, the SDK provides tools to facilitate and reduce the cost of inputing data into Cartesi Machines.
+Cartesi Compute SDK allows Cartesi DApps to specify and request verifiable computations to Cartesi Machines. Additionally, the SDK provides tools to facilitate and reduce the cost of inputting data into Cartesi Machines.
 
 ## Cartesi computations
 

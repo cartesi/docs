@@ -132,7 +132,7 @@ export const learn = [
         href: "/cartesi-rollups/http-api",
       },
       {
-        label: "Dive into technical details of compenetns and main concepts",
+        label: "Dive into technical details of components and main concepts",
         href: "/cartesi-rollups/components#main-concepts",
       },
     ],

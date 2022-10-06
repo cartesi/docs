@@ -236,7 +236,7 @@ projected_period_rewards = blocks_by_user * block_reward
 # block_reward has the value of the current block reward, currently it's 2900 CTSI/block
 # user_stake is an input of the model
 projected_annual_earnings = (user_stake_percent * blocks_per_year * block_reward) / user_stake
-Some thigs to bare in mind when using this model:
+Some things to bare in mind when using this model:
 
 The PoS system is probabilistic and the output of the model is an expected average. You can understand what that means with an example: if you got a reward for flipping a coin and getting a head, and you flipped a coin twice, you could have 3 possible outcomes (disregarding the order): two heads, two tails or a head and a tail. The actual reward you could get would be nothing, one or two rewards, but the average reward if you had a large number of people doing that, would be very close to one. That average value for a very large number of users within the given situation is what the model outputs. It is very useful for having a grasp on what to expect but in practice what actually happens in your case will probably not match that exact output.
 The model considers constant difficulty, stakes, reward values, etc on it's calculations. In practice, difficulty varies a lot due to multiple reasons (nodes are not online and working perfectly 24/7, users withdraw and stake CTSI all the time, etc) so when using the model it is wise to simulate a couple of extreme scenarios, one with a very high total staked value, to use as worst-case scenario, and another one with a very low total staked value, to use as a best-case scenario. Those are useful to have a better range of what to expect.

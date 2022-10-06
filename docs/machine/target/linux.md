@@ -466,7 +466,7 @@ Once the root file-system is mounted, the kernel executes `/sbin/init`.
 The Cartesi-provided `/sbin/init` script in `rootfs.ext2` sets up a basic Linux environment on which applications can run.
 In particular, it goes over the available flash drive devices (`/dev/mtdblock1`&ndash;`/dev/mtdblock7`) looking for valid file-systems, and mounting them at the appropriate `/mnt/<label>` mount points.
 The Linux kernel passes to `/sbin/init`, unmodified, everything after the separator `--` in its own command-line.
-Once its initialization tasks are complete, the Cartesi-proviced `/sbin/init` concatenates all its arguments into a string and executes them in a shell.
+Once its initialization tasks are complete, the Cartesi-provided `/sbin/init` concatenates all its arguments into a string and executes them in a shell.
 
 This is how the commands passed to `cartesi-machine` come to be executed in the Linux environment that runs inside the Cartesi Machine.
 Given a proper `rootfs.ext2` and an appropriate command-line, the applications can run any general computation, consuming input from any flash drives, and writing outputs to any flash drives.

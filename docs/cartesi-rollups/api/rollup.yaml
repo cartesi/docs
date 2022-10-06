@@ -189,7 +189,7 @@ paths:
       summary: Add a new report
       description: |
         The DApp can call this method to add a new report for the given rollup request.
-        A report can be a diagnostic or a log; reports are not discarted when a request is rejected.
+        A report can be a diagnostic or a log; reports are not discarded when a request is rejected.
         Between calls to the finish method, the report method can be called any number of times.
 
       requestBody:

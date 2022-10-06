@@ -18,7 +18,7 @@ To test stake delegation on the Ethereum Ropsten testnet, you’ll need some Rop
 
 * [Getting Started](https://github.com/cartesi/noether/wiki/FAQ#getting-startedsetup)
 * [Staking Testnet](https://github.com/cartesi/noether/wiki/Testnet-FAQ)
-* [Node Opeartion](https://github.com/cartesi/noether/wiki/FAQ#node-operation)
+* [Node Operation](https://github.com/cartesi/noether/wiki/FAQ#node-operation)
 * [Fees and Costs](https://github.com/cartesi/noether/wiki/FAQ#fees-and-costs)
 * [Block Production and Rewards](https://github.com/cartesi/noether/wiki/FAQ#block-production-and-rewards)
 * [Security](https://github.com/cartesi/noether/wiki/FAQ#security)

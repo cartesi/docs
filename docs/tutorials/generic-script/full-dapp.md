@@ -33,7 +33,7 @@ contract GenericScript {
     uint256 finalTime = 1e11;
     uint256 roundDuration = 51;
 
-    // generic script to execute (python cares about identation)
+    // generic script to execute (python cares about indentation)
     bytes script = "#!/usr/bin/python3\n\
 import jwt\n\
 payload = jwt.decode(b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzb21lIjoicGF5bG9hZCJ9.Joh1R2dYzkRvDkqv3sygm5YyK8Gi4ShZqbhK2gxcs2U', 'secret', algorithms=['HS256'])\n\
