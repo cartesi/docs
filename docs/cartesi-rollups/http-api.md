@@ -4,15 +4,15 @@ title: Rollups HTTP APIs
 tags: [learn, rollups, dapps, low-level developer, api, back-end, front-end]
 ---
 
-In a Cartesi DApp, the front-end and back-end parts of the application [communicate with each other through the Rollups framework](../cartesi-rollups/dapp-architecture.md#communication). This is accomplished in practice by a set of HTTP APIs.
+In a Cartesi DApp, the front-end and back-end parts of the application [communicate with each other through the Rollups framework](../cartesi-rollups/dapp-architecture.md#communication) via a set of HTTP APIs.
 
-When designing the APIs for this communication with the framework, we wanted to ensure developers could create their applications without having to worry too much about the idiosyncrasies of blockchain technology or our rollups solution. In particular, we wanted to allow the back-end code to abstract away whether it was running inside a specific virtual machine or not.
+When designing the APIs for this communication with the framework, we wanted to ensure developers could create their applications without worrying too much about the idiosyncrasies of blockchain technology or our rollups solution. In particular, we wanted to allow the back-end code to abstract away whether it was running inside a specific virtual machine or not.
 
 With this in mind, we decided to offer APIs on top of HTTP as a convenience layer for this communication, leveraging a well-known and ubiquitous standard instead of having applications deal with any kernel-level or VM-specific devices, or having to understand how our rollups solution encodes and decodes data.
 
 ## Back-end API
 
-The DApp's back-end interacts with the Cartesi Rollups framework by retrieving processing requests and then submitting corresponding outputs. This is accomplished by calling a number of HTTP endpoints, as illustrated by the figure below:
+The DApp's back-end interacts with the Cartesi Rollups framework by retrieving processing requests and then submitting corresponding outputs. This is accomplished by calling a set of HTTP endpoints, as illustrated by the figure below:
 
 ![img](./back-end-api.png)
 
@@ -20,7 +20,7 @@ First, the back-end retrieves a new request as follows:
 
 * [**Finish**](./api/rollup/finish.api.mdx) — Communicates that any previous processing or initialization has been completed, and that the back-end is now ready to handle the next request. This next request is itself returned as the call's response, and can be of the following types:
 
-  * **AdvanceState** — Provides an input to be processed by the back-end in order to advance the application's state. When processing an *AdvanceState* request, the back-end can call the methods [AddVoucher](./api/rollup/add-voucher.api.mdx), [AddNotice](./api/rollup/add-notice.api.mdx) and [AddReport](./api/rollup/add-report.api.mdx), as detailed below. For *AdvanceState* requests, the input data contains both the payload itself and also metadata such as the address of the account that submitted it.
+  * **AdvanceState** — Provides an input to be processed by the back-end in order to advance the application's state. When processing an AdvanceState request, the back-end can call the methods [AddVoucher](./api/rollup/add-voucher.api.mdx), [AddNotice](./api/rollup/add-notice.api.mdx) and [AddReport](./api/rollup/add-report.api.mdx), as detailed below. For such requests, the input data contains the payload and some metadata, such as the account address that submitted the input.
 
   * **InspectState** — Submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged, since the machine is reverted to its exact previous condition after processing is completed. For *InspectState* requests, the input data contains only a payload.
 
