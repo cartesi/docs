@@ -12,9 +12,9 @@ Here, the yellow boxes represent the parts that the developer needs to implement
 
 ## Back-end
 
-The back-end of a Cartesi DApp contains the business logic of the application, similar to what traditional systems would run inside a server. The difference here — and the reason for using blockchain technology in general — is that for decentralized applications there is a need for this back-end logic to be _verifiable_ and hence _trustless_. As such, it is executed inside the Cartesi Rollups framework.
+The back-end of a Cartesi DApp contains the business logic of the application, similar to what traditional systems would run inside a server. The difference here — and the reason for using blockchain technology in general — is that decentralized applications need this back-end logic to be verifiable and hence trustless. As such, it is executed inside the Cartesi Rollups framework.
 
-The back-end stores and updates the application state as user input is received, and produces corresponding outputs. These outputs can come in the form of [vouchers](../cartesi-rollups/components.md#vouchers) (transactions that can be carried out on layer-1, such as a transfer of assets), [notices](../cartesi-rollups/components.md#notices) (informational statements, such as the resulting score of a game), or [reports](../cartesi-rollups/components.md#reports) (application logs and diagnostic information, such as error or warning messages).
+The back-end stores and updates the application state as user input is received and produces corresponding outputs. These outputs can come in the form of [vouchers](../cartesi-rollups/components.md#vouchers) (transactions that can be carried out on layer-1, such as a transfer of assets), [notices](../cartesi-rollups/components.md#notices) (informational statements, such as the resulting score of a game), or [reports](../cartesi-rollups/components.md#reports) (application logs and diagnostic information, such as error or warning messages).
 
 In practical terms, a Cartesi DApp back-end can be seen as a smart contract, but on steroids.
 
@@ -26,8 +26,7 @@ The front-end's job is usually to collect user input and submit it to the DApp, 
 
 ## Communication
 
-When compared to traditional software development, the main difference of a Cartesi DApp is that the back-end is deployed to a decentralized network of layer-2 nodes, who continuously verify the correctness of all processing results. As a consequence, the front-end and back-end do not communicate directly with each other. Rather, the front-end sends inputs to the Cartesi Rollups framework, who in turn makes them available to the back-end instances running inside each node. After the inputs are processed by the back-end logic, the corresponding outputs are then informed back to the Rollups framework, which enforces their correctness and makes them available to the front-end and any other interested parties.
-
+When compared to traditional software development, the main difference of a Cartesi DApp is that the back-end is deployed to a decentralized network of layer-2 nodes, which continuously verify the correctness of all processing results. As a consequence, the front-end and back-end do not communicate directly with each other. Rather, the front-end sends inputs to the Cartesi Rollups framework, which in turn makes them available to the back-end instances running inside each node. After the inputs are processed by the back-end logic, the corresponding outputs are then informed back to the Rollups framework, which enforces their correctness and makes them available to the front-end and any other interested parties.
 
 The sequence diagram below illustrates how all of this works:
 
@@ -39,6 +38,6 @@ The Cartesi Rollups framework provides a set of APIs to specify how the DApp's f
 
 ## Other components
 
-Aside from the back-end running inside the Cartesi Rollups infrastructure, the DApp front-end can of course also make use of external resources such as 3rd-party services. Indeed, for more complex DApps it is expected that there will be other back-ends besides the one running verifiable logic. These would be used whenever the application doesn’t really need a service to be decentralized and trustless, such as providing fast and accessible data caches, helping users communicate with each other, or interfacing with other non-blockchain services.
+Aside from the back-end running inside the Cartesi Rollups infrastructure, the DApp front-end may also use external resources such as third-party services. Indeed, for more complex DApps it is expected that there will be other back-ends besides the one running verifiable logic. They would be used whenever the application doesn’t need a service to be decentralized and trustless, such as providing fast and accessible data caches, helping users communicate with each other, or interfacing with other non-blockchain services.
 
 Conversely, it is also possible for complex DApps to provide more than one front-end application, with the goal of supporting different kinds of users and use cases.
