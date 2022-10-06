@@ -20,8 +20,8 @@ The _Cartesi Node_ is the layer-2 component that consists of the combination of 
 
 In practice, there are two distinct kinds of agents that run Cartesi Nodes: _users_ and _validators_. Each of them interacts with the on-chain rollups in different ways, and thus run different types of Cartesi Nodes:
 
-* **User or Reader Nodes** are only involved in advancing the state of the off-chain machine, and making that state publicly available. They consume information from the blockchain but do not bother to enforce state updates, trusting that validators will ensure the validity of all on-chain state updates.
-* **Validator Nodes** have more responsibility: they not only watch the blockchain but also fight possible dishonest validators to ensure the prevalence of honest claims for state updates. On the other hand, if Reader Nodes are available, validators do not need to expose endpoints for retrieving application state. As such, they can run in more secure environments and remain inaccessible to external clients and users.
+* **User or Reader Nodes**, which are only involved in advancing the state of the off-chain machine, and making that state publicly available. They consume information from the blockchain but do not bother to enforce state updates, trusting that validators will ensure the validity of all on-chain state updates.
+* **Validator Nodes**, which have more responsibility: they not only watch the blockchain but also fight possible dishonest validators to ensure the prevalence of honest claims for state updates. On the other hand, if Reader Nodes are available, validators do not need to expose endpoints for retrieving application state. Therefore, they can run in more secure environments and remain inaccessible to external clients and users.
 
 ### Epochs
 
@@ -29,16 +29,16 @@ In order to avoid over interacting with the blockchain, validators don't checkpo
 We can imagine epochs in three different states:
 
 - **Accumulating**, when the epoch is open and waiting for inputs.
-- **Sealed**, when the inputs for that epoch are well defined and the validators are preparing to or sending their claims. Sealed epochs can also be under dispute.
+- **Sealed**, when the inputs for that epoch are well defined and the validators are preparing to send their claims. Sealed epochs can also be under dispute.
 - **Finalized**, when consensus was reached and the outputs can be safely executed.
 
-The on-chain state, depending on the phase it is at, can contain one or two epochs, as illustrated by the diagram below.
+The on-chain state, depending on what phase it is, can contain one or two epochs, as illustrated by the diagram below.
 
 ![img](./onchain-phases.png)
 
 - **Input Accumulation**: there is a single accumulating epoch, active and waiting for the inputs it is going to batch.
 - **Awaiting Consensus**: there are two epochs. A sealed one, for which validators are preparing to or sending their claims, and an accumulating one, which is active and receiving inputs.
-- **Awaiting Dispute**: also has two epochs. A sealed one and an accumulating one. The sealed epoch is under dispute. Two conflicting claims were received and the validators are enrolling in a verification game to decide which claim stands. Since the sealed epoch's inputs are well defined, honest validators will always reach the same claim. A dispute necessarily means that a claim is provably false.
+- **Awaiting Dispute**: there are also two epochs. A sealed one and an accumulating one. The sealed epoch is under dispute. At least two conflicting claims were received and the validators are enrolling in a verification game to decide which claim stands. Since the sealed epoch's inputs are well defined, honest validators will always reach the same claim. A dispute necessarily means that a claim is provably false.
 
 To better understand the whole process on a timeline, let's describe how the system schedules different rollups phases.
 
@@ -50,11 +50,11 @@ The nodes then process every message of the batch through the Cartesi Machine, p
 
 After a challenge period is over, if there was no dispute, _S(N)_ is assumed final by the system. Otherwise, disputes will follow until the correct state claim represented by its output hash is enforced. The _settlement period_ displayed on the diagram above accounts for a _challenge period_, with or without disputes.
 
-To guarantee a minimum duration for each epoch, the rollups protocol also requires an _accumulation slot_. This is a minimal latency imposed on on-chain finalization to prevent frequent claims being sent to layer-1, for the sake of Ethereum fee cost-effectiveness. The rollup developer can configure a specific accumulation slot period for his application, to accommodate eventual specific requirements for balancing latency to finality and security.
+To guarantee a minimum duration for each epoch, the rollups protocol also requires an _accumulation slot_. This is a minimal latency imposed on on-chain finalization to prevent frequent claims being sent to layer-1, for the sake of Ethereum fee cost-effectiveness. The rollup developer can configure a specific accumulation slot period for their application to accommodate eventual specific requirements for balancing latency to finality and security.
 
 ### Vouchers
 
-A _voucher_ is a combination of a target address and a payload in bytes. It is used by the off-chain machine to respond and interact with layer-1 smart contracts. When vouchers get executed they'll simply send a message to the target address with the payload as a parameter. Therefore, vouchers can be anything ranging from providing liquidity in a DeFi protocol to withdrawing funds from the [Portal](#portal). Vouchers can only be executed when the epoch in which they are contained is _finalized_, at which point a _validity proof_ will be available to ensure layer-1 smart contracts can trust its content.
+A _voucher_ is a combination of a target address and a payload in bytes. It is used by the off-chain machine to respond and interact with layer-1 smart contracts. Upon execution, a voucher sends a message to the target address with the payload as a parameter. Vouchers can be used for anything, ranging from providing liquidity in a DeFi protocol to withdrawing funds from the [Portal](#portal). Vouchers can only be executed when the epoch in which they are contained is _finalized_, at which point a _validity proof_ will be available to ensure layer-1 smart contracts can trust its content.
 
 ### Notices
 
@@ -62,7 +62,7 @@ A _notice_ is an arbitrary payload in bytes that is submitted by the off-chain m
 
 ### Reports
 
-A _report_ is an application log or a piece of diagnostic information. Like a notice, it is represented by an arbitrary payload in bytes. However, a report is never associated with a proof and is thus not suitable for trustless interactions such as on-chain processing or convincing independent third-parties of DApp outcomes. Reports are commonly used to indicate processing errors or to retrieve application information for display.
+A _report_ is an application log or a piece of diagnostic information. Like a notice, it is represented by an arbitrary payload in bytes. However, a report is never associated with a proof and is thus not suitable for trustless interactions such as on-chain processing or convincing independent third parties of DApp outcomes. Reports are commonly used to indicate processing errors or to retrieve application information for display.
 
 ## On-chain components
 
@@ -74,7 +74,7 @@ These consist of the Cartesi Rollups smart contracts that were designed to media
 
 The [Cartesi Rollups Manager](https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/interfaces/IRollups.sol) is responsible for synchronicity between the modules. It defines the duration of the different phases and notifies the other modules of any phase change. Among others, the responsibilities of this module are:
 
-- Define for which epoch, depending on the current state and deadlines, an input is destined to.
+- Define to which epoch an input is destined, depending on the current state and deadlines.
 - Receive and forward claims to the Validator Manager.
 - Forward disputes to the Dispute Resolution module.
 - Forward the result of disputes to the Validator Manager.
@@ -115,7 +115,7 @@ The [Cartesi Rollups Manager](#cartesi-rollups-manager) receives claims and redi
 
 - If the sender is not a validator or the claim is invalid, the transaction reverts.
 - If the claim is valid, doesn’t disagree with any of the other claims in the epoch, and does not generate consensus, it returns a "No Conflict" response.
-- If the claim is valid but disagrees with another claim for that epoch, it warns the Cartesi Rollups Manager that a conflict is happening and what are the conflicting claims and claimants involved. When that dispute is resolved the Validator Manager module gets notified so it can deal however it likes with the validators involved. In our initially suggested implementation, the loser of a dispute gets removed from the validator set.
+- If the claim is valid but disagrees with another claim for that epoch, it warns the Cartesi Rollups Manager that a conflict is happening and what are the conflicting claims and claimants involved. When that dispute is resolved the Validator Manager module gets notified so it can deal however it likes with the validators involved. In our initially suggested implementation, the loser of a dispute is removed from the validator set.
 - If the claim is valid, agrees with all other claims in that epoch, and is the last claim to be received, it lets Cartesi Rollups know that consensus was reached. This allows the rollups DApp to finalize the epoch and allow for the execution of its vouchers. Regardless of what the name might suggest, validators do not interact with this module at all.
 
 ### Fee Manager and Bank
@@ -150,7 +150,7 @@ This service is responsible for ensuring that the remaining modules have access 
 
 ### Rollups Dispatcher
 
-Responsible for interpreting the current state of the Cartesi Rollups smart contracts, this module informs the [Server Manager](#server-manager) about any incoming inputs and, in the case of Validator Nodes, also submits transactions corresponding to  state update claims. It will also handle any disputes should they arise.
+Responsible for interpreting the current state of the Cartesi Rollups smart contracts, this module informs the [Server Manager](#server-manager) about any incoming inputs and, in the case of Validator Nodes, also submits transactions to layer-1 corresponding to state update claims. It will also handle any disputes should they arise.
 
 ### Server Manager
 
