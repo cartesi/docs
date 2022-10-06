@@ -44,14 +44,14 @@ export const CodeSamples = () => {
                   {category.title}
                 </h2>
                 <div className="flex gap-3">
-                  <IconGitHub />
                   <div className="flex flex-wrap gap-2">
                     {category.links.map((link, index) => (
                       <div
                         className="flex items-center gap-2 text-sm"
                         key={link.label}
                       >
-                        {index > 0 && <span>•</span>}
+                        {index > 0}
+                        <IconGitHub />
                         <Link
                           className="text-current hover:underline hover:text-current"
                           to={useBaseUrl(link.href)}
