@@ -8,7 +8,7 @@ title: Instantiating computation
 :::
 
 
-After creating our [basic HelloWorld DApp project](../helloworld/create-project/) and building our [Hello World Cartesi Machine](../helloworld/cartesi-machine/), we can now implement the method that actually instantiates and triggers the specified computation from an Ethereum smart contract.
+After creating our [basic HelloWorld DApp project](../helloworld/create-project.md) and building our [Hello World Cartesi Machine](../helloworld/cartesi-machine.md), we can now implement the method that actually instantiates and triggers the specified computation from an Ethereum smart contract.
 
 To do that, open the `helloworld/contracts/HelloWorld.sol` file and add the following code:
 
@@ -44,7 +44,7 @@ function instantiate(address[] memory parties) public returns (uint256) {
 }
 ```
 
-The method receives as arguments the addresses of the parties that will execute and validate the computation, otherwise known as the *claimer* and *challenger* nodes. In our [development environment](../descartes-env/), these will correspond to the addresses for `alice` and `bob`.
+The method receives as arguments the addresses of the parties that will execute and validate the computation, otherwise known as the *claimer* and *challenger* nodes. In our [development environment](../descartes-env.md), these will correspond to the addresses for `alice` and `bob`.
 
 The instantiation itself simply calls the corresponding method in the Cartesi Compute smart contract. This will trigger a transaction in the Ethereum network, requesting the specified computation to be carried out off-chain by the specified actors. Cartesi Compute will ensure that the appropriate nodes automatically step in to perform the computation, resolve any disputes, and finally validate the result.
 

@@ -206,12 +206,12 @@ For example, the input payload to an advance-state request and the query payload
 Conversely, vouchers, notices, reports, and exceptions are written to the `tx_buffer` memory range.
 The input metadata for advance-state requests are written to the `input_metadata` memory range.
 The `voucher_hashes` and `notice_hashes` memory ranges are arrays on which the hash of each voucher or notice emitted during processing of an advance-state are appended, respectively.
-For more details on how exactly these memory ranges are used, please read the [architecture section](../target/architecture/) under the target perspective.
+For more details on how exactly these memory ranges are used, please read the [architecture section](../target/architecture.md) under the target perspective.
 
 The remaining entries in the `machine_config` are used only in rare occasions.
 The devices and processor have a variety of control and status registers (CSRs), in addition to processor's general-purpose registers.
 Most of these are defined in volumes [1 and 2](https://riscv.org/technical/specifications/) of the  ISA specification.
-The Cartesi-specific additions are described under the [architecture section](../target/architecture/) under the target perspective.
+The Cartesi-specific additions are described under the [architecture section](../target/architecture.md) under the target perspective.
 
 The <a href="#clint_config">`clint`</a> entry has a single field, `mtimecmp`, which allows for the overriding of the default initial value of this CSR.
 Similarly, the fields in the <a href="#processor_config">`processor`</a> entry allow for the overriding of the default initial value of all general-purpose registers and CSRs in the processor.
@@ -219,7 +219,7 @@ Similarly, the fields in the <a href="#processor_config">`processor`</a> entry a
 ### Configuration from command-line
 
 The `cartesi-machine` command-line utility can be used to output machine configurations for Cartesi Machines that can be used directly by the Lua `cartesi.machine` constructor.
-Recall from an [earlier example](./cmdline/#initialization) that the `cartesi-machine` command
+Recall from an [earlier example](./cmdline.md#initialization) that the `cartesi-machine` command
 
 ```bash
 cartesi-machine \
@@ -293,7 +293,7 @@ The Cartesi-provided `/sbin/init` then uses this information to run the desired 
 
 Recall the command-line utility can also run Cartesi Machines with additional drives.
 In that case, the resulting configuration automatically includes an entry for them in the `mtdparts` kernel command-line argument.
-Repeating another [earlier example](./cmdline/#flash-drives)
+Repeating another [earlier example](./cmdline.md#flash-drives)
 ```bash
 mkdir foo
 echo Hello world > foo/bar.txt
@@ -606,7 +606,7 @@ However, it needs a mechanism to communicate its progress back to the program co
 
 The command-line utility `/opt/cartesi/bin/yield` can be used for this purpose.
 Internally, the tool uses an `ioctl` system-call on the Cartesi-specific `/dev/yield` device.
-The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF Yield device are explained in detail under the [target perspective](../target/architecture/).
+The protocols followed by the `/opt/cartesi/bin/yield` utility to interact with the `/dev/yield` driver, and by the driver itself to communicate with the HTIF Yield device are explained in detail under the [target perspective](../target/architecture.md).
 The focus here is on its effect on the host program controlling the emulator.
 
 A Cartesi Machine can be configured to accept HTIF yield automatic commands by means of the `htif.yield_automatic` Boolean field in the machine configuration.
@@ -691,7 +691,7 @@ which uses an equivalent mechanism for progress reports.
 
 ## Cartesi Machine templates
 
-Recall that, to instantiate a [Cartesi Machine template](./cmdline/#cartesi-machine-templates), we first replace its flash drive place-holders with their actual content.
+Recall that, to instantiate a [Cartesi Machine template](./cmdline.md#cartesi-machine-templates), we first replace its flash drive place-holders with their actual content.
 After that, we can run the resulting machine.
 To save the simple calculator template into directory `"calculator-template"`, we ran:
 ```bash
@@ -873,7 +873,7 @@ The selected data *must* reside entirely inside a single memory range (i.e., it 
 
 There are also methods for reading individual registers.
 Most registers are part of the [RISC-V ISA](https://content.riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf), and its [privileged architecture](https://content.riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf).
-Cartesi-specific registers are described under the target perspective sections that cover the [processor](../target/architecture#the-processor) and [board](../target/architecture#the-board) of the Cartesi Machine architecture.
+Cartesi-specific registers are described under the target perspective sections that cover the [processor](../target/architecture.md#the-processor) and [board](../target/architecture.md#the-board) of the Cartesi Machine architecture.
 
 The method `machine:read_x(<index>)`, where `<index>` is in 0&hellip;31 returns the value of one of the 32 general-purpose processor registers.
 
@@ -1308,14 +1308,14 @@ Finally, hashes for vouchers and notices produced in response to advance-state r
 Data in the input-metadata memory range consists of the following fields: a _message sender_ (an EVM address), a _block-number_, a _timestamp_ (seconds since the _Unix epoch_), the rollup _epoch index_, and the rollup _input index_.
 All entries are 256-bit big-endian unsigned integers.
 In practice, only the least-significant 20 bytes are used for the message sender address, and only the least-significant 8 bytes, or 64-bits, are used for the remaining number entries.
-(See the table in the target perspective [architecture](../target/architecture#rollup-format).)
+(See the table in the target perspective [architecture](../target/architecture.md#rollup-format).)
 
 Data for the input to an advance-state request, the query to an inspect-state request, exceptions, notices, and reports are all encoded in the same way: a 256-bit _offset_ field (with value 32), then a 256-bit _length_ field, directly followed by payload with _length_ bytes.
 The offset and length fields are encoded as 256-bit big-endian unsigned integers.
 Data for vouchers start with an _address_ field (an EVM address, again as the least-significant 20 bytes in a 256-bit big-endian unsigned integer) and then continue just like the others: and _offset_ field (this time with value 64), then a 256-bit _length_ field, directly followed by payload with _length_ bytes.
-(See the table in the target perspective [architecture](../target/architecture#rollup-format).)
+(See the table in the target perspective [architecture](../target/architecture.md#rollup-format).)
 
-The following script illustrates how the Lua API can be used to send advance-state requests to a Rolling Cartesi Machine, and how it can be used to collect the notices produced as responses (We will use the server calculator [example](./cmdline/#rolling-cartesi-machine-templates):
+The following script illustrates how the Lua API can be used to send advance-state requests to a Rolling Cartesi Machine, and how it can be used to collect the notices produced as responses (We will use the server calculator [example](./cmdline.md#rolling-cartesi-machine-templates):
 
 ```lua title="run-rolling-calculator.lua"
 -- No need to load the Cartesi module
@@ -1514,7 +1514,7 @@ input; expected '[', '{', or a literal
 ## State transition proofs
 
 During verification, the blockchain mediates a *verification game* between the disputing parties.
-This process is explained in detail under [the blockchain perspective](../blockchain/vg/).
+This process is explained in detail under [the blockchain perspective](../blockchain/vg.md).
 In a nutshell, both parties started from a Cartesi Machine that has a known and agreed upon initial state hash.
 (E.g., an agreed upon template that was instantiated with an agreed upon input drive.)
 At the end of the computation, these parties now disagree on the state hash for the halted machine.

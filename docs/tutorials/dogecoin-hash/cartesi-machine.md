@@ -9,9 +9,9 @@ title: Dogecoin Hash machine
 
 ## Building `ext2` file-system
 
-With our RISC-V [scrypt-hash](../dogecoin-hash/scrypt-c/#dogecoinlitecoin-scrypt-computation) program compiled, we must now pack it for usage within a Cartesi Machine. To do that, we will build an `ext2` file-system with the necessary contents, similar to what was done for the [GPG Verify tutorial](../gpg-verify/ext2-gpg/#building-an-ext2-file-system).
+With our RISC-V [scrypt-hash](../dogecoin-hash/scrypt-c.md#dogecoinlitecoin-scrypt-computation) program compiled, we must now pack it for usage within a Cartesi Machine. To do that, we will build an `ext2` file-system with the necessary contents, similar to what was done for the [GPG Verify tutorial](../gpg-verify/ext2-gpg.md#building-an-ext2-file-system).
 
-To do that, first copy the `scrypt-hash` executable and the `libscrypt` shared library we compiled [before](../dogecoin-hash/scrypt-c) to a directory called `ext2`:
+To do that, first copy the `scrypt-hash` executable and the `libscrypt` shared library we compiled [before](../dogecoin-hash/scrypt-c.md) to a directory called `ext2`:
 
 ```bash
 mkdir ext2
@@ -38,7 +38,7 @@ At this point, to finally compute hashes using a Cartesi Machine, all we need is
 - Bits: `0x1b267eeb`
 - Nonce: `0x84214800` (equivalent to `2216773632` in decimal notation)
 
-As explained in the [technical background](../dogecoin-hash/create-project/#technical-background), the hashing algorithm's input data can be derived by simply concatenating all those hexadecimal values. The resulting 80 bytes long hexadecimal string can then be written as a binary file with the following command, using the `xxd` tool:
+As explained in the [technical background](../dogecoin-hash/create-project.md#technical-background), the hashing algorithm's input data can be derived by simply concatenating all those hexadecimal values. The resulting 80 bytes long hexadecimal string can then be written as a binary file with the following command, using the `xxd` tool:
 
 ```bash
 echo "0000000212aca0938fe1fb786c9e0e4375900e8333123de75e240abd3337d1b411d14ebe31757c266102d1bee62ef2ff8438663107d64bdd5d9d9173421ec25fb2a814de52fd869d1b267eeb84214800" | xxd -r -p > input-doge100000.raw
@@ -50,7 +50,7 @@ We can also generate an adulterated invalid block header input, just to see how 
 echo "0000000212aca0938fe1fb786c9e0e4375900e8333123de75e240abd3337d1b411d14ebe31757c266102d1bee62ef2ff8438663107d64bdd5d9d9173421ec25fb2a814de52fd869d1b267eeb84214801" | xxd -r -p > input-doge100000-invalid.raw
 ```
 
-Finally, as discussed in [other tutorials](../calculator/cartesi-machine/#performing-calculations-with-a-cartesi-machine) and in the [Cartesi Machine host perspective section](/machine/host/cmdline#flash-drives), we need to use the `truncate` tool to pad all drive files to 4K, which is the minimum required length for usage with Cartesi Machines:
+Finally, as discussed in [other tutorials](../calculator/cartesi-machine.md#performing-calculations-with-a-cartesi-machine) and in the [Cartesi Machine host perspective section](/machine/host/cmdline#flash-drives), we need to use the `truncate` tool to pad all drive files to 4K, which is the minimum required length for usage with Cartesi Machines:
 
 ```bash
 truncate -s 4K input-doge100000.raw
@@ -85,7 +85,7 @@ xxd -p -l 32 -c 32 output.raw
 00000000002647462b1abb10059b1f6f363acbc93f581cc256cc208e0895e5c7
 ```
 
-Notice the leading zeros, which indicate a relatively small number. Recalling the explanation of the `Bits` field given in the [technical background](../dogecoin-hash/create-project/#technical-background), the target hash value for a valid block header with the given `Bits` value of `0x1b267eeb` is given by:
+Notice the leading zeros, which indicate a relatively small number. Recalling the explanation of the `Bits` field given in the [technical background](../dogecoin-hash/create-project.md#technical-background), the target hash value for a valid block header with the given `Bits` value of `0x1b267eeb` is given by:
 
 ```bash
 target = 267eeb << 8*(1b - 3) =
@@ -122,9 +122,9 @@ exit
 
 ## Full machine implementation
 
-Following the same strategy used for the [other tutorials](../helloworld/cartesi-machine#cartesi-machine-for-the-hello-world-dapp), we will finish off our Cartesi Machine implementation by producing a bash script that allows us to easily build and appropriately store the machine's *template specification*. This way, the machine will be available for Cartesi Compute to instantiate computations whenever a smart contract requests it.
+Following the same strategy used for the [other tutorials](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), we will finish off our Cartesi Machine implementation by producing a bash script that allows us to easily build and appropriately store the machine's *template specification*. This way, the machine will be available for Cartesi Compute to instantiate computations whenever a smart contract requests it.
 
-It should also be noted that, as discussed in the [GPG Verify tutorial](../gpg-verify/cartesi-machine/#full-machine-implementation), the process of creating `ext2` file-systems using the `genext2fs` tool is *not reproducible*. This means that each generated `ext2` file leads to a different Cartesi Machine template hash, even if the file-system's contents are identical. For this reason, to exactly reproduce this tutorial's results, you can download the actual [scrypt-hash.ext2](https://github.com/cartesi/descartes-tutorials/tree/master/dogecoin-hash/cartesi-machine) file used when writing this documentation. To do that, run the following command:
+It should also be noted that, as discussed in the [GPG Verify tutorial](../gpg-verify/cartesi-machine.md#full-machine-implementation), the process of creating `ext2` file-systems using the `genext2fs` tool is *not reproducible*. This means that each generated `ext2` file leads to a different Cartesi Machine template hash, even if the file-system's contents are identical. For this reason, to exactly reproduce this tutorial's results, you can download the actual [scrypt-hash.ext2](https://github.com/cartesi/descartes-tutorials/tree/master/dogecoin-hash/cartesi-machine) file used when writing this documentation. To do that, run the following command:
 
 ```bash
 rm scrypt-hash.ext2
@@ -195,7 +195,7 @@ fi
 mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
-With this script ready, the final Cartesi Machine template can finally be built and stored in the appropriate location within the [Cartesi Compute SDK environment](../descartes-env) by executing the following command:
+With this script ready, the final Cartesi Machine template can finally be built and stored in the appropriate location within the [Cartesi Compute SDK environment](../descartes-env.md) by executing the following command:
 
 ```bash
 ./build-cartesi-machine.sh ../descartes-env/machines

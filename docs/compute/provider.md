@@ -39,11 +39,11 @@ function provideDirectDrive(uint256 _index, bytes memory _value)
 
 Where:
 
-- **`_index`** is the Cartesi Compute computation index returned by the [instantiate method](../compute/instantiate);
+- **`_index`** is the Cartesi Compute computation index returned by the [instantiate method](../compute/instantiate.md);
 
 - **`_value`** corresponds to the drive's provided data, directly given as a variable size `bytes` array.
 
-After all the drives that require a provider have been filled (in the order they appear in the [instantiate method](../compute/instantiate)'s `_inputDrives` field), the machine will be executed automatically by the claimer.
+After all the drives that require a provider have been filled (in the order they appear in the [instantiate method](../compute/instantiate.md)'s `_inputDrives` field), the machine will be executed automatically by the claimer.
 
 Note that in the above example drives are still limited by the storage restrictions of the underlying blockchain, which in the case of Ethereum would certainly mean that input data of more than 1024 bytes could become impractical.
 The next section lifts this limitation.

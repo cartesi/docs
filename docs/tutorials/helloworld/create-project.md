@@ -11,7 +11,7 @@ tags: [sdk, tutorials, low-level developer]
 
 In this section we are going to start building our first Cartesi Compute DApp. This *Hello World DApp* will consist of a trivial application, which simply instantiates an off-chain computation that always returns "Hello World!". A complete implementation of this example can be found in the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/helloworld).
 
-In order to build this DApp, we will start by creating a basic project with a smart contract capable of using the Cartesi Compute contract already deployed to the [Cartesi Compute SDK Environment](../descartes-env/).
+In order to build this DApp, we will start by creating a basic project with a smart contract capable of using the Cartesi Compute contract already deployed to the [Cartesi Compute SDK Environment](../descartes-env.md).
 
 
 ## Initializing the DApp project

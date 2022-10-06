@@ -26,7 +26,7 @@ struct Drive {
 ```
 Let's take a closer look at the most basic fields that compose a `Drive`:
 
-- **`position`** refers to the beginning of the drive's representation with respect to the address space of the off-chain machine. The position of a drive is determined when building the Cartesi Machine, as explained previously for the [output drive's position](../compute/instantiate);
+- **`position`** refers to the beginning of the drive's representation with respect to the address space of the off-chain machine. The position of a drive is determined when building the Cartesi Machine, as explained previously for the [output drive's position](../compute/instantiate.md);
 
 - **`driveLog2Size`** similarly to the `outputLog2Size` parameter described in the previous section, this argument represents the log<sub>2</sub> of the input drive's size given in bytes. As such, a value of `10` would represent an input drive with a size of 1024 bytes. This value cannot be smaller than `5` (i.e., the drive size must be at least 32 bytes);
 

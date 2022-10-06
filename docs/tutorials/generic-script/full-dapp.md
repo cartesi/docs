@@ -11,7 +11,7 @@ title: Full Generic Script DApp
 
 ## Generic Script smart contract
 
-Following the same procedure of the [previous tutorials](../calculator/full-dapp), we will now implement a smart contract that executes a generic script computation by running it off-chain using Cartesi Compute.
+Following the same procedure of the [previous tutorials](../calculator/full-dapp.md), we will now implement a smart contract that executes a generic script computation by running it off-chain using Cartesi Compute.
 
 Inside the `generic-script/contracts` directory, create a file called `GenericScript.sol` with these contents:
 
@@ -80,12 +80,12 @@ print(payload)\n\
 }
 ```
 
-When compared to the smart contract of the [Calculator DApp](../calculator/full-dapp#calculator-smart-contract), it can be readily noted that this implementation is virtually identical to that one. Indeed, the only relevant changes are the `templateHash`, which obviously must identify a different machine template, and the input data, now represented by a `script` variable that specifies generic code instead of a mathematical expression. This illustrates how the Cartesi Compute API provides a useful and practical abstraction for instantiating complex computations from on-chain code, with the majority of the complexity and heavy-lifting moved off-chain.
+When compared to the smart contract of the [Calculator DApp](../calculator/full-dapp.md#calculator-smart-contract), it can be readily noted that this implementation is virtually identical to that one. Indeed, the only relevant changes are the `templateHash`, which obviously must identify a different machine template, and the input data, now represented by a `script` variable that specifies generic code instead of a mathematical expression. This illustrates how the Cartesi Compute API provides a useful and practical abstraction for instantiating complex computations from on-chain code, with the majority of the complexity and heavy-lifting moved off-chain.
 
 
 ## Deployment and execution
 
-Now that we have the contract ready, let's build the migration file necessary to deploy it to the local [development environment](../descartes-env) using Hardhat. As explained in the [previous tutorials](../helloworld/deploy-run#deployment), we need to create a file called `01_contracts.ts` inside the `generic-script/deploy` directory with the following content:
+Now that we have the contract ready, let's build the migration file necessary to deploy it to the local [development environment](../descartes-env.md) using Hardhat. As explained in the [previous tutorials](../helloworld/deploy-run.md#deployment), we need to create a file called `01_contracts.ts` inside the `generic-script/deploy` directory with the following content:
 
 ```javascript
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -142,7 +142,7 @@ Then, we can use an `ethers` utility method to print the output data as a string
 {'some': 'payload'}
 ```
 
-As we can see, the result is the same one we got when we [tested the Cartesi Machine with this Python script](../generic-script/cartesi-machine). But now it has been automatically validated through Cartesi Compute and made available to on-chain code.
+As we can see, the result is the same one we got when we [tested the Cartesi Machine with this Python script](../generic-script/cartesi-machine.md). But now it has been automatically validated through Cartesi Compute and made available to on-chain code.
 
 ## Beyond Python
 
@@ -185,9 +185,9 @@ After some time, we can query and print the result using the new computation's i
 2432902008176640000
 ```
 
-Which is indeed the result of `20!`. As a side note, although in this tutorial we directly updated our smart contract with a new script definition, it is always a good idea to test computations off-chain first, as we did for the Python code in the [previous section](../generic-script/cartesi-machine).
+Which is indeed the result of `20!`. As a side note, although in this tutorial we directly updated our smart contract with a new script definition, it is always a good idea to test computations off-chain first, as we did for the Python code in the [previous section](../generic-script/cartesi-machine.md).
 
-Needless to say, other scripts and interpreters can be used. As a matter of fact, any *shell script* can be executed (i.e., using `/bin/sh` as the interpreter), which means that all the previous tutorial computations can also be performed by our generic machine. For instance, the same computation performed by our [Calculator DApp](../calculator/full-dapp) can be specified by defining our `script` variable as:
+Needless to say, other scripts and interpreters can be used. As a matter of fact, any *shell script* can be executed (i.e., using `/bin/sh` as the interpreter), which means that all the previous tutorial computations can also be performed by our generic machine. For instance, the same computation performed by our [Calculator DApp](../calculator/full-dapp.md) can be specified by defining our `script` variable as:
 
 ```javascript
 bytes script = "#!/bin/sh\n\

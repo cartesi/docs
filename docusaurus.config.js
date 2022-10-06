@@ -11,6 +11,7 @@ const config = {
   tagline: "The Blockchain OS",
   url: "https://cartesi.io",
   baseUrl: "/",
+  trailingSlash: true,
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.png",

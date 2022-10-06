@@ -10,7 +10,7 @@ title: Hello World machine
 
 ## Introduction
 
-Now that we have [built our basic DApp project](../helloworld/create-project/), we will shift our focus towards the off-chain part of the DApp.
+Now that we have [built our basic DApp project](../helloworld/create-project.md), we will shift our focus towards the off-chain part of the DApp.
 
 As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template](/machine/intro)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
 
@@ -93,7 +93,7 @@ ls stored_machine/
 
 ## Final implementation
 
-Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Cartesi Compute nodes running inside the [Cartesi Compute SDK Environment](../descartes-env).
+Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Cartesi Compute nodes running inside the [Cartesi Compute SDK Environment](../descartes-env.md).
 
 In order to do that, we'll code a handy shell script that wraps it all up, so that it's easy to make changes to the machine if desired. Inside our `cartesi-machine` subdirectory, create a file called `build-cartesi-machine.sh`, and make sure it is executable:
 
@@ -157,7 +157,7 @@ mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 
 This script accepts an optional parameter specifying where the stored machine contents should be moved to. This is useful to specify the directory where the Cartesi Compute nodes effectively read stored machines. Moreover, the nodes expect machine directories to be named after the machine's template hash, so the script makes use of the `cartesi-machine-stored-hash` tool, available within the playground Docker, to extract that hash from the stored contents and properly name the final directory name.
 
-Finally, if the [Cartesi Compute SDK Environment](../descartes-env/) is running in a relative directory at `../descartes-env`, we can build the Hello World machine and make it available to the Cartesi Compute nodes by running:
+Finally, if the [Cartesi Compute SDK Environment](../descartes-env.md) is running in a relative directory at `../descartes-env`, we can build the Hello World machine and make it available to the Cartesi Compute nodes by running:
 
 ```bash
 ./build-cartesi-machine.sh ../descartes-env/machines

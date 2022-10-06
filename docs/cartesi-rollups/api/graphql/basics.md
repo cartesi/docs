@@ -8,7 +8,7 @@ The Cartesi Rollups state query API is fully specified by its [GraphQL schema](h
 
 ## Queries
 
-A number of [top-level queries](./queries/) are available in order to retrieve rollup information for a Cartesi DApp.
+A number of [top-level queries](../queries) are available in order to retrieve rollup information for a Cartesi DApp.
 
 In GraphQL, submitting a query involves defining parameters for filtering the entries to retrieve, and also specifying the data fields of interest, which can span any objects linked to the entry being retrieved.
 
@@ -84,6 +84,6 @@ The [GraphQL Playground](https://github.com/graphql/graphql-playground) is a gra
 For local development, the interactive playground is accessible at [http://localhost:4000/graphql](http://localhost:4000/graphql).
 
 :::note
-You can check the list of deployed DApps with the associated GraphQL endpoint URLs by navigating to the section [Explore our DApps](../../../build-dapps/run-dapp#explore-our-dapps).
+You can check the list of deployed DApps with the associated GraphQL endpoint URLs by navigating to the section [Explore our DApps](../../../build-dapps/run-dapp.md#explore-our-dapps).
 :::
 

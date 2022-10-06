@@ -3,7 +3,7 @@ title: Linux environment
 ---
 
 :::note
-[The host perspective](../host/overview/) section describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines.
+[The host perspective](../host/overview.md) section describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines.
 In order to avoid repetition, this section assumes familiarity with the material presented there.
 :::
 

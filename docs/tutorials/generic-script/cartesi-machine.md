@@ -10,7 +10,7 @@ title: Generic Script machine
 
 ## Cartesi Machine with custom root file-system
 
-In the [previous section](../generic-script/custom-rootfs), we generated a `rootfs-python-jwt.ext2` file specifying a custom root file-system that includes the Python3 interpreter and the PyJWT library. With that ready, we can now try it out with a Cartesi Machine by using the `cartesi/playground` Docker image.
+In the [previous section](../generic-script/custom-rootfs.md), we generated a `rootfs-python-jwt.ext2` file specifying a custom root file-system that includes the Python3 interpreter and the PyJWT library. With that ready, we can now try it out with a Cartesi Machine by using the `cartesi/playground` Docker image.
 
 First, let's create a test input script written in Python. Create a file named `input.py` in the `generic-script/cartesi-machine` directory and place the following contents into it:
 
@@ -36,7 +36,7 @@ docker run -it --rm \
   cartesi/playground:0.3.0 /bin/bash
 ```
 
-Inside the playground, let's run the truncate tool to ensure the input file has an adequate size, as we did before for the [Calculator Cartesi Machine](../calculator/cartesi-machine#performing-calculations-with-a-cartesi-machine):
+Inside the playground, let's run the truncate tool to ensure the input file has an adequate size, as we did before for the [Calculator Cartesi Machine](../calculator/cartesi-machine.md#performing-calculations-with-a-cartesi-machine):
 
 ```bash
 truncate -s 4K input.py
@@ -69,7 +69,7 @@ exit
 
 Now that we have learned how to run a Python script inside a Cartesi Machine, we can write a full implementation that is capable of interpreting an initial *shebang line* to fire the adequate interpreter, be it `python3`, `lua`, or anything else. Aside from that, we also need to change our machine so that it writes the script's result to an output drive, rather than printing to the console.
 
-As such, repeating the approach of the [previous tutorials](../helloworld/cartesi-machine#cartesi-machine-for-the-hello-world-dapp), we'll create a bash script that can build our final machine's *template specification* and store it in the appropriate directory within our [development environment](../descartes-env).
+As such, repeating the approach of the [previous tutorials](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), we'll create a bash script that can build our final machine's *template specification* and store it in the appropriate directory within our [development environment](../descartes-env.md).
 
 First, create a `build-cartesi-machine.sh` file in the `cartesi-machine` directory:
 

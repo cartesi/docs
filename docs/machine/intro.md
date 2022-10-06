@@ -77,7 +77,7 @@ The root file-system `rootfs.ext2` contains all the data files and programs that
 It can be built in the `fs/` directory in the Emulator SDK.
 The components of the target application can reside in the root file-system itself, or in their own, separate file-systems.
 The emulator can be instructed to execute whatever command is necessary to start the target application.
-For a complete description of the Cartesi Machine architecture and the boot process, see the documentation for [the target perspective](./target/overview/).
+For a complete description of the Cartesi Machine architecture and the boot process, see the documentation for [the target perspective](./target/overview.md).
 
 There are two distinct modes of operation.
 In the first mode, a Cartesi Machine is initialized and tasked to run a target application until the machine _halts_.

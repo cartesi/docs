@@ -4,7 +4,7 @@ title: Quick Start
 tags: [build, quickstart, dapps, developer]
 ---
 
-This article explains how to build and interact with a minimalistic [Cartesi Rollups](../cartesi-rollups/overview) application.
+This article explains how to build and interact with a minimalistic [Cartesi Rollups](../cartesi-rollups/overview.md) application.
 
 By the end of this tutorial, you will learn how to run a simple existing DApp written in *Python*, called **Echo-Python**.
 
@@ -14,7 +14,7 @@ You can inspect the [full code of the Echo Python DApp](https://github.com/carte
 
 ## Overview
 
-The Echo-Python DApp simply copies (or "echoes") each input received as a corresponding output [notice](../cartesi-rollups/components/#notices). The DApp's back-end is written in *Python*, and its front-end is a [simple console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) written in *Typescript* that can be executed from a terminal.
+The Echo-Python DApp simply copies (or "echoes") each input received as a corresponding output [notice](../cartesi-rollups/components.md#notices). The DApp's back-end is written in *Python*, and its front-end is a [simple console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) written in *Typescript* that can be executed from a terminal.
 
 The **Quick Start** guide consists of 5 main steps:
 1. [Installing](#installing)
@@ -26,7 +26,7 @@ The **Quick Start** guide consists of 5 main steps:
 ## Installing
 
 :::note
-You can use online development environments such as [Gitpod](https://gitpod.io/) and [CodeSandbox](https://codesandbox.io) to open the [rollups-exmaples](https://github.com/cartesi/rollups-examples) directly in your browser with all [required dependencies](../build-dapps/requirements) already installed. These services allow you to start experimenting immediately, but keep in mind that they are provided by third-parties and are subject to unavailability and policy changes. They may also require access to your GitHub account in order to work properly.
+You can use online development environments such as [Gitpod](https://gitpod.io/) and [CodeSandbox](https://codesandbox.io) to open the [rollups-exmaples](https://github.com/cartesi/rollups-examples) directly in your browser with all [required dependencies](../build-dapps/requirements.md) already installed. These services allow you to start experimenting immediately, but keep in mind that they are provided by third-parties and are subject to unavailability and policy changes. They may also require access to your GitHub account in order to work properly.
 :::
 
 There are two different options to setup the prerequisites, you can choose one of the following:
@@ -49,7 +49,7 @@ This is an easy and fast setup, you need to follow the steps:
 
 ### Using manual setup
 
-Follow the [manual setup](../build-dapps/requirements) to  make sure you have installed all the necessary requirements locally.
+Follow the [manual setup](../build-dapps/requirements.md) to  make sure you have installed all the necessary requirements locally.
 
 ## Building
 
@@ -151,7 +151,7 @@ After completing all the steps above, you should get a response similar to the f
 ```
 
 :::tip
-You can run the Cartesi Rollups environment locally in [host mode](../build-dapps/overview#host-mode). Please follow the guide on [how to run DApp back-ends in Host Mode](../build-dapps/dapp-host-mode), but before that make sure to [shutdown the current running environment](#how-to-shutdown-the-environment).
+You can run the Cartesi Rollups environment locally in [host mode](../build-dapps/overview.md#host-mode). Please follow the guide on [how to run DApp back-ends in Host Mode](../build-dapps/dapp-host-mode.md), but before that make sure to [shutdown the current running environment](#how-to-shutdown-the-environment).
 :::
 
 :::note
@@ -227,7 +227,7 @@ You can find several Cartesi DApp [examples on GitHub](https://github.com/cartes
 
 Cartesi Rollups DApps are intended to be deployed to public blockchains, so that they can be accessed by users. This can be done by taking advantage of a cloud-based infrastructure provided by Cartesi.
 
-As happens with any blockchain application, the act of "deploying a DApp" involves publishing its smart contract so that it is publicly available and usable by clients or [front-end applications](../cartesi-rollups/dapp-architecture/#front-end). In the context of a Cartesi DApp, the smart contract is represented by an arbitrary [back-end program](../cartesi-rollups/dapp-architecture/#back-end) that runs on Linux inside a [Cartesi Node](../cartesi-rollups/components.md#cartesi-nodes). This means that deploying Cartesi DApps basically corresponds to instantiating Cartesi Nodes that run the intended back-end logic of the application.
+As happens with any blockchain application, the act of "deploying a DApp" involves publishing its smart contract so that it is publicly available and usable by clients or [front-end applications](../cartesi-rollups/dapp-architecture.md#front-end). In the context of a Cartesi DApp, the smart contract is represented by an arbitrary [back-end program](../cartesi-rollups/dapp-architecture.md#back-end) that runs on Linux inside a [Cartesi Node](../cartesi-rollups/components.md#cartesi-nodes). This means that deploying Cartesi DApps basically corresponds to instantiating Cartesi Nodes that run the intended back-end logic of the application.
 
 In order to facilitate the instantiation of such nodes, Cartesi provides an infrastructure for easily getting them running in the cloud. Developers are thus invited to take advantage of this convenience service in order to jump-start bringing their applications to public blockchains.
 

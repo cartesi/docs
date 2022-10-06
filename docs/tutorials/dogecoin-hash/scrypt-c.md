@@ -10,7 +10,7 @@ title: Computing scrypt using C
 
 ## Libscrypt C library
 
-As discussed in the [technical background](../dogecoin-hash/create-project/#technical-background), the Dogecoin/Litecoin proof-of-work hash must be computed using the `scrypt` algorithm. In this tutorial, we will implement this computation in C, making use of the well-established [libscrypt](https://github.com/technion/libscrypt) library.
+As discussed in the [technical background](../dogecoin-hash/create-project.md#technical-background), the Dogecoin/Litecoin proof-of-work hash must be computed using the `scrypt` algorithm. In this tutorial, we will implement this computation in C, making use of the well-established [libscrypt](https://github.com/technion/libscrypt) library.
 
 Before we begin, let's first switch to the `dogecoin-hash/cartesi-machine` directory:
 
@@ -90,7 +90,7 @@ cd ..
 
 ## Dogecoin/Litecoin scrypt computation
 
-Now that the `libscrypt` library has been built, we can implement our application-specific code. Namely, this code will read input data for a block header and call the library to compute the appropriate `scrypt` hash using the parameters defined by the [Dogecoin/Litecoin specification](https://litecoin.info/index.php/Block_hashing_algorithm) and discussed in the [technical background](../dogecoin-hash/create-project/#technical-background).
+Now that the `libscrypt` library has been built, we can implement our application-specific code. Namely, this code will read input data for a block header and call the library to compute the appropriate `scrypt` hash using the parameters defined by the [Dogecoin/Litecoin specification](https://litecoin.info/index.php/Block_hashing_algorithm) and discussed in the [technical background](../dogecoin-hash/create-project.md#technical-background).
 
 In the playground's home directory (mapped to `dogecoin-hash/cartesi-machine/`), create a file called `scrypt-hash.c` with the following contents:
 
@@ -227,7 +227,7 @@ Once the code is ready, we can finally *cross-compile* it to the RISC-V target a
 riscv64-cartesi-linux-gnu-gcc -O2 -o scrypt-hash scrypt-hash.c -Wl,-rpath=. -Llibscrypt -lscrypt
 ```
 
-The above command will generate an executable file called `scrypt-hash` in the current directory. However, since it has been built for the RISC-V architecture, this program *cannot* be executed directly from the command line, but rather from inside a Cartesi Machine, as we'll see in the [next section](../dogecoin-hash/cartesi-machine).
+The above command will generate an executable file called `scrypt-hash` in the current directory. However, since it has been built for the RISC-V architecture, this program *cannot* be executed directly from the command line, but rather from inside a Cartesi Machine, as we'll see in the [next section](../dogecoin-hash/cartesi-machine.md).
 
 As a curiosity, we can actually check out some interesting information about the generated file by typing:
 

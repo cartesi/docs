@@ -14,7 +14,7 @@ Here, the yellow boxes represent the parts that the developer needs to implement
 
 The back-end of a Cartesi DApp contains the business logic of the application, similar to what traditional systems would run inside a server. The difference here — and the reason for using blockchain technology in general — is that for decentralized applications there is a need for this back-end logic to be _verifiable_ and hence _trustless_. As such, it is executed inside the Cartesi Rollups framework.
 
-The back-end stores and updates the application state as user input is received, and produces corresponding outputs. These outputs can come in the form of [vouchers](../cartesi-rollups/components#vouchers) (transactions that can be carried out on layer-1, such as a transfer of assets), [notices](../cartesi-rollups/components#notices) (informational statements, such as the resulting score of a game), or [reports](../cartesi-rollups/components#reports) (application logs and diagnostic information, such as error or warning messages).
+The back-end stores and updates the application state as user input is received, and produces corresponding outputs. These outputs can come in the form of [vouchers](../cartesi-rollups/components.md#vouchers) (transactions that can be carried out on layer-1, such as a transfer of assets), [notices](../cartesi-rollups/components.md#notices) (informational statements, such as the resulting score of a game), or [reports](../cartesi-rollups/components.md#reports) (application logs and diagnostic information, such as error or warning messages).
 
 In practical terms, a Cartesi DApp back-end can be seen as a smart contract, but on steroids.
 
@@ -34,7 +34,7 @@ The sequence diagram below illustrates how all of this works:
 ![img](./sequence-diagram.png)
 
 :::note
-The Cartesi Rollups framework provides a set of APIs to specify how the DApp's front-end and back-end should communicate with it. These APIs are explained in detail in the [next section](../cartesi-rollups/http-api).
+The Cartesi Rollups framework provides a set of APIs to specify how the DApp's front-end and back-end should communicate with it. These APIs are explained in detail in the [next section](../cartesi-rollups/http-api.md).
 :::
 
 ## Other components

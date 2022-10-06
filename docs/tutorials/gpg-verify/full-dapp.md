@@ -10,7 +10,7 @@ title: Full GPG Verify DApp
 
 ## GPG Verify smart contract
 
-The implementation of this DApp's smart contract will naturally follow the same structure of the [previous tutorials](../calculator/full-dapp). Namely, it will define input drives containing the necessary data and provide methods to instantiate a Cartesi Compute computation using that data and then retrieve the corresponding result.
+The implementation of this DApp's smart contract will naturally follow the same structure of the [previous tutorials](../calculator/full-dapp.md). Namely, it will define input drives containing the necessary data and provide methods to instantiate a Cartesi Compute computation using that data and then retrieve the corresponding result.
 
 To that end, create a file called `GpgVerify.sol` in the `gpg-verify/contracts` directory, with the following content:
 
@@ -122,14 +122,14 @@ contract GpgVerify {
 }
 ```
 
-As detailed in the [previous section](../gpg-verify/cartesi-machine/#full-machine-implementation), our DApp's Cartesi Machine specifies two input flash drives, one for an arbitrary document and another for an associated digital signature that asserts the authenticity and integrity of the document's contents. This is reflected in the `drives` definition within the `instantiate` method, which in this implementation establishes a total limit of 1024 bytes (log<sub>2</sub> size `10`) for each input drive content.
+As detailed in the [previous section](../gpg-verify/cartesi-machine.md#full-machine-implementation), our DApp's Cartesi Machine specifies two input flash drives, one for an arbitrary document and another for an associated digital signature that asserts the authenticity and integrity of the document's contents. This is reflected in the `drives` definition within the `instantiate` method, which in this implementation establishes a total limit of 1024 bytes (log<sub>2</sub> size `10`) for each input drive content.
 
-In the code above, the input data itself is arbitrarily defined so as to match the test data we used [before](../gpg-verify/ext2-gpg/#test-data). However, as discussed in the [preceding section](../gpg-verify/cartesi-machine), the actual data submitted to the Cartesi Machine is required to have its content length encoded in each drive's four initial bytes. This is achieved by calling the method `prependDataWithContentLength` and using that method's output in the computation instantiation.
+In the code above, the input data itself is arbitrarily defined so as to match the test data we used [before](../gpg-verify/ext2-gpg.md#test-data). However, as discussed in the [preceding section](../gpg-verify/cartesi-machine.md), the actual data submitted to the Cartesi Machine is required to have its content length encoded in each drive's four initial bytes. This is achieved by calling the method `prependDataWithContentLength` and using that method's output in the computation instantiation.
 
 
 ## Deployment and execution
 
-With the smart contract implemented, it's time to compile and deploy it to the local network within our [development environment](../descartes-env). Using Hardhat, as in the [other tutorials](../helloworld/deploy-run#deployment), we'll start by adding a file named `01_contracts.ts` to the `gpg-verify/deploy` directory and inserting the following code into it:
+With the smart contract implemented, it's time to compile and deploy it to the local network within our [development environment](../descartes-env.md). Using Hardhat, as in the [other tutorials](../helloworld/deploy-run.md#deployment), we'll start by adding a file named `01_contracts.ts` to the `gpg-verify/deploy` directory and inserting the following code into it:
 
 ```javascript
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -179,7 +179,7 @@ Finally, after some time it will possible to query the GPG verification result b
 ]
 ```
 
-Recalling that the output of the Cartesi Machine's [execution script](../gpg-verify/cartesi-machine/#final-execution-script) corresponds to the `gpg` tool's exit status, we must interpret the result data as an ASCII value that can represent success (`"0"`), failure (`"1"`), or other values for errors. This can be done by using `ethers` to print the output data as a string:
+Recalling that the output of the Cartesi Machine's [execution script](../gpg-verify/cartesi-machine.md#final-execution-script) corresponds to the `gpg` tool's exit status, we must interpret the result data as an ASCII value that can represent success (`"0"`), failure (`"1"`), or other values for errors. This can be done by using `ethers` to print the output data as a string:
 
 ```javascript
 > console.log(ethers.utils.toUtf8String(result[3]))

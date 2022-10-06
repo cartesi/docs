@@ -37,7 +37,7 @@ You can start by watching our Blockchain Course (available on Youtube):
 6. [Ethereum Scaling Solutions ](https://www.youtube.com/watch?v=REj6fj7AxbI)
 
 :::tip
-Read the article about [Scalability](../new-to-cartesi/scalability) to learn more about solving the scalability issue in a blockchain system.
+Read the article about [Scalability](../new-to-cartesi/scalability.md) to learn more about solving the scalability issue in a blockchain system.
 :::
 
 </TabItem>
@@ -51,15 +51,15 @@ As a developer, you can use all the programming languages, tools, libraries, sof
 
 ### Quick start to run your first DApp
 
-The fastest way of getting started is by [Running a Simple DApp](../build-dapps/run-dapp) that we already built using Python.
+The fastest way of getting started is by [Running a Simple DApp](../build-dapps/run-dapp.md) that we already built using Python.
 
 :::tip
-Check the section [**Cartesi Rollups**](../cartesi-rollups/overview) to learn theoretical concepts such as DApp architecture, available APIs, and how Cartesi's off-chain and on-chain components work under the hood.
+Check the section [**Cartesi Rollups**](../cartesi-rollups/overview.md) to learn theoretical concepts such as DApp architecture, available APIs, and how Cartesi's off-chain and on-chain components work under the hood.
 :::
 
-* Navigate to [Build DApps](../build-dapps/overview) section for more guides:
-  * [Technical Prerequisites](../build-dapps/requirements)
-  * [Steps to create a DApp](../build-dapps/create-dapp)
+* Navigate to [Build DApps](../build-dapps/overview.md) section for more guides:
+  * [Technical Prerequisites](../build-dapps/requirements.md)
+  * [Steps to create a DApp](../build-dapps/create-dapp.md)
 
 * Check [more examples on GitHub](https://github.com/cartesi/rollups-examples#examples) such as:
   * [Echo Python DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python)
@@ -74,14 +74,14 @@ Check the section [**Cartesi Rollups**](../cartesi-rollups/overview) to learn th
 
 ### Run your DApp off-chain using Cartesi Compute SDK
 
-You can use the [Cartesi Compute SDK](../compute) to leverage Cartesi to run one-off complex computations that could never be executed inside a normal smart contract. Instead, those computations are executed off-chain with automatic dispute resolution guarantees, and its results can later be used on-chain.
+You can use the [Cartesi Compute SDK](../compute.md) to leverage Cartesi to run one-off complex computations that could never be executed inside a normal smart contract. Instead, those computations are executed off-chain with automatic dispute resolution guarantees, and its results can later be used on-chain.
 
-Navigate to [Cartesi Compute Tutorials](../compute#cartesi-compute-tutorials) section for more examples:
-* [HelloWorld](../compute#hello-world-dapp)
-* [Calculator](../compute#calculator-dapp)
-* [Dogecoin Hash](../compute#dogecoin-hash-dapp)
-* [Generic Script](../compute#generic-script-dapp)
-* [GPG Verify](../compute#gpg-verify-dapp)
+Navigate to [Cartesi Compute Tutorials](../compute.md#cartesi-compute-tutorials) section for more examples:
+* [HelloWorld](../compute.md#hello-world-dapp)
+* [Calculator](../compute.md#calculator-dapp)
+* [Dogecoin Hash](../compute.md#dogecoin-hash-dapp)
+* [Generic Script](../compute.md#generic-script-dapp)
+* [GPG Verify](../compute.md#gpg-verify-dapp)
 
 </TabItem>
 <TabItem value="researcher">
@@ -90,7 +90,7 @@ Navigate to [Cartesi Compute Tutorials](../compute#cartesi-compute-tutorials) se
 This section targets researchers and low-level programmers who want to dive into our core technology.
 :::
 
-You can dive deeper into the Blockchain OS core technology by reading the section about [The Cartesi Machine](../machine/intro), which is a virtual machine that allows for verifiable computing using a Linux operating system.
+You can dive deeper into the Blockchain OS core technology by reading the section about [The Cartesi Machine](../machine/intro.md), which is a virtual machine that allows for verifiable computing using a Linux operating system.
 </TabItem>
 </Tabs>
 <br/>

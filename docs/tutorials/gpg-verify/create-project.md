@@ -19,7 +19,7 @@ The [GNU Privacy Guard (GnuPG)](https://www.gnupg.org/) is a widely used tool fo
 
 ## Initializing the DApp project
 
-To begin with, let's create a directory for our project and set up some subdirectories inside it, as [discussed before](../helloworld/create-project/):
+To begin with, let's create a directory for our project and set up some subdirectories inside it, as [discussed before](../helloworld/create-project.md):
 
 ```bash
 mkdir gpg-verify
@@ -37,7 +37,7 @@ yarn add ethers hardhat hardhat-deploy hardhat-deploy-ethers --dev
 yarn add typescript ts-node --dev
 ```
 
-Finally, we need to create the `hardhat.config.ts` file to indicate the location of the Ethereum instance running inside our [development environment](../descartes-env), in addition to the dependency on Descartes' artifacts and deployments scripts and other configurations:
+Finally, we need to create the `hardhat.config.ts` file to indicate the location of the Ethereum instance running inside our [development environment](../descartes-env.md), in addition to the dependency on Descartes' artifacts and deployments scripts and other configurations:
 
 ```javascript
 import { HardhatUserConfig } from "hardhat/config";

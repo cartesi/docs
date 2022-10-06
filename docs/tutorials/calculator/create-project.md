@@ -9,7 +9,7 @@ tags: [sdk, tutorials, low-level developer]
 
 ## Introduction
 
-In creating our [basic Hello World DApp](../helloworld/create-project/), we were able to understand the basic structure of a Cartesi Compute DApp, including how to build an appropriate Cartesi Machine, instantiate its computation from a smart contract via the Cartesi Compute API, and actually deploying and running the DApp on a test network.
+In creating our [basic Hello World DApp](../helloworld/create-project.md), we were able to understand the basic structure of a Cartesi Compute DApp, including how to build an appropriate Cartesi Machine, instantiate its computation from a smart contract via the Cartesi Compute API, and actually deploying and running the DApp on a test network.
 
 As interesting as it is, this first application serves more as an introduction to the basic concepts of the Cartesi Compute SDK, since the computation performed is actually not very useful, always yielding a constant string "Hello World!" as its result. In order to build really useful DApps, we will now introduce the usage of *input drives*, which allows us to parameterize the computation performed by the machine and thus open up a wide range of interesting possibilities.
 
@@ -20,7 +20,7 @@ As before, the complete implementation of this example can be found in the [Cart
 
 ## Initializing the DApp project
 
-Following the same procedure that was laid out for the [Hello World DApp](../helloworld/create-project/), we will start by creating a directory called `calculator`. Inside that directory, we will already create three subdirectories called `contracts`, `deploy` and `cartesi-machine`:
+Following the same procedure that was laid out for the [Hello World DApp](../helloworld/create-project.md), we will start by creating a directory called `calculator`. Inside that directory, we will already create three subdirectories called `contracts`, `deploy` and `cartesi-machine`:
 
 ```bash
 mkdir calculator

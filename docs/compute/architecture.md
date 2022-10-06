@@ -16,7 +16,7 @@ Cartesi Compute on-chain
 
 The on-chain component of Cartesi Compute is a set of smart contracts developed by Cartesi.
 For convenience, the DApp developer interacts with a single one of these contracts, named "Descartes".
-The API to interact with the Cartesi Compute smart contract is described [here](../compute/instantiate/).
+The API to interact with the Cartesi Compute smart contract is described [here](../compute/instantiate.md).
 
 Cartesi Compute off-chain
 -------------------
@@ -25,7 +25,7 @@ The off-chain component of Cartesi Compute is called the Cartesi Compute Node, w
 More precisely, in the same way that a blockchain node allows clients to interact with the first layer, a Cartesi Compute Node allows clients to interact with Cartesi.
 
 It is expected that all validator parties (claimer and challengers) have a Cartesi Compute Node working on their behalves.
-In Section [Topologies](../compute/topologies), we discuss alternatives to this setup.
+In Section [Topologies](../compute/topologies.md), we discuss alternatives to this setup.
 
 These nodes will guarantee that their interests will be enforced on the blockchain by:
 - automatically running computations;

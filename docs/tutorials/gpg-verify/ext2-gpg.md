@@ -53,7 +53,7 @@ echo "My public statement was tampered!" > document-tampered
 
 ## Building an `ext2` file-system
 
-As thoroughly discussed in the [Cartesi Machine host perspective section](/machine/host/cmdline/#flash-drives), `ext2` is a file-system format that can be easily created and manipulated with command-line utilities available in Linux distributions. It is the preferred file-system type used in Cartesi Machines, and we have actually already used it when building our [custom root file-system](../generic-script/custom-rootfs) for the Generic Script tutorial.
+As thoroughly discussed in the [Cartesi Machine host perspective section](/machine/host/cmdline/#flash-drives), `ext2` is a file-system format that can be easily created and manipulated with command-line utilities available in Linux distributions. It is the preferred file-system type used in Cartesi Machines, and we have actually already used it when building our [custom root file-system](../generic-script/custom-rootfs.md) for the Generic Script tutorial.
 
 In the context of this project, we will thus build an `ext2` file that contains our public key, so as to make it available to our GPG signature verification Cartesi Machine. We can also conveniently include other pre-defined resources in this file-system, such as the test data we have just created.
 

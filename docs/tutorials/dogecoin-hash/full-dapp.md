@@ -10,9 +10,9 @@ title: Full Dogecoin Hash DApp
 
 ## Dogecoin Hash smart contract
 
-Having successfully built a [Cartesi Machine capable of computing proof-of-work hashes for Dogecoin blocks](../dogecoin-hash/cartesi-machine), we can finally turn our attention to the final piece of our DApp. In other words, it is now time to implement the smart contract that will instantiate our machine's computation via Cartesi Compute.
+Having successfully built a [Cartesi Machine capable of computing proof-of-work hashes for Dogecoin blocks](../dogecoin-hash/cartesi-machine.md), we can finally turn our attention to the final piece of our DApp. In other words, it is now time to implement the smart contract that will instantiate our machine's computation via Cartesi Compute.
 
-Recalling the strategy already used for the [previous tutorials](../calculator/full-dapp), this smart contract will itself define the adequate input data, which in this case corresponds to information about a real Dogecoin block header. It will then provide methods to instantiate the hash computation using Descartes, and finally retrieve the corresponding result.
+Recalling the strategy already used for the [previous tutorials](../calculator/full-dapp.md), this smart contract will itself define the adequate input data, which in this case corresponds to information about a real Dogecoin block header. It will then provide methods to instantiate the hash computation using Descartes, and finally retrieve the corresponding result.
 
 To begin with, create a file called `DogecoinHash.sol` within the `dogecoin-hash/contracts` directory, and place the following code in it:
 
@@ -100,12 +100,12 @@ contract DogecoinHash {
 ```
 
 As always, we must make sure that the contract's specified `templateHash` really corresponds to the Cartesi Machine built in the previous section.
-Aside from that, we can see that the code is using block header information from [Dogecoin block #100000](https://dogechain.info/block/100000), as we did when we [tested the machine off-chain](/tutorials/dogecoin-hash/cartesi-machine#test-data). Note that, as defined by the [specification](https://litecoin.info/index.php/Block_hashing_algorithm) and discussed in the [technical background](../dogecoin-hash/create-project/#technical-background), the block header fields are concatenated together in order to produce the adequate 80 bytes long `headerData` bytes array, which is the data actually used as input for the hashing algorithm.
+Aside from that, we can see that the code is using block header information from [Dogecoin block #100000](https://dogechain.info/block/100000), as we did when we [tested the machine off-chain](/tutorials/dogecoin-hash/cartesi-machine#test-data). Note that, as defined by the [specification](https://litecoin.info/index.php/Block_hashing_algorithm) and discussed in the [technical background](../dogecoin-hash/create-project.md#technical-background), the block header fields are concatenated together in order to produce the adequate 80 bytes long `headerData` bytes array, which is the data actually used as input for the hashing algorithm.
 
 
 ## Deployment and execution
 
-Now that we have completed our smart contract, we can finally compile and deploy it to our local [development environment](../descartes-env). To that end, we will use `hardhat-deploy` as [before](../helloworld/deploy-run#deployment), starting by creating a file called `01_contracts.ts` inside the `dogecoin-hash/deploy` directory, with the following contents:
+Now that we have completed our smart contract, we can finally compile and deploy it to our local [development environment](../descartes-env.md). To that end, we will use `hardhat-deploy` as [before](../helloworld/deploy-run.md#deployment), starting by creating a file called `01_contracts.ts` inside the `dogecoin-hash/deploy` directory, with the following contents:
 
 ```javascript
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -157,12 +157,12 @@ The final computed hash can then be retrieved by calling the `getResult` method,
 ]
 ```
 
-In the above output, the computed `scrypt` hash `0x00..002647462..c7` is given as the last entry, and can be seen to match the result we got when testing our machine in the [previous section](../dogecoin-hash/cartesi-machine/#testing-hash-computation). As discussed there, to confirm that the given block header is valid, this value must be smaller than the one encoded by the header's `difficultyBits` field, which decodes to `0x00..00267eeb0..00`. That is indeed the case, so we are now sure of the validity of this block header.
+In the above output, the computed `scrypt` hash `0x00..002647462..c7` is given as the last entry, and can be seen to match the result we got when testing our machine in the [previous section](../dogecoin-hash/cartesi-machine.md#testing-hash-computation). As discussed there, to confirm that the given block header is valid, this value must be smaller than the one encoded by the header's `difficultyBits` field, which decodes to `0x00..00267eeb0..00`. That is indeed the case, so we are now sure of the validity of this block header.
 
 
 ## Validating Litecoin block headers
 
-Of course, now that we have a working smart contract for validating block headers, we don't need to stop on Dogecoin blocks. Recalling that [Dogecoin actually follows the Litecoin specification](../dogecoin-hash/create-project/#technical-background), we can in fact use the very same procedure to validate any Litecoin block header.
+Of course, now that we have a working smart contract for validating block headers, we don't need to stop on Dogecoin blocks. Recalling that [Dogecoin actually follows the Litecoin specification](../dogecoin-hash/create-project.md#technical-background), we can in fact use the very same procedure to validate any Litecoin block header.
 
 To do that, we simply need to change our contract code to declare the header data of a Litecoin block. In this case, we'll use
 [LTC block #1881577](https://chainz.cryptoid.info/ltc/block.dws?1881577.htm), so that our code will now look like this:
@@ -202,7 +202,7 @@ Once again, after some time we will be able to check the result:
 ]
 ```
 
-As seen above, the resulting hash `0x00..00ae7e1..58` is again a relatively small number, which is a good sign. To check if it is small enough, we need to infer the required target value by interpreting the `difficultyBits` value `0x1a01cd2d`, like we already did [before](../dogecoin-hash/cartesi-machine/#testing-hash-computation) for the Dogecoin block:
+As seen above, the resulting hash `0x00..00ae7e1..58` is again a relatively small number, which is a good sign. To check if it is small enough, we need to infer the required target value by interpreting the `difficultyBits` value `0x1a01cd2d`, like we already did [before](../dogecoin-hash/cartesi-machine.md#testing-hash-computation) for the Dogecoin block:
 
 ```bash
 target = 01cd2d << 8*(1a - 3) =
