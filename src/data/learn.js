@@ -27,7 +27,7 @@ export const learn = [
   },
   {
     category: "by-goal",
-    title: "Deep Dive: Explore Cartesi Machine",
+    title: "Deep Dive: Explore The Cartesi Machine",
     links: [
       {
         label: "Setting up Cartesi Machines and running them",
@@ -53,7 +53,7 @@ export const learn = [
         href: "/new-to-cartesi/overview#how-are-cartesi-rollups-different",
       },
       {
-        label: "Brief overview of the Blockchain OS",
+        label: "Brief overview of The Blockchain OS",
         href: "/new-to-cartesi/overview#limitations-develop-with-the-blockchain-os",
       },
       {
@@ -83,7 +83,7 @@ export const learn = [
         href: "/build-dapps/create-dapp",
       },
       {
-        label: "Run your dapp off-chain",
+        label: "Run your DApp off-chain",
         href: "/new-to-cartesi/onboarding#run-your-dapp-off-chain-using-descartes-sdk",
       },
       {

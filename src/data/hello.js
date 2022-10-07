@@ -15,7 +15,7 @@ export const hello = [
   },
 
   {
-    title: "Q&A",
+    title: "Get Help",
     href: "/#qa",
     description:
       "Ask questions and learn from others in our technical community.",
@@ -24,7 +24,7 @@ export const hello = [
   {
     title: "Code Samples",
     href: "/#code-samples",
-    description: "Explore our code samples and main repositories on Github",
+    description: "Explore our code samples and main repositories on Github.",
     bgColor: "#FEE959",
   },
 ];

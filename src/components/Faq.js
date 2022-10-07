@@ -42,10 +42,10 @@ export const Faq = () => {
         <div className="max-w-screen-md mx-auto">
           <div className="mb-8 lg:mb-16">
             <h1 className="font-serif text-4xl lg:text-4xl xl:text-5xl font-normal mb-6 lg:mb-8">
-              Q&A
+              Get Help
             </h1>
             <p className="font-serif text-lg md:text-2xl lg:text-3xl">
-              How can we help you?
+              Feeling stuck? Don’t worry, come join us over on Discord or StackOverflow and connect with our core developers who’ll be happy to help.
               <br/>
               <br/>
               Describe your issue or learn from others:

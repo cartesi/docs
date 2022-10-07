@@ -13,7 +13,7 @@ export const Hello = () => {
             Hello, developer.
           </h1>
           <p className="font-serif text-lg md:text-2xl lg:text-3xl text-center mx-auto max-w-5xl">
-          The home for Blockchain OS documentation and learning for all kinds of developers, blockchain technology professionals, and researchers.
+          Welcome to the home for The Blockchain OS documentation and learning for all kinds of developers, blockchain technology professionals, and researchers.
           </p>
         </div>
 
