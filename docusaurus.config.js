@@ -9,7 +9,7 @@ const replacementPlugin = require("./src/remark/replacement");
 const config = {
   title: "Cartesi Docs",
   tagline: "The Blockchain OS",
-  url: "https://cartesi.io",
+  url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
   onBrokenLinks: "throw",
