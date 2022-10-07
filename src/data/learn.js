@@ -27,19 +27,23 @@ export const learn = [
   },
   {
     category: "by-goal",
-    title: "Deep Dive: Explore The Cartesi Machine",
+    title: "Deep Dive: Explore the Cartesi Machine",
     links: [
       {
-        label: "Setting up Cartesi Machines and running them",
-        href: "/machine/host",
+        label: "Introduction to the Cartesi Machine",
+        href: "/machine/intro",
       },
       {
-        label: "Verifying DApp components that run off-chain",
-        href: "/machine/target",
+        label: "Setting up and running Cartesi Machines",
+        href: "/machine/host/overview",
       },
       {
-        label: "Smart contracts view",
-        href: "/machine/blockchain",
+        label: "Cartesi Machines from the inside: Linux environment and system architecture",
+        href: "/machine/target/overview",
+      },
+      {
+        label: "How blockchains can benefit from Cartesi Machines",
+        href: "/machine/blockchain/intro",
       },
     ],
   },
