@@ -31,15 +31,15 @@ export const learn = [
     links: [
       {
         label: "Setting up Cartesi Machines and running them",
-        href: "/host-perspective",
+        href: "/machine/host",
       },
       {
         label: "Verifying DApp components that run off-chain",
-        href: "/target-perspective",
+        href: "/machine/target",
       },
       {
         label: "Smart contracts view",
-        href: "/blockchain-perspective",
+        href: "/machine/blockchain",
       },
     ],
   },

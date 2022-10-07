@@ -78,7 +78,7 @@ const sidebars = {
                   label: "Rollups state GraphQL API",
                   link: {
                     type: "generated-index",
-                    slug: "cartesi-rollups/api/graphql-index",
+                    slug: "cartesi-rollups/api/graphql/index",
                   },
                   collapsed: true,
                   items: [
@@ -178,7 +178,7 @@ const sidebars = {
       label: "Cartesi Machine",
       link: {
         type: "generated-index",
-        slug: "cartesi-machine",
+        slug: "machine",
       },
       collapsed: true,
       items: [
@@ -188,7 +188,7 @@ const sidebars = {
           label: "Host perspective",
           link: {
             type: "generated-index",
-            slug: "/host-perspective",
+            slug: "/machine/host",
           },
           collapsed: true,
           items: [
@@ -202,7 +202,7 @@ const sidebars = {
           label: "Target perspective",
           link: {
             type: "generated-index",
-            slug: "/target-perspective",
+            slug: "/machine/target",
           },
           collapsed: true,
           items: [
@@ -216,7 +216,7 @@ const sidebars = {
           label: "Blockchain perspective",
           link: {
             type: "generated-index",
-            slug: "/blockchain-perspective",
+            slug: "/machine/blockchain",
           },
           collapsed: true,
           items: [
