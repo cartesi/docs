@@ -1,12 +1,12 @@
 "Data that can be used as proof to validate notices and execute vouchers on the base layer blockchain"
 type Proof {
-  "Merkle root of all input's output metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  "Merkle root of all output metadata hashes of the related input, given in Ethereum hex binary format (32 bytes), starting with '0x'"
   outputHashesRootHash: String!
-  "Merkle root of all epoch's voucher metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  "Merkle root of all voucher metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'"
   vouchersEpochRootHash: String!
-  "Merkle root of all epoch's notice metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  "Merkle root of all notice metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'"
   noticesEpochRootHash: String!
-  "Hash of the machine state claimed for this epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  "Hash of the machine state claimed for the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'"
   machineStateHash: String!
   "Array of hashes representing a proof that this output metadata is in the metadata memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'"
   keccakInHashesSiblings: [String!]!
@@ -47,11 +47,29 @@ type Input {
   "Get report from this particular input given report's index"
   report(index: Int!): Report!
   "Get vouchers from this particular input with support for pagination (filtering not implemented at the moment)"
-  vouchers(first: Int, last: Int, after: String, before: String, where: VoucherFilter): VoucherConnection!
+  vouchers(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: VoucherFilter
+  ): VoucherConnection!
   "Get notices from this particular input with support for pagination (filtering not implemented at the moment)"
-  notices(first: Int, last: Int, after: String, before: String, where: NoticeFilter): NoticeConnection!
+  notices(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: NoticeFilter
+  ): NoticeConnection!
   "Get reports from this particular input with support for pagination (filtering not implemented at the moment)"
-  reports(first: Int, last: Int, after: String, before: String, where: ReportFilter): ReportConnection!
+  reports(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: ReportFilter
+  ): ReportConnection!
 }
 
 "Representation of a transaction that can be carried out on the base layer blockchain, such as a transfer of assets"
@@ -87,13 +105,37 @@ type Query {
   "Get epochs with support for pagination"
   epochs(first: Int, last: Int, after: String, before: String): EpochConnection!
   "Get inputs with support for pagination (filtering not implemented at the moment)"
-  inputs(first: Int, last: Int, after: String, before: String, where: InputFilter): InputConnection!
+  inputs(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: InputFilter
+  ): InputConnection!
   "Get vouchers with support for pagination (filtering not implemented at the moment)"
-  vouchers(first: Int, last: Int, after: String, before: String, where: VoucherFilter): VoucherConnection!
+  vouchers(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: VoucherFilter
+  ): VoucherConnection!
   "Get notices with support for pagination (filtering not implemented at the moment)"
-  notices(first: Int, last: Int, after: String, before: String, where: NoticeFilter): NoticeConnection!
+  notices(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: NoticeFilter
+  ): NoticeConnection!
   "Get reports with support for pagination (filtering not implemented at the moment)"
-  reports(first: Int, last: Int, after: String, before: String, where: ReportFilter): ReportConnection!
+  reports(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: ReportFilter
+  ): ReportConnection!
 }
 
 "Notice pagination entry"
@@ -118,18 +160,43 @@ type Epoch {
   "Get input from this particular epoch given the input's index"
   input(index: Int!): Input!
   "Get inputs from this particular epoch with support for pagination (filtering not implemented at the moment)"
-  inputs(first: Int, last: Int, after: String, before: String, where: InputFilter): InputConnection!
+  inputs(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: InputFilter
+  ): InputConnection!
   "Get vouchers from this particular epoch with support for pagination (filtering not implemented at the moment)"
-  vouchers(first: Int, last: Int, after: String, before: String, where: VoucherFilter): VoucherConnection!
+  vouchers(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: VoucherFilter
+  ): VoucherConnection!
   "Get notices from this particular input with support for pagination (filtering not implemented at the moment)"
-  notices(first: Int, last: Int, after: String, before: String, where: NoticeFilter): NoticeConnection!
+  notices(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: NoticeFilter
+  ): NoticeConnection!
   "Get reports from this particular epoch with support for pagination (filtering not implemented at the moment)"
-  reports(first: Int, last: Int, after: String, before: String, where: ReportFilter): ReportConnection!
+  reports(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: ReportFilter
+  ): ReportConnection!
 }
 
 "Filter object to restrict results depending on voucher properties"
 input VoucherFilter {
-  "Filter only vouchers that target a specific destination address" destination: String!
+  "Filter only vouchers that target a specific destination address"
+  destination: String!
 }
 
 "Input pagination result"
@@ -207,12 +274,18 @@ type ReportConnection {
 
 "Filter object to restrict results depending on input properties"
 input InputFilter {
-  "Filter only inputs submitted by a specific address" msgSender: String
-  "Filter only inputs recorded in a specific base layer block" blockNumber: BigInt
-  "Filter only inputs recorded before a specific base layer block" blockNumberLowerThan: BigInt
-  "Filter only inputs recorded after a specific base layer block" blockNumberGreaterThan: BigInt
-  "Filter only inputs recorded before a specific timestamp, as defined by the base layer" timestampLowerThan: BigInt
-  "Filter only inputs recorded after a specific timestamp, as defined by the base layer" timestampGreaterThan: BigInt
+  "Filter only inputs submitted by a specific address"
+  msgSender: String
+  "Filter only inputs recorded in a specific base layer block"
+  blockNumber: BigInt
+  "Filter only inputs recorded before a specific base layer block"
+  blockNumberLowerThan: BigInt
+  "Filter only inputs recorded after a specific base layer block"
+  blockNumberGreaterThan: BigInt
+  "Filter only inputs recorded before a specific timestamp, as defined by the base layer"
+  timestampLowerThan: BigInt
+  "Filter only inputs recorded after a specific timestamp, as defined by the base layer"
+  timestampGreaterThan: BigInt
 }
 
 scalar BigInt

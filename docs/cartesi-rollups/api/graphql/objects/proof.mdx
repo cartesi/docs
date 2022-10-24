@@ -23,22 +23,22 @@ type Proof {
 
 #### [`outputHashesRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
 
-Merkle root of all input's output metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'
+Merkle root of all output metadata hashes of the related input, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
 #### [`vouchersEpochRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
 
-Merkle root of all epoch's voucher metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'
+Merkle root of all voucher metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
 #### [`noticesEpochRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
 
-Merkle root of all epoch's notice metadata hashes, given in Ethereum hex binary format (32 bytes), starting with '0x'
+Merkle root of all notice metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
 #### [`machineStateHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
 
-Hash of the machine state claimed for this epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
+Hash of the machine state claimed for the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
 #### [`keccakInHashesSiblings`](#) ([`[String!]!`](/cartesi-rollups/api/graphql/scalars/string))
