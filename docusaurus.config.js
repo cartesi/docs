@@ -30,7 +30,7 @@ const config = {
           editUrl: "https://github.com/cartesi/docs/tree/develop",
           remarkPlugins: [replacementPlugin],
           docLayoutComponent: "@theme/DocPage",
-          docItemComponent: "@theme/ApiItem"
+          docItemComponent: "@theme/ApiItem",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -59,7 +59,6 @@ const config = {
           height: "52px",
         },
         items: [
-
           {
             to: "/cartesi-rollups/api",
             position: "right",
@@ -198,7 +197,7 @@ const config = {
         additionalLanguages: ["lua"],
       },
 
-    /*  // Announcemnt bar
+      /*  // Announcemnt bar
       announcementBar: {
         id: "example_bar",
         content:
@@ -221,44 +220,44 @@ const config = {
       };
     },
     [
-  '@docusaurus/plugin-google-gtag',
-  {
-    trackingID: 'GTM-MS89D9K',
-    anonymizeIP: true,
-  },
-],
-[
-'docusaurus-plugin-openapi-docs',
-  {
-    id: "apiDocs",
-    docsPluginId: "classic",
-    config: {
-      backEndApi: { // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-        specPath: "docs/cartesi-rollups/api/rollup.yaml", // Path to designated spec file
-        outputDir: "docs/cartesi-rollups/api/rollup", // Output directory for generated .mdx docs
-        sidebarOptions: {
-          groupPathsBy: "tag",
+      "@docusaurus/plugin-google-gtag",
+      {
+        trackingID: "GTM-MS89D9K",
+        anonymizeIP: true,
+      },
+    ],
+    [
+      "docusaurus-plugin-openapi-docs",
+      {
+        id: "apiDocs",
+        docsPluginId: "classic",
+        config: {
+          backEndApi: {
+            // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
+            specPath: "docs/cartesi-rollups/api/rollup.yaml", // Path to designated spec file
+            outputDir: "docs/cartesi-rollups/api/rollup", // Output directory for generated .mdx docs
+            sidebarOptions: {
+              groupPathsBy: "tag",
+            },
+          },
+          frontEndApi: {
+            specPath: "docs/cartesi-rollups/api/inspect.yaml",
+            outputDir: "docs/cartesi-rollups/api/inspect",
+          },
         },
       },
-      frontEndApi: {
-        specPath: "docs/cartesi-rollups/api/inspect.yaml",
-        outputDir: "docs/cartesi-rollups/api/inspect",
-      }
-    }
-  },
-],
+    ],
 
-[
-  "@edno/docusaurus2-graphql-doc-generator",
-  {
-    schema: "docs/cartesi-rollups/api/typeDefs.graphql",
-    rootPath: "./docs", // docs will be generated under './docs/swapi' (rootPath/baseURL)
-    baseURL: "cartesi-rollups/api/graphql",
-  },
-],
-
+    [
+      "@edno/docusaurus2-graphql-doc-generator",
+      {
+        schema: "docs/cartesi-rollups/api/typeDefs.graphql",
+        rootPath: "./docs", // docs will be generated under './docs/swapi' (rootPath/baseURL)
+        baseURL: "cartesi-rollups/api/graphql",
+      },
+    ],
   ],
-themes: ["docusaurus-theme-openapi-docs"]
+  themes: ["docusaurus-theme-openapi-docs"],
 };
 
 module.exports = config;
