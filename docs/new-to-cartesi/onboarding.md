@@ -65,12 +65,16 @@ Check the section [**Cartesi Rollups**](../cartesi-rollups/overview.md) to learn
   * [Echo Python DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python)
   * [Echo C++ DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-cpp)
   * [Echo Rust DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-rust)
+  * [Echo Lua DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-lua)
+  * [Echo JS DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-js)
+  * [Echo Low-Level](https://github.com/cartesi/rollups-examples/blob/main/echo-low-level)
   * [Converter DApp](https://github.com/cartesi/rollups-examples/blob/main/converter)
   * [Calculator DApp](https://github.com/cartesi/rollups-examples/blob/main/calculator)
   * [SQLite DApp](https://github.com/cartesi/rollups-examples/blob/main/sqlite)
   * [k-NN DApp](https://github.com/cartesi/rollups-examples/blob/main/knn)
   * [m2cgen DApp](https://github.com/cartesi/rollups-examples/blob/main/m2cgen)
   * [ERC-20 DApp](https://github.com/cartesi/rollups-examples/blob/main/erc20)
+  * [Auction DApp](https://github.com/cartesi/rollups-examples/blob/main/auction)
 
 ### Run your DApp off-chain using Cartesi Compute SDK
 

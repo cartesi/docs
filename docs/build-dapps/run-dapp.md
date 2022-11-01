@@ -222,6 +222,7 @@ You can find several Cartesi DApp [examples on GitHub](https://github.com/cartes
 | [k-NN](https://github.com/cartesi/rollups-examples/blob/main/knn)           | Yes                                      | [https://knn.goerli.rollups.staging.cartesi.io/graphql](https://knn.goerli.rollups.staging.cartesi.io/graphql)
 | [m2cgen](https://github.com/cartesi/rollups-examples/blob/main/m2cgen)         | No                                       | - |
 | [ERC-20](https://github.com/cartesi/rollups-examples/blob/main/erc20)          | No                                       | - |
+| [Auction](https://github.com/cartesi/rollups-examples/blob/main/auction)          | No                                       | - |
 
 ## Deploying DApps to Cartesi's infrastructure
 
