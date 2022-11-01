@@ -7,7 +7,7 @@ tags: [build, quickstart, dapps, developer]
 When developing an application, it is often important to easily test and debug it. For that matter, it is possible to run the Cartesi Rollups environment in [host mode](../build-dapps/overview.md#host-mode), so that the DApp's back-end can be executed directly on the host machine, allowing it to be debugged using regular development tools such as an IDE.
 
 :::note
-When running in host mode, localhost ports 5003 and 5004 will be used by default for the communication between the Cartesi Rollups framework and the DApp's back-end.
+When running in host mode, localhost port `5004` will be used by default to allow the DApp's back-end to communicate with the Cartesi Rollups framework.
 :::
 
 ## Step 1: Run the environment
