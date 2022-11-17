@@ -1,6 +1,6 @@
 ---
 id: staking-faq
-title: Staking FAQs
+title: FAQs
 ---
 
 ## How do I stake?

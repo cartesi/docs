@@ -131,7 +131,7 @@ const sidebars = {
                   ],
                 },
                 "cartesi-rollups/api/inspect/inspect",
-    
+
               ],
             },
             {
@@ -153,7 +153,7 @@ const sidebars = {
               ],
             },
           ],
-        },        
+        },
       ],
     },
     {
@@ -229,17 +229,19 @@ const sidebars = {
     },
 
 
-    // {
-    //   type: 'category',
-    //   label: 'Earn CTSI',
-    //   link: {
-    //     type: 'generated-index',
-    //   },
-    //   collapsed: true,
-    //   items: [
-    //     'earn-ctsi/staking',
-    //   ],
-    // },
+    {
+      type: 'category',
+      label: 'Staking',
+      link: {
+      type: 'generated-index',
+            },
+     collapsed: true,
+        items: [
+          'earn-ctsi/how-to-stake',
+          'earn-ctsi/staking',
+          'earn-ctsi/staking-faq',
+        ],
+    },
 
     /*  {
           type: "category",
