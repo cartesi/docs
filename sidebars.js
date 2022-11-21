@@ -237,7 +237,6 @@ const sidebars = {
             },
      collapsed: true,
         items: [
-          'earn-ctsi/how-to-stake',
           'earn-ctsi/staking',
           'earn-ctsi/staking-faq',
         ],

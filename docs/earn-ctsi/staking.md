@@ -1,31 +1,16 @@
 ---
-id: staking
-title: Stake CTSI
+title: How to Stake
 ---
 
-Check our [Staking Portal](https://explorer.cartesi.io/).
+## Prerequisites
 
-:::note
-To test stake delegation on the Ethereum Ropsten testnet, you’ll need some Ropsten ETH and Ropsten CTSI. There are multiple Ropsten ETH faucets, [this one gives 5 Ropsten ETH](https://faucet.dimensions.network/). You can get **Ropsten CTSI** at [this simple faucet](https://ropsten.etherscan.io/address/0x0F3D7Dbaf7125885D8dd80dA4327feF54A030fe5#writeContract) by connecting your metamask wallet and executing the requestTokens method.
-:::
+First, you need to have [Metamask installed](https://metamask.io/download/) or other crypto wallets such as Ledger, Coinbase wallet or using WalletConnect.
 
-# Guides
+To test stake delegation on the Ethereum Goerli testnet, you will need to have some ETH Goerli  and Goerli CTSI. Use [Alchemy faucet](https://goerlifaucet.com) to get 0.2 ETH Goerli. You can get **Goerli CTSI** at [this simple faucet](https://goerli.etherscan.io/address/0xc3779fE5E6246fF6dBFEd09904788abC9063037E#writeContract) by connecting your Metamask wallet, clicking on **Connect to Web3**, and then executing the method **requestTokens** by clicking on the **Write** button.
 
-* [How to run your own Cartesi node and participate in the staking system](https://medium.com/cartesi/running-a-node-and-staking-42523863970e)
-* [Staking Delegation Testnet Guide — Pool Management](https://medium.com/cartesi/staking-delegation-testnet-guide-pool-management-2cc29a6cc33a)
+## Staking delegation Testnet guide
 
-# FAQs
-
-* [Getting Started](https://github.com/cartesi/noether/wiki/FAQ#getting-startedsetup)
-* [Staking Testnet](https://github.com/cartesi/noether/wiki/Testnet-FAQ)
-* [Node Operation](https://github.com/cartesi/noether/wiki/FAQ#node-operation)
-* [Fees and Costs](https://github.com/cartesi/noether/wiki/FAQ#fees-and-costs)
-* [Block Production and Rewards](https://github.com/cartesi/noether/wiki/FAQ#block-production-and-rewards)
-* [Security](https://github.com/cartesi/noether/wiki/FAQ#security)
-* [Terminating your Staking Operation](https://github.com/cartesi/noether/wiki/FAQ#terminating-your-staking-operation)
-
-**Problem not covered/solution failed?**
-
-Ok, so I read all the F.A.Q. and found no solution to my problem/the proposed solution failed, what should I do?
-
-We are sorry to hear that, please head to the [Cartesi Technical Community on Discord](https://discord.gg/uxYE5YNv3N) and we’ll be happy to assist you.
+1. Navigate to our [Staking Portal](https://explorer.cartesi.io/)
+2. Click on the button "CONNECT TO WALLET" ![img](./connectwallet.png)
+3. Navigate to the Stake option in the top menu ![img](./stakebutton.png)
+4. Now you should see the screen below with a different list of pools ![img](./poolList.png)
