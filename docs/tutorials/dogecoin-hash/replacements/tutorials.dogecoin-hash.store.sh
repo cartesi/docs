@@ -1,9 +1,10 @@
 #!/bin/bash
-wget https://github.com/cartesi/descartes-tutorials/raw/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2 > /dev/null 2>&1
+wget https://github.com/cartesi/descartes-tutorials/raw/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
 
 cartesi-machine \
     --max-mcycle=0 \
     --initial-hash \
+    --append-rom-bootargs="single=yes" \
     --store=stored_machine \
     --flash-drive="label:scrypt-hash,filename:scrypt-hash.ext2" \
     --flash-drive="label:input,length:1<<12" \

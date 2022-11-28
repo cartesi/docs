@@ -33,7 +33,7 @@ docker run -it --rm \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  cartesi/playground:0.3.0 /bin/bash
+  cartesi/playground:0.5.0 /bin/bash
 ```
 
 Inside the playground, let's run the truncate tool to ensure the input file has an adequate size, as we did before for the [Calculator Cartesi Machine](../calculator/cartesi-machine.md#performing-calculations-with-a-cartesi-machine):
@@ -46,6 +46,7 @@ At this point, we can run a Cartesi Machine that uses the customized root file-s
 
 ```bash
 cartesi-machine \
+  --append-rom-bootargs="single=yes" \
   --flash-drive="label:root,filename:rootfs-python-jwt.ext2" \
   --flash-drive="label:input,length:1<<12,filename:input.py" \
   -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' | python3'
@@ -69,7 +70,7 @@ exit
 
 Now that we have learned how to run a Python script inside a Cartesi Machine, we can write a full implementation that is capable of interpreting an initial *shebang line* to fire the adequate interpreter, be it `python3`, `lua`, or anything else. Aside from that, we also need to change our machine so that it writes the script's result to an output drive, rather than printing to the console.
 
-As such, repeating the approach of the [previous tutorials](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), we'll create a bash script that can build our final machine's *template specification* and store it in the appropriate directory within our [development environment](../descartes-env.md).
+As such, repeating the approach of the [previous tutorials](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), we'll create a bash script that can build our final machine's *template specification* and store it in the appropriate directory within our [development environment](../compute-env.md).
 
 First, create a `build-cartesi-machine.sh` file in the `cartesi-machine` directory:
 
@@ -86,7 +87,7 @@ Then, add the following contents:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.5.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
@@ -108,6 +109,7 @@ docker run \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine \
     --max-mcycle=0 \
     --initial-hash \
+    --append-rom-bootargs="single=yes" \
     --store="$MACHINE_TEMP_DIR" \
     --flash-drive="label:root,filename:rootfs-python-jwt.ext2" \
     --flash-drive="label:input,length:1<<12" \
@@ -123,7 +125,7 @@ MACHINE_TARGET_DIR=$MACHINES_DIR/$(docker run \
   -v `pwd`:/home/$(id -u -n) \
   -h playground \
   -w /home/$(id -u -n) \
-  --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+  --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/ | tail -n 1)
 
 # moves stored machine to the target directory
 if [ -d "$MACHINE_TARGET_DIR" ]; then
@@ -137,7 +139,7 @@ As in our previous test, we specify the `rootfs-python-jwt.ext2` file as the roo
 Now we can build the machine template and store it by executing:
 
 ```bash
-./build-cartesi-machine.sh ../descartes-env/machines
+./build-cartesi-machine.sh ../../compute-env/machines
 ```
 
 The output of which should be something like this:
@@ -148,12 +150,12 @@ The output of which should be something like this:
 
 It is important to note here that, contrary to our previous tutorials, the resulting template hash produced will be different from the one presented above, even though the machine specification and input contents are apparently the same. This happens because the hash captures the *complete initial state* of the machine, and the process of generating a customized `rootfs-python-jwt.ext2` will always lead to a slightly different file.
 
-As such, to get the exact same result you will need to download the very same `ext2` file that was used to build the machine when this tutorial was written, which is actually [available in the Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials). Thus, we can finish off this section by executing the following commands to retrieve that file and then rebuild the machine template using it:
+As such, to get the exact same result you will need to download the very same `ext2` file that was used to build the machine when this tutorial was written, which is actually [available in the Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials). Thus, we can finish off this section by executing the following commands to retrieve that file and then rebuild the machine template using it:
 
 ```bash
 rm rootfs-python-jwt.ext2
-wget https://github.com/cartesi/descartes-tutorials/releases/download/v1.1.0/rootfs-python-jwt.ext2
-./build-cartesi-machine.sh ../descartes-env/machines
+wget https://github.com/cartesi/compute-tutorials/releases/download/v1.1.0/rootfs-python-jwt.ext2
+./build-cartesi-machine.sh ../../compute-env/machines
 ```
 
 Which should now yield the exact same output as above.

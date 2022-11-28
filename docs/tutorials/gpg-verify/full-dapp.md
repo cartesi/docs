@@ -19,12 +19,12 @@ To that end, create a file called `GpgVerify.sol` in the `gpg-verify/contracts` 
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "@cartesi/descartes-sdk/contracts/DescartesInterface.sol";
+import "@cartesi/compute-sdk/CartesiComputeInterface.sol";
 
 
 contract GpgVerify {
 
-    DescartesInterface descartes;
+    CartesiComputeInterface CartesiCompute;
 
     bytes32 templateHash = 0x%tutorials.gpg-verify.hash-full;
 
@@ -54,8 +54,8 @@ contract GpgVerify {
     bytes documentData = new bytes(1024);
     bytes signatureData = new bytes(1024);
 
-    constructor(address descartesAddress) {
-        descartes = DescartesInterface(descartesAddress);
+    constructor(address cartesiComputeAddress) {
+        cartesiCompute = CartesiComputeInterface(cartesiComputeAddress);
 
         // prepares data: computation expects input data to be prepended by four bytes that encode the length of the content
         prependDataWithContentLength(document, documentData);
@@ -82,8 +82,8 @@ contract GpgVerify {
     function instantiate(address[] memory parties) public returns (uint256) {
 
         // specifies two input drives containing the document and the signature
-        DescartesInterface.Drive[] memory drives = new DescartesInterface.Drive[](2);
-        drives[0] = DescartesInterface.Drive(
+        CartesiComputeInterface.Drive[] memory drives = new CartesiComputeInterface.Drive[](2);
+        drives[0] = CartesiComputeInterface.Drive(
             0xa000000000000000,    // 3rd drive position: 1st is the root file-system (0x8000..), 2nd is the dapp-data file-system (0x9000..)
             10,                    // driveLog2Size
             documentData,          // directValue
@@ -93,7 +93,7 @@ contract GpgVerify {
             false,                 // waitsProvider
             false                  // needsLogger
         );
-        drives[1] = DescartesInterface.Drive(
+        drives[1] = CartesiComputeInterface.Drive(
             0xb000000000000000,    // 4th drive position
             10,                    // driveLog2Size
             signatureData,         // directValue
@@ -105,7 +105,7 @@ contract GpgVerify {
         );
 
         // instantiates the computation
-        return descartes.instantiate(
+        return cartesiCompute.instantiate(
             finalTime,
             templateHash,
             outputPosition,
@@ -117,7 +117,7 @@ contract GpgVerify {
     }
 
     function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
-        return descartes.getResult(index);
+        return cartesiCompute.getResult(index);
     }
 }
 ```
@@ -129,7 +129,7 @@ In the code above, the input data itself is arbitrarily defined so as to match t
 
 ## Deployment and execution
 
-With the smart contract implemented, it's time to compile and deploy it to the local network within our [development environment](../descartes-env.md). Using Hardhat, as in the [other tutorials](../helloworld/deploy-run.md#deployment), we'll start by adding a file named `01_contracts.ts` to the `gpg-verify/deploy` directory and inserting the following code into it:
+With the smart contract implemented, it's time to compile and deploy it to the local network within our [development environment](../compute-env.md). Using Hardhat, as in the [other tutorials](../helloworld/deploy-run.md#deployment), we'll start by adding a file named `01_contracts.ts` to the `gpg-verify/deploy` directory and inserting the following code into it:
 
 ```javascript
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -140,11 +140,11 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const Descartes = await get("Descartes");
+  const CartesiCompute = await get("CartesiCompute");
   await deploy("GpgVerify", {
     from: deployer,
     log: true,
-    args: [Descartes.address],
+    args: [CartesiCompute.address],
   });
 };
 
@@ -186,7 +186,7 @@ Recalling that the output of the Cartesi Machine's [execution script](../gpg-ver
 0
 ```
 
-Which indicates "success" - or, in other words, that the provided document is indeed guaranteed to have been produced and adequately signed by someone in possession of the private key for `descartes.tutorials@cartesi.io`, and that the document's data has not been tampered.
+Which indicates "success" - or, in other words, that the provided document is indeed guaranteed to have been produced and adequately signed by someone in possession of the private key for `compute.tutorials@cartesi.io`, and that the document's data has not been tampered.
 
 Should you change the `document` declaration in the smart contract, the output would become `"1"` (i.e., "failure"). Additionally, changing the data for the `signature` variable would either also lead to failure (i.e., signature no longer matches) or possibly to an error, in the case that the data no longer represents a valid digital signature. In this case, a different non-zero result would be retrieved.
 

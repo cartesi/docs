@@ -35,7 +35,7 @@ dd status=none if=$(flashdrive document) | lua -e 'io.write((string.unpack(">s4"
 dd status=none if=$(flashdrive signature) | lua -e 'io.write((string.unpack(">s4",  io.read("a"))))' > signature
 
 # imports public key informing that it can be trusted (0xA86D9CB964EB527E is the key's LONG id)
-gpg --trusted-key 0xA86D9CB964EB527E --import /mnt/dapp-data/descartes-pub.key
+gpg --trusted-key 0xA86D9CB964EB527E --import /mnt/dapp-data/compute-pub.key
 
 # verifies document signature
 gpg --verify signature document
@@ -54,7 +54,7 @@ First, create a directory called `ext2` within the current `gpg-verify/cartesi-m
 
 ```bash
 mkdir ext2
-cp descartes-pub.key gpg-verify.sh ext2/
+cp compute-pub.key gpg-verify.sh ext2/
 ```
 
 Now, use the `genext2fs` tool within `cartesi/playground` Docker image to build the `ext2` file:
@@ -67,7 +67,7 @@ docker run \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  --rm cartesi/playground:0.3.0 \
+  --rm cartesi/playground:0.5.0 \
     genext2fs -b 1024 -d ext2 dapp-data.ext2
 ```
 
@@ -93,7 +93,7 @@ Now, place the following contents into it:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.5.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
@@ -118,6 +118,7 @@ docker run \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine \
     --max-mcycle=0 \
     --initial-hash \
+    --append-rom-bootargs="single=yes" \
     --store="$MACHINE_TEMP_DIR" \
     --flash-drive="label:dapp-data,filename:dapp-data.ext2" \
     --flash-drive="label:document,length:1<<22" \
@@ -134,7 +135,7 @@ MACHINE_TARGET_DIR=$MACHINES_DIR/$(docker run \
   -v `pwd`:/home/$(id -u -n) \
   -h playground \
   -w /home/$(id -u -n) \
-  --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+  --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/ | tail -n 1)
 
 # moves stored machine to the target directory
 if [ -d "$MACHINE_TARGET_DIR" ]; then
@@ -145,10 +146,10 @@ mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 
 Comparing this to the [test Cartesi Machine](../gpg-verify/ext2-gpg.md#cartesi-machine-with-gpg) of the previous section, we can see that we now have individual input flash drives for the document and signature data, as well as an output flash drive. Futhermore, we have increased one of the input drive sizes to 4MiB (`1 << 22`) in order to be able to deal with larger documents [later on](../gpg-verify/larger-files.md). Finally, we should note that the whole command line executed is now a lot simpler, since we moved most of the complexity into the `gpg-verify.sh` script.
 
-At this point, the machine template can be built and appropriately stored in the [Cartesi Compute SDK environment](../descartes-env.md) by typing:
+At this point, the machine template can be built and appropriately stored in the [Cartesi Compute SDK environment](../compute-env.md) by typing:
 
 ```bash
-./build-cartesi-machine.sh ../descartes-env/machines
+./build-cartesi-machine.sh ../../compute-env/machines
 ```
 
 Giving an output such as this:
@@ -157,12 +158,12 @@ Giving an output such as this:
 %tutorials.gpg-verify.store
 ```
 
-Similar to the issue discussed in the [GenericScript tutorial](../generic-script/cartesi-machine.md#final-cartesi-machine-implementation), the template hash generated for your machine will certainly differ from the one seen here. This is because, as noted in the beginning of this section and explained in the [Cartesi Machine host perspective](/machine/host/cmdline#flash-drives), using the `genext2fs` tool to build a new `ext2` file with the *same contents* will actually always lead to a slightly *different* file, which as a consequence changes the initial state of the machine. Therefore, to produce the same hash `%tutorials.gpg-verify.hash-trunc...` presented above, you should have the exact same `ext2` file used when writing this tutorial. This file is [available in the Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/gpg-verify/cartesi-machine), and as such you can download it and rebuild the machine template with the following commands:
+Similar to the issue discussed in the [GenericScript tutorial](../generic-script/cartesi-machine.md#final-cartesi-machine-implementation), the template hash generated for your machine will certainly differ from the one seen here. This is because, as noted in the beginning of this section and explained in the [Cartesi Machine host perspective](/machine/host/cmdline#flash-drives), using the `genext2fs` tool to build a new `ext2` file with the *same contents* will actually always lead to a slightly *different* file, which as a consequence changes the initial state of the machine. Therefore, to produce the same hash `%tutorials.gpg-verify.hash-trunc...` presented above, you should have the exact same `ext2` file used when writing this tutorial. This file is [available in the Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/gpg-verify/cartesi-machine), and as such you can download it and rebuild the machine template with the following commands:
 
 ```bash
 rm dapp-data.ext2
-wget https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartesi-machine/dapp-data.ext2
-./build-cartesi-machine.sh ../descartes-env/machines
+wget https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/dapp-data.ext2
+./build-cartesi-machine.sh ../compute-env/machines
 ```
 
 Which should now produce the expected hash `%tutorials.gpg-verify.hash-trunc...`.

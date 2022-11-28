@@ -10,7 +10,7 @@ Since Cartesi Machines are deterministic, input drives are necessary to make the
 
 For example, our first Hello World tutorial does exactly that, passing no drives to the `instantiate` call and always obtaining `"Hello World!"` as an output.
 
-In order to specify input drives to the machine, one should start by looking at the `Drive` structure defined in `DescartesInterface.sol`:
+In order to specify input drives to the machine, one should start by looking at the `Drive` structure defined in `CartesiComputeInterface.sol`:
 
 ```javascript
 struct Drive {
@@ -22,6 +22,7 @@ struct Drive {
     address provider;
     bool waitsProvider;
     bool needsLogger;
+    bool downloadAsCAR;
 }
 ```
 Let's take a closer look at the most basic fields that compose a `Drive`:
@@ -31,6 +32,8 @@ Let's take a closer look at the most basic fields that compose a `Drive`:
 - **`driveLog2Size`** similarly to the `outputLog2Size` parameter described in the previous section, this argument represents the log<sub>2</sub> of the input drive's size given in bytes. As such, a value of `10` would represent an input drive with a size of 1024 bytes. This value cannot be smaller than `5` (i.e., the drive size must be at least 32 bytes);
 
 - **`directValue`** contains actual input data in the form of a variable size `bytes` array. This is the simplest and easiest way of specifying drive data, but may be problematic for larger chunks of data because of the storage limitations of the underlying blockchain.
+
+- **`downloadAsCAR`** if enabled, the Cartesi Compute infrastructure will automatically retrieve the IPFS DAG located at the `loggerIpfsHash` and export it in the CAR format. The resulting CAR file contains a complete copy of the DAG's contents and metadata, which can be easily verified and reconstructed inside the Cartesi Machine.
 
 ## Direct drives
 

@@ -12,7 +12,7 @@ title: Full Dogecoin Hash DApp
 
 Having successfully built a [Cartesi Machine capable of computing proof-of-work hashes for Dogecoin blocks](../dogecoin-hash/cartesi-machine.md), we can finally turn our attention to the final piece of our DApp. In other words, it is now time to implement the smart contract that will instantiate our machine's computation via Cartesi Compute.
 
-Recalling the strategy already used for the [previous tutorials](../calculator/full-dapp.md), this smart contract will itself define the adequate input data, which in this case corresponds to information about a real Dogecoin block header. It will then provide methods to instantiate the hash computation using Descartes, and finally retrieve the corresponding result.
+Recalling the strategy already used for the [previous tutorials](../calculator/full-dapp.md), this smart contract will itself define the adequate input data, which in this case corresponds to information about a real Dogecoin block header. It will then provide methods to instantiate the hash computation using Cartesi Compute, and finally retrieve the corresponding result.
 
 To begin with, create a file called `DogecoinHash.sol` within the `dogecoin-hash/contracts` directory, and place the following code in it:
 
@@ -21,12 +21,12 @@ To begin with, create a file called `DogecoinHash.sol` within the `dogecoin-hash
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "@cartesi/descartes-sdk/contracts/DescartesInterface.sol";
+import "@cartesi/compute-sdk/contracts/CartesiComputeInterface.sol";
 
 
 contract DogecoinHash {
 
-    DescartesInterface descartes;
+    CartesiComputeInterface cartesiCompute;
 
     bytes32 templateHash = 0x%tutorials.dogecoin-hash.hash-full;
 
@@ -52,8 +52,8 @@ contract DogecoinHash {
     uint8 headerDataLog2Size = 7;
 
 
-    constructor(address descartesAddress) {
-        descartes = DescartesInterface(descartesAddress);
+    constructor(address cartesiComputeAddress) {
+        cartesiCompute = CartesiComputeInterface(cartesiComputeAddress);
 
         // defines headerData by concatenating block header fields
         uint iHeader = 0;
@@ -69,8 +69,8 @@ contract DogecoinHash {
     function instantiate(address[] memory parties) public returns (uint256) {
 
         // specifies an input drive with the header data to be hashed using scrypt
-        DescartesInterface.Drive[] memory drives = new DescartesInterface.Drive[](1);
-        drives[0] = DescartesInterface.Drive(
+        CartesiComputeInterface.Drive[] memory drives = new CartesiComputeInterface.Drive[](1);
+        drives[0] = CartesiComputeInterface.Drive(
             0xa000000000000000,    // 3rd drive position: 1st is the root file-system (0x8000..), 2nd is the mounted ext2 filesystem (0x9000..)
             headerDataLog2Size,    // driveLog2Size
             headerData,            // directValue
@@ -78,23 +78,25 @@ contract DogecoinHash {
             0x00,                  // loggerRootHash
             parties[0],            // provider
             false,                 // waitsProvider
-            false                  // needsLogger
+            false,
+            false                 // needsLogger
         );
 
         // instantiates the computation
-        return descartes.instantiate(
+        return cartesiCompute.instantiate(
             finalTime,
             templateHash,
             outputPosition,
             outputLog2Size,
             roundDuration,
             parties,
-            drives
+            drives,
+            false
         );
     }
 
     function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
-        return descartes.getResult(index);
+        return cartesiCompute.getResult(index);
     }
 }
 ```
@@ -105,7 +107,7 @@ Aside from that, we can see that the code is using block header information from
 
 ## Deployment and execution
 
-Now that we have completed our smart contract, we can finally compile and deploy it to our local [development environment](../descartes-env.md). To that end, we will use `hardhat-deploy` as [before](../helloworld/deploy-run.md#deployment), starting by creating a file called `01_contracts.ts` inside the `dogecoin-hash/deploy` directory, with the following contents:
+Now that we have completed our smart contract, we can finally compile and deploy it to our local [development environment](../compute-env.md). To that end, we will use `hardhat-deploy` as [before](../helloworld/deploy-run.md#deployment), starting by creating a file called `01_contracts.ts` inside the `dogecoin-hash/deploy` directory, with the following contents:
 
 ```javascript
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -116,11 +118,11 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const Descartes = await get("Descartes");
+  const CartesiCompute = await get("CartesiCompute");
   await deploy("DogecoinHash", {
     from: deployer,
     log: true,
-    args: [Descartes.address],
+    args: [CartesiCompute.address],
   });
 };
 

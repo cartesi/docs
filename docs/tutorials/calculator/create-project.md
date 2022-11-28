@@ -15,7 +15,7 @@ As interesting as it is, this first application serves more as an introduction t
 
 In this section, we will start building a *Calculator DApp* capable of evaluating an arbitrary mathematical expression. As such, this application actually enables smart contracts to perform calculations that would otherwise be very hard to perform on-chain.
 
-As before, the complete implementation of this example can be found in the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/calculator).
+As before, the complete implementation of this example can be found in the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/calculator).
 
 
 ## Initializing the DApp project
@@ -33,12 +33,12 @@ mkdir cartesi-machine
 After that, we can add project dependencies to the Cartesi Compute SDK, Hardhat, Ethers and TypeScript:
 
 ```bash
-yarn add @cartesi/descartes-sdk@1.1.1
-yarn add ethers hardhat hardhat-deploy hardhat-deploy-ethers --dev
+yarn add @cartesi/compute-sdk@1.3.0
+yarn add ethers@5.4.7 hardhat hardhat-deploy hardhat-deploy-ethers --dev
 yarn add typescript ts-node --dev
 ```
 
-Finally, we must once again create a `hardhat.config.ts` file to reflect our development environment with a local Ethereum node running on port `8545`. In this file we also define the project's dependencies on Descartes' artifacts and deployments scripts, along with other minor configurations such as the Solidity version to use:
+Finally, we must once again create a `hardhat.config.ts` file to reflect our development environment with a local Ethereum node running on port `8545`. In this file we also define the project's dependencies on Cartesi Compute's artifacts and deployments scripts, along with other minor configurations such as the Solidity version to use:
 
 ```javascript
 import { HardhatUserConfig } from "hardhat/config";
@@ -58,12 +58,12 @@ const config: HardhatUserConfig = {
   external: {
     contracts: [
       {
-        artifacts: "node_modules/@cartesi/descartes-sdk/export/artifacts",
-        deploy: "node_modules/@cartesi/descartes-sdk/dist/deploy",
+        artifacts: "node_modules/@cartesi/compute-sdk/export/artifacts",
+        deploy: "node_modules/@cartesi/compute-sdk/dist/deploy",
       },
     ],
     deployments: {
-      localhost: ["../descartes-env/deployments/localhost"],
+      localhost: ["../compute-env/deployments/localhost"],
     },
   },
   namedAccounts: {

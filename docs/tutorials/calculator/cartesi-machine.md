@@ -23,7 +23,7 @@ For this computation, we will use the [Linux bc tool](https://www.gnu.org/softwa
 We can use the playground to help us configure and test an appropriate machine. To do that, let's run it in interactive mode:
 
 ```bash
-docker run -it --rm cartesi/playground:0.3.0 /bin/bash
+docker run -it --rm cartesi/playground:0.5.0 /bin/bash
 ```
 
 Now, let's create some test input data:
@@ -43,6 +43,7 @@ At this point, we can now exercise a machine execution that uses the `bc` tool t
 
 ```bash
 cartesi-machine \
+  --append-rom-bootargs="single=yes" \
   --flash-drive="label:input,length:1<<12,filename:input.raw" \
   --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \
   -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
@@ -67,7 +68,7 @@ exit
 
 ## Final Cartesi Machine implementation
 
-Having exercised how our machine will work, we can now turn to building a final version of it that will be used by the Cartesi Compute nodes in our [development environment](../descartes-env.md).
+Having exercised how our machine will work, we can now turn to building a final version of it that will be used by the Cartesi Compute nodes in our [development environment](../compute-env.md).
 
 Recalling the previous machine built for the [Hello World DApp](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), let's create a bash script called `build-cartesi-machine.sh` back in our `calculator/cartesi-machine` directory:
 
@@ -84,7 +85,7 @@ Now, edit the file and place the following contents into it:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.5.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
@@ -110,6 +111,7 @@ docker run \
     --max-mcycle=0 \
     --initial-hash \
     --store="$MACHINE_TEMP_DIR" \
+    --append-rom-bootargs="single=yes" \
     --flash-drive="label:input,length:1<<12" \
     --flash-drive="label:output,length:1<<12" \
     -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
@@ -137,7 +139,7 @@ As explained in more detail in the [Hello World tutorial](../helloworld/cartesi-
 With all of this set, build the machine by executing:
 
 ```bash
-./build-cartesi-machine.sh ../descartes-env/machines
+./build-cartesi-machine.sh ../../compute-env/machines
 ```
 
 The output of the above command should then be:

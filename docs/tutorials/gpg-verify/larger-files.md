@@ -31,8 +31,8 @@ public
     returns (uint256)
 {
     // specifies two input drives containing the document and the signature
-    DescartesInterface.Drive[] memory drives = new DescartesInterface.Drive[](2);
-    drives[0] = DescartesInterface.Drive(
+    CartesiComputeInterface.Drive[] memory drives = new CartesiComputeInterface.Drive[](2);
+    drives[0] = CartesiComputeInterface.Drive(
         0xa000000000000000,    // 3rd drive position: 1st is the root file-system (0x8000..), 2nd is the dapp-data file-system (0x9000..)
         documentLog2Size,      // driveLog2Size
         "",                    // directValue
@@ -42,7 +42,7 @@ public
         false,                 // waitsProvider
         true                   // needsLogger
     );
-    drives[1] = DescartesInterface.Drive(
+    drives[1] = CartesiComputeInterface.Drive(
         0xb000000000000000,    // 4th drive position
         signatureLog2Size,     // driveLog2Size
         "",                    // directValue
@@ -54,7 +54,7 @@ public
     );
 
     // instantiates the computation
-    return descartes.instantiate(
+    return compute.instantiate(
         finalTime,
         templateHash,
         outputPosition,
@@ -84,11 +84,11 @@ Let's begin by switching back to the `cartesi-machine` directory:
 cd cartesi-machine
 ```
 
-Once there, the image and its corresponding signature from our fictional user `descartes.tutorials@cartesi.io` can be downloaded by running the following commands:
+Once there, the image and its corresponding signature from our fictional user `compute.tutorials@cartesi.io` can be downloaded by running the following commands:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartesi-machine/portrait.jpg
-wget https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartesi-machine/portrait.sig
+wget https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/portrait.jpg
+wget https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/portrait.sig
 ```
 
 In order to use the Logger and IPFS services, the first step is to compute the Merkle root hash of the data that is going to be processed. This hash will serve as an identifier when retrieving the corresponding data from the Cartesi `Logger` smart contract deployed on the blockchain.
@@ -105,14 +105,14 @@ docker run -it --rm \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  cartesi/playground:0.3.0 /bin/bash
+  cartesi/playground:0.5.0 /bin/bash
 ```
 
 Now run the following commands to prepend the portrait image and signature with their respective content lengths:
 
 ```bash
-cat portrait.jpg | luapp5.3 -e 'io.write((string.pack(">s4", io.read("a"))))' > portrait.jpg.prepended
-cat portrait.sig | luapp5.3 -e 'io.write((string.pack(">s4", io.read("a"))))' > portrait.sig.prepended
+cat portrait.jpg | lua5.3 -e 'io.write((string.pack(">s4", io.read("a"))))' > portrait.jpg.prepended
+cat portrait.sig | lua5.3 -e 'io.write((string.pack(">s4", io.read("a"))))' > portrait.sig.prepended
 ```
 
 The Lua expression used here is basically the opposite of the code used in the `gpg-verify.sh` script to read the input data within the Cartesi Machine, as discussed in the [GpgVerify machine section](../gpg-verify/cartesi-machine.md). The commands will generate `*.prepended` files 4 bytes larger than the original ones.
@@ -127,8 +127,8 @@ In order to use this utility, we must provide two parameters `input` and `tree-l
 We can thus compute the desired Merkle root hashes for our data with the following commands:
 
 ```bash
-merkle-tree-hash --input=portrait.jpg.prepended --tree-log2-size=16 | tr -d "\n" > portrait.jpg.prepended.merkle
-merkle-tree-hash --input=portrait.sig.prepended --tree-log2-size=10 | tr -d "\n" > portrait.sig.prepended.merkle
+merkle-tree-hash --input=portrait.jpg.prepended --tree-log2-size=22 | tr -d "\n" > portrait.jpg.prepended.merkle
+merkle-tree-hash --input=portrait.sig.prepended --tree-log2-size=12 | tr -d "\n" > portrait.sig.prepended.merkle
 ```
 
 In which we define the total portrait document tree size as 64KiB (2<sup>16</sup>), while its signature has tree size 1KiB (2<sup>10</sup>). The resulting hashes will be stored in corresponding `*.merkle` files.
@@ -143,11 +143,11 @@ exit
 In our DApp, `alice` is serving as the drive's provider, since that is the address given by `parties[0]`. As such, we can make the files available by executing the following commands:
 
 ```bash
-cp portrait.jpg.prepended ../descartes-env/alice_data/$(cat portrait.jpg.prepended.merkle)
-cp portrait.sig.prepended ../descartes-env/alice_data/$(cat portrait.sig.prepended.merkle)
+cp portrait.jpg.prepended ../../compute-env/alice_data/$(cat portrait.jpg.prepended.merkle)
+cp portrait.sig.prepended ../../compute-env/alice_data/$(cat portrait.sig.prepended.merkle)
 ```
 
-Now, with everything set up for the Logger service, it would already be possible to instantiate our signature verification computation using only the data's Merkle root hashes. However, before doing that, let's take a look at Descartes' IPFS functionality.
+Now, with everything set up for the Logger service, it would already be possible to instantiate our signature verification computation using only the data's Merkle root hashes. However, before doing that, let's take a look at Cartesi Compute's IPFS functionality.
 
 ## Using IPFS
 
@@ -155,7 +155,7 @@ As interesting as it is to be able to handle a 33K image in a computation valida
 
 As discussed above, this inconvenience can be tackled by coupling the Logger service we just explored with IPFS. The idea is to upload the data to IPFS before the computation is instantiated. As such, if all validator nodes cooperate, then no data will need to be sent over to the blockchain.
 
-In this tutorial, we will submit our data to IPFS using the Infura IPFS service, an action that can be performed with a simple `cURL` POST call. To avoid repeating ourselves, and to capture the resulting IPFS hash, let's create a small shell script:
+In this tutorial, we will submit our data to IPFS using the IPFS service in the environment, an action that can be performed with a simple `cURL` POST call. To avoid repeating ourselves, and to capture the resulting IPFS hash, let's create a small shell script:
 
 ```bash
 touch ipfs-submit.sh
@@ -172,7 +172,7 @@ if [ ! $1 ]; then
   exit 1
 fi
 
-output=$(curl -X POST -s -F file=@$1 "https://ipfs.infura.io:5001/api/v0/add?pin=true")
+output=$(curl -X POST -s -F file=@$1 "http://localhost:5008/api/v0/add?pin=true")
 
 # searches for string 'Hash":"', after which comes the desired 46-char IPFS hash value
 output=${output#*Hash\":\"}
@@ -206,7 +206,7 @@ npx hardhat console --network localhost
 > sigIpfsPathBytes = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(sigIpfsPath))
 > { alice, bob } = await getNamedAccounts()
 > gpg = await ethers.getContract("GpgVerify")
-> tx = await gpg.instantiateWithLoggerIpfs([alice, bob], docIpfsPathBytes, docRootHash, 16, sigIpfsPathBytes, sigRootHash, 10)
+> tx = await gpg.instantiateWithLoggerIpfs([alice, bob], docIpfsPathBytes, docRootHash, 22, sigIpfsPathBytes, sigRootHash, 12)
 ```
 
 Notice that the IPFS paths correspond to the IPFS hashes prepended by `/ipfs/`. Aside from that, they need to be given as `bytes`, and thus we use `ethers` utilities to convert them into proper hex strings. Finally, we can see that the instantiation call specifies the document's and signature's respective log<sub>2</sub> sizes of 16 (64KiB) and 10 (1KiB).
@@ -228,7 +228,7 @@ After a while, we should be able to obtain the signature verification result, as
 
 Which, as noted in the [previous section](../gpg-verify/full-dapp.md), represents that the computation successfully identified the document's signature as valid.
 
-With this setup, the Cartesi Compute nodes have downloaded the data from IPFS, computed the Merkle root hashes locally, and checked them against the drive's advertised hashes. As such, the data was *never* uploaded to the blockchain. However, should the data be removed from IPFS, which cannot be verified by on-chain code, any node that cannot retrieve it will request the drive's provider to post the data. This process is done automatically by Descartes, and it can be reproduced here by simply instantiating the same computation using the correct Merkle root hashes but invalid IPFS paths.
+With this setup, the Cartesi Compute nodes have downloaded the data from IPFS, computed the Merkle root hashes locally, and checked them against the drive's advertised hashes. As such, the data was *never* uploaded to the blockchain. However, should the data be removed from IPFS, which cannot be verified by on-chain code, any node that cannot retrieve it will request the drive's provider to post the data. This process is done automatically by Cartesi Compute, and it can be reproduced here by simply instantiating the same computation using the correct Merkle root hashes but invalid IPFS paths.
 
 ## Conclusion
 

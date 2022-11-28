@@ -19,12 +19,12 @@ In order to do that, create a file called `Calculator.sol` inside the `calculato
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "@cartesi/descartes-sdk/contracts/DescartesInterface.sol";
+import "@cartesi/compute-sdk/contracts/CartesiComputeInterface.sol";
 
 
 contract Calculator {
 
-    DescartesInterface descartes;
+    CartesiComputeInterface cartesiCompute;
 
     bytes32 templateHash = 0x%tutorials.calculator.hash-full;
     uint64 outputPosition = 0xa000000000000000;
@@ -36,15 +36,15 @@ contract Calculator {
     bytes expression = "2^71 + 36^12";
     uint8 expressionLog2Size = 5;
 
-    constructor(address descartesAddress) {
-        descartes = DescartesInterface(descartesAddress);
+    constructor(address cartesiComputeAddress) {
+        cartesiCompute = CartesiComputeInterface(cartesiComputeAddress);
     }
 
     function instantiate(address[] memory parties) public returns (uint256) {
 
         // specifies an input drive containing the mathematical expression
-        DescartesInterface.Drive[] memory drives = new DescartesInterface.Drive[](1);
-        drives[0] = DescartesInterface.Drive(
+        CartesiComputeInterface.Drive[] memory drives = new CartesiComputeInterface.Drive[](1);
+        drives[0] = CartesiComputeInterface.Drive(
             0x9000000000000000,    // 2nd drive position: 1st is the root file-system (0x8000..)
             expressionLog2Size,    // driveLog2Size
             expression,            // directValue
@@ -52,23 +52,25 @@ contract Calculator {
             0x00,                  // loggerRootHash
             parties[0],            // provider
             false,                 // waitsProvider
+            false,
             false                  // needsLogger
         );
 
         // instantiates the computation
-        return descartes.instantiate(
+        return cartesiCompute.instantiate(
             finalTime,
             templateHash,
             outputPosition,
             outputLog2Size,
             roundDuration,
             parties,
-            drives
+            drives,
+            false
         );
     }
 
     function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
-        return descartes.getResult(index);
+        return cartesiCompute.getResult(index);
     }
 }
 ```
@@ -93,11 +95,11 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const Descartes = await get("Descartes");
+  const CartesiCompute = await get("CartesiCompute");
   await deploy("Calculator", {
     from: deployer,
     log: true,
-    args: [Descartes.address],
+    args: [CartesiCompute.address],
   });
 };
 

@@ -16,7 +16,7 @@ replacements: build-replacements
 		 -e GID=$$(id -g) \
 		 -v `pwd`:/home/$$(id -u -n) \
 		 -w /home/$$(id -u -n) \
-		 --rm $(REPLACEMENTS_IMG) node /opt/cartesi/docs-replacements/replacements.js ~/docs $$REPLACEMENTS_FILTER
+		 --rm $(REPLACEMENTS_IMG) node /opt/cartesi/docs-replacements/replacements.js /home/$$(id -u -n)/docs $$REPLACEMENTS_FILTER
 
 build-server:
 	docker build -t $(SERVER_IMG) server

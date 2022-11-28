@@ -3,7 +3,7 @@ title: Retrieving result
 ---
 
 :::note Section Goal
-- implement smart contract `getResult` method to retrieve computation results from Descartes
+- implement smart contract `getResult` method to retrieve computation results from Cartesi Compute
 :::
 
 Once the [computation has been instantiated](../helloworld/instantiate.md), we need a means to effectively retrieve its result within our smart contract.
@@ -12,7 +12,7 @@ To do so, we will implement the following `getResult` method in the `HelloWorld.
 
 ```javascript
 function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
-    return descartes.getResult(index);
+    return compute.getResult(index);
 }
 ```
 
@@ -32,25 +32,25 @@ With all of that set, our complete smart contract should look like this:
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "@cartesi/descartes-sdk/contracts/DescartesInterface.sol";
+import "@cartesi/compute-sdk/contracts/CartesiComputeInterface.sol";
 
 contract HelloWorld {
 
-    DescartesInterface descartes;
+    CartesiComputeInterface cartesiCompute;
 
     bytes32 templateHash = 0x%tutorials.helloworld.hash-full;
     uint64 outputPosition = 0x9000000000000000;
     uint8 outputLog2Size = 5;
     uint256 finalTime = 1e11;
     uint256 roundDuration = 51;
-    DescartesInterface.Drive[] drives;
+    CartesiComputeInterface.Drive[] drives;
 
-    constructor(address descartesAddress) {
-        descartes = DescartesInterface(descartesAddress);
+    constructor(address cartesiComputeAddress) {
+        cartesiCompute = CartesiComputeInterface(cartesiComputeAddress);
     }
 
     function instantiate(address[] memory parties) public returns (uint256) {
-        return descartes.instantiate(
+        return cartesiCompute.instantiate(
             finalTime,
             templateHash,
             outputPosition,
@@ -62,7 +62,7 @@ contract HelloWorld {
     }
 
     function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
-        return descartes.getResult(index);
+        return cartesiCompute.getResult(index);
     }
 }
 ```

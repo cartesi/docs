@@ -4,6 +4,7 @@ wget https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartes
 cartesi-machine \
     --max-mcycle=0 \
     --initial-hash \
+    --append-rom-bootargs="single=yes" \
     --store=stored_machine \
     --flash-drive="label:dapp-data,filename:dapp-data.ext2" \
     --flash-drive="label:document,length:1<<22" \

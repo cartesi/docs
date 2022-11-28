@@ -31,18 +31,14 @@ cd cartesi-machine
 Then, pull the `cartesi/rootfs` Docker image and tag it as `cartesi/rootfs:devel`:
 
 ```bash
-docker pull cartesi/rootfs:0.6.0
-docker tag cartesi/rootfs:0.6.0 cartesi/rootfs:devel
+docker pull cartesi/rootfs:0.14.0
+docker tag cartesi/rootfs:0.14.0 cartesi/rootfs:devel
 ```
 
 After that, clone Cartesi's [machine-emulator-sdk](https://github.com/cartesi/machine-emulator-sdk) repository along with its submodules:
 
 ```bash
-git clone --branch v0.8.0 --recurse-submodules --depth 1 git@github.com:cartesi/machine-emulator-sdk.git
-```
-or using the http address:
-```bash
-git clone --branch v0.8.0 --recurse-submodules --depth 1 https://github.com/cartesi/machine-emulator-sdk.git
+git clone --branch v0.12.0 --recurse-submodules --depth 1 https://github.com/cartesi/machine-emulator-sdk.git
 ```
 
 After the repository and submodules are downloaded, switch to the `machine-emulator-sdk/fs` subdirectory and start up the configuration tool to select the desired packages using a textual menu interface:
@@ -59,8 +55,8 @@ After that, simply exit the configuration interface and answer `y` when prompted
 Finally, move the generated root file-system file back to our project's `cartesi-machine` directory:
 
 ```bash
-mv rootfs.ext2 ../rootfs-python-jwt.ext2
-cd ../
+mv rootfs.ext2 ../../rootfs-python-jwt.ext2
+cd ../..
 ```
 
 And as such we have created our own customized root file-system, and can now focus on using it to build our Cartesi Machine, as discussed in the next section.

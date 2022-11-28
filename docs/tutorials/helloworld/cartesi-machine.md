@@ -29,7 +29,7 @@ To illustrate how we are going to use the playground, try executing the followin
 
 ```bash
 docker run \
-  --rm cartesi/playground:0.3.0 cartesi-machine \
+  --rm cartesi/playground:0.5.0 cartesi-machine \
     -- $'echo Hello World!'
 ```
 
@@ -62,7 +62,7 @@ docker run \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  --rm cartesi/playground:0.3.0 cartesi-machine \
+  --rm cartesi/playground:0.5.0 cartesi-machine \
     --max-mcycle=0 \
     --initial-hash \
     --store=stored_machine \
@@ -93,7 +93,7 @@ ls stored_machine/
 
 ## Final implementation
 
-Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Cartesi Compute nodes running inside the [Cartesi Compute SDK Environment](../descartes-env.md).
+Now that we have defined what our Hello World Cartesi Machine looks like, all we need to do is make the generated stored machine available to the Cartesi Compute nodes running inside the [Cartesi Compute SDK Environment](../compute-env.md).
 
 In order to do that, we'll code a handy shell script that wraps it all up, so that it's easy to make changes to the machine if desired. Inside our `cartesi-machine` subdirectory, create a file called `build-cartesi-machine.sh`, and make sure it is executable:
 
@@ -108,7 +108,7 @@ Edit the file and place the following contents into it:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.5.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
@@ -133,6 +133,7 @@ docker run \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine \
     --max-mcycle=0 \
     --initial-hash \
+    --append-rom-bootargs="single=yes" \
     --store="$MACHINE_TEMP_DIR" \
     --flash-drive="label:output,length:1<<12" \
     -- $'echo Hello World! | dd status=none of=$(flashdrive output)'
@@ -146,7 +147,7 @@ MACHINE_TARGET_DIR=$MACHINES_DIR/$(docker run \
   -v `pwd`:/home/$(id -u -n) \
   -h playground \
   -w /home/$(id -u -n) \
-  --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+  --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/ tail -n 1)
 
 # moves stored machine to the target directory
 if [ -d "$MACHINE_TARGET_DIR" ]; then
@@ -157,19 +158,19 @@ mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 
 This script accepts an optional parameter specifying where the stored machine contents should be moved to. This is useful to specify the directory where the Cartesi Compute nodes effectively read stored machines. Moreover, the nodes expect machine directories to be named after the machine's template hash, so the script makes use of the `cartesi-machine-stored-hash` tool, available within the playground Docker, to extract that hash from the stored contents and properly name the final directory name.
 
-Finally, if the [Cartesi Compute SDK Environment](../descartes-env.md) is running in a relative directory at `../descartes-env`, we can build the Hello World machine and make it available to the Cartesi Compute nodes by running:
+Finally, if the [Cartesi Compute SDK Environment](../compute-env.md) is running in a relative directory at `../compute-env`, we can build the Hello World machine and make it available to the Cartesi Compute nodes by running:
 
 ```bash
-./build-cartesi-machine.sh ../descartes-env/machines
+./build-cartesi-machine.sh ../../compute-env/machines
 ```
 
 The output should be the same as before, but now the contents will be neatly stored in the expected form within the Cartesi Compute environment's `machines` directory:
 
 ```bash
-ls ../descartes-env/machines
+ls ../../compute-env/machines
 %tutorials.helloworld.hash-full
 
-ls ../descartes-env/machines/%tutorials.helloworld.hash-full/
+ls ../../compute-env/machines/%tutorials.helloworld.hash-full/
 0000000000001000-f000.bin  0000000080000000-4000000.bin  8000000000000000-3c00000.bin  9000000000000000-1000.bin  config  hash
 ```
 

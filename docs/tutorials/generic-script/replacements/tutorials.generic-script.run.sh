@@ -5,6 +5,7 @@ cp input.py input-trunc.py
 truncate -s 4K input-trunc.py
 
 cartesi-machine \
+    --append-rom-bootargs="single=yes" \
     --flash-drive="label:root,filename:rootfs-python-jwt.ext2" \
     --flash-drive="label:input,length:1<<12,filename:input-trunc.py" \
     -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' | python3' \

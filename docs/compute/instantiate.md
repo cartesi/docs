@@ -15,7 +15,8 @@ function instantiate(
      uint8 _outputLog2Size,
      uint256 _roundDuration,
      address[] memory _parties,
-     Drive[] memory _inputDrives) external returns (uint256);
+     Drive[] memory _inputDrives,
+     bool _noChallengeDrive) external returns (uint256);
 ```
 
 **`_finalTime`** stands for the maximum number of machine cycles that a machine should be allowed to run during the requested computation.
@@ -38,6 +39,8 @@ The first entry in this list will be selected by Cartesi Compute as the *claimer
 Meanwhile, the remaining parties become *challenger* nodes. After seeing the output submitted by the claimer, the challengers are offered the opportunity to either endorse or challenge the result of the computation.
 In case of a disagreement among the parties, the nodes representing each of them will automatically engage in a dispute resolution algorithm that allows the honest party to prove the fraud of any opponent.
 In the end, the DApp is informed of the result of the dispute.
+
+**`_noChallengeDrive`** indicates whether any of the drives specified in the machine can have their contents' data availability challenged by the challenger nodes during the computation. When `_noChallengeDrive` is set to true, it means that all drives specified in the machine are considered to have their data available at all times during the computation.
 
 There is now only one argument left to explain in the `instantiate` call.
 Namely, the `Drive[] _inputDrives` parameter, which will be detailed in the next sections.

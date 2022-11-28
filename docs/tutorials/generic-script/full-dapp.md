@@ -20,12 +20,12 @@ Inside the `generic-script/contracts` directory, create a file called `GenericSc
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "@cartesi/descartes-sdk/contracts/DescartesInterface.sol";
+import "@cartesi/compute-sdk/contracts/CartesiComputeInterface.sol";
 
 
 contract GenericScript {
 
-    DescartesInterface descartes;
+    CartesiComputeInterface compute;
 
     bytes32 templateHash = 0x%tutorials.generic-script.hash-full;
     uint64 outputPosition = 0xa000000000000000;
@@ -43,15 +43,15 @@ print(payload)\n\
     // defines script size as 1024 bytes
     uint8 scriptLog2Size = 10;
 
-    constructor(address descartesAddress) {
-        descartes = DescartesInterface(descartesAddress);
+    constructor(address cartesicomputeAddress) {
+        compute = CartesiComputeInterface(cartesicomputeAddress);
     }
 
     function instantiate(address[] memory parties) public returns (uint256) {
 
         // specifies an input drive containing the script
-        DescartesInterface.Drive[] memory drives = new DescartesInterface.Drive[](1);
-        drives[0] = DescartesInterface.Drive(
+        CartesiComputeInterface.Drive[] memory drives = new CartesiComputeInterface.Drive[](1);
+        drives[0] = CartesiComputeInterface.Drive(
             0x9000000000000000,    // 2nd drive position: 1st is the root file-system (0x8000..)
             scriptLog2Size,        // driveLog2Size
             script,                // directValue
@@ -59,23 +59,25 @@ print(payload)\n\
             0x00,                  // loggerRootHash
             parties[0],            // provider
             false,                 // waitsProvider
-            false                  // needsLogger
+            false,                  // needsLogger
+            false
         );
 
         // instantiates the computation
-        return descartes.instantiate(
+        return compute.instantiate(
             finalTime,
             templateHash,
             outputPosition,
             outputLog2Size,
             roundDuration,
             parties,
-            drives
+            drives,
+            false
         );
     }
 
     function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
-        return descartes.getResult(index);
+        return compute.getResult(index);
     }
 }
 ```
@@ -85,7 +87,7 @@ When compared to the smart contract of the [Calculator DApp](../calculator/full-
 
 ## Deployment and execution
 
-Now that we have the contract ready, let's build the migration file necessary to deploy it to the local [development environment](../descartes-env.md) using Hardhat. As explained in the [previous tutorials](../helloworld/deploy-run.md#deployment), we need to create a file called `01_contracts.ts` inside the `generic-script/deploy` directory with the following content:
+Now that we have the contract ready, let's build the migration file necessary to deploy it to the local [development environment](../compute-env.md) using Hardhat. As explained in the [previous tutorials](../helloworld/deploy-run.md#deployment), we need to create a file called `01_contracts.ts` inside the `generic-script/deploy` directory with the following content:
 
 ```javascript
 import { HardhatRuntimeEnvironment } from "hardhat/types";
@@ -96,11 +98,11 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const Descartes = await get("Descartes");
+  const CartesiCompute = await get("CartesiCompute");
   await deploy("GenericScript", {
     from: deployer,
     log: true,
-    args: [Descartes.address],
+    args: [CartesiCompute.address],
   });
 };
 

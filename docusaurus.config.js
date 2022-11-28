@@ -147,7 +147,7 @@ const config = {
               },
               {
                 label: "Cartesi Compute Tutorials",
-                to: "https://github.com/cartesi/descartes-tutorials",
+                to: "https://github.com/cartesi/compute-tutorials",
               },
             ],
           },

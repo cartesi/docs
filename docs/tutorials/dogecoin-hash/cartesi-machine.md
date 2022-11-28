@@ -66,6 +66,7 @@ Still within the playground, execute the following command to run the hashing al
 
 ```bash
 cartesi-machine \
+  --append-rom-bootargs="single=yes" \
   --flash-drive="label:scrypt-hash,filename:scrypt-hash.ext2" \
   --flash-drive="label:input,length:1<<12,filename:input-doge100000.raw" \
   --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \
@@ -98,6 +99,7 @@ To make sure that our hashing algorithm implementation is really working, let's 
 
 ```bash
 cartesi-machine \
+  --append-rom-bootargs="single=yes" \
   --flash-drive="label:scrypt-hash,filename:scrypt-hash.ext2" \
   --flash-drive="label:input,length:1<<12,filename:input-doge100000-invalid.raw" \
   --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \
@@ -124,11 +126,11 @@ exit
 
 Following the same strategy used for the [other tutorials](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), we will finish off our Cartesi Machine implementation by producing a bash script that allows us to easily build and appropriately store the machine's *template specification*. This way, the machine will be available for Cartesi Compute to instantiate computations whenever a smart contract requests it.
 
-It should also be noted that, as discussed in the [GPG Verify tutorial](../gpg-verify/cartesi-machine.md#full-machine-implementation), the process of creating `ext2` file-systems using the `genext2fs` tool is *not reproducible*. This means that each generated `ext2` file leads to a different Cartesi Machine template hash, even if the file-system's contents are identical. For this reason, to exactly reproduce this tutorial's results, you can download the actual [scrypt-hash.ext2](https://github.com/cartesi/descartes-tutorials/tree/master/dogecoin-hash/cartesi-machine) file used when writing this documentation. To do that, run the following command:
+It should also be noted that, as discussed in the [GPG Verify tutorial](../gpg-verify/cartesi-machine.md#full-machine-implementation), the process of creating `ext2` file-systems using the `genext2fs` tool is *not reproducible*. This means that each generated `ext2` file leads to a different Cartesi Machine template hash, even if the file-system's contents are identical. For this reason, to exactly reproduce this tutorial's results, you can download the actual [scrypt-hash.ext2](https://github.com/cartesi/compute-tutorials/tree/master/dogecoin-hash/cartesi-machine) file used when writing this documentation. To do that, run the following command:
 
 ```bash
 rm scrypt-hash.ext2
-wget https://github.com/cartesi/descartes-tutorials/raw/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
+wget https://github.com/cartesi/compute-tutorials/raw/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
 ```
 
 After that, let's create the `build-cartesi-machine.sh` file inside the `cartesi-machine` directory:
@@ -146,8 +148,7 @@ Then, edit the file and insert the following contents:
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
-
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.5.0
 # set machines directory to specified path if provided
 if [ $1 ]; then
   MACHINES_DIR=$1
@@ -171,6 +172,7 @@ docker run \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine \
     --max-mcycle=0 \
     --initial-hash \
+    --append-rom-bootargs="single=yes" \
     --store="$MACHINE_TEMP_DIR" \
     --flash-drive="label:scrypt-hash,filename:scrypt-hash.ext2" \
     --flash-drive="label:input,length:1<<12" \
@@ -195,10 +197,10 @@ fi
 mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
-With this script ready, the final Cartesi Machine template can finally be built and stored in the appropriate location within the [Cartesi Compute SDK environment](../descartes-env.md) by executing the following command:
+With this script ready, the final Cartesi Machine template can finally be built and stored in the appropriate location within the [Cartesi Compute SDK environment](../compute-env.md) by executing the following command:
 
 ```bash
-./build-cartesi-machine.sh ../descartes-env/machines
+./build-cartesi-machine.sh ../../compute-env/machines
 ```
 
 Running the above command should give you the following output, which includes the appropriate `templateHash` value to use when instantiating this computation from a smart contract:

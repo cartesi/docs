@@ -36,7 +36,7 @@ A challenging period starts. The challenger runs the same computation and verifi
 
 Here is one possible high-level design for this high-score decentralized game. The developer uses TypeScript to code the game front-end, which is distributed by a game server that is remotely accessible over HTTPS. The game server has exclusive privileges to generate new game configurations and scheduled contests with write access to the respective functions of the game smart contracts.
 
-![Cartesi Compute Workflow](/img/descartes-workflow.png)
+![Cartesi Compute Workflow](/img/compute-workflow.png)
 
 The game smart contracts use the Cartesi Compute smart contract to initialize match resolutions. As described above, at initialization time, the Cartesi Machines are specified with empty input drives. The claimer and the challenger players have not played yet and thus not submitted their game logs.
 

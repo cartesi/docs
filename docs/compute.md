@@ -24,7 +24,7 @@ title: Cartesi Compute
 
 * [Introduction](./tutorials/introduction.md)
 * [General requirements](./tutorials/requirements.md)
-* [Cartesi Compute SDK Environment](./tutorials/descartes-env.md)
+* [Cartesi Compute SDK Environment](./tutorials/compute-env.md)
 
 ### Hello World DApp
 

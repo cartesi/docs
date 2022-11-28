@@ -14,7 +14,7 @@ When considering Cartesi Compute DApps, some of the most interesting use cases c
 
 In this context, this tutorial will show how an Ethereum smart contract can run the [scrypt](https://www.tarsnap.com/scrypt.html) algorithm to compute the proof-of-work hash for a given Dogecoin (or Litecoin) block header. The resulting hash can then be compared to the block's target difficulty so as to verify whether that block is indeed valid.
 
-As always, the complete implementation of this project is also available on the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/tree/master/dogecoin-hash).
+As always, the complete implementation of this project is also available on the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/dogecoin-hash).
 
 
 ## Technical background
@@ -62,12 +62,12 @@ mkdir cartesi-machine
 Once the project is initialized, ensure that it has the adequate dependencies to the Cartesi Compute SDK, Hardhat, Ethers and TypeScript:
 
 ```bash
-yarn add @cartesi/descartes-sdk@1.1.1
-yarn add ethers hardhat hardhat-deploy hardhat-deploy-ethers --dev
+yarn add @cartesi/compute-sdk@1.3.0
+yarn add ethers@5.4.7 hardhat hardhat-deploy hardhat-deploy-ethers --dev
 yarn add typescript ts-node --dev
 ```
 
-After that, create a `hardhat.config.ts` file with the configuration of the local Ethereum instance running inside our [development environment](../descartes-env.md), which is using port `8545`, along with the project's dependencies on Descartes' artifacts and deployments scripts and other settings such as named accounts and Solidity version:
+After that, create a `hardhat.config.ts` file with the configuration of the local Ethereum instance running inside our [development environment](../compute-env.md), which is using port `8545`, along with the project's dependencies on Cartesi Compute's artifacts and deployments scripts and other settings such as named accounts and Solidity version:
 
 ```javascript
 import { HardhatUserConfig } from "hardhat/config";
@@ -87,12 +87,12 @@ const config: HardhatUserConfig = {
   external: {
     contracts: [
       {
-        artifacts: "node_modules/@cartesi/descartes-sdk/export/artifacts",
-        deploy: "node_modules/@cartesi/descartes-sdk/dist/deploy",
+        artifacts: "node_modules/@cartesi/compute-sdk/export/artifacts",
+        deploy: "node_modules/@cartesi/compute-sdk/dist/deploy",
       },
     ],
     deployments: {
-      localhost: ["../descartes-env/deployments/localhost"],
+      localhost: ["../compute-env/deployments/localhost"],
     },
   },
   namedAccounts: {

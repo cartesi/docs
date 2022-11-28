@@ -6,6 +6,7 @@ truncate -s 4K input-doge100000.raw
 truncate -s 4K output.raw
 
 cartesi-machine \
+    --append-rom-bootargs="single=yes" \
     --flash-drive="label:scrypt-hash,filename:scrypt-hash.ext2" \
     --flash-drive="label:input,length:1<<12,filename:input-doge100000.raw" \
     --flash-drive="label:output,length:1<<12,filename:output.raw,shared" \

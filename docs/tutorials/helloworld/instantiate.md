@@ -18,7 +18,7 @@ uint64 outputPosition = 0x9000000000000000;
 uint8 outputLog2Size = 5;
 uint256 finalTime = 1e11;
 uint256 roundDuration = 51;
-DescartesInterface.Drive[] drives;
+CartesiComputeInterface.Drive[] drives;
 ```
 
 Let's go into some detail over these declarations. First of all, `templateHash` can be understood as an *identifier* of the computation we intend to perform, and effectively corresponds to the initial hash that was computed for our Hello World Cartesi Machine template. In other words, the hash `0x%tutorials.helloworld.hash-trunc...` represents the complete initial state of our computation, and can be used by the Cartesi Compute nodes to securely trigger that computation off-chain.
@@ -32,7 +32,7 @@ With those declarations all set up, we can finally implement our `instantiate` m
 
 ```javascript
 function instantiate(address[] memory parties) public returns (uint256) {
-    return descartes.instantiate(
+    return cartesiCompute.instantiate(
         finalTime,
         templateHash,
         outputPosition,
@@ -44,7 +44,7 @@ function instantiate(address[] memory parties) public returns (uint256) {
 }
 ```
 
-The method receives as arguments the addresses of the parties that will execute and validate the computation, otherwise known as the *claimer* and *challenger* nodes. In our [development environment](../descartes-env.md), these will correspond to the addresses for `alice` and `bob`.
+The method receives as arguments the addresses of the parties that will execute and validate the computation, otherwise known as the *claimer* and *challenger* nodes. In our [development environment](../compute-env.md), these will correspond to the addresses for `alice` and `bob`.
 
 The instantiation itself simply calls the corresponding method in the Cartesi Compute smart contract. This will trigger a transaction in the Ethereum network, requesting the specified computation to be carried out off-chain by the specified actors. Cartesi Compute will ensure that the appropriate nodes automatically step in to perform the computation, resolve any disputes, and finally validate the result.
 

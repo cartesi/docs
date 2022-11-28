@@ -15,7 +15,7 @@ Cartesi Compute on-chain
 ------------------
 
 The on-chain component of Cartesi Compute is a set of smart contracts developed by Cartesi.
-For convenience, the DApp developer interacts with a single one of these contracts, named "Descartes".
+For convenience, the DApp developer interacts with a single one of these contracts, named "CartesiCompute".
 The API to interact with the Cartesi Compute smart contract is described [here](../compute/instantiate.md).
 
 Cartesi Compute off-chain
@@ -35,6 +35,6 @@ These nodes will guarantee that their interests will be enforced on the blockcha
 
 All these tasks are performed automatically, with no intervention from the DApp users or even the DApp Client Software.
 
-![Cartesi Compute Architecture](/img/descartes-architecture.png)
+![Cartesi Compute Architecture](/img/compute-architecture.png)
 
 This gives a complete picture of the software components involved in running a Cartesi Compute powered DApp: The *Blockchain Node*, the *DApp Client Software*, the *DApp Smart Contracts* and the *Cartesi Compute Node*, see the above picture.

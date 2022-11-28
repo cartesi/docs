@@ -92,7 +92,7 @@ export const learn = [
       },
       {
         label: "Run your DApp off-chain",
-        href: "/new-to-cartesi/onboarding#run-your-dapp-off-chain-using-descartes-sdk",
+        href: "/new-to-cartesi/onboarding#run-your-dapp-off-chain-using-compute-sdk",
       },
       {
         label: "Explore DApp architecture",

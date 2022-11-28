@@ -43,7 +43,14 @@ docker run -it --rm \
   -e GID=$(id -g) \
   -v `pwd`:/home/$(id -u -n) \
   -w /home/$(id -u -n) \
-  cartesi/playground:0.3.0 /bin/bash
+  --name playground \
+  cartesi/playground:0.5.0 /bin/bash
+```
+On another terminal window, run the command to download `make` and proceed with the rest from the first terminal window:
+    
+```bash
+    docker exec -it playground apt-get update
+    docker exec -it playground apt-get install make
 ```
 
 As usual for C projects, the `libscrypt` library is intended to be built using the `make` command, which will follow the specifications layed out in its `Makefile`. In this context, we need to set up some changes to the environment, so that the library is built with the intended cross-compiler for RISC-V, using adequate parameters:

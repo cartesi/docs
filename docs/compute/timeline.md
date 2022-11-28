@@ -6,7 +6,7 @@ tags: [maintain, sdk, low-level developer]
 At this point, an overview has been given of what constitutes a Cartesi computation, who are the parties involved, and what the software components of Cartesi Compute are. It is important to understand better what events happen during the execution of a Cartesi Machine.
 
 The event that marks the beginning of a Cartesi computation is an on-chain request by the DApp Smart Contract to Cartesi Compute.
-This is done through a call to the `instantiate` function of the Descartes’ smart contract.
+This is done through a call to the `instantiate` function of the CartesiCompute’ smart contract.
 
 Although the exact API definition of this call will be detailed later, it is relevant to have a general understanding of the purpose of this call at this point.
 
@@ -53,7 +53,7 @@ All these steps are done automatically by the Cartesi Compute Nodes so that they
 
 The end of such disputes is notified to the DApp developer to enforce appropriate penalties to misbehaving parties.
 
-![Cartesi Compute Timeline](/img/descartes-state-diagram.png)
+![Cartesi Compute Timeline](/img/compute-state-diagram.png)
 
 API / interface Cartesi node diagram
 High-level sequence diagram explaining the interaction between the client, the SC, and Cartesi Compute.

@@ -18,7 +18,7 @@ However, for the purposes of these tutorials (and general rapid Cartesi Compute 
 
 The Cartesi Compute SDK Environment basically consists of a *Docker Compose* specification that spins up services corresponding to the components described below.
 
-### Local Descartes-enabled blockchain
+### Local Compute-enabled blockchain
 
 The environment starts up a local blockchain network using [Hardhat](https://hardhat.org/), which is accessible on port `8545`. This network instance comes pre-installed with a number of user accounts, the first two of which we will use for `alice` and `bob`, with addresses respectively at `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and `0x70997970C51812dc3A010C7d01b50e0d17dc79C8`.
 
@@ -31,19 +31,19 @@ For each of the two actors, `alice` and `bob`, the environment provides a corres
 
 ## Download and run
 
-The Cartesi Compute SDK Environment is available on the [Descartes Tutorials GitHub repo](https://github.com/cartesi/descartes-tutorials/).
+The Cartesi Compute SDK Environment is available on the [Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/).
 
 You can download and extract a ready-to-use artifact by executing:
 
 ```bash
-wget https://github.com/cartesi/descartes-tutorials/releases/download/v1.1.0/descartes-env-1.1.0.tar.gz
-tar -xzvf descartes-env-1.1.0.tar.gz
+wget https://github.com/cartesi/compute-tutorials/releases/download/v1.3.0/compute-env-1.3.0.tar.gz
+tar -xzvf compute-env-1.3.0.tar.gz
 ```
 
 Then, start it up by running:
 
 ```bash
-cd descartes-env
+cd compute-env
 docker-compose up
 ```
 

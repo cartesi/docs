@@ -10,7 +10,7 @@ title: Deploying and running
 
 ## Introduction
 
-By now, we have completed the implementation of our Hello World DApp. However, in order to effectively run it, we still need to *deploy* it to an Ethereum network that includes the Cartesi Compute smart contract. To that end, we'll make use of the local development network already running within our [Cartesi Compute SDK Environment](../descartes-env.md).
+By now, we have completed the implementation of our Hello World DApp. However, in order to effectively run it, we still need to *deploy* it to an Ethereum network that includes the Cartesi Compute smart contract. To that end, we'll make use of the local development network already running within our [Cartesi Compute SDK Environment](../compute-env.md).
 
 ## Deployment
 
@@ -33,11 +33,11 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const Descartes = await get("Descartes");
+  const CartesiCompute = await get("CartesiCompute");
   await deploy("HelloWorld", {
     from: deployer,
     log: true,
-    args: [Descartes.address],
+    args: [CartesiCompute.address],
   });
 };
 
@@ -80,7 +80,7 @@ At this point, we can acquire a reference to our deployed HelloWorld DApp and in
 > tx = await hw.instantiate([alice, bob])
 ```
 
-This will trigger the computation, which can take a couple of minutes to run with Descartes's default settings.
+This will trigger the computation, which can take a couple of minutes to run with Cartesi Compute's default settings.
 
 As can be seen by the `getResult` implementation discussed in the [previous section](../helloworld/getresult.md), to query a computation's results we should use the `index` value returned by the `instantiate` method. This is straightforward when calling that method from another contract, but clients such as `ethers` and `web3` [cannot immediately retrieve return values from transactions](https://www.trufflesuite.com/docs/truffle/getting-started/interacting-with-your-contracts#transactions). Fortunately, Cartesi Compute emits events for each computation step, and thus it is possible to retrieve our index from the creation event.
 
