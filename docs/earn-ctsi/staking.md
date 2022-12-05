@@ -1,5 +1,5 @@
 ---
-title: How to Stake
+title: How to stake
 ---
 
 ## Prerequisites

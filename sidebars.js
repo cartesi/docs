@@ -231,13 +231,15 @@ const sidebars = {
 
     {
       type: 'category',
-      label: 'Staking',
+      label: 'Staking Delegation',
       link: {
       type: 'generated-index',
             },
      collapsed: true,
         items: [
           'earn-ctsi/staking',
+          'earn-ctsi/run-node',
+          'earn-ctsi/public-pool',
           'earn-ctsi/staking-faq',
         ],
     },

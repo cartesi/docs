@@ -17,15 +17,15 @@ title: FAQs
 
 Currently there are 3 different options available to stake CTSI:
 
-1. You can delegate your CTSI to a decentralized pool of your choice. Each pool has its own commission taken from pool rewards to cover their costs and generate profit. The tutorial to do so is [here](https://medium.com/cartesi/noethers-staking-delegation-full-mainnet-release-is-now-live-92334e91fbb1)
+1. You can delegate your CTSI to a decentralized pool of your choice. Each pool has its own commission taken from pool rewards to cover their costs and generate profit. The tutorial to do so is [here](../earn-ctsi/staking.md)
 
-2. You are able to stake directly by running your own node to represent your stake. This can be a good option for you if you have a relatively large amount of CTSI and the patience/ability to monitor the node and make sure it's running correctly 24/7. The tutorial for this options is [here](https://medium.com/cartesi/running-a-node-and-staking-42523863970e)
+2. You are able to stake directly by running your own node to represent your stake. This can be a good option for you if you have a relatively large amount of CTSI and the patience/ability to monitor the node and make sure it's running correctly 24/7. The tutorial for this options is [here](../earn-ctsi/run-node.md)
 
 3. You can stake indirectly using a 3rd party custodian centralized service, like Binance, CoinOne and MyCointainer. Each service has its own set of policies, rules, fees, etc so make sure to educate yourself on those and ask the 3rd party to clear any of your doubts in case you choose to follow that route.
 
 ### What's the minimum amount of CTSI to stake?
 
-The system doesn't impose a limit (you could even stake only 1 CTSI) but as the setup process has costs that do not depend on the amount you are staking (take a look at the costs here) and running a node does require maintenance, you should evaluate if the combination of (amount of CTSI/duration of staking) is worth the effort. Relatively low stakes do tend to take a lot of time to be able to produce blocks, so having a relatively low stake will probably make sense only if you are planning to stake for a very long time. For relatively small stakes it might be a better idea to join a decentralized pool, or even stake though a 3rd party centralized custodian service, check those options on this other FAQ.
+The system doesn't impose a limit (you could even stake only 1 CTSI) but as the setup process has costs that do not depend on the amount you are staking (take a look at the costs [here](../staking-faq/#how-much-eth-do-i-need)) and running a node does require maintenance, you should evaluate if the combination of (amount of CTSI/duration of staking) is worth the effort. Relatively low stakes do tend to take a lot of time to be able to produce blocks, so having a relatively low stake will probably make sense only if you are planning to stake for a very long time. For relatively small stakes it might be a better idea to join a decentralized pool, or even stake though a 3rd party centralized custodian service, check those options on this other [FAQ](../staking-faq/#how-do-i-stake).
 
 
 
@@ -63,34 +63,32 @@ Yes you can, just make sure to double-check the address you are sending the fund
 
 It is hard to predict how much you should fund your node with, since there are lots of moving parts like gas price fluctuation, stakes variation and the intrinsic variation in the block production rate. For small stakers, putting enough ETH for the node to accept the hire (~31k gas cost) and produce a couple of blocks (~120k gas per block) should be enough to run the node for some time. That would be roughly 271 x gas_price / 1 000 000 ETH.
 
-There is also a template Google sheet you can use to help you to estimate the ETH amount you need here. You may take a look at sites like etherscan gas price history page to estimate an average gas price value. Regardless of the amount you fund your node with, it is always a good idea to check on the node to make sure it is still well funded and that it is running fine.
+There is also a template Google sheet you can use to help you to estimate the ETH amount you need [here](https://docs.google.com/spreadsheets/d/1StJqGy5oumXf0tm-4gJotDkeh77SGltINLqBWNE80RY/template/preview). You may take a look at sites like [etherscan gas price history page](https://etherscan.io/chart/gasprice) to estimate an average gas price value. Regardless of the amount you fund your node with, it is always a good idea to check on the node to make sure it is still well funded and that it is running fine.
 
 
 ### How much ETH do I need?
 
 You have to do some math in order to estimate the amount of ETH you'll need for staking.
 
-There is basically a one-time cost to setup the staking operation and a continuous operational cost. You can take a look at the gas prices associated with each operation involved in the staking process and also at this section about the amount of ETH to fund your node with.
+There is basically a one-time cost to setup the staking operation and a continuous operational cost. You can take a look at the [gas prices](../staking-faq/#how-much-eth-do-the-transactions-involved-in-staking-ctsi-cost) associated with each operation involved in the staking process and also at this section about [the amount of ETH to fund your node with](../staking-faq/#how-much-eth-should-i-fund-my-node-with).
 
-There is also a template Google sheet you can use to help you to estimate the ETH amount you need here.
-
-
+There is also a template Google sheet you can use to help you to estimate the ETH amount you need [here](https://docs.google.com/spreadsheets/d/1StJqGy5oumXf0tm-4gJotDkeh77SGltINLqBWNE80RY/template/preview).
 
 ### Cannot authorize CTSI with my ledger, getting a “Ledger device: Invalid data received” error, what’s wrong?
 
-You have to enable blind signing in the Ethereum application of your ledger. Procedure from Ledger documentation.
+You have to enable blind signing in the Ethereum application of your ledger. Procedure from [Ledger documentation](https://support.ledger.com/hc/en-us/articles/4405481324433-Enable-blind-signing-in-the-Ethereum-ETH-app?docs=true).
 
 
 
 ### I hired my node in the Cartesi Explorer, but I am stuck with the "Cancel Hire" button in the Explorer. What's going on?
 
-It is probably a good idea to check if the hire transaction was correctly processed as it might still be pending due to Ethereum Network congestion or a gas price surge. You can do so by checking your hire transaction status at Etherscan and inputting your wallet address. If the hire transaction went through, there might be a problem with your node accepting the hire. Check your node's log, copy the tx hash of the accept job transaction (available in your node's log) and take a look at it on Etherscan. If it is taking too long to process or you get an error, do contact us at the Cartesi Technical Community on Discord so we can provide you some help.
+It is probably a good idea to check if the hire transaction was correctly processed as it might still be pending due to [Ethereum Network congestion or a gas price surge](https://info.etherscan.com/how-to-cancel-ethereum-pending-transactions/). You can do so by checking your hire transaction status at [Etherscan](https://etherscan.io/) and inputting your wallet address. If the hire transaction went through, there might be a problem with your node accepting the hire. Check your node's log, copy the tx hash of the accept job transaction (available in your node's log) and take a look at it on Etherscan. If it is taking too long to process or you get an error, do contact us at the [Cartesi Technical Community on Discord](https://discord.gg/Pt2NrnS) so we can provide you some help.
 
 ## Node operation FAQs
 
 ### How do I update my Cartesi Node?
 
-Please check the Noether update wiki page.
+Please check the [Noether update wiki page](https://github.com/cartesi/noether/wiki/Docker-node-update).
 
 ### How do backup my Cartesi Node wallet?
 
@@ -106,7 +104,7 @@ Open a terminal and input this command to export the wallet mnemonic: docker run
 Stop your node (one way to do it is using the docker kill cartesi_noether command on a terminal, if you are using the default name for the node container)
 Edit the command you used to start your node before (it should be something like this docker pull cartesi/noether; docker run -it --rm --name cartesi_noether -v cartesi_wallet:/root/.ethereum cartesi/noether --url <YOUR_OLD_ETHEREUM_GATEWAY_URL_HERE> --wallet /root/.ethereum/key --create --verbose), replacing the value in the --url parameter with the url of the new Ethereum Network Gateway you wish to use (example: old value --url https://myoldethgateway.com and new value --url https://mainnet.infura.io/v3/your_infura_project_id_here)
 Start your node using the command from the previous step, enter your password when prompted
-If you are on a terminal, once your node resumes operations, detach from it (default key sequence is ctrl+p followed by ctrl+q, you can learn more about attaching to/detaching from a container in the official docker documentation) so your node keeps running once you close the terminal
+If you are on a terminal, once your node resumes operations, detach from it (default key sequence is ctrl+p followed by ctrl+q, you can learn more about attaching to/detaching from a container in the official [docker documentation](https://docs.docker.com/engine/reference/commandline/attach/)) so your node keeps running once you close the terminal
 
 
 ### I am getting some network errors in my node's log, should I worry?
@@ -114,13 +112,13 @@ If you are on a terminal, once your node resumes operations, detach from it (def
 It depends on the type of error and frequency as having your node not working when eligible to produce will prevent it from producing a block and getting the associated reward. A common source of errors is using an unstable Ethereum Gateway, it causes errors similar to this one:
 
 ERROR: Error: processing response error (body="{"jsonrpc":"2.0","error":{"code":-32600,"message":"Invalid Request. Requested data is older than 128 blocks."},"id":25035}", error={"code":-32600}, requestBody="{"method":"eth_call","params":[{"from":"your_node_address","to":"0x9edeadfde65bcfd0907db3acdb3445229c764a69","data":"some_payload_data"},"latest"],"id":25035,"jsonrpc":"2.0"}", requestMethod="POST", url="https://eth.cartesi.io/", code=SERVER_ERROR, version=web/5.0.12)
-In case you are getting those, it highly advised to switch to a stable Ethereum Gateway(Infura is a good option and the free tier is enough to run a single node)
+In case you are getting those, it highly advised to [switch to a stable Ethereum Gateway](http://localhost:3000/earn-ctsi/staking-faq/#how-do-i-change-my-ethereum-network-gateway)(Infura is a good option and the free tier is enough to run a single node)
 
 
 
 ### If I turn off my computer/close the browser window/close the terminal, will my node keep running?
 
-It depends on how you are running your node. If you are running a docker node on a VPS, make sure to detach from the container before closing your session, so the container keeps running. You can detach from a docker container using the default escape sequence of ctrl+p followed by ctrl+q. You can learn more about attaching to/detaching from a container in the official docker documentation. If you are running a docker container in your local computer, and you manually started the container in a terminal, you have to detach from the container before closing the terminal, so it keeps running in the background. If you used some graphical interface to start your container, you can probably close it safely and your container will continue running in the background but do check your specific tool documentation to make sure of it. When you are running a local node, your node can only run when your computer is on, so if you shutdown your computer, you will not produce blocks when eligible during that period.
+It depends on how you are running your node. If you are running a docker node on a VPS, make sure to detach from the container before closing your session, so the container keeps running. You can detach from a docker container using the default escape sequence of ctrl+p followed by ctrl+q. You can learn more about attaching to/detaching from a container in the [official docker documentation](https://docs.docker.com/engine/reference/commandline/attach/). If you are running a docker container in your local computer, and you manually started the container in a terminal, you have to detach from the container before closing the terminal, so it keeps running in the background. If you used some graphical interface to start your container, you can probably close it safely and your container will continue running in the background but do check your specific tool documentation to make sure of it. When you are running a local node, your node can only run when your computer is on, so if you shutdown your computer, you will not produce blocks when eligible during that period.
 
 
 
@@ -213,7 +211,7 @@ One thing to keep in mind is that comparing your block production with others in
 
 ### What is the reward per block produced?
 
-Currently the reward is 2900 CTSI, this value is bound to last for approximately 6 months. You may read more about this on the Medium post.
+Currently the reward is 2900 CTSI, this value is bound to last for approximately 6 months. You may read more about this on the [Medium post](https://medium.com/cartesi/ctsi-mining-how-it-works-37d3dc6d86e0).
 
 
 
@@ -250,7 +248,7 @@ Your node only produces blocks when functioning properly, so the more it is inte
 
 ### Is it better to run my own node, join a decentralized pool or to use a 3rd-party custodian service to stake?
 
-It is a personal choice and one option might be better suited to you depending on your requirements and expectations. The three options have different advantages and disadvantages. Running your own node requires some technical proficiency, has higher setup costs and requires a certain amount of time and energy to maintain your node running correctly, but provides you with the full rewards of the blocks produced using your stake. Joining a decentralized pool through the Cartesi Explorer you'll get rewards whenever the pool produces block - proportional to the cut of your stake on the pool - so you'll get more frequent but diluted rewards comparing to staking by yourself. The pool also gets a cut of the rewards, which is the setup poll commission: it's intended to cover the costs of running a pool and also give some reward to the pool manager for doing so. When using a pool you don't have to worry about maintaining a node, that's the pool manager's job, but you should monitor the pool performance to make sure it's node is being well taken care of. Decentralized pools are safe: withdrawing your CTSI demands having control over the wallet associated to those funds. Using a 3rd party custodian service is generally simpler and faster to setup, demands lower technical proficiency and the custodian service takes care of having the node up and running, but that comes at a cost: each custodian service takes a cut of the rewards and has its own fees and reward distribution policy, so do educate yourself on those if deciding for this option. When using a custodian service, staking rewards have a similar behavior to decentralized pools in terms of rewards frequency: while directly staking relatively low values will probably take a very long time to produce a block and generate rewards, custodian services generally distribute rewards on a frequent basis (though very diluted amounts). One last important point is that, from the blockchain point of view, your CTSI is owned by the custodian service (since it's under it's wallet's control) so you have to trust it to behave correctly.
+It is a personal choice and one option might be better suited to you depending on your requirements and expectations. The three options have different advantages and disadvantages. Running your own node requires some technical proficiency, has [higher setup costs](../staking-faq/#how-much-eth-do-the-transactions-involved-in-staking-ctsi-cost) and requires a certain amount of time and energy to maintain your node running correctly, but provides you with the full rewards of the blocks produced using your stake. Joining a decentralized pool through the [Cartesi Explorer](https://explorer.cartesi.io/pools) you'll get rewards whenever the pool produces block - proportional to the cut of your stake on the pool - so you'll get more frequent but diluted rewards comparing to staking by yourself. The pool also gets a cut of the rewards, which is the setup poll commission: it's intended to cover the costs of running a pool and also give some reward to the pool manager for doing so. When using a pool you don't have to worry about maintaining a node, that's the pool manager's job, but you should monitor the pool performance to make sure it's node is being well taken care of. Decentralized pools are safe: withdrawing your CTSI demands having control over the wallet associated to those funds. Using a 3rd party custodian service is generally simpler and faster to setup, demands lower technical proficiency and the custodian service takes care of having the node up and running, but that comes at a cost: each custodian service takes a cut of the rewards and has its own fees and reward distribution policy, so do educate yourself on those if deciding for this option. When using a custodian service, staking rewards have a similar behavior to decentralized pools in terms of rewards frequency: while directly staking relatively low values will probably take a very long time to produce a block and generate rewards, custodian services generally distribute rewards on a frequent basis (though very diluted amounts). One last important point is that, from the blockchain point of view, your CTSI is owned by the custodian service (since it's under it's wallet's control) so you have to trust it to behave correctly.
 
 
 
