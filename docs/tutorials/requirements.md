@@ -9,7 +9,7 @@ tags: [sdk, tutorials, low-level developer]
 
 In order to run the tutorials, we must first make sure that the packages listed in this section are all installed and working in your system.
 
-As we mentioned earlier, The Cartesi Compute Tutorials will provide _every single command_ that you need to run in your shell to turn an Ubuntu machine into a fully fledged Cartesi development environment. That is, if you are starting with a fresh copy of the latest Ubuntu LTS installed in your machine, you should never need to leave this tutorial for an external website to get something installed. And if some tutorial step doesn't work for you, and you have tried it in a clean Ubuntu LTS installation, then that could be a bug in the tutorials, and you can discuss it in our [Discord channel](https://discordapp.com/invite/Pt2NrnS).
+As we mentioned earlier, The Cartesi Compute Tutorials will provide _every single command_ that you need to run in your shell to turn an Ubuntu machine into a fully fledged Cartesi development environment. That is, if you are starting with a fresh copy of the latest Ubuntu LTS installed in your machine, you should never need to leave this tutorial for an external website to get something installed. And if some tutorial step doesn't work for you, and you have tried it in a clean Ubuntu LTS installation, then that could be a bug in the tutorials, and you can discuss it in our [Discord channel](https://discord.gg/uxYE5YNv3N).
 
 ## Basic tools
 

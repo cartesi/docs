@@ -28,4 +28,4 @@ To test stake delegation on the Ethereum Ropsten testnet, you’ll need some Rop
 
 Ok, so I read all the F.A.Q. and found no solution to my problem/the proposed solution failed, what should I do?
 
-We are sorry to hear that, please head to the [Cartesi Technical Community on Discord](https://discord.gg/Pt2NrnS) and we’ll be happy to assist you.
+We are sorry to hear that, please head to the [Cartesi Technical Community on Discord](https://discord.gg/uxYE5YNv3N) and we’ll be happy to assist you.

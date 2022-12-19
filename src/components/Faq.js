@@ -54,7 +54,7 @@ export const Faq = () => {
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
               <a
-                href="https://discord.gg/Pt2NrnS"
+                href="https://discord.gg/uxYE5YNv3N"
                 target="_blank"
                 rel="nofollow"
                 className="text-current border-solid border-2 border-blue-900 py-4 px-6 flex items-center gap-4 text-2xl hover:no-underline hover:text-blue-500"
