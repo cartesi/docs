@@ -21,7 +21,7 @@ export const learn = [
       },
       {
         label: "Step 5: Deploying",
-        href: "/build-dapps/run-dapp#deploying-dapps-to-cartesis-infrastructure",
+        href: "/build-dapps/deploying-dapps",
       },
     ],
   },

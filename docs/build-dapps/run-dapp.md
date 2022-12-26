@@ -21,7 +21,7 @@ The **Quick Start** guide consists of 5 main steps:
 2. [Building](#building)
 3. [Running](#running)
 4. [Interacting](#interacting-with-the-dapp)
-5. [Deploying](#deploying-dapps-to-cartesis-infrastructure)
+5. [Deploying](../build-dapps/deploying-dapps.md)
 
 ## Installing
 
@@ -223,21 +223,3 @@ You can find several Cartesi DApp [examples on GitHub](https://github.com/cartes
 | [m2cgen](https://github.com/cartesi/rollups-examples/blob/main/m2cgen)         | No                                       | - |
 | [ERC-20](https://github.com/cartesi/rollups-examples/blob/main/erc20)          | No                                       | - |
 | [Auction](https://github.com/cartesi/rollups-examples/blob/main/auction)          | No                                       | - |
-
-## Deploying DApps to Cartesi's infrastructure
-
-Cartesi Rollups DApps are intended to be deployed to public blockchains, so that they can be accessed by users. This can be done by taking advantage of a cloud-based infrastructure provided by Cartesi.
-
-As happens with any blockchain application, the act of "deploying a DApp" involves publishing its smart contract so that it is publicly available and usable by clients or [front-end applications](../cartesi-rollups/dapp-architecture.md#front-end). In the context of a Cartesi DApp, the smart contract is represented by an arbitrary [back-end program](../cartesi-rollups/dapp-architecture.md#back-end) that runs on Linux inside a [Cartesi Node](../cartesi-rollups/components.md#cartesi-nodes). This means that deploying Cartesi DApps basically corresponds to instantiating Cartesi Nodes that run the intended back-end logic of the application.
-
-In order to facilitate the instantiation of such nodes, Cartesi provides an infrastructure for easily getting them running in the cloud. Developers are thus invited to take advantage of this convenience service in order to jump-start bringing their applications to public blockchains.
-
-:::tip
-Please check the [full documentation for deploying Rollups DApps to Cartesi's cloud-based execution infrastructure](https://github.com/cartesi/rollups-deployment/blob/main/README.md).
-:::
-
-## Additional resources
-
-* [Customizing a DApp using a ready DApp template ](https://github.com/cartesi/rollups-examples/blob/main/custom-dapps/README.md)
-* [Deploying a new Cartesi DApp to a blockchain](https://github.com/cartesi/rollups-examples/blob/main/README.md#deploying-dapps)
-* [Building and deployment DApps to a cloud based execution infrastructure](https://github.com/cartesi/rollups-deployment/blob/main/README.md)
