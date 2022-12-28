@@ -20,22 +20,25 @@ The ETH to fund these transactions must be deposited in the wallet managed by th
 Any organization or individual is free to create and operate a pool. There are no restrictions or special requirements, anyone can create a pool as long as they are willing to pay the necessary ETH fees to create and manage the pool.
 
 The main prerequisites are:
-* Set up Ethereum node as the Cartesi node connects to the Ethereum network through a standard gateway. The Ethereum node works with any standard JSON-RPC Ethereum provider. It's important to use a stable and reliable provider, you can use [Infura](https://infura.io/) or [Alchemy](https://www.alchemy.com/) as Ehtereum gateway
+* Set up Ethereum node as the Cartesi node connects to the Ethereum network through a standard gateway. The Ethereum node works with any standard JSON-RPC Ethereum provider. It's important to use a stable and reliable provider, you can use [Infura](https://infura.io/) or [Alchemy](https://www.alchemy.com/) as Ethereum gateway
 * Install Docker enginer, you can download it for [macOS](https://docs.docker.com/desktop/mac/install/) or for [Windows](https://docs.docker.com/desktop/windows/install/)
 
 ## Commission
-
-:::note
-Once created and configured, the pool manager cannot change the selected commission model. The value of the commission cannot be increased, but can be decreased at any time. This allows for fine adjustments of the economics of the pool, while preserving the public commitment not to increase the commission value.
-:::
 
 Pool operators have two main responsibilities:
 1. Make sure the Noether node is online and works properly 24x7
 2. Pay the Ethereum fees that are necessary for block production and also maintenance operations like staking, unstaking and withdrawing from the Staking contract, on behalf of the users that delegate to their pool.
 
-The first decision the pool owner has to make when creating a pool is choosing the commission model. There are two models available:
+The first decision the pool owner has to make when creating a pool is choosing the commission model. Once created and configured, the pool manager cannot change the selected commission model.
+
+There are two models available:
 * Flat rate commission
 * Gas-based commission
+
+:::note
+After you have selected and created the commission model, the commission value cannot be increased, but can be decreased at any time. This allows for fine adjustments of the economics of the pool, while preserving the public commitment not to increase the commission value.
+You can increase the commission value with rules in place about maximum increases. For example, flat-rate commissions at the moment are at 5% and they can only increase once a week (i.e. they need to wait for seven days to be able to increase again)
+:::
 
 ### Flat Rate
 
