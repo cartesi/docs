@@ -14,7 +14,7 @@ const config = {
   trailingSlash: true,
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.png",
+  favicon: "img/favicon.ico",
   organizationName: "cartesi", // Usually your GitHub org/user name.
   projectName: "cartesi", // Usually your repo name.
   scripts: ["/js/index.js"],
