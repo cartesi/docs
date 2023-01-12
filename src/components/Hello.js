@@ -10,10 +10,10 @@ export const Hello = () => {
       <div className="container">
         <div className="mb-8 lg:mb-16">
           <h1 className="font-serif text-4xl sm:text-7xl xl:text-8xl text-center font-normal mb-6 lg:mb-8">
-            Hello, developer.
+            Hello, Developer.
           </h1>
           <p className="font-serif text-lg md:text-2xl lg:text-3xl text-center mx-auto max-w-5xl">
-          Welcome to the home for The Blockchain OS documentation and learning for all kinds of developers, blockchain technology professionals, and researchers.
+          Browse by selecting a product
           </p>
         </div>
 
