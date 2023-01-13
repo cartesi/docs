@@ -70,6 +70,11 @@ const config = {
             label: "I need help",
           },
           {
+            to: "/#code-samples",
+            position: "right",
+            label: "Code samples",
+          },
+          {
             to: "https://discord.gg/Pt2NrnS",
             position: "right",
             className: "header-discord-link",
