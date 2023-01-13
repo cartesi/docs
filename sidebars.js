@@ -28,24 +28,7 @@ const sidebars = {
         "new-to-cartesi/scalability",
       ],
     },
-
-    {
-      type: "category",
-      label: "Build DApps",
-      link: {
-        type: "generated-index",
-        slug: "/build-dapps",
-      },
-      collapsed: true,
-      items: [
-        "build-dapps/overview",
-        "build-dapps/requirements",
-        "build-dapps/run-dapp",
-        "build-dapps/create-dapp",
-        "build-dapps/dapp-host-mode",
-      ],
-    },
-
+  ],
 
     // {
     //   type: 'category',
@@ -58,12 +41,14 @@ const sidebars = {
     //     'earn-ctsi/staking',
     //   ],
     // },
-
-    /*  {
+    
+  cartesicompute: [
+      {
           type: "category",
           label: "Cartesi Compute SDK",
           link: {
-            type: 'generated-index',
+            type: "generated-index",
+            slug: "cartesi-compute",
           },
           collapsed: true,
           items: [
@@ -87,7 +72,8 @@ const sidebars = {
           type: "category",
           label: "Cartesi Compute Tutorials",
           link: {
-            type: 'generated-index',
+            type: "generated-index",
+            slug: "/compute/tutorials",
           },
           collapsed: true,
           items: [
@@ -98,7 +84,8 @@ const sidebars = {
               type: "category",
               label: "Hello World DApp",
               link: {
-                type: 'generated-index',
+                type: "generated-index",
+                slug: "/compute/tutorials/helloworld/",
               },
               collapsed: true,
               items: [
@@ -113,7 +100,8 @@ const sidebars = {
               type: "category",
               label: "Calculator DApp",
               link: {
-                type: 'generated-index',
+                type: "generated-index",
+                slug: "/compute/tutorials/calculator/",
               },
               collapsed: true,
               items: [
@@ -126,7 +114,8 @@ const sidebars = {
               type: "category",
               label: "Generic Script DApp",
               link: {
-                type: 'generated-index',
+                type: "generated-index",
+                slug: "/compute/tutorials/generic-script/",
               },
               collapsed: true,
               items: [
@@ -140,7 +129,8 @@ const sidebars = {
               type: "category",
               label: "GPG Verify DApp",
               link: {
-                type: 'generated-index',
+                type: "generated-index",
+                slug: "/compute/tutorials/gpg-verify/",
               },
               collapsed: true,
               items: [
@@ -155,7 +145,8 @@ const sidebars = {
               type: "category",
               label: "Dogecoin Hash DApp",
               link: {
-                type: 'generated-index',
+                type: "generated-index",
+                slug: "/compute/tutorials/dogecoin-hash/",
               },
               collapsed: true,
               items: [
@@ -166,9 +157,8 @@ const sidebars = {
               ]
             },
           ]
-},*/
+},
 ],
-
 
   rollups: [
     {
@@ -298,17 +288,32 @@ const sidebars = {
         },
       ],
     },
-    /////////////dapps
+    {
+      type: "category",
+      label: "Build DApps",
+      link: {
+        type: "generated-index",
+        slug: "/build-dapps",
+      },
+      collapsed: true,
+      items: [
+        "build-dapps/overview",
+        "build-dapps/requirements",
+        "build-dapps/run-dapp",
+        "build-dapps/create-dapp",
+        "build-dapps/dapp-host-mode",
+      ],
+    },
   ],
 
 
-  "machine": [
+  machine: [
     {
       type: "category",
       label: "Cartesi Machine",
       link: {
         type: "generated-index",
-        slug: "machine",
+        slug: "cartesi-machine",
       },
       collapsed: true,
       items: [
