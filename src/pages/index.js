@@ -3,7 +3,6 @@ import Layout from "@theme/Layout";
 import { Hello } from "../components/Hello";
 import { Learn } from "../components/Learn";
 import { Faq } from "../components/Faq";
-import { CodeSamples } from "../components/CodeSamples";
 
 function Home() {
   return (
@@ -11,7 +10,6 @@ function Home() {
       <Hello />
       <Learn />
       <Faq />
-      <CodeSamples />
     </Layout>
   );
 }

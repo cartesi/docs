@@ -1,7 +1,7 @@
 export const learn = [
   {
     category: "by-goal",
-    title: "Hands-on: Build DApps Now!",
+    title: "Hands-on: Build Rollups DApps Now!",
     links: [
       {
         label: "Step 1: Installing",
@@ -52,6 +52,10 @@ export const learn = [
     category: "by-role",
     title: "Beginner",
     links: [
+      {
+        label: "New to Cartesi",
+        href: "/new-to-cartesi/",
+      },
       {
         label: "Understand how Cartesi Rollups are different",
         href: "/new-to-cartesi/overview#how-are-cartesi-rollups-different",
@@ -119,57 +123,6 @@ export const learn = [
       {
         label: "How blockchains can benefit from Cartesi Machines",
         href: "/machine/blockchain/intro",
-      },
-    ],
-  },
-
-  {
-    category: "by-product",
-    title: "Cartesi Rollups",
-    links: [
-      {
-        label: "Overview",
-        href: "/cartesi-rollups/overview",
-      },
-      {
-        label: "HTTP API",
-        href: "/cartesi-rollups/http-api",
-      },
-      {
-        label: "Dive into technical details of components and main concepts",
-        href: "/cartesi-rollups/components#main-concepts",
-      },
-    ],
-  },
-  {
-    category: "by-product",
-    title: "Cartesi Machine",
-    links: [
-      {
-        label: "Introduction",
-        href: "/machine/intro",
-      },
-      {
-        label: "Command-line interface",
-        href: "/machine/host/cmdline",
-      },
-      {
-        label: "Lua interface",
-        href: "/machine/host/lua",
-      },
-    ],
-  },
-  {
-    category: "by-product",
-    title: "Cartesi Explorer",
-    links: [
-      {
-        label: "Staking Pools",
-        href: "https://explorer.cartesi.io/pools",
-      },
-      {
-        label: "Node Runners",
-        href: "https://explorer.cartesi.io/staking",
       },
     ],
   },

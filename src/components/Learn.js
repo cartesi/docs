@@ -51,7 +51,6 @@ export const Learn = () => {
               values={[
                 { label: "by goal", value: "by-goal" },
                 { label: "by role", value: "by-role" },
-                { label: "by product", value: "by-product" },
               ]}
             >
               {/* fix not to use a custom comp only for here */}

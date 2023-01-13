@@ -60,24 +60,14 @@ const config = {
         },
         items: [
           {
-            to: "/cartesi-rollups/api",
+            to: "/#learn",
             position: "right",
-            label: "Rollups APIs",
+            label: "Learn",
           },
           {
-            to: "https://youtu.be/8kEBwJt2YLM",
-            label: "Blockchain Course",
+            to: "/#qa",
             position: "right",
-          },
-          {
-            to: "https://cartesi.io/en/labs",
-            label: "Cartesi Labs",
-            position: "right",
-          },
-          {
-            to: "https://github.com/cartesi/rollups-examples",
-            label: "DApp Examples",
-            position: "right",
+            label: "Help",
           },
           {
             to: "https://discord.gg/uxYE5YNv3N",

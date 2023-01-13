@@ -1,19 +1,32 @@
 export const hello = [
   {
-    title: "Documentation",
-    href: "/new-to-cartesi",
+    title: "Rollups",
+    href: "/cartesi-rollups",
     description:
-      "Browse our DApp tutorials, guides, architectural diagrams, API references, and more to learn how to build on Cartesi.",
-    bgColor: "#2D5ABE",
-    color: "#fff",
-  },
-  {
-    title: "Learn",
-    href: "/#learn",
-    description: "Discover training paths by role, subject matter, or technology.",
+      "Browse our DApp tutorials, API references, and more to learn how to build on Cartesi.",
     bgColor: "#E1EBFF",
   },
-
+    // {
+    //     title: "Compute",
+    //     href: "/cartesi-compute",
+    //     description:
+    //       "Powerful off-chain computations without compromising decentralization.",
+    //     bgColor: "#2D5ABE",
+    //     color: "#fff",
+    //   },
+  {
+    title: "Machine",
+    href: "/cartesi-machine",
+    description: "Deep dive into the low level of Cartesi's core technology.",
+    bgColor: "#85B4FF",
+  },
+  {
+    title: "Staking",
+    href: "/earn-ctsi",
+    description: "View and analyse assets, transactions and balances on the Cartesi network.",
+    bgColor: "#FEE959",
+  },
+/*
   {
     title: "Get Help",
     href: "/#qa",
@@ -26,5 +39,5 @@ export const hello = [
     href: "/#code-samples",
     description: "Explore our code samples and main repositories on Github.",
     bgColor: "#FEE959",
-  },
+  },*/
 ];

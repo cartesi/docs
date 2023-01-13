@@ -10,15 +10,12 @@ export const Hello = () => {
       <div className="container">
         <div className="mb-8 lg:mb-16">
           <h1 className="font-serif text-4xl sm:text-7xl xl:text-8xl text-center font-normal mb-6 lg:mb-8">
-            Hello, developer.
+            Welcome to Cartesi docs.
           </h1>
-          <p className="font-serif text-lg md:text-2xl lg:text-3xl text-center mx-auto max-w-5xl">
-          Welcome to the home for The Blockchain OS documentation and learning for all kinds of developers, blockchain technology professionals, and researchers.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-          {hello.map(({ title, href, description, bgColor, color }, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          {hello.slice(0,3).map(({ title, href, description, bgColor, color }, idx) => (
             <Link
               to={useBaseUrl(href)}
               activeClassName="active"
