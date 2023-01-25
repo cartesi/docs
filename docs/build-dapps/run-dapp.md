@@ -188,7 +188,7 @@ yarn build
 7. Configure your account on Goerli by running the commands below, which specify the network and MNEMONIC (Secret Backup Phrase) to use:
 ```shell
 export NETWORK=goerli
-export MNEMONIC=<paste here your user sequence of twelve words>
+export MNEMONIC="your_phrase1 your_phrase2 your_phrase3 your_phrase4 your_phrase5 your_phrase6 your_phrase7 your_phrase8 your_phrase9 your_phrase10 your_phrase11 your_phrase12"
 ```
 8. Configure your [Alchemy](https://www.alchemy.com/) RPC gateway URL for Goerli by running the following command:
 ```shell
