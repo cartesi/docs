@@ -51,6 +51,7 @@ const config = {
       hotjar: {
         applicationId: "3103959",
       },
+      image: "img/socialLogo.png",
       navbar: {
         logo: {
           alt: "Cartesi Logo",
