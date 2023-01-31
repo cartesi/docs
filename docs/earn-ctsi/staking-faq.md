@@ -3,7 +3,7 @@ id: staking-faq
 title: FAQs
 ---
 
-* [Staking on testnet](#staking-testnet)
+* [Staking](#staking)
 * [Node operation](#node-operation-faqs)
 * [Fees and costs](#fees-and-costs-faqs)
 * [Block production and rewards](#block-production-and-rewards-faqs)
@@ -11,7 +11,7 @@ title: FAQs
 * [Terminating your staking operation](#terminating-your-staking-operation)
 * [Submit other questions](#submit-a-new-question)
 
-## Staking Testnet
+## Staking
 
 ### How do I stake?
 
