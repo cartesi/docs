@@ -51,15 +51,15 @@ As a developer, you can use all the programming languages, tools, libraries, sof
 
 ### Quick start to run your first DApp
 
-The fastest way of getting started is by [Running a Simple DApp](../build-dapps/run-dapp.md) that we already built using Python.
+The fastest way of getting started is by [Running a Simple DApp](/cartesi-rollups/build-dapps/run-dapp) that we already built using Python.
 
 :::tip
-Check the section [**Cartesi Rollups**](../cartesi-rollups/overview.md) to learn theoretical concepts such as DApp architecture, available APIs, and how Cartesi's off-chain and on-chain components work under the hood.
+Check the section [**Cartesi Rollups**](/cartesi-rollups/overview) to learn theoretical concepts such as DApp architecture, available APIs, and how Cartesi's off-chain and on-chain components work under the hood.
 :::
 
-* Navigate to [Build DApps](../build-dapps/overview.md) section for more guides:
-  * [Technical Prerequisites](../build-dapps/requirements.md)
-  * [Steps to create a DApp](../build-dapps/create-dapp.md)
+* Navigate to [Build DApps](/cartesi-rollups/build-dapps/overview) section for more guides:
+  * [Technical Prerequisites](/cartesi-rollups/build-dapps/requirements)
+  * [Steps to create a DApp](/cartesi-rollups/build-dapps/create-dapp)
 
 * Check [more examples on GitHub](https://github.com/cartesi/rollups-examples#examples) such as:
   * [Echo Python DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python)

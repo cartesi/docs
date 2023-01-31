@@ -1,0 +1,55 @@
+---
+id: input-filter
+title: InputFilter
+hide_table_of_contents: false
+---
+
+
+Filter object to restrict results depending on input properties
+
+```graphql
+input InputFilter {
+  msgSender: String
+  blockNumber: BigInt
+  blockNumberLowerThan: BigInt
+  blockNumberGreaterThan: BigInt
+  timestampLowerThan: BigInt
+  timestampGreaterThan: BigInt
+}
+```
+
+
+### Fields
+
+#### [`msgSender`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+
+Filter only inputs submitted by a specific address
+
+
+#### [`blockNumber`](#) ([`BigInt`](/cartesi-rollups/api/graphql/scalars/big-int))
+
+Filter only inputs recorded in a specific base layer block
+
+
+#### [`blockNumberLowerThan`](#) ([`BigInt`](/cartesi-rollups/api/graphql/scalars/big-int))
+
+Filter only inputs recorded before a specific base layer block
+
+
+#### [`blockNumberGreaterThan`](#) ([`BigInt`](/cartesi-rollups/api/graphql/scalars/big-int))
+
+Filter only inputs recorded after a specific base layer block
+
+
+#### [`timestampLowerThan`](#) ([`BigInt`](/cartesi-rollups/api/graphql/scalars/big-int))
+
+Filter only inputs recorded before a specific timestamp, as defined by the base layer
+
+
+#### [`timestampGreaterThan`](#) ([`BigInt`](/cartesi-rollups/api/graphql/scalars/big-int))
+
+Filter only inputs recorded after a specific timestamp, as defined by the base layer
+
+
+
+

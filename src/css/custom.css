@@ -390,4 +390,40 @@ html[data-theme="dark"] {
   max-height: calc(100vh - 3.5rem) !important;
 }
 
+.theme-doc-version-badge {
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  color: inherit;
+  margin-left: -2px;
+  margin-bottom: 0.5rem;
+}
+
+/* // Version Dropdown */
+.dropdown-version {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem 0.5rem 0rem;
+  justify-content: flex-end;
+}
+
+@media (min-width: 996px) {
+  .dropdown-version {
+    padding: 1rem 0.5rem 0.5rem 1.5rem;
+    justify-content: flex-start;
+  }
+}
+
+.dropdown-version__label {
+  font-size: 0.815rem;
+  opacity: 0.5;
+}
+
+.navbar__item--version {
+  display: inline-block !important;
+  border: 1px solid var(--docusaurus-tag-list-border);
+  font-size: 0.875rem;
+}
+
 @tailwind utilities;

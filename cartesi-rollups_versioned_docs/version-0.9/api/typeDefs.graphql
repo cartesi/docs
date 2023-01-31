@@ -1,0 +1,347 @@
+"Data that can be used as proof to validate notices and execute vouchers on the base layer blockchain"
+type Proof {
+  "Merkle root of all output metadata hashes of the related input, given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  outputHashesRootHash: String!
+  "Merkle root of all voucher metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  vouchersEpochRootHash: String!
+  "Merkle root of all notice metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  noticesEpochRootHash: String!
+  "Hash of the machine state claimed for the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  machineStateHash: String!
+  "Array of hashes representing a proof that this output metadata is in the metadata memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  keccakInHashesSiblings: [String!]!
+  "Array of hashes representing a proof that this output metadata is in the epoch's output memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'"
+  outputHashesInEpochSiblings: [String!]!
+}
+
+"Epoch pagination result"
+type EpochConnection {
+  "Total number of entries that match the query"
+  totalCount: Int!
+  "Pagination entries returned for the current page"
+  edges: [EpochEdge!]!
+  "Epoch instances returned for the current page"
+  nodes: [Epoch!]!
+  "Pagination metadata"
+  pageInfo: PageInfo!
+}
+
+"Request submitted to the application to advance its state"
+type Input {
+  "Input identifier"
+  id: ID!
+  "Input index within its containing epoch"
+  index: Int!
+  "Epoch in which the input is contained"
+  epoch: Epoch!
+  "Address responsible for submitting the input"
+  msgSender: String!
+  "Timestamp associated with the input submission, as defined by the base layer's block in which it was recorded"
+  timestamp: BigInt!
+  "Number of the base layer block in which the input was recorded"
+  blockNumber: BigInt!
+  "Get voucher from this particular input given the voucher's index"
+  voucher(index: Int!): Voucher!
+  "Get notice from this particular input given the notice's index"
+  notice(index: Int!): Notice!
+  "Get report from this particular input given report's index"
+  report(index: Int!): Report!
+  "Get vouchers from this particular input with support for pagination (filtering not implemented at the moment)"
+  vouchers(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: VoucherFilter
+  ): VoucherConnection!
+  "Get notices from this particular input with support for pagination (filtering not implemented at the moment)"
+  notices(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: NoticeFilter
+  ): NoticeConnection!
+  "Get reports from this particular input with support for pagination (filtering not implemented at the moment)"
+  reports(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: ReportFilter
+  ): ReportConnection!
+}
+
+"Representation of a transaction that can be carried out on the base layer blockchain, such as a transfer of assets"
+type Voucher {
+  "Voucher identifier"
+  id: ID!
+  "Voucher index within the context of the input that produced it"
+  index: Int!
+  "Input whose processing produced the notice"
+  input: Input!
+  "Proof object that allows this voucher to be validated and executed in the base layer blockchain"
+  proof: Proof
+  "Transaction destination address in Ethereum hex binary format (20 bytes), starting with '0x'"
+  destination: String!
+  "Transaction payload in Ethereum hex binary format, starting with '0x'"
+  payload: String!
+}
+
+"Top level queries"
+type Query {
+  "Get epoch based on its identifier"
+  epoch(id: ID!): Epoch!
+  "Get epoch based on its index"
+  epochI(index: Int!): Epoch!
+  "Get input based on its identifier"
+  input(id: ID!): Input!
+  "Get notice based on its identifier"
+  notice(id: ID!): Notice!
+  "Get report based on its identifier"
+  report(id: ID!): Report!
+  "Get voucher based on its identifier"
+  voucher(id: ID!): Voucher!
+  "Get epochs with support for pagination"
+  epochs(first: Int, last: Int, after: String, before: String): EpochConnection!
+  "Get inputs with support for pagination (filtering not implemented at the moment)"
+  inputs(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: InputFilter
+  ): InputConnection!
+  "Get vouchers with support for pagination (filtering not implemented at the moment)"
+  vouchers(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: VoucherFilter
+  ): VoucherConnection!
+  "Get notices with support for pagination (filtering not implemented at the moment)"
+  notices(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: NoticeFilter
+  ): NoticeConnection!
+  "Get reports with support for pagination (filtering not implemented at the moment)"
+  reports(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: ReportFilter
+  ): ReportConnection!
+}
+
+"Notice pagination entry"
+type NoticeEdge {
+  "Notice instance"
+  node: Notice!
+  "Pagination cursor"
+  cursor: String!
+}
+
+"Filter object to restrict results depending on notice properties (unused at the moment)"
+input NoticeFilter {
+  dummy: String!
+}
+
+"Represents the period of time for which a rollup claim is made, encapsulating a batch of inputs and its corresponding outputs"
+type Epoch {
+  "Epoch identifier"
+  id: ID!
+  "Epoch index"
+  index: Int!
+  "Get input from this particular epoch given the input's index"
+  input(index: Int!): Input!
+  "Get inputs from this particular epoch with support for pagination (filtering not implemented at the moment)"
+  inputs(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: InputFilter
+  ): InputConnection!
+  "Get vouchers from this particular epoch with support for pagination (filtering not implemented at the moment)"
+  vouchers(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: VoucherFilter
+  ): VoucherConnection!
+  "Get notices from this particular input with support for pagination (filtering not implemented at the moment)"
+  notices(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: NoticeFilter
+  ): NoticeConnection!
+  "Get reports from this particular epoch with support for pagination (filtering not implemented at the moment)"
+  reports(
+    first: Int
+    last: Int
+    after: String
+    before: String
+    where: ReportFilter
+  ): ReportConnection!
+}
+
+"Filter object to restrict results depending on voucher properties"
+input VoucherFilter {
+  "Filter only vouchers that target a specific destination address"
+  destination: String!
+}
+
+"Input pagination result"
+type InputConnection {
+  "Total number of entries that match the query"
+  totalCount: Int!
+  "Pagination entries returned for the current page"
+  edges: [InputEdge!]!
+  "Input instances returned for the current page"
+  nodes: [Input!]!
+  "Pagination metadata"
+  pageInfo: PageInfo!
+}
+
+"Filter object to restrict results depending on report properties (unused at the moment)"
+input ReportFilter {
+  dummy: String!
+}
+
+"Epoch pagination entry"
+type EpochEdge {
+  "Epoch instance"
+  node: Epoch!
+  "Pagination cursor"
+  cursor: String!
+}
+
+"Voucher pagination result"
+type VoucherConnection {
+  "Total number of entries that match the query"
+  totalCount: Int!
+  "Pagination entries returned for the current page"
+  edges: [VoucherEdge!]!
+  "Voucher instances returned for the current page"
+  nodes: [Voucher!]!
+  "Pagination metadata"
+  pageInfo: PageInfo!
+}
+
+"Informational statement that can be validated in the base layer blockchain"
+type Notice {
+  "Notice identifier"
+  id: ID!
+  "Notice index within the context of the input that produced it"
+  index: Int!
+  "Input whose processing produced the notice"
+  input: Input!
+  "Proof object that allows this notice to be validated in the base layer blockchain"
+  proof: Proof
+  "Keccak hash in Ethereum hex binary format, starting with '0x'"
+  keccak: String!
+  "Notice data as a payload in Ethereum hex binary format, starting with '0x'"
+  payload: String!
+}
+
+"Report pagination entry"
+type ReportEdge {
+  "Report instance"
+  node: Report!
+  "Pagination cursor"
+  cursor: String!
+}
+
+"Report pagination result"
+type ReportConnection {
+  "Total number of entries that match the query"
+  totalCount: Int!
+  "Pagination entries returned for the current page"
+  edges: [ReportEdge!]!
+  "Report instances returned for the current page"
+  nodes: [Report!]!
+  "Pagination metadata"
+  pageInfo: PageInfo!
+}
+
+"Filter object to restrict results depending on input properties"
+input InputFilter {
+  "Filter only inputs submitted by a specific address"
+  msgSender: String
+  "Filter only inputs recorded in a specific base layer block"
+  blockNumber: BigInt
+  "Filter only inputs recorded before a specific base layer block"
+  blockNumberLowerThan: BigInt
+  "Filter only inputs recorded after a specific base layer block"
+  blockNumberGreaterThan: BigInt
+  "Filter only inputs recorded before a specific timestamp, as defined by the base layer"
+  timestampLowerThan: BigInt
+  "Filter only inputs recorded after a specific timestamp, as defined by the base layer"
+  timestampGreaterThan: BigInt
+}
+
+scalar BigInt
+
+"Notice pagination result"
+type NoticeConnection {
+  "Total number of entries that match the query"
+  totalCount: Int!
+  "Pagination entries returned for the current page"
+  edges: [NoticeEdge!]!
+  "Notice instances returned for the current page"
+  nodes: [Notice!]!
+  "Pagination metadata"
+  pageInfo: PageInfo!
+}
+
+"Input pagination entry"
+type InputEdge {
+  "Input instance"
+  node: Input!
+  "Pagination cursor"
+  cursor: String!
+}
+
+"Page metadata for the cursor-based Connection pagination pattern"
+type PageInfo {
+  "Cursor pointing to the first entry of the page"
+  startCursor: String!
+  "Cursor pointing to the last entry of the page"
+  endCursor: String!
+  "Indicates if there are additional entries after the end cursor"
+  hasNextPage: Boolean!
+  "Indicates if there are additional entries before the start cursor"
+  hasPreviousPage: Boolean!
+}
+
+"Voucher pagination entry"
+type VoucherEdge {
+  "Voucher instance"
+  node: Voucher!
+  "Pagination cursor"
+  cursor: String!
+}
+
+"Application log or diagnostic information"
+type Report {
+  "Report identifier"
+  id: ID!
+  "Report index within the context of the input that produced it"
+  index: Int!
+  "Input whose processing produced the report"
+  input: Input!
+  "Report data as a payload in Ethereum hex binary format, starting with '0x'"
+  payload: String!
+}
+
+schema {
+  query: Query
+}

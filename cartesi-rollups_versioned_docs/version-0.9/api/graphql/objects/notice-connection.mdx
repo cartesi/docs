@@ -1,0 +1,43 @@
+---
+id: notice-connection
+title: NoticeConnection
+hide_table_of_contents: false
+---
+
+
+Notice pagination result
+
+```graphql
+type NoticeConnection {
+  totalCount: Int!
+  edges: [NoticeEdge!]!
+  nodes: [Notice!]!
+  pageInfo: PageInfo!
+}
+```
+
+
+### Fields
+
+#### [`totalCount`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+
+Total number of entries that match the query
+
+
+#### [`edges`](#) ([`[NoticeEdge!]!`](/cartesi-rollups/api/graphql/objects/notice-edge))
+
+Pagination entries returned for the current page
+
+
+#### [`nodes`](#) ([`[Notice!]!`](/cartesi-rollups/api/graphql/objects/notice))
+
+Notice instances returned for the current page
+
+
+#### [`pageInfo`](#) ([`PageInfo!`](/cartesi-rollups/api/graphql/objects/page-info))
+
+Pagination metadata
+
+
+
+

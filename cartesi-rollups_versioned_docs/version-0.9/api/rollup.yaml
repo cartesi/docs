@@ -1,0 +1,356 @@
+openapi: 3.0.0
+servers:
+  - url: https://<dapp_rollup_url>
+  - url: http://localhost:5005/rollup
+
+info:
+  title: Cartesi Rollup HTTP API
+  version: 0.4.0
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+  description: |
+    API that the Cartesi Rollup HTTP Server implements.
+
+    In the box below, there is an example of a DApp backend that uses the Rollup HTTP API.
+
+    ```
+    import requests
+    import sys
+
+    rollup = sys.argv[1]
+
+    def check_status_code(response):
+        if response.status_code not in range(200, 300):
+            print(f'Error: invalid status code {response.status_code}')
+            sys.exit(1)
+        return response
+
+    finish = {'status': 'accept'}
+    while True:
+        print('Sending finish')
+        r = check_status_code(requests.post(rollup + '/finish', json=finish))
+        if r.status_code == 202:
+            print('No pending rollup request, trying again')
+            continue
+
+        rollup_request = r.json()
+        if rollup_request['request_type'] == 'advance_state':
+            print('Sending voucher')
+            voucher = {
+                'address': rollup_request['data']['metadata']['msg_sender'],
+                'payload': rollup_request['data']['payload']
+            }
+            check_status_code(requests.post(rollup + '/voucher', json=voucher))
+
+            print('Sending notice')
+            notice = {'payload': rollup_request['data']['payload']}
+            check_status_code(requests.post(rollup + '/notice', json=notice))
+
+            print('Sending report')
+            report = {'payload': rollup_request['data']['payload']}
+            check_status_code(requests.post(rollup + '/report', json=report))
+
+            finish['status'] = 'accept'
+
+        elif rollup_request['request_type'] == 'inspect_state':
+            print('Sending report per inspect request')
+            report = {'payload': rollup_request['data']['payload']}
+            check_status_code(requests.post(rollup + '/report', json=report))
+
+        else:
+            print('Throwing rollup exception')
+            exception = {'payload': rollup_request['data']['payload']}
+            requests.post(rollup + '/exception', json=exception)
+            break
+    ```
+
+paths:
+  /finish:
+    post:
+      operationId: finish
+      summary: Finish and get next request
+      description: |
+        The DApp backend should call this method to start processing rollup requests.
+        The Rollup HTTP Server returns the next rollup request in the response body.
+
+        The possible values for the request_type field are 'advance_state' and 'inspect_state'.
+        The data field contains the rollup request input data.
+        For advance-state requests, the input data contains the advance-state metadata and the payload.
+        For inspect-state requests, the input data contains only the payload.
+
+        After processing an rollup request, the DApp-backend should call again the finish method.
+        For advance-state requests, depending on the result of the request processing, it should fill the status field of the request body with 'accept' or 'reject'.
+        The Rollup HTTP Server ignores the content of the status field for the first finish request and after an inspect-state request.
+
+        If the advance-state request is rejected, the vouchers and notices are discarded.
+        In contrast, reports are not discarded in case of reject.
+        When running inside a Cartesi machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.
+
+        During a finish call, the next rollup request might not be immediately available.
+        When the DApp backend and the Rollup HTTP Server are running inside a Cartesi machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.
+        When running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.
+        When the Rollup HTTP Server returns 202, the DApp backend should retry the call to finish passing the same arguments as before.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Finish"
+
+      responses:
+        "200":
+          description: Finish accepted and next rollup request returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RollupRequest"
+
+        "202":
+          description: Finish accepted but try again to obtain the next request.
+
+        default:
+          description: Error response.
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /voucher:
+    post:
+      operationId: addVoucher
+      summary: Add a new voucher
+      description: |
+        The DApp backend can call this method to add a new voucher when processing an advance-state request.
+        Vouchers are collateral effects actionable in the blockchain.
+        Between calls to the finish method, the voucher method can be called at least 32k times.
+
+        The returned value is the index of the voucher for the current advance-state request.
+        In other words, the index counting restarts at every request.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Voucher"
+
+      responses:
+        "200":
+          description: Created the voucher.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexResponse"
+
+        default:
+          description: Error response.
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /notice:
+    post:
+      operationId: addNotice
+      summary: Add a new notice
+      description: |
+        The DApp backend can call this method to add a new notice when processing advance-state request.
+        A notice describes any changes to the internal state of the DApp that may be relevant to the blockchain.
+        Between calls to the finish method, the notice method can be called at least 32k times.
+
+        The returned value is the index of the notice for the current advance request.
+        In other words, the index counting restarts at every request.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Notice"
+
+      responses:
+        "200":
+          description: Created the notice.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexResponse"
+
+        default:
+          description: Error response.
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /report:
+    post:
+      operationId: addReport
+      summary: Add a new report
+      description: |
+        The DApp can call this method to add a new report for the given rollup request.
+        A report can be a diagnostic or a log; reports are not discarded when a request is rejected.
+        Between calls to the finish method, the report method can be called any number of times.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Report"
+
+      responses:
+        "200":
+          description: Create the report.
+
+        default:
+          description: Error response.
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /exception:
+    post:
+      operationId: registerException
+      summary: Register an exception
+      description: |
+        The DApp should call this method when it cannot proceed with the request processing after an exception happens.
+        This method should be the last method ever called by the DApp backend, and it should not expect the call to return.
+        The Rollup HTTP Server will pass the exception info to the Cartesi Server Manager.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Exception"
+
+      responses:
+        "200":
+          description: Accepted the exception throw.
+
+        default:
+          description: Error response.
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Finish:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [accept, reject]
+          example: "accept"
+
+    RollupRequest:
+      type: object
+      properties:
+        request_type:
+          type: string
+          enum: [advance_state, inspect_state]
+          example: "advance_state"
+        data:
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/Advance"
+            - $ref: "#/components/schemas/Inspect"
+
+    Advance:
+      type: object
+      properties:
+        metadata:
+          $ref: "#/components/schemas/Metadata"
+        payload:
+          $ref: "#/components/schemas/Payload"
+
+    Metadata:
+      type: object
+      properties:
+        msg_sender:
+          $ref: "#/components/schemas/Address"
+        epoch_index:
+          $ref: "#/components/schemas/Id"
+        input_index:
+          $ref: "#/components/schemas/Id"
+        block_number:
+          $ref: "#/components/schemas/Id"
+        timestamp:
+          $ref: "#/components/schemas/Timestamp"
+
+    Address:
+      type: string
+      description: Ethereum address.
+      example: "0x1111111111111111111111111111111111111111"
+
+    Id:
+      type: integer
+      format: uint64
+      description: Identifier encoded as integer.
+      example: 123
+
+    Timestamp:
+      type: integer
+      format: uint64
+      description: Unix timestamp in milliseconds.
+      example: 1609459200000
+
+    Payload:
+      type: string
+      description: |
+        Payload in the Ethereum hex binary format.
+        The first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.
+        For instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.
+        An empty payload is represented by the string '0x'.
+      example: "0xdeadbeef"
+
+    Inspect:
+      type: object
+      properties:
+        payload:
+          $ref: "#/components/schemas/Payload"
+
+    Voucher:
+      type: object
+      properties:
+        address:
+          $ref: "#/components/schemas/Address"
+        payload:
+          $ref: "#/components/schemas/Payload"
+
+    Notice:
+      type: object
+      properties:
+        payload:
+          $ref: "#/components/schemas/Payload"
+
+    Report:
+      type: object
+      properties:
+        payload:
+          $ref: "#/components/schemas/Payload"
+
+    Exception:
+      type: object
+      properties:
+        payload:
+          $ref: "#/components/schemas/Payload"
+
+    IndexResponse:
+      type: object
+      properties:
+        index:
+          $ref: "#/components/schemas/Index"
+
+    Index:
+      type: integer
+      format: uint64
+      description: Position in the Merkle tree.
+      example: 123
+
+    Error:
+      type: string
+      description: Detailed error message.
+      example: "The request could not be understood by the server due to malformed syntax"

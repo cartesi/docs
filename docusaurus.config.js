@@ -199,6 +199,20 @@ const config = {
       },*/
     }),
   plugins: [
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "cartesi-rollups",
+        path: "cartesi-rollups",
+        routeBasePath: "cartesi-rollups",
+        sidebarPath: require.resolve("./sidebarsRollups.js"),
+        versions: {
+          current: {
+            label: "0.8",
+          },
+        },
+      },
+    ],
     "docusaurus-plugin-hotjar",
     async function AddTailwindCss(context, options) {
       return {
@@ -225,15 +239,15 @@ const config = {
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath: "docs/cartesi-rollups/api/rollup.yaml", // Path to designated spec file
-            outputDir: "docs/cartesi-rollups/api/rollup", // Output directory for generated .mdx docs
+            specPath: "cartesi-rollups/api/rollup.yaml", // Path to designated spec file
+            outputDir: "cartesi-rollups/api/rollup", // Output directory for generated .mdx docs
             sidebarOptions: {
               groupPathsBy: "tag",
             },
           },
           frontEndApi: {
-            specPath: "docs/cartesi-rollups/api/inspect.yaml",
-            outputDir: "docs/cartesi-rollups/api/inspect",
+            specPath: "cartesi-rollups/api/inspect.yaml",
+            outputDir: "cartesi-rollups/api/inspect",
           },
         },
       },
@@ -242,8 +256,8 @@ const config = {
     [
       "@edno/docusaurus2-graphql-doc-generator",
       {
-        schema: "docs/cartesi-rollups/api/typeDefs.graphql",
-        rootPath: "./docs", // docs will be generated under './docs/swapi' (rootPath/baseURL)
+        schema: "cartesi-rollups/api/typeDefs.graphql",
+        rootPath: "./cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
         baseURL: "cartesi-rollups/api/graphql",
       },
     ],

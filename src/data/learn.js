@@ -5,23 +5,23 @@ export const learn = [
     links: [
       {
         label: "Step 1: Installing",
-        href: "/build-dapps/requirements",
+        href: "/cartesi-rollups/build-dapps/requirements",
       },
       {
         label: "Step 2: Building",
-        href: "/build-dapps/run-dapp#building",
+        href: "/cartesi-rollups/build-dapps/run-dapp#building",
       },
       {
         label: "Step 3: Running",
-        href: "/build-dapps/run-dapp#running",
+        href: "/cartesi-rollups/build-dapps/run-dapp#running",
       },
       {
         label: "Step 4: Interacting",
-        href: "/build-dapps/run-dapp#interacting-with-the-dapp",
+        href: "/cartesi-rollups/build-dapps/run-dapp#interacting-with-the-dapp",
       },
       {
         label: "Step 5: Deploying",
-        href: "/build-dapps/deploying-dapps",
+        href: "/cartesi-rollups/build-dapps/deploying-dapps",
       },
     ],
   },
@@ -80,15 +80,15 @@ export const learn = [
       },
       {
         label: "Install technical prerequisites",
-        href: "/build-dapps/requirements",
+        href: "/cartesi-rollups/build-dapps/requirements",
       },
       {
         label: "Quick start to run an existing DApp",
-        href: "/build-dapps/run-dapp",
+        href: "/cartesi-rollups/build-dapps/run-dapp",
       },
       {
         label: "Create your first DApp",
-        href: "/build-dapps/create-dapp",
+        href: "/cartesi-rollups/build-dapps/create-dapp",
       },
       {
         label: "Run your DApp off-chain",
