@@ -26,4 +26,4 @@ First, you need to have [Metamask installed](https://metamask.io/download/) or o
 ## Unstaking
 
 Whenever you decide, you can unstake a specific amount of your tokens or all of them and withdraw the tokens back to your wallet. You just need to navigate to the particular pool page and click on the button **Unstake**:
-![img](stakeAmount.png)
+![img](unstake.png)
