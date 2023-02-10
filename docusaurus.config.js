@@ -31,6 +31,7 @@ const config = {
           remarkPlugins: [replacementPlugin],
           docLayoutComponent: "@theme/DocPage",
           docItemComponent: "@theme/ApiItem",
+          includeCurrentVersion: true,
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -206,9 +207,10 @@ const config = {
         path: "cartesi-rollups",
         routeBasePath: "cartesi-rollups",
         sidebarPath: require.resolve("./sidebarsRollups.js"),
+        editUrl: "https://github.com/cartesi/docs/tree/develop",
         versions: {
           current: {
-            label: "0.8",
+            label: "0.9 🚧",
           },
         },
       },
