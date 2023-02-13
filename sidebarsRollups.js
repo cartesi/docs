@@ -143,5 +143,38 @@ module.exports = {
           "build-dapps/dapp-host-mode",
         ],
       },
+
+      {
+      type: "category",
+      label: "References",
+      link: {
+        type: "generated-index",
+        slug: "/references",
+      },
+      collapsed: true,
+      items: [
+      {
+        type: "link",
+        label: "Code samples",
+        href: "https://github.com/cartesi/rollups-examples",
+      },
+      {
+        type: "link",
+        label: "Deployment samples",
+        href: "https://github.com/cartesi/rollups-deployment",
+      },
+      {
+        type: "link",
+        label: "Changelog",
+        href: "https://github.com/cartesi/rollups/blob/main/CHANGELOG.md",
+      },
+      {
+        type: "link",
+        label: "Releases",
+        href: "https://github.com/cartesi/rollups/releases",
+      },
+      ],
+    },
     ]
+
   };
