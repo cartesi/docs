@@ -42,8 +42,29 @@ module.exports = {
                       slug: "api/json-rpc",
                     },
                     collapsed: true,
-                    items: ["api/json-rpc/sol-input", "api/json-rpc/sol-output"],
+                    items: [
+                    "api/json-rpc/sol-input",
+                    "api/json-rpc/sol-output",
+                    {
+                      type: "category",
+                      label: "Portals",
+                      link: {
+                        type: "generated-index",
+                        slug: "api/json-rpc/portals",
+                      },
+                      collapsed: true,
+                      items: [
+                    "api/json-rpc/portals/ERC20Portal",
+                    "api/json-rpc/portals/ERC721Portal",
+                    "api/json-rpc/portals/EtherPortal",
+                    "api/json-rpc/portals/IERC20Portal",
+                    "api/json-rpc/portals/IERC721Portal",
+                    "api/json-rpc/portals/IEtherPortal",
+                    "api/json-rpc/portals/IPortal"
+                  ],
                   },
+                ],
+              },
                   {
                     type: "category",
                     label: "Rollups state GraphQL API",
