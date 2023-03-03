@@ -67,8 +67,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Report'
-        metadata:
-          $ref: '#/components/schemas/InspectMetadata'
+        processed_input_count:
+          type: integer
+          description: Number of processed inputs since genesis
+          example: 0
 
     CompletionStatus:
       type: string
@@ -82,18 +84,6 @@ components:
         TimeLimitExceeded,
       ]
       example: 'Accepted'
-
-    InspectMetadata:
-      type: object
-      description: Contain the blockchain Metadata for the given inspect request
-      properties:
-        active_epoch_index:
-          type: integer
-          description: Epoch that was inspected
-          example: 0
-        current_input_index:
-          type: integer
-          description: Current input index when the state was inspected
 
     Payload:
       type: string
