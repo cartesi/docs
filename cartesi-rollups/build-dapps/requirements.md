@@ -76,7 +76,7 @@ It is recommended that the installed Docker version be at least `20.10.14` in or
 To install Node.js, follow [the official instructions](https://nodejs.org/en/download/). Specifically for Ubuntu, you can perform the steps below:
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
