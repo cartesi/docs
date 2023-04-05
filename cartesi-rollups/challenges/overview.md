@@ -37,7 +37,7 @@ Our team has recognized this limitation and has already begun developing dispute
 
 ### Challenge
 
-The current Cartesi Machine does not support obtaining large data (from logger or IPFS), limiting DApps based on Cartesi Rollups to rely solely on on-chain data.
+The current Cartesi Machine does not support very large data inputs (e.g., from IPFS), limiting DApps based on Cartesi Rollups to rely solely on on-chain data.
 
 ### Solution strategy
 
