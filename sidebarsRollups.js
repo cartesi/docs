@@ -159,6 +159,8 @@ module.exports = {
           "build-dapps/run-dapp",
           "build-dapps/create-dapp",
           "build-dapps/dapp-host-mode",
+          "build-dapps/deploying-dapps",
+          "build-dapps/guidelines",
         ],
       },
 
