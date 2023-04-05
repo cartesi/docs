@@ -41,7 +41,11 @@ The current Cartesi Machine does not support very large data inputs (e.g., from 
 
 ### Solution strategy
 
-We are currently researching methods to expand the Cartesi Machine's capabilities.
+We are currently researching methods to expand the Cartesi Machine's capabilities, taking into account recent improvements and potential new features. First of all, users can already benefit from advancements in the Ethereum ecosystem, such as EIP-4844 (dunksharding), which makes on-chain data more affordable. Additionally, users can deploy Cartesi as a Layer-3 solution on top of other Layer-2 rollup solutions to enjoy the benefits of cheaper data.
+
+Another useful feature we're considering is a convenience layer to help front-end clients divide large pieces of data into smaller chunks and reassemble them within the back-end. This approach would be similar to the *Logger* feature used in Cartesi Compute.
+
+Lastly, we're exploring other possible solutions for the future, including integrating Rollups with external Data Availability solutions such as zkPorter and implementing a Data Availability Committee solution for quorum-based validator sets.
 
 ## Composability
 
