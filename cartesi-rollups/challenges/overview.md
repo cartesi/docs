@@ -21,7 +21,7 @@ In contrast to the majority of proposed Layer 2 rollup solutions, which primaril
 
 ### Solution strategy
 
-Achieving transaction scalability is directly related to the implementation of *Aggregator*. This key component will streamline the process, enhancing the overall efficiency and capacity of our rollup solution.
+Achieving transaction scalability is directly related to the implementation of an *Aggregator*, which is often associated with a Sequencer. This key component will streamline the process, enhancing the overall efficiency and capacity of our rollup solution.
 
 ## Disputes
 
