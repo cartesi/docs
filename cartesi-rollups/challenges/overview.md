@@ -17,7 +17,7 @@ Cartesi Rollups are an innovative and dynamic product that constantly evolves to
 
 ### Challenge
 
-In contrast to the majority of rollups, which primarily focus on enhancing transaction throughput and minimizing fees (essentially facilitating more transactions at a lower cost), our current **0.9** release is dedicated to expanding computational capacity within the rollup framework, ensuring more efficient and optimized performance.
+In contrast to the majority of proposed Layer 2 rollup solutions, which primarily focus on enhancing transaction throughput and minimizing fees (essentially facilitating more transactions at a lower cost), our current **0.9** release is dedicated to expanding the computational capacity to allow the creation of decentralized applications that were simply not possible to build before.
 
 ### Solution strategy
 
