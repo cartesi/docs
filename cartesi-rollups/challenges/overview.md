@@ -71,7 +71,7 @@ After developing a few example applications internally, we believe it is clear t
 
 ### Challenge
 
-The current **0.9** release does not currently account for the evolution of our solution or the DApps built on it. This includes the ability to modify smart contract behaviors related to validator operations, dispute strategies, and other aspects. Additionally, the The current **0.9** release does not consider the possibility of updating the code running inside the Cartesi Machine or establishing a clear governance model to manage upgradability decisions.
+The current **0.9** release incorporates mechanisms that account for the evolution of our solution and the DApps built on it, including the ability to modify smart contract behaviors related to validator operations, dispute strategies, and other aspects. However, the existing mechanisms may not be as convenient as they could be for developers. Although it is possible to make changes, such as modifying validator operations and dispute strategies, the process might currently be more complex than desired for day-to-day developers and the general audience. 
 
 ### Solution strategy
 
