@@ -31,7 +31,7 @@ The initial **0.9** release lacks support for dispute resolution.
 
 ### Solution strategy
 
-Our team has strategically planned for the development of dispute resolution features from the beginning. We have successfully built dispute resolution for Compute, and it was deliberately left out of the initial releases to streamline the complexity. Furthermore, we wanted to incorporate it after making other improvements and research, such as the Microarchitecture enhancement (completed) and the more recent research on NxN dispute resolution.
+Our team has strategically planned for the development of dispute resolution features from the beginning. We have successfully built dispute resolution for Compute, and it was deliberately left out of the initial releases to streamline the complexity. Furthermore, we wanted to incorporate it after making other improvements and research, such as the Microarchitecture enhancement (completed) and the more recent [research on NxN dispute resolution](https://arxiv.org/abs/2212.12439).
 
 ## Large data as input
 
