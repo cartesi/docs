@@ -12,11 +12,11 @@ A number of [top-level queries](../queries) are available in order to retrieve r
 
 In GraphQL, submitting a query involves defining parameters for filtering the entries to retrieve, and also specifying the data fields of interest, which can span any objects linked to the entry being retrieved.
 
-As an example, to retrieve a specific [notice](./objects/notice.mdx) given its index, one could specify the following query:
+As an example, to retrieve a specific [input](./objects/input.mdx) given its index, one could specify the following query:
 
 ```
 {
-  noticeI(
+  input(
     index: 0
   ) {
     id
@@ -27,7 +27,7 @@ As an example, to retrieve a specific [notice](./objects/notice.mdx) given its i
 This query can be submitted as an HTTP POST request, specifying the Content-Type as `application/json`. For instance, using `curl` you could submit it as follows:
 
 ```
-curl 'https://<graphql_url>' -H 'Content-Type: application/json' -d '{"query":"{ noticeI(index:0) {id} }"}'
+curl 'https://<graphql_url>' -H 'Content-Type: application/json' -d '{"query":"{ input(index:0) {id} }"}'
 ```
 
 The response of which would be something like this:
@@ -35,18 +35,18 @@ The response of which would be something like this:
 ```
 {
   "data": {
-    "noticeI": {
+    "input": {
       "id": "1"
     }
   }
 }
 ```
 
-In this simple example, only the notice's identifier is retrieved. However, linked information from the notice's inputs can be retrieved as well. For example, the following query would retrieve the identifiers and timestamps of each input submitted for that notice:
+In this simple example, only the input's identifier is retrieved. However, linked information from the input's inputs can be retrieved as well. For example, the following query would retrieve the identifiers and timestamps of each input submitted for that input:
 
 ```
 {
-  noticeI(
+  input(
     index: 0
   ) {
     inputs {
