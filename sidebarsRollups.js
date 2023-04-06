@@ -177,7 +177,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Rollups evolution",
+      label: "Future Developments",
       link: {
         type: "generated-index",
         slug: "/challenges",
