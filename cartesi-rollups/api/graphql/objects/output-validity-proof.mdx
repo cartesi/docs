@@ -23,41 +23,41 @@ type OutputValidityProof {
 
 ### Fields
 
-#### [`inputIndex`](#) ([`Int!`](/api/graphql/scalars/int))
+#### [`inputIndex`](#) ([`Int!`](/cartesi-rollups/next/api/graphql/scalars/int))
 
 Local input index within the context of the related epoch
 
 
-#### [`outputIndex`](#) ([`Int!`](/api/graphql/scalars/int))
+#### [`outputIndex`](#) ([`Int!`](/cartesi-rollups/next/api/graphql/scalars/int))
 
 Output index within the context of the input that produced it
 
 
-#### [`outputHashesRootHash`](#) ([`String!`](/api/graphql/scalars/string))
+#### [`outputHashesRootHash`](#) ([`String!`](/cartesi-rollups/next/api/graphql/scalars/string))
 
 Merkle root of all output metadata hashes of the related input, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`vouchersEpochRootHash`](#) ([`String!`](/api/graphql/scalars/string))
+#### [`vouchersEpochRootHash`](#) ([`String!`](/cartesi-rollups/next/api/graphql/scalars/string))
 
 Merkle root of all voucher metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`noticesEpochRootHash`](#) ([`String!`](/api/graphql/scalars/string))
+#### [`noticesEpochRootHash`](#) ([`String!`](/cartesi-rollups/next/api/graphql/scalars/string))
 
 Merkle root of all notice metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`machineStateHash`](#) ([`String!`](/api/graphql/scalars/string))
+#### [`machineStateHash`](#) ([`String!`](/cartesi-rollups/next/api/graphql/scalars/string))
 
 Hash of the machine state claimed for the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`keccakInHashesSiblings`](#) ([`[String!]!`](/api/graphql/scalars/string))
+#### [`keccakInHashesSiblings`](#) ([`[String!]!`](/cartesi-rollups/next/api/graphql/scalars/string))
 
 Array of hashes representing a proof that this output metadata is in the metadata memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`outputHashesInEpochSiblings`](#) ([`[String!]!`](/api/graphql/scalars/string))
+#### [`outputHashesInEpochSiblings`](#) ([`[String!]!`](/cartesi-rollups/next/api/graphql/scalars/string))
 
 Array of hashes representing a proof that this output metadata is in the epoch's output memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'

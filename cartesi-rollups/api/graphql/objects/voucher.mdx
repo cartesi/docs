@@ -20,27 +20,27 @@ type Voucher {
 
 ### Fields
 
-#### [`index`](#) ([`Int!`](/api/graphql/scalars/int))
+#### [`index`](#) ([`Int!`](/cartesi-rollups/next/api/graphql/scalars/int))
 
 Voucher index within the context of the input that produced it
 
 
-#### [`input`](#) ([`Input!`](/api/graphql/objects/input))
+#### [`input`](#) ([`Input!`](cartesi-rollups/next/api/graphql/objects/input))
 
 Input whose processing produced the voucher
 
 
-#### [`destination`](#) ([`String!`](/api/graphql/scalars/string))
+#### [`destination`](#) ([`String!`](/cartesi-rollups/next/api/graphql/scalars/string))
 
 Transaction destination address in Ethereum hex binary format (20 bytes), starting with '0x'
 
 
-#### [`payload`](#) ([`String!`](/api/graphql/scalars/string))
+#### [`payload`](#) ([`String!`](/cartesi-rollups/next/api/graphql/scalars/string))
 
 Transaction payload in Ethereum hex binary format, starting with '0x'
 
 
-#### [`proof`](#) ([`Proof`](/api/graphql/objects/proof))
+#### [`proof`](#) ([`Proof`](cartesi-rollups/next/api/graphql/objects/proof))
 
 Proof object that allows this voucher to be validated and executed on the base layer blockchain
 
