@@ -5,13 +5,12 @@ hide_table_of_contents: false
 ---
 
 
-Report pagination result
+Pagination result
 
 ```graphql
 type ReportConnection {
   totalCount: Int!
   edges: [ReportEdge!]!
-  nodes: [Report!]!
   pageInfo: PageInfo!
 }
 ```
@@ -19,22 +18,17 @@ type ReportConnection {
 
 ### Fields
 
-#### [`totalCount`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+#### [`totalCount`](#) ([`Int!`](/api/graphql/scalars/int))
 
 Total number of entries that match the query
 
 
-#### [`edges`](#) ([`[ReportEdge!]!`](/cartesi-rollups/api/graphql/objects/report-edge))
+#### [`edges`](#) ([`[ReportEdge!]!`](/api/graphql/objects/report-edge))
 
 Pagination entries returned for the current page
 
 
-#### [`nodes`](#) ([`[Report!]!`](/cartesi-rollups/api/graphql/objects/report))
-
-Report instances returned for the current page
-
-
-#### [`pageInfo`](#) ([`PageInfo!`](/cartesi-rollups/api/graphql/objects/page-info))
+#### [`pageInfo`](#) ([`PageInfo!`](/api/graphql/objects/page-info))
 
 Pagination metadata
 

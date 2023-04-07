@@ -9,46 +9,22 @@ Data that can be used as proof to validate notices and execute vouchers on the b
 
 ```graphql
 type Proof {
-  outputHashesRootHash: String!
-  vouchersEpochRootHash: String!
-  noticesEpochRootHash: String!
-  machineStateHash: String!
-  keccakInHashesSiblings: [String!]!
-  outputHashesInEpochSiblings: [String!]!
+  validity: OutputValidityProof!
+  context: String!
 }
 ```
 
 
 ### Fields
 
-#### [`outputHashesRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`validity`](#) ([`OutputValidityProof!`](/api/graphql/objects/output-validity-proof))
 
-Merkle root of all output metadata hashes of the related input, given in Ethereum hex binary format (32 bytes), starting with '0x'
-
-
-#### [`vouchersEpochRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
-
-Merkle root of all voucher metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
+Validity proof for an output
 
 
-#### [`noticesEpochRootHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`context`](#) ([`String!`](/api/graphql/scalars/string))
 
-Merkle root of all notice metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
-
-
-#### [`machineStateHash`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
-
-Hash of the machine state claimed for the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
-
-
-#### [`keccakInHashesSiblings`](#) ([`[String!]!`](/cartesi-rollups/api/graphql/scalars/string))
-
-Array of hashes representing a proof that this output metadata is in the metadata memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'
-
-
-#### [`outputHashesInEpochSiblings`](#) ([`[String!]!`](/cartesi-rollups/api/graphql/scalars/string))
-
-Array of hashes representing a proof that this output metadata is in the epoch's output memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'
+Data that allows the validity proof to be contextualized within submitted claims, given as a payload in Ethereum hex binary format, starting with '0x'
 
 
 

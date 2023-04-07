@@ -9,12 +9,11 @@ Request submitted to the application to advance its state
 
 ```graphql
 type Input {
-  id: ID!
   index: Int!
-  epoch: Epoch!
   msgSender: String!
   timestamp: BigInt!
   blockNumber: BigInt!
+  payload: String!
   voucher(
   index: Int!
 ): Voucher!
@@ -29,21 +28,18 @@ type Input {
   last: Int
   after: String
   before: String
-  where: VoucherFilter
 ): VoucherConnection!
   notices(
   first: Int
   last: Int
   after: String
   before: String
-  where: NoticeFilter
 ): NoticeConnection!
   reports(
   first: Int
   last: Int
   after: String
   before: String
-  where: ReportFilter
 ): ReportConnection!
 }
 ```
@@ -51,140 +47,120 @@ type Input {
 
 ### Fields
 
-#### [`id`](#) ([`ID!`](/cartesi-rollups/api/graphql/scalars/id))
+#### [`index`](#) ([`Int!`](/api/graphql/scalars/int))
 
-Input identifier
-
-
-#### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
-
-Input index within its containing epoch
+Input index starting from genesis
 
 
-#### [`epoch`](#) ([`Epoch!`](/cartesi-rollups/api/graphql/objects/epoch))
-
-Epoch in which the input is contained
-
-
-#### [`msgSender`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`msgSender`](#) ([`String!`](/api/graphql/scalars/string))
 
 Address responsible for submitting the input
 
 
-#### [`timestamp`](#) ([`BigInt!`](/cartesi-rollups/api/graphql/scalars/big-int))
+#### [`timestamp`](#) ([`BigInt!`](/api/graphql/scalars/big-int))
 
 Timestamp associated with the input submission, as defined by the base layer's block in which it was recorded
 
 
-#### [`blockNumber`](#) ([`BigInt!`](/cartesi-rollups/api/graphql/scalars/big-int))
+#### [`blockNumber`](#) ([`BigInt!`](/api/graphql/scalars/big-int))
 
 Number of the base layer block in which the input was recorded
 
 
-#### [`voucher`](#) ([`Voucher!`](/cartesi-rollups/api/graphql/objects/voucher))
+#### [`payload`](#) ([`String!`](/api/graphql/scalars/string))
+
+Input payload in Ethereum hex binary format, starting with '0x'
+
+
+#### [`voucher`](#) ([`Voucher!`](/api/graphql/objects/voucher))
 
 Get voucher from this particular input given the voucher's index
-- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`index`](#) ([`Int!`](/api/graphql/scalars/int))
 
 
 
 
-#### [`notice`](#) ([`Notice!`](/cartesi-rollups/api/graphql/objects/notice))
+#### [`notice`](#) ([`Notice!`](/api/graphql/objects/notice))
 
 Get notice from this particular input given the notice's index
-- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`index`](#) ([`Int!`](/api/graphql/scalars/int))
 
 
 
 
-#### [`report`](#) ([`Report!`](/cartesi-rollups/api/graphql/objects/report))
+#### [`report`](#) ([`Report!`](/api/graphql/objects/report))
 
-Get report from this particular input given report's index
-- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+Get report from this particular input given the report's index
+- ##### [`index`](#) ([`Int!`](/api/graphql/scalars/int))
 
 
 
 
-#### [`vouchers`](#) ([`VoucherConnection!`](/cartesi-rollups/api/graphql/objects/voucher-connection))
+#### [`vouchers`](#) ([`VoucherConnection!`](/api/graphql/objects/voucher-connection))
 
-Get vouchers from this particular input with support for pagination (filtering not implemented at the moment)
-- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+Get vouchers from this particular input with support for pagination
+- ##### [`first`](#) ([`Int`](/api/graphql/scalars/int))
 
 
 
 
-- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`last`](#) ([`Int`](/api/graphql/scalars/int))
 
 
 
 
-- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`after`](#) ([`String`](/api/graphql/scalars/string))
 
 
 
 
-- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`before`](#) ([`String`](/api/graphql/scalars/string))
 
 
 
 
-- ##### [`where`](#) ([`VoucherFilter`](/cartesi-rollups/api/graphql/inputs/voucher-filter))
+#### [`notices`](#) ([`NoticeConnection!`](/api/graphql/objects/notice-connection))
 
+Get notices from this particular input with support for pagination
+- ##### [`first`](#) ([`Int`](/api/graphql/scalars/int))
 
 
 
-#### [`notices`](#) ([`NoticeConnection!`](/cartesi-rollups/api/graphql/objects/notice-connection))
 
-Get notices from this particular input with support for pagination (filtering not implemented at the moment)
-- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`last`](#) ([`Int`](/api/graphql/scalars/int))
 
 
 
 
-- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`after`](#) ([`String`](/api/graphql/scalars/string))
 
 
 
 
-- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`before`](#) ([`String`](/api/graphql/scalars/string))
 
 
 
 
-- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`reports`](#) ([`ReportConnection!`](/api/graphql/objects/report-connection))
 
+Get reports from this particular input with support for pagination
+- ##### [`first`](#) ([`Int`](/api/graphql/scalars/int))
 
 
 
-- ##### [`where`](#) ([`NoticeFilter`](/cartesi-rollups/api/graphql/inputs/notice-filter))
 
+- ##### [`last`](#) ([`Int`](/api/graphql/scalars/int))
 
 
 
-#### [`reports`](#) ([`ReportConnection!`](/cartesi-rollups/api/graphql/objects/report-connection))
 
-Get reports from this particular input with support for pagination (filtering not implemented at the moment)
-- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`after`](#) ([`String`](/api/graphql/scalars/string))
 
 
 
 
-- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
-
-
-
-
-- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
-
-
-
-
-- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
-
-
-
-
-- ##### [`where`](#) ([`ReportFilter`](/cartesi-rollups/api/graphql/inputs/report-filter))
+- ##### [`before`](#) ([`String`](/api/graphql/scalars/string))
 
 
 

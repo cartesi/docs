@@ -9,8 +9,8 @@ Page metadata for the cursor-based Connection pagination pattern
 
 ```graphql
 type PageInfo {
-  startCursor: String!
-  endCursor: String!
+  startCursor: String
+  endCursor: String
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
 }
@@ -19,24 +19,24 @@ type PageInfo {
 
 ### Fields
 
-#### [`startCursor`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`startCursor`](#) ([`String`](/api/graphql/scalars/string))
 
 Cursor pointing to the first entry of the page
 
 
-#### [`endCursor`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`endCursor`](#) ([`String`](/api/graphql/scalars/string))
 
 Cursor pointing to the last entry of the page
 
 
-#### [`hasNextPage`](#) ([`Boolean!`](/cartesi-rollups/api/graphql/scalars/boolean))
+#### [`hasNextPage`](#) ([`Boolean!`](/api/graphql/scalars/boolean))
 
-Indicates if there are additional entries after the end cursor
+Indicates if there are additional entries after the end curs
 
 
-#### [`hasPreviousPage`](#) ([`Boolean!`](/cartesi-rollups/api/graphql/scalars/boolean))
+#### [`hasPreviousPage`](#) ([`Boolean!`](/api/graphql/scalars/boolean))
 
-Indicates if there are additional entries before the start cursor
+Indicates if there are additional entries before the start curs
 
 
 

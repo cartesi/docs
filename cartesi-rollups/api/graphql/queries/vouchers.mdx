@@ -5,7 +5,7 @@ hide_table_of_contents: false
 ---
 
 
-Get vouchers with support for pagination (filtering not implemented at the moment)
+Get vouchers with support for pagination
 
 ```graphql
 vouchers(
@@ -13,43 +13,37 @@ vouchers(
   last: Int
   after: String
   before: String
-  where: VoucherFilter
 ): VoucherConnection!
 ```
 
 
 ### Arguments
 
-#### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+#### [`first`](#) ([`Int`](/api/graphql/scalars/int))
 
 
 
 
-#### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+#### [`last`](#) ([`Int`](/api/graphql/scalars/int))
 
 
 
 
-#### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`after`](#) ([`String`](/api/graphql/scalars/string))
 
 
 
 
-#### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
-
-
-
-
-#### [`where`](#) ([`VoucherFilter`](/cartesi-rollups/api/graphql/inputs/voucher-filter))
+#### [`before`](#) ([`String`](/api/graphql/scalars/string))
 
 
 
 
 ### Type
 
-#### [`VoucherConnection`](/cartesi-rollups/api/graphql/objects/voucher-connection)
+#### [`VoucherConnection`](/api/graphql/objects/voucher-connection)
 
-Voucher pagination result
+Pagination result
 
 
 

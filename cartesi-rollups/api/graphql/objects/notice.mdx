@@ -9,46 +9,34 @@ Informational statement that can be validated in the base layer blockchain
 
 ```graphql
 type Notice {
-  id: ID!
   index: Int!
   input: Input!
-  proof: Proof
-  keccak: String!
   payload: String!
+  proof: Proof
 }
 ```
 
 
 ### Fields
 
-#### [`id`](#) ([`ID!`](/cartesi-rollups/api/graphql/scalars/id))
-
-Notice identifier
-
-
-#### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+#### [`index`](#) ([`Int!`](/api/graphql/scalars/int))
 
 Notice index within the context of the input that produced it
 
 
-#### [`input`](#) ([`Input!`](/cartesi-rollups/api/graphql/objects/input))
+#### [`input`](#) ([`Input!`](/api/graphql/objects/input))
 
 Input whose processing produced the notice
 
 
-#### [`proof`](#) ([`Proof`](/cartesi-rollups/api/graphql/objects/proof))
-
-Proof object that allows this notice to be validated in the base layer blockchain
-
-
-#### [`keccak`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
-
-Keccak hash in Ethereum hex binary format, starting with '0x'
-
-
-#### [`payload`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`payload`](#) ([`String!`](/api/graphql/scalars/string))
 
 Notice data as a payload in Ethereum hex binary format, starting with '0x'
+
+
+#### [`proof`](#) ([`Proof`](/api/graphql/objects/proof))
+
+Proof object that allows this notice to be validated by the base layer blockchain
 
 
 

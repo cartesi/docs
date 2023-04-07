@@ -259,8 +259,8 @@ const config = {
       "@edno/docusaurus2-graphql-doc-generator",
       {
         schema: "cartesi-rollups/api/typeDefs.graphql",
-        rootPath: "./cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
-        baseURL: "cartesi-rollups/api/graphql",
+        rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
+        baseURL: "api/graphql",
       },
     ],
   ],

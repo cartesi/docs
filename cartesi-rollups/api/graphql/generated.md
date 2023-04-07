@@ -1,6 +1,6 @@
 ---
 id: schema
-slug: /cartesi-rollups/api/graphql
+slug: /api/graphql
 title: Schema Documentation
 sidebar_position: 1
 hide_table_of_contents: true
@@ -16,4 +16,4 @@ Use the docs in the sidebar to find out how to use the schema:
 - **Allowed operations**: queries and mutations.
 - **Schema-defined types**: scalars, objects, enums, interfaces, unions, and input objects.
 
-<small><i>Generated on 10/24/2022, 6:26:52 PM.</i></small>
+<small><i>Generated on 4/7/2023, 2:43:56 PM.</i></small>

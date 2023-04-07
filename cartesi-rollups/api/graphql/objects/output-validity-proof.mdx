@@ -1,0 +1,63 @@
+---
+id: output-validity-proof
+title: OutputValidityProof
+hide_table_of_contents: false
+---
+
+
+Validity proof for an output
+
+```graphql
+type OutputValidityProof {
+  inputIndex: Int!
+  outputIndex: Int!
+  outputHashesRootHash: String!
+  vouchersEpochRootHash: String!
+  noticesEpochRootHash: String!
+  machineStateHash: String!
+  keccakInHashesSiblings: [String!]!
+  outputHashesInEpochSiblings: [String!]!
+}
+```
+
+
+### Fields
+
+#### [`inputIndex`](#) ([`Int!`](/api/graphql/scalars/int))
+
+Local input index within the context of the related epoch
+
+
+#### [`outputIndex`](#) ([`Int!`](/api/graphql/scalars/int))
+
+Output index within the context of the input that produced it
+
+
+#### [`outputHashesRootHash`](#) ([`String!`](/api/graphql/scalars/string))
+
+Merkle root of all output metadata hashes of the related input, given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`vouchersEpochRootHash`](#) ([`String!`](/api/graphql/scalars/string))
+
+Merkle root of all voucher metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`noticesEpochRootHash`](#) ([`String!`](/api/graphql/scalars/string))
+
+Merkle root of all notice metadata hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`machineStateHash`](#) ([`String!`](/api/graphql/scalars/string))
+
+Hash of the machine state claimed for the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`keccakInHashesSiblings`](#) ([`[String!]!`](/api/graphql/scalars/string))
+
+Array of hashes representing a proof that this output metadata is in the metadata memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'
+
+
+#### [`outputHashesInEpochSiblings`](#) ([`[String!]!`](/api/graphql/scalars/string))
+
+Array of hashes representing a proof that this output metadata is in the epoch's output memory range, where each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'
