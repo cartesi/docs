@@ -4,7 +4,7 @@ title: Current challenges
 tags: [build, quickstart, developer, dapps]
 ---
 
-Cartesi Rollups are an innovative and dynamic product that constantly evolves to meet the needs of our users. As we strive for excellence, we recognize that there may be ongoing challenges that need to be addressed. On this page, you'll find a comprehensive list of these challenges, along with the strategies and solutions we're working on to overcome them.
+Cartesi Rollups are a constantly evolving solution, shaped by the collaborative efforts of our contributors and community. As we continuously work together to build something amazing, we acknowledge the ongoing challenges that need attention. On this page, you’ll discover a compilation of these challenges, along with the strategies and solutions that we are developing to address them.
 
 - [Transaction scalability](#transaction-scalability)
 - [Disputes](#disputes)
