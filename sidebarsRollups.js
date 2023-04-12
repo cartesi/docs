@@ -56,9 +56,13 @@ module.exports = {
                       items: [
                     "api/json-rpc/portals/ERC20Portal",
                     "api/json-rpc/portals/ERC721Portal",
+                    "api/json-rpc/portals/ERC1155BatchPortal",
+                    "api/json-rpc/portals/ERC1155SinglePortal",
                     "api/json-rpc/portals/EtherPortal",
                     "api/json-rpc/portals/IERC20Portal",
                     "api/json-rpc/portals/IERC721Portal",
+                    "api/json-rpc/portals/IERC1155BatchPortal",
+                    "api/json-rpc/portals/IERC1155SinglePortal",
                     "api/json-rpc/portals/IEtherPortal",
                     "api/json-rpc/portals/IPortal"
                   ],

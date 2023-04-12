@@ -3,7 +3,7 @@
 ### depositEther
 
 ```solidity
-function depositEther(address _dapp, bytes _L2data) external payable
+function depositEther(address _dapp, bytes _execLayerData) external payable
 ```
 
 Transfer Ether to a DApp and add an input to
@@ -16,5 +16,5 @@ _All the value sent through this function is forwarded to the DApp_
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | _dapp | address | The address of the DApp |
-| _L2data | bytes | Additional data to be interpreted by L2 |
+| _execLayerData | bytes | Additional data to be interpreted by the execution layer |
 

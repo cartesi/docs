@@ -1,4 +1,4 @@
-## ERC20Portal
+## ERC1155SinglePortal
 
 ### inputBox
 
@@ -26,24 +26,26 @@ Get the input box used by this portal
 | ---- | ---- | ----------- |
 | [0] | contract IInputBox | the input box |
 
-### depositERC20Tokens
+### depositSingleERC1155Token
 
 ```solidity
-function depositERC20Tokens(contract IERC20 _token, address _dapp, uint256 _amount, bytes _execLayerData) external
+function depositSingleERC1155Token(contract IERC1155 _token, address _dapp, uint256 _tokenId, uint256 _value, bytes _baseLayerData, bytes _execLayerData) external
 ```
 
-Transfer ERC-20 tokens to a DApp and add an input to
+Transfer an ERC-1155 token to a DApp and add an input to
         the DApp's input box to signal such operation.
 
-_The caller must allow the portal to withdraw at least
-     `_amount` tokens from their account beforehand._
+_The caller must allow the portal to withdraw the token
+     from their account beforehand._
 
 #### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _token | contract IERC20 | The ERC-20 token contract |
+| _token | contract IERC1155 | The ERC-1155 token contract |
 | _dapp | address | The address of the DApp |
-| _amount | uint256 | The amount of tokens to be transferred |
+| _tokenId | uint256 | The identifier of the token being transferred |
+| _value | uint256 | Transfer amount |
+| _baseLayerData | bytes | Additional data to be interpreted by the base layer |
 | _execLayerData | bytes | Additional data to be interpreted by the execution layer |
 
