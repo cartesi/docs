@@ -5,7 +5,7 @@ servers:
 
 info:
   title: Cartesi Rollup HTTP API
-  version: 0.4.0
+  version: 0.5.1
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -39,7 +39,7 @@ info:
         if rollup_request['request_type'] == 'advance_state':
             print('Sending voucher')
             voucher = {
-                'address': rollup_request['data']['metadata']['msg_sender'],
+                'destination': rollup_request['data']['metadata']['msg_sender'],
                 'payload': rollup_request['data']['payload']
             }
             check_status_code(requests.post(rollup + '/voucher', json=voucher))
@@ -66,6 +66,12 @@ info:
             break
     ```
 
+    In production mode, if the DApp exits the Rollups initialization script will register a Rollup Exception.
+    See [/exception](#api-Default-registerException).
+
+    In host mode, the Cartesi Rollups infrastructure is not able to detect that the DApp exited.
+    It is up to the DApp developer to re-launch the DApp.
+
 paths:
   /finish:
     post:
@@ -80,12 +86,12 @@ paths:
         For advance-state requests, the input data contains the advance-state metadata and the payload.
         For inspect-state requests, the input data contains only the payload.
 
-        After processing an rollup request, the DApp-backend should call again the finish method.
+        After processing a rollup request, the DApp back-end should call again the finish method.
         For advance-state requests, depending on the result of the request processing, it should fill the status field of the request body with 'accept' or 'reject'.
         The Rollup HTTP Server ignores the content of the status field for the first finish request and after an inspect-state request.
 
         If the advance-state request is rejected, the vouchers and notices are discarded.
-        In contrast, reports are not discarded in case of reject.
+        In contrast, reports are not discarded in case of rejection.
         When running inside a Cartesi machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.
 
         During a finish call, the next rollup request might not be immediately available.
@@ -124,7 +130,7 @@ paths:
       description: |
         The DApp backend can call this method to add a new voucher when processing an advance-state request.
         Vouchers are collateral effects actionable in the blockchain.
-        Between calls to the finish method, the voucher method can be called at least 32k times.
+        Between calls to the finish method, the voucher method can be called up to 32k times.
 
         The returned value is the index of the voucher for the current advance-state request.
         In other words, the index counting restarts at every request.
@@ -155,9 +161,9 @@ paths:
       operationId: addNotice
       summary: Add a new notice
       description: |
-        The DApp backend can call this method to add a new notice when processing advance-state request.
+        The DApp backend can call this method to add a new notice when processing the advance-state request.
         A notice describes any changes to the internal state of the DApp that may be relevant to the blockchain.
-        Between calls to the finish method, the notice method can be called at least 32k times.
+        Between calls to the finish method, the notice method can be called up to 32k times.
 
         The returned value is the index of the notice for the current advance request.
         In other words, the index counting restarts at every request.
@@ -215,8 +221,13 @@ paths:
       summary: Register an exception
       description: |
         The DApp should call this method when it cannot proceed with the request processing after an exception happens.
-        This method should be the last method ever called by the DApp backend, and it should not expect the call to return.
-        The Rollup HTTP Server will pass the exception info to the Cartesi Server Manager.
+        This method should be the last method ever called by the DApp backend while processing a request.
+
+        When running in production mode, the Cartesi Server Manager pauses the Cartesi Machine and reverts the entire state of the machine to what it was before receiving the request.
+        No HTTP status code will be sent or received.
+
+        When running in host mode, the Rollup HTTP Server returns the status code 200.
+        In both cases, the input will be skipped with the reason EXCEPTION and the exception message will be forwarded.
 
       requestBody:
         content:
@@ -270,37 +281,34 @@ components:
       type: object
       properties:
         msg_sender:
-          $ref: "#/components/schemas/Address"
+          type: string
+          description: 20-byte address of the destination contract for which the payload will be sent.
+          example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
         epoch_index:
-          $ref: "#/components/schemas/Id"
+          type: integer
+          format: uint64
+          description: Deprecated. Always receives 0.
+          example: 0
         input_index:
-          $ref: "#/components/schemas/Id"
+          type: integer
+          format: uint64
+          description: Input index starting from genesis.
+          example: 123
         block_number:
-          $ref: "#/components/schemas/Id"
+          type: integer
+          format: uint64
+          description: Block number when input was posted.
+          example: 10000000
         timestamp:
-          $ref: "#/components/schemas/Timestamp"
-
-    Address:
-      type: string
-      description: Ethereum address.
-      example: "0x1111111111111111111111111111111111111111"
-
-    Id:
-      type: integer
-      format: uint64
-      description: Identifier encoded as integer.
-      example: 123
-
-    Timestamp:
-      type: integer
-      format: uint64
-      description: Unix timestamp in milliseconds.
-      example: 1609459200000
+          type: integer
+          format: uint64
+          description: Time stamp of block in milliseconds.
+          example: 1588598533000
 
     Payload:
       type: string
       description: |
-        Payload in the Ethereum hex binary format.
+        The payload is in the Ethereum hex binary format.
         The first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.
         For instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.
         An empty payload is represented by the string '0x'.
@@ -315,10 +323,21 @@ components:
     Voucher:
       type: object
       properties:
-        address:
-          $ref: "#/components/schemas/Address"
+        destination:
+          type: string
+          description: 20-byte address of destination.
+          example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
         payload:
-          $ref: "#/components/schemas/Payload"
+          type: string
+          description: |
+            The payload is in the Ethereum hex binary format.
+            The first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.
+            For instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.
+            An empty payload is represented by the string '0x'.
+            For vouchers, the payload should describe a method call to be executed by the destination contract.
+            It should thus consist of a function selector (method identifier) followed by its ABI-encoded arguments.
+            ref: https://docs.soliditylang.org/en/v0.8.19/abi-spec.html
+          example: "0xcdcd77c000000000000000000000000000000000000000000000000000000000000000450000000000000000000000000000000000000000000000000000000000000001"
 
     Notice:
       type: object
@@ -342,13 +361,10 @@ components:
       type: object
       properties:
         index:
-          $ref: "#/components/schemas/Index"
-
-    Index:
-      type: integer
-      format: uint64
-      description: Position in the Merkle tree.
-      example: 123
+          type: integer
+          format: uint64
+          description: Position in the Merkle tree.
+          example: 123
 
     Error:
       type: string

@@ -5,7 +5,7 @@ servers:
 
 info:
   title: Inspect-state HTTP API for Cartesi Rollups
-  version: 0.4.0
+  version: 0.5.1
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -40,19 +40,19 @@ paths:
             type: string
 
       responses:
-        '200':
+        "200":
           description: Inspect state response.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InspectResponse'
+                $ref: "#/components/schemas/InspectResponse"
 
         default:
           description: Error response.
           content:
             text/plain:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
 components:
   schemas:
@@ -60,13 +60,13 @@ components:
       type: object
       properties:
         status:
-          $ref: '#/components/schemas/CompletionStatus'
+          $ref: "#/components/schemas/CompletionStatus"
         exception_payload:
-          $ref: '#/components/schemas/Payload'
+          $ref: "#/components/schemas/Payload"
         reports:
           type: array
           items:
-            $ref: '#/components/schemas/Report'
+            $ref: "#/components/schemas/Report"
         processed_input_count:
           type: integer
           description: Number of processed inputs since genesis
@@ -75,15 +75,16 @@ components:
     CompletionStatus:
       type: string
       description: Whether inspection completed or not (and why not)
-      enum: [
-        Accepted,
-        Rejected,
-        Exception,
-        MachineHalted,
-        CycleLimitExceeded,
-        TimeLimitExceeded,
-      ]
-      example: 'Accepted'
+      enum:
+        [
+          Accepted,
+          Rejected,
+          Exception,
+          MachineHalted,
+          CycleLimitExceeded,
+          TimeLimitExceeded,
+        ]
+      example: "Accepted"
 
     Payload:
       type: string
@@ -92,13 +93,13 @@ components:
         The first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.
         For instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.
         An empty payload is represented by the string '0x'.
-      example: '0xdeadbeef'
+      example: "0xdeadbeef"
 
     Report:
       type: object
       properties:
         payload:
-          $ref: '#/components/schemas/Payload'
+          $ref: "#/components/schemas/Payload"
 
     Error:
       type: string
