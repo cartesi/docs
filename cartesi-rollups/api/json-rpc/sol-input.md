@@ -3,90 +3,81 @@ id: sol-input
 title: Input Endpoints
 ---
 
+### InputAdded
+
+```solidity
+event InputAdded(address dapp, uint256 inboxInputIndex, address sender, bytes input)
+```
+
+Emitted when an input is added to a DApp's input box
+
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| dapp | address | The address of the DApp |
+| inboxInputIndex | uint256 | The index of the input in the input box |
+| sender | address | The address that sent the input |
+| input | bytes | The contents of the input |
+
 ### addInput
 
 ```solidity
-function addInput(bytes _input) external returns (bytes32)
+function addInput(address _dapp, bytes _input) external returns (bytes32)
 ```
 
-Adds an input to the accumulating epoch's inbox
-
-_There is a maximum size for the input data that is defined by the DApp_
+Add an input to a DApp's input box
 
 #### Parameters
 
-| Name    | Type  | Description          |
-| ------- | ----- | -------------------- |
-| \_input | bytes | bytes array of input |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| _dapp | address | The address of the DApp |
+| _input | bytes | The contents of the input |
 
 #### Return Values
 
-| Name | Type    | Description       |
-| ---- | ------- | ----------------- |
-| [0]  | bytes32 | hash of the input |
-
-### getInput
-
-```solidity
-function getInput(uint256 _index) external view returns (bytes32)
-```
-
-Returns the hash of the input at the provided input index, for the current sealed epoch
-
-#### Parameters
-
-| Name    | Type    | Description                    |
-| ------- | ------- | ------------------------------ |
-| \_index | uint256 | position of the input on inbox |
-
-#### Return Values
-
-| Name | Type    | Description       |
-| ---- | ------- | ----------------- |
-| [0]  | bytes32 | hash of the input |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | bytes32 | The hash of the input plus some extra metadata |
 
 ### getNumberOfInputs
 
 ```solidity
-function getNumberOfInputs() external view returns (uint256)
+function getNumberOfInputs(address _dapp) external view returns (uint256)
 ```
 
-Returns the number of inputs on the current sealed epoch's inbox
-
-#### Return Values
-
-| Name | Type    | Description                          |
-| ---- | ------- | ------------------------------------ |
-| [0]  | uint256 | number of inputs of non active inbox |
-
-### getCurrentInbox
-
-```solidity
-function getCurrentInbox() external view returns (uint256)
-```
-
-Returns the internal index of the current accumulating inbox
-
-#### Return Values
-
-| Name | Type    | Description                         |
-| ---- | ------- | ----------------------------------- |
-| [0]  | uint256 | index of current accumulating inbox |
-
-### InputAdded
-
-```solidity
-event InputAdded(uint256 epochNumber, uint256 inputIndex, address sender, uint256 timestamp, bytes input)
-```
-
-Indicates that an input was added to the accumulating epoch's inbox
+Get the number of inputs in a DApp's input box
 
 #### Parameters
 
-| Name        | Type    | Description                       |
-| ----------- | ------- | --------------------------------- |
-| epochNumber | uint256 | which epoch this input belongs to |
-| inputIndex  | uint256 | index of the input just added     |
-| sender      | address | msg.sender address                |
-| timestamp   | uint256 | block timestamp                   |
-| input       | bytes   | input data                        |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| _dapp | address | The address of the DApp |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | uint256 | Number of inputs in the DApp's input box |
+
+### getInputHash
+
+```solidity
+function getInputHash(address _dapp, uint256 _index) external view returns (bytes32)
+```
+
+Get the hash of an input in a DApp's input box
+
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| _dapp | address | The address of the DApp |
+| _index | uint256 | The index of the input in the DApp's input box |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | bytes32 | The hash of the input at the provided index in the DApp's input box |

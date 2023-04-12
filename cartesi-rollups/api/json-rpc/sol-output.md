@@ -3,133 +3,166 @@ id: sol-output
 title: Output Endpoints
 ---
 
+### templateHash
+
+```solidity
+bytes32 templateHash
+```
+
+### voucherBitmask
+
+```solidity
+mapping(uint256 => uint256) voucherBitmask
+```
+
+### consensus
+
+```solidity
+contract IConsensus consensus
+```
+
+### constructor
+
+```solidity
+constructor(contract IConsensus _consensus, address _owner, bytes32 _templateHash) public
+```
+
 ### executeVoucher
 
 ```solidity
-function executeVoucher(address _destination, bytes _payload, struct OutputValidityProof _v) external returns (bool)
+function executeVoucher(address _destination, bytes _payload, struct Proof _proof) external returns (bool)
 ```
 
-Executes a voucher
+Execute a voucher
 
-_vouchers can only be successfully executed one time, and only if the provided proof is valid_
+_Each voucher can only be executed once_
 
 #### Parameters
 
-| Name          | Type                       | Description                                                                                                  |
-| ------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| \_destination | address                    | address of the target contract that will execute the payload                                                 |
-| \_payload     | bytes                      | payload to be executed by the destination contract, containing a method signature and ABI-encoded parameters |
-| \_v           | struct OutputValidityProof | validity proof for the voucher                                                                               |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| _destination | address | The contract that will execute the payload |
+| _payload | bytes | The ABI-encoded function call |
+| _proof | struct Proof | Data for validating outputs |
 
 #### Return Values
 
-| Name | Type | Description                               |
-| ---- | ---- | ----------------------------------------- |
-| [0]  | bool | true if voucher was executed successfully |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | bool | Whether the voucher was executed successfully or not |
+
+### wasVoucherExecuted
+
+```solidity
+function wasVoucherExecuted(uint256 _inboxInputIndex, uint256 _outputIndex) external view returns (bool)
+```
+
+Check whether a voucher has been executed
+
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| _inboxInputIndex | uint256 | The index of the input in the input box |
+| _outputIndex | uint256 | The index of output emitted by the input |
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | bool | Whether the voucher has been executed before |
+
+### _wasVoucherExecuted
+
+```solidity
+function _wasVoucherExecuted(uint256 _voucherPosition) internal view returns (bool)
+```
 
 ### validateNotice
 
 ```solidity
-function validateNotice(bytes _notice, struct OutputValidityProof _v) external view returns (bool)
+function validateNotice(bytes _notice, struct Proof _proof) external view returns (bool)
 ```
 
-Validates a notice
+Validate a notice
 
 #### Parameters
 
-| Name     | Type                       | Description                   |
-| -------- | -------------------------- | ----------------------------- |
-| \_notice | bytes                      | notice to be validated        |
-| \_v      | struct OutputValidityProof | validity proof for the notice |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| _notice | bytes | The notice |
+| _proof | struct Proof | Data for validating outputs |
 
 #### Return Values
 
-| Name | Type | Description             |
-| ---- | ---- | ----------------------- |
-| [0]  | bool | true if notice is valid |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | bool | Whether the notice is valid or not |
 
-### getNumberOfFinalizedEpochs
-
-```solidity
-function getNumberOfFinalizedEpochs() external view returns (uint256)
-```
-
-Get number of finalized epochs
-
-### getVoucherMetadataLog2Size
+### getClaim
 
 ```solidity
-function getVoucherMetadataLog2Size() external pure returns (uint256)
+function getClaim(bytes _proofContext) internal view returns (bytes32, uint256, uint256)
 ```
 
-Get log2 size of voucher metadata memory range
-
-### getEpochVoucherLog2Size
+### migrateToConsensus
 
 ```solidity
-function getEpochVoucherLog2Size() external pure returns (uint256)
+function migrateToConsensus(contract IConsensus _newConsensus) external
 ```
 
-Get log2 size of epoch voucher memory range
+Migrate the DApp to a new consensus
 
-### getNoticeMetadataLog2Size
-
-```solidity
-function getNoticeMetadataLog2Size() external pure returns (uint256)
-```
-
-Get log2 size of notice metadata memory range
-
-### getEpochNoticeLog2Size
-
-```solidity
-function getEpochNoticeLog2Size() external pure returns (uint256)
-```
-
-Get log2 size of epoch notice memory range
-
-### VoucherExecuted
-
-```solidity
-event VoucherExecuted(uint256 voucherPosition)
-```
-
-Indicates that a voucher was executed
+_Should have access control_
 
 #### Parameters
 
-| Name            | Type    | Description                                                           |
-| --------------- | ------- | --------------------------------------------------------------------- |
-| voucherPosition | uint256 | voucher unique identifier considering epoch, input and output indices |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| _newConsensus | contract IConsensus | The new consensus |
 
-### OutputValidityProof
-
-Data used to prove the validity of an output (notices and vouchers)
+### getTemplateHash
 
 ```solidity
-struct OutputValidityProof {
-  uint256 epochIndex;
-  uint256 inputIndex;
-  uint256 outputIndex;
-  bytes32 outputHashesRootHash;
-  bytes32 vouchersEpochRootHash;
-  bytes32 noticesEpochRootHash;
-  bytes32 machineStateHash;
-  bytes32[] keccakInHashesSiblings;
-  bytes32[] outputHashesInEpochSiblings;
-}
+function getTemplateHash() external view returns (bytes32)
 ```
 
-#### Members
+Get the DApp's template hash
 
-| Name                        | Type      | Description                                                       |
-| --------------------------- | --------- | ----------------------------------------------------------------- |
-| epochIndex                  | uint256   | which epoch the output belongs to                                 |
-| inputIndex                  | uint256   | which input, inside the epoch, the output belongs to              |
-| outputIndex                 | uint256   | index of output inside the input                                  |
-| outputHashesRootHash        | bytes32   | merkle root of all output metadata hashes of the related input    |
-| vouchersEpochRootHash       | bytes32   | merkle root of all voucher metadata hashes of the related epoch   |
-| noticesEpochRootHash        | bytes32   | merkle root of all notice metadata hashes of the related epoch    |
-| machineStateHash            | bytes32   | hash of the machine state claimed for the related epoch           |
-| keccakInHashesSiblings      | bytes32[] | proof that this output metadata is in metadata memory range       |
-| outputHashesInEpochSiblings | bytes32[] | proof that this output metadata is in epoch's output memory range |
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | bytes32 | The DApp's template hash |
+
+### getConsensus
+
+```solidity
+function getConsensus() external view returns (contract IConsensus)
+```
+
+Get the current consensus
+
+#### Return Values
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | contract IConsensus | The current consensus |
+
+### receive
+
+```solidity
+receive() external payable
+```
+
+### withdrawEther
+
+```solidity
+function withdrawEther(address _receiver, uint256 _value) external
+```
+
+### onERC721Received
+
+```solidity
+function onERC721Received(address, address, uint256, bytes) external pure returns (bytes4)
+```
