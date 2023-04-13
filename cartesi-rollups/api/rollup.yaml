@@ -206,7 +206,7 @@ paths:
 
       responses:
         "200":
-          description: Create the report.
+          description: Created the report.
 
         default:
           description: Error response.
@@ -282,7 +282,7 @@ components:
       properties:
         msg_sender:
           type: string
-          description: 20-byte address of the destination contract for which the payload will be sent.
+          description: 20-byte address of the account that submitted the input.
           example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
         epoch_index:
           type: integer
@@ -302,7 +302,7 @@ components:
         timestamp:
           type: integer
           format: uint64
-          description: Time stamp of block in milliseconds.
+          description: Unix timestamp of block in milliseconds.
           example: 1588598533000
 
     Payload:
@@ -325,7 +325,7 @@ components:
       properties:
         destination:
           type: string
-          description: 20-byte address of destination.
+          description: 20-byte address of the destination contract for which the payload will be sent.
           example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
         payload:
           type: string
