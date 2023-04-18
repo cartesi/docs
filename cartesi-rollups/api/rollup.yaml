@@ -330,12 +330,11 @@ components:
         payload:
           type: string
           description: |
-            The payload is in the Ethereum hex binary format.
+            String in Ethereum hex binary format describing a method call to be executed by the destination contract.
             The first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.
-            For instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.
-            An empty payload is represented by the string '0x'.
-            For vouchers, the payload should describe a method call to be executed by the destination contract.
-            It should thus consist of a function selector (method identifier) followed by its ABI-encoded arguments.
+            For instance, '0xcdcd77c0' corresponds to a payload with length 4 and bytes 205, 205, 119, 192.
+            To describe the method call, the payload should consist of a function selector (method identifier) followed
+            by its ABI-encoded arguments.
             ref: https://docs.soliditylang.org/en/v0.8.19/abi-spec.html
           example: "0xcdcd77c000000000000000000000000000000000000000000000000000000000000000450000000000000000000000000000000000000000000000000000000000000001"
 

@@ -29,7 +29,7 @@ while True:
     if rollup_request['request_type'] == 'advance_state':
         print('Sending voucher')
         voucher = {
-            'address': rollup_request['data']['metadata']['msg_sender'],
+            'destination': rollup_request['data']['metadata']['msg_sender'],
             'payload': rollup_request['data']['payload']
         }
         check_status_code(requests.post(rollup + '/voucher', json=voucher))
@@ -55,6 +55,12 @@ while True:
         requests.post(rollup + '/exception', json=exception)
         break
 ```
+
+In production mode, if the DApp exits the Rollups initialization script will register a Rollup Exception.
+See [/exception](#api-Default-registerException).
+
+In host mode, the Cartesi Rollups infrastructure is not able to detect that the DApp exited.
+It is up to the DApp developer to re-launch the DApp.
 "
 sidebar_label: Introduction
 sidebar_position: 0
@@ -65,7 +71,7 @@ import ApiLogo from "@theme/ApiLogo";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-<span className={"theme-doc-version-badge badge badge--secondary"}>Version: 0.4.0</span>
+<span className={"theme-doc-version-badge badge badge--secondary"}>Version: 0.5.1</span>
 
 # Cartesi Rollup HTTP API
 
@@ -99,7 +105,7 @@ while True:
     if rollup_request['request_type'] == 'advance_state':
         print('Sending voucher')
         voucher = {
-            'address': rollup_request['data']['metadata']['msg_sender'],
+            'destination': rollup_request['data']['metadata']['msg_sender'],
             'payload': rollup_request['data']['payload']
         }
         check_status_code(requests.post(rollup + '/voucher', json=voucher))
@@ -125,6 +131,12 @@ while True:
         requests.post(rollup + '/exception', json=exception)
         break
 ```
+
+In production mode, if the DApp exits the Rollups initialization script will register a Rollup Exception.
+See [/exception](#api-Default-registerException).
+
+In host mode, the Cartesi Rollups infrastructure is not able to detect that the DApp exited.
+It is up to the DApp developer to re-launch the DApp.
 
 
 <div style={{"marginBottom":"var(--ifm-paragraph-margin-bottom)"}}><h3 style={{"marginBottom":"0.25rem"}}>License</h3><a href={"https://www.apache.org/licenses/LICENSE-2.0.html"}>Apache-2.0</a></div>
