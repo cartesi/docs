@@ -3,6 +3,7 @@ servers:
   - url: https://<dapp_rollup_url>
   - url: http://localhost:5005/rollup
 
+
 info:
   title: Cartesi Rollup HTTP API
   version: 0.5.1
