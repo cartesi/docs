@@ -1,6 +1,6 @@
 ---
 id: sol-output
-title: Output Endpoints
+title: CartesiDApp Endpoints
 ---
 
 ### templateHash
@@ -71,12 +71,6 @@ Check whether a voucher has been executed
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | [0] | bool | Whether the voucher has been executed before |
-
-### _wasVoucherExecuted
-
-```solidity
-function _wasVoucherExecuted(uint256 _voucherPosition) internal view returns (bool)
-```
 
 ### validateNotice
 

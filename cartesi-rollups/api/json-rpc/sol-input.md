@@ -1,6 +1,6 @@
 ---
 id: sol-input
-title: Input Endpoints
+title: InputBox Endpoints
 ---
 
 ### InputAdded
