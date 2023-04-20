@@ -1,6 +1,6 @@
 ---
 id: guidelines
-title: DApp performance recommendations
+title: Performance recommendations
 tags: [build, dapps, developer]
 ---
 
