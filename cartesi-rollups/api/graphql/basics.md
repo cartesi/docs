@@ -10,25 +10,24 @@ The Cartesi Rollups state query API is fully specified by its [GraphQL schema](h
 
 A number of [top-level queries](../queries) are available in order to retrieve rollup information for a Cartesi DApp.
 
-
 In GraphQL, submitting a query involves defining parameters for filtering the entries to retrieve, and also specifying the data fields of interest, which can span any objects linked to the entry being retrieved.
 
-As an example, to retrieve a specific [input](./objects/input.mdx) given its index, one could specify the following query:
+For example, the following query retrieves the number of the base layer block in which the [input](./objects/input.mdx) was recorded:
 
 ```
 {
   input(
-    index: 0
+   index: "1"
   ) {
-    payload
+  	blockNumber
   }
 }
 ```
 
-This query can be submitted as an HTTP POST request, specifying the Content-Type as `application/json`. For instance, using `curl` you could submit it as follows:
+You can submit the query above as an HTTP POST request, specifying the Content-Type as `application/json`. For instance, using `curl` you could submit it as follows:
 
 ```
-curl 'https://<graphql_url>' -H 'Content-Type: application/json' -d '{"query":"{ input(index:0) {payload} }"}'
+curl 'https://<graphql_url>' -H 'Content-Type: application/json' -d '{"query":"{ input(index:1) {blockNumber} }"}'
 ```
 
 The response of which would be something like this:
@@ -37,22 +36,54 @@ The response of which would be something like this:
 {
   "data": {
     "input": {
-      "payload": "0x67556c6c6f20776f726b64"
+      "blockNumber": 8629116
     }
   }
 }
 ```
 
-In this simple example, only the input's payload, Input payload in Ethereum hex binary format, is retrieved. However, linked information from the input's voucher can be retrieved as well. For example, the following query would retrieve the voucher from this particular input given the voucher's index:
+You can also retrieve linked information from the input. For example, the following query would retrieve vouchers from this particular input with support for pagination and with total number of entries that match the query:
 
 ```
 {
   input(
-    index: 0
+    index: "1"
   ) {
-      voucher {
-        index: 1
+      vouchers(first: 1
+        )
+        {
+          totalCount
+        }
+  }
+}
+```
+
+The following query would retrieve notices from this particular input with support for pagination and with total number of entries that match the query::
+
+```
+{
+  input(
+    index: "1"
+  ) {
+      notices(first: 1
+        )
+        {
+          totalCount
+        }
+  }
+}
+```
+
+The response of which would be something like this:
+
+```
+{
+  "data": {
+    "input": {
+      "notices": {
+        "totalCount": 6
       }
+    }
   }
 }
 ```
