@@ -4,7 +4,7 @@ In order to query the state of a Cartesi Rollups instance, front-end clients can
 
 Essentially, this API allows any client to retrieve outputs produced by a DApp's back-end, and to link those outputs to the corresponding inputs that triggered them. Outputs can generally come in the form of [vouchers](./objects/voucher.mdx), [notices](./objects/notice.mdx) and [reports](./objects/report.mdx), and allow clients to both receive DApp updates and enforce consequences on the base layer, such as asset transfers.
 
-The Cartesi Rollups state query API is fully specified by its [GraphQL schema](https://github.com/cartesi/rollups/blob/main/offchain/data/graphql/typeDefs.graphql). This specification is displayed in a more accessible and navigable way in the next sections.
+The Cartesi Rollups state query API is fully specified by its [GraphQL schema](https://github.com/cartesi/rollups/blob/main/offchain/graphql-server/schema.graphql). This specification is displayed in a more accessible and navigable way in the next sections.
 
 ## Queries
 
@@ -19,7 +19,7 @@ As an example, to retrieve a specific [input](./objects/input.mdx) given its ind
   input(
     index: 0
   ) {
-    id
+    payload
   }
 }
 ```
@@ -27,7 +27,7 @@ As an example, to retrieve a specific [input](./objects/input.mdx) given its ind
 This query can be submitted as an HTTP POST request, specifying the Content-Type as `application/json`. For instance, using `curl` you could submit it as follows:
 
 ```
-curl 'https://<graphql_url>' -H 'Content-Type: application/json' -d '{"query":"{ input(index:0) {id} }"}'
+curl 'https://<graphql_url>' -H 'Content-Type: application/json' -d '{"query":"{ input(index:0) {payload} }"}'
 ```
 
 The response of which would be something like this:
@@ -36,25 +36,22 @@ The response of which would be something like this:
 {
   "data": {
     "input": {
-      "id": "1"
+      "payload": "0x67556c6c6f20776f726b64"
     }
   }
 }
 ```
 
-In this simple example, only the input's identifier is retrieved. However, linked information from the input's inputs can be retrieved as well. For example, the following query would retrieve the identifiers and timestamps of each input submitted for that input:
+In this simple example, only the input's payload, Input payload in Ethereum hex binary format, is retrieved. However, linked information from the input's voucher can be retrieved as well. For example, the following query would retrieve the voucher from this particular input given the voucher's index:
 
 ```
 {
   input(
     index: 0
   ) {
-    inputs {
-      nodes {
-        id
-        timestamp
+      voucher {
+        index: 1
       }
-    }
   }
 }
 ```
