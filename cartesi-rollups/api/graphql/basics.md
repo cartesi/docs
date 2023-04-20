@@ -10,6 +10,7 @@ The Cartesi Rollups state query API is fully specified by its [GraphQL schema](h
 
 A number of [top-level queries](../queries) are available in order to retrieve rollup information for a Cartesi DApp.
 
+
 In GraphQL, submitting a query involves defining parameters for filtering the entries to retrieve, and also specifying the data fields of interest, which can span any objects linked to the entry being retrieved.
 
 As an example, to retrieve a specific [input](./objects/input.mdx) given its index, one could specify the following query:
