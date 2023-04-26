@@ -64,6 +64,7 @@ docker run \
   -w /home/$(id -u -n) \
   --rm cartesi/playground:0.5.0 cartesi-machine \
     --max-mcycle=0 \
+    --append-rom-bootargs="single=yes" \
     --initial-hash \
     --store=stored_machine \
     --flash-drive="label:output,length:1<<12" \
