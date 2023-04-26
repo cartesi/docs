@@ -6,6 +6,10 @@ Essentially, this API allows any client to retrieve outputs produced by a DApp's
 
 The Cartesi Rollups state query API is fully specified by its [GraphQL schema](https://github.com/cartesi/rollups/blob/main/offchain/graphql-server/schema.graphql). This specification is displayed in a more accessible and navigable way in the next sections.
 
+:::note
+Check the implemented [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm).
+:::
+
 ## Queries
 
 A number of [top-level queries](../queries) are available in order to retrieve rollup information for a Cartesi DApp.
@@ -15,13 +19,10 @@ In GraphQL, submitting a query involves defining parameters for filtering the en
 For example, the following query retrieves the number of the base layer block in which the [input](./objects/input.mdx) was recorded:
 
 ```
-{
-  input(
-   index: "1"
-  ) {
-  	blockNumber
+input(index: "1")
+  {
+    blockNumber
   }
-}
 ```
 
 You can submit the query above as an HTTP POST request, specifying the Content-Type as `application/json`. For instance, using `curl` you could submit it as follows:
@@ -42,36 +43,16 @@ The response of which would be something like this:
 }
 ```
 
-You can also retrieve linked information from the input. For example, the following query would retrieve vouchers from this particular input with support for pagination and with total number of entries that match the query:
+You can also retrieve linked information from the input. For example, the following query would retrieve notices from this particular input with support for pagination and with total number of entries that match the query:
 
 ```
-{
-  input(
-    index: "1"
-  ) {
-      vouchers(first: 1
-        )
-        {
-          totalCount
-        }
+input(index: "1")
+  {
+    notices
+    {
+      totalCount
+    }
   }
-}
-```
-
-The following query would retrieve notices from this particular input with support for pagination and with total number of entries that match the query::
-
-```
-{
-  input(
-    index: "1"
-  ) {
-      notices(first: 1
-        )
-        {
-          totalCount
-        }
-  }
-}
 ```
 
 The response of which would be something like this:
