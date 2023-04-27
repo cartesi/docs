@@ -1,16 +1,6 @@
 ## ERC20Portal
 
-### inputBox
-
-```solidity
-contract IInputBox inputBox
-```
-
-### constructor
-
-```solidity
-constructor(contract IInputBox _inputBox) public
-```
+Transfer ERC-20 tokens to a DApp and add an input to the DApp's input box to signal such operation.
 
 ### getInputBox
 
@@ -46,4 +36,3 @@ _The caller must allow the portal to withdraw at least
 | _dapp | address | The address of the DApp |
 | _amount | uint256 | The amount of tokens to be transferred |
 | _execLayerData | bytes | Additional data to be interpreted by the execution layer |
-

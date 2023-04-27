@@ -1,16 +1,6 @@
 ## EtherPortal
 
-### inputBox
-
-```solidity
-contract IInputBox inputBox
-```
-
-### constructor
-
-```solidity
-constructor(contract IInputBox _inputBox) public
-```
+Transfer Ether to a DApp and add an input to the DApp's input box to signal such operation.
 
 ### getInputBox
 
@@ -43,4 +33,3 @@ _All the value sent through this function is forwarded to the DApp_
 | ---- | ---- | ----------- |
 | _dapp | address | The address of the DApp |
 | _execLayerData | bytes | Additional data to be interpreted by the execution layer |
-

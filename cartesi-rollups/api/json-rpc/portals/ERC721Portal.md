@@ -1,16 +1,6 @@
 ## ERC721Portal
 
-### inputBox
-
-```solidity
-contract IInputBox inputBox
-```
-
-### constructor
-
-```solidity
-constructor(contract IInputBox _inputBox) public
-```
+Transfer an ERC-721 token to a DApp and add an input to the DApp's input box to signal such operation.
 
 ### getInputBox
 
@@ -47,4 +37,3 @@ _The caller must allow the portal to withdraw the token
 | _tokenId | uint256 | The identifier of the NFT being transferred |
 | _baseLayerData | bytes | Additional data to be interpreted by the base layer                (forwarded to the ERC-721 token contract) |
 | _execLayerData | bytes | Additional data to be interpreted by the execution layer |
-

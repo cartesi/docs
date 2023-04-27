@@ -1,16 +1,6 @@
 ## ERC1155BatchPortal
 
-### inputBox
-
-```solidity
-contract IInputBox inputBox
-```
-
-### constructor
-
-```solidity
-constructor(contract IInputBox _inputBox) public
-```
+Transfer a batch of ERC-1155 tokens to a DApp and add an input to the DApp's input box to signal such operation.
 
 ### getInputBox
 
@@ -47,4 +37,3 @@ _Requirements:_
 | _values | uint256[] | Transfer amounts per token type |
 | _baseLayerData | bytes | Additional data to be interpreted by the base layer |
 | _execLayerData | bytes | Additional data to be interpreted by the execution layer |
-
