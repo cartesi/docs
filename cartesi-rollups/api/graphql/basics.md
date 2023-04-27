@@ -6,10 +6,6 @@ Essentially, this API allows any client to retrieve outputs produced by a DApp's
 
 The Cartesi Rollups state query API is fully specified by its [GraphQL schema](https://github.com/cartesi/rollups/blob/main/offchain/graphql-server/schema.graphql). This specification is displayed in a more accessible and navigable way in the next sections.
 
-:::note
-Check the implemented [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm).
-:::
-
 ## Queries
 
 A number of [top-level queries](../queries) are available in order to retrieve rollup information for a Cartesi DApp.
@@ -19,8 +15,7 @@ In GraphQL, submitting a query involves defining parameters for filtering the en
 For example, the following query retrieves the number of the base layer block in which the [input](./objects/input.mdx) was recorded:
 
 ```
-input(index: "1")
-  {
+input(index: "1") {
     blockNumber
   }
 ```
@@ -46,10 +41,8 @@ The response of which would be something like this:
 You can also retrieve linked information from the input. For example, the following query would retrieve notices from this particular input with support for pagination and with total number of entries that match the query:
 
 ```
-input(index: "1")
-  {
-    notices
-    {
+input(index: "1") {
+    notices {
       totalCount
     }
   }
@@ -82,10 +75,10 @@ As exemplified above, GraphQL query responses are given in JSON format. In pract
 
 ### More information
 
-Please refer to the [GraphQL spec](https://spec.graphql.org/October2021/) for the full specification of GraphQL.
-
-Aside from that, the article [Queries and Mutations](https://graphql.org/learn/queries/) can be useful to learn in detail about how to query a GraphQL server.
-Finally, you may also read the article [Schemas and Types](https://graphql.org/learn/schema/) to learn all you need to know about the GraphQL type system and how it describes what data can be queried.
+* Read the article [Queries and Mutations](https://graphql.org/learn/queries/) to learn in detail about how to query a GraphQL server
+* Read the article [Schemas and Types](https://graphql.org/learn/schema/) to learn all you need to know about the GraphQL type system and how it describes what data can be queried
+* Check the [GraphQL spec](https://spec.graphql.org/October2021/) for the full specification of GraphQL
+* Check the implemented [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm)
 
 ## GraphQL Playground
 
