@@ -1,7 +1,9 @@
 ---
 id: sol-input
-title: InputBox Endpoints
+title: InputBox
 ---
+
+The **InputBox** Collects inputs for all DApps.
 
 ### InputAdded
 

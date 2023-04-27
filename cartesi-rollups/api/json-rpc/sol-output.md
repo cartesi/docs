@@ -1,31 +1,7 @@
 ---
 id: sol-output
-title: CartesiDApp Endpoints
+title: CartesiDApp
 ---
-
-### templateHash
-
-```solidity
-bytes32 templateHash
-```
-
-### voucherBitmask
-
-```solidity
-mapping(uint256 => uint256) voucherBitmask
-```
-
-### consensus
-
-```solidity
-contract IConsensus consensus
-```
-
-### constructor
-
-```solidity
-constructor(contract IConsensus _consensus, address _owner, bytes32 _templateHash) public
-```
 
 ### executeVoucher
 
@@ -43,7 +19,7 @@ _Each voucher can only be executed once_
 | ---- | ---- | ----------- |
 | _destination | address | The contract that will execute the payload |
 | _payload | bytes | The ABI-encoded function call |
-| _proof | struct Proof | Data for validating outputs |
+| _proof | struct [Proof](#proof) | Data for validating outputs |
 
 #### Return Values
 
@@ -85,7 +61,7 @@ Validate a notice
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | _notice | bytes | The notice |
-| _proof | struct Proof | Data for validating outputs |
+| _proof | struct [Proof](#proof) | Data for validating outputs |
 
 #### Return Values
 
@@ -93,11 +69,6 @@ Validate a notice
 | ---- | ---- | ----------- |
 | [0] | bool | Whether the notice is valid or not |
 
-### getClaim
-
-```solidity
-function getClaim(bytes _proofContext) internal view returns (bytes32, uint256, uint256)
-```
 
 ### migrateToConsensus
 
@@ -160,3 +131,67 @@ function withdrawEther(address _receiver, uint256 _value) external
 ```solidity
 function onERC721Received(address, address, uint256, bytes) external pure returns (bytes4)
 ```
+
+### NewConsensus
+
+```solidity
+event NewConsensus(IConsensus newConsensus);
+```
+
+A new consensus is used, this event is emitted when a new consensus is set
+
+### VoucherExecuted
+
+```solidity
+event VoucherExecuted(uint256 voucherId);
+```
+
+A voucher was executed from the DApp, this event is emitted when a voucher is executed
+
+### Proof
+
+Data for validating outputs
+
+```solidity
+struct Proof {
+    OutputValidityProof validity;
+    bytes context;
+}
+```
+
+#### Members
+
+| Name                        | Type      | Description                                                       |
+| --------------------------- | --------- | ----------------------------------------------------------------- |
+| validity                  | [OutputValidityProof](#outputvalidityproof)   | validity A validity proof for the output                                |
+| context                 | bytes   | context Data for querying the right claim from consensus                     |
+
+### OutputValidityProof
+
+Data used to prove the validity of an output (notices and vouchers)
+
+```solidity
+struct OutputValidityProof {
+  uint256 epochInputIndex;
+  uint256 outputIndex;
+  bytes32 outputHashesRootHash;
+  bytes32 vouchersEpochRootHash;
+  bytes32 noticesEpochRootHash;
+  bytes32 machineStateHash;
+  bytes32[] keccakInHashesSiblings;
+  bytes32[] outputHashesInEpochSiblings;
+}
+```
+
+#### Members
+
+| Name                        | Type      | Description                                                       |
+| --------------------------- | --------- | ----------------------------------------------------------------- |
+| epochIndex                  | uint256   | which input, inside the epoch, the output belongs to                                |
+| outputIndex                 | uint256   | index of output emitted by the input                      |
+| outputHashesRootHash        | bytes32   | Merkle root of hashes of outputs emitted by the input    |
+| vouchersEpochRootHash       | bytes32   | merkle root of all epoch's voucher metadata hashes   |
+| noticesEpochRootHash        | bytes32   | merkle root of all epoch's notice metadata hashes    |
+| machineStateHash            | bytes32   | hash of the machine state claimed this epoch           |
+| keccakInHashesSiblings      | bytes32[] | proof that this output metadata is in metadata memory range       |
+| outputHashesInEpochSiblings | bytes32[] | proof that this output metadata is in epoch's output memory range |
