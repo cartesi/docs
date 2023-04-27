@@ -1,6 +1,6 @@
 ## ERC1155BatchPortal
 
-Transfer a batch of ERC-1155 tokens to a DApp and add an input to the DApp's input box to signal such operation.
+ERC-1155 Batch Transfer Portal
 
 ### getInputBox
 

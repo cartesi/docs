@@ -1,6 +1,6 @@
 ## ERC721Portal
 
-Transfer an ERC-721 token to a DApp and add an input to the DApp's input box to signal such operation.
+Add Description here...
 
 ### getInputBox
 

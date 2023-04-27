@@ -1,6 +1,6 @@
 ## EtherPortal
 
-Transfer Ether to a DApp and add an input to the DApp's input box to signal such operation.
+Add Description here...
 
 ### getInputBox
 

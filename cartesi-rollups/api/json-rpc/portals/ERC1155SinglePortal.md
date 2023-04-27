@@ -1,6 +1,6 @@
 ## ERC1155SinglePortal
 
-Transfer an ERC-1155 token to a DApp and add an input to the DApp's input box to signal such operation.
+ERC-1155 Single Transfer Portal
 
 ### getInputBox
 
