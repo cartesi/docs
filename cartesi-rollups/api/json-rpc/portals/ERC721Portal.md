@@ -1,6 +1,4 @@
-## ERC721Portal
-
-This contract allows anyone to perform transfers of
+The **ERC721Portal** allows anyone to perform transfers of
 ERC-721 tokens to a DApp while informing the off-chain machine.
 
 

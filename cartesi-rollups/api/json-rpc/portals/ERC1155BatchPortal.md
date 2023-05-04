@@ -1,6 +1,4 @@
-## ERC1155BatchPortal
-
-The **ERC1155BatchPortal** contract allows anyone to perform batch transfers of
+The **ERC1155BatchPortal** allows anyone to perform batch transfers of
 ERC-1155 tokens to a DApp while informing the off-chain machine.
 
 

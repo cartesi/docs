@@ -1,6 +1,4 @@
-## EtherPortal
-
-This contract allows anyone to perform transfers of
+The **EtherPortal** allows anyone to perform transfers of
 Ether to a DApp while informing the off-chain machine.
 
 

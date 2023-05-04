@@ -1,6 +1,4 @@
-## ERC20Portal
-
-This contract allows anyone to perform transfers of
+The **ERC20Portal** allows anyone to perform transfers of
 ERC-20 tokens to a DApp while informing the off-chain machine.
 
 

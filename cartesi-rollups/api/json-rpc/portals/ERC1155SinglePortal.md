@@ -1,6 +1,4 @@
-## ERC1155SinglePortal
-
-This contract allows anyone to perform single transfers of ERC-1155 tokens to a DApp while informing the off-chain machine.
+The **ERC1155SinglePortal** allows anyone to perform single transfers of ERC-1155 tokens to a DApp while informing the off-chain machine.
 
 ### depositSingleERC1155Token
 
