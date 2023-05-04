@@ -1,6 +1,6 @@
 ---
 id: overview
-title: Overview of building DApps
+title: Overview
 tags: [build, quickstart, developer, dapps]
 ---
 
