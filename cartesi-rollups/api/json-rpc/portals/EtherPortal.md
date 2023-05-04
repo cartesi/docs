@@ -1,20 +1,8 @@
 ## EtherPortal
 
-Add Description here...
+This contract allows anyone to perform transfers of
+Ether to a DApp while informing the off-chain machine.
 
-### getInputBox
-
-```solidity
-function getInputBox() external view returns (contract IInputBox)
-```
-
-Get the input box used by this portal
-
-#### Return Values
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | contract IInputBox | the input box |
 
 ### depositEther
 
@@ -23,9 +11,9 @@ function depositEther(address _dapp, bytes _execLayerData) external payable
 ```
 
 Transfer Ether to a DApp and add an input to
-        the DApp's input box to signal such operation.
+the DApp's input box to signal such operation.
 
-_All the value sent through this function is forwarded to the DApp_
+All the value sent through this function is forwarded to the DApp.
 
 #### Parameters
 

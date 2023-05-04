@@ -1,20 +1,6 @@
 ## ERC1155SinglePortal
 
-ERC-1155 Single Transfer Portal
-
-### getInputBox
-
-```solidity
-function getInputBox() external view returns (contract IInputBox)
-```
-
-Get the input box used by this portal
-
-#### Return Values
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | contract IInputBox | the input box |
+This contract allows anyone to perform single transfers of ERC-1155 tokens to a DApp while informing the off-chain machine.
 
 ### depositSingleERC1155Token
 
@@ -23,10 +9,10 @@ function depositSingleERC1155Token(contract IERC1155 _token, address _dapp, uint
 ```
 
 Transfer an ERC-1155 token to a DApp and add an input to
-        the DApp's input box to signal such operation.
+the DApp's input box to signal such operation.
 
-_The caller must allow the portal to withdraw the token
-     from their account beforehand._
+The caller must enable approval for the portal to manage all of their tokens
+beforehand, by calling the `setApprovalForAll` function in the token contract.
 
 #### Parameters
 

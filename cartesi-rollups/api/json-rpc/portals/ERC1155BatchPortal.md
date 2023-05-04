@@ -1,20 +1,8 @@
 ## ERC1155BatchPortal
 
-ERC-1155 Batch Transfer Portal
+The **ERC1155BatchPortal** contract allows anyone to perform batch transfers of
+ERC-1155 tokens to a DApp while informing the off-chain machine.
 
-### getInputBox
-
-```solidity
-function getInputBox() external view returns (contract IInputBox)
-```
-
-Get the input box used by this portal
-
-#### Return Values
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | contract IInputBox | the input box |
 
 ### depositBatchERC1155Token
 
@@ -23,9 +11,12 @@ function depositBatchERC1155Token(contract IERC1155 _token, address _dapp, uint2
 ```
 
 Transfer a batch of ERC-1155 tokens to a DApp and add an input to
-        the DApp's input box to signal such operation.
+the DApp's input box to signal such operation.
 
-_Requirements:_
+The caller must enable approval for the portal to manage all of their tokens
+beforehand, by calling the `setApprovalForAll` function in the token contract.
+
+_Please make sure `_tokenIds` and `_values` have the same length._
 
 #### Parameters
 

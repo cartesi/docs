@@ -1,20 +1,8 @@
 ## ERC20Portal
 
-Add Description here...
+This contract allows anyone to perform transfers of
+ERC-20 tokens to a DApp while informing the off-chain machine.
 
-### getInputBox
-
-```solidity
-function getInputBox() external view returns (contract IInputBox)
-```
-
-Get the input box used by this portal
-
-#### Return Values
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | contract IInputBox | the input box |
 
 ### depositERC20Tokens
 
@@ -23,10 +11,11 @@ function depositERC20Tokens(contract IERC20 _token, address _dapp, uint256 _amou
 ```
 
 Transfer ERC-20 tokens to a DApp and add an input to
-        the DApp's input box to signal such operation.
+the DApp's input box to signal such operation.
 
-_The caller must allow the portal to withdraw at least
-     `_amount` tokens from their account beforehand._
+The caller must allow the portal to withdraw at least `_amount` tokens
+from their account beforehand, by calling the `approve` function in the
+token contract.
 
 #### Parameters
 
