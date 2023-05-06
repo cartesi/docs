@@ -43,7 +43,7 @@ INFO:__main__:Sending finish
 
 ## Step 4: Interact with the application
 
-After that, you can interact with the application normally [as explained in the quick start article](/build-dapps/run-dapp#interacting-with-the-application).
+After that, you can interact with the application normally [as explained in the quick start article](/build-dapps/run-dapp#interacting-with-the-dapp).
 
 ## Options
 
