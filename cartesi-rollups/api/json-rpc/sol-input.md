@@ -7,8 +7,8 @@ The **InputBox** is a trustless and permissionless contract that receives arbitr
 (called "inputs") from anyone and adds a compound hash to an append-only list
 (called "input box"). Each DApp has its own input box.
 
-The hash that is stored on-chain is composed by hash of the input blob,
-the block number and hash, the input sender address, and the input index.
+The hash that is stored on-chain is composed by the hash of the input blob,
+the block number and timestamp, the input sender address, and the input index.
 
 Data availability is guaranteed by the emission of `InputAdded` events
 on every successful call to `addInput`. This ensures that inputs can be
@@ -16,7 +16,7 @@ retrieved by anyone at any time, without having to rely on centralized data
 providers.
 
 From the perspective of this contract, inputs are encoding-agnostic byte
-arrays. It adds up to the DApp to interpret, validate and act upon inputs.
+arrays. It is up to the DApp to interpret, validate and act upon inputs.
 
 ### inputBoxes
 
