@@ -1,5 +1,5 @@
 #!/bin/bash
-wget https://github.com/cartesi/descartes-tutorials/releases/download/v1.1.0/rootfs-python-jwt.ext2
+wget https://github.com/cartesi/compute-tutorials/releases/download/v1.3.0/rootfs-python-jwt.ext2
 
 cartesi-machine \
     --max-mcycle=0 \

@@ -170,7 +170,7 @@ const sidebars = {
     //   {
     //     type: "link",
     //     label: "Code samples",
-    //     href: "https://github.com/cartesi/descartes-tutorials",
+    //     href: "https://github.com/cartesi/compute-tutorials",
     //   },
     //   ],
     // },
@@ -213,7 +213,7 @@ const sidebars = {
 //           items: [
 //             "tutorials/introduction",
 //             "tutorials/requirements",
-//             "tutorials/descartes-env",
+//             "tutorials/compute-env",
 //             {
 //               type: "category",
 //               label: "Hello World DApp",

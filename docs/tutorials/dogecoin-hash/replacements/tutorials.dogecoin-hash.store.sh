@@ -1,5 +1,5 @@
 #!/bin/bash
-wget https://github.com/cartesi/descartes-tutorials/raw/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
+wget https://github.com/cartesi/compute-tutorials/raw/master/dogecoin-hash/cartesi-machine/scrypt-hash.ext2
 
 cartesi-machine \
     --max-mcycle=0 \

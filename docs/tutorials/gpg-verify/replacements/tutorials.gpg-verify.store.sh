@@ -1,5 +1,5 @@
 #!/bin/bash
-wget https://github.com/cartesi/descartes-tutorials/raw/master/gpg-verify/cartesi-machine/dapp-data.ext2 > /dev/null 2>&1
+wget https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/dapp-data.ext2 > /dev/null 2>&1
 
 cartesi-machine \
     --max-mcycle=0 \
