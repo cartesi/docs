@@ -41,7 +41,7 @@ public
         parties[0],            // provider
         false,                 // waitsProvider
         true,                  // needsLogger
-	false                  // downloadAsCAR
+        false                  // downloadAsCAR
     );
     drives[1] = CartesiComputeInterface.Drive(
         0xb000000000000000,    // 4th drive position
@@ -52,7 +52,7 @@ public
         parties[0],            // provider
         false,                 // waitsProvider
         true,                  // needsLogger
-	false                  // downloadAsCAR
+        false                  // downloadAsCAR
     );
 
     // instantiates the computation
