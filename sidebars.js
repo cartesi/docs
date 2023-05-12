@@ -79,7 +79,7 @@ const sidebars = {
     //           items: [
     //             "tutorials/introduction",
     //             "tutorials/requirements",
-    //             "tutorials/descartes-env",
+    //             "tutorials/compute-env",
     //             {
     //               type: "category",
     //               label: "Hello World DApp",
@@ -305,12 +305,12 @@ const sidebars = {
 //   {
 //     type: "link",
 //     label: "Code samples",
-//     href: "https://github.com/cartesi/descartes-tutorials",
+//     href: "https://github.com/cartesi/compute-tutorials",
 //   },
 //   {
 //     type: 'link',
 //     label: 'Changelog',
-//     href: 'https://github.com/cartesi/descartes/blob/master/CHANGELOG.md',
+//     href: 'https://github.com/cartesi/compute/blob/master/CHANGELOG.md',
 //   },
 //   ],
 // },
