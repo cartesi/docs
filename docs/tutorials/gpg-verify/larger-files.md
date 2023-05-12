@@ -40,7 +40,8 @@ public
         documentRootHash,      // loggerRootHash
         parties[0],            // provider
         false,                 // waitsProvider
-        true                   // needsLogger
+        true,                  // needsLogger
+	false                  // downloadAsCAR
     );
     drives[1] = CartesiComputeInterface.Drive(
         0xb000000000000000,    // 4th drive position
@@ -50,7 +51,8 @@ public
         signatureRootHash,     // loggerRootHash
         parties[0],            // provider
         false,                 // waitsProvider
-        true                   // needsLogger
+        true,                  // needsLogger
+	false                  // downloadAsCAR
     );
 
     // instantiates the computation
