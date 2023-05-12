@@ -154,7 +154,7 @@ As such, to get the exact same result you will need to download the very same `e
 
 ```bash
 rm rootfs-python-jwt.ext2
-wget https://github.com/cartesi/compute-tutorials/releases/download/v1.1.0/rootfs-python-jwt.ext2
+wget https://github.com/cartesi/compute-tutorials/releases/download/v1.3.0/rootfs-python-jwt.ext2
 ./build-cartesi-machine.sh ../../compute-env/machines
 ```
 
