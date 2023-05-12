@@ -48,7 +48,7 @@ Please refer to the [GnuPG manual](https://www.gnupg.org/gph/en/manual.html) for
 As a final touch, let's also produce a "tampered" version of our document, so that we can check if we are able to detect a "fraud":
 
 ```bash
-echo "My public statement was tampered!" > document-tampered
+echo "My public statement was tampered\!" > document-tampered
 ```
 
 ## Building an `ext2` file-system
