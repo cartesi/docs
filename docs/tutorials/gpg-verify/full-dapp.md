@@ -82,7 +82,7 @@ contract GpgVerify {
     function instantiate(address[] memory parties) public returns (uint256) {
 
         // specifies two input drives containing the document and the signature
-        CartesiComputeInterface.Drive[] memory drives = new CartesiComputeInterface.Drive[](2);
+        CartesiComputeInterface.Drive[] memory drives = new CartesiComputeInterface.Drive[](2)
         drives[0] = CartesiComputeInterface.Drive(
             0xa000000000000000,    // 3rd drive position: 1st is the root file-system (0x8000..), 2nd is the dapp-data file-system (0x9000..)
             10,                    // driveLog2Size
@@ -91,7 +91,8 @@ contract GpgVerify {
             0x00,                  // loggerRootHash
             parties[0],            // provider
             false,                 // waitsProvider
-            false                  // needsLogger
+            false,                 // needsLogger
+            false                  // downloadAsCAR
         );
         drives[1] = CartesiComputeInterface.Drive(
             0xb000000000000000,    // 4th drive position
@@ -101,7 +102,8 @@ contract GpgVerify {
             0x00,                  // loggerRootHash
             parties[0],            // provider
             false,                 // waitsProvider
-            false                  // needsLogger
+            false,                 // needsLogger
+            false                  // downloadAsCAR
         );
 
         // instantiates the computation
@@ -112,7 +114,8 @@ contract GpgVerify {
             outputLog2Size,
             roundDuration,
             parties,
-            drives
+            drives,
+            false
         );
     }
 
