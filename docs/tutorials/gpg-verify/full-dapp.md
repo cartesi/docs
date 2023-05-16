@@ -23,7 +23,7 @@ import "@cartesi/compute-sdk/contracts/CartesiComputeInterface.sol";
 
 contract GpgVerify {
 
-    CartesiComputeInterface CartesiCompute;
+    CartesiComputeInterface cartesiCompute;
 
     bytes32 templateHash = 0x%tutorials.gpg-verify.hash-full;
 
