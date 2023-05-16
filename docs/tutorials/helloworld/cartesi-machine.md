@@ -90,7 +90,7 @@ This informs us that the machine's initial template hash is `%tutorials.hellowor
 
 ```
 ls stored_machine/
-%tutorials.helloworld.storedir
+%tutorials.helloworld.dir
 ```
 
 ## Final implementation
@@ -173,7 +173,7 @@ ls ../../compute-env/machines
 %tutorials.helloworld.hash-full
 
 ls ../../compute-env/machines/%tutorials.helloworld.hash-full/
-%tutorials.helloworld.storedir
+%tutorials.helloworld.dir
 ```
 
 And that's it, we now have running Cartesi Compute nodes that are capable of performing our Hello World computation!
