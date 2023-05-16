@@ -8,6 +8,6 @@ cartesi-machine \
     -- $'echo Hello World! | dd status=none of=$(flashdrive output)' \
     &> /dev/null
 
-ls stored_machine/
+ls stored_machine/ | xargs echo
 
 rm -r stored_machine
