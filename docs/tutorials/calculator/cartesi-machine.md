@@ -125,7 +125,7 @@ MACHINE_TARGET_DIR=$MACHINES_DIR/$(docker run \
   -v `pwd`:/home/$(id -u -n) \
   -h playground \
   -w /home/$(id -u -n) \
-  --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+  --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/ | tail -n 1)
 
 # moves stored machine to the target directory
 if [ -d "$MACHINE_TARGET_DIR" ]; then
