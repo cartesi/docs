@@ -78,8 +78,8 @@ contract DogecoinHash {
             0x00,                  // loggerRootHash
             parties[0],            // provider
             false,                 // waitsProvider
-            false,
-            false                 // needsLogger
+            false,                 // needsLogger
+            false                  // downloadAsCAR
         );
 
         // instantiates the computation
