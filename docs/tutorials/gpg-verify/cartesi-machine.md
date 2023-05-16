@@ -163,7 +163,7 @@ Similar to the issue discussed in the [GenericScript tutorial](../generic-script
 ```bash
 rm dapp-data.ext2
 wget https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/dapp-data.ext2
-./build-cartesi-machine.sh ../compute-env/machines
+./build-cartesi-machine.sh ../../compute-env/machines
 ```
 
 Which should now produce the expected hash `%tutorials.gpg-verify.hash-trunc...`.
