@@ -58,7 +58,7 @@ contract HelloWorld {
             roundDuration,
             parties,
             drives,
-            false,
+            false
         );
     }
 
