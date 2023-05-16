@@ -19,8 +19,7 @@ To that end, create a file called `GpgVerify.sol` in the `gpg-verify/contracts` 
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "@cartesi/compute-sdk/CartesiComputeInterface.sol";
-
+import "@cartesi/compute-sdk/contracts/CartesiComputeInterface.sol";
 
 contract GpgVerify {
 
