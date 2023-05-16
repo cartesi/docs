@@ -23,7 +23,6 @@ import "@cartesi/compute-sdk/contracts/CartesiComputeInterface.sol";
 
 
 contract Calculator {
-
     CartesiComputeInterface cartesiCompute;
 
     bytes32 templateHash = 0x%tutorials.calculator.hash-full;
@@ -52,8 +51,8 @@ contract Calculator {
             0x00,                  // loggerRootHash
             parties[0],            // provider
             false,                 // waitsProvider
-            false,
-            false                  // needsLogger
+            false,                 // needsLogger
+            false                  // downloadAsCar
         );
 
         // instantiates the computation
