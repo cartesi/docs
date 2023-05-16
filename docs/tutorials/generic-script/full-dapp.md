@@ -59,8 +59,8 @@ print(payload)\n\
             0x00,                  // loggerRootHash
             parties[0],            // provider
             false,                 // waitsProvider
-            false,                  // needsLogger
-            false
+            false,                 // needsLogger
+            false                  // downloadAsCAR
         );
 
         // instantiates the computation
