@@ -12,7 +12,7 @@ To do so, we will implement the following `getResult` method in the `HelloWorld.
 
 ```javascript
 function getResult(uint256 index) public view returns (bool, bool, address, bytes memory) {
-    return compute.getResult(index);
+    return cartesiCompute.getResult(index);
 }
 ```
 
@@ -57,7 +57,8 @@ contract HelloWorld {
             outputLog2Size,
             roundDuration,
             parties,
-            drives
+            drives,
+            false,
         );
     }
 

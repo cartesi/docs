@@ -39,7 +39,8 @@ function instantiate(address[] memory parties) public returns (uint256) {
         outputLog2Size,
         roundDuration,
         parties,
-        drives
+        drives,
+        false
     );
 }
 ```
