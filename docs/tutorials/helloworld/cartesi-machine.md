@@ -30,6 +30,7 @@ To illustrate how we are going to use the playground, try executing the followin
 ```bash
 docker run \
   --rm cartesi/playground:0.5.0 cartesi-machine \
+    --append-rom-bootargs="single=yes" \
     -- $'echo Hello World!'
 ```
 
