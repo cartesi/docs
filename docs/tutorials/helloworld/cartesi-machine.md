@@ -107,6 +107,7 @@ chmod +x build-cartesi-machine.sh
 Edit the file and place the following contents into it:
 
 ```bash
+#!/bin/bash
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
