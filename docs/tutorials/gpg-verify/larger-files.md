@@ -131,7 +131,7 @@ We can thus compute the desired Merkle root hashes for our data with the followi
 
 ```bash
 merkle-tree-hash --input=portrait.jpg.prepended --tree-log2-size=22 | tr -d "\n" > portrait.jpg.prepended.merkle
-merkle-tree-hash --input=portrait.sig.prepended --tree-log2-size=12 | tr -d "\n" > portrait.sig.prepended.merkle
+merkle-tree-hash --input=portrait.sig.prepended --log2-root-size=12 | tr -d "\n" > portrait.sig.prepended.merkle
 ```
 
 In which we define the total portrait document tree size as 64KiB (2<sup>16</sup>), while its signature has tree size 1KiB (2<sup>10</sup>). The resulting hashes will be stored in corresponding `*.merkle` files.
