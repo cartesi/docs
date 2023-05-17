@@ -56,14 +56,15 @@ public
     );
 
     // instantiates the computation
-    return compute.instantiate(
+    return cartesiCompute.instantiate(
         finalTime,
         templateHash,
         outputPosition,
         outputLog2Size,
         roundDuration,
         parties,
-        drives
+        drives,
+	false
     );
 }
 ```
