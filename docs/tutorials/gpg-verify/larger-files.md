@@ -130,7 +130,7 @@ In order to use this utility, we must provide two parameters `input` and `tree-l
 We can thus compute the desired Merkle root hashes for our data with the following commands:
 
 ```bash
-merkle-tree-hash --input=portrait.jpg.prepended --tree-log2-size=22 | tr -d "\n" > portrait.jpg.prepended.merkle
+merkle-tree-hash --input=portrait.jpg.prepended --log2-root-size=22 | tr -d "\n" > portrait.jpg.prepended.merkle
 merkle-tree-hash --input=portrait.sig.prepended --log2-root-size=12 | tr -d "\n" > portrait.sig.prepended.merkle
 ```
 
