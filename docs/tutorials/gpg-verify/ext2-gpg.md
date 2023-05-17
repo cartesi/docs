@@ -39,7 +39,7 @@ You can then download and import the private key, and create a detached document
 ```bash
 wget https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/compute-private.key
 gpg --import compute-private.key
-gpg --detach-sig -u compute --output signature document
+gpg --detach-sig -u descartes --output signature document
 ```
 
 Please refer to the [GnuPG manual](https://www.gnupg.org/gph/en/manual.html) for more information on how to use `gpg`, such as creating your own keypairs.
