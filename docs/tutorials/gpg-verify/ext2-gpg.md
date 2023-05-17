@@ -24,7 +24,7 @@ An appropriate signature for that document has been created using the tutorial's
 wget https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/signature
 ```
 
-Alternatively, you can use the tutorial's [private key](https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/compute-private.key) and sign it yourself using the GnuPG `gpg` tool (the private key's passphrase is "Cartesi Compute rocks!").
+Alternatively, you can use the tutorial's [private key](https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-machine/compute-private.key) and sign it yourself using the GnuPG `gpg` tool (the private key's passphrase is "Descartes rocks!").
 
 :::note
 Although not necessary, it may be fun to use the GnuPG tool to play around with your own keypairs and document signatures. If you do not already have it installed, you can do that in an Ubuntu distribution by typing:
