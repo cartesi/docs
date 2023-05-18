@@ -175,18 +175,6 @@ module.exports = {
       },
       ],
     },
-    {
-      type: "category",
-      label: "Rollups evolution",
-      link: {
-        type: "generated-index",
-        slug: "/challenges",
-      },
-      collapsed: true,
-      items: [
-        "challenges/overview",
-      ],
-    },
     ]
 
   };
