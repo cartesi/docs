@@ -55,7 +55,7 @@ The current **0.9** release lacks composability, which is the ability of multipl
 
 ### Solution strategy
 
-After the initial **0.9** release, our attention will be directed towards a variety of development aspects, one of which includes planning research to address the composability issue. We understand the importance of composability for expanding the functionality and interoperability of DApps within the Cartesi Rollups ecosystem. In the meantime, we may consider solutions for specific use cases, such as utilizing liquidity providers for rapidly transferring fungible assets between applications. This approach allows us to improve the user experience and promote the growth of the DApps network while continuing to work on all our development priorities.
+After the initial **0.9** release, we plan to prioritize the development of composability features, expanding the functionality and interoperability of DApps within the Cartesi Rollups ecosystem. This enhancement will further improve the user experience and promote the growth of the DApps network.
 
 ## Convenience layer: Frontend
 
