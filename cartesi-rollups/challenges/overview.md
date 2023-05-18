@@ -21,7 +21,7 @@ In contrast to the majority of proposed Layer 2 rollup solutions, which primaril
 
 ### Solution strategy
 
-Achieving transaction scalability is directly related to the implementation of an *Aggregator*, which is often associated with a Sequencer. This key component will streamline the process, enhancing the overall efficiency and capacity of our rollup solution. It is worth noting that users can already easily benefit from transaction scalability by deploying Cartesi as a Layer-3 solution, on top of another Layer-2 solution that provides scalability. Cartesi officially supports deployment on top of Optimism and Arbitrum, further expanding the options for users seeking enhanced transaction scalability.
+Achieving transaction scalability is directly related to the implementation of an *Aggregator*, which is often associated with a Sequencer. This key component will streamline the process, enhancing the overall efficiency and capacity of our rollup solution.
 
 ## Disputes
 
@@ -31,7 +31,7 @@ The initial **0.9** release lacks support for dispute resolution.
 
 ### Solution strategy
 
-Our team has strategically planned for the development of dispute resolution features from the beginning. We have successfully built dispute resolution for Compute, and it was deliberately left out of the initial releases to streamline the complexity. Furthermore, we wanted to incorporate it after making other improvements and research, such as the Microarchitecture enhancement (completed) and the more recent research on NxN dispute resolution.
+Our team has recognized this limitation and has already begun developing dispute resolution features to enhance this functionality in future releases.
 
 ## Large data as input
 
