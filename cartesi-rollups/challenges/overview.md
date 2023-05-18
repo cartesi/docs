@@ -61,11 +61,11 @@ After the initial **0.9** release, our attention will be directed towards a vari
 
 ### Challenge
 
-The current **0.9** release features an HTTP API, which, while providing a solid and universal foundation for our rollups solution, may be a bit inconvenient to use both in the front-end and back-end. This was a deliberate strategy, as we wanted to start releasing a product with a robust foundation. More convenient solutions would inevitably be more opinionated and geared towards specific languages or frameworks. As a result, early adopters may face a steeper learning curve to get started. However, we recognize the importance of convenience in SDK usage, which often involves multiple layers, each designed to simplify and streamline the process further.
+The current **0.9** release features an HTTP API, which, while providing a solid and universal foundation for our rollups solution, may be a bit inconvenient to use both in the front-end and back-end. This was a deliberate strategy, as we wanted to start releasing a product with a robust foundation. More convenient solutions would inevitably be more opinionated and geared towards specific languages or frameworks. As a result, early adopters may face a steeper learning curve to get started. However, we recognize the importance of convenience in SDK usage, which often involves multiple layers, each designed to simplify and streamline the process further. In the future, we plan to address this aspect and enhance the convenience of our API for developers working with our platform.
 
 ### Solution strategy
 
-After developing a few example applications internally, we believe it is clear that "higher-level development frameworks" are essential for improving usability and developer experience. These frameworks will be opinionated convenience layers, both in the front-end and in the back-end, that will allow developers to abstract away several concepts, benefit from code completion, reuse standard code such as wallet implementations, and much more. We expect several of these frameworks to be implemented in the near future, in collaboration with the community.
+To improve the user experience for developers, we are examining the potential integration of various convenience layers, including a frontend layer that would make it simpler and easier to use the SDK. Our present focus lies in conducting research and exploring potential approaches, without committing to a specific implementation plan at this stage.
 
 ## Design for upgradability
 
