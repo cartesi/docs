@@ -10,7 +10,7 @@ Cartesi Rollups are an innovative and dynamic product that constantly evolves to
 - [Disputes](#disputes)
 - [Large data as input](#large-data-as-input)
 - [Composability](#composability)
-- [Convenience layer: Front-end](#convenience-layer-front-end)
+- [Convenience layer: Frontend](#convenience-layer-frontend)
 - [Design for upgradability](#design-for-upgradability)
 
 ## Transaction scalability
@@ -57,11 +57,11 @@ The current **0.9** release lacks composability, which is the ability of multipl
 
 After the initial **0.9** release, our attention will be directed towards a variety of development aspects, one of which includes planning research to address the composability issue. We understand the importance of composability for expanding the functionality and interoperability of DApps within the Cartesi Rollups ecosystem. In the meantime, we may consider solutions for specific use cases, such as utilizing liquidity providers for rapidly transferring fungible assets between applications. This approach allows us to improve the user experience and promote the growth of the DApps network while continuing to work on all our development priorities.
 
-## Convenience layer: Front-end
+## Convenience layer: Frontend
 
 ### Challenge
 
-The current **0.9** release features an HTTP API, which, while providing a solid and universal foundation for our rollups solution, may be a bit inconvenient to use both in the front-end and back-end. This was a deliberate strategy, as we wanted to start releasing a product with a robust foundation. More convenient solutions would inevitably be more opinionated and geared towards specific languages or frameworks. As a result, early adopters may face a steeper learning curve to get started. However, we recognize the importance of convenience in SDK usage, which often involves multiple layers, each designed to simplify and streamline the process further. In the future, we plan to address this aspect and enhance the convenience of our API for developers working with our platform.
+The current **0.9** release features an HTTP API but does not yet include a frontend convenience layer that would minimize the amount of code necessary for developers to send inputs, query the DApp state in the rollups, and execute outputs. Convenience in SDK usage often involves multiple layers, with each layer designed to simplify and streamline the process further. However, the current release's lack of such layers could lead to increased effort for developers when interacting with our rollups solution.
 
 ### Solution strategy
 
