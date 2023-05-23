@@ -189,6 +189,12 @@ event NewConsensus(IConsensus newConsensus);
 
 A new consensus is used, this event is emitted when a new consensus is set. This event must be triggered on a successful call to [migrateToConsensus](#migratetoconsensus).
 
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| newConsensus | IConsensus | The new consensus contract |
+
 ### VoucherExecuted
 
 ```solidity
@@ -196,6 +202,12 @@ event VoucherExecuted(uint256 voucherId);
 ```
 
 A voucher was executed from the DApp, this event is emitted when a voucher is executed so it must be triggered on a successful call to [executeVoucher](#executevoucher).
+
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| voucherId | uint256 | A number that uniquely identifies the voucher amongst all vouchers emitted by this DApp |
 
 ### Proof
 
@@ -212,8 +224,8 @@ struct Proof {
 
 | Name                        | Type      | Description                                                       |
 | --------------------------- | --------- | ----------------------------------------------------------------- |
-| validity                  | [OutputValidityProof](#outputvalidityproof)   | validity A validity proof for the output                                |
-| context                 | bytes   | context Data for querying the right claim from consensus                     |
+| validity                  | [OutputValidityProof](#outputvalidityproof)   | A validity proof for the output                                |
+| context                 | bytes   | Data for querying the right claim from consensus                     |
 
 ### OutputValidityProof
 
@@ -236,11 +248,11 @@ struct OutputValidityProof {
 
 | Name                        | Type      | Description                                                       |
 | --------------------------- | --------- | ----------------------------------------------------------------- |
-| inputIndex                 | uint256   | which input, inside the epoch, the output belongs to                                |
-| outputIndex                 | uint256   | index of output emitted by the input                      |
+| inputIndex                 | uint256   | Which input, inside the epoch, the output belongs to                                |
+| outputIndex                 | uint256   | Index of output emitted by the input                      |
 | outputHashesRootHash        | bytes32   | Merkle root of hashes of outputs emitted by the input    |
-| vouchersEpochRootHash       | bytes32   | merkle root of all epoch's voucher metadata hashes   |
-| noticesEpochRootHash        | bytes32   | merkle root of all epoch's notice metadata hashes    |
-| machineStateHash            | bytes32   | hash of the machine state claimed this epoch           |
-| keccakInHashesSiblings      | bytes32[] | proof that this output metadata is in metadata memory range       |
-| outputHashesInEpochSiblings | bytes32[] | proof that this output metadata is in epoch's output memory range |
+| vouchersEpochRootHash       | bytes32   | Merkle root of all epoch's voucher metadata hashes   |
+| noticesEpochRootHash        | bytes32   | Merkle root of all epoch's notice metadata hashes    |
+| machineStateHash            | bytes32   | Hash of the machine state claimed this epoch           |
+| keccakInHashesSiblings      | bytes32[] | Proof that this output metadata is in metadata memory range       |
+| outputHashesInEpochSiblings | bytes32[] | Proof that this output metadata is in epoch's output memory range |
