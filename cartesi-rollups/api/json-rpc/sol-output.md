@@ -43,7 +43,7 @@ This contract inherits the following OpenZeppelin contracts. For more informatio
 ### executeVoucher
 
 ```solidity
-function executeVoucher(address _destination, bytes _payload, struct [Proof](#proof) _proof) external returns (bool)
+function executeVoucher(address _destination, bytes _payload, struct Proof _proof) external returns (bool)
 ```
 
 Try to execute a voucher.
@@ -58,7 +58,7 @@ _On a successful execution, emits a `VoucherExecuted` event._
 | ---- | ---- | ----------- |
 | _destination | address | The address that will receive the payload through a message call |
 | _payload | bytes | The payload, which—in the case of Solidity contracts—encodes a function call |
-| _proof | struct [Proof](#proof) | The proof used to validate the voucher against               a claim submitted by the current consensus contract |
+| _proof | struct Proof | The proof used to validate the voucher against               a claim submitted by the current consensus contract |
 
 #### Return Values
 
@@ -90,7 +90,7 @@ Check whether a voucher has been executed.
 ### validateNotice
 
 ```solidity
-function validateNotice(bytes _notice, struct [Proof](#proof) _proof) external view returns (bool)
+function validateNotice(bytes _notice, struct Proof _proof) external view returns (bool)
 ```
 
 Validate a notice.

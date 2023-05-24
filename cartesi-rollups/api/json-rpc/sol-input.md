@@ -28,6 +28,23 @@ Mapping from DApp address to list of input hashes.
 
 _See the `getNumberOfInputs`, `getInputHash` and `addInput` functions._
 
+### InputAdded
+
+```solidity
+event InputAdded(address dapp, uint256 inboxInputIndex, address sender, bytes input)
+```
+
+Emitted when an input is added to a DApp's input box
+
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| dapp | address | The address of the DApp |
+| inboxInputIndex | uint256 | The index of the input in the input box |
+| sender | address | The address that sent the input |
+| input | bytes | The contents of the input |
+
 ### addInput
 
 ```solidity
