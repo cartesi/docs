@@ -4,7 +4,7 @@ title: Performance recommendations
 tags: [build, dapps, developer]
 ---
 
-The Cartesi Rollups framework offers a plethora of possibilities for developing DApps, giving developers the freedom to choose the technologies and stacks that align with their goals. Nonetheless, it is essential to consider certain recommendations to ensure that the DApps work seamlessly, given the current state of the Cartesi Rollups framework.
+The Cartesi Rollups framework offers a plethora of possibilities for developing DApps, giving you the freedom to choose the technologies and stacks that align with their goals. Nonetheless, it is essential to consider certain recommendations to ensure that the DApps work seamlessly, given the current state of the Cartesi Rollups framework.
 
 This article explains common practices for developing DApps using the Cartesi Rollups framework to ensure better performance and reliability.
 
@@ -14,7 +14,7 @@ This article explains common practices for developing DApps using the Cartesi Ro
 Please, check the article [DApp architecture](../dapp-architecture.md) to explore more essential topics such as the [back-end](../dapp-architecture.md#back-end)) and [front-end](../dapp-architecture.md#front-end)) components, and the [communication](../dapp-architecture.md#communication) between them.
 :::
 
-Cartesi DApps communicate between the front-end and back-end using the Rollups framework via a [set of HTTP APIs](..//http-api.md). The Cartesi DApp back-end contains the application's business logic and executes within the Cartesi Rollups framework. The back-end produces outputs in the form of vouchers, notices, or reports, which provide vital information about the application's status. The Cartesi DApp front-end is responsible for presenting information and receiving inputs. The front-end communicates with the back-end via APIs, and Cartesi provides a range of APIs that DApp developers can use to interact with the Rollups framework.
+Cartesi DApps communicate between the front-end and back-end using the Rollups framework via a [set of HTTP APIs](..//http-api.md). The Cartesi DApp back-end contains the application's business logic and executes within the Cartesi Rollups framework. The back-end produces outputs in the form of [vouchers](../components.md#vouchers), [notices](../components.md#notices), or [reports](../components.md#reports), which provide vital information about the application's status. The Cartesi DApp front-end is responsible for presenting information and receiving inputs. The front-end communicates with the back-end via APIs, and Cartesi provides a range of APIs that you can use to interact with the Rollups framework.
 
 When it comes to DApp architecture and APIs, several points are important to highlight:
 
@@ -49,13 +49,13 @@ The DApp front-end clients have two ways of retrieving information:
 
 The **Inspect API** provides enhanced flexibility and aligns better with the conventions of modern web2 applications. Enabling the implementation of a REST-like API on the back-end allows for the retrieval of various information about the DApp.
 
-In contrast, the **GraphQL API** allows clients to retrieve vouchers and notices, which can be leveraged to enforce consequences on the base layer. For instance, executing a voucher to withdraw assets. Additionally, it offers a standardized approach to retrieve information in the form of notices and reports. This aspect is particularly advantageous for generic clients, including the Cartesi Rollups Explorer, as well as the front-end console client, which is available in the [rollups-examples repository](https://github.com/cartesi/rollups-examples).
+In contrast, the **GraphQL API** allows you to retrieve vouchers and notices, which can be leveraged to enforce consequences on the base layer. For instance, executing a voucher to withdraw assets. Additionally, it offers a standardized approach to retrieve information in the form of notices and reports. This aspect is particularly advantageous for generic clients, including the Cartesi Rollups Explorer, as well as the front-end console client, which is available in the [rollups-examples repository](https://github.com/cartesi/rollups-examples/tree/main/frontend-console).
 
 ### GraphQL Server
 
 The GraphQL Server is the Cartesi Node component that processes GraphQL API requests, and it scales well, allowing thousands of requests to be processed per second.
 
-### Inspect Server [add a new section for it in the component article]
+### Inspect Server
 
 The Inspect Server is the component that processes Inspect API requests. At its current stage, its implementation is very basic and it does not scale well. In order to answer an inspect request, it asks the back-end to stop processing new inputs so that it can process the inspect call. As a consequence, inspect requests are currently _serialized_ and processed one at a time. If too many inspect requests are received at the same time, they may start to get rejected by the server.
 
@@ -79,7 +79,7 @@ For example, you can make Inspect API requests when the user view a webpage in a
 
 When you need to regularly check for status updates, it is recommended to utilize the [GraphQL API](../api/graphql/basics.md) and poll it at intervals of around 500ms.
 
-For example, the [Echo DApp Front-end](https://github.com/cartesi/rollups-examples/tree/main/frontend-echo) web application provides a practical example of how to implement a GraphQL API polling mechanism to check for new notices and keep the front-end updated. Also, Web modules such as the [Apollo Client](https://www.apollographql.com/apollo-client) enable developers to easily configure a polling GraphQL query.
+For example, the [Echo DApp Front-end](https://github.com/cartesi/rollups-examples/tree/main/frontend-echo) web application provides a practical example of how to implement a GraphQL API polling mechanism to check for new notices and keep the front-end updated. Also, Web modules such as the [Apollo Client](https://www.apollographql.com/apollo-client) enable you to easily configure a polling GraphQL query.
 
 :::note
 At the moment of writing this documentation, using GraphQL is the most efficient way to query for DApp state updates.
