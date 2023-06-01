@@ -33,12 +33,14 @@ Examples of DApp ownership models include:
 
 See `IConsensus` for examples of consensus models.
 
-This contract inherits the following OpenZeppelin contracts. For more information, please consult [OpenZeppelin's official documentation](https://docs.openzeppelin.com/contracts/4.x/).
+This contract inherits the following OpenZeppelin contracts.
 
 * `Ownable`
 * `ERC721Holder`
 * `ERC1155Holder`
 * `ReentrancyGuard`
+
+For more information, please consult [OpenZeppelin's official documentation](https://docs.openzeppelin.com/contracts/4.x/).
 
 ### executeVoucher
 
