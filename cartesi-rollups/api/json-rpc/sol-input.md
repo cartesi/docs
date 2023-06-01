@@ -18,16 +18,6 @@ providers.
 From the perspective of this contract, inputs are encoding-agnostic byte
 arrays. It is up to the DApp to interpret, validate and act upon inputs.
 
-### inputBoxes
-
-```solidity
-mapping(address => bytes32[]) inputBoxes
-```
-
-Mapping from DApp address to list of input hashes.
-
-_See the `getNumberOfInputs`, `getInputHash` and `addInput` functions._
-
 ### InputAdded
 
 ```solidity
