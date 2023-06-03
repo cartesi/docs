@@ -85,24 +85,13 @@ After you see the expected logs below, you can go to the [Interacting Step](#int
 
 ### Expected logs
 
-Allow some time for the infrastructure to be ready.
-How much will depend on your system, but after some time showing the error `"concurrent call in session"`, eventually the container logs will repeatedly show the following:
+Allow some time for the infrastructure to be ready. How much will depend on your system, but eventually the container logs will only show the continuous production of empty blocks in the local blockchain, as displayed below:
 
 ```shell
-server_manager_1      | Received GetVersion
-server_manager_1      | Received GetStatus
-server_manager_1      |   default_rollups_id
-server_manager_1      | Received GetSessionStatus for session default_rollups_id
-server_manager_1      |   0
-server_manager_1      | Received GetEpochStatus for session default_rollups_id epoch 0
-```
-
-### Advancing time
-
-When executing an example, it is possible to advance time to simulate the passing of epochs. To do that, run:
-
-```shell
-curl --data '{"id":1337,"jsonrpc":"2.0","method":"evm_increaseTime","params":[864010]}' http://localhost:8545
+rollups-examples-hardhat-1                      | Mined empty block range #32 to #33
+rollups-examples-hardhat-1                      | Mined empty block range #32 to #34
+rollups-examples-hardhat-1                      | Mined empty block range #32 to #35
+rollups-examples-hardhat-1                      | Mined empty block range #32 to #36
 ```
 
 ### How to shutdown the environment
@@ -149,7 +138,7 @@ yarn start notice list
 After completing all the steps above, you should get a response similar to the following:
 
 ```
-[ { epoch: '0', input: '1', notice: '0', payload: 'Hello, Cartesi.' } ]
+[{"id":"1","epoch":0,"input":1,"notice":0,"payload":"Hello Blockchain OS!"}]
 ```
 
 :::tip
