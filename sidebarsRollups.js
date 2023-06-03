@@ -12,18 +12,16 @@ module.exports = {
           "overview",
           "components",
           "dapp-architecture",
-          "http-api",
-          "dapp-life-cycle",
           {
             type: "category",
-            label: "Rollups HTTP APIs reference",
+            label: "Rollups HTTP APIs",
             link: {
               type: "generated-index",
               slug: "api",
               description: "APIs available for DApp developers to interact with the Cartesi Rollups framework."
             },
             collapsed: true,
-            items: [
+            items: [                 "http-api",
               {
                 type: "category",
                 label: "Front-end APIs",
@@ -144,6 +142,7 @@ module.exports = {
               },
             ],
           },
+          "dapp-life-cycle",
         ],
       },
       {
