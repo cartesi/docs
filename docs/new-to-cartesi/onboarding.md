@@ -49,7 +49,7 @@ This section targets developers who want to start building DApps.
 
 As a developer, you can use all the programming languages, tools, libraries, software, and services you are already familiar with. By moving most of the complex logic of their DApps to portable off-chain components, developers are freed from the limitations and idiosyncrasies imposed by blockchains. In this way, Cartesi empowers developers to select the best run-time environment in which to host each part of their DApps.
 
-### Quick start to run your first DApp
+<h3> Quick start to run your first DApp </h3>
 
 The fastest way of getting started is by [Running a Simple DApp](/cartesi-rollups/build-dapps/run-dapp) that we already built using Python.
 
@@ -76,7 +76,18 @@ Check the section [**Cartesi Rollups**](/cartesi-rollups/overview) to learn theo
   * [ERC-20 DApp](https://github.com/cartesi/rollups-examples/blob/main/erc20)
   * [Auction DApp](https://github.com/cartesi/rollups-examples/blob/main/auction)
 
-### Run your DApp off-chain using Cartesi Compute SDK
+</TabItem>
+<TabItem value="researcher">
+
+:::note
+This section targets researchers and low-level programmers who want to dive into our core technology.
+:::
+
+<h3> Cartesi Machine </h3>
+
+You can dive deeper into the Blockchain OS core technology by reading the section about [The Cartesi Machine](../machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
+
+<h3> Cartesi Compute SDK to run a DApp off-chain </h3>
 
 You can use the [Cartesi Compute SDK](../compute.md) to leverage Cartesi to run one-off complex computations that could never be executed inside a normal smart contract. Instead, those computations are executed off-chain with automatic dispute resolution guarantees, and its results can later be used on-chain.
 
@@ -87,14 +98,6 @@ Navigate to [Cartesi Compute Tutorials](../compute.md#cartesi-compute-tutorials)
 * [Generic Script](../compute.md#generic-script-dapp)
 * [GPG Verify](../compute.md#gpg-verify-dapp)
 
-</TabItem>
-<TabItem value="researcher">
-
-:::note
-This section targets researchers and low-level programmers who want to dive into our core technology.
-:::
-
-You can dive deeper into the Blockchain OS core technology by reading the section about [The Cartesi Machine](../machine/intro.md), which is a virtual machine that allows for verifiable computing using a Linux operating system.
 </TabItem>
 </Tabs>
 <br/>
