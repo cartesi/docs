@@ -26,7 +26,7 @@ The **Quick Start** guide consists of 5 main steps:
 ## Installing
 
 :::note
-You can use online development environments such as [Gitpod](https://gitpod.io/) and [CodeSandbox](https://codesandbox.io) to open the [rollups-exmaples](https://github.com/cartesi/rollups-examples) directly in your browser with all [required dependencies](./requirements.md) already installed. These services allow you to start experimenting immediately, but keep in mind that they are provided by third-parties and are subject to unavailability and policy changes. They may also require access to your GitHub account in order to work properly.
+You can use online development environments such as [Gitpod](https://gitpod.io/) and [CodeSandbox](https://codesandbox.io) to open the [rollups-examples](https://github.com/cartesi/rollups-examples) directly in your browser with all [required dependencies](./requirements.md) already installed. These services allow you to start experimenting immediately, but keep in mind that they are provided by third-parties and are subject to unavailability and policy changes. They may also require access to your GitHub account in order to work properly.
 :::
 
 There are two different options to setup the prerequisites, you can choose one of the following:
