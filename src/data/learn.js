@@ -47,6 +47,20 @@ export const learn = [
       },
     ],
   },
+  {
+    category: "by-goal",
+    title: "Deep Dive: Explore the Cartesi Compute",
+    links: [
+      {
+        label: "Introduction to the Cartesi Compute",
+        href: "/compute/overview",
+      },
+      {
+        label: "Cartesi Compute Tutorials",
+        href: "/compute/tutorials/",
+      },
+    ],
+  },
 
   {
     category: "by-role",
@@ -55,6 +69,10 @@ export const learn = [
       {
         label: "New to Cartesi",
         href: "/new-to-cartesi/",
+      },
+      {
+        label: "Choose your Onboarding Path",
+        href: "/new-to-cartesi/onboarding/",
       },
       {
         label: "Understand how Cartesi Rollups are different",
@@ -108,6 +126,14 @@ export const learn = [
     category: "by-role",
     title: "Researcher & Low-level developer",
     links: [
+      {
+        label: "Introduction to the Cartesi Compute",
+        href: "/compute/overview",
+      },
+      {
+        label: "Cartesi Compute Tutorials",
+        href: "/compute/tutorials/",
+      },
       {
         label: "Introduction to the Cartesi Machine",
         href: "/machine/intro",
