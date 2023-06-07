@@ -84,7 +84,7 @@ And then test them:
 
 ```bash
 node –-version
-npm –-version
+npm version
 ```
 
 ## Yarn
