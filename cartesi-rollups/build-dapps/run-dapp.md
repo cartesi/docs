@@ -58,17 +58,14 @@ To build the `echo-python` example:
 If you are running your environment using the [Gitpod option explained above](#using-gitpod), then please start from **step number 2** as you will not need to clone the Github repository.
 :::
 
-1. Clone the [cartesi/rollups-examples](https://github.com/cartesi/rollups-examples) Github repository:
+1. Clone the [cartesi/rollups-examples](https://github.com/cartesi/rollups-examples) Github repository, and `cd` into it:
 ```shell
 git clone https://github.com/cartesi/rollups-examples.git
+cd rollups-examples
 ```
-2. Navigate to the DApp example directory, If you are running your environment using Gitpod:
+2. Navigate to the DApp example directory by running the following command:
 ```shell
 cd echo-python
-```
-Or if you are running your environment using a manual setup:
-```shell
-cd rollups-examples/echo-python
 ```
 3. Build the Echo DApp:
 ```shell
