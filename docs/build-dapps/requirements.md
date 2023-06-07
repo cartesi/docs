@@ -77,7 +77,7 @@ To install Node.js, follow [the official instructions](https://nodejs.org/en/dow
 
 ```bash
 curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-sudo apt-get install -y nodejs
+sudo apt-get install -y nodejs && apt install npm
 ```
 
 And then test them:
