@@ -134,11 +134,9 @@ yarn start input send --payload "Hello, Cartesi."
 yarn start notice list
 ```
 
-After completing all the steps above, you should get a response similar to the following:
+After completing all the steps above, you should get a response with the payload of the notice:
 
-```
-[{"index":0,"input":0,"payload":"Hello, Cartesi."}]
-```
+`"Hello, Cartesi."`
 
 :::tip
 You can run the Cartesi Rollups environment locally in [host mode](./overview.md#host-mode). Please follow the guide on [how to run DApp back-ends in Host Mode](./dapp-host-mode.md), but before that make sure to [shutdown the current running environment](#how-to-shutdown-the-environment).
@@ -189,10 +187,7 @@ yarn start input send --payload "Hello, Cartesi." --dapp echo-python
 ```shell
 yarn start notice list --url https://echo-python.goerli.rollups.staging.cartesi.io/graphql
 ```
-11. You should get a response similar to the following:
-```
-[{"index":0,"input":0,"payload":"Hello, Cartesi."}]
-```
+11. You should get a response with the payload of the notice: `"Hello, Cartesi."`
 
 :::tip
 As shown in the last step (number 10), to query the layer-2 Cartesi Node for DApp outputs, you will need to specify the URL of its GraphQL endpoint. You can find other existing examples endpoints in the [DApp table below](#explore-our-dapps).
