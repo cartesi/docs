@@ -11,7 +11,7 @@ This article explains common practices for developing DApps using the Cartesi Ro
 ## Summary of a Cartesi DApp's architecture
 
 :::tip
-Please, check the article [DApp architecture](../dapp-architecture.md) to explore more essential topics such as the [back-end](../dapp-architecture.md#back-end)) and [front-end](../dapp-architecture.md#front-end)) components, and the [communication](../dapp-architecture.md#communication) between them.
+Please, check the article [DApp architecture](../dapp-architecture.md) to explore more essential topics such as the [back-end](../dapp-architecture.md#back-end) and [front-end](../dapp-architecture.md#front-end) components, and the [communication](../dapp-architecture.md#communication) between them.
 :::
 
 Cartesi DApps communicate between the front-end and back-end using the Rollups framework via a [set of HTTP APIs](..//http-api.md). The Cartesi DApp back-end contains the application's business logic and executes within the Cartesi Rollups framework. The back-end produces outputs in the form of [vouchers](../components.md#vouchers), [notices](../components.md#notices), or [reports](../components.md#reports), which provide vital information about the application's status. The Cartesi DApp front-end is responsible for presenting information and receiving inputs. The front-end communicates with the back-end via APIs, and Cartesi provides a range of APIs that you can use to interact with the Rollups framework.
@@ -38,8 +38,7 @@ If performance is a critical concern for your DApp, consider implementing the ba
 
 ### Understand Cartesi Machine limitations
 
-The Cartesi Machine is a deterministic RISC-V emulator that runs software in a simulated environment. This means that software running inside it will not perform as well as running on the host machine using an x86 or ARM architecture. Expect performance to be at least 50x slower than bare metal.
-
+The Cartesi Machine is a deterministic RISC-V emulator that runs software in a emulated environment. This means that software running inside it will not perform as well as running on the host machine using an x86 or ARM architecture. Expect performance to be at least 50x slower than bare metal.
 
 ## Recommendations to retrieve DApp information
 
