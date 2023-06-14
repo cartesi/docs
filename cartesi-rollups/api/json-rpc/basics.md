@@ -3,7 +3,6 @@ id: basics
 title: Introduction
 ---
 
-## Introduction
 
 The [Cartesi Rollups framework](../../overview.md#what-is-a-blockchain-rollup) consists of components on the *base layer* (The foundational blockchain where a DApp contract is deployed, such as Ethereum) and *execution layer* (The blockchain layer where the DApp runs its backend logic).
 
