@@ -197,6 +197,18 @@ module.exports = {
         label: "Releases",
         href: "https://github.com/cartesi/rollups/releases",
       },
+      {
+        type: "category",
+        label: "Migration guides",
+        link: {
+          type: "generated-index",
+          slug: "/migration-guides",
+        },
+        collapsed: true,
+        items: [
+          "migration-guides/from-08-to-09",
+        ],
+      },
       ],
     },
     ]
