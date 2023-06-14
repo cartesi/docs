@@ -41,6 +41,7 @@ module.exports = {
                     },
                     collapsed: true,
                     items: [
+                    "api/json-rpc/basics",
                     "api/json-rpc/sol-input",
                     "api/json-rpc/sol-output",
                     {
