@@ -4,27 +4,27 @@ title: Introduction
 ---
 
 
-The [Cartesi Rollups framework](../../overview.md#what-is-a-blockchain-rollup) consists of components on the *base layer* (The foundational blockchain where a DApp contract is deployed, such as Ethereum) and *execution layer* (The blockchain layer where the DApp runs its backend logic).
+The [Cartesi Rollups framework](../../overview.md#what-is-a-blockchain-rollup) consists of components on the *base layer* (the foundational blockchain where a DApp contract is deployed, such as Ethereum) and *execution layer* (the Cartesi off-chain layer where the DApp runs its backend logic).
 
-* The base components are a set of smart contracts deployed on the base layer.
+* The base layer components are a set of smart contracts deployed on an Ethereum-compatible blockchain.
 * The execution layer components are the Cartesi Nodes.
 
 In a typical Cartesi DApp architecture, the DApp back-end is running on a Cartesi Node and the DApp front-ends [interact](../../overview.md#how-does-a-rollup-work) with base layer smart contracts to send inputs to the DApp back-end, deposit assets, and process outputs (execute vouchers and validate notices).
 
-To interact with the Ethereum blockchain, the DApp front-end needs to connect to an Ethereum node using [Ethereum's JSON-RPC API](https://ethereum.org/en/developers/docs/apis/json-rpc/). JSON-RPC is a lightweight remote procedure call (RPC) protocol that uses JSON as the data exchange format, and Ethereum has specified an API using this protocol to allow clients to communicate with Ethereum nodes.
+To interact with an Ethereum-compatible blockchain, the DApp front-end needs to connect to a blockchain node using [Ethereum's JSON-RPC API](https://ethereum.org/en/developers/docs/apis/json-rpc/). JSON-RPC is a lightweight remote procedure call (RPC) protocol that uses JSON as the data exchange format, and Ethereum has specified an API using this protocol to allow clients to communicate with Ethereum-compatible nodes.
 
-There are two ways in which clients can interact with Ethereum nodes using the JSON-RPC API:
+There are two ways in which clients can interact with Ethereum-compatible nodes using the JSON-RPC API:
 
 * *Querying state* (read operations) - state can be queried by calling functions whose definition in Solidity is labeled as `view` or `pure` as they do not alter the blockchain state and do not incur gas fees
 
 * *Changing state* (write operations) - state is changed by submitting a transaction, which requires gas fees to be paid. It needs to be cryptographically signed by an Ethereum account that has funds in its wallet.
 
 
-### Testnet vs Mainnet
+### Testnets vs Mainnet
 
-#### Testnet
+#### Testnets
 
-Ethereum Testnet is a testing environment or network that is designed to test the features and capabilities of the Ethereum blockchain without using real ETH and incurring any actual cost. There are several testnets available that simulate the Ethereum mainnet. [Goerli](https://goerli.net/) is one of such testnets.
+Ethereum Testnets are testing environments or networks that are designed to test the features and capabilities of the Ethereum blockchain without using real ETH and incurring any actual cost. There are several testnets available that simulate the Ethereum mainnet. [Goerli](https://goerli.net/) is one of such testnets.
 
 A _faucet_ is a service that provides users with free testnet Ether tokens (GTH in the case of Goerli). These tokens can then be used to test and develop DApps on the testnet. There are several faucets available for Goerli. You may try [https://goerlifaucet.com/](https://goerlifaucet.com/).
 
@@ -70,7 +70,7 @@ The result of this JSON-RPC request is a JSON object similar to the one below:
 ```js
 {"jsonrpc":"2.0","id":1,"result":"0x117295ef834407b723d"}
 ```
-Where:
+Where we have the following properties:
 
 * `jsonrpc`: The version of the JSON-RPC protocol being used.
 * `id`: The ID of the JSON-RPC request, which in this case is 1.
@@ -115,20 +115,20 @@ The result of this JSON-RPC call is the number of inputs for the DApp, returned 
 
 ##### addInput
 
-The following example is a cast comand that shows how to send input using the function [addInput](./sol-input.md#addInput):
+The following example is a cast command that shows how to send an input using the function [addInput](./sol-input.md#addInput) of the [`InputBox`](./sol-input.md) smart contract:
 
 ```shell
 cast send <INPUTBOX_ADDRESS> addInput(_dapp,_input) <DAPP_ADDRESS> <INPUT>
 ```
 
 Where:
-* `<INPUTBOX_ADDRESS>` must be replaced with the address of of the InputBox contract
+* `<INPUTBOX_ADDRESS>` must be replaced with the address of the InputBox contract
 * `<DAPP_ADDRESS>` must be replaced with the address of the DApp
-* `<INPUT>` must be replaced with the bytes of the `_input` argument to the function
+* `<INPUT>` must be replaced with the bytes of the payload being sent as input
 
 
 
-## Cartesi Rollups Smart Contract endpoints
+## Cartesi Rollups Smart Contracts
 
 [**InputBox**](./sol-input.md): global contract where inputs for all DApps are submitted.
 
