@@ -10,7 +10,10 @@ module.exports = {
         collapsed: true,
         items: [
           "overview",
-          "components",
+          "main-concepts",
+          "sending-input-data",
+          "reading-outputs",
+          "assets-handling",
           "dapp-architecture",
           {
             type: "category",
