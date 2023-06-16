@@ -4,8 +4,6 @@ title: Assets handling
 tags: [learn, rollups, dapps, components]
 ---
 
-## Assets handling
-
 Assets exist on the base layer, which is where they have actual meaning and value. As with any execution layer solution, a Cartesi DApp that wants to manipulate assets (e.g. to allow players to bet on a game, so that the winner receives the loser's assets) needs a secure way of "teleporting" the assets from the base layer to the execution layer, and then a way to "teleport" them back to the base layer.
 
 Asset handling in Cartesi DApps involves the following procedures:
@@ -19,13 +17,13 @@ Asset handling in Cartesi DApps involves the following procedures:
 
 The Ethereum Application Binary Interface (ABI) is a standard for interacting with smart contracts in the Ethereum ecosystem.
 
-It defines a standard way to encode function calls and their parameters, so that they can be interpreted correctly by any client or node on the Ethereum network.
-
-This standard ensures that function calls and parameters are consistently encoded across different programming languages and clients, allowing smart contracts to be interoperable and usable by any client on the Ethereum network.
+It defines a standard way to encode function calls and their parameters, so that they can be interpreted correctly by any client or node on the Ethereum network. This standard ensures that function calls and parameters are consistently encoded across different programming languages and clients, allowing smart contracts to be interoperable and usable by any client on the Ethereum network.
 
 In particular, the ABI-encoded payload of a voucher defines a function call, for which the first four bytes correspond to a _function selector_. This selector identifies a method within the contract specified by the voucher's target or _destination_ address. After those initial four bytes, the remainder of the voucher's payload corresponds to the function call parameters, each of which is encoded according to its elementary type (e.g., `uint8`, `bool`, etc.)
 
+:::tip
 You can refer to [Ethereum's ABI specification](https://docs.soliditylang.org/en/latest/abi-spec.html) for the full details about the standard.
+:::
 
 Let's delve deeper into ABI encoding for Cartesi DApps, using ERC-20 and ERC-721 as illustrative examples.
 
@@ -76,6 +74,4 @@ def erc721_withdraw(rollup_address, sender, erc721, token_id):
     return Voucher(erc721, payload)
 ```
 
-Similar to the ERC-20 example above, the `encode` function is used to transform the parameters into a byte string. We have two `address` types (representing the `rollup_address` and `sender`), and one `uint256` type (representing the `token_id` of the ERC-721 token). The resulting byte string is prefixed with `SAFE_TRANSFER_FROM_SELECTOR`, which is the identifier for the `safeTransferFrom` function in ERC-721 contracts. 
-
-
+Similar to the ERC-20 example above, the `encode` function is used to transform the parameters into a byte string. We have two `address` types (representing the `rollup_address` and `sender`), and one `uint256` type (representing the `token_id` of the ERC-721 token). The resulting byte string is prefixed with `SAFE_TRANSFER_FROM_SELECTOR`, which is the identifier for the `safeTransferFrom` function in ERC-721 contracts.

@@ -6,18 +6,18 @@ tags: [learn, rollups, dapps, low-level developer, components]
 
 In Cartesi Rollups, the outputs include:
 
-* Vouchers 
-* Notices
-* Reports
+* [Vouchers](../main-concepts#vouchers)
+* [Notices](../main-concepts#notices)
+* [Reports](../main-concepts#reports)
 
-Vouchers and Notices are intended for on-chain validation by making function calls to the `CartesiDApp` contract (which is effectively our output contract). We validate and execute Vouchers using the [`executeVoucher()`](./api/json-rpc/sol-output.md#executevoucher) function. We validate Notices using the [`validateNotice()`](./api/json-rpc/sol-output.md#validatenotice) function call. Conversely, Reports serve as stateless logs, providing read-only information without affecting the state. These outputs can be read through [GraphQL APIs](./api/graphql/basics.md) and the [Inspect DApp state REST API](./api/inspect/inspect.api.mdx) that the Cartesi Nodes expose.
+Vouchers and Notices are intended for on-chain validation by making function calls to the [CartesiDApp](./api/json-rpc/sol-output.md) contract (which is effectively our output contract). We validate and execute Vouchers using the [`executeVoucher()`](./api/json-rpc/sol-output.md#executevoucher) function. We validate Notices using the [`validateNotice()`](./api/json-rpc/sol-output.md#validatenotice) function call. Conversely, Reports serve as stateless logs, providing read-only information without affecting the state. These outputs can be read through [GraphQL APIs](./api/graphql/basics.md) and the [Inspect DApp state REST API](./api/inspect/inspect.api.mdx) that the Cartesi Nodes expose.
 
 ![img](./outputs.png)
 
 
-## Vouchers
+## How to read Vouchers
 
-The following Python code example shows how you can create and send a voucher payload containing both an Ethereum address and a payload to the Rollup Server's [/voucher](./api/rollup/add-voucher.api.mdx) endpoint:
+The following Python code example shows how to create and send a voucher payload containing both an Ethereum address and a payload to the Rollup Server's [/voucher](./api/rollup/add-voucher.api.mdx) endpoint:
 
 ```python
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
@@ -28,14 +28,14 @@ voucher_payload = {
 
 #selector - first 4 bytes of the keccak hash of the method signature (method name with arguments):
 selector = web3.Web3().keccak(b"mint(address,string)")[0:4]
-#abi encode of parameters 
+#abi encode of parameters
 data = encode_abi(['address', 'string'], [receiver,string])
 
 response = requests.post(rollup_server + "/voucher", json=voucher_payload))
 assert(response.status_code == 200)
 ```
 
-For example, for a user to withdraw ERC20 from the DApp in this specific Python example, you need to encode a call to "erc20Token.transfer(_user,amount)". In this case, the destination will correspond to the address of the ERC20 token contract, while the payload will correspond to the appropriate encoding of the function selector + parameters, as explained before:
+For example, for a user to withdraw ERC20 from the DApp in this specific Python example, you need to encode a call to `erc20Token.transfer(_user,amount)`. In this case, the destination will correspond to the address of the ERC20 token contract, while the payload will correspond to the appropriate encoding of the function selector + parameters, as explained before:
 
 ```python
 voucher_payload = {
@@ -44,9 +44,9 @@ voucher_payload = {
 }
 ```
 
-## Notices
+## How to read Notices
 
-The following Python code example shows how you can construct and send a notice payload containing a payload to the Rollup Server's [/notice](./api/rollup/add-notice.api.mdx) endpoint, enabling on-chain validation of specific events or conditions without requiring direct interaction with the DApp Rollup Contract:
+The following Python code example shows how to create and send a notice payload containing a payload to the Rollup Server's [/notice](./api/rollup/add-notice.api.mdx) endpoint, enabling on-chain validation of specific events or conditions without requiring direct interaction with the DApp Rollup Contract:
 
 ```python
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
@@ -57,7 +57,7 @@ response = requests.post(rollup_server + "/notice", json=notice_payload)
 assert(response.status_code == 200)
 ```
 
-## Reports
+## How to read Reports
 
 The following Python code example shows how to create and send a report payload containing a payload to the Rollup Server's [/report](./api/rollup/add-report.api.mdx) endpoint, facilitating the logging of read-only information and data for analysis without affecting the underlying system state:
 
