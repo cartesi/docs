@@ -55,16 +55,13 @@ Non-interactive refers to the fact that the challengers can prove that a state u
 
 **Cartesi’s version of Optimistic Rollups** uses interactive fraud proofs. The model was chosen because it imposes a higher ceiling to the size of computations that can be executed. In other words, with this model the blockchain base layer is never responsible for executing entire computations: either there are no disputes and no computation takes place there, or, if a dispute occurs, it only needs to compute a single instruction to distinguish between misbehavior and honesty. In either case, the results themselves are always computed off-chain, and as a consequence the computation involved can be massive.
 
-In the next sections, we will first discuss the [main concepts of the Cartesi Rollups framework](./components.md) and how they work. Next, we'll explain how to [send input data](./sending-input-data.md) to a Cartesi DApp, and how a Cartesi DApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md). We will then dig deeper into the [architecture of DApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](./http-api.md) to communicate with it. Finally, we share our vision of a [step-by-step process for developing applications](./dapp-life-cycle.md) on Cartesi Rollups, from the initial design stage up to its final deployment.
-
-:::note
-You can read the article [Everything you need to know about Optimistic Rollup](https://research.paradigm.xyz/rollups) to get more information about optimistic rollups in general.
-:::
-
-:::note
-You can read the article [Fraud proofs and virtual machines](https://medium.com/@cpbuckland88/fraud-proofs-and-virtual-machines-2826a3412099) or go into more details [here](https://tlu.tarilabs.com/cryptography/fraud-proofs#what-are-fraud-proofs)
-:::
+In the next sections:
+1. We will discuss the [main concepts of the Cartesi Rollups framework](./components.md) and how they work
+2. We will explain how to [send input data](./sending-input-data.md) to a Cartesi DApp, and how a Cartesi DApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md)
+3. We will dig deeper into the [architecture of DApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](./http-api.md) to communicate with it
+4. We will share our vision of a [step-by-step process for developing applications](./dapp-life-cycle.md) on Cartesi Rollups, from the initial design stage up to its final deployment
 
 ## See Also
 
-* [Blockchain For Beginners #1 - Smart Contracts With Ethereum & Solidity](https://youtu.be/8kEBwJt2YLM)
+* [Everything you need to know about Optimistic Rollup in general](https://research.paradigm.xyz/rollups)
+* [Fraud proofs and virtual machines](https://medium.com/@cpbuckland88/fraud-proofs-and-virtual-machines-2826a3412099) or go into more details [here](https://tlu.tarilabs.com/cryptography/fraud-proofs#what-are-fraud-proofs)
