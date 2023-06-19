@@ -8,7 +8,7 @@ Assets exist on the base layer, which is where they have actual meaning and valu
 
 Asset handling in Cartesi DApps involves the following procedures:
 
-  1. Locking assets on the base layer by briefly depositing them into a special contract called [Portal](../components/#portal) before transferring them to DApps. There are specific portals for each kind of asset (Ether, ERC-20, ERC-721, ERC-1155).
+  1. Locking assets on the base layer by briefly depositing them into a special contract called [Portal](./components/#portal) before transferring them to DApps. There are specific portals for each kind of asset (Ether, ERC-20, ERC-721, ERC-1155).
   2. The Cartesi Rollups framework notifies the DApp back-end of the deposit by sending it a special input.
   3. The DApp's back-end code needs to recognize and handle the special input, in order to process the deposit according to its own logic (e.g., by storing each user's balance in a hash table or database).
   4. When appropriate (e.g., when a game ends and the winner wishes to withdraw their funds), the back-end generates a [voucher](#vouchers) that encodes a transfer of assets on the base layer, from the DApp to the target user. The actual withdrawal will take effect on the base layer when the voucher is executed. This is a secure process because it can only be done when the voucher has an associated validity proof ensuring that the validator nodes have reached consensus about its contents.
