@@ -25,9 +25,11 @@ In particular, the ABI-encoded payload of a voucher defines a function call, for
 You can refer to [Ethereum's ABI specification](https://docs.soliditylang.org/en/latest/abi-spec.html) for the full details about the standard.
 :::
 
-Let's delve deeper into ABI encoding for Cartesi DApps, using ERC-20 and ERC-721 as illustrative examples.
+### Message encoding in Cartesi Portals
 
-### ERC-20
+As the Cartesi Rollups framework uses multiple distinct portals per specific asset, each portal has a unique message encoding scheme. Let's delve deeper into this, using ERC-20 and ERC-721 as illustrative examples.
+
+#### ERC-20
 
 Consider the following example:
 
@@ -51,7 +53,7 @@ The `encode` function takes two parameters:
 
 The `encode` function transforms these values into a byte string according to Ethereum's ABI specifications. The result is concatenated with `TRANSFER_FUNCTION_SELECTOR`, which is the identifier for the `transfer` function in ERC-20 contracts.
 
-### ERC-721
+#### ERC-721
 
 Consider the following example:
 
