@@ -4,7 +4,7 @@ title: Overview
 tags: [learn, rollups, dapps, low-level developer]
 ---
 
-The combination of [an Optimistic Rollups framework](https://github.com/cartesi/rollups) and [the Cartesi Machine Emulator](https://github.com/cartesi/machine-emulator) enables the development of smart contracts and DApps using any package or library that is available for Linux. This allows developers to break free from the scalability limitations of the Ethereum Virtual Machine (EVM), and brings the rise of a new blockchain era to handle real-life and complex use-cases.
+The combination of [an Optimistic Rollups framework](https://github.com/cartesi/rollups) and [the Cartesi Machine Emulator](https://github.com/cartesi/machine-emulator) enables the development of smart contracts and DApps using any package or library that is available for Linux. This allows developers to break free from the scalability limitations of the Ethereum Virtual Machine (EVM), and brings the rise of a new blockchain era to handle real-life and complex use cases.
 
 A DApp running on Cartesi Rollups consists of the following main components:
 
@@ -22,15 +22,15 @@ You can [**run a simple DApp**](./build-dapps/run-dapp.md) that we already built
 
 ## What is a blockchain rollup?
 
-A rollup is a blockchain scalability solution that pushes complex computations "off-chain", meaning that they run on a separate computing environment (layer-2) outside of the main network (layer 1, such as the Ethereum network). When employing rollups, the blockchain's role becomes solely to receive transactions and log them. On rare occasions in which parties disagree with the outcomes of a computation, the blockchain also gets involved in resolving these disputes.
+A rollup is a blockchain scalability solution that pushes complex computations "off-chain", meaning that they run on a separate computing environment (execution layer) outside of the main network (base layer, such as Ethereum). When employing rollups, the blockchain's role becomes solely to receive transactions and log them. On rare occasions in which parties disagree with the outcomes of a computation, the blockchain also gets involved in resolving these disputes.
 
-Offloading the blockchain from complex computations along with aggregating and compressing data is expected to increase the number of transactions a blockchain can process by a factor of at least 40x. Additionally, transactions can now involve much more complex logic since applications running in a rollup are able to perform virtually any computation and can also take advantage of more powerful virtual machines (VMs) running on layer-2.
+Offloading the blockchain from complex computations along with aggregating and compressing data is expected to increase the number of transactions a blockchain can process by a factor of at least 40x. Additionally, transactions can now involve much more complex logic since applications running in a rollup are able to perform virtually any computation and can also take advantage of more powerful virtual machines (VMs) running on the execution layer.
 
 ## How does a rollup work?
 
-Users interact with a rollup through transactions on the base layer (layer 1). They send messages (inputs) to the rollup on-chain smart contracts to define a computation to be processed, and as such advance the state of the computing environment on layer-2. Interested parties run an off-chain component (a layer-2 node) that watches the blockchain for inputs, understanding and executing the state updates.
+Users interact with a rollup through transactions on the base layer. They send messages (inputs) to the rollup on-chain smart contracts to define a computation to be processed, and as such advance the state of the computing environment on the execution layer. Interested parties run an off-chain component (a node on the execution layer) that watches the blockchain for inputs, understanding and executing the state updates.
 
-Once in a while, the state of the machine is checkpointed on-chain, at which point the state is considered to be *finalized* and can thus be accepted by any smart contract on layer 1. It is of course vital to ensure this operation is secure, meaning that the layer-2 node needs to somehow *prove* the new state to the base layer.
+Once in a while, the state of the machine is checkpointed on-chain, at which point the state is considered to be *finalized* and can thus be accepted by any smart contract on the base layer. It is of course vital to ensure this operation is secure, meaning that the execution layer node needs to somehow *prove* the new state to the base layer.
 
 Let’s think about this question:
 **"How does a blockchain system, such as Ethereum, know that the data posted by an off-chain layer-2 node is valid and was not submitted in a malicious way?"**
@@ -60,6 +60,23 @@ In the next sections:
 2. We will explain how to [send input data](./sending-input-data.md) to a Cartesi DApp, and how a Cartesi DApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md)
 3. We will dig deeper into the [architecture of DApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](./http-api.md) to communicate with it
 4. We will share our vision of a [step-by-step process for developing applications](./dapp-life-cycle.md) on Cartesi Rollups, from the initial design stage up to its final deployment
+
+## Cartesi Machine
+
+Central to Cartesi Rollups is the [Cartesi Machine](/machine/intro), which is a virtual machine designed to perform off-chain computations for blockchain applications. When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:
+
+* **Code execution**: Code is executed based on specific inputs to perform computations, process data, or run custom logic, depending on the requirements of the task at hand.
+* **Abstraction of infrastructure**: The underlying infrastructure is abstracted away, allowing you to focus on writing code without worrying about managing servers, hardware, or networking resources.
+* **Flexibility in programming languages**: You have flexibility in the choice of programming languages.
+* **Scalability**: Scalability is the primary driver of the whole infrastructure.
+
+The Cartesi Machine is a state machine that remains idle until a new request arises. The concept of state in this case is tied to both the input requests that the Cartesi Machine receives and the execution of the RISC-V instructions that the machine follows to process those requests. The Cartesi Machine handles:
+
+* **Discrete states**: RISC-V instructions are executed in a step-by-step manner, transitioning from one state to another.
+* **State transitions**: State transitions happen deterministically as the emulator processes these RISC-V instructions, changing the state of the system  to a new discrete state.
+* **Determinism**: Given the same initial state and input, Cartesi Machine will always produce the same output and final state to ensure that off-chain computations can be verified and agreed upon.
+
+To engage with Cartesi Rollups, you either interact by [submitting *input data*](./sending-inputs.md) or by [accessing the generated *outputs*](./reading-outputs.md).
 
 ## See Also
 
