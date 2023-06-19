@@ -76,7 +76,7 @@ The Cartesi Machine is a state machine that remains idle until a new request ari
 * **State transitions**: State transitions happen deterministically as the emulator processes these RISC-V instructions, changing the state of the system  to a new discrete state.
 * **Determinism**: Given the same initial state and input, Cartesi Machine will always produce the same output and final state to ensure that off-chain computations can be verified and agreed upon.
 
-To engage with Cartesi Rollups, you either interact by [submitting *input data*](./sending-inputs.md) or by [accessing the generated *outputs*](./reading-outputs.md).
+To engage with Cartesi Rollups, you either interact by [submitting *input data*](./sending-input-data.md) or by [accessing the generated *outputs*](./reading-outputs.md).
 
 ## See Also
 
