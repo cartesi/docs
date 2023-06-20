@@ -24,7 +24,7 @@ There are two ways in which clients can interact with Ethereum-compatible nodes 
 
 #### Testnets
 
-Ethereum Testnets are testing environments or networks that are designed to test the features and capabilities of the Ethereum blockchain without using real ETH and incurring any actual cost. There are several testnets available that simulate the Ethereum mainnet. [Goerli](https://goerli.net/) is one of such testnets.
+Ethereum testnets are testing environments or networks that are designed to test the features and capabilities of the Ethereum blockchain without using real ETH and incurring any actual cost. There are several testnets available that simulate the Ethereum Mainnet. [Goerli](https://goerli.net/) is one of such testnets.
 
 A _faucet_ is a service that provides users with free testnet Ether tokens (GTH in the case of Goerli). These tokens can then be used to test and develop DApps on the testnet. There are several faucets available for Goerli. You may try [https://goerlifaucet.com/](https://goerlifaucet.com/).
 
@@ -132,6 +132,6 @@ Where:
 
 [**InputBox**](./sol-input.md): global contract where inputs for all DApps are submitted.
 
-[**Portals**](../portals): global contract where assets are deposited, so that they can be managed by Cartesi DApps.
+[**Portals**](../portals): global contracts with methods for depositing assets, so that they can be managed by Cartesi DApps.
 
 [**CartesiDApp**](./sol-output.md): contract instantiated for each DApp (i.e., each DApp has its own `CartesiDApp` address), used for processing outputs, such as executing vouchers and validating notices.
