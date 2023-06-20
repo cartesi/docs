@@ -11,7 +11,7 @@ module.exports = {
         items: [
           "overview",
           "main-concepts",
-          "sending-input-data",
+          "sending-requests",
           "reading-outputs",
           "assets-handling",
           "dapp-architecture",

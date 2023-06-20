@@ -57,7 +57,7 @@ Non-interactive refers to the fact that the challengers can prove that a state u
 
 In the next sections:
 1. We will discuss the [main concepts of the Cartesi Rollups framework](./components.md) and how they work
-2. We will explain how to [send input data](./sending-input-data.md) to a Cartesi DApp, and how a Cartesi DApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md)
+2. We will explain how to [send requests](./sending-requests.md) to a Cartesi DApp, and how a Cartesi DApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md)
 3. We will dig deeper into the [architecture of DApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](./http-api.md) to communicate with it
 4. We will share our vision of a [step-by-step process for developing applications](./dapp-life-cycle.md) on Cartesi Rollups, from the initial design stage up to its final deployment
 
@@ -76,7 +76,7 @@ The Cartesi Machine is a state machine that remains idle until a new request ari
 * **State transitions**: State transitions happen deterministically as the emulator processes these RISC-V instructions, changing the state of the system  to a new discrete state.
 * **Determinism**: Given the same initial state and input, Cartesi Machine will always produce the same output and final state to ensure that off-chain computations can be verified and agreed upon.
 
-To engage with Cartesi Rollups, you either interact by [submitting *input data*](./sending-input-data.md) or by [accessing the generated *outputs*](./reading-outputs.md).
+To engage with Cartesi Rollups, you either interact by [sending requests](./sending-requests.md) or by [accessing generated outputs](./reading-outputs.md).
 
 ## See Also
 

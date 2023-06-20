@@ -1,6 +1,6 @@
 ---
-id: sending-input-data
-title: Sending input data
+id: sending-requests
+title: Sending requests
 tags: [learn, rollups, dapps, low-level developer, components]
 ---
 
