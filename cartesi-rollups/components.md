@@ -26,7 +26,7 @@ In order to end an epoch, all validators need to reach a consensus about the sta
 
 ### Vouchers
 
-A _voucher_ is a combination of a target address and a payload in bytes. It is used by the off-chain machine to respond and interact with layer-1 smart contracts. Upon execution, a voucher sends a message to the target address with the payload as a parameter. Vouchers can be used for anything, ranging from providing liquidity in a DeFi protocol to withdrawing funds from the [Portal](#portal). Vouchers can only be executed when the epoch in which they are contained is _finalized_, at which point a _validity proof_ will be available to ensure layer-1 smart contracts can trust its content.
+A _voucher_ is a combination of a target address and a payload in bytes. It is used by the off-chain machine to respond and interact with layer-1 smart contracts. Upon execution, a voucher sends a message to the target address with the payload as a parameter. Vouchers can be used for anything, ranging from providing liquidity in a DeFi protocol to withdrawing funds from the [Portals](#portals). Vouchers can only be executed when the epoch in which they are contained is _finalized_, at which point a _validity proof_ will be available to ensure layer-1 smart contracts can trust its content.
 
 ### Notices
 
@@ -36,13 +36,13 @@ A _notice_ is an arbitrary payload in bytes that is submitted by the off-chain m
 
 A _report_ is an application log or a piece of diagnostic information. Like a notice, it is represented by an arbitrary payload in bytes. However, a report is never associated with a proof and is thus not suitable for trustless interactions such as on-chain processing or convincing independent third parties of DApp outcomes. Reports are commonly used to indicate processing errors or to retrieve application information for display.
 
-### Portal
+### Portals
 
-The Portal, as the name suggests, is used to teleport assets from the Ethereum blockchain to DApps running on Cartesi Rollups. Once deposited, those layer-1 assets gain a representation in layer-2 and are owned, there, by whomever the depositor assigned them to. After being teleported, layer-2 assets can be moved around in a significantly cheaper way, using simple inputs that are understood by the Linux logic.
+The Portals, as the name suggests, are used to teleport assets from the Ethereum blockchain to DApps running on Cartesi Rollups. Once deposited, those layer-1 assets gain a representation in layer-2 and are owned, there, by whomever the depositor assigned them to. After being teleported, layer-2 assets can be moved around in a significantly cheaper way, using simple inputs that are understood by the Linux logic.
 
-When an asset is deposited, the Portal contract sends an input to the DApp’s inbox, describing the type of asset, amount, receivers, and some data the depositor might want the DApp to read. This allows deposits and instructions to be sent as a single layer-1 interaction. One could think of the Portal as a bank account, owned by the off-chain machine.
+When an asset is deposited, the Portal contract sends an input to the DApp’s inbox, describing the type of asset, amount, receivers, and some data the depositor might want the DApp to read. This allows deposits and instructions to be sent as a single layer-1 interaction. One could think of a Portal as a bank account, owned by the off-chain machine.
 
-Anyone can deposit assets there but only the DApp — through its Output contract — can decide on withdrawals. The withdrawal process is quite simple from a user perspective. They send an input requesting a withdrawal, which gets processed and interpreted off-chain. If everything is correct, the machine creates a voucher destined to the Portal contract, ordering and finalizing that withdrawal request. Currently, we support the following types of assets:
+Anyone can deposit assets there but only the DApp — through its CartesiDApp contract — can decide on withdrawals. The withdrawal process is quite simple from a user perspective. An input is sent requesting a withdrawal, which gets processed and interpreted off-chain. If everything is correct, the machine creates a voucher destined to the appropriate Portal contract, ordering and finalizing that withdrawal request. Currently, we support the following types of assets:
 
 - [Ether (ETH)](./api/json-rpc/portals/EtherPortal.md)
 - [ERC-20](./api/json-rpc/portals/ERC20Portal.md)
