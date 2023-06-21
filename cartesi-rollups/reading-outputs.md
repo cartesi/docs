@@ -25,9 +25,7 @@ notice = {"payload": "0xdeadbeef"}
 requests.post(rollup_server + "/notice", json=notice)
 ```
 
-These outputs can then be read through the [GraphQL API](./api/graphql/basics.md) that the Cartesi Nodes expose, as illustrated below.
-
-![img](./outputs.png)
+These outputs can then be read through the [GraphQL API](./api/graphql/basics.md) that the Cartesi Nodes expose.
 
 The following code shows an example of a Javascript client querying the notices of a DApp that is running in a local environment:
 
