@@ -18,18 +18,27 @@ Let's take a look at how a Cartesi DApp reads Notices. We can send an input to t
 cast send 0xInputBoxAddress123 "addInput(address,bytes)" 0xDAppAddress456 0xEncodedPayload789
 ```
 
-On the back-end, the following example code creates and sends a notice payload containing a payload to the Rollup Server's [/notice](./api/rollup/add-notice.api.mdx) endpoint, enabling on-chain validation of specific events or conditions without requiring direct interaction with the DApp Rollup Contract:
+On the back-end, the following example code creates and sends a notice containing a payload to the Rollup Server's [/notice](./api/rollup/add-notice.api.mdx) endpoint, enabling on-chain validation of specific events or conditions without requiring direct interaction with the DApp Rollup Contract:
 
 ```python
-def handle_advance(data):
-    logger.info(f"Received advance request data {data}")
-    logger.info("Adding notice")
-    notice = {"payload": data["payload"]}
-    response = requests.post(rollup_server + "/notice", json=notice)
-    logger.info(f"Received notice status {response.status_code} body {response.content}")
-    return "accept"
+notice = {"payload": "0xdeadbeef"}
+requests.post(rollup_server + "/notice", json=notice)
 ```
 
-These outputs can then be read through [GraphQL APIs](./api/graphql/basics.md) and the [Inspect DApp state REST API](./api/inspect/inspect.api.mdx) that the Cartesi Nodes expose.
+These outputs can then be read through the [GraphQL API](./api/graphql/basics.md) that the Cartesi Nodes expose, as illustrated below.
 
 ![img](./outputs.png)
+
+The following code shows an example of a Javascript client querying the notices of a DApp that is running in a local environment:
+
+```javascript
+const response = await fetch('http://localhost:4000/graphql', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: '{ "query": "{ notices { edges { node { payload } } } }" }'
+});
+const result = await response.json();
+for (let edge of result.data.notices.edges) {
+    let payload = edge.node.payload;
+}
+```
