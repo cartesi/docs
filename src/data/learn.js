@@ -49,10 +49,10 @@ export const learn = [
   },
   {
     category: "by-goal",
-    title: "Deep Dive: Explore the Cartesi Compute",
+    title: "Deep Dive: Explore Cartesi Compute",
     links: [
       {
-        label: "Introduction to the Cartesi Compute",
+        label: "Introduction to Cartesi Compute",
         href: "/compute/overview",
       },
       {
@@ -127,7 +127,7 @@ export const learn = [
     title: "Researcher & Low-level developer",
     links: [
       {
-        label: "Introduction to the Cartesi Compute",
+        label: "Introduction to Cartesi Compute",
         href: "/compute/overview",
       },
       {

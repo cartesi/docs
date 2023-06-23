@@ -85,18 +85,18 @@ This section targets researchers and low-level programmers who want to dive into
 
 <h3> Cartesi Machine </h3>
 
-You can dive deeper into the Blockchain OS core technology by reading the section about [The Cartesi Machine](../machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
+You can dive deeper into the Blockchain OS core technology by reading the section about [the Cartesi Machine](/machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
 
 <h3> Cartesi Compute SDK to run a DApp off-chain </h3>
 
-You can use the [Cartesi Compute SDK](../compute.md) to leverage Cartesi to run one-off complex computations that could never be executed inside a normal smart contract. Instead, those computations are executed off-chain with automatic dispute resolution guarantees, and its results can later be used on-chain.
+You can use the [Cartesi Compute SDK](/compute/overview) to leverage Cartesi to run one-off complex computations that could never be executed inside a normal smart contract. Instead, those computations are executed off-chain with automatic dispute resolution guarantees, and its results can later be used on-chain.
 
-Navigate to [Cartesi Compute Tutorials](../compute.md#cartesi-compute-tutorials) section for more examples:
-* [HelloWorld](../compute.md#hello-world-dapp)
-* [Calculator](../compute.md#calculator-dapp)
-* [Dogecoin Hash](../compute.md#dogecoin-hash-dapp)
-* [Generic Script](../compute.md#generic-script-dapp)
-* [GPG Verify](../compute.md#gpg-verify-dapp)
+Navigate to [Cartesi Compute Tutorials](/compute/tutorials/) section for more examples:
+* [HelloWorld](/compute/tutorials/helloworld)
+* [Calculator](/compute/tutorials/calculator)
+* [Generic Script](/compute/tutorials/generic-script)
+* [GPG Verify](/compute/tutorials/gpg-verify)
+* [Dogecoin Hash](/compute/tutorials/dogecoin-hash)
 
 </TabItem>
 </Tabs>
