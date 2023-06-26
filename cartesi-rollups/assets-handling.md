@@ -183,7 +183,7 @@ requests.post(rollup_server + "/voucher", json=voucher)
 
 In this case, again we use `eth_abi`'s [encode](https://eth-abi.readthedocs.io/en/stable/encoding.html) method to define a payload corresponding to a call to the `safeTransferFrom` function of an ERC-721 contract. This call has three parameters: the address currently owning the asset to transfer (`rollup_address`, which corresponds to the DApp contract address on the base layer), the address to which to transfer the token (`recipient`), and the token's ID (`token_id`).
 
-As was done for ERC-20, the encoded payload is then concatenated with the function selector of the transfer function. This time, the selector corresponds to the first four bytes of the Keccak256 hash of "safeTransferFrom(address,address,uint256)", which amounts to `0x42842e0e`. Then, the resulting combined bytes object is again converted to a hexadecimal string to produce the complete payload of the voucher.
+As was done for ERC-20, the encoded payload is then concatenated with the function selector of the transfer function. This time, the selector corresponds to the first four bytes of the Keccak256 hash of the signature string `"safeTransferFrom(address,address,uint256)"`, which amounts to `0x42842e0e`. Then, the resulting combined bytes object is again converted to a hexadecimal string to produce the complete payload of the voucher.
 
 Finally, the ERC-721 contract address is specified as the voucher's `destination`, and an HTTP POST request is submitted to emit the voucher.
 
