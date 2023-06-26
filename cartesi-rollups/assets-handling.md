@@ -87,7 +87,7 @@ As an example, consider the following sample ERC-20 deposit payload:
 
 For the above example, we would have the following decoded values:
 
-- `success: "0x01"` - indicates a successful deposit
+- `success: "0x01"` - indicates a successful deposit (hexadecimal representation of the boolean value `true`)
 - `erc20: "0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1"` - the ERC-20 contract address on the base layer
 - `depositor: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"` - the address of the owner of the assets
 - `amount: "0x000...0064"` - the amount being deposited (100 in decimal format)
