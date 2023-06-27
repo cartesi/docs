@@ -1,7 +1,9 @@
 ---
 id: sol-relay
-title: DAppAddressRelay
+title: Relays
 ---
+
+### DAppAddressRelay
 
 The **DAppAddressRelay** contract allows anyone to inform the off-chain machine
 of the address of the DApp contract in a trustless and permissionless way.
