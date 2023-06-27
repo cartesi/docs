@@ -66,7 +66,18 @@ module.exports = {
                         "api/json-rpc/portals/EtherPortal",
                       ],
                     },
-                    "api/json-rpc/sol-relay",
+                    {
+                      type: "category",
+                      label: "Relays",
+                      link: {
+                        type: "generated-index",
+                        slug: "api/json-rpc/relays",
+                      },
+                      collapsed: true,
+                      items: [
+                        "api/json-rpc/relays/DAppAddressRelay",
+                      ],
+                    },
                   ],
                 },
                 {

@@ -110,7 +110,7 @@ Please refer to the [Assets handling](../assets-handling.md) section for general
 
 In v0.8 most DApps needed to know their own address on the base layer, and a mandatory "Setup Input" was always added as the very first input for every DApp. As such, the back-end code had to _always_ be prepared to handle this very first input, from which it could safely capture its `msg_sender` metadata as the DApp's contract address.
 
-In v0.9, the DApp's address is needed only for more specific cases, and there is no longer this mandatory "Setup Input" as the very first input a DApp always receives. Instead, a special contract - [`DAppAddressRelay`](https://github.com/cartesi/rollups/blob/main/onchain/rollups/contracts/relays/DAppAddressRelay.sol) - is introduced that allows anyone, at any time, to call it to safely _relay_ the DApp's address as an input to be received and handled by the back-end code.
+In v0.9, the DApp's address is needed only for more specific cases, and there is no longer this mandatory "Setup Input" as the very first input a DApp always receives. Instead, a special contract - [`DAppAddressRelay`](../api/json-rpc/relays/DAppAddressRelay.md) - is introduced that allows anyone, at any time, to call it to safely _relay_ the DApp's address as an input to be received and handled by the back-end code.
 
 If a DApp needs to know its own address (which is required for withdrawing Ether and ERC-721 tokens), its back-end will need to handle the input sent by `DAppAddressRelay` with the DApp address as payload. In this case, the back-end should know a priori the address of the `DAppAddressRelay` contract on the base layer, and then check the `msg_sender` metadata of the input to safely accept its payload as the trusted DApp's address.
 
