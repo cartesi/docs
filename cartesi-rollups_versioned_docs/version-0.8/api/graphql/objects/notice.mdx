@@ -21,32 +21,32 @@ type Notice {
 
 ### Fields
 
-#### [`id`](#) ([`ID!`](/cartesi-rollups/api/graphql/scalars/id))
+#### [`id`](#) ([`ID!`](../scalars/id.mdx))
 
 Notice identifier
 
 
-#### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+#### [`index`](#) ([`Int!`](../scalars/int.mdx))
 
 Notice index within the context of the input that produced it
 
 
-#### [`input`](#) ([`Input!`](/cartesi-rollups/api/graphql/objects/input))
+#### [`input`](#) ([`Input!`](./input.mdx))
 
 Input whose processing produced the notice
 
 
-#### [`proof`](#) ([`Proof`](/cartesi-rollups/api/graphql/objects/proof))
+#### [`proof`](#) ([`Proof`](./proof.mdx))
 
 Proof object that allows this notice to be validated in the base layer blockchain
 
 
-#### [`keccak`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`keccak`](#) ([`String!`](../scalars/string.mdx))
 
 Keccak hash in Ethereum hex binary format, starting with '0x'
 
 
-#### [`payload`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`payload`](#) ([`String!`](../scalars/string.mdx))
 
 Notice data as a payload in Ethereum hex binary format, starting with '0x'
 

@@ -21,32 +21,32 @@ type Voucher {
 
 ### Fields
 
-#### [`id`](#) ([`ID!`](/cartesi-rollups/api/graphql/scalars/id))
+#### [`id`](#) ([`ID!`](../scalars/id.mdx))
 
 Voucher identifier
 
 
-#### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+#### [`index`](#) ([`Int!`](../scalars/int.mdx))
 
 Voucher index within the context of the input that produced it
 
 
-#### [`input`](#) ([`Input!`](/cartesi-rollups/api/graphql/objects/input))
+#### [`input`](#) ([`Input!`](./input.mdx))
 
 Input whose processing produced the notice
 
 
-#### [`proof`](#) ([`Proof`](/cartesi-rollups/api/graphql/objects/proof))
+#### [`proof`](#) ([`Proof`](./proof.mdx))
 
 Proof object that allows this voucher to be validated and executed in the base layer blockchain
 
 
-#### [`destination`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`destination`](#) ([`String!`](../scalars/string.mdx))
 
 Transaction destination address in Ethereum hex binary format (20 bytes), starting with '0x'
 
 
-#### [`payload`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`payload`](#) ([`String!`](../scalars/string.mdx))
 
 Transaction payload in Ethereum hex binary format, starting with '0x'
 

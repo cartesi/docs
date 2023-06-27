@@ -51,140 +51,140 @@ type Input {
 
 ### Fields
 
-#### [`id`](#) ([`ID!`](/cartesi-rollups/api/graphql/scalars/id))
+#### [`id`](#) ([`ID!`](../scalars/id.mdx))
 
 Input identifier
 
 
-#### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+#### [`index`](#) ([`Int!`](../scalars/int.mdx))
 
 Input index within its containing epoch
 
 
-#### [`epoch`](#) ([`Epoch!`](/cartesi-rollups/api/graphql/objects/epoch))
+#### [`epoch`](#) ([`Epoch!`](./epoch.mdx))
 
 Epoch in which the input is contained
 
 
-#### [`msgSender`](#) ([`String!`](/cartesi-rollups/api/graphql/scalars/string))
+#### [`msgSender`](#) ([`String!`](../scalars/string.mdx))
 
 Address responsible for submitting the input
 
 
-#### [`timestamp`](#) ([`BigInt!`](/cartesi-rollups/api/graphql/scalars/big-int))
+#### [`timestamp`](#) ([`BigInt!`](../scalars/big-int.mdx))
 
 Timestamp associated with the input submission, as defined by the base layer's block in which it was recorded
 
 
-#### [`blockNumber`](#) ([`BigInt!`](/cartesi-rollups/api/graphql/scalars/big-int))
+#### [`blockNumber`](#) ([`BigInt!`](../scalars/big-int.mdx))
 
 Number of the base layer block in which the input was recorded
 
 
-#### [`voucher`](#) ([`Voucher!`](/cartesi-rollups/api/graphql/objects/voucher))
+#### [`voucher`](#) ([`Voucher!`](./voucher.mdx))
 
 Get voucher from this particular input given the voucher's index
-- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`index`](#) ([`Int!`](../scalars/int.mdx))
 
 
 
 
-#### [`notice`](#) ([`Notice!`](/cartesi-rollups/api/graphql/objects/notice))
+#### [`notice`](#) ([`Notice!`](./notice.mdx))
 
 Get notice from this particular input given the notice's index
-- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`index`](#) ([`Int!`](../scalars/int.mdx))
 
 
 
 
-#### [`report`](#) ([`Report!`](/cartesi-rollups/api/graphql/objects/report))
+#### [`report`](#) ([`Report!`](./report.mdx))
 
 Get report from this particular input given report's index
-- ##### [`index`](#) ([`Int!`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`index`](#) ([`Int!`](../scalars/int.mdx))
 
 
 
 
-#### [`vouchers`](#) ([`VoucherConnection!`](/cartesi-rollups/api/graphql/objects/voucher-connection))
+#### [`vouchers`](#) ([`VoucherConnection!`](./voucher-connection.mdx))
 
 Get vouchers from this particular input with support for pagination (filtering not implemented at the moment)
-- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`first`](#) ([`Int`](../scalars/int.mdx))
 
 
 
 
-- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`last`](#) ([`Int`](../scalars/int.mdx))
 
 
 
 
-- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`after`](#) ([`String`](../scalars/string.mdx))
 
 
 
 
-- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`before`](#) ([`String`](../scalars/string.mdx))
 
 
 
 
-- ##### [`where`](#) ([`VoucherFilter`](/cartesi-rollups/api/graphql/inputs/voucher-filter))
+- ##### [`where`](#) ([`VoucherFilter`](../inputs/voucher-filter.mdx))
 
 
 
 
-#### [`notices`](#) ([`NoticeConnection!`](/cartesi-rollups/api/graphql/objects/notice-connection))
+#### [`notices`](#) ([`NoticeConnection!`](./notice-connection.mdx))
 
 Get notices from this particular input with support for pagination (filtering not implemented at the moment)
-- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`first`](#) ([`Int`](../scalars/int.mdx))
 
 
 
 
-- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`last`](#) ([`Int`](../scalars/int.mdx))
 
 
 
 
-- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`after`](#) ([`String`](../scalars/string.mdx))
 
 
 
 
-- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`before`](#) ([`String`](../scalars/string.mdx))
 
 
 
 
-- ##### [`where`](#) ([`NoticeFilter`](/cartesi-rollups/api/graphql/inputs/notice-filter))
+- ##### [`where`](#) ([`NoticeFilter`](../inputs/notice-filter.mdx))
 
 
 
 
-#### [`reports`](#) ([`ReportConnection!`](/cartesi-rollups/api/graphql/objects/report-connection))
+#### [`reports`](#) ([`ReportConnection!`](./report-connection.mdx))
 
 Get reports from this particular input with support for pagination (filtering not implemented at the moment)
-- ##### [`first`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`first`](#) ([`Int`](../scalars/int.mdx))
 
 
 
 
-- ##### [`last`](#) ([`Int`](/cartesi-rollups/api/graphql/scalars/int))
+- ##### [`last`](#) ([`Int`](../scalars/int.mdx))
 
 
 
 
-- ##### [`after`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`after`](#) ([`String`](../scalars/string.mdx))
 
 
 
 
-- ##### [`before`](#) ([`String`](/cartesi-rollups/api/graphql/scalars/string))
+- ##### [`before`](#) ([`String`](../scalars/string.mdx))
 
 
 
 
-- ##### [`where`](#) ([`ReportFilter`](/cartesi-rollups/api/graphql/inputs/report-filter))
+- ##### [`where`](#) ([`ReportFilter`](../inputs/report-filter.mdx))
 
 
 

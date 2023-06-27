@@ -31,7 +31,7 @@ const config = {
           remarkPlugins: [replacementPlugin],
           docLayoutComponent: "@theme/DocPage",
           docItemComponent: "@theme/ApiItem",
-          includeCurrentVersion: true,
+          
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -189,6 +189,7 @@ const config = {
         additionalLanguages: ["lua"],
       },
 
+
       /*  // Announcemnt bar
       announcementBar: {
         id: "example_bar",
@@ -208,9 +209,11 @@ const config = {
         routeBasePath: "cartesi-rollups",
         sidebarPath: require.resolve("./sidebarsRollups.js"),
         editUrl: "https://github.com/cartesi/docs/tree/develop",
+        includeCurrentVersion: true,
+        onlyIncludeVersions: ['0.8', '0.9'],
         versions: {
           current: {
-            label: "0.9 🚧",
+            label: "0.9",
           },
         },
       },
