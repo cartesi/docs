@@ -63,6 +63,7 @@ module.exports = {
                     "api/json-rpc/portals/EtherPortal"
                   ],
                   },
+                  "api/json-rpc/sol-relay",
                 ],
               },
                   {
