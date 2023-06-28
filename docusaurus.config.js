@@ -208,7 +208,7 @@ const config = {
         path: "cartesi-rollups",
         routeBasePath: "cartesi-rollups",
         sidebarPath: require.resolve("./sidebarsRollups.js"),
-        editUrl: "https://github.com/cartesi/docs/tree/develop",
+        editUrl: "https://github.com/cartesi/docs/tree/main",
         includeCurrentVersion: true,
         lastVersion: "current",
         versions: {
