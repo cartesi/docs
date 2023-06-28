@@ -132,6 +132,8 @@ Where:
 
 [**InputBox**](./sol-input.md): global contract where inputs for all DApps are submitted.
 
+[**CartesiDApp**](./sol-output.md): contract instantiated for each DApp (i.e., each DApp has its own `CartesiDApp` address), used for processing outputs, such as executing vouchers and validating notices.
+
 [**Portals**](../portals): global contracts with methods for depositing assets, so that they can be managed by Cartesi DApps.
 
-[**CartesiDApp**](./sol-output.md): contract instantiated for each DApp (i.e., each DApp has its own `CartesiDApp` address), used for processing outputs, such as executing vouchers and validating notices.
+[**Relays**](../relays): global contracts with methods for securely relaying on-chain information to DApp back-ends, such as the DApp smart contract address.
