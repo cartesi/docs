@@ -210,7 +210,7 @@ const config = {
         sidebarPath: require.resolve("./sidebarsRollups.js"),
         editUrl: "https://github.com/cartesi/docs/tree/develop",
         includeCurrentVersion: true,
-        onlyIncludeVersions: ['0.8', '0.9'],
+        lastVersion: "current",
         versions: {
           current: {
             label: "0.9",
