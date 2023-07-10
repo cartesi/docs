@@ -108,9 +108,23 @@ There are two ways to interact with the DApp:
 * [Locally](#interacting-locally-with-the-dapp)
 * [Remotely](#interacting-with-remotely-deployed-dapps)
 
+### Frontend-console application
+
+With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with the Echo DApp.
+
+The [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) uses `rollup_address` to send inputs to the DApp. The `rollup_address` is the address of a DApp contract used to send inputs and deposit assets. The Cartesi Machine receives the `rollup_address` as the first input sender (up to 0.8.X rollups), enabling the DApp to emit vouchers for withdrawing assets from this address. The `rollup_address` is used by DApps running on local, test and on-chain networks. 
+
+Every Rollups DApp gets an address on the base layer when it's deployed. The following is needed to send inputs to a DApp:
+
+* Gateway URL to the intended chain
+* Rollup address
+* Appropriate account with sufficient funds for submitting transactions to the network
+
+
 ### Interacting locally with the DApp
 
-With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with the Echo DApp by following the steps:
+The following steps describe how to send an input to the Echo DApp instance that is running locally:
+
 
 1. Open a separate terminal window
 2. From the rollups-examples base directory, navigate to the `frontend-console` one:
@@ -150,7 +164,6 @@ For more information about the `frontend-console` application and its options, p
 
 The **Echo DApp** example is already deployed on a public blockchain test network called [Goerli](https://goerli.net/), which is an Ethereum testnet.
 
-You can use the same [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with it, as described below.
 :::note
 Please refer to the [frontend-console documentation](https://github.com/cartesi/rollups-examples/blob/main/frontend-console/README.md) for details on how to use it to [send inputs](https://github.com/cartesi/rollups-examples/blob/main/frontend-console/README.md#sending-inputs), [list notices](https://github.com/cartesi/rollups-examples/blob/main/frontend-console/README.md#listing-notices-vouchers-and-reports) and [deposit ERC-20 tokens](https://github.com/cartesi/rollups-examples/blob/main/frontend-console/README.md#depositing-erc-20-tokens).
 :::
