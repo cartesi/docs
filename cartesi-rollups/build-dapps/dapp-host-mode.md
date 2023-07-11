@@ -99,3 +99,7 @@ Stop the containers using `ctrl+c` then remove the containers and the volumes:
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml down -v
 ```
+
+:::note
+Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
+:::
