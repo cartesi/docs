@@ -112,8 +112,6 @@ There are two ways to interact with the DApp:
 
 With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with the Echo DApp.
 
-The [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) uses `rollup_address` to send inputs to the DApp. The `rollup_address` is the address of a DApp contract used to send inputs and deposit assets. The Cartesi Machine receives the `rollup_address` as the first input sender (up to 0.8.X rollups), enabling the DApp to emit vouchers for withdrawing assets from this address. The `rollup_address` is used by DApps running on local, test and on-chain networks. 
-
 Every Rollups DApp gets an address on the base layer when it's deployed. The following is needed to send inputs to a DApp:
 
 * Gateway URL to the intended chain
