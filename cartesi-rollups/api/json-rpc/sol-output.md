@@ -241,7 +241,7 @@ struct OutputValidityProof {
   bytes32 vouchersEpochRootHash;
   bytes32 noticesEpochRootHash;
   bytes32 machineStateHash;
-  bytes32[] keccakInHashesSiblings;
+  bytes32[] outputHashInOutputHashesSiblings;
   bytes32[] outputHashesInEpochSiblings;
 }
 ```
@@ -256,5 +256,5 @@ struct OutputValidityProof {
 | vouchersEpochRootHash       | bytes32   | Merkle root of all epoch's voucher metadata hashes   |
 | noticesEpochRootHash        | bytes32   | Merkle root of all epoch's notice metadata hashes    |
 | machineStateHash            | bytes32   | Hash of the machine state claimed this epoch           |
-| keccakInHashesSiblings      | bytes32[] | Proof that this output metadata is in metadata memory range       |
+| outputHashInOutputHashesSiblings      | bytes32[] | Proof that this output metadata is in metadata memory range       |
 | outputHashesInEpochSiblings | bytes32[] | Proof that this output metadata is in epoch's output memory range |
