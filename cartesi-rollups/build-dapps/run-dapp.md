@@ -117,7 +117,7 @@ The [frontend-console application](https://github.com/cartesi/rollups-examples/t
 Every Rollups DApp gets an address on the base layer when it's deployed. The following is needed to send inputs to a DApp:
 
 * Gateway URL to the intended chain
-* Rollup address
+* Cartesi Rollups InputBox contract address
 * Appropriate account with sufficient funds for submitting transactions to the network
 
 
