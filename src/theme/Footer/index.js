@@ -4,7 +4,7 @@
 import React from "react";
 import Logo from "/img/logo_dark.svg";
 import GdrpBar from "./gdrpBar";
-import FooterNavigation from "./FooterNavigation";
+import FooterNav from "./FooterNav";
 
 function Footer() {
   return (
@@ -15,7 +15,7 @@ function Footer() {
             <div className="flex flex-col gap-8">
               <Logo />
             </div>
-            <FooterNavigation />
+            <FooterNav />
           </div>
           <div className="flex items-center justify-between gap-4 text-xs text-background/50">
             <p>© 2023 Cartesi Foundation Ltd. All rights reserved.</p>
