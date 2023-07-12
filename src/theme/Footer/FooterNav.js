@@ -10,7 +10,7 @@ import IconReddit from "/img/icon-reddit.svg";
 import IconLinkedin from "/img/icon-linkedin.svg";
 import IconInstagram from "/img/icon-instagram.svg";
 
-function FooterNavigation() {
+function FooterNav() {
   const routes = {
     home: "https://cartesi.io",
     about: "https://cartesi.io/about",
@@ -102,7 +102,7 @@ function FooterNavigation() {
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconGithub alt="" className="h-5 w-5 sm:hidden" />
-          <span className="hidden sm:block">Github</span>
+          <span className="hidden sm:block">GitHub</span>
         </a>
         <a
           href={routes.telegram}
@@ -162,4 +162,4 @@ function FooterNavigation() {
   );
 }
 
-export default FooterNavigation;
+export default FooterNav;
