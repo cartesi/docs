@@ -14,7 +14,7 @@ export const Learn = () => {
       <Details
         className="details"
         summary={
-          <summary className="text-lg sm:text-xl font-serif">
+          <summary className="text-lg sm:text-xl font-serif font-semibold">
             {item.title}
           </summary>
         }
@@ -35,13 +35,13 @@ export const Learn = () => {
 
   return (
     <div
-      className="my-auto py-8 sm:py-12 lg:py-24 bg-blue-50 text-gray-900 dark:text-gray-900 scroll-m-20"
+      className="my-auto py-8 sm:py-12 lg:py-24 bg-card dark:bg-white/5 scroll-m-20"
       id="learn"
     >
       <div className="container">
         <div className="max-w-screen-md mx-auto">
           <div className="mb-0 sm:mb-8 flex flex-col sm:flex-row justify-between">
-            <h1 className="font-serif text-4xl lg:text-4xl xl:text-5xl font-normal ">
+            <h1 className="text-4xl lg:text-4xl xl:text-5xl font-semibold">
               Learn
             </h1>
             <Tabs

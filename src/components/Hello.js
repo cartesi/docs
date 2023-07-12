@@ -6,31 +6,27 @@ import { hello } from "../data/hello";
 
 export const Hello = () => {
   return (
-    <div className="my-auto py-8 sm:py-12 lg:py-24 flex flex-col justify-center xl:min-h-[60vh] dark:text-yellow-50">
+    <div className="my-auto py-8 sm:py-12 lg:py-24 flex flex-col justify-center xl:min-h-[60vh]">
       <div className="container">
         <div className="mb-8 lg:mb-16">
-          <h1 className="font-serif text-4xl sm:text-7xl xl:text-8xl text-center font-normal mb-6 lg:mb-8">
+          <h1 className="text-4xl sm:text-7xl font-semibold text-center mb-6 lg:mb-8 tracking-tight">
             Welcome to Cartesi docs.
           </h1>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-          {hello.slice(0,3).map(({ title, href, description, bgColor, color }, idx) => (
+          {hello.slice(0, 3).map(({ title, href, description }, idx) => (
             <Link
               to={useBaseUrl(href)}
               activeClassName="active"
               key={idx}
-              className="no-underline hover:no-underline lg:hover:scale-105 transition-transform"
+              className="card no-underline hover:no-underline"
             >
-              <div
-                className="flex flex-col h-full p-4 sm:p-6 lg:p-8"
-                style={{
-                  backgroundColor: bgColor,
-                  color: color ? color : "var(--ifm-color-gray-900)",
-                }}
-              >
-                <h2>{title}</h2>
-                <div className="leading-tight">{description}</div>
+              <div className="flex flex-col h-full p-4 sm:p-6 lg:p-8">
+                <h2 className="sm:!text-3xl !mb-4">{title}</h2>
+                <div className="text-gray-900/70 dark:text-white">
+                  {description}
+                </div>
               </div>
             </Link>
           ))}

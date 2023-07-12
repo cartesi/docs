@@ -1,27 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const GdrpBar = ({ hideGdprBar }) => {
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-white">
-      <div>
-        We use cookies to ensure that we give you the best experience on our
-        website. By using the website, you agree to the use of cookies.
-      </div>
-      <div className="flex items-center justify-center gap-2">
-        <button
-          className="inline-flex items-center justify-center bg-blue-300/50 text-white border-0 px-3 py-1 font-bold leading-normal  hover:text-white hover:no-underline cursor-pointer"
-          onClick={hideGdprBar}
-        >
-          OK
-        </button>
-        <a
-          href="https://cartesi.io/privacy_policy.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center bg-blue-300/50 text-white border-0 px-3 py-1 font-bold leading-normal  hover:text-white hover:no-underline cursor-pointer"
-        >
-          PRIVACY POLICY
-        </a>
+const GdrpBar = () => {
+  const [isGdprBarHidden, setIsGdprBarHidden] = useState(false);
+  const hideGdprBar = () => {
+    sessionStorage.setItem("isGdprBarHidden", true);
+    setIsGdprBarHidden(true);
+  };
+
+  useEffect(() => {
+    const isHidden = sessionStorage.getItem("isGdprBarHidden");
+    setIsGdprBarHidden(Boolean(isHidden));
+  }, []);
+
+  return isGdprBarHidden ? null : (
+    <div className=" fixed inset-x-0 bottom-0 bg-gray-900/80 py-3 backdrop-blur">
+      <div className="container flex flex-wrap items-center justify-between gap-4 text-sm text-white">
+        <div>
+          We use cookies to ensure that we give you the best experience on our
+          website. By using the website, you agree to the use of cookies.
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <a
+            href="https://cartesi.io/privacy_policy.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center bg-transparent border rounded border-primary  border-1 border-solid text-white px-3 py-1 font-bold leading-normal  hover:text-white hover:no-underline cursor-pointer"
+          >
+            PRIVACY POLICY
+          </a>
+          <button
+            className="inline-flex items-center justify-center bg-primary rounded text-white border-primary border-1 border-solid px-3 py-1 font-bold leading-normal  hover:text-white hover:no-underline cursor-pointer"
+            onClick={hideGdprBar}
+          >
+            OK
+          </button>
+        </div>
       </div>
     </div>
   );
