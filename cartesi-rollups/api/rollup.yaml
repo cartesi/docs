@@ -290,7 +290,7 @@ components:
           format: uint64
           description: Deprecated. Always receives 0.
           example: 0
-        input_index_within_epoch:
+        input_index:
           type: integer
           format: uint64
           description: Input index starting from genesis.
