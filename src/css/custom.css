@@ -319,7 +319,7 @@ html[data-theme="dark"] {
 }
 
 .theme-doc-version-badge {
-  @apply font-serif font-semibold bg-primary text-white dark:text-gray-900 px-3 py-2 rounded-full uppercase text-xs border-0;
+  @apply font-serif font-semibold bg-secondary text-gray-900 dark:text-gray-900 px-3 py-2 rounded-full uppercase text-xs border-0;
   margin-left: -2px;
   margin-bottom: 1rem;
 }
