@@ -24,12 +24,12 @@ const GdrpBar = () => {
             href="https://cartesi.io/privacy_policy.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center bg-transparent border rounded border-primary  border-1 border-solid text-white px-3 py-1 font-bold leading-normal  hover:text-white hover:no-underline cursor-pointer"
+            className="inline-flex items-center justify-center bg-transparent border rounded border-secondary  border-1 border-solid text-white px-3 py-1 font-bold leading-normal  hover:text-white hover:no-underline cursor-pointer"
           >
             PRIVACY POLICY
           </a>
           <button
-            className="inline-flex items-center justify-center bg-primary rounded text-white border-primary border-1 border-solid px-3 py-1 font-bold leading-normal  hover:text-white hover:no-underline cursor-pointer"
+            className="inline-flex items-center justify-center bg-secondary rounded text-gray-900 border-secondary border-1 border-solid px-3 py-1 font-bold leading-normal  hover:text-gray-900 hover:no-underline cursor-pointer"
             onClick={hideGdprBar}
           >
             OK
