@@ -20,15 +20,11 @@ export const Hello = () => {
               to={useBaseUrl(href)}
               activeClassName="active"
               key={idx}
-              className="card no-underline hover:no-underline text-inherit !hover:text-text-gray-900 dark:!hover:text-white"
+              className="card bg-secondary dark:bg-secondary !text-gray-900 dark:!text-gray-900 no-underline hover:no-underline text-inherit !hover:text-text-gray-900 dark:!hover:text-white"
             >
               <div className="flex flex-col h-full p-4 sm:p-6 lg:p-8">
-                <h2 className="sm:!text-3xl !mb-4 !text-gray-900 dark:!text-secondary">
-                  {title}
-                </h2>
-                <div className="text-gray-900/70 dark:text-white">
-                  {description}
-                </div>
+                <h2 className="sm:!text-3xl !mb-4 !text-gray-900">{title}</h2>
+                <div className="text-gray-900/70">{description}</div>
               </div>
             </Link>
           ))}
