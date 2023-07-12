@@ -34,20 +34,19 @@ const IconStackOverflow = () => (
 
 export const Faq = () => {
   return (
-    <div
-      className="my-auto py-8 sm:py-12 lg:py-24 bg-blue-200 dark:text-gray-900 scroll-m-20"
-      id="qa"
-    >
+    <div className="my-auto py-8 sm:py-12 lg:py-24 scroll-m-20" id="qa">
       <div className="container">
         <div className="max-w-screen-md mx-auto">
           <div className="mb-8 lg:mb-16">
-            <h1 className="font-serif text-4xl lg:text-4xl xl:text-5xl font-normal mb-6 lg:mb-8">
+            <h1 className="text-4xl lg:text-4xl xl:text-5xl font-semibold mb-6 lg:mb-8">
               Get Help
             </h1>
-            <p className="font-serif text-lg md:text-2xl lg:text-3xl">
-              Feeling stuck? Don’t worry, come join us over on Discord or StackOverflow and connect with our core developers who’ll be happy to help.
-              <br/>
-              <br/>
+            <p className="text-lg md:text-2xl">
+              Feeling stuck? Don’t worry, come join us over on Discord or
+              StackOverflow and connect with our core developers who’ll be happy
+              to help.
+              <br />
+              <br />
               Ask a question or learn from others:
             </p>
           </div>
@@ -57,7 +56,7 @@ export const Faq = () => {
                 href="https://discord.gg/uxYE5YNv3N"
                 target="_blank"
                 rel="nofollow"
-                className="text-current border-solid border-2 border-blue-900 py-4 px-6 flex items-center gap-4 text-2xl hover:no-underline hover:text-blue-500"
+                className="text-current flex items-center gap-4 text-2xl hover:no-underline font-serif font-semibold"
               >
                 <IconDiscord />
                 <span>Discord</span>
@@ -67,7 +66,7 @@ export const Faq = () => {
                 href="https://stackoverflow.com/questions/tagged/cartesi"
                 target="_blank"
                 rel="nofollow"
-                className="text-current border-solid border-2 border-gray-900 py-4 px-6 flex items-center gap-4 text-2xl hover:no-underline hover:text-blue-500"
+                className="text-current flex items-center gap-4 text-2xl hover:no-underline font-serif font-semibold"
               >
                 <IconStackOverflow />
                 <span>StackOverflow</span>

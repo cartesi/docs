@@ -1,4 +1,5 @@
 /* Added Tailwind - note: preflight is disabled in otder the Docusaurus global styles to be applied */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Plus+Jakarta+Sans:wght@500;600&display=swap");
 
 @tailwind base;
 
@@ -10,42 +11,25 @@ html {
 
 /* Docusaurus vars */
 :root {
-  --ifm-font-color-base: #1e1941;
-  --ifm-color-primary: #2d5abe;
-  --ifm-background-surface-color: #fffdf5;
-  --ifm-background-color: #fffdf5;
+  --ifm-font-color-base: #1c1b1f;
+  --ifm-color-primary: #008da5;
 
-  --ifm-color-secondary-contrast-background: #ffe3a3;
-  --ifm-color-secondary-dark: #ffc966;
+  --ifm-font-family-base: "Inter", sans-serif;
+  --ifm-heading-font-family: "Plus Jakarta Sans", "serif";
+  --ifm-font-weight-semibold: 600;
+  --ifm-heading-font-weight: var(--ifm-font-weight-semibold);
 
-  --ifm-font-family-base: "FK Grotesk", sans-serif;
-  --ifm-navbar-height: 5rem;
+  --ifm-menu-color-background-hover: var(--ifm-card-background-color);
+  --ifm-menu-color-background-active: var(--ifm-card-background-color);
 
-  --ifm-pagination-nav-border-radius: 0;
+  --ifm-card-background-color: #f0f7f9;
+  --ifm-card-border-radius: 0.25rem;
 
-  /* --ifm-color-primary: #0042aa;
-  --ifm-color-primary-dark: #003b99;
-  --ifm-color-primary-darker: #003890;
-  --ifm-color-primary-darkest: #002e77;
-  --ifm-color-primary-light: #0049bb;
-  --ifm-color-primary-lighter: #004cc3;
-  --ifm-color-primary-lightest: #0056dd; */
-
-  --ifm-code-font-size: 95%;
-
-  --ifm-card-background-color: #ffe3a3;
-  --ifm-card-border-radius: 0rem;
-
-  --ifm-menu-color: #1e1941;
-  --ifm-menu-color-background-active: #ffe3a3;
-  --ifm-menu-color-active: #1e1941;
-  --ifm-menu-color-background-hover: #ffe3a3;
-
-  --ifm-footer-background-color: #1e1941;
+  --ifm-footer-background-color: #1c1b1f;
   --ifm-footer-color: #fff;
-  --ifm-footer-link-color: rgb(225, 235, 255);
-  --ifm-footer-link-hover-color: #fff;
-  --ifm-footer-padding-vertical: 4rem;
+
+  --ifm-menu-link-padding-vertical: 0.6rem;
+  --ifm-menu-link-padding-horizontal: 1rem;
 
   --ifm-h1-font-size: 2rem;
   --ifm-h2-font-size: 1.5rem;
@@ -53,78 +37,18 @@ html {
   --ifm-h4-font-size: 1rem;
   --ifm-h5-font-size: 0.875rem;
   --ifm-h6-font-size: 0.85rem;
-
-  --ifm-heading-font-family: "FK Roman Display", "serif";
-  --ifm-heading-font-weight: 500;
 }
 
 /* Dark Theme var */
 html[data-theme="dark"] {
-  --ifm-font-color-base: #fffdf5;
-  --ifm-color-primary: #85b4ff;
-  --ifm-background-surface-color: #1e1941;
-  --ifm-background-color: #1e1941;
+  --ifm-font-color-base: #ffffff;
+  --ifm-color-primary: #4bd7ee;
+  --ifm-background-surface-color: #38373a;
+  --ifm-background-color: #1c1b1f;
 
-  --ifm-color-secondary-contrast-background: rgba(0, 0, 0, 0.2);
-  --ifm-color-secondary-dark: #85b4ff;
+  --ifm-color-secondary: var(--ifm-background-surface-color);
 
-  --ifm-card-background-color: #2d5abe;
-
-  --ifm-menu-color: #fffdf5;
-  --ifm-menu-color-background-active: #85b4ff;
-  --ifm-menu-color-active: #fffdf5;
-  --ifm-menu-color-background-hover: #85b4ff;
-}
-/* Fonts */
-
-@font-face {
-  font-family: "FK Grotesk";
-  src: local("FK Grotesk Light Italic"), local("FKGrotesk-LightItalic"),
-    url("/fonts/FKGrotesk-LightItalic.woff2") format("woff2"),
-    url("/fonts/FKGrotesk-LightItalic.woff") format("woff");
-  font-weight: 300;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "FK Grotesk";
-  src: local("FK Grotesk Italic"), local("FKGrotesk-Italic"),
-    url("/fonts/FKGrotesk-Italic.woff2") format("woff2"),
-    url("/fonts/FKGrotesk-Italic.woff") format("woff");
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "FK Grotesk";
-  src: local("FK Grotesk Light"), local("FKGrotesk-Light"),
-    url("/fonts/FKGrotesk-Light.woff2") format("woff2"),
-    url("/fonts/FKGrotesk-Light.woff") format("woff");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "FK Grotesk";
-  src: local("FK Grotesk Regular"), local("FKGrotesk-Regular"),
-    url("/fonts/FKGrotesk-Regular.woff2") format("woff2"),
-    url("/fonts/FKGrotesk-Regular.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "FK Roman Display";
-  src: local("FK Roman Display Medium"), local("FKRomanDisplay-Medium"),
-    url("/fonts/FKRomanDisplay-Medium.woff2") format("woff2"),
-    url("/fonts/FKRomanDisplay-Medium.woff") format("woff");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+  --ifm-card-background-color: var(--ifm-background-surface-color);
 }
 
 @-ms-viewport {
@@ -149,8 +73,8 @@ html[data-theme="dark"] {
 .markdown > h4,
 .markdown > h5,
 .markdown > h6 {
-  --ifm-h1-font-size: 2.5rem;
-  --ifm-h2-font-size: 2rem;
+  --ifm-h1-font-size: 2rem;
+  --ifm-h2-font-size: 1.75rem;
   --ifm-h3-font-size: 1.5rem;
   --ifm-h4-font-size: 1rem;
   --ifm-h5-font-size: 0.875rem;
@@ -158,10 +82,6 @@ html[data-theme="dark"] {
 }
 
 /* Header */
-
-.navbar__logo {
-  height: 3rem;
-}
 
 .header-discord-link:hover {
   opacity: 0.6;
@@ -201,49 +121,42 @@ html[data-theme="dark"] {
 
 /* Theme card */
 .card {
-  --bg-1: #e1ebff;
-  --bg-2: #85b4ff;
-  --bg-3: #ffe95a;
-  --bg-4: #ffe3a3;
-  --bg-5: #ffd700;
-
   border: 0 !important;
-  border-radius: 0 !important;
   box-shadow: none !important;
-  background-color: var(--bg);
-  color: #1e1941;
 
   @apply transition-transform;
 }
 
-.card:hover {
-  color: #1e1941;
-
-  @apply transition-transform lg:scale-105;
-}
-
 .card h2 {
-  @apply text-2xl;
+  @apply text-primary text-2xl mb-2;
 }
 
-.row > article:nth-child(5n + 1) .card {
-  --bg: var(--bg-1);
+.card p {
+  @apply text-base;
 }
 
-.row > article:nth-child(5n + 2) .card {
-  --bg: var(--bg-2);
+/* Navbar */
+.navbar {
+  @apply font-serif font-semibold;
 }
 
-.row > article:nth-child(5n + 3) .card {
-  --bg: var(--bg-3);
+.navbar__logo {
+  height: 2.5rem;
 }
 
-.row > article:nth-child(5n + 4) .card {
-  --bg: var(--bg-4);
+.navbar__item--version {
+  display: inline-block !important;
+  border: 1px solid var(--docusaurus-tag-list-border);
+  font-size: 0.875rem;
 }
 
-.row > article:nth-child(5n + 5) .card {
-  --bg: var(--bg-5);
+/* Menu */
+.menu {
+  @apply font-serif;
+}
+
+.menu__link--sublist {
+  @apply font-semibold;
 }
 
 /* Theme Menu adjustments */
@@ -276,7 +189,7 @@ html[data-theme="dark"] {
   justify-content: left;
   @apply mb-0 text-current;
 
-  --ifm-tabs-color-active: var(--ifm-background-color);
+  --ifm-tabs-color-active: var(--ifm-color-primary);
   --ifm-tabs-bg-active: var(--ifm-color-gray-900);
   --ifm-tabs-border: var(--ifm-color-gray-900);
 }
@@ -289,8 +202,8 @@ html[data-theme="dark"] {
 
 [class*="bg-"] .tabs--tabs-only {
   --ifm-tabs-color-active: #fff;
-  --ifm-tabs-bg-active: var(--ifm-color-gray-900);
-  --ifm-tabs-border: var(--ifm-color-gray-900);
+  --ifm-tabs-bg-active: var(--ifm-color-primary);
+  --ifm-tabs-border: var(--ifm-color-gray-300);
 }
 
 .tabs--tabs-only {
@@ -316,7 +229,11 @@ html[data-theme="dark"] {
 }
 
 .tabs--tabs-only .tabs__item:first-of-type {
-  @apply -ml-0;
+  @apply -ml-0 rounded-l;
+}
+
+.tabs--tabs-only .tabs__item:last-of-type {
+  @apply -ml-0 rounded-r;
 }
 
 .tabs--tabs-only .tabs__item:hover {
@@ -334,13 +251,17 @@ html[data-theme="dark"] {
 
 .details {
   border: 0 !important;
-  border-bottom: 1px solid currentColor !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
   padding: 1rem 0 !important;
   margin: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   background-color: transparent !important;
   color: inherit;
+}
+
+[data-theme="dark"] .details {
+  border-bottom-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .details > summary {
@@ -372,7 +293,7 @@ html[data-theme="dark"] {
 }
 
 .details ul li a {
-  @apply text-current no-underline border-0 hover:text-blue-500;
+  @apply text-current no-underline border-0;
 }
 
 [class^="collapsibleContent"] {
@@ -391,12 +312,9 @@ html[data-theme="dark"] {
 }
 
 .theme-doc-version-badge {
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 24px;
-  color: inherit;
+  @apply font-serif font-semibold bg-primary text-white px-3 py-2 rounded-full uppercase text-xs border-0;
   margin-left: -2px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 /* // Version Dropdown */
@@ -418,12 +336,6 @@ html[data-theme="dark"] {
 .dropdown-version__label {
   font-size: 0.815rem;
   opacity: 0.5;
-}
-
-.navbar__item--version {
-  display: inline-block !important;
-  border: 1px solid var(--docusaurus-tag-list-border);
-  font-size: 0.875rem;
 }
 
 @tailwind utilities;
