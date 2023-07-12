@@ -35,8 +35,9 @@ export const Learn = () => {
 
   return (
     <div
-      className="my-auto py-8 sm:py-12 lg:py-24 bg-card dark:bg-white/5 scroll-m-20"
+      className="my-auto py-8 sm:py-12 lg:py-24 bg-gray-950 text-white dark:bg-white/5 scroll-m-20"
       id="learn"
+      data-theme="dark"
     >
       <div className="container">
         <div className="max-w-screen-md mx-auto">

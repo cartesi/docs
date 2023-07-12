@@ -13,6 +13,7 @@ html {
 :root {
   --ifm-font-color-base: #1c1b1f;
   --ifm-color-primary: #008da5;
+  --ifm-color-secondary: #00f6ff;
 
   --ifm-font-family-base: "Inter", sans-serif;
   --ifm-heading-font-family: "Plus Jakarta Sans", "serif";
@@ -21,8 +22,9 @@ html {
 
   --ifm-menu-color-background-hover: var(--ifm-card-background-color);
   --ifm-menu-color-background-active: var(--ifm-card-background-color);
+  --ifm-menu-color-active: var(--ifm-font-color-base);
 
-  --ifm-card-background-color: #f0f7f9;
+  --ifm-card-background-color: #00f6ff;
   --ifm-card-border-radius: 0.25rem;
 
   --ifm-footer-background-color: #1c1b1f;
@@ -42,11 +44,10 @@ html {
 /* Dark Theme var */
 html[data-theme="dark"] {
   --ifm-font-color-base: #ffffff;
-  --ifm-color-primary: #4bd7ee;
+  --ifm-color-primary: #00f6ff;
+  --ifm-color-secondary: #00f6ff;
   --ifm-background-surface-color: #38373a;
   --ifm-background-color: #1c1b1f;
-
-  --ifm-color-secondary: var(--ifm-background-surface-color);
 
   --ifm-card-background-color: var(--ifm-background-surface-color);
 }
@@ -128,7 +129,7 @@ html[data-theme="dark"] {
 }
 
 .card h2 {
-  @apply text-primary text-2xl mb-2;
+  @apply text-2xl mb-2;
 }
 
 .card p {
@@ -189,21 +190,27 @@ html[data-theme="dark"] {
   justify-content: left;
   @apply mb-0 text-current;
 
-  --ifm-tabs-color-active: var(--ifm-color-primary);
+  --ifm-tabs-color-active: var(--ifm-card-background-color);
   --ifm-tabs-bg-active: var(--ifm-color-gray-900);
   --ifm-tabs-border: var(--ifm-color-gray-900);
 }
 
 [data-theme="dark"] .tabs--tabs-only {
-  --ifm-tabs-color-active: var(--ifm-color-gray-900);
-  --ifm-tabs-bg-active: #fff;
-  --ifm-tabs-border: #fff;
+  --ifm-tabs-color-active: var(--ifm-color-gray-500);
+  --ifm-tabs-bg-active: var(--ifm-card-background-color);
+  --ifm-tabs-border: var(--ifm-card-background-color);
 }
 
 [class*="bg-"] .tabs--tabs-only {
-  --ifm-tabs-color-active: #fff;
-  --ifm-tabs-bg-active: var(--ifm-color-primary);
-  --ifm-tabs-border: var(--ifm-color-gray-300);
+  --ifm-tabs-color-active: var(--ifm-font-color-base);
+  --ifm-tabs-bg-active: var(--ifm-card-background-color);
+  --ifm-tabs-border: var(--ifm-card-background-color);
+}
+
+[data-theme="dark"] [class*="bg-"] .tabs--tabs-only {
+  --ifm-tabs-color-active: var(--ifm-card-background-color);
+  --ifm-tabs-bg-active: #fff;
+  --ifm-tabs-border: #fff;
 }
 
 .tabs--tabs-only {
@@ -312,7 +319,7 @@ html[data-theme="dark"] {
 }
 
 .theme-doc-version-badge {
-  @apply font-serif font-semibold bg-primary text-white px-3 py-2 rounded-full uppercase text-xs border-0;
+  @apply font-serif font-semibold bg-primary text-white dark:text-gray-900 px-3 py-2 rounded-full uppercase text-xs border-0;
   margin-left: -2px;
   margin-bottom: 1rem;
 }

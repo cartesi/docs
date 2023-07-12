@@ -14,6 +14,7 @@ module.exports = {
       colors: {
         card: "var(--ifm-card-background-color)",
         primary: "var(--ifm-color-primary)",
+        secondary: "var(--ifm-color-secondary)",
         gray: {
           DEFAULT: "#1D1C1E",
           50: "#F5F6F6",
