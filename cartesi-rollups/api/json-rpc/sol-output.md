@@ -235,8 +235,8 @@ Data used to prove the validity of an output (notices and vouchers)
 
 ```solidity
 struct OutputValidityProof {
-  uint256 inputIndex;
-  uint256 outputIndex;
+  uint256 inputIndexWithinEpoch;
+  uint256 outputIndexWithinInput;
   bytes32 outputHashesRootHash;
   bytes32 vouchersEpochRootHash;
   bytes32 noticesEpochRootHash;
