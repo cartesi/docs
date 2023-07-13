@@ -251,7 +251,7 @@ struct OutputValidityProof {
 | Name                        | Type      | Description                                                       |
 | --------------------------- | --------- | ----------------------------------------------------------------- |
 | inputIndexWithinEpoch                 | uint256   | Which input, inside the epoch, the output belongs to                                |
-| outputIndexWithinEpoch                 | uint256   | Index of output emitted by the input                      |
+| outputIndexWithinInput                 | uint256   | Index of output emitted by the input                      |
 | outputHashesRootHash        | bytes32   | Merkle root of hashes of outputs emitted by the input    |
 | vouchersEpochRootHash       | bytes32   | Merkle root of all epoch's voucher metadata hashes   |
 | noticesEpochRootHash        | bytes32   | Merkle root of all epoch's notice metadata hashes    |
