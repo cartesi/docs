@@ -16,25 +16,23 @@ function FooterNav() {
     about: "https://cartesi.io/about",
     blog: "https://cartesi.io/blog",
     governance: "https://cartesi.io/governance",
-    contact: "https://cartesi.io/contact",
     docs: "https://docs.cartesi.io/",
     whitepaper: "https://cartesi.io/cartesi_whitepaper.pdf",
-    foundationNotice: "https://cartesi.io/foundation_notice.pdf",
-    usagePolicy: "https://cartesi.io/cartesi_trademark_usage_policy.pdf",
+    foundationNotice: "https://cartesi.io/",
+    usagePolicy: "https://cartesi.io/",
     examples: "https://docs.cartesi.io/",
     showcase: "https://rolluplab.io/",
     bugBounty:
       "https://immunefi.com/bounty/cartesi/?_gl:1*10hyf54*_ga*MTAyODg1OTI1LjE2ODY5MDA3NjA.*_ga_HM92STPNFJ*MTY4Nzg2ODk0Ny41LjEuMTY4Nzg2OTU0OC4xOC4wLjA.",
     staking: "https://explorer.cartesi.io/stake",
     grantsProgram: "https://governance.cartesi.io/",
-    cgpVoting: "https://governance.cartesi.io/",
+    cgpVoting: "https://snapshot.org/#/cartesi-community-grants-program.eth",
     discord: "https://discord.gg/pfXMwXDDfW",
-    github:
-      "https://www.github.com/cartesi?_gl:1*li4xfw*_ga*MTAyODg1OTI1LjE2ODY5MDA3NjA.*_ga_HM92STPNFJ*MTY4Nzg0OTc2OS4zLjEuMTY4Nzg1MTAwMS41OC4wLjA.",
-    telegram: "https://t.me/cartesiannouncements",
+    github: "https://www.github.com/cartesi",
+    telegram: "https://t.me/CartesiProject",
     twitter: "https://www.twitter.com/cartesiproject",
     medium: "https://medium.com/cartesi",
-    youtube: "https://www.youtube.com/c/Cartesiproject/videos",
+    youtube: "https://www.youtube.com/@Cartesiproject/featured",
     reddit: "https://www.reddit.com/r/cartesi/",
     linkedin: "https://www.linkedin.com/company/cartesi/",
     instagram: "https://www.instagram.com/cartesiproject/",
@@ -60,13 +58,7 @@ function FooterNav() {
           className="text-white hover:text-white/80 no-underline hover:no-underline"
           href={routes.governance}
         >
-          Governance and grants
-        </a>
-        <a
-          className="text-white hover:text-white/80 no-underline hover:no-underline"
-          href={routes.contact}
-        >
-          Contact
+          Governance & Grants
         </a>
       </div>
       <div className="flex flex-col gap-4">
