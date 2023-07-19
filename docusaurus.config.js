@@ -7,8 +7,8 @@ const replacementPlugin = require("./src/remark/replacement");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Blockchain OS Documentation - Cartesi",
-  tagline: "The Blockchain OS",
+  title: "Cartesi Documentation",
+  tagline: "Application-specific rollups with a Linux runtime.",
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
@@ -31,7 +31,6 @@ const config = {
           remarkPlugins: [replacementPlugin],
           docLayoutComponent: "@theme/DocPage",
           docItemComponent: "@theme/ApiItem",
-          
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -92,7 +91,7 @@ const config = {
             title: "Ecosystem",
             items: [
               {
-                label: "The Blockchain OS",
+                label: "Application-specific rollups with a Linux runtime.",
                 to: "https://cartesi.io/",
               },
               {
@@ -188,7 +187,6 @@ const config = {
         darkTheme: darkCodeTheme,
         additionalLanguages: ["lua"],
       },
-
 
       /*  // Announcemnt bar
       announcementBar: {
