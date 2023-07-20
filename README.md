@@ -1,6 +1,6 @@
-# The Blockchain OS Documentation
+# Cartesi Documentation
 
-The Blockchain OS Docs built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+Cartesi Docs is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
 
 ## Requirements
 
