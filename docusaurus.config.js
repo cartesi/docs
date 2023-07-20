@@ -7,8 +7,8 @@ const replacementPlugin = require("./src/remark/replacement");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Blockchain OS Documentation - Cartesi",
-  tagline: "The Blockchain OS",
+  title: "Cartesi Documentation",
+  tagline: "Cartesi",
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
@@ -92,7 +92,7 @@ const config = {
             title: "Ecosystem",
             items: [
               {
-                label: "The Blockchain OS",
+                label: "Cartesi",
                 to: "https://cartesi.io/",
               },
               {

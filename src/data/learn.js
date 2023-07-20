@@ -79,8 +79,8 @@ export const learn = [
         href: "/new-to-cartesi/overview#how-are-cartesi-rollups-different",
       },
       {
-        label: "Brief overview of The Blockchain OS",
-        href: "/new-to-cartesi/overview#limitations-develop-with-the-blockchain-os",
+        label: "Brief overview of Cartesi",
+        href: "/new-to-cartesi/overview#limitations-develop-with-cartesi",
       },
       {
         label: "Understand the scalability problem",
