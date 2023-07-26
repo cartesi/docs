@@ -1,7 +1,7 @@
 ---
 id: onboarding
 title: Choose your Onboarding Path
-tags: [blockchain os, quickstart, beginner, low-level developer, developer, researcher, learn, build]
+tags: [blockchain, quickstart, beginner, low-level developer, developer, researcher, learn, build]
 ---
 
 import Tabs from '@theme/Tabs';
@@ -9,9 +9,9 @@ import TabItem from '@theme/TabItem';
 
 Our onboarding paths answer the following questions:
 
-1. What can the Blockchain OS do for you as a new blockchain user?
-2. What can the Blockchain OS do for you as a developer?
-3. What can the Blockchain OS do for you as a researcher/low-level developer?
+1. What can Cartesi do for you as a new blockchain user?
+2. What can Cartesi do for you as a developer?
+3. What can Cartesi do for you as a researcher/low-level developer?
 
 
 <Tabs
@@ -85,7 +85,7 @@ This section targets researchers and low-level programmers who want to dive into
 
 <h3> Cartesi Machine </h3>
 
-You can dive deeper into the Blockchain OS core technology by reading the section about [the Cartesi Machine](/machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
+You can dive deeper into the Cartesi core technology by reading the section about [the Cartesi Machine](/machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
 
 <h3> Cartesi Compute SDK to run a DApp off-chain </h3>
 

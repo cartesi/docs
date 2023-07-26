@@ -8,7 +8,7 @@ tags: [build, quickstart, developer, dapps]
 Navigate to our [Quick Start](./run-dapp.md) tutorial if you want to build DApps now!
 :::
 
-Cartesi's vision is that creating a DApp should not be too different from the general development of desktop, web, and mobile applications. To that end, Cartesi provides a Blockchain OS for building decentralized logic, giving developers full flexibility to use the tools and libraries of their preference.
+Cartesi's vision is that creating a DApp should not be too different from the general development of desktop, web, and mobile applications. To that end, Cartesi provides a framework for building decentralized logic, giving developers full flexibility to use the tools and libraries of their preference.
 
 From a developer's point of view, a Cartesi DApp is composed of two main parts:
 - **[Front-end](../dapp-architecture.md#back-end)**: the user facing interface, which will often provide a UI (e.g., a web application) but may also be a command line interface (e.g., a hardhat task using ethers, or a command line using python).

@@ -1,6 +1,6 @@
 ---
 title: Introduction
-tags: [blockchain os, maintain, machine, low-level developer, researcher]
+tags: [blockchain, maintain, machine, low-level developer, researcher]
 ---
 
 The Cartesi Machine is Cartesi's solution for verifiable computation.
