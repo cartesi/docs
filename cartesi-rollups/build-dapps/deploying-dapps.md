@@ -27,3 +27,103 @@ The table below shows the list of all [networks that are currently supported](ht
 | Gnosis Chiado | 10200 |
 | Optimism Goerli |  420 |
 | Polygon Mumbai |  80001 |
+
+
+## Deploying on a public Testnet with a Cartesi Node running locally
+
+1. Build the DApp's back-end machine. To do this, run the following command from the directory of your DApp:
+
+```shell
+docker buildx bake machine --load --set *.args.NETWORK=<network>
+```
+
+Replace `<network>` with the name for your preferred network, written in the following way:
+
+* `goerli`
+* `gnosis_chiado`
+* `arbitrum_goerli`
+* `optimism_goerli`
+* `polygon_mumbai`
+* `sepolia`
+
+
+2. Deploy the back-end to a corresponding Rollups smart contract by running:
+
+```shell
+export MNEMONIC=<user sequence of twelve words>
+export RPC_URL=<https://your.rpc.gateway>
+```
+
+Replace `<https://your.rpc.gateway>` with your preferred RPC gateway, for example: `https://eth-goerli.alchemyapi.io/v2/<USER_KEY>`
+
+3. submit a deploy transaction to the Cartesi DApp Factory contract on the target network by executing the following command
+
+```shell
+DAPP_NAME=<example> docker compose --env-file ../env.<network> -f ../deploy-testnet.yml up
+```
+
+Replace `<network>` with the name for your preferred network.
+
+
+4. Get the address of the DApp by running:
+
+```shell
+cat ../deployments/goerli/fortune.json
+```
+
+The output will look similar to this:
+
+```json
+{
+"address": "Oxf3C97b309BfBf6bDD3436cC86dEdA6D149e2BD9D",
+"blockHash": "0x8a895c94d23bf6aba465addc065f7bc205b637e4497ab79895541359620f05c8",
+"blockNumber": 9361663,
+"transactionHash": "0x154b7d30a6ffe728206cc56280cfb8c35b27cf6fdaca108fd400d38c4f6537cf"
+}
+```
+
+5. Stop the Docker compose and remove the volumes:
+
+```shell
+DAPP_NAME=<example> docker compose --env-file ../env.<network> -f ../deploy-testnet.yml down -v
+```
+
+Replace `<network>` with the name for your preferred network.
+
+
+6. Now we can start the local node:
+
+```shell
+DAPP_NAME=<example> docker compose --env-file ../env.<network> -f ../docker-compose-testnet.yml -f ./docker-compose.override.yml up
+```
+
+Replace `<network>` with the name for your preferred network.
+
+
+7. We can check the application status on Etherscan, for example, `goerli.etherscan.io` by searching by our address, such as `Oxf3C97b309BfBf6bDD3436cC86dEdA6D149e2BD9D`.
+
+9. Now let's send inputs to the DApp using the [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console).
+
+From the rollups-examples base directory, navigate to the `frontend-console` one:
+
+```shell
+cd frontend-console
+```
+
+Build the frontend console application:
+
+```shell
+yarn
+yarn build
+```
+
+And send an input as follows:
+
+```shell
+yarn start input send --payload “test” --rpc <rpc-address> —address <dapp address>
+```
+
+* Replace `<rpc-address>` with your preferred PRC address. You can obtain an address [here](https://chainlist.org/chain/5).
+* Replace `<dapp address>` with the address obtained in step 4.
+
+
