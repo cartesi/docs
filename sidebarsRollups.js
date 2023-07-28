@@ -224,5 +224,17 @@ module.exports = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "Future Developments",
+      link: {
+        type: "generated-index",
+        slug: "/challenges",
+      },
+      collapsed: true,
+      items: [
+        "challenges/overview",
+      ],
+    },
   ],
 };
