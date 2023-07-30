@@ -6,22 +6,21 @@ import { hello } from "../data/hello";
 
 export const Hello = () => {
   const buttonStyle = {
-    padding: "0.75rem 0.75rem",
-    textAlign: "center",
+    display: "inline-block",
+    padding: "10px 20px",
     textDecoration: "none",
-    backgroundColor: "#1B1A1E",
-    color: "#fff",
-    borderRadius: "0.25rem",
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    width: "100%",
+    backgroundColor: "#FFFFFF",
+    color: "#000000",
+    borderRadius: "5px",
+    margin: "5px",
+    fontWeight: "bold", 
   };
 
   const buttonContainerStyle = {
     display: "flex",
     justifyContent: "center",
-    gap: "0.75rem",
-    marginTop: "1.5rem",
+    gap: "10px",
+    marginTop: "20px"
   };
 
   return (
@@ -32,13 +31,7 @@ export const Hello = () => {
             Welcome to Cartesi docs.
           </h1>
           <p className="text-2xl text-center">
-            Cartesi: Application-specific rollups with a Linux runtime.
-          </p>
-          <p className="text-2xl text-center">
-            Cartesi provides your DApp with a dedicated CPU and rollup, enhancing computational scalability while preserving decentralization, security, and censorship resistance.
-          </p>
-          <p className="text-2xl text-center">
-            With the Cartesi Virtual Machine, you can use familiar libraries, languages and tooling, moving beyond the EVM.
+          Cartesi is an application-specific rollups framework that can execute DApps with the full support of a Linux runtime along with existing Linux toolchains. Cartesi Rollups ecosystem is based on a special RISC-V-based VM - the Cartesi Machine - which is capable of running Linux or other operating systems within a rollups framework. This enables the development of scalable DApps in traditional programming languages.
           </p>
         </div>
 
