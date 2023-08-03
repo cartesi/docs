@@ -1027,6 +1027,9 @@ This is passed to the `bc` utility, which outputs the result split into lines te
 The `tr` utility joins the lines back together.
 The result is again fed to `jq`, which assembles the proper JSON object with a `"payload"` field that is passed to `rollup notice`.
 
+We add the command line option `--assert-rolling-template` to help catch errors.
+When enabled, it will cause `cartesi-machine` to exit with a status-code reporting failure if the generated machine is not Rolling Cartesi Machine template compatible.
+
 To use `calc.sh` in a Rolling Cartesi Machine template, first create a filesystem with the program:
 ```
 mkdir calc
@@ -1053,6 +1056,7 @@ cartesi-machine \
     --rollup \
     --flash-drive=label:calc,filename:calc.ext2 \
     --store="rolling-calculator-template" \
+    --assert-rolling-template \
     -- /mnt/calc/calc.sh
 ```
 
