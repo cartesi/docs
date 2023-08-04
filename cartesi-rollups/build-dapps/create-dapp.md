@@ -398,4 +398,4 @@ while True:
         finish["status"] = handler(rollup_request["data"])
 ```
 
-As we conclude this tutorial, we hope that you now have a better understanding of how to build a DApp that uses the `fortune` package and how the Cartesi Machine drives the DApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom DApps. Happy coding!
+As we conclude this tutorial, we hope that you now have a better understanding of how to build a DApp that uses the `fortune` package and how the Cartesi Machine drives the DApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom DApps. Happy coding! 
