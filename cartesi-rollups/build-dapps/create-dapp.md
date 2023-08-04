@@ -283,4 +283,4 @@ The back-end logic may be found at `<dapp-name>/<dapp-name>.py`.
 The script comes with some reference code, which may be helpful during development.
 It may be replaced or extended according to the use case needs.
 
-As we conclude this tutorial, we hope that you now have a better understanding of how to build a DApp that uses the `fortune` package and how the Cartesi Machine drives the DApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom DApps. Happy coding!
+As we conclude this tutorial, we hope that you now have a better understanding of how to build a DApp that uses the `fortune` package and how the Cartesi Machine drives the DApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom DApps. Happy coding! 
