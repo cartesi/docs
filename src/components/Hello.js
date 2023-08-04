@@ -31,7 +31,13 @@ export const Hello = () => {
             Welcome to Cartesi docs.
           </h1>
           <p className="text-2xl text-center">
-          Cartesi are application-specific rollups with a Linux runtime. Cartesi gives your DApp its own rollup with a dedicated CPU, bringing significant gains in computational scalability without compromising on decentralization, security and censorship resistance. With the Cartesi Virtual Machine, DApp developers move beyond the EVM and gain access to the full suite of code libraries, programming languages, and open-source tooling they're accustomed to.
+            Cartesi: Application-specific rollups with a Linux runtime.
+          </p>
+          <p className="text-2xl text-center">
+            Cartesi gives your DApp its own rollup with a dedicated CPU, bringing significant gains in computational scalability without compromising on decentralization, security, and censorship resistance.
+          </p>
+          <p className="text-2xl text-center">
+            With the Cartesi Virtual Machine, DApp developers move beyond the EVM and gain access to the full suite of code libraries, programming languages, and open-source tooling they're accustomed to.
           </p>
         </div>
 
