@@ -176,8 +176,8 @@ yarn
 yarn build
 ```
 4. You can [follow this tutorial to create an Ethereum account using Metamask](https://support.metamask.io/hc/en-us/articles/360015489531). Make sure to save the Secret Backup Phrase (MNEMONIC user sequence of twelve words)
-5. Get testnet funds/tokens on Goerli to be able to submit transactions on that network. There are several faucets available, you may try [https://goerlifaucet.com/](https://goerlifaucet.com/) or [https://goerli-faucet.slock.it/](https://goerli-faucet.slock.it/)
-6. Create an [Alchemy account](https://docs.alchemy.com/docs/alchemy-quickstart-guide) to obtain an API key for reliable access to the Goerli network. Alternatively, you can use other options such as [Infura](https://infura.io/) or [Moralis](https://moralis.io/)
+5. Get testnet funds/tokens on Goerli to be able to submit transactions on that network. There are several faucets available, you may try [https://goerlifaucet.com/](https://goerlifaucet.com/), [https://goerli-faucet.slock.it/](https://goerli-faucet.slock.it/) or [https://faucet.chainstack.com/goerli-faucet](https://faucet.chainstack.com/goerli-faucet)
+6. Create an [Alchemy account](https://docs.alchemy.com/docs/alchemy-quickstart-guide) to obtain an API key for reliable access to the Goerli network. Alternatively, you can use other options such as [Infura](https://infura.io/) or [Chainstack](https://chainstack.com/)
 7. Configure your account on Goerli by running the commands below, which specify the network and MNEMONIC (Secret Backup Phrase) to use. The MNEMONIC is always specified as a string sequence of twelve words. In this example, use the MNEMONIC that you received when creating the Ethereum account using Metamask as described in step 4.
 ```shell
 export NETWORK=goerli
