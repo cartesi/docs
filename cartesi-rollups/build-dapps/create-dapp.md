@@ -4,7 +4,7 @@ title: Create your first DApp
 tags: [build, dapps ,developer]
 ---
 
-Once you learned how to [run a simple example](./run-dapp.md), it is now time to create one of your own. In order to do this, we will make use of the [DApp template](https://github.com/cartesi/rollups-examples/blob/main/custom-dapps/README.md) available in Cartesi's [rollups-examples](https://github.com/cartesi/rollups-examples) Github repository. Once again, make sure you have [installed all the necessary requirements](./requirements.md) before proceeding.
+Once you learned how to [run a simple example](./run-dapp.md), it is now time to create one of your own. In order to do this, we will make use of the existing DApps available in Cartesi's [rollups-examples](https://github.com/cartesi/rollups-examples) Github repository. Once again, make sure you have [installed all the necessary requirements](./requirements.md) before proceeding.
 
 ## Example DApp
 
@@ -99,12 +99,7 @@ COPY ./fortune.py .
 import subprocess
 ```
 
-2. We then delete the `parser` module as we are not using it in our application:
-
-```python
-from py_expression_eval import Parser
-
-```
+2. We then delete `from py_expression_eval import Parser` as we are not using the `parser` module in our application.
 
 3. Next, we need to add the `FORTUNE_CMD` command to our code as follows:
 
@@ -115,36 +110,26 @@ FORTUNE_CMD = "/usr/games/fortune; exit 0"
 This command sets the FORTUNE_CMD variable to a string that, when executed, runs the fortune program to display a random quote and then immediately exits the shell with a success status.
 
 
-4. We delete the following part:
+4. We then replace the existing `try` function of `def handle_advance(data)` with the following command that calls the `fortune` app:
 
 ```python
-        # Evaluates expression
-        parser = Parser()
-        output = parser.parse(input).evaluate({})
-```
+    try:
+        input = hex2str(data["payload"])
+        logger.info(f"Received input: {input}")
 
-and replace it with  the command that calls the `fortune` app:
-
-```python
         quote = subprocess.check_output(FORTUNE_CMD, shell=True, stderr=subprocess.STDOUT).decode()
         output = f"Received input: {input}. This was the quote {quote}"
+
+        # Emits notice with result of calculation
+        logger.info(f"Adding notice with payload: '{output}'")
+        response = requests.post(rollup_server + "/notice", json={"payload": str2hex(str(output))})
+        logger.info(f"Received notice status {response.status_code} body {response.content}")
 ```
 
-The first line runs the command stored in FORTUNE_CMD using a shell, captures the output (including errors), and then decodes it from bytes to a string, storing the result in the variable output. The second line creates a formatted string with placeholders, replacing {input} and {quote} with the values of the variables input and quote, respectively, and assigns the resulting string to the variable output.
+The `quote` runs the command stored in FORTUNE_CMD using a shell, captures the output (including errors), and then decodes it from bytes to a string, storing the result in the variable output. The `output` creates a formatted string with placeholders, replacing {input} and {quote} with the values of the variables input and quote, respectively, and assigns the resulting string to the variable output.
 
 
-5. We then change the code of the `def handle_inspect(data):` function from:
-
-```python
-    logger.info(f"Received inspect request data {data}")
-    logger.info("Adding report")
-    response = requests.post(rollup_server + "/report", json={"payload": data["payload"]})
-    logger.info(f"Received report status {response.status_code}")
-    return "accept"
-```
-
-to:
-
+5. We then change the code of the `def handle_inspect(data):` function to:
 
 ```python
     logger.info(f"Received inspect request data {data}")
