@@ -78,7 +78,7 @@ The preferred network must be one that has the Rollups contracts deployed.
 cat ../deployments/<network>/<example>.json
 ```
 
-Replace `<network>` with the name of your preferred network and `<example>` with the name of your DApp. For example `cat ../deployments/goerli/fortune.json`.
+Replace `<network>` with the name of your preferred network and `<example>` with the name of your DApp. For example, `cat ../deployments/goerli/fortune.json`.
 
 The output will look similar to this:
 
