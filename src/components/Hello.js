@@ -31,7 +31,7 @@ export const Hello = () => {
             Welcome to Cartesi docs.
           </h1>
           <p className="text-2xl text-center">
-          Cartesi is an application-specific rollups framework that can execute DApps with the full support of a Linux runtime along with existing Linux toolchains. Cartesi Rollups ecosystem is based on a special RISC-V-based VM - the Cartesi Machine - which is capable of running Linux or other operating systems within a rollups framework. This enables the development of scalable DApps in traditional programming languages.
+          Cartesi are application-specific rollups with a Linux runtime. Cartesi gives your DApp its own rollup with a dedicated CPU, bringing significant gains in computational scalability without compromising on decentralization, security and censorship resistance. With the Cartesi Virtual Machine, DApp developers move beyond the EVM and gain access to the full suite of code libraries, programming languages, and open-source tooling they're accustomed to.
           </p>
         </div>
 
