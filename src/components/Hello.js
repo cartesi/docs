@@ -6,21 +6,22 @@ import { hello } from "../data/hello";
 
 export const Hello = () => {
   const buttonStyle = {
-    display: "inline-block",
-    padding: "10px 20px",
+    padding: "0.75rem 0.75rem",
+    textAlign: "center",
     textDecoration: "none",
-    backgroundColor: "#FFFFFF",
-    color: "#000000",
-    borderRadius: "5px",
-    margin: "5px",
-    fontWeight: "bold", 
+    backgroundColor: "#1B1A1E",
+    color: "#fff",
+    borderRadius: "0.25rem",
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    width: "100%",
   };
 
   const buttonContainerStyle = {
     display: "flex",
     justifyContent: "center",
-    gap: "10px",
-    marginTop: "20px"
+    gap: "0.75rem",
+    marginTop: "1.5rem",
   };
 
   return (
@@ -34,10 +35,10 @@ export const Hello = () => {
             Cartesi: Application-specific rollups with a Linux runtime.
           </p>
           <p className="text-2xl text-center">
-            Cartesi gives your DApp its own rollup with a dedicated CPU, bringing significant gains in computational scalability without compromising on decentralization, security, and censorship resistance.
+            Cartesi provides your DApp with a dedicated CPU and rollup, enhancing computational scalability while preserving decentralization, security, and censorship resistance.
           </p>
           <p className="text-2xl text-center">
-            With the Cartesi Virtual Machine, DApp developers move beyond the EVM and gain access to the full suite of code libraries, programming languages, and open-source tooling they're accustomed to.
+            With Cartesi Virtual Machine, you can use familiar libraries, languages and tooling, moving beyond the EVM.
           </p>
         </div>
 
