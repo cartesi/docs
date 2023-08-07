@@ -40,7 +40,7 @@ There are two different options to setup the prerequisites, you can choose one o
 
 This is an easy and fast setup, you need to follow the steps:
 
-1. [Navigate to Gitpod rollups-examples](https://gitpod.io/#/https://github.com/cartesi/rollups-examples/) to automate your development setup
+1. [Navigate to Gitpod rollups-examples](https://gitpod.io/#/https://github.com/cartesi/rollups-examples/) to automate your development setup.
 2. When you click on the link above, it will forward you to login options.
 3. Login with your preferable option via GitLab, GitHub, or Bitbucket.
 4. Provide authorization to GitLab, GitHub, or Bitbucket.

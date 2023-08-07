@@ -4,9 +4,6 @@ title: Deploying DApps
 tags: [deploy, quickstart, dapps, developer]
 ---
 
-:::tip
-Please check the [full documentation for deploying Rollups DApps to Cartesi's cloud-based execution infrastructure](https://github.com/cartesi/rollups-deployment/blob/main/README.md).
-:::
 
 Cartesi Rollups DApps are intended to be deployed to public blockchains, so that they can be accessed by users. This can be done by taking advantage of a cloud-based infrastructure provided by Cartesi.
 
