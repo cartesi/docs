@@ -94,7 +94,7 @@ ls *.py | ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" entr -r python3 echo.py
 
 ### How to stop containers
 
-To stop the containers and remove any associated volumes, run the following command:
+Stop the containers using `ctrl+c` then remove the containers and the volumes:
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml down -v
