@@ -190,25 +190,9 @@ yarn start notice list --url https://echo-python.goerli.rollups.staging.cartesi.
 11. You should get a response with the payload of the notice: `"Hello, Cartesi."`
 
 :::tip
-As shown in the last step (number 10), to query the layer-2 Cartesi Node for DApp outputs, you will need to specify the URL of its GraphQL endpoint. You can find other existing examples endpoints in the [DApp table below](#explore-our-dapps).
+As shown in the last step (number 10), to query the layer-2 Cartesi Node for DApp outputs, you will need to specify the URL of its GraphQL endpoint.
 :::
 
 ### Explore our DApps
 
-You can find several Cartesi DApp [examples on GitHub](https://github.com/cartesi/rollups-examples#examples), such as the following:
-
-| DApp Name      | DApp Deployment Status on Goerli Testnet | GraphQL endpoint URL |
-|----------------|------------------------------------------|----------------------|
-| [Echo Python](https://github.com/cartesi/rollups-examples/blob/main/echo-python)   |  Yes                                      |  [https://echo-python.goerli.rollups.staging.cartesi.io/graphql](https://echo-python.goerli.rollups.staging.cartesi.io/graphql) |
-| [Echo C++](https://github.com/cartesi/rollups-examples/blob/main/echo-cpp)       |  Yes                                       | [https://echo-cpp.goerli.rollups.staging.cartesi.io/graphql](https://echo-cpp.goerli.rollups.staging.cartesi.io/graphql) |
-| [Echo Rust](https://github.com/cartesi/rollups-examples/blob/main/echo-rust)      | No                                       | - |
-| [Echo Lua](https://github.com/cartesi/rollups-examples/blob/main/echo-lua)       | Yes                                      | [https://echo-lua.goerli.rollups.staging.cartesi.io/graphql](https://echo-lua.goerli.rollups.staging.cartesi.io/graphql) |
-| [Echo JS DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-js)   | Yes                                      | [https://echo-js.goerli.rollups.staging.cartesi.io/graphql](https://echo-js.goerli.rollups.staging.cartesi.io/graphql)
-| [Echo Low-Level](https://github.com/cartesi/rollups-examples/blob/main/echo-low-level) | Yes                                      | [https://echo-low-level.goerli.rollups.staging.cartesi.io/graphql](https://echo-low-level.goerli.rollups.staging.cartesi.io/graphql) |
-| [Converter](https://github.com/cartesi/rollups-examples/blob/main/converter)   | No                                       | - |
-| [Calculator](https://github.com/cartesi/rollups-examples/blob/main/calculator) | No                                       | _ |
-| [SQLite](https://github.com/cartesi/rollups-examples/blob/main/sqlite)         | Yes                                      | [https://sqlite.goerli.rollups.staging.cartesi.io/graphql](https://sqlite.goerli.rollups.staging.cartesi.io/graphql)               |
-| [k-NN](https://github.com/cartesi/rollups-examples/blob/main/knn)           | Yes                                      | [https://knn.goerli.rollups.staging.cartesi.io/graphql](https://knn.goerli.rollups.staging.cartesi.io/graphql)
-| [m2cgen](https://github.com/cartesi/rollups-examples/blob/main/m2cgen)         | No                                       | - |
-| [ERC-20](https://github.com/cartesi/rollups-examples/blob/main/erc20)          | No                                       | - |
-| [Auction](https://github.com/cartesi/rollups-examples/blob/main/auction)          | No                                       | - |
+You can find several Cartesi DApp [examples on GitHub](https://github.com/cartesi/rollups-examples#examples).
