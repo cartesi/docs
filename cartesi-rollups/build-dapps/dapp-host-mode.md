@@ -12,7 +12,19 @@ When running in host mode, localhost port `5004` will be used by default to allo
 
 ## Step 1: Run the environment
 
-The first step is to run the environment in host mode using the following command:
+The first step is to run the environment in host mode. Before this, check if your Docker supports `riscv` by running:
+
+```shell
+docker buildx ls
+```
+
+If you do not see `riscv` in the results, install this dependency by running:
+
+```shell
+apt install qemu-user-static
+```
+
+Now we can start the environment:
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml up
@@ -21,6 +33,8 @@ docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../d
 :::note
 If you are using macOS, please add the line `platform: linux/amd64` under the `server_manager` service in the `docker-compose.host.yml` file, located in the root of the cloned `rollups-examples` repository.
 :::
+
+
 
 ## Step 2: Run the application back-end
 
