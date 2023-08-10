@@ -4,7 +4,7 @@ title: Current challenges
 tags: [build, quickstart, developer, dapps]
 ---
 
-Cartesi Rollups are a constantly evolving solution, shaped by the collaborative efforts of the contributors and community. As the community continuously works together to build something amazing, there are ongoing challenges that need attention. On this page, you’ll discover a compilation of these challenges, along with the strategies and solutions that can be developed to address them.
+Cartesi Rollups are shaped by the contributions and collaborative efforts of its decentralized community. As the community continuously works together to build something amazing, there are ongoing challenges that need attention. On this page, you’ll explore these challenges and potential strategies and solutions that the community might consider.
 
 - [Transaction scalability](#transaction-scalability)
 - [Disputes](#disputes)
@@ -17,21 +17,21 @@ Cartesi Rollups are a constantly evolving solution, shaped by the collaborative 
 
 ### Challenge
 
-In contrast to the majority of proposed Layer 2 rollup solutions, which primarily focus on enhancing transaction throughput and minimizing fees (essentially facilitating more transactions at a lower cost), the current **v0.9** release is dedicated to expanding the *computational capacity* (as opposed to *transaction scalability* alone) to allow the creation of decentralized applications that were simply not possible to build before.
+In contrast to the majority of proposed Layer 2 rollup solutions, which primarily focus on enhancing transaction throughput and minimizing fees (essentially facilitating more transactions at a lower cost), the current **v1.0** release is dedicated to expanding the *computational capacity* (as opposed to *transaction scalability* alone) to allow the creation of decentralized applications that were simply not possible to build before.
 
 ### Solution strategy
 
-Achieving transaction scalability is directly related to the implementation of an *Aggregator*, which is often associated with a Sequencer. This key component will streamline the process, enhancing the overall efficiency and capacity of the rollup solution. It is worth noting that users can already easily benefit from transaction scalability by deploying Cartesi as a Layer-3 solution, on top of another Layer-2 solution that provides that. Cartesi officially supports deployment on top of Optimism and Arbitrum, further expanding the options for users seeking enhanced transaction scalability.
+One potential path to achieve transaction scalability is the introduction of an *Aggregator*, often associated with a Sequencer. This component might enhance the overall efficiency and capacity of the rollup solution. Moreover, an exciting area for exploration is deploying Cartesi on top of other Layer-2 solutions like Optimism and Arbitrum, potentially expanding the options for enhanced transaction scalability.
 
 ## Disputes
 
 ### Challenge
 
-The **0.9** release lacks support for dispute resolution.
+The **1.0** release lacks support for dispute resolution.
 
 ### Solution strategy
 
-Cartesi framework has been strategically planned for the development of dispute resolution features from the beginning. Cartesi successfully uses dispute resolution for [Compute](/compute/overview), and it was deliberately left out of the initial releases to streamline the complexity. Furthermore, the community wanted to incorporate it after making other improvements and research, such as the Microarchitecture enhancement (completed) and the more recent [research on NxN dispute resolution](https://arxiv.org/abs/2212.12439).
+From its inception, the Cartesi framework has the potential to integrate dispute resolution features. Cartesi's community-driven iterations have leveraged dispute resolution for [Compute](/compute/overview). Prioritizing other features and improvements, like the Microarchitecture enhancement and recent [research on NxN dispute resolution](https://arxiv.org/abs/2212.12439), the community might delve deeper into this area.
 
 ## Large data as input
 
@@ -41,21 +41,21 @@ The current Rollups framework does not support very large data inputs (e.g., fro
 
 ### Solution strategy
 
-There is an ongoing research into expanding the Cartesi Rollups' capabilities, taking into account recent improvements and potential new features. First of all, users can already expect benefits from advancements in the Ethereum ecosystem, such as [EIP-4844](https://www.eip4844.com/) (proto-danksharding), which makes on-chain data more affordable. Additionally, users can deploy Cartesi as a Layer-3 solution on top of other Layer-2 rollup solutions to enjoy the benefits of cheaper data.
+A promising research area is enhancing Cartesi Rollups' data capabilities. Potential advancements in the Ethereum ecosystem, like [EIP-4844](https://www.eip4844.com/) (proto-danksharding), might make on-chain data more affordable. Moreover, layering Cartesi on top of other rollup solutions can offer data advantages.
 
-Another useful feature being considered is a convenience layer to help front-end clients divide large pieces of data into smaller chunks and reassemble them within the back-end. This approach would be similar to the [Logger](/compute/logger_drive/) feature used in Cartesi Compute.
+Another feature for community consideration could be a mechanism assisting front-end clients in dividing large pieces of data into smaller chunks and reassembling them within the back-end. This approach would be similar to the [Logger](/compute/logger_drive/) feature used in Cartesi Compute.
 
-Lastly, other possible solutions are being explored for the future, including integrating Rollups with external Data Availability solutions such as zkPorter and implementing a Data Availability Committee solution for quorum-based validator sets.
+Additionally, potential future exploration might focus on integrating Rollups with Data Availability solutions like zkPorter or using a Data Availability Committee solution for quorum-based validator sets.
 
 ## Composability
 
 ### Challenge
 
-The current **v0.9** release lacks composability, which is the ability of multiple DApps to directly interact with each other, for example by having one application directly send inputs to another one without going through the base layer. This would enable seamless communication and data exchange between DApps. The most important use case for this feature would be to allow users to easily and cheaply transfer assets from one DApp to another. 
+The current **v1.0** release lacks composability, which is the ability of multiple DApps to directly interact with each other, for example by having one application directly send inputs to another one without going through the base layer. This would enable seamless communication and data exchange between DApps. The most important use case for this feature would be to allow users to easily and cheaply transfer assets from one DApp to another. 
 
 ### Solution strategy
 
-After the initial **v1.0** mainnet release, it is advised to direct attention towards a variety of development aspects, one of which includes planning research to address the composability issue. It is very important to consider composability for expanding the functionality and interoperability of DApps within the Cartesi Rollups ecosystem. In the meantime, solutions for specific use cases should be considered as well, such as utilizing liquidity providers for rapidly transferring fungible assets between applications. This approach allows Cartsi to improve the user experience and promote the growth of the DApps network while continuing to work on all the development priorities.
+Post the **v1.0** mainnet release, a potential area of focus could be research into addressing composability, vital for enhancing DApp functionality. Meanwhile, interim solutions like leveraging liquidity providers for asset transfers might be considered, enhancing the user experience while juggling development priorities.
 
 ## Convenience layers
 
@@ -65,7 +65,7 @@ The current **0.9** release features an HTTP API, which, while providing a solid
 
 ### Solution strategy
 
-After developing a few example applications, it is clear that "higher-level development frameworks" are essential for improving usability and developer experience. These frameworks will be opinionated convenience layers, both in the front-end and in the back-end, that will allow developers to abstract away several concepts, benefit from code completion, reuse standard code such as wallet implementations, and much more. Several of these frameworks are expected to be implemented in the near future, in collaboration with the community.
+Following community-built applications, it's clear that "higher-level development frameworks" might greatly benefit usability. The community could explore the development of these frameworks, allowing developers to abstract away several concepts, benefit from code completion, reuse standard code such as wallet implementations, and much more. Engaging the community in these areas could lead to some innovative solutions.
 
 ## Design for upgradability
 
@@ -77,6 +77,8 @@ In particular, upgrading the back-end code of a DApp is an important concern tha
 
 ### Solution strategy
 
-After the initial **v1.0** mainnet release, research is planned to start on the topic of supporting an upgrade procedure for DApps that wish to allow it (which of course should involve an acceptable governance model to trigger it). One of the main concerns here is to provide a streamlined or standardized procedure to safely handle asset ownership integrity (e.g., safely transfer assets from the previous version of the application to the new one). Since a new DApp version necessarily implies a different Cartesi Machine, there needs to be a safe and sound procedure to load the previous machine's state (including user assets) into the new one.
-In order to tackle this challenge, the community has already begun experimenting with keeping the application's back-end state separate from the remainder of the machine. With this approach, the Cartesi Machine can act as a "lambda" function, whereas a stateless template always takes as parameters the current application state and a new input to process, producing as results the new application state and any relevant outputs such as vouchers. Any disputes, should they arise, would now focus on reaching consensus around the isolated application state, as opposed to the entire machine state.
-With an approach like this, the isolated state, kept separated from the original machine, could easily be reused with a new upgraded machine.
+Following the **v1.0** mainnet release, an interesting area for research could be to explore methods for supporting an upgrade procedure for DApps that are inclined to allow it. A key concern in this research domain is finding a way, or a set of best practices, to securely handle asset ownership continuity – for instance, how to transfer assets safely from an older version of an application to its newer incarnation. Given that an updated DApp would entail utilizing a different Cartesi Machine, the challenge is to devise a robust method to migrate the previous machine's state, inclusive of user assets, into this new framework.
+
+To address such challenges, some in the community are already testing the waters by trying to segregate the application's backend state from the rest of the machine. This proposed methodology would enable the Cartesi Machine to function akin to a "lambda" function. A stateless template in this scenario would always accept the present application state and a fresh input to process. The result of this would be a new application state and potentially relevant outputs like vouchers. If disputes arise, the focus would shift towards reaching a consensus on this isolated application state, rather than the machine's full state.
+
+By adopting such a strategy, the isolated state, maintained separately from the original machine, could potentially be incorporated into an upgraded machine more effortlessly.
