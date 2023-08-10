@@ -182,7 +182,7 @@ yarn build
 ## Start the application
 
 ```shell
-docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml up
+docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml up
 ```
 
 ## Check the DApp address
