@@ -101,6 +101,10 @@ You can shutdown the environment by running:
 docker-compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
 ```
 
+:::note
+Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
+:::
+
 ## Interacting with the DApp
 
 There are two ways to interact with the DApp:
