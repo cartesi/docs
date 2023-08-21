@@ -25,38 +25,13 @@ The **Quick Start** guide consists of 5 main steps:
 
 ## Installing
 
-:::note
-You can use online development environments such as [Gitpod](https://gitpod.io/) and [CodeSandbox](https://codesandbox.io) to open the [rollups-examples](https://github.com/cartesi/rollups-examples) directly in your browser with all [required dependencies](./requirements.md) already installed. These services allow you to start experimenting immediately, but keep in mind that they are provided by third-parties and are subject to unavailability and policy changes. They may also require access to your GitHub account in order to work properly.
-:::
-
-There are two different options to setup the prerequisites, you can choose one of the following:
-
-1. [Using Gitpod](#using-gitpod) as a fast option
-2. [Using manual setup](#using-manual-setup) to install all the necessary requirements locally
-
-### Using Gitpod
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#/https://github.com/cartesi/rollups-examples/)
-
-This is an easy and fast setup, you need to follow the steps:
-
-1. [Navigate to Gitpod rollups-examples](https://gitpod.io/#/https://github.com/cartesi/rollups-examples/) to automate your development setup
-2. When you click on the link above, it will forward you to login options.
-3. Login with your preferable option via GitLab, GitHub, or Bitbucket.
-4. Provide authorization to GitLab, GitHub, or Bitbucket.
-5. Congratulations, you have successfully setup your development environment
-6. [Start Building our Echo DApp](#building)
-
-### Using manual setup
 
 Follow the [manual setup](./requirements.md) to  make sure you have installed all the necessary requirements locally.
 
 ## Building
 
 To build the `echo-python` example:
-:::tip
-If you are running your environment using the [Gitpod option explained above](#using-gitpod), then please start from **step number 2** as you will not need to clone the Github repository.
-:::
+
 
 1. Clone the [cartesi/rollups-examples](https://github.com/cartesi/rollups-examples) Github repository, and `cd` into it:
 ```shell
