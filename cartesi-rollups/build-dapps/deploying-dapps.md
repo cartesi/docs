@@ -23,7 +23,7 @@ The table below shows the list of all [networks that are currently supported](ht
 | Network Name  | Chain ID |
 |----------------|----------------------------------|
 | Arbitrum Goerli  | 421613 |
-| Goerli  |   5  |
+| Sepolia  |   11155111  |
 | Gnosis Chiado | 10200 |
 | Optimism Goerli |  420 |
 | Polygon Mumbai |  80001 |
