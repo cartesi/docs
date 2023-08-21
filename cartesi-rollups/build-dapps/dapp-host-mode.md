@@ -12,19 +12,7 @@ When running in host mode, localhost port `5004` will be used by default to allo
 
 ## Step 1: Run the environment
 
-The first step is to run the environment in host mode. Before this, check if your Docker supports `riscv` by running:
-
-```shell
-docker buildx ls
-```
-
-If you do not see `riscv` in the results, install this dependency by running:
-
-```shell
-apt install qemu-user-static
-```
-
-Now we can start the environment:
+The first step is to run the environment in host mode:
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml up

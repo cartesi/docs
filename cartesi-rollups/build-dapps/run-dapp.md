@@ -74,7 +74,20 @@ docker buildx bake --load
 
 ## Running
 
-To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the DApp's back-end logic:
+
+To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the DApp's back-end logic. Before this, check if your Docker supports `riscv` by running:
+
+```shell
+docker buildx ls
+```
+
+If you do not see `riscv` in the results, install this dependency by running:
+
+```shell
+apt install qemu-user-static
+```
+
+Now we can start the environment:
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml up
