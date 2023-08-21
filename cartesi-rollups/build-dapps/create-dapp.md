@@ -52,6 +52,18 @@ cd fortune
 
 ### Test the copied DApp
 
+First of all, check if your Docker supports `riscv` by running:
+
+```shell
+docker buildx ls
+```
+
+If you do not see `riscv` in the results, install this dependency by running:
+
+```shell
+apt install qemu-user-static
+```
+
 Build the copied existing DApp to ensure that the Docker image functions correctly:
 
 ```shell
