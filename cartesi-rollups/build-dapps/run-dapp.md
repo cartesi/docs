@@ -42,7 +42,24 @@ cd rollups-examples
 ```shell
 cd echo-python
 ```
-3. Build the Echo DApp:
+
+3. Check if your Docker supports the riscv platform by running:
+
+```shell
+docker buildx ls
+```
+
+If you do not see `linux/riscv64` in the platforms list, install QEMU by runing::
+
+```shell
+apt install qemu-user-static
+```
+
+QEMU is a generic and open source machine emulator and virtualizer that will be used by Docker to emulate RISCV instructions to build a Cartesi Machine for your DApp. 
+
+After installing QEMU, the platform `linux/riscv64` should appear in the platforms list.
+
+4. Build the Echo DApp:
 ```shell
 docker buildx bake --load
 ```
@@ -50,19 +67,7 @@ docker buildx bake --load
 ## Running
 
 
-To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the DApp's back-end logic. Before this, check if your Docker supports `riscv` by running:
-
-```shell
-docker buildx ls
-```
-
-If you do not see `riscv` in the results, install this dependency by running:
-
-```shell
-apt install qemu-user-static
-```
-
-Now we can start the environment:
+To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the DApp's back-end logic. 
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml up
