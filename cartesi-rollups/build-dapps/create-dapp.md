@@ -52,7 +52,7 @@ cd fortune
 
 ### Test the copied DApp
 
-First of all, check if your Docker supports the riscv platform by running:
+First of all, check if your Docker supports the RISCV platform by running:
 
 ```shell
 docker buildx ls
