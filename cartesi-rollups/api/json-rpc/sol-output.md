@@ -235,13 +235,13 @@ Data used to prove the validity of an output (notices and vouchers)
 
 ```solidity
 struct OutputValidityProof {
-  uint256 inputIndex;
-  uint256 outputIndex;
+  uint256 inputIndexWithinEpoch;
+  uint256 outputIndexWithinInput;
   bytes32 outputHashesRootHash;
   bytes32 vouchersEpochRootHash;
   bytes32 noticesEpochRootHash;
   bytes32 machineStateHash;
-  bytes32[] keccakInHashesSiblings;
+  bytes32[] outputHashInOutputHashesSiblings;
   bytes32[] outputHashesInEpochSiblings;
 }
 ```
@@ -250,11 +250,11 @@ struct OutputValidityProof {
 
 | Name                        | Type      | Description                                                       |
 | --------------------------- | --------- | ----------------------------------------------------------------- |
-| inputIndex                 | uint256   | Which input, inside the epoch, the output belongs to                                |
-| outputIndex                 | uint256   | Index of output emitted by the input                      |
+| inputIndexWithinEpoch                 | uint256   | Which input, inside the epoch, the output belongs to                                |
+| outputIndexWithinInput                 | uint256   | Index of output emitted by the input                      |
 | outputHashesRootHash        | bytes32   | Merkle root of hashes of outputs emitted by the input    |
 | vouchersEpochRootHash       | bytes32   | Merkle root of all epoch's voucher metadata hashes   |
 | noticesEpochRootHash        | bytes32   | Merkle root of all epoch's notice metadata hashes    |
 | machineStateHash            | bytes32   | Hash of the machine state claimed this epoch           |
-| keccakInHashesSiblings      | bytes32[] | Proof that this output metadata is in metadata memory range       |
+| outputHashInOutputHashesSiblings      | bytes32[] | Proof that this output metadata is in metadata memory range       |
 | outputHashesInEpochSiblings | bytes32[] | Proof that this output metadata is in epoch's output memory range |

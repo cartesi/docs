@@ -9,13 +9,13 @@ Validity proof for an output
 
 ```graphql
 type OutputValidityProof {
-  inputIndex: Int!
-  outputIndex: Int!
+  inputIndexWithinEpoch: Int!
+  outputIndexWithinInput: Int!
   outputHashesRootHash: String!
   vouchersEpochRootHash: String!
   noticesEpochRootHash: String!
   machineStateHash: String!
-  keccakInHashesSiblings: [String!]!
+  outputHashInOutputHashesSiblings: [String!]!
   outputHashesInEpochSiblings: [String!]!
 }
 ```
@@ -23,12 +23,12 @@ type OutputValidityProof {
 
 ### Fields
 
-#### [`inputIndex`](#) ([`Int!`](../../scalars/int))
+#### [`inputIndexWithinEpoch`](#) ([`Int!`](../../scalars/int))
 
 Local input index within the context of the related epoch
 
 
-#### [`outputIndex`](#) ([`Int!`](../../scalars/int))
+#### [`outputIndexWithinInput`](#) ([`Int!`](../../scalars/int))
 
 Output index within the context of the input that produced it
 
@@ -53,7 +53,7 @@ Merkle root of all notice hashes of the related epoch, given in Ethereum hex bin
 Hash of the machine state claimed for the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`keccakInHashesSiblings`](#) ([`[String!]!`](../../scalars/string))
+#### [`outputHashInOutputHashesSiblings`](#) ([`[String!]!`](../../scalars/string))
 
 Proof that this output hash is in the output-hashes merkle tree. This array of siblings is bottom-up ordered (from the leaf to the root). Each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'.
 
