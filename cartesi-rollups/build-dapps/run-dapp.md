@@ -43,7 +43,7 @@ cd rollups-examples
 cd echo-python
 ```
 
-3. Check if your Docker supports the riscv platform by running:
+3. Check if your Docker supports the RISCV platform by running:
 
 ```shell
 docker buildx ls
