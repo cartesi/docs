@@ -21,7 +21,7 @@ In contrast to the majority of proposed Layer 2 rollup solutions, which primaril
 
 ### Solution strategy
 
-One potential path to achieve transaction scalability is the introduction of an *Aggregator*, often associated with a Sequencer. This component might enhance the overall efficiency and capacity of the rollup solution. Moreover, an exciting area for exploration is deploying Cartesi on top of other Layer-2 solutions like Optimism and Arbitrum, potentially expanding the options for enhanced transaction scalability.
+A potential path that can be considered to achieve transaction scalability is the introduction of an *Aggregator*, often associated with a Sequencer. This component might enhance the overall efficiency and capacity of the rollup solution. Moreover, an exciting area for exploration is deploying Cartesi on top of other Layer-2 solutions like Optimism and Arbitrum, potentially expanding the options for enhanced transaction scalability.
 
 ## Disputes
 
@@ -55,7 +55,7 @@ The current **v1.0** release lacks composability, which is the ability of multip
 
 ### Solution strategy
 
-Post the **v1.0** mainnet release, a potential area of focus could be research into addressing composability, vital for enhancing DApp functionality. Meanwhile, interim solutions like leveraging liquidity providers for asset transfers might be considered, enhancing the user experience while juggling development priorities.
+Post the **v1.0** mainnet release, a potential path to consider could be research into addressing composability, vital for enhancing DApp functionality. Meanwhile, interim solutions like leveraging liquidity providers for asset transfers might be considered, enhancing the user experience while juggling development priorities.
 
 ## Convenience layers
 
@@ -77,7 +77,7 @@ In particular, upgrading the back-end code of a DApp is an important concern tha
 
 ### Solution strategy
 
-Following the **v1.0** mainnet release, an interesting area for research could be to explore methods for supporting an upgrade procedure for DApps that are inclined to allow it. A key concern in this research domain is finding a way, or a set of best practices, to securely handle asset ownership continuity – for instance, how to transfer assets safely from an older version of an application to its newer incarnation. Given that an updated DApp would entail utilizing a different Cartesi Machine, the challenge is to devise a robust method to migrate the previous machine's state, inclusive of user assets, into this new framework.
+Following the **v1.0** mainnet release, an interesting area for research could be to explore methods for supporting an upgrade procedure for DApps that are inclined to allow it. A key concern in this research domain is finding a way, or a set of best practices, to securely handle asset ownership continuity – for instance, how to transfer assets safely from an older version of an application to its newer incarnation. Given that an updated DApp would entail utilizing a different Cartesi Machine, a possible challenge is to devise a robust method to migrate the previous machine's state, inclusive of user assets, into this new framework. For example, ensuring that the DApp's asset ownership remains the same after an update.
 
 To address such challenges, some in the community are already testing the waters by trying to segregate the application's backend state from the rest of the machine. This proposed methodology would enable the Cartesi Machine to function akin to a "lambda" function. A stateless template in this scenario would always accept the present application state and a fresh input to process. The result of this would be a new application state and potentially relevant outputs like vouchers. If disputes arise, the focus would shift towards reaching a consensus on this isolated application state, rather than the machine's full state.
 
