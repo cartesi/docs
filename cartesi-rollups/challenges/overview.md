@@ -51,7 +51,7 @@ Additionally, potential future exploration might focus on integrating Rollups wi
 
 ### Challenge
 
-The current **v1.0** release lacks composability, which is the ability of multiple DApps to directly interact with each other, for example by having one application directly send inputs to another one without going through the base layer. This would enable seamless communication and data exchange between DApps. The most important use case for this feature would be to allow users to easily and cheaply transfer assets from one DApp to another. 
+The current **v1.0** release still faces a lot of hurdles with composability, which is the ability of multiple DApps to directly interact with each other, for example by having one application directly send inputs to another one without going through the base layer. This would enable seamless communication and data exchange between DApps. The most important use case for this feature would be to allow users to easily and cheaply transfer assets from one DApp to another. 
 
 ### Solution strategy
 
