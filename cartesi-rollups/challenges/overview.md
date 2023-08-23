@@ -31,7 +31,7 @@ The **1.0** release lacks support for dispute resolution.
 
 ### Solution strategy
 
-From its inception, the Cartesi framework has the potential to integrate dispute resolution features. Cartesi's community-driven iterations have leveraged dispute resolution for [Compute](/compute/overview). Prioritizing other features and improvements, like the Microarchitecture enhancement and recent [research on NxN dispute resolution](https://arxiv.org/abs/2212.12439), the community might delve deeper into this area.
+From its inception, the Cartesi framework has the potential to integrate dispute resolution features. Cartesi's community-driven iterations have leveraged dispute resolution for [Compute](/compute/overview), which may be interesting to investigate further after other features and improvements, like the Microarchitecture enhancement and recent [research on NxN dispute resolution](https://arxiv.org/abs/2212.12439) have been fully addressed. 
 
 ## Large data as input
 
