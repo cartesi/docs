@@ -58,7 +58,7 @@ First of all, check if your Docker supports the RISCV platform by running:
 docker buildx ls
 ```
 
-If you do not see `linux/riscv64` in the platforms list, install QEMU by runing::
+If you do not see `linux/riscv64` in the platforms list, install QEMU by running:
 
 ```shell
 apt install qemu-user-static
