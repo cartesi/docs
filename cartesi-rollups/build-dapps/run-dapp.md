@@ -49,7 +49,7 @@ cd echo-python
 docker buildx ls
 ```
 
-If you do not see `linux/riscv64` in the platforms list, install QEMU by runing::
+If you do not see `linux/riscv64` in the platforms list, install QEMU by running:
 
 ```shell
 apt install qemu-user-static
