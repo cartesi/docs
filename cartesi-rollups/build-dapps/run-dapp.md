@@ -107,7 +107,7 @@ rollups-examples-hardhat-1                      | Mined empty block range #32 to
 You can shutdown the environment by running:
 
 ```shell
-docker-compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
+docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
 ```
 
 :::note
