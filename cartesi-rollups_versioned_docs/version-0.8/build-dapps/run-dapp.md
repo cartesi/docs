@@ -110,7 +110,7 @@ curl --data '{"id":1337,"jsonrpc":"2.0","method":"evm_increaseTime","params":[86
 You can shutdown the environment by running the following command:
 
 ```shell
-docker-compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
+docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
 ```
 
 ## Interacting with the DApp
