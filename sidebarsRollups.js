@@ -220,7 +220,7 @@ module.exports = {
             slug: "/migration-guides",
           },
           collapsed: true,
-          items: ["migration-guides/from-08-to-09"],
+          items: ["migration-guides/from-09-to-10"],
         },
       ],
     },
