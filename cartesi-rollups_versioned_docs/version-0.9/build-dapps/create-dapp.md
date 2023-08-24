@@ -108,7 +108,7 @@ COPY ./fortune.py .
 ```
 
 
-## Modify the DApp logic
+## Modify the DApp logic in fortune.py
 
 1. First we need to import the `subprocess package`:
 
@@ -291,7 +291,7 @@ This will return the previous quote:
 yarn run v1.22.19
 ts-node src/index. ts notice list
 querying http://localhost:4000/graphql for notices of input index "undefined"...
-[{"index" :0, Tinput": 0, "payload" : "Received input: test. This was the quote \tMy dear People. \n\tMy dear Bagginses and Boffins, and my dear Tooks and Brandybucks, \nand Grubbs, and Chubbs, and Burrowses,
+[{"index" :0, "input": 0, "payload" : "Received input: test. This was the quote \tMy dear People. \n\tMy dear Bagginses and Boffins, and my dear Tooks and Brandybucks, \nand Grubbs, and Chubbs, and Burrowses,
 nd Hornblowers, and Bolgers, \nBracegirdles, Goodbodies, Brockhouses and Proudfoots. Also my good \nSackville Bagginses that welcome back at last to Bag End. Today is my\none hundred and eleventh birt
 hday: am eleventy-one today! \"\n\t\t - - J. R. R. Tolkien\n"}]
 ```
