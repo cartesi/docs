@@ -114,12 +114,25 @@ docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
 Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
 :::
 
+:::note
+Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
+:::
+
 ## Interacting with the DApp
+
+### Frontend-console application
+
+With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with the Echo DApp.
+
+Every Rollups DApp gets an address on the base layer when it's deployed. The following is needed to send inputs to a DApp:
+
+* Gateway URL to the intended chain
+* Cartesi Rollups InputBox contract address
+* Appropriate account with sufficient funds for submitting transactions to the network
 
 ### Interacting locally with the DApp
 
 The following steps describe how to send an input to the Echo DApp instance that is running locally:
-
 
 1. Open a separate terminal window
 2. From the rollups-examples base directory, navigate to the `frontend-console` one:
