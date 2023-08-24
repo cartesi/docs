@@ -52,6 +52,23 @@ cd fortune
 
 ### Test the copied DApp
 
+First of all, check if your Docker supports the RISCV platform by running:
+
+```shell
+docker buildx ls
+```
+
+If you do not see `linux/riscv64` in the platforms list, install QEMU by running:
+
+```shell
+apt install qemu-user-static
+```
+
+QEMU is a generic and open source machine emulator and virtualizer that will be used by Docker to emulate RISCV instructions to build a Cartesi Machine for your DApp. 
+
+After installing QEMU, the platform `linux/riscv64` should appear in the platforms list.
+
+
 Build the copied existing DApp to ensure that the Docker image functions correctly:
 
 ```shell
@@ -182,7 +199,7 @@ yarn build
 ## Start the application
 
 ```shell
-docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml up
+docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml up
 ```
 
 ## Check the DApp address
