@@ -18,11 +18,15 @@ The first step is to run the environment in host mode using the following comman
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml up
 ```
 
+:::note
+If you are using macOS, please add the line `platform: linux/amd64` under the `server_manager` service in the `docker-compose.host.yml` file, located in the root of the cloned `rollups-examples` repository.
+:::
+
 ## Step 2: Run the application back-end
 
-The next step is to run the application back-end in your machine. For example, if the code is written in Python, you will need to have `python3` installed.
+The next step is to run the application back-end in your machine. Before proceeding, ensure that you have installed the dependencies and libraries required for your selected language. For example, if the code is written in Python, you will need to have `python3` installed.
 
-In order to start the back-end, run the following commands in a dedicated terminal:
+If you are using the `echo-python` example, in order to start the back-end, run the following commands in a dedicated terminal:
 
 ```shell
 cd echo-python/
@@ -43,7 +47,37 @@ INFO:__main__:Sending finish
 
 ## Step 4: Interact with the application
 
-After that, you can interact with the application normally [as explained in the quick start article](./run-dapp.md#interacting-with-the-application).
+With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with your DApp by following the steps:
+
+1. Open a separate terminal window
+2. From the rollups-examples base directory, navigate to the `frontend-console` one:
+```shell
+cd frontend-console
+```
+3. Build the frontend console application:
+```shell
+yarn
+yarn build
+```
+4. Send an input to the current locally deployed DApp:
+
+```shell
+yarn start input send --payload "Hello, Cartesi."
+```
+
+5. For instance, the echo-python DApp "echoes" each input it receives by generating a corresponding output notice based on your input. To check these notices, run the following command:
+
+```shell
+yarn start notice list
+```
+
+After completing all the steps above, you should get a response with the payload of the notice:
+
+`"Hello, Cartesi."`
+
+:::note
+Although we used the `echo-python` DApp as a specific example, it's important to understand that not all DApps generate notices in the same manner. Your DApp may have different behaviors or responses related to notices. However, we hope this example provides a clear understanding and a helpful starting point.
+:::
 
 ## Options
 
@@ -60,7 +94,7 @@ ls *.py | ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" entr -r python3 echo.py
 
 ### How to stop containers
 
-To stop the containers and remove any associated volumes, run the following command:
+Stop the containers using `ctrl+c` then remove the containers and the volumes:
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml down -v
