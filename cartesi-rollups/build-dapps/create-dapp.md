@@ -75,6 +75,10 @@ Build the copied existing DApp to ensure that the Docker image functions correct
 docker buildx bake --load
 ```
 
+:::note
+If you have PostgreSQL and Redis already installed on your system, you may encounter port conflicts when the Docker containers attempt to start services on ports that are already in use. To resolve these conflicts, edit the ports for Redis and PostgreSQL in the docker-compose.yml file located in the root directory of your DApp.
+:::
+
 ## Add the fortune package to the Dockerfile
 
 Add the `fortune` package to the Docker image as follows:
@@ -280,11 +284,130 @@ A new directory, `<dapp-name>`, will be created with all the boiler plate infras
 
 The new DApp will be provided with some basic back-end code, resembling what is available in the sample [Echo Python DApp](https://github.com/cartesi/rollups-examples/tree/main/echo-python), as explained in the [previous section](./run-dapp.md).
 
-## Modifying the DApp logic
+## Stop the application
 
-The back-end logic may be found at `<dapp-name>/<dapp-name>.py`.
+You can shutdown the environment with `ctrl+c` and then running:
 
-The script comes with some reference code, which may be helpful during development.
-It may be replaced or extended according to the use case needs.
+```shell
+docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
+```
+
+:::note
+Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
+:::
+
+### Application code
+
+Now let's have a look at the entire code of our sample application:
+
+```python
+# Copyright 2022 Cartesi Pte. Ltd.
+#
+# SPDX-License-Identifier: Apache-2.0
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+# this file except in compliance with the License. You may obtain a copy of the
+# License at http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
+
+from os import environ
+import traceback
+import logging
+import requests
+
+import subprocess
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger(__name__)
+
+rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
+logger.info(f"HTTP rollup_server url is {rollup_server}")
+
+FORTUNE_CMD = "/usr/games/fortune; exit 0"
+
+def hex2str(hex):
+    """
+    Decodes a hex string into a regular string
+    """
+    return bytes.fromhex(hex[2:]).decode("utf-8")
+
+def str2hex(str):
+    """
+    Encodes a string as a hex string
+    """
+    return "0x" + str.encode("utf-8").hex()
+
+def handle_advance(data):
+    logger.info(f"Received advance request data {data}")
+
+    status = "accept"
+    try:
+        input = hex2str(data["payload"])
+        logger.info(f"Received input: {input}")
+
+        quote = subprocess.check_output(FORTUNE_CMD, shell=True, stderr=subprocess.STDOUT).decode()
+        output = f"Received input: {input}. This was the quote {quote}"
+
+        # Emits notice with result of calculation
+        logger.info(f"Adding notice with payload: '{output}'")
+        response = requests.post(rollup_server + "/notice", json={"payload": str2hex(str(output))})
+        logger.info(f"Received notice status {response.status_code} body {response.content}")
+
+    except Exception as e:
+        status = "reject"
+        msg = f"Error processing data {data}\n{traceback.format_exc()}"
+        logger.error(msg)
+        response = requests.post(rollup_server + "/report", json={"payload": str2hex(msg)})
+        logger.info(f"Received report status {response.status_code} body {response.content}")
+
+    return status
+
+def handle_inspect(data):
+    logger.info(f"Received inspect request data {data}")
+
+    status = "accept"
+    try:
+        input = hex2str(data["payload"])
+        logger.info(f"Received input: {input}")
+
+        output = subprocess.check_output(FORTUNE_CMD, shell=True, stderr=subprocess.STDOUT).decode()
+
+        # Emits notice with result of calculation
+        logger.info(f"Adding report with payload: '{output}'")
+        response = requests.post(rollup_server + "/report", json={"payload": str2hex(str(output))})
+        logger.info(f"Received report status {response.status_code} body {response.content}")
+
+    except Exception as e:
+        status = "reject"
+        msg = f"Error processing data {data}\n{traceback.format_exc()}"
+        logger.error(msg)
+        response = requests.post(rollup_server + "/report", json={"payload": str2hex(msg)})
+        logger.info(f"Received report status {response.status_code} body {response.content}")
+
+    return status
+
+handlers = {
+    "advance_state": handle_advance,
+    "inspect_state": handle_inspect,
+}
+
+finish = {"status": "accept"}
+
+while True:
+    logger.info("Sending finish")
+    response = requests.post(rollup_server + "/finish", json=finish)
+    logger.info(f"Received finish status {response.status_code}")
+    if response.status_code == 202:
+        logger.info("No pending rollup request, trying again")
+    else:
+        rollup_request = response.json()
+        data = rollup_request["data"]
+        
+        handler = handlers[rollup_request["request_type"]]
+        finish["status"] = handler(rollup_request["data"])
+```
 
 As we conclude this tutorial, we hope that you now have a better understanding of how to build a DApp that uses the `fortune` package and how the Cartesi Machine drives the DApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom DApps. Happy coding! 
