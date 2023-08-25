@@ -22,6 +22,10 @@ docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../d
 If you are using macOS, please add the line `platform: linux/amd64` under the `server_manager` service in the `docker-compose.host.yml` file, located in the root of the cloned `rollups-examples` repository.
 :::
 
+:::note
+If you have PostgreSQL and Redis already installed on your system, you may encounter port conflicts when the Docker containers attempt to start services on ports that are already in use. To resolve these conflicts, edit the ports for Redis and PostgreSQL in the docker-compose.yml file located in the root directory of your DApp.
+:::
+
 ## Step 2: Run the application back-end
 
 The next step is to run the application back-end in your machine. Before proceeding, ensure that you have installed the dependencies and libraries required for your selected language. For example, if the code is written in Python, you will need to have `python3` installed.

@@ -75,6 +75,10 @@ Build the copied existing DApp to ensure that the Docker image functions correct
 docker buildx bake --load
 ```
 
+:::note
+If you have PostgreSQL and Redis already installed on your system, you may encounter port conflicts when the Docker containers attempt to start services on ports that are already in use. To resolve these conflicts, edit the ports for Redis and PostgreSQL in the docker-compose.yml file located in the root directory of your DApp.
+:::
+
 ## Add the fortune package to the Dockerfile
 
 Add the `fortune` package to the Docker image as follows:
@@ -299,7 +303,17 @@ hday: am eleventy-one today! \"\n\t\t - - J. R. R. Tolkien\n"}]
 
 An intriguing aspect, demonstrating how Cartesi Machine operates, is that the Cartesi Machine is designed to roll back to a previous state every time its state is inspected. Therefore, if we execute the same `inspect` command repeatedly, it consistently returns the same result, as the machine keeps reverting to its prior state.
 
+## Stop the application
 
+You can shutdown the environment with `ctrl+c` and then running:
+
+```shell
+docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
+```
+
+:::note
+Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
+:::
 
 ### Application code
 
