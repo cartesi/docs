@@ -78,6 +78,10 @@ After installing QEMU, the platform `linux/riscv64` should appear in the platfor
 docker buildx bake --load
 ```
 
+:::note
+If you have PostgreSQL and Redis already installed on your system, you may encounter port conflicts when the Docker containers attempt to start services on ports that are already in use. To resolve these conflicts, edit the ports for Redis and PostgreSQL in the docker-compose.yml file located in the root directory of your DApp.
+:::
+
 ## Running
 
 
@@ -104,7 +108,7 @@ rollups-examples-hardhat-1                      | Mined empty block range #32 to
 
 ### How to shutdown the environment
 
-You can shutdown the environment by running:
+You can shutdown the environment with `ctrl+c` and then running:
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
