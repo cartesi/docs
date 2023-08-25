@@ -39,13 +39,15 @@ docker buildx bake machine --load --set *.args.NETWORK=<network>
 
 Replace `<network>` with the name for your preferred network, written in the following way:
 
-* `goerli`
 * `gnosis_chiado`
 * `arbitrum_goerli`
 * `optimism_goerli`
 * `polygon_mumbai`
 * `sepolia`
 
+:::note
+If you have PostgreSQL and Redis already installed on your system, you may encounter port conflicts when the Docker containers attempt to start services on ports that are already in use. To resolve these conflicts, edit the ports for Redis and PostgreSQL in the docker-compose.yml file located in the root directory of your DApp.
+:::
 
 2. Deploy the back-end to a corresponding Rollups smart contract by running:
 
