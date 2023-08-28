@@ -3,7 +3,7 @@ title: Introduction
 tags: [maintain, machine, low-level developer]
 ---
 
-This section describes Cartesi Machines from the perspective of the blockchain.
+This section describes the Cartesi Machine from the perspective of the blockchain.
 Using the Cartesi platform, smart contracts gain a new ability.
 They can get their users to agree on the results of computations that cannot be performed natively as smart contracts: computations that either involve too much data, are too computationally demanding, or require a sophisticated software infrastructure that is simply not available for use on-chain.
 
