@@ -1,7 +1,7 @@
 ---
 id: onboarding
 title: Choose your Onboarding Path
-tags: [blockchain, quickstart, beginner, low-level developer, developer, researcher, learn, build]
+tags: [quickstart, beginner, low-level developer, developer, researcher, learn, build]
 ---
 
 import Tabs from '@theme/Tabs';

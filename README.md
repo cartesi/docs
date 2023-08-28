@@ -1,6 +1,6 @@
 # Cartesi Documentation
 
-Cartesi Docs is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+Cartesi Docs has been built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
 
 ## Requirements
 
