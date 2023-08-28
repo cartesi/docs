@@ -7,6 +7,8 @@ const replacementPlugin = require("./src/remark/replacement");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
+  title: "Documentation - Cartesi",
+  tagline: "Cartesi",
   title: "Cartesi Documentation",
   tagline: "Application-specific rollups with a Linux runtime.",
   url: "https://docs.cartesi.io",

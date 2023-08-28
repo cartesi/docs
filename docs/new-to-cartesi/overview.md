@@ -1,10 +1,10 @@
 ---
 id: overview
 title: Cartesi
-tags: [blockchain, quickstart, beginner, low-level developer, researcher, learn, build, maintain]
+tags: [quickstart, beginner, low-level developer, researcher, learn, build, maintain]
 ---
 
-**Cartesi** is a layer-2 platform for the development and deployment of scalable decentralized applications. **Cartesi** offers a Linux operating system coupled with a blockchain infrastructure, which allows DApps to be developed in familiar programming languages like Python without the need to write Solidity code.
+**Cartesi**, is a layer-2 platform for the development and deployment of scalable decentralized applications. It offers a Linux operating system coupled with a blockchain infrastructure, which allows DApps to be developed in familiar programming languages like Python without the need to write Solidity code.
 
 ## Limitations, develop with Cartesi!
 
