@@ -1,6 +1,6 @@
 ---
 title: Overview
-tags: [blockchain os, maintain, machine, low-level developer]
+tags: [maintain, machine, low-level developer]
 ---
 
 Cartesi's reference off-chain implementation of Cartesi Machines is based on software emulation.

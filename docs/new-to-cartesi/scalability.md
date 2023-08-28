@@ -1,7 +1,7 @@
 ---
 id: scalability
 title: Scalability
-tags: [blockchain os, quickstart, beginner, low-level developer, researcher, learn, build, maintain]
+tags: [quickstart, beginner, low-level developer, researcher, learn, build, maintain]
 ---
 
 The scalability issue is one of the three parts of the [Blockchain Trilemma](https://www.gemini.com/cryptopedia/blockchain-trilemma-decentralization-scalability-definition), along with security and decentralization. Solving the scalability issue refers to any type of improvement within a blockchain system in terms of computational power, throughput, latency, bootstrap time, or cost per transaction. For example, high gas fees make it expensive for users to pay for their transactions within the Ethereum blockchain.
