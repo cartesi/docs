@@ -85,7 +85,7 @@ This section targets researchers and low-level programmers who want to dive into
 
 <h3> Cartesi Machine </h3>
 
-You can dive deeper into the Cartesi core technology by reading the section about [the Cartesi Machine](/machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
+You can dive deeper into the Cartesi's core technology by reading the section about [the Cartesi Machine](/machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
 
 <h3> Cartesi Compute SDK to run a DApp off-chain </h3>
 
