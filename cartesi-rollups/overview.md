@@ -78,6 +78,16 @@ The Cartesi Machine is a state machine that remains idle until a new request ari
 
 To engage with Cartesi Rollups, you either interact by [sending requests](./sending-requests.md) or by [accessing generated outputs](./reading-outputs.md).
 
+
+## Summary
+
+Rollups enhance blockchain scalability by taking computations off-chain. This boosts computation speeds and allows for more complex DApp logic. Rollups confirm transaction validity either through validity proofs, which provide immediate confirmation but are costly, or fraud proofs, which rely on challenges and confirmations.
+
+Cartesi's approach uses application-specific Optimistic Rollups with interactive fraud proofs. The Cartesi Machine, central to this framework, facilitates deterministic off-chain computations.
+
+The integration of the Optimistic Rollups framework with the Cartesi Machine Emulator advances DApp development, allowing Linux-compatible tools and bypassing Ethereum's computational scalability issues. 
+
+
 ## See Also
 
 * [Everything you need to know about Optimistic Rollup in general](https://research.paradigm.xyz/rollups)
