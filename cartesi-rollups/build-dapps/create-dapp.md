@@ -114,13 +114,13 @@ COPY ./fortune.py .
 
 ## Modify the DApp logic in fortune.py
 
-1. First we need to import the `subprocess package`:
+1. First we need to import the `subprocess` module:
 
 ```puthon
 import subprocess
 ```
 
-2. We then delete `from py_expression_eval import Parser` as we are not using the `parser` module in our application.
+2. Remove the line `from py_expression_eval import Parser` since we won't be using the `parser` module in this application..
 
 3. After setting up the import statements and the logger, add the `FORTUNE_CMD` command to the code right before defining the functions:
 
@@ -131,7 +131,7 @@ FORTUNE_CMD = "/usr/games/fortune; exit 0"
 This command sets the FORTUNE_CMD variable to a string that, when executed, runs the fortune program to display a random quote and then immediately exits the shell with a success status.
 
 
-4. We then replace the existing `try` function of `def handle_advance(data)` with the following command that calls the `fortune` app:
+4. We then replace the existing `try` block within the `handle_advance(data)` function with the following command that calls the fortune DApp:
 
 ```python
     try:
