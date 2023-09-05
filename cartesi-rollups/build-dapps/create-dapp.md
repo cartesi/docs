@@ -81,7 +81,7 @@ If you have PostgreSQL and Redis already installed on your system, you may encou
 
 ## Add the fortune package to the Dockerfile
 
-Add the `fortune` package to the Docker image as follows:
+Add the `fortune` package to the Docker image by amending the Dockerfile as follows:
 
 ```dockerfile
 RUN apt-get update \
