@@ -180,9 +180,13 @@ The `quote` runs the command stored in FORTUNE_CMD using a shell, captures the o
 
 ## Create the Docker build for the new DApp
 
+The following command is executed to construct a Docker image for our DApp and ensure that the built image is directly loaded into the local Docker instance. This makes it immediately ready for deployment or testing:
+
 ```shell
 docker buildx bake --load
 ```
+
+The `docker buildx` is an extended toolset for Docker, which provides full support for the features of the Moby BuildKit builder toolkit. The `bake` command is part of this extension and simplifies the process of defining and running builds by using a declarative format in the form of a `docker-bake.hcl` or a `docker-compose.yml`. When the `--load` flag is added, it instructs BuildKit to build the Docker image and then immediately load it into the local Docker runtime environment.
 
 
 ## Build the frontend console
