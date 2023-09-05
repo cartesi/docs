@@ -36,7 +36,7 @@ You may also refer to the full [ERC-20 example](https://github.com/cartesi/rollu
 
 #### Decoding deposits
 
-When handling an [advance request](./sending-requests.md#advance) that could be an ERC-20 deposit, the DApp will first have to check if the sender of the input message is the [ERC20Portal](./api/json-rpc/portals/ERC20Portal.md) contract. The contract's address must of course be known a priori by the back-end code so that it can trust the operation to be authentic.
+When handling an [advance request](./sending-requests.md#advance) that could be an ERC-20 deposit, the DApp will first have to check if the sender of the input message is the [ERC20Portal](./api/json-rpc/portals/ERC20Portal.md) contract. The back-end code should already know this contract's address to ensure the operation's authenticity.
 
 ```python
 from os import environ
