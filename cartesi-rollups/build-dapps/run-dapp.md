@@ -112,6 +112,10 @@ Every Rollups DApp gets an address on the base layer when it's deployed. The fol
 
 ### Interacting locally with the DApp
 
+:::note
+Ensure that the DApp's backend is running before proceeding with the following steps.
+:::
+
 The following steps describe how to send an input to the Echo DApp instance that is running locally:
 
 1. Open a separate terminal window
