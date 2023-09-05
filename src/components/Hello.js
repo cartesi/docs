@@ -61,7 +61,7 @@ export const Hello = () => {
                       style={buttonStyle}
                       onClick={(event) => event.stopPropagation()}
                     >
-                      Learn more
+                      Dev docs
                     </Link>
                     <Link
                       to={useBaseUrl(href + "/build-dapps")}
