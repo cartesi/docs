@@ -8,6 +8,11 @@ This article explains how to build and interact with a minimalistic [Cartesi Rol
 
 By the end of this tutorial, you will learn how to run a simple existing DApp written in *Python*, called **Echo-Python**.
 
+:::warning
+This guide is tailored for Ubuntu or similar Linux distributions. Adjustments might be required for other operating systems.
+:::
+
+
 :::note
 You can inspect the [full code of the Echo Python DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python/echo.py) in Cartesi's public Github repository.
 :::
