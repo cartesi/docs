@@ -122,7 +122,7 @@ import subprocess
 
 2. We then delete `from py_expression_eval import Parser` as we are not using the `parser` module in our application.
 
-3. Next, we need to add the `FORTUNE_CMD` command to our code as follows:
+3. After setting up the import statements and the logger, add the `FORTUNE_CMD` command to the code right before defining the functions:
 
 ```python
 FORTUNE_CMD = "/usr/games/fortune; exit 0"
