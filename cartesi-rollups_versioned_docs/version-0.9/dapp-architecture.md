@@ -16,7 +16,7 @@ The back-end of a Cartesi DApp contains the business logic of the application, s
 
 The back-end stores and updates the application state as user input is received and produces corresponding outputs. These outputs can come in the form of [vouchers](./components.md#vouchers) (transactions that can be carried out on layer-1, such as a transfer of assets), [notices](./components.md#notices) (informational statements, such as the resulting score of a game), or [reports](./components.md#reports) (application logs and diagnostic information, such as error or warning messages).
 
-In practical terms, a Cartesi DApp back-end can be seen as a smart contract, but on steroids.
+In practical terms, a Cartesi DApp back-end can be seen as an advanced smart contract.
 
 ## Front-end
 
