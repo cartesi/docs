@@ -7,8 +7,6 @@ const replacementPlugin = require("./src/remark/replacement");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Documentation - Cartesi",
-  tagline: "Cartesi",
   title: "Cartesi Documentation",
   tagline: "Application-specific rollups with a Linux runtime.",
   url: "https://docs.cartesi.io",
@@ -61,6 +59,7 @@ const config = {
           srcDark: "img/logo_dark.svg",
           height: "52px",
         },
+
         items: [
           {
             to: "/#learn",
@@ -83,6 +82,11 @@ const config = {
             position: "right",
             className: "header-github-link",
             "aria-label": "GitHub repository",
+          },
+          {
+            type: "search",
+            className: "navbar-search-custom",
+            position: "right",
           },
         ],
       },
