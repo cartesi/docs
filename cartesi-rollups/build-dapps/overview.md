@@ -10,6 +10,11 @@ Navigate to our [Quick Start](./run-dapp.md) tutorial if you want to build DApps
 
 Cartesi's vision is that creating a DApp should not be too different from the general development of desktop, web, and mobile applications. To that end, Cartesi provides a framework for building decentralized logic, giving developers full flexibility to use the tools and libraries of their preference.
 
+<video width="100%" controls poster="/img/architecture_dapp.png">
+    <source src="/videos/HLA_video.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+</video>
+
 From a developer's point of view, a Cartesi DApp is composed of two main parts:
 - **[Front-end](../dapp-architecture.md#back-end)**: the user facing interface, which will often provide a UI (e.g., a web application) but may also be a command line interface (e.g., a hardhat task using ethers, or a command line using python).
 - **[Back-end](../dapp-architecture.md#back-end)**: the verifiable logic that will run inside the Cartesi Rollups infrastructure; this will store and update the application state given user input, and will produce outputs in the form of [vouchers](../components.md#vouchers) (transactions that can be carried out on layer-1) and [notices](../components.md#notices) (information that can be validated on layer-1).
@@ -25,6 +30,11 @@ In **Production Mode**, the DApp's back-end logic is packaged to run inside a [C
 ## Host Mode
 
 In [Host Mode](./dapp-host-mode.md), the back-end logic is executed natively on localhost, just as any regular application. This is made possible because the Cartesi Rollups Host Environment provides the very same APIs as the regular mode, mimicking the behavior of the actual layer-1 and layer-2 components. This allows the developer to test and debug the back-end logic using familiar tools, such as an IDE or a debugger.
+
+<video width="100%" controls poster="/img/prodvshost.png">
+    <source src="/videos/Running_DApps_video.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+</video>
 
 ## Learn more
 
