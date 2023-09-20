@@ -9,8 +9,8 @@ The staking system runs on top of Ethereum. Each block is claimed on-chain by it
 ## Prerequisites
 
 The main prerequisites are:
-* Set up Ethereum node as the Cartesi node connects to the Ethereum network through a standard gateway. The Ethereum node works with any standard JSON-RPC Ethereum provider. It's important to use a stable and reliable provider, you can use [Infura](https://infura.io/) or [Alchemy](https://www.alchemy.com/) as Ehtereum gateway
-* Install Docker enginer, you can download it for [macOS](https://docs.docker.com/desktop/mac/install/) or for [Windows](https://docs.docker.com/desktop/windows/install/)
+* Set up Ethereum node as the Cartesi node connects to the Ethereum network through a standard gateway. The Ethereum node works with any standard JSON-RPC Ethereum provider. It's important to use a stable and reliable provider, you can use [Infura](https://infura.io/) or [Alchemy](https://www.alchemy.com/) as Ethereum gateway
+* Install Docker engine, you can download it for [macOS](https://docs.docker.com/desktop/mac/install/) or for [Windows](https://docs.docker.com/desktop/windows/install/)
 
 
 If your node is down, offline, or with insufficient ETH funds, you will fail to produce blocks and therefore be unable to gain rewards. However, there is no slashing due to any node failure at the moment. Your principal is never at risk and you can always recover it from the staking contract at any time by using the Cartesi Explorer and the wallet you used to stake.
