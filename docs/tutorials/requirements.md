@@ -56,7 +56,7 @@ sudo usermod -aG docker $USER
 newgrp docker
 ```
 
-After that, you can check if Docker is property installed by running:
+After that, you can check if Docker is properly installed by running:
 
 ```
 docker --version
@@ -121,7 +121,7 @@ Then, run:
 sudo apt-get update && sudo apt-get install yarn
 ```
 
-And finally, test that Yarn is installed and working property:
+And finally, test that Yarn is installed and working properly:
 
 ```bash
 yarn --version
