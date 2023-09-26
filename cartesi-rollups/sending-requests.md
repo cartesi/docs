@@ -11,6 +11,11 @@ In Cartesi Rollups, there are two kinds of requests that can be made to the DApp
 
 When you initiate your [node](./components.md#cartesi-nodes) for development purposes, you are effectively deploying Cartesi Rollups on a localhost testnet chain, which serves as your Ethereum network for development and mimics the Mainnet's behavior (for example, Ganache, Anvil, Hardhat node). This means you will be sending transactions to contracts on this local chain.
 
+<video width="100%" controls poster="/img/Nodes.png">
+    <source src="/videos/Cartesi_Nodes.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+</video>
+
 ## Advance
 
 ![img](./input.png)
