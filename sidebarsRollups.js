@@ -11,6 +11,7 @@ module.exports = {
       items: [
         "overview",
         "main-concepts",
+        "mainnet-risks",
         "sending-requests",
         "reading-outputs",
         "assets-handling",
