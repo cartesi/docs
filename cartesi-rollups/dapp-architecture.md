@@ -13,7 +13,7 @@ Borrowing from familiar mainstream terminology, from a developer’s point of vi
     Your browser does not support the video tag.
 </video>
 
-Here, the yellow boxes represent the parts that the developer needs to implement to build a DApp, which are discussed in more detail below. On the other hand, the parts in blue correspond to the general Rollups framework provided by Cartesi. This framework includes both the underlying layer-1 blockchain, with Cartesi Rollups smart contracts deployed, and the layer-2 off-chain nodes.
+Here, the black boxes represent the parts that the developer needs to implement to build a DApp, which are discussed in more detail below. On the other hand, the parts in cyan correspond to the general Rollups framework provided by Cartesi. This framework includes both the underlying layer-1 blockchain, with Cartesi Rollups smart contracts deployed, and the layer-2 off-chain nodes.
 
 ## Back-end
 
