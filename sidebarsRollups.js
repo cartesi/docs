@@ -11,7 +11,11 @@ module.exports = {
       items: [
         "overview",
         "main-concepts",
-        "mainnet-risks",
+        {
+          "type": "doc",
+          "id": "mainnet-risks",
+          "label": "Mainnet Risks"
+        },
         "sending-requests",
         "reading-outputs",
         "assets-handling",
