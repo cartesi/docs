@@ -39,6 +39,8 @@ const config = {
     ],
   ],
   themeConfig:
+
+  
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Algolia Search
@@ -89,6 +91,14 @@ const config = {
             position: "right",
           },
         ],
+      },
+      announcementBar: {
+        id: 'mainnet',
+        content:
+          'Cartesi Rollups is Mainnet Ready! Learn more about the beta launch <a href="https://docs.cartesi.io/cartesi-rollups/mainnet-risks/" target="_blank" rel="noopener noreferrer">here</a>.',
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        textColor: '#FFFFFF',
+        isCloseable: true,
       },
 
       footer: {
