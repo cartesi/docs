@@ -39,8 +39,6 @@ const config = {
     ],
   ],
   themeConfig:
-
-  
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Algolia Search
@@ -53,7 +51,7 @@ const config = {
       hotjar: {
         applicationId: "3103959",
       },
-      image: "img/socialLogo.png",
+      image: "img/socialLogo2023.png",
       navbar: {
         logo: {
           alt: "Cartesi Logo",
@@ -93,11 +91,11 @@ const config = {
         ],
       },
       announcementBar: {
-        id: 'mainnet',
+        id: "mainnet",
         content:
           'Cartesi Rollups is Mainnet Ready! Learn more about the beta launch <a href="https://docs.cartesi.io/cartesi-rollups/mainnet-risks/" target="_blank" rel="noopener noreferrer">here</a>.',
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        textColor: '#FFFFFF',
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
+        textColor: "#FFFFFF",
         isCloseable: true,
       },
 
