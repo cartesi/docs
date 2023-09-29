@@ -184,7 +184,7 @@ For asset deposits, you need:
 
 On application start, a `deployments` directory is created. The `ERC20Portal.json` inside this directory contains the address of the ERC20 Portal. The `dapp.json` contains your DApp's address.
 
-The ERC20_ADDR is a simple ERC20 token utilized by Cartesi DApps. Find its address in `common-contracts/deployments/SimpleERC20.json`.
+The ERC20_ADDR is a simple ERC20 token utilized by Cartesi DApps. Find its address in [rollups-contracts](https://github.com/cartesi/rollups-contracts/tree/main/onchain%2Frollups%2Fdeployments).
 
 ### Building the frontend-console
 
