@@ -74,7 +74,6 @@ If you have PostgreSQL and Redis already installed on your system, you may encou
 
 To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the DApp's back-end logic.
 
-To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the DApp's back-end logic.
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml up
@@ -105,9 +104,6 @@ docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
 Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
 :::
 
-:::note
-Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
-:::
 
 ## Interacting with the DApp
 

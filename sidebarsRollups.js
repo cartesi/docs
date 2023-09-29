@@ -209,11 +209,6 @@ module.exports = {
         },
         {
           type: "link",
-          label: "Changelog",
-          href: "https://github.com/cartesi/rollups/blob/main/CHANGELOG.md",
-        },
-        {
-          type: "link",
           label: "Releases",
           href: "https://github.com/cartesi/rollups/releases",
         },
