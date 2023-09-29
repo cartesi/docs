@@ -8,10 +8,10 @@ Assets exist on the base layer, which is where they have actual meaning and valu
 
 Asset handling in Cartesi DApps involves the following procedures:
 
-  1. Locking assets on the base layer by calling deposit methods on special contracts called [Portals](./components.md#portals), which will effectively transfer asset ownership to the target DApp contract. There are specific portals for each kind of asset (Ether, ERC-20, ERC-721, ERC-1155).
+  1. Locking assets on the base layer by calling deposit methods on special contracts called [Portals](../components.md#portals), which will effectively transfer asset ownership to the target DApp contract. There are specific portals for each kind of asset (Ether, ERC-20, ERC-721, ERC-1155).
   2. The Cartesi Rollups framework notifies the DApp back-end of the deposit by sending it a special input.
   3. The DApp's back-end code needs to recognize and handle the special input, in order to process the deposit according to its own logic (e.g., by storing each user's balance in a hash table or database).
-  4. When appropriate (e.g., when a game ends and the winner wishes to withdraw their funds), the back-end generates a [voucher](./components.md#vouchers) that encodes a transfer of assets on the base layer, from the DApp to the target user. The actual withdrawal will take effect on the base layer when the voucher is executed. This is a secure process because it can only be done when the voucher has an associated validity proof ensuring that the validator nodes have reached consensus about its contents.
+  4. When appropriate (e.g., when a game ends and the winner wishes to withdraw their funds), the back-end generates a [voucher](../components.md#vouchers) that encodes a transfer of assets on the base layer, from the DApp to the target user. The actual withdrawal will take effect on the base layer when the voucher is executed. This is a secure process because it can only be done when the voucher has an associated validity proof ensuring that the validator nodes have reached consensus about its contents.
 
 ## Ethereum ABI encoding for asset operations
 
@@ -36,7 +36,7 @@ You may also refer to the full [ERC-20 example](https://github.com/cartesi/rollu
 
 #### Decoding deposits
 
-When handling an [advance request](./sending-requests.md#advance) that could be an ERC-20 deposit, the DApp will first have to check if the sender of the input message is the [ERC20Portal](./api/json-rpc/portals/ERC20Portal.md) contract. The back-end code should already know this contract's address to ensure the operation's authenticity.
+When handling an [advance request](../sending-requests.md#advance) that could be an ERC-20 deposit, the DApp will first have to check if the sender of the input message is the [ERC20Portal](../api/json-rpc/portals/ERC20Portal.md) contract. The back-end code should already know this contract's address to ensure the operation's authenticity.
 
 ```python
 from os import environ
@@ -94,7 +94,7 @@ For the above example, we would have the following decoded values:
 
 #### Encoding withdrawals
 
-In the case of a withdrawal, the back-end code needs to create a [voucher](./components.md#vouchers) that encodes a transfer of assets from the DApp to the target recipient address. For ERC-20, this transfer can be performed by encoding a call to the [transfer(address,uint256)](https://eips.ethereum.org/EIPS/eip-20#transfer) method of the appropriate ERC-20 contract on the base layer.
+In the case of a withdrawal, the back-end code needs to create a [voucher](../components.md#vouchers) that encodes a transfer of assets from the DApp to the target recipient address. For ERC-20, this transfer can be performed by encoding a call to the [transfer(address,uint256)](https://eips.ethereum.org/EIPS/eip-20#transfer) method of the appropriate ERC-20 contract on the base layer.
 
 ```python
 TRANSFER_FUNCTION_SELECTOR = b'\xa9\x05\x9c\xbb'
@@ -117,7 +117,7 @@ You may refer to the [Auction example](https://github.com/cartesi/rollups-exampl
 
 #### Decoding deposits
 
-As with [ERC-20 deposits](#decoding-deposits), the first step is to identify if the input message originated from the [ERC721Portal](./api/json-rpc/portals/ERC721Portal.md) contract:
+As with [ERC-20 deposits](#decoding-deposits), the first step is to identify if the input message originated from the [ERC721Portal](../api/json-rpc/portals/ERC721Portal.md) contract:
 
 ```python
 from os import environ
@@ -171,7 +171,7 @@ For the above example, we would have the following decoded values:
 
 #### Encoding withdrawals
 
-Withdrawals for ERC-721 are again very similar to what is done for ERC-20. Once more, a [voucher](./components.md#vouchers) must be emitted that encodes a transfer of the intended asset from the DApp to a target recipient address.
+Withdrawals for ERC-721 are again very similar to what is done for ERC-20. Once more, a [voucher](../components.md#vouchers) must be emitted that encodes a transfer of the intended asset from the DApp to a target recipient address.
 In the case of ERC-721 tokens, the voucher should encode a call to the [safeTransferFrom(address,address,uint256)](https://eips.ethereum.org/EIPS/eip-721#specification) method on the base layer token contract.
 
 ```python
