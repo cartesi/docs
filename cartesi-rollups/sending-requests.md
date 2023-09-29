@@ -84,5 +84,5 @@ for (let i in result.reports) {
 }
 ```
 
-Now that we know how to handle generic payloads in our DApp, it is important to mention the concept of handling standardized Solidity interfaces, specifically ERC20 and ERC721 assets. To receive this special kind of *input data*, the Cartesi Rollup Framework provides a set of contracts called the [Portals](./components.md#portals), which are specifically designed to [handle assets](./assets-handling.md) on behalf of your DApp.
+Now that we know how to handle generic payloads in our DApp, it is important to mention the concept of handling standardized Solidity interfaces, specifically ERC20 and ERC721 assets. To receive this special kind of *input data*, the Cartesi Rollup Framework provides a set of contracts called the [Portals](./components.md#portals), which are specifically designed to [handle assets](./assets-handling/assets-handling.md) on behalf of your DApp.
 

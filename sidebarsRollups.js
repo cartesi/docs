@@ -18,7 +18,18 @@ module.exports = {
         },
         "sending-requests",
         "reading-outputs",
-        "assets-handling",
+        {
+          type: "category",
+          label: "Assets handling",
+          link: {
+            type: "doc",
+            id: "assets-handling/assets-handling",
+          },
+          collapsed: true,
+          items: [
+            "assets-handling/ERC20",
+          ],
+        },
         "dapp-architecture",
         {
           type: "category",
