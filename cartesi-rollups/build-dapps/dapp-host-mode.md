@@ -83,37 +83,6 @@ After completing all the steps above, you should get a response with the payload
 :::note
 Although we used the `echo-python` DApp as a specific example, it's important to understand that not all DApps generate notices in the same manner. Your DApp may have different behaviors or responses related to notices. However, we hope this example provides a clear understanding and a helpful starting point.
 :::
-With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with your DApp by following the steps:
-
-1. Open a separate terminal window
-2. From the rollups-examples base directory, navigate to the `frontend-console` one:
-```shell
-cd frontend-console
-```
-3. Build the frontend console application:
-```shell
-yarn
-yarn build
-```
-4. Send an input to the current locally deployed DApp:
-
-```shell
-yarn start input send --payload "Hello, Cartesi."
-```
-
-5. For instance, the echo-python DApp "echoes" each input it receives by generating a corresponding output notice based on your input. To check these notices, run the following command:
-
-```shell
-yarn start notice list
-```
-
-After completing all the steps above, you should get a response with the payload of the notice:
-
-`"Hello, Cartesi."`
-
-:::note
-Although we used the `echo-python` DApp as a specific example, it's important to understand that not all DApps generate notices in the same manner. Your DApp may have different behaviors or responses related to notices. However, we hope this example provides a clear understanding and a helpful starting point.
-:::
 
 ## Options
 

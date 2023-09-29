@@ -4,6 +4,7 @@ title: Create your first DApp
 tags: [build, dapps ,developer]
 ---
 
+
 Once you learned how to [run a simple example](./run-dapp.md), it is now time to create one of your own. In order to do this, we will make use of the existing DApps available in Cartesi's [rollups-examples](https://github.com/cartesi/rollups-examples) Github repository. Once again, make sure you have [installed all the necessary requirements](./requirements.md) before proceeding.
 
 ## Example DApp
@@ -46,11 +47,13 @@ cd fortune
 * Change the DApp name in `entrypoint.sh` to `rollup-init python3 fortune.py`
 * Change the DApp name in the Dockerfile to `COPY ./fortune.py`
 * Change the DApp name in ` docker-bake.override.hcl` to `dapp:fortune`
-* Change the DApp name in `docker-compose.override` to `dapp:fortune-devel-server`
+* Change the DApp name in `docker-compose.override.yml` to `dapp:fortune-devel-server`
 * Amend the Readme as required.
 
 
 ### Test the copied DApp
+
+
 
 First of all, check if your Docker supports the RISCV platform by running:
 
@@ -68,7 +71,6 @@ QEMU is a generic and open source machine emulator and virtualizer that will be 
 
 After installing QEMU, the platform `linux/riscv64` should appear in the platforms list.
 
-
 Build the copied existing DApp to ensure that the Docker image functions correctly:
 
 ```shell
@@ -81,7 +83,7 @@ If you have PostgreSQL and Redis already installed on your system, you may encou
 
 ## Add the fortune package to the Dockerfile
 
-Add the `fortune` package to the Docker image by amending the Dockerfile as follows:
+Add the `fortune` package to the Docker image as follows:
 
 ```dockerfile
 RUN apt-get update \
@@ -112,17 +114,17 @@ COPY ./fortune.py .
 ```
 
 
-## Modify the DApp logic in fortune.py
+## Modify the DApp logic
 
-1. First we need to import the `subprocess` module:
+1. First we need to import the `subprocess package`:
 
 ```puthon
 import subprocess
 ```
 
-2. Remove the line `from py_expression_eval import Parser` since we won't be using the `parser` module in this application..
+2. We then delete `from py_expression_eval import Parser` as we are not using the `parser` module in our application.
 
-3. After setting up the import statements and the logger, add the `FORTUNE_CMD` command to the code right before defining the functions:
+3. Next, we need to add the `FORTUNE_CMD` command to our code as follows:
 
 ```python
 FORTUNE_CMD = "/usr/games/fortune; exit 0"
@@ -131,7 +133,7 @@ FORTUNE_CMD = "/usr/games/fortune; exit 0"
 This command sets the FORTUNE_CMD variable to a string that, when executed, runs the fortune program to display a random quote and then immediately exits the shell with a success status.
 
 
-4. We then replace the existing `try` block within the `handle_advance(data)` function with the following command that calls the fortune DApp:
+4. We then replace the existing `try` function of `def handle_advance(data)` with the following command that calls the `fortune` app:
 
 ```python
     try:
@@ -180,14 +182,35 @@ The `quote` runs the command stored in FORTUNE_CMD using a shell, captures the o
 
 ## Create the Docker build for the new DApp
 
-The following command is executed to construct a Docker image for our DApp and ensure that the built image is directly loaded into the local Docker instance. This makes it immediately ready for deployment or testing:
-
 ```shell
 docker buildx bake --load
 ```
 
 The `docker buildx` is an extended toolset for Docker, which provides full support for the features of the Moby BuildKit builder toolkit. The `bake` command is part of this extension and simplifies the process of defining and running builds by using a declarative format in the form of a `docker-bake.hcl` or a `docker-compose.yml`. When the `--load` flag is added, it instructs BuildKit to build the Docker image and then immediately load it into the local Docker runtime environment.
 
+
+## Start the application
+
+```shell
+docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml up
+```
+
+## Check the DApp address
+
+We now will check our DApp address by viewing the contents of the `dapp.json` file located in the `deployments/localhost/` directory inside the `rollups-examples` repository:
+
+```shell
+cat ../deployments/localhost/dapp.json
+```
+
+It will return a response similar to the one below:
+
+```json
+"address": "0x142105FC8dA71191b3a13C738Ba0cF4BC33325e2",
+"blockHash":"0xa228c81061345a0db2910c3f253213bfab131cd575c4589b370555bb748b6238"
+"blockNumber": 22,
+"transactionHash":"0x77b6be9c95b16f7ab880fc7662028ealdea3279fe28f0382706dd693f0d5315d"
+```
 
 ## Build the frontend console
 
@@ -202,29 +225,6 @@ And build it:
 ```yarn
 yarn
 yarn build
-```
-
-## Start the application
-
-```shell
-docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml up
-```
-
-## Check the DApp address
-
-We now will check our DApp address by viewing the contents of the `dapp.json` file located in the `deployments/localhost/` directory:
-
-```shell
-cat deployments/localhost/dapp.json
-```
-
-It will return a response similar to the one below:
-
-```json
-"address": "0x142105FC8dA71191b3a13C738Ba0cF4BC33325e2",
-"blockHash":"0xa228c81061345a0db2910c3f253213bfab131cd575c4589b370555bb748b6238"
-"blockNumber": 22,
-"transactionHash":"0x77b6be9c95b16f7ab880fc7662028ealdea3279fe28f0382706dd693f0d5315d"
 ```
 
 ## Run an inspect call
@@ -258,35 +258,53 @@ J. R. R. Tolkien
 If we execute the `inspect` command again, it will consistently produce the same result, thereby providing the same quote each time.
 
 
-
 ## Run an advance call
 
 From the front-end console directory:
 
-## Setting up the environment
-
-First of all, clone the repository as follows:
-
-```shell
-$ git clone https://github.com/cartesi/rollups-examples.git
+```yarn
+yarn start input send --payload 'test'
 ```
 
-## Customizing the DApp
+It will give us a response similar to the one below:
 
-Then, use `create-dapp.sh` to create a customized DApp:
+```shell
+yarn run v1.22.19
+$ ts-node src/index. ts input send
+connecting to http://localhost:8545
+payload test
+connected to chain 31337
+using account "Oxf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+sending "test"
+transaction: 0x4ea14167cd19c08379ca22afa568fb952073bb7762e5cd66a36cdccdb875d65f
+waiting for confirmation...
+input 0 added
+```
+
+Upon executing the `inspect` command now, it will generate a new quote.
+
+
+## Request a notice
+
+From the front-end console directory:
+
+```yarn
+yarn start notice list
+```
+
+This will return the previous quote:
 
 ```shell
 yarn run v1.22.19
 ts-node src/index. ts notice list
 querying http://localhost:4000/graphql for notices of input index "undefined"...
-[{"index" :0, "input": 0, "payload" : "Received input: test. This was the quote \tMy dear People. \n\tMy dear Bagginses and Boffins, and my dear Tooks and Brandybucks, \nand Grubbs, and Chubbs, and Burrowses,
+[{"index" :0, Tinput": 0, "payload" : "Received input: test. This was the quote \tMy dear People. \n\tMy dear Bagginses and Boffins, and my dear Tooks and Brandybucks, \nand Grubbs, and Chubbs, and Burrowses,
 nd Hornblowers, and Bolgers, \nBracegirdles, Goodbodies, Brockhouses and Proudfoots. Also my good \nSackville Bagginses that welcome back at last to Bag End. Today is my\none hundred and eleventh birt
 hday: am eleventy-one today! \"\n\t\t - - J. R. R. Tolkien\n"}]
 ```
 
-A new directory, `<dapp-name>`, will be created with all the boiler plate infrastructure needed by the new DApp.
 
-The new DApp will be provided with some basic back-end code, resembling what is available in the sample [Echo Python DApp](https://github.com/cartesi/rollups-examples/tree/main/echo-python), as explained in the [previous section](./run-dapp.md).
+An intriguing aspect, demonstrating how Cartesi Machine operates, is that the Cartesi Machine is designed to roll back to a previous state every time its state is inspected. Therefore, if we execute the same `inspect` command repeatedly, it consistently returns the same result, as the machine keeps reverting to its prior state.
 
 ## Stop the application
 
@@ -414,4 +432,4 @@ while True:
         finish["status"] = handler(rollup_request["data"])
 ```
 
-As we conclude this tutorial, we hope that you now have a better understanding of how to build a DApp that uses the `fortune` package and how the Cartesi Machine drives the DApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom DApps. Happy coding! 
+As we conclude this tutorial, we hope that you now have a better understanding of how to build a DApp that uses the `fortune` package and how the Cartesi Machine drives the DApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom DApps. Happy coding!

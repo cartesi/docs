@@ -109,3 +109,7 @@ And finally, test that Yarn is installed and working property:
 ```bash
 yarn --version
 ```
+
+## WSL
+
+For Windows users, we recommend using [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
