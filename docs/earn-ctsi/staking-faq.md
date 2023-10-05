@@ -289,4 +289,4 @@ Your node holds a wallet that contains the funds you provided it with, so it is 
 ## Submit a new question
 
 Ok, so I read all the F.A.Q. and found no solution to my problem/the proposed solution failed, what should I do?
-We are sorry to hear that, please head to the [Cartesi Technical Community on Discord](https://discord.gg/Pt2NrnS) and we’ll be happy to assist you or submit your question on [StackOverflow](https://stackoverflow.com/questions/tagged/cartesi).
+We are sorry to hear that, please head to the [Cartesi Technical Community on Discord](https://discord.gg/Pt2NrnS) and we’ll be happy to assist you.

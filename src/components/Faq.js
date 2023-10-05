@@ -16,21 +16,7 @@ const IconDiscord = () => (
   </svg>
 );
 
-const IconStackOverflow = () => (
-  <svg
-    width="71"
-    height="71"
-    viewBox="0 0 71 71"
-    xmlns="http://www.w3.org/2000/svg"
-    className="fill-current flex-shrink-0"
-  >
-    <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M0 7.01235C0 3.13951 3.13951 0 7.01235 0H63.9877C67.8605 0 71 3.13951 71 7.01235V63.9877C71 67.8605 67.8605 71 63.9877 71H7.01235C3.13951 71 0 67.8605 0 63.9877V7.01235ZM50.2159 56.9604V43.8161H56.0545V62.8018H12.2716V43.8161H18.1103V56.9604H50.2159ZM47.0061 42.3544L45.8389 46.7367L22.4872 42.3544L23.5085 37.5371L47.0061 42.3544ZM47.5897 41.1872L25.6996 30.9636L27.7421 26.5839L49.6323 36.8049L47.5897 41.1872ZM50.2159 35.6377L31.8274 20.1563H31.6814L34.748 16.5061L53.2824 31.9875L50.2159 35.6377ZM39.7085 11.6861L43.6504 8.76543L58.0971 28.1888L54.1578 31.1095L39.7085 11.6861ZM45.8389 52.5781H22.4872V48.1984H45.8389V52.5781Z"
-    />
-  </svg>
-);
+
 
 export const Faq = () => {
   return (
@@ -42,8 +28,7 @@ export const Faq = () => {
               Get Help
             </h1>
             <p className="text-lg md:text-2xl">
-              Feeling stuck? Don’t worry, come join us over on Discord or
-              StackOverflow and connect with our core developers who’ll be happy
+              Feeling stuck? Don’t worry, come join us over on Discord and connect with our core developers who’ll be happy
               to help.
               <br />
               <br />
@@ -56,21 +41,13 @@ export const Faq = () => {
                 href="https://discord.gg/uxYE5YNv3N"
                 target="_blank"
                 rel="nofollow"
-                className="text-current flex items-center gap-4 text-2xl hover:no-underline font-serif font-semibold"
+                className="text-current flex justify-center items-center gap-4 text-2xl hover:no-underline font-serif font-semibold"
               >
                 <IconDiscord />
                 <span>Discord</span>
               </a>
 
-              <a
-                href="https://stackoverflow.com/questions/tagged/cartesi"
-                target="_blank"
-                rel="nofollow"
-                className="text-current flex items-center gap-4 text-2xl hover:no-underline font-serif font-semibold"
-              >
-                <IconStackOverflow />
-                <span>StackOverflow</span>
-              </a>
+            
             </div>
           </div>
         </div>
