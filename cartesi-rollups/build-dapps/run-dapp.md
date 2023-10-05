@@ -1,6 +1,6 @@
 ---
 id: run-dapp
-title: Quick Start
+title: Run an example DApp
 tags: [build, quickstart, dapps, developer]
 ---
 
