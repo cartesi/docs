@@ -249,6 +249,12 @@ const config = {
       },
     ],
     [
+      "@docusaurus/plugin-google-tag-manager",
+      {
+        containerId: "GTM-MS89D9K",
+      },
+    ],
+    [
       "docusaurus-plugin-openapi-docs",
       {
         id: "apiDocs",
