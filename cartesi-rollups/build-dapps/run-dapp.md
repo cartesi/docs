@@ -6,6 +6,94 @@ tags: [build, quickstart, dapps, developer]
 
 This article explains how to build and interact with a minimalistic [Cartesi Rollups](../overview.md) application.
 
+## Run an example application built with Sunodo
+
+[Sunodo](https://docs.sunodo.io/) is a Rollups-as-a-Service platform and a set of tools for a simplified development of Cartesi DApps.
+
+By the end of this tutorial, you will learn how to create and run a simple existing DApp written in *Python*.
+
+
+
+The DApp continuously polls a specified rollup server for requests, logs them, and responds with a pre-defined `accept` status for both `advance` and `inspect` request types.
+
+The **Quick Start** guide consists of 4 main steps:
+
+1. [Installing](#installing-with-sunodo)
+2. [Building](#building-with-sunodo)
+3. [Running](#running-with-sunodo)
+4. [Interacting](#interacting-with-sunodo)
+
+
+Make sure you have [installed all the necessary requirements](./requirements.md) before proceeding.
+
+## Installing with Sunodo
+
+First of all, you need [Sunodo](https://docs.sunodo.io/) installed on your machine. You can skip this step if you already have it.
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+  <TabItem value="MacOS" label="MacOS" default>
+    <p>You can use Homebrew:</p>
+    <pre><code>
+    brew install sunodo/tap/sunodo
+    </code></pre>
+    <p>Or:</p>
+    <pre><code>
+    npm install -g @sunodo/cli
+    </code></pre>
+  </TabItem>
+
+  <TabItem value="Linux" label="Linux">
+    <pre><code>
+    npm install -g @sunodo/cli
+    </code></pre>
+  </TabItem>
+
+  <TabItem value="Windows" label="Windows">
+    <p>Install <a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL</a> and then run:</p>
+    <pre><code>
+    npm install -g @sunodo/cli
+    </code></pre>
+  </TabItem>
+</Tabs>
+
+With Sunodo in place, run:
+
+```shell
+sunodo create my-app --template python
+```
+
+:::note
+If you need a DApp in a different language, change the `python` argument according to the [available templates](https://docs.sunodo.io/guide/creating/available-templates).
+:::
+
+### Building with Sunodo
+
+Navigate to the `my-app` directory and run:
+
+```shell
+sunodo build
+```
+
+### Running with Sunodo
+
+From the `my-app` directory run:
+
+```shell
+sunodo run
+```
+
+### Interacting with Sunodo
+
+You can run an [inspect](../sending-requests.md) call by accessing the Inspect server at `http://localhost:8080/inspect/`. 
+
+For other calls, access the [GraphQL playground](https://github.com/graphql/graphql-playground) at `http://localhost:8080/graphql` and follow our [GraphQL API guide](../api/graphql/basics.md) to interact with the DApp.
+
+## Run an example application from the `rollups-examples` repository
+
+
 By the end of this tutorial, you will learn how to run a simple existing DApp written in *Python*, called **Echo-Python**.
 
 :::warning
@@ -26,7 +114,7 @@ The **Quick Start** guide consists of 5 main steps:
 2. [Building](#building)
 3. [Running](#running)
 4. [Interacting](#interacting-with-the-dapp)
-5. [Deploying](./deploying-dapps.md)
+
 
 ## Installing
 
@@ -156,6 +244,6 @@ For more information about the `frontend-console` application and its options, p
 :::
 
 
-### Explore our DApps
+## Explore our DApps
 
 You can find several Cartesi DApp [examples on GitHub](https://github.com/cartesi/rollups-examples#examples).
