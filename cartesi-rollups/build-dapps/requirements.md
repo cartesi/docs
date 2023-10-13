@@ -113,3 +113,41 @@ yarn --version
 ## WSL
 
 For Windows users, we recommend using [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
+
+## Sunodo
+
+[Sunodo](https://docs.sunodo.io/) is a Rollups-as-a-Service platform and a set of tools for a simplified development of Cartesi DApps. You can install it as described below:
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+  <TabItem value="MacOS" label="MacOS" default>
+    <p>You can use Homebrew:</p>
+    <pre><code>
+    brew install sunodo/tap/sunodo
+    </code></pre>
+    <p>Or:</p>
+    <pre><code>
+    npm install -g @sunodo/cli
+    </code></pre>
+  </TabItem>
+
+  <TabItem value="Linux" label="Linux">
+    <pre><code>
+    npm install -g @sunodo/cli
+    </code></pre>
+  </TabItem>
+
+  <TabItem value="Windows" label="Windows">
+    <p>Install <a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL</a> and then run:</p>
+    <pre><code>
+    npm install -g @sunodo/cli
+    </code></pre>
+  </TabItem>
+</Tabs>
+
+:::caution
+If you are using Docker Desktop, make sure to update it to the latest version. If you are using Homebrew to install Sunodo, navigate to *Settings > Resources > File sharing* and add the following path: `/opt/homebrew/Cellar/sunodo`.
+:::
