@@ -55,7 +55,7 @@ Cartesi Compute also supports a distinct setup, in which the drive's contents ar
 
 ## Integrated IPFS support
 
-Another important feature of Cartesi Compute' Logger Service corresponds to the possibility of using the [InterPlanetary File System (IPFS)](https://ipfs.io/) to allow Cartesi Machines to use large input drives without necessarily having to submit the data to the blockchain. This can be configured by specifying the following Drive field:
+Another important feature of Cartesi Compute's Logger Service corresponds to the possibility of using the [InterPlanetary File System (IPFS)](https://ipfs.io/) to allow Cartesi Machines to use large input drives without necessarily having to submit the data to the blockchain. This can be configured by specifying the following Drive field:
 
 - **`loggerIpfsPath`** identifies an object path in IPFS that remotely stores the same data identified by `loggerRootHash`.
 
