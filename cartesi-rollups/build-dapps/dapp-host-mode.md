@@ -31,7 +31,7 @@ If you have PostgreSQL and Redis already installed on your system, you may encou
 ## Step 2: Run the application back-end
 
 The next step is to run the application back-end in your machine. Before proceeding, ensure that you have installed the dependencies and libraries required for your selected language. For example, if the code is written in Python, you will need to have `python3` installed.
-The next step is to run the application back-end in your machine. Before proceeding, ensure that you have installed the dependencies and libraries required for your selected language. For example, if the code is written in Python, you will need to have `python3` installed.
+
 
 If you are using the `echo-python` example, in order to start the back-end, run the following commands in a dedicated terminal:
 
