@@ -37,8 +37,8 @@ If you are using the `echo-python` example, in order to start the back-end, run 
 
 ```shell
 cd echo-python/
-python3 -m venv .env
-. .env/bin/activate
+python3 -m venv .venv
+. .venv/bin/activate
 pip install -r requirements.txt
 ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004" python3 echo.py
 ```
