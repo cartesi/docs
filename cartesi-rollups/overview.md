@@ -90,5 +90,7 @@ The integration of the Optimistic Rollups framework with the Cartesi Machine Emu
 
 ## See Also
 
-* [Everything you need to know about Optimistic Rollup in general](https://research.paradigm.xyz/rollups)
+* [Everything you need to know about Optimistic Rollup in general](https://www.paradigm.xyz/2021/01/almost-everything-you-need-to-know-about-optimistic-rollup)
+
+This can be a replacement? I don't know what was on the page that is dead, so i'm assuming is about this.)
 * [Fraud proofs and virtual machines](https://medium.com/@cpbuckland88/fraud-proofs-and-virtual-machines-2826a3412099) or go into more details [here](https://tlu.tarilabs.com/cryptography/fraud-proofs#what-are-fraud-proofs)
