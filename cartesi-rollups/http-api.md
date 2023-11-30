@@ -53,6 +53,7 @@ The front-end part of the dApp needs to access the Cartesi Rollups framework to 
 * [**InspectState**](./api/inspect/inspect.api.mdx) — Submits a query to a Cartesi layer-2 node to retrieve arbitrary dApp-specific application state.
 * [**ExecuteVoucher**](./api/json-rpc/sol-output.md#executevoucher) — Submits a JSON-RPC blockchain transaction to request a given voucher to be executed by the [Cartesi dApp](./api/json-rpc/sol-output.md) smart contract on layer-1. This is how a dApp’s results, such as a transfer of assets, can take effect on the underlying blockchain. It should be noted that the contracts will only actually execute the voucher if it has been finalized, meaning that its contents can no longer be disputed. Finalization is explained in more detail in the [Main concepts](./components.md#epochs) section and in the [Rollups On-chain article](https://medium.com/cartesi/rollups-on-chain-d749744a9cb3).
 
+
 :::tip
 The complete specification for these front-end APIs, including additional endpoints, can be found in the [Rollups HTTP APIs reference](../api/front-end).
 :::

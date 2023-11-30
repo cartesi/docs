@@ -195,11 +195,6 @@
         },
         {
           "type": "link",
-          "label": "Deployment samples",
-          "href": "https://github.com/cartesi/rollups-deployment"
-        },
-        {
-          "type": "link",
           "label": "Changelog",
           "href": "https://github.com/cartesi/rollups/blob/main/CHANGELOG.md"
         },

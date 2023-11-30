@@ -19,7 +19,7 @@ The Ethereum Application Binary Interface (ABI) is a standard for interacting wi
 
 It defines a standard way to encode function calls and their parameters, so that they can be interpreted correctly by any client or node on the Ethereum network. This standard ensures that function calls and parameters are consistently encoded across different programming languages and clients, allowing smart contracts to be interoperable and usable by any client on the Ethereum network.
 
-In particular, the [ABI-encoded payload of a voucher](https://github.com/cartesi/rollups#vouchers) defines a function call, for which the first four bytes correspond to a _function selector_. This selector identifies a method within the contract specified by the voucher's target or _destination_ address. After those initial four bytes, the remainder of the voucher's payload corresponds to the function call parameters, each of which is encoded according to its elementary type (e.g., `uint8`, `bool`, etc.)
+In particular, the [ABI-encoded payload of a voucher](https://github.com/cartesi/rollups-contracts#vouchers) defines a function call, for which the first four bytes correspond to a _function selector_. This selector identifies a method within the contract specified by the voucher's target or _destination_ address. After those initial four bytes, the remainder of the voucher's payload corresponds to the function call parameters, each of which is encoded according to its elementary type (e.g., `uint8`, `bool`, etc.)
 
 :::tip
 You can refer to [Ethereum's ABI specification](https://docs.soliditylang.org/en/latest/abi-spec.html) for the full details about the standard.
@@ -189,4 +189,4 @@ Finally, the ERC-721 contract address is specified as the voucher's `destination
 
 ### Other assets
 
-Please refer to the [Cartesi Rollups repository documentation](https://github.com/cartesi/rollups#portals) for a full list of Portals, along with their corresponding deposit encodings and withdrawal voucher specifications.
+Please refer to the [Cartesi Rollups repository documentation](https://github.com/cartesi/rollups-contracts#portals) for a full list of Portals, along with their corresponding deposit encodings and withdrawal voucher specifications.
