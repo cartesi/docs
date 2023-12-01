@@ -4,23 +4,23 @@ tags: [sdk, tutorials, low-level developer]
 ---
 
 :::note Section Goal
-- create and initialize project for the Generic Script Cartesi Compute DApp
+- create and initialize project for the Generic Script Cartesi Compute dApp
 :::
 
 ## Introduction
 
-In the [previous tutorial](../calculator/create-project.md), we learned how to build a Cartesi Compute DApp that is capable of receiving input data as a string and performing a mathematical calculation using the Linux `bc` tool. In this project, we will generalize this idea to show how Cartesi Compute can be leveraged to allow a smart contract to perform a *generic* computation by receiving an arbitrary script as input and using *any* interpreter of choice, such as Python or Lua, including any required libraries, to execute it. And without compromising on decentralization.
+In the [previous tutorial](../calculator/create-project.md), we learned how to build a Cartesi Compute dApp that is capable of receiving input data as a string and performing a mathematical calculation using the Linux `bc` tool. In this project, we will generalize this idea to show how Cartesi Compute can be leveraged to allow a smart contract to perform a *generic* computation by receiving an arbitrary script as input and using *any* interpreter of choice, such as Python or Lua, including any required libraries, to execute it. And without compromising on decentralization.
 
 :::warning DISCLAIMER
-Despite being included as a tutorial, it should be noted that this is **NOT** the recommended way of implementing a DApp using Cartesi Compute. It usually makes little sense to waste resources building a full script on-chain - all possible logic should rather be moved over to the off-chain Cartesi Machine. However, this strategy is used here for the purposes of illustrating Cartesi Compute's potential for running any generic computation in a verifiable way. Furthermore, this approach allows us to play with the possibilities without the need of building a different machine for every script we want to try out.
+Despite being included as a tutorial, it should be noted that this is **NOT** the recommended way of implementing a dApp using Cartesi Compute. It usually makes little sense to waste resources building a full script on-chain - all possible logic should rather be moved over to the off-chain Cartesi Machine. However, this strategy is used here for the purposes of illustrating Cartesi Compute's potential for running any generic computation in a verifiable way. Furthermore, this approach allows us to play with the possibilities without the need of building a different machine for every script we want to try out.
 :::
 
 As always, a full implementation of this tutorial is available in the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/generic-script).
 
 
-## Initializing the DApp project
+## Initializing the dApp project
 
-As we did for the [other DApps](../helloworld/create-project.md), we will first initialize our project by creating an appropriate directory along with its basic internal structure:
+As we did for the [other dApps](../helloworld/create-project.md), we will first initialize our project by creating an appropriate directory along with its basic internal structure:
 
 ```bash
 mkdir generic-script

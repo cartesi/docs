@@ -13,7 +13,7 @@ As discussed in the [documentation](/compute/logger_drive), Cartesi Compute prov
 
 On top of the Logger service, Cartesi Compute also features integrated IPFS support in its nodes. As also explained in the [documentation](/compute/logger_drive/#ipfs-integrated-support), generally speaking IPFS alone is not sufficient to ensure data availability for verifying a computation, since it cannot guarantee that the validator nodes will be able to access the data when needed. However, in Cartesi Compute it is possible to upload the data to IPFS, and then trigger the Logger service automatically as a fallback should any node fail to retrieve it. As such, for the vast majority of cases in which actors do not misbehave, and for specific scenarios for which IPFS data availability is not an issue, using IPFS can prevent data from ever having to be published to the blockchain, with obvious benefits in terms of cost and performance.
 
-In this context, we will now build upon our [previous DApp implementation](../gpg-verify/full-dapp.md) and add a method that uses the Logger and IPFS services to allow a larger file's signature to be verified using Cartesi Compute.
+In this context, we will now build upon our [previous dApp implementation](../gpg-verify/full-dapp.md) and add a method that uses the Logger and IPFS services to allow a larger file's signature to be verified using Cartesi Compute.
 ## Implementation
 
 Open the `GpgVerify.sol` file in the `gpg-verify/contracts` directory and add the following code right after the `instantiate` method:
@@ -71,7 +71,7 @@ public
 
 Similarly to the `instantiate` method implemented [in the previous section](../gpg-verify/full-dapp.md), this code also defines two input drives in order to call Cartesi Compute to instantiate the computation. However, instead of providing the `directValue` drive fields, this time around user-provided indirect information about the data is given. First of all, the `loggerRootHash` parameter corresponds to the Merkle root hash of the data being submitted. This information can be used both for retrieving the data from the Logger service and for validating that downloaded data matches the previously advertised drive contents. Furthermore, the `loggerIpfsPath`, if provided, will be used to attempt to first download the data via IPFS.
 
-With the code in place, redeploy the DApp by executing the following command:
+With the code in place, redeploy the dApp by executing the following command:
 
 ```bash
 npx hardhat deploy --network localhost
@@ -96,7 +96,7 @@ wget https://github.com/cartesi/compute-tutorials/raw/master/gpg-verify/cartesi-
 
 In order to use the Logger and IPFS services, the first step is to compute the Merkle root hash of the data that is going to be processed. This hash will serve as an identifier when retrieving the corresponding data from the Cartesi `Logger` smart contract deployed on the blockchain.
 
-Within the specific context of this DApp, the Cartesi Machine expects the input data to have its content length encoded in each drive's four initial bytes, as [previously discussed](../gpg-verify/cartesi-machine.md). Thus, before computing any hash we must first prepare our data by prepending each file with its content length. This is a simple operation that can be implemented using a tiny Lua script, as follows.
+Within the specific context of this dApp, the Cartesi Machine expects the input data to have its content length encoded in each drive's four initial bytes, as [previously discussed](../gpg-verify/cartesi-machine.md). Thus, before computing any hash we must first prepare our data by prepending each file with its content length. This is a simple operation that can be implemented using a tiny Lua script, as follows.
 
 First, hop into the playground mapping the current directory:
 
@@ -143,7 +143,7 @@ Let's first leave the playground:
 ```bash
 exit
 ```
-In our DApp, `alice` is serving as the drive's provider, since that is the address given by `parties[0]`. As such, we can make the files available by executing the following commands:
+In our dApp, `alice` is serving as the drive's provider, since that is the address given by `parties[0]`. As such, we can make the files available by executing the following commands:
 
 ```bash
 cp portrait.jpg.prepended ../../compute-env/alice_data/$(cat portrait.jpg.prepended.merkle)
@@ -154,7 +154,7 @@ Now, with everything set up for the Logger service, it would already be possible
 
 ## Using IPFS
 
-As interesting as it is to be able to handle a 33K image in a computation validated by a smart contract, some important limitations remain. In particular, the data is still going to be necessarily submitted to the blockchain, a fact that in the real world would incur in fees and delays that could lend intensive usage of the DApp quite prohibitive.
+As interesting as it is to be able to handle a 33K image in a computation validated by a smart contract, some important limitations remain. In particular, the data is still going to be necessarily submitted to the blockchain, a fact that in the real world would incur in fees and delays that could lend intensive usage of the dApp quite prohibitive.
 
 As discussed above, this inconvenience can be tackled by coupling the Logger service we just explored with IPFS. The idea is to upload the data to IPFS before the computation is instantiated. As such, if all validator nodes cooperate, then no data will need to be sent over to the blockchain.
 
@@ -194,7 +194,7 @@ Now we can submit our 33K image and its signature to IPFS by running the followi
 
 As such, the files are now publicly available on IPFS, and their paths can be found in the corresponding `*.ipfs` files.
 
-## Running the DApp
+## Running the dApp
 
 Finally, with our files published on IPFS and made available to the Logger service as a fallback guarantee, we can now hop into Hardhat's console to instantiate the signature verification computation, using only the data's Merkle root hashes and IPFS paths:
 
@@ -235,6 +235,6 @@ With this setup, the Cartesi Compute nodes have downloaded the data from IPFS, c
 
 ## Conclusion
 
-In this last section, we have seen how Cartesi Compute allows DApps to handle inputs larger than those normally viable for blockchain applications, and in a much more efficient way.
+In this last section, we have seen how Cartesi Compute allows dApps to handle inputs larger than those normally viable for blockchain applications, and in a much more efficient way.
 
 Furthermore, this GPG verification tutorial as a whole, albeit relatively simple, illustrates how Cartesi Compute enables smart contracts to solve common and relevant tasks by taking advantage of proven and mature libraries available in Linux, like `GnuPG`, and without compromising on decentralization. The advantages of this strategy should not be taken lightly, since re-implementing such tools in Solidity is often unfeasible and almost always less secure, given that it will inevitably lack the maturity and stability that comes with decades of usage and refinement.

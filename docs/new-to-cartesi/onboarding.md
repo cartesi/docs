@@ -25,7 +25,7 @@ Our onboarding paths answer the following questions:
 <TabItem value="beginner">
 
 :::note
-This section of documentation targets new blockchain users who want to learn more about blockchain technology, DApps, and Rollups.
+This section of documentation targets new blockchain users who want to learn more about blockchain technology, dApps, and Rollups.
 :::
 
 You can start by watching our Blockchain Course (available on Youtube):
@@ -44,37 +44,37 @@ Read the article about [Scalability](../new-to-cartesi/scalability.md) to learn 
 <TabItem value="developer">
 
 :::note
-This section targets developers who want to start building DApps.
+This section targets developers who want to start building dApps.
 :::
 
-As a developer, you can use all the programming languages, tools, libraries, software, and services you are already familiar with. By moving most of the complex logic of their DApps to portable off-chain components, developers are freed from the limitations and idiosyncrasies imposed by blockchains. In this way, Cartesi empowers developers to select the best run-time environment in which to host each part of their DApps.
+As a developer, you can use all the programming languages, tools, libraries, software, and services you are already familiar with. By moving most of the complex logic of their dApps to portable off-chain components, developers are freed from the limitations and idiosyncrasies imposed by blockchains. In this way, Cartesi empowers developers to select the best run-time environment in which to host each part of their dApps.
 
-<h3> Quick start to run your first DApp </h3>
+<h3> Quick start to run your first dApp </h3>
 
-The fastest way of getting started is by [Running a Simple DApp](/cartesi-rollups/build-dapps/run-dapp) that we already built using Python.
+The fastest way of getting started is by [Running a Simple dApp](/cartesi-rollups/build-dapps/run-dapp) that we already built using Python.
 
 :::tip
-Check the section [**Cartesi Rollups**](/cartesi-rollups/overview) to learn theoretical concepts such as DApp architecture, available APIs, and how Cartesi's off-chain and on-chain components work under the hood.
+Check the section [**Cartesi Rollups**](/cartesi-rollups/overview) to learn theoretical concepts such as dApp architecture, available APIs, and how Cartesi's off-chain and on-chain components work under the hood.
 :::
 
-* Navigate to [Build DApps](/cartesi-rollups/build-dapps/overview) section for more guides:
+* Navigate to [Build dApps](/cartesi-rollups/build-dapps/overview) section for more guides:
   * [Technical Prerequisites](/cartesi-rollups/build-dapps/requirements)
-  * [Steps to create a DApp](/cartesi-rollups/build-dapps/create-dapp)
+  * [Steps to create a dApp](/cartesi-rollups/build-dapps/create-dapp)
 
 * Check [more examples on GitHub](https://github.com/cartesi/rollups-examples#examples) such as:
-  * [Echo Python DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python)
-  * [Echo C++ DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-cpp)
-  * [Echo Rust DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-rust)
-  * [Echo Lua DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-lua)
-  * [Echo JS DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-js)
+  * [Echo Python dApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python)
+  * [Echo C++ dApp](https://github.com/cartesi/rollups-examples/blob/main/echo-cpp)
+  * [Echo Rust dApp](https://github.com/cartesi/rollups-examples/blob/main/echo-rust)
+  * [Echo Lua dApp](https://github.com/cartesi/rollups-examples/blob/main/echo-lua)
+  * [Echo JS dApp](https://github.com/cartesi/rollups-examples/blob/main/echo-js)
   * [Echo Low-Level](https://github.com/cartesi/rollups-examples/blob/main/echo-low-level)
-  * [Converter DApp](https://github.com/cartesi/rollups-examples/blob/main/converter)
-  * [Calculator DApp](https://github.com/cartesi/rollups-examples/blob/main/calculator)
-  * [SQLite DApp](https://github.com/cartesi/rollups-examples/blob/main/sqlite)
-  * [k-NN DApp](https://github.com/cartesi/rollups-examples/blob/main/knn)
-  * [m2cgen DApp](https://github.com/cartesi/rollups-examples/blob/main/m2cgen)
-  * [ERC-20 DApp](https://github.com/cartesi/rollups-examples/blob/main/erc20)
-  * [Auction DApp](https://github.com/cartesi/rollups-examples/blob/main/auction)
+  * [Converter dApp](https://github.com/cartesi/rollups-examples/blob/main/converter)
+  * [Calculator dApp](https://github.com/cartesi/rollups-examples/blob/main/calculator)
+  * [SQLite dApp](https://github.com/cartesi/rollups-examples/blob/main/sqlite)
+  * [k-NN dApp](https://github.com/cartesi/rollups-examples/blob/main/knn)
+  * [m2cgen dApp](https://github.com/cartesi/rollups-examples/blob/main/m2cgen)
+  * [ERC-20 dApp](https://github.com/cartesi/rollups-examples/blob/main/erc20)
+  * [Auction dApp](https://github.com/cartesi/rollups-examples/blob/main/auction)
 
 </TabItem>
 <TabItem value="researcher">
@@ -87,7 +87,7 @@ This section targets researchers and low-level programmers who want to dive into
 
 You can dive deeper into Cartesi's core technology by reading the section about [the Cartesi Machine](/machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
 
-<h3> Cartesi Compute SDK to run a DApp off-chain </h3>
+<h3> Cartesi Compute SDK to run a dApp off-chain </h3>
 
 You can use the [Cartesi Compute SDK](/compute/overview) to leverage Cartesi to run one-off complex computations that could never be executed inside a normal smart contract. Instead, those computations are executed off-chain with automatic dispute resolution guarantees, and its results can later be used on-chain.
 

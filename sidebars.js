@@ -216,7 +216,7 @@ const sidebars = {
             "tutorials/compute-env",
             {
               type: "category",
-              label: "Hello World DApp",
+              label: "Hello World dApp",
               link: {
                 type: "generated-index",
                 slug: "/compute/tutorials/helloworld/",
@@ -232,7 +232,7 @@ const sidebars = {
             },
             {
               type: "category",
-              label: "Calculator DApp",
+              label: "Calculator dApp",
               link: {
                 type: "generated-index",
                 slug: "/compute/tutorials/calculator/",
@@ -246,7 +246,7 @@ const sidebars = {
             },
             {
               type: "category",
-              label: "Generic Script DApp",
+              label: "Generic Script dApp",
               link: {
                 type: "generated-index",
                 slug: "/compute/tutorials/generic-script/",
@@ -261,7 +261,7 @@ const sidebars = {
             },
             {
               type: "category",
-              label: "GPG Verify DApp",
+              label: "GPG Verify dApp",
               link: {
                 type: "generated-index",
                 slug: "/compute/tutorials/gpg-verify/",
@@ -277,7 +277,7 @@ const sidebars = {
             },
             {
               type: "category",
-              label: "Dogecoin Hash DApp",
+              label: "Dogecoin Hash dApp",
               link: {
                 type: "generated-index",
                 slug: "/compute/tutorials/dogecoin-hash/",

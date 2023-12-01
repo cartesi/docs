@@ -3,7 +3,7 @@ export const hello = [
     title: "Rollups",
     href: "/cartesi-rollups",
     description:
-      "Browse our DApp tutorials, API references, and more to learn how to build on Cartesi.",
+      "Browse our dApp tutorials, API references, and more to learn how to build on Cartesi.",
     bgColor: "#E1EBFF",
   },
     // {

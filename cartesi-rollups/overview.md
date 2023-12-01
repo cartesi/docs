@@ -4,20 +4,20 @@ title: Overview
 tags: [learn, rollups, dapps, low-level developer]
 ---
 
-The combination of [an Optimistic Rollups framework](https://github.com/cartesi/rollups) and [the Cartesi Machine Emulator](https://github.com/cartesi/machine-emulator) enables the development of smart contracts and DApps using any package or library that is available for Linux. This allows developers to break free from the scalability limitations of the Ethereum Virtual Machine (EVM), and brings the rise of a new blockchain era to handle real-life and complex use cases.
+The combination of [an Optimistic Rollups framework](https://github.com/cartesi/rollups) and [the Cartesi Machine Emulator](https://github.com/cartesi/machine-emulator) enables the development of smart contracts and dApps using any package or library that is available for Linux. This allows developers to break free from the scalability limitations of the Ethereum Virtual Machine (EVM), and brings the rise of a new blockchain era to handle real-life and complex use cases.
 
-A DApp running on Cartesi Rollups consists of the following main components:
+A dApp running on Cartesi Rollups consists of the following main components:
 
-* [**Cartesi Rollups**](./components.md), a set of on-chain and off-chain components that implement an Optimistic Rollups solution and provide the general framework for building DApps.
-* [**Cartesi Machine**](/machine/intro), a virtual machine (VM) that runs an entire Linux OS, in which each DApp's [back-end](./dapp-architecture.md#back-end) is executed.
-* [**DApp Back-end**](./dapp-architecture.md#back-end), the application's state and verifiable logic, which corresponds to the DApp's smart contract. The back-end runs inside the Cartesi Machine as a regular Linux application.
-* [**DApp Front-end**](./dapp-architecture.md#front-end), the application's user-facing interface, such as a web app.
+* [**Cartesi Rollups**](./components.md), a set of on-chain and off-chain components that implement an Optimistic Rollups solution and provide the general framework for building dApps.
+* [**Cartesi Machine**](/machine/intro), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's [back-end](./dapp-architecture.md#back-end) is executed.
+* [**dApp Back-end**](./dapp-architecture.md#back-end), the application's state and verifiable logic, which corresponds to the dApp's smart contract. The back-end runs inside the Cartesi Machine as a regular Linux application.
+* [**dApp Front-end**](./dapp-architecture.md#front-end), the application's user-facing interface, such as a web app.
 
 The diagram below shows the overall architecture:
 ![img](./core-components.png)
 
 :::note
-You can [**run a simple DApp**](./build-dapps/run-dapp.md) that we already built using Python
+You can [**run a simple dApp**](./build-dapps/run-dapp.md) that we already built using Python
 :::
 
 ## What is a blockchain rollup?
@@ -57,8 +57,8 @@ Non-interactive refers to the fact that the challengers can prove that a state u
 
 In the next sections:
 1. We will discuss the [main concepts of the Cartesi Rollups framework](./components.md) and how they work
-2. We will explain how to [send requests](./sending-requests.md) to a Cartesi DApp, and how a Cartesi DApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md)
-3. We will dig deeper into the [architecture of DApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](./http-api.md) to communicate with it
+2. We will explain how to [send requests](./sending-requests.md) to a Cartesi dApp, and how a Cartesi dApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md)
+3. We will dig deeper into the [architecture of dApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](./http-api.md) to communicate with it
 4. We will share our vision of a [step-by-step process for developing applications](./dapp-life-cycle.md) on Cartesi Rollups, from the initial design stage up to its final deployment
 
 ## Cartesi Machine
@@ -81,11 +81,11 @@ To engage with Cartesi Rollups, you either interact by [sending requests](./send
 
 ## Summary
 
-Rollups enhance blockchain scalability by taking computations off-chain. This boosts computation speeds and allows for more complex DApp logic. Rollups confirm transaction validity either through validity proofs, which provide immediate confirmation but are costly, or fraud proofs, which rely on challenges and confirmations.
+Rollups enhance blockchain scalability by taking computations off-chain. This boosts computation speeds and allows for more complex dApp logic. Rollups confirm transaction validity either through validity proofs, which provide immediate confirmation but are costly, or fraud proofs, which rely on challenges and confirmations.
 
 Cartesi's approach uses application-specific Optimistic Rollups with interactive fraud proofs. The Cartesi Machine, central to this framework, facilitates deterministic off-chain computations.
 
-The integration of the Optimistic Rollups framework with the Cartesi Machine Emulator advances DApp development, allowing Linux-compatible tools and bypassing Ethereum's computational scalability issues. 
+The integration of the Optimistic Rollups framework with the Cartesi Machine Emulator advances dApp development, allowing Linux-compatible tools and bypassing Ethereum's computational scalability issues. 
 
 
 ## See Also

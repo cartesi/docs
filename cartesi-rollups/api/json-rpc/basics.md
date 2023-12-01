@@ -4,14 +4,14 @@ title: Introduction
 ---
 
 
-The [Cartesi Rollups framework](../../overview.md#what-is-a-blockchain-rollup) consists of components on the *base layer* (the foundational blockchain where a DApp contract is deployed, such as Ethereum) and *execution layer* (the Cartesi off-chain layer where the DApp runs its backend logic).
+The [Cartesi Rollups framework](../../overview.md#what-is-a-blockchain-rollup) consists of components on the *base layer* (the foundational blockchain where a dApp contract is deployed, such as Ethereum) and *execution layer* (the Cartesi off-chain layer where the dApp runs its backend logic).
 
 * The base layer components are a set of smart contracts deployed on an Ethereum-compatible blockchain.
 * The execution layer components are the Cartesi Nodes.
 
-In a typical Cartesi DApp architecture, the DApp back-end is running on a Cartesi Node and the DApp front-ends [interact](../../overview.md#how-does-a-rollup-work) with base layer smart contracts to send inputs to the DApp back-end, deposit assets, and process outputs (execute vouchers and validate notices).
+In a typical Cartesi dApp architecture, the dApp back-end is running on a Cartesi Node and the dApp front-ends [interact](../../overview.md#how-does-a-rollup-work) with base layer smart contracts to send inputs to the dApp back-end, deposit assets, and process outputs (execute vouchers and validate notices).
 
-To interact with an Ethereum-compatible blockchain, the DApp front-end needs to connect to a blockchain node using [Ethereum's JSON-RPC API](https://ethereum.org/en/developers/docs/apis/json-rpc/). JSON-RPC is a lightweight remote procedure call (RPC) protocol that uses JSON as the data exchange format, and Ethereum has specified an API using this protocol to allow clients to communicate with Ethereum-compatible nodes.
+To interact with an Ethereum-compatible blockchain, the dApp front-end needs to connect to a blockchain node using [Ethereum's JSON-RPC API](https://ethereum.org/en/developers/docs/apis/json-rpc/). JSON-RPC is a lightweight remote procedure call (RPC) protocol that uses JSON as the data exchange format, and Ethereum has specified an API using this protocol to allow clients to communicate with Ethereum-compatible nodes.
 
 There are two ways in which clients can interact with Ethereum-compatible nodes using the JSON-RPC API:
 
@@ -26,7 +26,7 @@ There are two ways in which clients can interact with Ethereum-compatible nodes 
 
 Ethereum testnets are testing environments or networks that are designed to test the features and capabilities of the Ethereum blockchain without using real ETH and incurring any actual cost. There are several testnets available that simulate the Ethereum Mainnet. [Sepolia](https://sepolia.etherscan.io/) is one of such testnets.
 
-A _faucet_ is a service that provides users with free testnet Ether tokens (SepoliaETH in the case of Sepolia). These tokens can then be used to test and develop DApps on the testnet. There are several faucets available for Sepolia. You may try [Alchemy's free Sepolia Faucet](https://sepoliafaucet.com/).
+A _faucet_ is a service that provides users with free testnet Ether tokens (SepoliaETH in the case of Sepolia). These tokens can then be used to test and develop dApps on the testnet. There are several faucets available for Sepolia. You may try [Alchemy's free Sepolia Faucet](https://sepoliafaucet.com/).
 
 #### Mainnet
 
@@ -106,9 +106,9 @@ The following example is a cast command that shows how to get the number of inpu
 cast call <INPUTBOX_ADDRESS> getNumberOfInputs(address) <DAPP_ADDRESS>
 ```
 
-Here we are using the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call) command to call the `getNumberOfInputs` function of the [`InputBox`](./sol-input.md) smart contract. We pass in the address of the InputBox contract (`<INPUTBOX_ADDRESS>`) and the function name with DApp address (`<DAPP_ADDRESS>`) as parameters.
+Here we are using the [`cast call`](https://book.getfoundry.sh/reference/cast/cast-call) command to call the `getNumberOfInputs` function of the [`InputBox`](./sol-input.md) smart contract. We pass in the address of the InputBox contract (`<INPUTBOX_ADDRESS>`) and the function name with dApp address (`<DAPP_ADDRESS>`) as parameters.
 
-The result of this JSON-RPC call is the number of inputs for the DApp, returned as an unsigned integer in decimal format.
+The result of this JSON-RPC call is the number of inputs for the dApp, returned as an unsigned integer in decimal format.
 
 
 #### JSON-RPC call using Cast to perform a write operation
@@ -123,17 +123,17 @@ cast send <INPUTBOX_ADDRESS> addInput(_dapp,_input) <DAPP_ADDRESS> <INPUT>
 
 Where:
 * `<INPUTBOX_ADDRESS>` must be replaced with the address of the InputBox contract
-* `<DAPP_ADDRESS>` must be replaced with the address of the DApp
+* `<DAPP_ADDRESS>` must be replaced with the address of the dApp
 * `<INPUT>` must be replaced with the bytes of the payload being sent as input
 
 
 
 ## Cartesi Rollups Smart Contracts
 
-[**InputBox**](./sol-input.md): global contract where inputs for all DApps are submitted.
+[**InputBox**](./sol-input.md): global contract where inputs for all dApps are submitted.
 
-[**CartesiDApp**](./sol-output.md): contract instantiated for each DApp (i.e., each DApp has its own `CartesiDApp` address), used for processing outputs, such as executing vouchers and validating notices.
+[**CartesiDApp**](./sol-output.md): contract instantiated for each dApp (i.e., each dApp has its own `CartesidApp` address), used for processing outputs, such as executing vouchers and validating notices.
 
-[**Portals**](../portals): global contracts with methods for depositing assets, so that they can be managed by Cartesi DApps.
+[**Portals**](../portals): global contracts with methods for depositing assets, so that they can be managed by Cartesi dApps.
 
-[**Relays**](../relays): global contracts with methods for securely relaying on-chain information to DApp back-ends, such as the DApp smart contract address.
+[**Relays**](../relays): global contracts with methods for securely relaying on-chain information to dApp back-ends, such as the dApp smart contract address.

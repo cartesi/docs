@@ -10,7 +10,7 @@ As explained in the [previous section](./overview.md), the Cartesi Rollups frame
 
 ### Cartesi Nodes
 
-As explained before, [Cartesi Machines](/machine/intro) provide DApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the layer-1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
+As explained before, [Cartesi Machines](/machine/intro) provide dApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the layer-1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
 
 The _Cartesi Node_ is the layer-2 component that consists of the combination of the Cartesi Machine and this middleware, and can be used by anyone interested in the rollups state of affairs. Put simply, Cartesi Nodes play a role that is similar to what Geth does on the Ethereum ecosystem: execution and retrieval of information.
 
@@ -34,15 +34,15 @@ A _notice_ is an arbitrary payload in bytes that is submitted by the off-chain m
 
 ### Reports
 
-A _report_ is an application log or a piece of diagnostic information. Like a notice, it is represented by an arbitrary payload in bytes. However, a report is never associated with a proof and is thus not suitable for trustless interactions such as on-chain processing or convincing independent third parties of DApp outcomes. Reports are commonly used to indicate processing errors or to retrieve application information for display.
+A _report_ is an application log or a piece of diagnostic information. Like a notice, it is represented by an arbitrary payload in bytes. However, a report is never associated with a proof and is thus not suitable for trustless interactions such as on-chain processing or convincing independent third parties of dApp outcomes. Reports are commonly used to indicate processing errors or to retrieve application information for display.
 
 ### Portals
 
-The Portals, as the name suggests, are used to teleport assets from the Ethereum blockchain to DApps running on Cartesi Rollups. Once deposited, those layer-1 assets gain a representation in layer-2 and are owned, there, by whomever the depositor assigned them to. After being teleported, layer-2 assets can be moved around in a significantly cheaper way, using simple inputs that are understood by the Linux logic.
+The Portals, as the name suggests, are used to teleport assets from the Ethereum blockchain to dApps running on Cartesi Rollups. Once deposited, those layer-1 assets gain a representation in layer-2 and are owned, there, by whomever the depositor assigned them to. After being teleported, layer-2 assets can be moved around in a significantly cheaper way, using simple inputs that are understood by the Linux logic.
 
-When an asset is deposited, the Portal contract sends an input to the DApp’s inbox, describing the type of asset, amount, receivers, and some data the depositor might want the DApp to read. This allows deposits and instructions to be sent as a single layer-1 interaction. One could think of a Portal as a bank account, owned by the off-chain machine.
+When an asset is deposited, the Portal contract sends an input to the dApp’s inbox, describing the type of asset, amount, receivers, and some data the depositor might want the dApp to read. This allows deposits and instructions to be sent as a single layer-1 interaction. One could think of a Portal as a bank account, owned by the off-chain machine.
 
-Anyone can deposit assets there but only the DApp — through its CartesiDApp contract — can decide on withdrawals. The withdrawal process is quite simple from a user perspective. An input is sent requesting a withdrawal, which gets processed and interpreted off-chain. If everything is correct, the machine creates a voucher destined to the appropriate Portal contract, ordering and finalizing that withdrawal request. Currently, we support the following types of assets:
+Anyone can deposit assets there but only the dApp — through its CartesiDApp contract — can decide on withdrawals. The withdrawal process is quite simple from a user perspective. An input is sent requesting a withdrawal, which gets processed and interpreted off-chain. If everything is correct, the machine creates a voucher destined to the appropriate Portal contract, ordering and finalizing that withdrawal request. Currently, we support the following types of assets:
 
 - [Ether (ETH)](./api/json-rpc/portals/EtherPortal.md)
 - [ERC-20](./api/json-rpc/portals/ERC20Portal.md)

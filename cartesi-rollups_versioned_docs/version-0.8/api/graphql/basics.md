@@ -2,13 +2,13 @@
 
 In order to query the state of a Cartesi Rollups instance, front-end clients can make use of a [GraphQL API](https://graphql.org/learn/) that is exposed by the [Cartesi Nodes](../../components.md#cartesi-nodes).
 
-Essentially, this API allows any client to retrieve outputs produced by a DApp's back-end, and to link those outputs to the corresponding inputs that triggered them. Outputs can generally come in the form of [vouchers](./objects/voucher.mdx), [notices](./objects/notice.mdx) and [reports](./objects/report.mdx), and allow clients to both receive DApp updates and enforce consequences on the base layer, such as asset transfers.
+Essentially, this API allows any client to retrieve outputs produced by a dApp's back-end, and to link those outputs to the corresponding inputs that triggered them. Outputs can generally come in the form of [vouchers](./objects/voucher.mdx), [notices](./objects/notice.mdx) and [reports](./objects/report.mdx), and allow clients to both receive dApp updates and enforce consequences on the base layer, such as asset transfers.
 
 The Cartesi Rollups state query API is fully specified by its [GraphQL schema](https://github.com/cartesi/rollups/blob/main/offchain/data/graphql/typeDefs.graphql). This specification is displayed in a more accessible and navigable way in the next sections.
 
 ## Queries
 
-A number of [top-level queries](../queries) are available in order to retrieve rollup information for a Cartesi DApp.
+A number of [top-level queries](../queries) are available in order to retrieve rollup information for a Cartesi dApp.
 
 In GraphQL, submitting a query involves defining parameters for filtering the entries to retrieve, and also specifying the data fields of interest, which can span any objects linked to the entry being retrieved.
 
@@ -79,10 +79,10 @@ Finally, you may also read the article [Schemas and Types](https://graphql.org/l
 
 ## GraphQL Playground
 
-The [GraphQL Playground](https://github.com/graphql/graphql-playground) is a graphical, interactive, in-browser GraphQL IDE. It is a tool that can be used to explore the contents of a GraphQL server, and as such can be used to navigate the inputs and outputs of a Cartesi Rollups DApp.
+The [GraphQL Playground](https://github.com/graphql/graphql-playground) is a graphical, interactive, in-browser GraphQL IDE. It is a tool that can be used to explore the contents of a GraphQL server, and as such can be used to navigate the inputs and outputs of a Cartesi Rollups dApp.
 
 For local development, the interactive playground is accessible at [http://localhost:4000/graphql](http://localhost:4000/graphql).
 
 :::note
-You can check the list of deployed DApps with the associated GraphQL endpoint URLs by navigating to the section [Explore our DApps](../../build-dapps/run-dapp.md#explore-our-dapps).
+You can check the list of deployed dApps with the associated GraphQL endpoint URLs by navigating to the section [Explore our dApps](../../build-dapps/run-dapp.md#explore-our-dapps).
 :::

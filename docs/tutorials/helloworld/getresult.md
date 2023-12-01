@@ -68,4 +68,4 @@ contract HelloWorld {
 }
 ```
 
-In the [next section](../helloworld/deploy-run.md), we'll finally deploy and run our DApp, and then we'll explore actual examples of return values for the `getResult` method.
+In the [next section](../helloworld/deploy-run.md), we'll finally deploy and run our dApp, and then we'll explore actual examples of return values for the `getResult` method.

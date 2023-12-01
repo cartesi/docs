@@ -6,15 +6,15 @@ tags: [build, quickstart, dapps, developer]
 
 This article explains how to build and interact with a minimalistic [Cartesi Rollups](../overview.md) application.
 
-By the end of this tutorial, you will learn how to run a simple existing DApp written in *Python*, called **Echo-Python**.
+By the end of this tutorial, you will learn how to run a simple existing dApp written in *Python*, called **Echo-Python**.
 
 :::note
-You can inspect the [full code of the Echo Python DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python/echo.py) in Cartesi's public Github repository.
+You can inspect the [full code of the Echo Python dApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python/echo.py) in Cartesi's public Github repository.
 :::
 
 ## Overview
 
-The Echo-Python DApp simply copies (or "echoes") each input received as a corresponding output [notice](../components.md#notices). The DApp's back-end is written in *Python*, and its front-end is a [simple console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) written in *Typescript* that can be executed from a terminal.
+The Echo-Python dApp simply copies (or "echoes") each input received as a corresponding output [notice](../components.md#notices). The dApp's back-end is written in *Python*, and its front-end is a [simple console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) written in *Typescript* that can be executed from a terminal.
 
 The **Quick Start** guide consists of 5 main steps:
 1. [Installing](#installing)
@@ -38,7 +38,7 @@ To build the `echo-python` example:
 git clone https://github.com/cartesi/rollups-examples.git
 cd rollups-examples
 ```
-2. Navigate to the DApp example directory by running the following command:
+2. Navigate to the dApp example directory by running the following command:
 ```shell
 cd echo-python
 ```
@@ -55,11 +55,11 @@ If you do not see `linux/riscv64` in the platforms list, install QEMU by running
 apt install qemu-user-static
 ```
 
-QEMU is a generic and open source machine emulator and virtualizer that will be used by Docker to emulate RISCV instructions to build a Cartesi Machine for your DApp. 
+QEMU is a generic and open source machine emulator and virtualizer that will be used by Docker to emulate RISCV instructions to build a Cartesi Machine for your dApp. 
 
 After installing QEMU, the platform `linux/riscv64` should appear in the platforms list.
 
-4. Build the Echo DApp:
+4. Build the Echo dApp:
 ```shell
 docker buildx bake --load
 ```
@@ -67,7 +67,7 @@ docker buildx bake --load
 ## Running
 
 
-To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the DApp's back-end logic. 
+To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the dApp's back-end logic. 
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml up
@@ -98,26 +98,26 @@ docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
 Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
 :::
 
-## Interacting with the DApp
+## Interacting with the dApp
 
-There are two ways to interact with the DApp:
+There are two ways to interact with the dApp:
 
 * [Locally](#interacting-locally-with-the-dapp)
 * [Remotely](#interacting-with-remotely-deployed-dapps)
 
 ### Frontend-console application
 
-With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with the Echo DApp.
+With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with the Echo dApp.
 
-Every Rollups DApp gets an address on the base layer when it's deployed. The following is needed to send inputs to a DApp:
+Every Rollups dApp gets an address on the base layer when it's deployed. The following is needed to send inputs to a dApp:
 
 * Gateway URL to the intended chain
 * Cartesi Rollups InputBox contract address
 * Appropriate account with sufficient funds for submitting transactions to the network
 
-### Interacting locally with the DApp
+### Interacting locally with the dApp
 
-With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with the Echo DApp by following the steps:
+With the infrastructure in place, you can use our [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with the Echo dApp by following the steps:
 
 1. Open a separate terminal window
 2. From the rollups-examples base directory, navigate to the `frontend-console` one:
@@ -129,7 +129,7 @@ cd frontend-console
 yarn
 yarn build
 ```
-4. Send an input to the current locally deployed DApp:
+4. Send an input to the current locally deployed dApp:
 
 ```shell
 yarn start input send --payload "Hello, Cartesi."
@@ -146,23 +146,23 @@ After completing all the steps above, you should get a response with the payload
 `"Hello, Cartesi."`
 
 :::tip
-You can run the Cartesi Rollups environment locally in [host mode](./overview.md#host-mode). Please follow the guide on [how to run DApp back-ends in Host Mode](./dapp-host-mode.md), but before that make sure to [shutdown the current running environment](#how-to-shutdown-the-environment).
+You can run the Cartesi Rollups environment locally in [host mode](./overview.md#host-mode). Please follow the guide on [how to run dApp back-ends in Host Mode](./dapp-host-mode.md), but before that make sure to [shutdown the current running environment](#how-to-shutdown-the-environment).
 :::
 
 :::note
 For more information about the `frontend-console` application and its options, please check the [frontend-console documentation](https://github.com/cartesi/rollups-examples/tree/main/frontend-console/README.md).
 :::
 
-### Interacting with remotely deployed DApps
+### Interacting with remotely deployed dApps
 
-The **Echo DApp** example is already deployed on a public blockchain test network called [Goerli](https://goerli.net/), which is an Ethereum testnet.
+The **Echo dApp** example is already deployed on a public blockchain test network called [Goerli](https://goerli.net/), which is an Ethereum testnet.
 
 You can use the same [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) to interact with it, as described below.
 :::note
 Please refer to the [frontend-console documentation](https://github.com/cartesi/rollups-examples/blob/main/frontend-console/README.md) for details on how to use it to [send inputs](https://github.com/cartesi/rollups-examples/blob/main/frontend-console/README.md#sending-inputs), [list notices](https://github.com/cartesi/rollups-examples/blob/main/frontend-console/README.md#listing-notices-vouchers-and-reports) and [deposit ERC-20 tokens](https://github.com/cartesi/rollups-examples/blob/main/frontend-console/README.md#depositing-erc-20-tokens).
 :::
 
-The following steps describe how to send an input to the Echo DApp instance that is already deployed on Goerli:
+The following steps describe how to send an input to the Echo dApp instance that is already deployed on Goerli:
 
 1. Open a separate terminal window
 2. Navigate to the `frontend-console` directory:
@@ -190,27 +190,27 @@ export RPC_URL=https://eth-goerli.alchemyapi.io/v2/<Replace_This_With_Your_Alche
 ```shell
 yarn start input send --payload "Hello, Cartesi." --dapp echo-python
 ```
-10. Query the layer-2 Cartesi Node for notices produced by the DApp:
+10. Query the layer-2 Cartesi Node for notices produced by the dApp:
 ```shell
 yarn start notice list --url https://echo-python.goerli.rollups.staging.cartesi.io/graphql
 ```
 11. You should get a response with the payload of the notice: `"Hello, Cartesi."`
 
 :::tip
-As shown in the last step (number 10), to query the layer-2 Cartesi Node for DApp outputs, you will need to specify the URL of its GraphQL endpoint. You can find other existing examples endpoints in the [DApp table below](#explore-our-dapps).
+As shown in the last step (number 10), to query the layer-2 Cartesi Node for dApp outputs, you will need to specify the URL of its GraphQL endpoint. You can find other existing examples endpoints in the [dApp table below](#explore-our-dapps).
 :::
 
-### Explore our DApps
+### Explore our dApps
 
-You can find several Cartesi DApp [examples on GitHub](https://github.com/cartesi/rollups-examples#examples), such as the following:
+You can find several Cartesi dApp [examples on GitHub](https://github.com/cartesi/rollups-examples#examples), such as the following:
 
-| DApp Name      | DApp Deployment Status on Goerli Testnet | GraphQL endpoint URL |
+| dApp Name      | dApp Deployment Status on Goerli Testnet | GraphQL endpoint URL |
 |----------------|------------------------------------------|----------------------|
 | [Echo Python](https://github.com/cartesi/rollups-examples/blob/main/echo-python)   |  Yes                                      |  [https://echo-python.goerli.rollups.staging.cartesi.io/graphql](https://echo-python.goerli.rollups.staging.cartesi.io/graphql) |
 | [Echo C++](https://github.com/cartesi/rollups-examples/blob/main/echo-cpp)       |  Yes                                       | [https://echo-cpp.goerli.rollups.staging.cartesi.io/graphql](https://echo-cpp.goerli.rollups.staging.cartesi.io/graphql) |
 | [Echo Rust](https://github.com/cartesi/rollups-examples/blob/main/echo-rust)      | No                                       | - |
 | [Echo Lua](https://github.com/cartesi/rollups-examples/blob/main/echo-lua)       | Yes                                      | [https://echo-lua.goerli.rollups.staging.cartesi.io/graphql](https://echo-lua.goerli.rollups.staging.cartesi.io/graphql) |
-| [Echo JS DApp](https://github.com/cartesi/rollups-examples/blob/main/echo-js)   | Yes                                      | [https://echo-js.goerli.rollups.staging.cartesi.io/graphql](https://echo-js.goerli.rollups.staging.cartesi.io/graphql)
+| [Echo JS dApp](https://github.com/cartesi/rollups-examples/blob/main/echo-js)   | Yes                                      | [https://echo-js.goerli.rollups.staging.cartesi.io/graphql](https://echo-js.goerli.rollups.staging.cartesi.io/graphql)
 | [Echo Low-Level](https://github.com/cartesi/rollups-examples/blob/main/echo-low-level) | Yes                                      | [https://echo-low-level.goerli.rollups.staging.cartesi.io/graphql](https://echo-low-level.goerli.rollups.staging.cartesi.io/graphql) |
 | [Converter](https://github.com/cartesi/rollups-examples/blob/main/converter)   | No                                       | - |
 | [Calculator](https://github.com/cartesi/rollups-examples/blob/main/calculator) | No                                       | _ |

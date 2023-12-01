@@ -10,11 +10,11 @@ title: GPG Verify machine
 
 ## Final execution script
 
-Shifting our focus from understanding and testing GPG usage to an actual implementation of our DApp's Cartesi Machine, we must first of all acknowledge that our final machine cannot simply read the document and signature data from [pre-defined files](../gpg-verify/ext2-gpg.md#test-data). Rather, those two pieces of data should be read as separate input drives, so that they can be submitted in a smart contract request.
+Shifting our focus from understanding and testing GPG usage to an actual implementation of our dApp's Cartesi Machine, we must first of all acknowledge that our final machine cannot simply read the document and signature data from [pre-defined files](../gpg-verify/ext2-gpg.md#test-data). Rather, those two pieces of data should be read as separate input drives, so that they can be submitted in a smart contract request.
 
 Unfortunately, as noted in the [Cartesi Machine section](/machine/host/cmdline#flash-drives), there is no direct way of generating `ext2` file-systems in a reproducible way, so these input drives have to be *raw*. This means that, instead of being mounted as file-systems, the drives' contents are to be read and written directly as plain bytes. Therefore, since we do not know in advance the exact size of the document or the signature, we will choose to *encode* the document and signature content lengths in the first four bytes of the input drives' data, so that we can correctly read the binary contents.
 
-Aside from that, when writing the previous section's [Cartesi Machine example](../gpg-verify/ext2-gpg.md#cartesi-machine-with-gpg), you may have noticed that specifying all those command instructions as a single line was quite cumbersome. Thus, to tackle that issue and better organize our DApp, we will specify our final machine's commands in a separate *shell script* file, and include that file in the `ext2` file-system that our machine is already using to have access to the public key.
+Aside from that, when writing the previous section's [Cartesi Machine example](../gpg-verify/ext2-gpg.md#cartesi-machine-with-gpg), you may have noticed that specifying all those command instructions as a single line was quite cumbersome. Thus, to tackle that issue and better organize our dApp, we will specify our final machine's commands in a separate *shell script* file, and include that file in the `ext2` file-system that our machine is already using to have access to the public key.
 
 Back in the `gpg-verify/cartesi-machine` directory, create a file called `gpg-verify.sh` and make it executable:
 

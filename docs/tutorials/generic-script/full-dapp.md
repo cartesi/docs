@@ -1,10 +1,10 @@
 ---
-title: Full Generic Script DApp
+title: Full Generic Script dApp
 ---
 
 :::note Section Goal
 - create Generic Script smart contract
-- deploy and run the Generic Script DApp
+- deploy and run the Generic Script dApp
 - test computation of various scripts written in Python, Lua or shell script
 :::
 
@@ -82,7 +82,7 @@ print(payload)\n\
 }
 ```
 
-When compared to the smart contract of the [Calculator DApp](../calculator/full-dapp.md#calculator-smart-contract), it can be readily noted that this implementation is virtually identical to that one. Indeed, the only relevant changes are the `templateHash`, which obviously must identify a different machine template, and the input data, now represented by a `script` variable that specifies generic code instead of a mathematical expression. This illustrates how the Cartesi Compute API provides a useful and practical abstraction for instantiating complex computations from on-chain code, with the majority of the complexity and heavy-lifting moved off-chain.
+When compared to the smart contract of the [Calculator dApp](../calculator/full-dapp.md#calculator-smart-contract), it can be readily noted that this implementation is virtually identical to that one. Indeed, the only relevant changes are the `templateHash`, which obviously must identify a different machine template, and the input data, now represented by a `script` variable that specifies generic code instead of a mathematical expression. This illustrates how the Cartesi Compute API provides a useful and practical abstraction for instantiating complex computations from on-chain code, with the majority of the complexity and heavy-lifting moved off-chain.
 
 
 ## Deployment and execution
@@ -115,7 +115,7 @@ Then, use Hardhat to compile and deploy the contract:
 npx hardhat deploy --network localhost
 ```
 
-Finally, let's hop inside Hardhat's console to play with our DApp. Recalling that we have two named accounts in our development environment, we can instantiate our Generic Script computation with the following commands:
+Finally, let's hop inside Hardhat's console to play with our dApp. Recalling that we have two named accounts in our development environment, we can instantiate our Generic Script computation with the following commands:
 
 ```javascript
 npx hardhat console --network localhost
@@ -189,7 +189,7 @@ After some time, we can query and print the result using the new computation's i
 
 Which is indeed the result of `20!`. As a side note, although in this tutorial we directly updated our smart contract with a new script definition, it is always a good idea to test computations off-chain first, as we did for the Python code in the [previous section](../generic-script/cartesi-machine.md).
 
-Needless to say, other scripts and interpreters can be used. As a matter of fact, any *shell script* can be executed (i.e., using `/bin/sh` as the interpreter), which means that all the previous tutorial computations can also be performed by our generic machine. For instance, the same computation performed by our [Calculator DApp](../calculator/full-dapp.md) can be specified by defining our `script` variable as:
+Needless to say, other scripts and interpreters can be used. As a matter of fact, any *shell script* can be executed (i.e., using `/bin/sh` as the interpreter), which means that all the previous tutorial computations can also be performed by our generic machine. For instance, the same computation performed by our [Calculator dApp](../calculator/full-dapp.md) can be specified by defining our `script` variable as:
 
 ```javascript
 bytes script = "#!/bin/sh\n\

@@ -4,13 +4,13 @@ tags: [sdk, tutorials, low-level developer]
 ---
 
 :::note Section Goal
-- create and initialize project for the Dogecoin Hash Cartesi Compute DApp
+- create and initialize project for the Dogecoin Hash Cartesi Compute dApp
 - understand technical details and motivations for computing proof-of-work hashes of Dogecoin and Litecoin block headers
 :::
 
 ## Introduction
 
-When considering Cartesi Compute DApps, some of the most interesting use cases consist of finding solutions to computational challenges that hinder potentially useful smart contracts.
+When considering Cartesi Compute dApps, some of the most interesting use cases consist of finding solutions to computational challenges that hinder potentially useful smart contracts.
 
 In this context, this tutorial will show how an Ethereum smart contract can run the [scrypt](https://www.tarsnap.com/scrypt.html) algorithm to compute the proof-of-work hash for a given Dogecoin (or Litecoin) block header. The resulting hash can then be compared to the block's target difficulty so as to verify whether that block is indeed valid.
 
@@ -21,7 +21,7 @@ As always, the complete implementation of this project is also available on the 
 
 To better illustrate the project's implementation, this tutorial will first go into some technical details of the Dogecoin and Litecoin specification.
 
-First of all, it should be noted that Dogecoin is actually based on Litecoin, and that both use the same algorithm for hashing blocks. For that reason, this DApp can be used to validate block header data from both of those chains.
+First of all, it should be noted that Dogecoin is actually based on Litecoin, and that both use the same algorithm for hashing blocks. For that reason, this dApp can be used to validate block header data from both of those chains.
 
 The specification for Litecoin's block hashing algorithm can be found [here](https://litecoin.info/index.php/Block_hashing_algorithm), and it defines that the data to be hashed should be composed of the concatenation of 6 fields available in the block header:
 
@@ -44,10 +44,10 @@ target = 01cd2d << 8*(1a - 3) = 1cd2d0000000000000000000000000000000000000000000
 
 This way, for that specific `Bits` field value, the corresponding block will only be considered valid if the computed proof-of-work hash represents a value that is smaller than the above target of `1cd2d00..00`.
 
-In this tutorial, we will implement a DApp that allows a smart contract to produce this hash, even though the `scrypt` algorithm is way too expensive to be executed on-chain. For that reason, the contract will use Cartesi Compute to run this computation off-chain, taking advantage of the well-established  [libscrypt](https://github.com/technion/libscrypt) library written in C.
+In this tutorial, we will implement a dApp that allows a smart contract to produce this hash, even though the `scrypt` algorithm is way too expensive to be executed on-chain. For that reason, the contract will use Cartesi Compute to run this computation off-chain, taking advantage of the well-established  [libscrypt](https://github.com/technion/libscrypt) library written in C.
 
 
-## Initializing the DApp project
+## Initializing the dApp project
 
 Now that we have a better understanding of the project's goal, let's start our implementation by initializing the project's structure, as we have done for the [other tutorials](../helloworld/create-project.md):
 

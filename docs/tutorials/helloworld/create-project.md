@@ -1,20 +1,20 @@
 ---
-title: Creating basic DApp
+title: Creating basic dApp
 tags: [sdk, tutorials, low-level developer]
 ---
 
 :::note Section Goal
-- create and initialize a basic project for a Cartesi Compute DApp
+- create and initialize a basic project for a Cartesi Compute dApp
 :::
 
 ## Introduction
 
-In this section we are going to start building our first Cartesi Compute DApp. This *Hello World DApp* will consist of a trivial application, which simply instantiates an off-chain computation that always returns "Hello World!". A complete implementation of this example can be found in the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/helloworld).
+In this section we are going to start building our first Cartesi Compute dApp. This *Hello World dApp* will consist of a trivial application, which simply instantiates an off-chain computation that always returns "Hello World!". A complete implementation of this example can be found in the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/helloworld).
 
-In order to build this DApp, we will start by creating a basic project with a smart contract capable of using the Cartesi Compute contract already deployed to the [Cartesi Compute SDK Environment](../compute-env.md).
+In order to build this dApp, we will start by creating a basic project with a smart contract capable of using the Cartesi Compute contract already deployed to the [Cartesi Compute SDK Environment](../compute-env.md).
 
 
-## Initializing the DApp project
+## Initializing the dApp project
 
 First of all, create a directory called `helloworld` and `cd` into it
 
@@ -35,7 +35,7 @@ At this point, we should have the following directory structure:
 └───helloworld
 ```
 
-Now, let's add dependencies to our project using Yarn. First, add a dependency to the Cartesi Compute SDK itself through the ` @cartesi/compute-sdk` package. This will allow our DApp code to refer to the Cartesi Compute smart contract and instantiate computations:
+Now, let's add dependencies to our project using Yarn. First, add a dependency to the Cartesi Compute SDK itself through the ` @cartesi/compute-sdk` package. This will allow our dApp code to refer to the Cartesi Compute smart contract and instantiate computations:
 
 ```bash
 yarn add @cartesi/compute-sdk@1.3.0
@@ -92,11 +92,11 @@ const config: HardhatUserConfig = {
 export default config;
 ```
 
-This configuration specifies the DApp's dependency on `@cartesi/compute-sdk` artifacts and deployment scripts, as well as the usage of the Cartesi Compute Environment's Ethereum node running on `localhost:8545`. We also specify the Solidity version that our DApp will use (`0.7.4`) and a few named accounts that will be useful later on for deploying the contracts and testing the application.
+This configuration specifies the dApp's dependency on `@cartesi/compute-sdk` artifacts and deployment scripts, as well as the usage of the Cartesi Compute Environment's Ethereum node running on `localhost:8545`. We also specify the Solidity version that our dApp will use (`0.7.4`) and a few named accounts that will be useful later on for deploying the contracts and testing the application.
 
 ##  Creating the smart contract
 
-At this point, we can start effectively writing our DApp's smart contract in Solidity.
+At this point, we can start effectively writing our dApp's smart contract in Solidity.
 
 In order to do that, first create a directory called `contracts`:
 

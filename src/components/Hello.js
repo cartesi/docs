@@ -35,7 +35,7 @@ export const Hello = () => {
             Cartesi: Application-specific rollups with a Linux runtime.
           </p>
           <p className="text-2xl text-center">
-            Cartesi provides your DApp with a dedicated CPU and rollup, enhancing computational scalability while preserving decentralization, security, and censorship resistance.
+            Cartesi provides your dApp with a dedicated CPU and rollup, enhancing computational scalability while preserving decentralization, security, and censorship resistance.
           </p>
           <p className="text-2xl text-center">
             With the Cartesi Virtual Machine, you can use familiar libraries, languages and tooling, moving beyond the EVM.

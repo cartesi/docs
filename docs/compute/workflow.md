@@ -3,16 +3,16 @@ title: Putting Things Together
 tags: [maintain, sdk, low-level developer, quickstart]
 ---
 
-To better understand how Cartesi Compute can be used, imagine the following simple Cartesi DApp with one claimer and one challenger. The DApp can be a skill-based game where players place their bets and challenge each other for the highest score over the blockchain. The winner takes the pot.
+To better understand how Cartesi Compute can be used, imagine the following simple Cartesi dApp with one claimer and one challenger. The dApp can be a skill-based game where players place their bets and challenge each other for the highest score over the blockchain. The winner takes the pot.
 
-Typically, a blockchain DApp is composed of a set of smart contracts and an off-chain client that interacts with these contracts through HTTP calls sent to the blockchain node, that is either locally or remotely hosted.
+Typically, a blockchain dApp is composed of a set of smart contracts and an off-chain client that interacts with these contracts through HTTP calls sent to the blockchain node, that is either locally or remotely hosted.
 
-DApps that use Cartesi Compute will work in a similar fashion, with two small differences:
+dApps that use Cartesi Compute will work in a similar fashion, with two small differences:
 
-- The DApp smart contracts will request computations to Cartesi Compute contract through a simple smart contract API;
-- The off-chain DApp client will feed any additional data to the Cartesi Compute Node through an HTTP request.
+- The dApp smart contracts will request computations to Cartesi Compute contract through a simple smart contract API;
+- The off-chain dApp client will feed any additional data to the Cartesi Compute Node through an HTTP request.
 
-Imagine the hypothetical skill-base game suggested above. In the game, Alice and Bob are two players that will challenge each other, following some procedure that is specified by the DApp. The DApp smart contracts should implement a betting logic, collect players' deposits and finally make a single transaction call to Cartesi Compute smart contract.
+Imagine the hypothetical skill-base game suggested above. In the game, Alice and Bob are two players that will challenge each other, following some procedure that is specified by the dApp. The dApp smart contracts should implement a betting logic, collect players' deposits and finally make a single transaction call to Cartesi Compute smart contract.
 
 The instantiation of the Cartesi Compute contract distributes the roles of claimer and challenger to the nodes representing Alice and Bob and specify the Cartesi Machine that runs a program that is capable of computing their scores and determining the winner, henceforth called the *verification program*.
 

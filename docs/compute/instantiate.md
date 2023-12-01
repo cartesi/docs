@@ -38,7 +38,7 @@ After this period is expired, their adversary is allowed to claim a timeout, eff
 The first entry in this list will be selected by Cartesi Compute as the *claimer* node, meaning that it will represent the party responsible for submitting the result of the computation. More specifically, the claimer node will collect the content of each drive specified in the machine, give Merkle-tree proofs to update the machine hash after the insertion of each of these drives, execute the machine, and finally submit its output to the blockchain.
 Meanwhile, the remaining parties become *challenger* nodes. After seeing the output submitted by the claimer, the challengers are offered the opportunity to either endorse or challenge the result of the computation.
 In case of a disagreement among the parties, the nodes representing each of them will automatically engage in a dispute resolution algorithm that allows the honest party to prove the fraud of any opponent.
-In the end, the DApp is informed of the result of the dispute.
+In the end, the dApp is informed of the result of the dispute.
 
 **`_noChallengeDrive`** indicates whether any of the drives specified in the machine can have their contents' data availability challenged by the challenger nodes during the computation. When `_noChallengeDrive` is set to true, it means that all drives specified in the machine are considered to have their data available at all times during the computation.
 

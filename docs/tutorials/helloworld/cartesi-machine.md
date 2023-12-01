@@ -10,9 +10,9 @@ title: Hello World machine
 
 ## Introduction
 
-Now that we have [built our basic DApp project](../helloworld/create-project.md), we will shift our focus towards the off-chain part of the DApp.
+Now that we have [built our basic dApp project](../helloworld/create-project.md), we will shift our focus towards the off-chain part of the dApp.
 
-As we said before, our DApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template](/machine/intro)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
+As we said before, our dApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a *[reproducible and verifiable Cartesi Machine template](/machine/intro)*, so that on-chain code can safely execute the off-chain computation. This process is described below.
 
 ## Cartesi Playground
 
@@ -45,7 +45,7 @@ Running as root
 %tutorials.helloworld.run
 ```
 
-## Cartesi Machine for the Hello World DApp
+## Cartesi Machine for the Hello World dApp
 
 The machine instantiated above runs fine, however in order to make it usable by on-chain code we'll need to make a couple of improvements.
 
@@ -53,7 +53,7 @@ First of all, instead of *executing* the computation, we must specify the Cartes
 
 Other than that, we must specify the machine in such a way that the computation output can be actually *read* by the Cartesi Compute node. This means that, instead of simply printing "Hello World!" to the screen, we need to specify that the string should be written to an *output drive*, from which the Cartesi Compute node will be able to pick it up.
 
-With these ideas in mind, let us look at a full-fledged Cartesi Machine specification that can be used by our Cartesi Compute DApp:
+With these ideas in mind, let us look at a full-fledged Cartesi Machine specification that can be used by our Cartesi Compute dApp:
 
 ```bash
 docker run \

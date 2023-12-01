@@ -1,16 +1,16 @@
 ---
-title: Full Dogecoin Hash DApp
+title: Full Dogecoin Hash dApp
 ---
 
 :::note Section Goal
 - create Dogecoin Hash smart contract with appropriate input data
-- deploy and run the DApp to verify the validity of real Dogecoin and Litecoin block headers
+- deploy and run the dApp to verify the validity of real Dogecoin and Litecoin block headers
 :::
 
 
 ## Dogecoin Hash smart contract
 
-Having successfully built a [Cartesi Machine capable of computing proof-of-work hashes for Dogecoin blocks](../dogecoin-hash/cartesi-machine.md), we can finally turn our attention to the final piece of our DApp. In other words, it is now time to implement the smart contract that will instantiate our machine's computation via Cartesi Compute.
+Having successfully built a [Cartesi Machine capable of computing proof-of-work hashes for Dogecoin blocks](../dogecoin-hash/cartesi-machine.md), we can finally turn our attention to the final piece of our dApp. In other words, it is now time to implement the smart contract that will instantiate our machine's computation via Cartesi Compute.
 
 Recalling the strategy already used for the [previous tutorials](../calculator/full-dapp.md), this smart contract will itself define the adequate input data, which in this case corresponds to information about a real Dogecoin block header. It will then provide methods to instantiate the hash computation using Cartesi Compute, and finally retrieve the corresponding result.
 
@@ -30,7 +30,7 @@ contract DogecoinHash {
 
     bytes32 templateHash = 0x%tutorials.dogecoin-hash.hash-full;
 
-    // this DApp has an ext2 file-system (at 0x9000..) and an input drives (at 0xa000), so the output will be at 0xb000..
+    // this dApp has an ext2 file-system (at 0x9000..) and an input drives (at 0xa000), so the output will be at 0xb000..
     uint64 outputPosition = 0xb000000000000000;
     // output hash has 32 bytes
     uint8 outputLog2Size = 5;
@@ -135,7 +135,7 @@ After creating that file, simply execute the following command:
 npx hardhat deploy --network localhost
 ```
 
-Once this process completes, we are finally ready to start playing with our fully implemented DApp. To do that, we'll use Hardhat's console to instantiate the hash computation using the development environment's addresses for `alice` and `bob`:
+Once this process completes, we are finally ready to start playing with our fully implemented dApp. To do that, we'll use Hardhat's console to instantiate the hash computation using the development environment's addresses for `alice` and `bob`:
 
 ```javascript
 npx hardhat console --network localhost
@@ -178,7 +178,7 @@ bytes4 difficultyBits = 0x1a01cd2d;
 bytes4 nonce = 0x84dd91a8;
 ```
 
-Once our contract file has been saved, we can still use our opened Hardhat console session to recompile and redeploy our DApp. To do that, execute the following command:
+Once our contract file has been saved, we can still use our opened Hardhat console session to recompile and redeploy our dApp. To do that, execute the following command:
 
 ```javascript
 > await run("deploy")
@@ -216,4 +216,4 @@ Indeed, the computed hash `0x00..00ae7e1..58` can be seen to be smaller than the
 
 ## Conclusion
 
-With this tutorial, we have seen how it is possible to easily build a powerful and useful real-world DApp using Cartesi Compute. The core take away idea is that tasks that are too complex or too computationally intensive to be executed on-chain (in this case, running the `scrypt` algorithm) can be moved to a special *reproducible* and *verifiable* off-chain environment using Cartesi Machines. This environment allows DApp developers to make use of all kinds of resources normally available for centralized applications, which in this example consisted of writing arbitrary C code using the pre-existing well-established `libscrypt` library.
+With this tutorial, we have seen how it is possible to easily build a powerful and useful real-world dApp using Cartesi Compute. The core take away idea is that tasks that are too complex or too computationally intensive to be executed on-chain (in this case, running the `scrypt` algorithm) can be moved to a special *reproducible* and *verifiable* off-chain environment using Cartesi Machines. This environment allows dApp developers to make use of all kinds of resources normally available for centralized applications, which in this example consisted of writing arbitrary C code using the pre-existing well-established `libscrypt` library.
