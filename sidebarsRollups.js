@@ -204,11 +204,6 @@ module.exports = {
         },
         {
           type: "link",
-          label: "Deployment samples",
-          href: "https://github.com/cartesi/rollups-deployment",
-        },
-        {
-          type: "link",
           label: "Releases",
           href: "https://github.com/cartesi/rollups/releases",
         },
