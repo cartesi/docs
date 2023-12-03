@@ -100,4 +100,4 @@ _`_index` MUST be in the interval `[0,n)` where `n` is the number of
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| [0] | bytes32 | The hash of the input at the provided index in the DApp's input box |
+| [0] | bytes32 | The hash of the input at the provided index in the dApp's input box |

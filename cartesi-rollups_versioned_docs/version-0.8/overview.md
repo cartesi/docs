@@ -6,7 +6,7 @@ tags: [learn, rollups, dapps, low-level developer]
 
 The combination of [an Optimistic Rollups framework](https://github.com/cartesi/rollups) and [the Cartesi Machine Emulator](https://github.com/cartesi/machine-emulator) enables the development of smart contracts and dApps using any package or library that is available for Linux. This allows developers to break free from the scalability limitations of the Ethereum Virtual Machine (EVM), and brings the rise of a new blockchain era to handle real-life and complex use-cases.
 
-A DApp running on Cartesi Rollups consists of the following main components:
+A dApp running on Cartesi Rollups consists of the following main components:
 
 * [**Cartesi Rollups**](./components.md), a set of on-chain and off-chain components that implement an Optimistic Rollups solution and provide the general framework for building dApps.
 * [**Cartesi Machine**](/machine/intro), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's [back-end](./dapp-architecture.md#back-end) is executed.
