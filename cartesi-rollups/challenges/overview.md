@@ -17,11 +17,11 @@ Cartesi Rollups are shaped by the contributions and collaborative efforts of its
 
 ### Challenge
 
-In contrast to the majority of proposed Layer 2 rollup solutions, which primarily focus on enhancing transaction throughput and minimizing fees (essentially facilitating more transactions at a lower cost), the current **v1.0** release is dedicated to expanding the *computational capacity* (as opposed to *transaction scalability* alone) to allow the creation of decentralized applications that were simply not possible to build before.
+In contrast to the majority of proposed Layer 2 rollup solutions, which primarily focus on enhancing transaction throughput and minimizing fees (essentially facilitating more transactions at a lower cost), the current **v1.0** release is dedicated to expanding the _computational capacity_ (as opposed to _transaction scalability_ alone) to allow the creation of decentralized applications that were simply not possible to build before.
 
 ### Solution strategy
 
-A potential path that can be considered to achieve transaction scalability is the introduction of an *Aggregator*, often associated with a Sequencer. This component might enhance the overall efficiency and capacity of the rollup solution. Moreover, an exciting area for exploration is deploying Cartesi on top of other Layer-2 solutions like Optimism and Arbitrum, potentially expanding the options for enhanced transaction scalability.
+A potential path that can be considered to achieve transaction scalability is the introduction of an _Aggregator_, often associated with a Sequencer. This component might enhance the overall efficiency and capacity of the rollup solution. Moreover, an exciting area for exploration is deploying Cartesi on top of other L2 solutions like Optimism and Arbitrum, potentially expanding the options for enhanced transaction scalability.
 
 ## Disputes
 
@@ -31,7 +31,7 @@ The **1.0** release lacks support for dispute resolution.
 
 ### Solution strategy
 
-From its inception, the Cartesi framework has the potential to integrate dispute resolution features. Cartesi's community-driven iterations have leveraged dispute resolution for [Compute](/compute/overview), which may be interesting to investigate further after other features and improvements, like the Microarchitecture enhancement and recent research on NxN dispute resolution, have been fully addressed. 
+From its inception, the Cartesi framework has the potential to integrate dispute resolution features. Cartesi's community-driven iterations have leveraged dispute resolution for [Compute](/compute/overview), which may be interesting to investigate further after other features and improvements, like the Microarchitecture enhancement and recent research on NxN dispute resolution, have been fully addressed.
 
 ## Large data as input
 
@@ -51,7 +51,7 @@ Additionally, potential future exploration might focus on integrating Rollups wi
 
 ### Challenge
 
-The current **v1.0** release still faces a lot of hurdles with composability, which is the ability of multiple dApps to directly interact with each other, for example by having one application directly send inputs to another one without going through the base layer. This would enable seamless communication and data exchange between dApps. The most important use case for this feature would be to allow users to easily and cheaply transfer assets from one dApp to another. 
+The current **v1.0** release still faces a lot of hurdles with composability, which is the ability of multiple dApps to directly interact with each other, for example by having one application directly send inputs to another one without going through the base layer. This would enable seamless communication and data exchange between dApps. The most important use case for this feature would be to allow users to easily and cheaply transfer assets from one dApp to another.
 
 ### Solution strategy
 

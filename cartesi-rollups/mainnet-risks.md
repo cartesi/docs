@@ -4,7 +4,7 @@ title: Cartesi Rollups - Understanding the risks
 tags: [learn, rollups, dapps, low-level developer]
 ---
 
-Cartesi Rollups is an app-specific execution environment that can be deployed as a L2, L3, or as sovereign rollups. It's not your typical layer-1 blockchain, so the idea of a "Mainnet launch" is a bit different. What actually goes to mainnet are the dApps built using Cartesi! And with the launch of the Honeypot dApp, Cartesi Rollups is officially Mainnet-ready (beta)!
+Cartesi Rollups is an app-specific execution environment that can be deployed as a L2, L3, or as sovereign rollups. It's not your typical L1 blockchain, so the idea of a "Mainnet launch" is a bit different. What actually goes to mainnet are the dApps built using Cartesi! And with the launch of the Honeypot dApp, Cartesi Rollups is officially Mainnet-ready (beta)!
 
 ## What do I need to know about Mainnet Beta?
 

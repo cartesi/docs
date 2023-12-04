@@ -10,9 +10,7 @@ This article explains how to build and interact with a minimalistic [Cartesi Rol
 
 [Sunodo](https://docs.sunodo.io/) is a Rollups-as-a-Service platform and a set of tools for a simplified development of Cartesi dApps.
 
-By the end of this tutorial, you will learn how to create and run a simple existing dApp written in *Python*.
-
-
+By the end of this tutorial, you will learn how to create and run a simple existing dApp written in _Python_.
 
 The dApp continuously polls a specified rollup server for requests, logs them, and responds with a pre-defined `accept` status for both `advance` and `inspect` request types.
 
@@ -22,7 +20,6 @@ The **Quick Start** guide consists of 4 main steps:
 2. [Building](#building-with-sunodo)
 3. [Running](#running-with-sunodo)
 4. [Interacting](#interacting-with-sunodo)
-
 
 Make sure you have [installed all the necessary requirements](./requirements.md) before proceeding.
 
@@ -87,19 +84,17 @@ sunodo run
 
 ### Interacting with Sunodo
 
-You can run an [inspect](../sending-requests.md) call by accessing the Inspect server at `http://localhost:8080/inspect/`. 
+You can run an [inspect](../sending-requests.md) call by accessing the Inspect server at `http://localhost:8080/inspect/`.
 
 For other calls, access the [GraphQL playground](https://github.com/graphql/graphql-playground) at `http://localhost:8080/graphql` and follow our [GraphQL API guide](../api/graphql/basics.md) to interact with the dApp.
 
 ## Run an example application from the `rollups-examples` repository
 
-
-By the end of this tutorial, you will learn how to run a simple existing dApp written in *Python*, called **Echo-Python**.
+By the end of this tutorial, you will learn how to run a simple existing dApp written in _Python_, called **Echo-Python**.
 
 :::warning
 This guide is tailored for Ubuntu or similar Linux distributions. Adjustments might be required for other operating systems.
 :::
-
 
 :::note
 You can inspect the [full code of the Echo Python dApp](https://github.com/cartesi/rollups-examples/blob/main/echo-python/echo.py) in Cartesi's public Github repository.
@@ -107,27 +102,30 @@ You can inspect the [full code of the Echo Python dApp](https://github.com/carte
 
 ## Overview
 
-The Echo-Python dApp simply copies (or "echoes") each input received as a corresponding output [notice](../components.md#notices). The dApp's back-end is written in *Python*, and its front-end is a [simple console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) written in *Typescript* that can be executed from a terminal.
+The Echo-Python dApp simply copies (or "echoes") each input received as a corresponding output [notice](../components.md#notices). The dApp's back-end is written in _Python_, and its front-end is a [simple console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) written in _Typescript_ that can be executed from a terminal.
 
 The **Quick Start** guide consists of 5 main steps:
+
 1. [Installing](#installing)
 2. [Building](#building)
 3. [Running](#running)
 4. [Interacting](#interacting-with-the-dapp)
 
-
 ## Installing
 
-Follow the [manual setup](./requirements.md) to  make sure you have installed all the necessary requirements locally.
+Follow the [manual setup](./requirements.md) to make sure you have installed all the necessary requirements locally.
 
 ## Building
 
 1. Clone the [cartesi/rollups-examples](https://github.com/cartesi/rollups-examples) Github repository, and `cd` into it:
+
 ```shell
 git clone https://github.com/cartesi/rollups-examples.git
 cd rollups-examples
 ```
+
 2. Navigate to the dApp example directory by running the following command:
+
 ```shell
 cd echo-python
 ```
@@ -149,6 +147,7 @@ QEMU is a generic and open source machine emulator and virtualizer that will be 
 After installing QEMU, the platform `linux/riscv64` should appear in the platforms list.
 
 4. Build the Echo dApp:
+
 ```shell
 docker buildx bake --load
 ```
@@ -159,9 +158,7 @@ If you have PostgreSQL and Redis already installed on your system, you may encou
 
 ## Running
 
-
-To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi layer-2 node executing the dApp's back-end logic.
-
+To run the application, you can start an environment that includes a local blockchain with the Cartesi smart contracts deployed, as well as a Cartesi L2 node executing the dApp's back-end logic.
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml up
@@ -189,9 +186,8 @@ docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
 ```
 
 :::note
-Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
+Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v` command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
 :::
-
 
 ## Interacting with the dApp
 
@@ -201,9 +197,9 @@ With the infrastructure in place, you can use our [frontend-console application]
 
 Every Rollups dApp gets an address on the base layer when it's deployed. The following is needed to send inputs to a dApp:
 
-* Gateway URL to the intended chain
-* Cartesi Rollups InputBox contract address
-* Appropriate account with sufficient funds for submitting transactions to the network
+- Gateway URL to the intended chain
+- Cartesi Rollups InputBox contract address
+- Appropriate account with sufficient funds for submitting transactions to the network
 
 ### Interacting locally with the dApp
 
@@ -211,14 +207,18 @@ The following steps describe how to send an input to the Echo dApp instance that
 
 1. Open a separate terminal window
 2. From the rollups-examples base directory, navigate to the `frontend-console` one:
+
 ```shell
 cd frontend-console
 ```
+
 3. Build the frontend console application:
+
 ```shell
 yarn
 yarn build
 ```
+
 4. Send an input to the current locally deployed dApp:
 
 ```shell
@@ -242,7 +242,6 @@ You can run the Cartesi Rollups environment locally in [host mode](./overview.md
 :::note
 For more information about the `frontend-console` application and its options, please check the [frontend-console documentation](https://github.com/cartesi/rollups-examples/tree/main/frontend-console/README.md).
 :::
-
 
 ## Explore our dApps
 

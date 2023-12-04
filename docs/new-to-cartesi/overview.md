@@ -1,10 +1,19 @@
 ---
 id: overview
 title: Cartesi
-tags: [quickstart, beginner, low-level developer, researcher, learn, build, maintain]
+tags:
+  [
+    quickstart,
+    beginner,
+    low-level developer,
+    researcher,
+    learn,
+    build,
+    maintain,
+  ]
 ---
 
-**Cartesi**, is a layer-2 platform for the development and deployment of scalable decentralized applications. It offers a Linux operating system coupled with a blockchain infrastructure, which allows dApps to be developed in familiar programming languages like Python without the need to write Solidity code.
+**Cartesi**, is a L2 platform for the development and deployment of scalable decentralized applications. It offers a Linux operating system coupled with a blockchain infrastructure, which allows dApps to be developed in familiar programming languages like Python without the need to write Solidity code.
 
 ## Limitations, develop with Cartesi!
 
@@ -14,9 +23,9 @@ Today there is a large number of developers and companies who want to enter the 
 
 Here comes the mission of Cartesi:
 
-* To offer a full operating system for blockchain applications.
-* To solve the [scalability problem](../new-to-cartesi/scalability.md) using Optimistic Rollups along with the Cartesi Machine to support complex computations.
-* To develop dApps of arbitrary complexity using mainstream development tools and software stacks, and have all of it sit on top of established blockchain networks such as Ethereum, Polygon, Avalanche and BNB Smart Chain.
+- To offer a full operating system for blockchain applications.
+- To solve the [scalability problem](../new-to-cartesi/scalability.md) using Optimistic Rollups along with the Cartesi Machine to support complex computations.
+- To develop dApps of arbitrary complexity using mainstream development tools and software stacks, and have all of it sit on top of established blockchain networks such as Ethereum, Polygon, Avalanche and BNB Smart Chain.
 
 Cartesi provides lower gas and crypto costs. Additionally, if you are a web developer and you want to build a simple application as your first step in blockchain development, with Cartesi you will not be forced to use a specific language, such as Solidity for Ethereum, nor be forced to reinvent the wheel because a given functionality or math library is not available.
 
@@ -28,9 +37,9 @@ You can think of Cartesi Rollups as a special operating system that makes your l
 
 ## See Also
 
-* [Why Cartesi Rollups is Unique](https://medium.com/cartesi/scalable-smart-contracts-on-ethereum-built-with-mainstream-software-stacks-8ad6f8f17997)
-* [Rollups On-chain](https://medium.com/cartesi/rollups-on-chain-d749744a9cb3)
-* [Cartesi Node](https://medium.com/cartesi/rollups-cartesi-node-3000b3ffec74)
-* [Testnet](https://medium.com/cartesi/cartesi-rollups-rollout-testnet-40c90d10c2f1)
-* [Transaction Manager](https://medium.com/cartesi/cartesi-rollups-rollout-transaction-manager-4a49af15d6b9)
-* [State Fold](https://medium.com/cartesi/state-fold-cfe5f4d79639)
+- [Why Cartesi Rollups is Unique](https://medium.com/cartesi/scalable-smart-contracts-on-ethereum-built-with-mainstream-software-stacks-8ad6f8f17997)
+- [Rollups On-chain](https://medium.com/cartesi/rollups-on-chain-d749744a9cb3)
+- [Cartesi Node](https://medium.com/cartesi/rollups-cartesi-node-3000b3ffec74)
+- [Testnet](https://medium.com/cartesi/cartesi-rollups-rollout-testnet-40c90d10c2f1)
+- [Transaction Manager](https://medium.com/cartesi/cartesi-rollups-rollout-transaction-manager-4a49af15d6b9)
+- [State Fold](https://medium.com/cartesi/state-fold-cfe5f4d79639)
