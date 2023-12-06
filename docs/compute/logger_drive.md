@@ -6,7 +6,7 @@ tags: [maintain, sdk, logger, api, low-level developer]
 A relevant limitation of the Cartesi Machines as they have been described until now is the size of their input drives.
 More precisely, even though the provided drives have no exact size limitations, in practice there is a cap to the amount of data that can be used, which is given by the maximum transaction size allowed by the blockchain itself (e.g., by the Ethereum network).
 
-In other words, without using the *Logger Feature* presented here, there is a practical limitation to the amount of data that can be used to perform a computation using Cartesi Compute. As such, this section describes how to use this service in order to submit much larger drives to the machine, without paying a prohibitively large transaction cost.
+In other words, without using the _Logger Feature_ presented here, there is a practical limitation to the amount of data that can be used to perform a computation using Cartesi Compute. As such, this section describes how to use this service in order to submit much larger drives to the machine, without paying a prohibitively large transaction cost.
 
 Recall the definition of the `Drive` structure:
 
@@ -27,21 +27,21 @@ Let's take a look at the parameters that are mandatory for using the Logger Serv
 
 - **`needsLogger`** is a Boolean value that enables the Logger Service, effectively indicating whether Cartesi Compute should attempt to retrieve the input drive's data from there;
 
-- **`loggerRootHash`** corresponds to the *Merkle root hash* of the drive contents, which serves as an identifier for retrieving the data from the Logger Service.
+- **`loggerRootHash`** corresponds to the _Merkle root hash_ of the drive contents, which serves as an identifier for retrieving the data from the Logger Service.
 
-The basic concept of the Logger Service is to split the drive's contents into *chunks*, so that the total drive size is no longer limited by the network's block capacity. On top of that, on Ethereum these chunks of data are also stored as *call data*, meaning that the data does not remain within the EVM's regular storage, but rather inside the read-only transaction history. This strategy ensures that less resources are spent even though the information is also kept in the chain forever, thus allowing for a cheaper way of sending input data for a computation.
+The basic concept of the Logger Service is to split the drive's contents into _chunks_, so that the total drive size is no longer limited by the network's block capacity. On top of that, on Ethereum these chunks of data are also stored as _call data_, meaning that the data does not remain within the EVM's regular storage, but rather inside the read-only transaction history. This strategy ensures that less resources are spent even though the information is also kept in the chain forever, thus allowing for a cheaper way of sending input data for a computation.
 
 ## The Logger contract
 
-In practice, an off-chain component (e.g., a Cartesi Compute node or an application client) will be responsible for splitting up the original input data and sending it over to the *Cartesi Logger smart contract* deployed on the blockchain.
+In practice, an off-chain component (e.g., a Cartesi Compute node or an application client) will be responsible for splitting up the original input data and sending it over to the _Cartesi Logger smart contract_ deployed on the blockchain.
 
-For each data chunk or *page*, a Merkle hash will be computed considering a tree with 64-bit (8-byte) leaves, which corresponds to the word size of the RISC-V Cartesi Machine. This ensures that a Merkle proof can be used to validate any given sequence of data within the drive. It is of course mandatory that each data page can fit into the blockchain's size limits.
+For each data chunk or _page_, a Merkle hash will be computed considering a tree with 64-bit (8-byte) leaves, which corresponds to the word size of the RISC-V Cartesi Machine. This ensures that a Merkle proof can be used to validate any given sequence of data within the drive. It is of course mandatory that each data page can fit into the blockchain's size limits.
 
 In the end, a Merkle root hash is computed for the complete drive considering all its data pages, which is then called the drive's `loggerRootHash`.
 
 The on-chain Logger contract is thus composed of two basic methods:
 
-- **`calculateMerkleRootFromData`** stores a given chunk of data, yielding both a Merkle root hash and an *index* identifier for the data page;
+- **`calculateMerkleRootFromData`** stores a given chunk of data, yielding both a Merkle root hash and an _index_ identifier for the data page;
 
 - **`calculateMerkleRootFromHistory`** returns the final Merkle root hash for a given set of data pages previously stored by calling `calculateMerkleRootFromData`.
 
@@ -51,7 +51,7 @@ Notice that, being stored as call data, the drive contents are actually inaccess
 
 The Cartesi Compute node includes an off-chain service that communicates with the on-chain Logger contract. When the drive's data is uploaded to the Logger Service before instantiating the computation, the Cartesi Compute off-chain component simply uses the `loggerRootHash` specified for the drive to download the corresponding data from the blockchain. It then locally computes the Merkle root hash of the retrieved content and compares it with the advertised hash, in order to validate the integrity of the data.
 
-Cartesi Compute also supports a distinct setup, in which the drive's contents are first stored locally by the node acting as the drive's *provider* (i.e., the party responsible for the drive's contents, as discussed in the [previous section](../compute/provider.md)). As such, when instantiating a computation Cartesi Compute can automatically detect if the required input data is not yet available on-chain, and in this case it will notify the provider's node asking for it to be uploaded. The entire process is transparent to the user and DApp developer, ensuring that all participating nodes have guaranteed access to the input contents.
+Cartesi Compute also supports a distinct setup, in which the drive's contents are first stored locally by the node acting as the drive's _provider_ (i.e., the party responsible for the drive's contents, as discussed in the [previous section](../compute/provider.md)). As such, when instantiating a computation Cartesi Compute can automatically detect if the required input data is not yet available on-chain, and in this case it will notify the provider's node asking for it to be uploaded. The entire process is transparent to the user and dApp developer, ensuring that all participating nodes have guaranteed access to the input contents.
 
 ## Integrated IPFS support
 
@@ -59,8 +59,8 @@ Another important feature of Cartesi Compute's Logger Service corresponds to the
 
 - **`loggerIpfsPath`** identifies an object path in IPFS that remotely stores the same data identified by `loggerRootHash`.
 
-Although IPFS is a decentralized storage framework, it is vital to understand that it cannot by itself offer the security guarantees necessary for validating an off-chain computation. This is known as the *data availability problem*, and basically boils down to the fact that with IPFS the on-chain code cannot ensure that all participating parties have proper access to the data. In other words, a malicious party could always simply remove access to the IPFS file and prevent other parties from performing a computation.
+Although IPFS is a decentralized storage framework, it is vital to understand that it cannot by itself offer the security guarantees necessary for validating an off-chain computation. This is known as the _data availability problem_, and basically boils down to the fact that with IPFS the on-chain code cannot ensure that all participating parties have proper access to the data. In other words, a malicious party could always simply remove access to the IPFS file and prevent other parties from performing a computation.
 
-Cartesi Compute provides a solution to this problem by always providing the Logger Service as a *fallback* mechanism. As such, if any party challenges the availability of IPFS-stored data, Cartesi Compute will notify the drive's provider node and ask it to submit it to the blockchain. Once the data is on-chain, there can no longer be any debate over its availability. If the provider node fails to upload the data, the computation will fail and the provider will be blamed. The DApp developer can decide about the appropriate consequences of a failure of this kind.
+Cartesi Compute provides a solution to this problem by always providing the Logger Service as a _fallback_ mechanism. As such, if any party challenges the availability of IPFS-stored data, Cartesi Compute will notify the drive's provider node and ask it to submit it to the blockchain. Once the data is on-chain, there can no longer be any debate over its availability. If the provider node fails to upload the data, the computation will fail and the provider will be blamed. The dApp developer can decide about the appropriate consequences of a failure of this kind.
 
-On the other hand, in the vast majority of cases in which the parties cooperate, the drive's contents will indeed be available on IPFS and all nodes will be capable of validating the computation with that data. This way, mass usage of large input drives for Cartesi Compute DApps becomes viable and cost-effective in practice, opening the door for a much wider range of applications.
+On the other hand, in the vast majority of cases in which the parties cooperate, the drive's contents will indeed be available on IPFS and all nodes will be capable of validating the computation with that data. This way, mass usage of large input drives for Cartesi Compute dApps becomes viable and cost-effective in practice, opening the door for a much wider range of applications.

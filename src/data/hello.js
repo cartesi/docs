@@ -3,17 +3,17 @@ export const hello = [
     title: "Rollups",
     href: "/cartesi-rollups",
     description:
-      "Browse our DApp tutorials, API references, and more to learn how to build on Cartesi.",
+      "Browse our dApp tutorials, API references, and more to learn how to build on Cartesi.",
     bgColor: "#E1EBFF",
   },
-    // {
-    //     title: "Compute",
-    //     href: "/cartesi-compute",
-    //     description:
-    //       "Powerful off-chain computations without compromising decentralization.",
-    //     bgColor: "#2D5ABE",
-    //     color: "#fff",
-    //   },
+  // {
+  //     title: "Compute",
+  //     href: "/cartesi-compute",
+  //     description:
+  //       "Powerful off-chain computations without compromising decentralization.",
+  //     bgColor: "#2D5ABE",
+  //     color: "#fff",
+  //   },
   {
     title: "Machine",
     href: "/cartesi-machine",
@@ -23,10 +23,11 @@ export const hello = [
   {
     title: "Staking",
     href: "/earn-ctsi",
-    description: "View and analyse assets, transactions and balances on the Cartesi network.",
+    description:
+      "View and analyse assets, transactions and balances on the Cartesi network.",
     bgColor: "#FEE959",
   },
-/*
+  /*
   {
     title: "Get Help",
     href: "/#qa",

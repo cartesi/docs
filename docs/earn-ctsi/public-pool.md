@@ -12,7 +12,7 @@ This guide provides more details for individuals or organizations who intend to 
 
 Individual pool users staking requests may take up to an additional 6 hours, and unstaking requests may take up to an additional 48 hours to complete. The pool performs aggregate staking and unstaking requests to the PoS and at the moment a user issues their individual request, the pool is probably in the middle of waiting for a previously issued staking/unstaking request to be completed. As it would happen with individual users, issuing an overlapping staking/unstaking request would restart the maturation/unlocking counter associated with the pool stake.
 
-**Noether** is a layer-2 solution. It rewards block producers with CTSI, and requires ETH to pay for layer 1 transaction costs. The fees for block production are paid by the pool manager. Users pay ETH fees to initiate staking, unstaking and withdrawal requests, but the pool also needs to pay ETH fees to fulfill those requests (as the users interface with the pool smart contract and the pool then has to fulfill the requests on the PoS smart contracts).
+**Noether** is a L2 solution. It rewards block producers with CTSI, and requires ETH to pay for L2 transaction costs. The fees for block production are paid by the pool manager. Users pay ETH fees to initiate staking, unstaking and withdrawal requests, but the pool also needs to pay ETH fees to fulfill those requests (as the users interface with the pool smart contract and the pool then has to fulfill the requests on the PoS smart contracts).
 The ETH to fund these transactions must be deposited in the wallet managed by the Noether node, created and managed by the pool manager. As a pool manager, one must keep track of the node’s wallet balance and replenish it as needed to make sure the node always has enough funds to operate correctly.
 
 ## Prerequisites
@@ -20,20 +20,23 @@ The ETH to fund these transactions must be deposited in the wallet managed by th
 Any organization or individual is free to create and operate a pool. There are no restrictions or special requirements, anyone can create a pool as long as they are willing to pay the necessary ETH fees to create and manage the pool.
 
 The main prerequisites are:
-* Set up Ethereum node as the Cartesi node connects to the Ethereum network through a standard gateway. The Ethereum node works with any standard JSON-RPC Ethereum provider. It's important to use a stable and reliable provider, you can use [Infura](https://infura.io/) or [Alchemy](https://www.alchemy.com/) as Ethereum gateway
-* Install Docker enginer, you can download it for [macOS](https://docs.docker.com/desktop/mac/install/) or for [Windows](https://docs.docker.com/desktop/windows/install/)
+
+- Set up Ethereum node as the Cartesi node connects to the Ethereum network through a standard gateway. The Ethereum node works with any standard JSON-RPC Ethereum provider. It's important to use a stable and reliable provider, you can use [Infura](https://infura.io/) or [Alchemy](https://www.alchemy.com/) as Ethereum gateway
+- Install Docker enginer, you can download it for [macOS](https://docs.docker.com/desktop/mac/install/) or for [Windows](https://docs.docker.com/desktop/windows/install/)
 
 ## Commission
 
 Pool operators have two main responsibilities:
+
 1. Make sure the Noether node is online and works properly 24x7
 2. Pay the Ethereum fees that are necessary for block production and also maintenance operations like staking, unstaking and withdrawing from the Staking contract, on behalf of the users that delegate to their pool.
 
 The first decision the pool owner has to make when creating a pool is choosing the commission model. Once created and configured, the pool manager cannot change the selected commission model.
 
 There are two models available:
-* Flat rate commission
-* Gas-based commission
+
+- Flat rate commission
+- Gas-based commission
 
 :::note
 After you have selected and created the commission model, the commission value cannot be increased, but can be decreased at any time. This allows for fine adjustments of the economics of the pool, while preserving the public commitment not to increase the commission value.
@@ -56,17 +59,21 @@ A gas based commission model takes into account the gas costs of producing the b
 
 A pool is configured to charge 400,000 gas. Upon producing a block this cost is “converted” to CTSI to calculate the commission. First it’s multiplied by the gas price at that moment, provided by a ChainLink oracle. Then it’s converted to CTSI by using an ETH/CTSI pair price provided by Uniswap V2.
 Consider the following scenario:
+
 ```
 gas price = 20 Gwei. 1 ETH = 4,000 CTSI
 400,000 gas x 20 Gwei = 0.008 ETH
 0.008 ETH x 4000 = 32 CTSI
 ```
+
 Now consider that the gas price surges to 400 Gwei, and the CTSI price goes up in relation to ETH such that
+
 ```
 1 ETH = 3200 CTSI
 400,000 gas x 400 Gwei = 0.16 ETH
 0.16 ETH x 3,200 = 512 CTSI
 ```
+
 In the first example (20 Gwei gas price) the commission for that block is 1.1% (32/2,900) considering a reward of 2,900 CTSI. In the second example (400 Gwei gas price) the commission for the block is 17.6% (512/2,900) for the same reward amount. Compared to a flat rate pool with a 10% rate, for instance, the gas based commission can have a lower or higher fee depending on the gas price, CTSI price, and ETH price as shown in the previous examples.
 No matter the selected commission model, the Cartesi Explorer will show the actual historical commission taken by each pool, as well as an estimate of the commission for the next block. Users can make an informed decision about which pool to choose based on the commission and reliability of pool operators (more about it below).
 

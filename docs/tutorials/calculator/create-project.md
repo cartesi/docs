@@ -4,23 +4,23 @@ tags: [sdk, tutorials, low-level developer]
 ---
 
 :::note Section Goal
-- create and initialize project for the Calculator Cartesi Compute DApp
-:::
+
+- create and initialize project for the Calculator Cartesi Compute dApp
+  :::
 
 ## Introduction
 
-In creating our [basic Hello World DApp](../helloworld/create-project.md), we were able to understand the basic structure of a Cartesi Compute DApp, including how to build an appropriate Cartesi Machine, instantiate its computation from a smart contract via the Cartesi Compute API, and actually deploying and running the DApp on a test network.
+In creating our [basic Hello World dApp](../helloworld/create-project.md), we were able to understand the basic structure of a Cartesi Compute dApp, including how to build an appropriate Cartesi Machine, instantiate its computation from a smart contract via the Cartesi Compute API, and actually deploying and running the dApp on a test network.
 
-As interesting as it is, this first application serves more as an introduction to the basic concepts of the Cartesi Compute SDK, since the computation performed is actually not very useful, always yielding a constant string "Hello World!" as its result. In order to build really useful DApps, we will now introduce the usage of *input drives*, which allows us to parameterize the computation performed by the machine and thus open up a wide range of interesting possibilities.
+As interesting as it is, this first application serves more as an introduction to the basic concepts of the Cartesi Compute SDK, since the computation performed is actually not very useful, always yielding a constant string "Hello World!" as its result. In order to build really useful dApps, we will now introduce the usage of _input drives_, which allows us to parameterize the computation performed by the machine and thus open up a wide range of interesting possibilities.
 
-In this section, we will start building a *Calculator DApp* capable of evaluating an arbitrary mathematical expression. As such, this application actually enables smart contracts to perform calculations that would otherwise be very hard to perform on-chain.
+In this section, we will start building a _Calculator dApp_ capable of evaluating an arbitrary mathematical expression. As such, this application actually enables smart contracts to perform calculations that would otherwise be very hard to perform on-chain.
 
 As before, the complete implementation of this example can be found in the [Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/calculator).
 
+## Initializing the dApp project
 
-## Initializing the DApp project
-
-Following the same procedure that was laid out for the [Hello World DApp](../helloworld/create-project.md), we will start by creating a directory called `calculator`. Inside that directory, we will already create three subdirectories called `contracts`, `deploy` and `cartesi-machine`:
+Following the same procedure that was laid out for the [Hello World dApp](../helloworld/create-project.md), we will start by creating a directory called `calculator`. Inside that directory, we will already create three subdirectories called `contracts`, `deploy` and `cartesi-machine`:
 
 ```bash
 mkdir calculator

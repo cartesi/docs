@@ -4,8 +4,9 @@ tags: [sdk, tutorials, low-level developer]
 ---
 
 :::note Section Goal
+
 - ensure all dependencies necessary for running the tutorials are installed
-:::
+  :::
 
 In order to run the tutorials, we must first make sure that the packages listed in this section are all installed and working in your system.
 
@@ -27,6 +28,7 @@ Now, let's also install the `wget` tool for non-interactive download of files fr
 ```bash
 sudo apt-get install wget
 ```
+
 ## Docker
 
 [Docker](https://docker.io) is a widely used platform for users to build, run, and share applications with containers, and is a great way of distributing the Cartesi Compute SDK and all of its dependencies.
@@ -64,7 +66,7 @@ docker --version
 
 ## Docker Compose
 
-[Docker Compose](https://docs.docker.com/compose/) is a tool that allows us to start multiple Docker containers simultaneously and set up communication between them. With Compose, we can emulate the entire [Cartesi Compute SDK environment](../tutorials/compute-env.md) (both of all off-chain and on-chain components, including the local "testnet" blockchain itself), and thus test our Cartesi Compute DApps using only your physical development machine.
+[Docker Compose](https://docs.docker.com/compose/) is a tool that allows us to start multiple Docker containers simultaneously and set up communication between them. With Compose, we can emulate the entire [Cartesi Compute SDK environment](../tutorials/compute-env.md) (both of all off-chain and on-chain components, including the local "testnet" blockchain itself), and thus test our Cartesi Compute dApps using only your physical development machine.
 
 Follow the [official instructions for installing Compose](https://docs.docker.com/compose/install/) from the Docker website. To make the official site display the instructions for installing on Ubuntu, click on the `Linux` tab under the `Install Compose` section. A subsection named `Install Compose on Linux systems` should appear, and you can follow those. The Docker Compose Linux installation instructions boil down to running the following commands.
 

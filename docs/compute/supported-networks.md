@@ -3,9 +3,9 @@ title: Supported networks
 tags: [maintain, sdk, networks, low-level developer]
 ---
 
-Broadly speaking, the Cartesi layer-2 platform architecture should be perceived as *blockchain-agnostic*, given that in principle any network could use Cartesi Machines to move complex computations off-chain without compromising on decentralization.
+Broadly speaking, the Cartesi L2 platform architecture should be perceived as _blockchain-agnostic_, given that in principle any network could use Cartesi Machines to move complex computations off-chain without compromising on decentralization.
 
-In practice, in order to effectively run, a Cartesi-powered DApp needs to call an *existing API* that is available on-chain, so as to instantiate the desired computation off-chain. As described in the preceding sections, the Cartesi Compute SDK provides such an [on-chain API](../compute/api.md), thus enabling real DApps to leverage on Cartesi.
+In practice, in order to effectively run, a Cartesi-powered dApp needs to call an _existing API_ that is available on-chain, so as to instantiate the desired computation off-chain. As described in the preceding sections, the Cartesi Compute SDK provides such an [on-chain API](../compute/api.md), thus enabling real dApps to leverage on Cartesi.
 
 At the moment, the Cartesi Compute API only supports the Ethereum Virtual Machine, and as such can only be deployed on Ethereum and EVM-compatible networks.
 

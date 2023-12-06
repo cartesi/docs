@@ -3,14 +3,14 @@ title: Deploying and running
 ---
 
 :::note Section Goal
-- deploy Hello World smart contract
-- run DApp using `hardhat console` and interpret results
-:::
 
+- deploy Hello World smart contract
+- run dApp using `hardhat console` and interpret results
+  :::
 
 ## Introduction
 
-By now, we have completed the implementation of our Hello World DApp. However, in order to effectively run it, we still need to *deploy* it to an Ethereum network that includes the Cartesi Compute smart contract. To that end, we'll make use of the local development network already running within our [Cartesi Compute SDK Environment](../compute-env.md).
+By now, we have completed the implementation of our Hello World dApp. However, in order to effectively run it, we still need to _deploy_ it to an Ethereum network that includes the Cartesi Compute smart contract. To that end, we'll make use of the local development network already running within our [Cartesi Compute SDK Environment](../compute-env.md).
 
 ## Deployment
 
@@ -46,7 +46,7 @@ export default func;
 
 This TypeScript code uses the `hardhat-deploy` plugin to publish our contract to the local Ethereum network specified by the [`hardhat.config.ts`](../helloworld/create-project.md#initializing-the-dapp-project) file. Note that Hardhat allows this script to easily retrieve the Cartesi Compute contract already deployed there, so as to pass its address as a parameter to the `deploy` method. Hardhat will use this parameter as an argument when calling the [HelloWorld's constructor we defined before](../helloworld/create-project.md#creating-the-smart-contract). As a final observation, we specify the `deployer` named account (also defined in `hardhat.config.ts`) to be used for submitting the deployment transaction.
 
-With this all set up, move back to the project's home directory and execute the following command to deploy our DApp:
+With this all set up, move back to the project's home directory and execute the following command to deploy our dApp:
 
 ```
 npx hardhat deploy --network localhost
@@ -54,9 +54,9 @@ npx hardhat deploy --network localhost
 
 This will effectively compile our smart contract and deploy it to the local network. Please [refer to the documentation](https://github.com/wighawag/hardhat-deploy#readme) for more information about using the `hardhat-deploy` plugin.
 
-## Running the DApp
+## Running the dApp
 
-Now that we have everything in place, we can finally try out our Hello World DApp. To do so, we'll start Hardhat's console by running:
+Now that we have everything in place, we can finally try out our Hello World dApp. To do so, we'll start Hardhat's console by running:
 
 ```bash
 npx hardhat console --network localhost
@@ -73,7 +73,7 @@ To check that we are indeed connected to the local Cartesi Compute SDK Environme
 }
 ```
 
-At this point, we can acquire a reference to our deployed HelloWorld DApp and instantiate a computation to be carried out off-chain by `alice`'s and `bob`'s Cartesi Compute nodes:
+At this point, we can acquire a reference to our deployed HelloWorld dApp and instantiate a computation to be carried out off-chain by `alice`'s and `bob`'s Cartesi Compute nodes:
 
 ```javascript
 > hw = await ethers.getContract("HelloWorld")
@@ -90,7 +90,7 @@ In Ethers, the events emitted by a transaction are included in the returned tran
 > index = (await tx.wait()).events[0].data
 ```
 
-In possession of that index, we can then immediately query our Hello World DApp to ask for current results:
+In possession of that index, we can then immediately query our Hello World dApp to ask for current results:
 
 ```javascript
 > result = await hw.getResult(index)
@@ -126,4 +126,4 @@ We can exit the Hardhat console now by typing:
 > .exit
 ```
 
-In the subsequent sections, we will explore additional features of the Cartesi Compute SDK and build more sophisticated and useful DApps.
+In the subsequent sections, we will explore additional features of the Cartesi Compute SDK and build more sophisticated and useful dApps.

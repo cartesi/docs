@@ -1,16 +1,14 @@
 ---
 id: create-dapp
-title: Create your first DApp
-tags: [build, dapps ,developer]
+title: Create your first dApp
+tags: [build, dapps, developer]
 ---
 
+Once you learned how to [run a simple example](./run-dapp.md), it is now time to create one of your own. In order to do this, we will make use of the existing dApps available in Cartesi's [rollups-examples](https://github.com/cartesi/rollups-examples) Github repository. Once again, make sure you have [installed all the necessary requirements](./requirements.md) before proceeding.
 
-Once you learned how to [run a simple example](./run-dapp.md), it is now time to create one of your own. In order to do this, we will make use of the existing DApps available in Cartesi's [rollups-examples](https://github.com/cartesi/rollups-examples) Github repository. Once again, make sure you have [installed all the necessary requirements](./requirements.md) before proceeding.
+## Example dApp
 
-## Example DApp
-
-The 'fortune' package in Linux contains a command-line tool that randomly displays quotes from a set of predefined lists, which serve as its quote database. This tutorial demonstrates how to create a DApp that installs this package, calls it from a Python script, and displays the result.
-
+The 'fortune' package in Linux contains a command-line tool that randomly displays quotes from a set of predefined lists, which serve as its quote database. This tutorial demonstrates how to create a dApp that installs this package, calls it from a Python script, and displays the result.
 
 ### Set up the environment
 
@@ -20,40 +18,35 @@ First of all, clone the [rollups-examples](https://github.com/cartesi/rollups-ex
 git clone https://github.com/cartesi/rollups-examples.git
 ```
 
-### Copy an existing DApp
+### Copy an existing dApp
 
-We suggest using a sample DApp that utilizes a new build system, `docker-riscv`, instead of the outdated `toolchain` system:
+We suggest using a sample dApp that utilizes a new build system, `docker-riscv`, instead of the outdated `toolchain` system:
 
-* [calculator](https://github.com/cartesi/rollups-examples/tree/main/calculator)
-* [converter](https://github.com/cartesi/rollups-examples/tree/main/converter)
-* [echo-js](https://github.com/cartesi/rollups-examples/tree/main/echo-js)
-* [erc20](https://github.com/cartesi/rollups-examples/tree/main/erc20)
-* [knn](https://github.com/cartesi/rollups-examples/tree/main/knn)
-* [m2cgen](https://github.com/cartesi/rollups-examples/tree/main/m2cgen)
+- [calculator](https://github.com/cartesi/rollups-examples/tree/main/calculator)
+- [converter](https://github.com/cartesi/rollups-examples/tree/main/converter)
+- [echo-js](https://github.com/cartesi/rollups-examples/tree/main/echo-js)
+- [erc20](https://github.com/cartesi/rollups-examples/tree/main/erc20)
+- [knn](https://github.com/cartesi/rollups-examples/tree/main/knn)
+- [m2cgen](https://github.com/cartesi/rollups-examples/tree/main/m2cgen)
 
-
-In this example, we are using the existing [Calculator DApp](https://github.com/cartesi/rollups-examples/tree/main/calculator) as a basis to build a new DApp called 'fortune'.
-
+In this example, we are using the existing [Calculator dApp](https://github.com/cartesi/rollups-examples/tree/main/calculator) as a basis to build a new dApp called 'fortune'.
 
 ```shell
 cd rollups-examples
 cp -r  calculator/ fortune
 cd fortune
-``` 
+```
 
 ### Adjust build files
 
-* Change `calculator.py` to `fortune.py`
-* Change the DApp name in `entrypoint.sh` to `rollup-init python3 fortune.py`
-* Change the DApp name in the Dockerfile to `COPY ./fortune.py`
-* Change the DApp name in ` docker-bake.override.hcl` to `dapp:fortune`
-* Change the DApp name in `docker-compose.override.yml` to `dapp:fortune-devel-server`
-* Amend the Readme as required.
+- Change `calculator.py` to `fortune.py`
+- Change the dApp name in `entrypoint.sh` to `rollup-init python3 fortune.py`
+- Change the dApp name in the Dockerfile to `COPY ./fortune.py`
+- Change the dApp name in ` docker-bake.override.hcl` to `dapp:fortune`
+- Change the dApp name in `docker-compose.override.yml` to `dapp:fortune-devel-server`
+- Amend the Readme as required.
 
-
-### Test the copied DApp
-
-
+### Test the copied dApp
 
 First of all, check if your Docker supports the RISCV platform by running:
 
@@ -67,18 +60,18 @@ If you do not see `linux/riscv64` in the platforms list, install QEMU by running
 apt install qemu-user-static
 ```
 
-QEMU is a generic and open source machine emulator and virtualizer that will be used by Docker to emulate RISCV instructions to build a Cartesi Machine for your DApp. 
+QEMU is a generic and open source machine emulator and virtualizer that will be used by Docker to emulate RISCV instructions to build a Cartesi Machine for your dApp.
 
 After installing QEMU, the platform `linux/riscv64` should appear in the platforms list.
 
-Build the copied existing DApp to ensure that the Docker image functions correctly:
+Build the copied existing dApp to ensure that the Docker image functions correctly:
 
 ```shell
 docker buildx bake --load
 ```
 
 :::note
-If you have PostgreSQL and Redis already installed on your system, you may encounter port conflicts when the Docker containers attempt to start services on ports that are already in use. To resolve these conflicts, edit the ports for Redis and PostgreSQL in the docker-compose.yml file located in the root directory of your DApp.
+If you have PostgreSQL and Redis already installed on your system, you may encounter port conflicts when the Docker containers attempt to start services on ports that are already in use. To resolve these conflicts, edit the ports for Redis and PostgreSQL in the docker-compose.yml file located in the root directory of your dApp.
 :::
 
 ## Add the fortune package to the Dockerfile
@@ -113,8 +106,7 @@ COPY ./entrypoint.sh .
 COPY ./fortune.py .
 ```
 
-
-## Modify the DApp logic
+## Modify the dApp logic
 
 1. First we need to import the `subprocess package`:
 
@@ -131,7 +123,6 @@ FORTUNE_CMD = "/usr/games/fortune; exit 0"
 ```
 
 This command sets the FORTUNE_CMD variable to a string that, when executed, runs the fortune program to display a random quote and then immediately exits the shell with a success status.
-
 
 4. We then replace the existing `try` function of `def handle_advance(data)` with the following command that calls the `fortune` app:
 
@@ -150,7 +141,6 @@ This command sets the FORTUNE_CMD variable to a string that, when executed, runs
 ```
 
 The `quote` runs the command stored in FORTUNE_CMD using a shell, captures the output (including errors), and then decodes it from bytes to a string, storing the result in the variable output. The `output` creates a formatted string with placeholders, replacing {input} and {quote} with the values of the variables input and quote, respectively, and assigns the resulting string to the variable output.
-
 
 5. We then change the code of the `def handle_inspect(data):` function to:
 
@@ -179,8 +169,7 @@ The `quote` runs the command stored in FORTUNE_CMD using a shell, captures the o
     return status
 ```
 
-
-## Create the Docker build for the new DApp
+## Create the Docker build for the new dApp
 
 ```shell
 docker buildx bake --load
@@ -188,16 +177,15 @@ docker buildx bake --load
 
 The `docker buildx` is an extended toolset for Docker, which provides full support for the features of the Moby BuildKit builder toolkit. The `bake` command is part of this extension and simplifies the process of defining and running builds by using a declarative format in the form of a `docker-bake.hcl` or a `docker-compose.yml`. When the `--load` flag is added, it instructs BuildKit to build the Docker image and then immediately load it into the local Docker runtime environment.
 
-
 ## Start the application
 
 ```shell
 docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml -f ../docker-compose-host.yml up
 ```
 
-## Check the DApp address
+## Check the dApp address
 
-We now will check our DApp address by viewing the contents of the `dapp.json` file located in the `deployments/localhost/` directory inside the `rollups-examples` repository:
+We now will check our dApp address by viewing the contents of the `dapp.json` file located in the `deployments/localhost/` directory inside the `rollups-examples` repository:
 
 ```shell
 cat ../deployments/localhost/dapp.json
@@ -257,7 +245,6 @@ J. R. R. Tolkien
 
 If we execute the `inspect` command again, it will consistently produce the same result, thereby providing the same quote each time.
 
-
 ## Run an advance call
 
 From the front-end console directory:
@@ -283,7 +270,6 @@ input 0 added
 
 Upon executing the `inspect` command now, it will generate a new quote.
 
-
 ## Request a notice
 
 From the front-end console directory:
@@ -303,7 +289,6 @@ nd Hornblowers, and Bolgers, \nBracegirdles, Goodbodies, Brockhouses and Proudfo
 hday: am eleventy-one today! \"\n\t\t - - J. R. R. Tolkien\n"}]
 ```
 
-
 An intriguing aspect, demonstrating how Cartesi Machine operates, is that the Cartesi Machine is designed to roll back to a previous state every time its state is inspected. Therefore, if we execute the same `inspect` command repeatedly, it consistently returns the same result, as the machine keeps reverting to its prior state.
 
 ## Stop the application
@@ -315,7 +300,7 @@ docker compose -f ../docker-compose.yml -f ./docker-compose.override.yml down -v
 ```
 
 :::note
-Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v`  command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
+Every time you stop the `docker compose ... up` command with `ctrl+c`, you need to run the `docker compose ... down -v` command to remove the volumes and containers. Ignoring this will preserve outdated information in those volumes, causing unexpected behaviors, such as failure to reset the hardhat localchain.
 :::
 
 ### Application code
@@ -427,9 +412,9 @@ while True:
     else:
         rollup_request = response.json()
         data = rollup_request["data"]
-        
+
         handler = handlers[rollup_request["request_type"]]
         finish["status"] = handler(rollup_request["data"])
 ```
 
-As we conclude this tutorial, we hope that you now have a better understanding of how to build a DApp that uses the `fortune` package and how the Cartesi Machine drives the DApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom DApps. Happy coding!
+As we conclude this tutorial, we hope that you now have a better understanding of how to build a dApp that uses the `fortune` package and how the Cartesi Machine drives the dApp's logic. Don't hesitate to experiment further with these tools and techniques, as they can greatly expand your capabilities in creating your custom dApps. Happy coding!

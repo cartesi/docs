@@ -1,16 +1,16 @@
 ---
-title: Full GPG Verify DApp
+title: Full GPG Verify dApp
 ---
 
 :::note Section Goal
-- create GPG Verify smart contract with appropriate input data
-- deploy and run the GPG Verify DApp
-:::
 
+- create GPG Verify smart contract with appropriate input data
+- deploy and run the GPG Verify dApp
+  :::
 
 ## GPG Verify smart contract
 
-The implementation of this DApp's smart contract will naturally follow the same structure of the [previous tutorials](../calculator/full-dapp.md). Namely, it will define input drives containing the necessary data and provide methods to instantiate a Cartesi Compute computation using that data and then retrieve the corresponding result.
+The implementation of this dApp's smart contract will naturally follow the same structure of the [previous tutorials](../calculator/full-dapp.md). Namely, it will define input drives containing the necessary data and provide methods to instantiate a Cartesi Compute computation using that data and then retrieve the corresponding result.
 
 To that end, create a file called `GpgVerify.sol` in the `gpg-verify/contracts` directory, with the following content:
 
@@ -27,7 +27,7 @@ contract GpgVerify {
 
     bytes32 templateHash = 0x%tutorials.gpg-verify.hash-full;
 
-    // this DApp has an ext2 file-system (at 0x9000..) and two input drives (at 0xa000.. and 0xb000..), so the output will be at 0xc000..
+    // this dApp has an ext2 file-system (at 0x9000..) and two input drives (at 0xa000.. and 0xb000..), so the output will be at 0xc000..
     uint64 outputPosition = 0xc000000000000000;
     // output will be "0" (success, no errors), "1" (failure), or some other error code that certainly fits into the minimum size of 32 bytes
     uint8 outputLog2Size = 5;
@@ -39,7 +39,7 @@ contract GpgVerify {
     bytes document = "My public statement\n";
 
     // detached signature for the document, produced with a private key
-    // - the DApp off-chain code must contain the corresponding public key in order to verify the signature
+    // - the dApp off-chain code must contain the corresponding public key in order to verify the signature
     bytes signature = hex'8901d20400010a003d162104dbbbb50ddc0910795f7c0b48a86d9cb964eb527e05025f19fa431f1c6465736361727465732e7475746f7269616c7340636172746573692e696f'
                       hex'000a0910a86d9cb964eb527ed88f0bf745cac22eca54a050edf5ce62ab5c8857bab9807d4b6cc4b01b47c640669f14c9457d129225d005585f7a4cec2c41bd088b0d622c4ee2'
                       hex'9eecb4a451461e421d0067575bd845818a12df0b197e525da3dea2c89f0210325d766a11da824d9469bea5add6c9f91c09098f72cca806f4b0eb3ff622531171f9ae5b855366'
@@ -124,10 +124,9 @@ contract GpgVerify {
 }
 ```
 
-As detailed in the [previous section](../gpg-verify/cartesi-machine.md#full-machine-implementation), our DApp's Cartesi Machine specifies two input flash drives, one for an arbitrary document and another for an associated digital signature that asserts the authenticity and integrity of the document's contents. This is reflected in the `drives` definition within the `instantiate` method, which in this implementation establishes a total limit of 1024 bytes (log<sub>2</sub> size `10`) for each input drive content.
+As detailed in the [previous section](../gpg-verify/cartesi-machine.md#full-machine-implementation), our dApp's Cartesi Machine specifies two input flash drives, one for an arbitrary document and another for an associated digital signature that asserts the authenticity and integrity of the document's contents. This is reflected in the `drives` definition within the `instantiate` method, which in this implementation establishes a total limit of 1024 bytes (log<sub>2</sub> size `10`) for each input drive content.
 
 In the code above, the input data itself is arbitrarily defined so as to match the test data we used [before](../gpg-verify/ext2-gpg.md#test-data). However, as discussed in the [preceding section](../gpg-verify/cartesi-machine.md), the actual data submitted to the Cartesi Machine is required to have its content length encoded in each drive's four initial bytes. This is achieved by calling the method `prependDataWithContentLength` and using that method's output in the computation instantiation.
-
 
 ## Deployment and execution
 
@@ -192,4 +191,4 @@ Which indicates "success" - or, in other words, that the provided document is in
 
 Should you change the `document` declaration in the smart contract, the output would become `"1"` (i.e., "failure"). Additionally, changing the data for the `signature` variable would either also lead to failure (i.e., signature no longer matches) or possibly to an error, in the case that the data no longer represents a valid digital signature. In this case, a different non-zero result would be retrieved.
 
-Although fully functional, there is still one important aspect of our DApp that can render it unusable for many real-world scenarios: how the input data is fed into the computation. Indeed, the code above, which uses *direct drives*, implies that the document whose signature is being verified must be directly available to the smart contract as a `bytes` object. This is unfortunately not a really scalable solution, given the storage limitations and accompanying high costs of blockchains like Ethereum. As such, in the next section we will cover a couple of Cartesi Compute features that can tackle this issue to allow DApps to process larger volumes of data.
+Although fully functional, there is still one important aspect of our dApp that can render it unusable for many real-world scenarios: how the input data is fed into the computation. Indeed, the code above, which uses _direct drives_, implies that the document whose signature is being verified must be directly available to the smart contract as a `bytes` object. This is unfortunately not a really scalable solution, given the storage limitations and accompanying high costs of blockchains like Ethereum. As such, in the next section we will cover a couple of Cartesi Compute features that can tackle this issue to allow dApps to process larger volumes of data.

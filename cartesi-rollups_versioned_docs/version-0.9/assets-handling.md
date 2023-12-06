@@ -4,14 +4,14 @@ title: Assets handling
 tags: [learn, rollups, dapps, components]
 ---
 
-Assets exist on the base layer, which is where they have actual meaning and value. As with any execution layer solution, a Cartesi DApp that wants to manipulate assets (e.g. to allow players to bet on a game, so that the winner receives the loser's assets) needs a secure way of "teleporting" the assets from the base layer to the execution layer, and then a way to "teleport" them back to the base layer.
+Assets exist on the base layer, which is where they have actual meaning and value. As with any execution layer solution, a Cartesi dApp that wants to manipulate assets (e.g. to allow players to bet on a game, so that the winner receives the loser's assets) needs a secure way of "teleporting" the assets from the base layer to the execution layer, and then a way to "teleport" them back to the base layer.
 
-Asset handling in Cartesi DApps involves the following procedures:
+Asset handling in Cartesi dApps involves the following procedures:
 
-  1. Locking assets on the base layer by calling deposit methods on special contracts called [Portals](./components.md#portals), which will effectively transfer asset ownership to the target DApp contract. There are specific portals for each kind of asset (Ether, ERC-20, ERC-721, ERC-1155).
-  2. The Cartesi Rollups framework notifies the DApp back-end of the deposit by sending it a special input.
-  3. The DApp's back-end code needs to recognize and handle the special input, in order to process the deposit according to its own logic (e.g., by storing each user's balance in a hash table or database).
-  4. When appropriate (e.g., when a game ends and the winner wishes to withdraw their funds), the back-end generates a [voucher](./components.md#vouchers) that encodes a transfer of assets on the base layer, from the DApp to the target user. The actual withdrawal will take effect on the base layer when the voucher is executed. This is a secure process because it can only be done when the voucher has an associated validity proof ensuring that the validator nodes have reached consensus about its contents.
+1. Locking assets on the base layer by calling deposit methods on special contracts called [Portals](./components.md#portals), which will effectively transfer asset ownership to the target dApp contract. There are specific portals for each kind of asset (Ether, ERC-20, ERC-721, ERC-1155).
+2. The Cartesi Rollups framework notifies the dApp back-end of the deposit by sending it a special input.
+3. The dApp's back-end code needs to recognize and handle the special input, in order to process the deposit according to its own logic (e.g., by storing each user's balance in a hash table or database).
+4. When appropriate (e.g., when a game ends and the winner wishes to withdraw their funds), the back-end generates a [voucher](./components.md#vouchers) that encodes a transfer of assets on the base layer, from the dApp to the target user. The actual withdrawal will take effect on the base layer when the voucher is executed. This is a secure process because it can only be done when the voucher has an associated validity proof ensuring that the validator nodes have reached consensus about its contents.
 
 ## Ethereum ABI encoding for asset operations
 
@@ -31,12 +31,12 @@ As the Cartesi Rollups framework uses multiple distinct portals per specific ass
 
 ### ERC-20
 
-Let's consider an example DApp written in Python, which can make use of the [eth_abi](https://pypi.org/project/eth-abi/) Python package to help encode and decode data to/from Ethereum's Application Binary Interface (ABI) format.
+Let's consider an example dApp written in Python, which can make use of the [eth_abi](https://pypi.org/project/eth-abi/) Python package to help encode and decode data to/from Ethereum's Application Binary Interface (ABI) format.
 You may also refer to the full [ERC-20 example](https://github.com/cartesi/rollups-examples/tree/main/erc20) on Github for more details.
 
 #### Decoding deposits
 
-When handling an [advance request](./sending-requests.md#advance) that could be an ERC-20 deposit, the DApp will first have to check if the sender of the input message is the [ERC20Portal](./api/json-rpc/portals/ERC20Portal.md) contract. The contract's address must of course be known a priori by the back-end code so that it can trust the operation to be authentic.
+When handling an [advance request](./sending-requests.md#advance) that could be an ERC-20 deposit, the dApp will first have to check if the sender of the input message is the [ERC20Portal](./api/json-rpc/portals/ERC20Portal.md) contract. The contract's address must of course be known a priori by the back-end code so that it can trust the operation to be authentic.
 
 ```python
 from os import environ
@@ -72,10 +72,10 @@ def handle_erc20_deposit(data):
 
 Here, `data["payload"]` is expected to contain the deposit payload defined by the `ERC20Portal` contract. The payload is transformed from a hexadecimal string to a bytes object, and then an auxiliary method `decode_packed` is used to interpret its contents considering the following encoding:
 
-* A boolean, representing whether the ERC-20 deposit transaction was successful or not on the base layer (**1 byte**)
-* The address of the ERC-20 contract that the deposited tokens belong to (**20 bytes**)
-* The address of the account that is making the deposit (**20 bytes**)
-* The number of tokens being deposited (**32 bytes**)
+- A boolean, representing whether the ERC-20 deposit transaction was successful or not on the base layer (**1 byte**)
+- The address of the ERC-20 contract that the deposited tokens belong to (**20 bytes**)
+- The address of the account that is making the deposit (**20 bytes**)
+- The number of tokens being deposited (**32 bytes**)
 
 The `decode_packed` method will attempt to convert the bytes object into these values. If the payload is not in the correct format, an exception is thrown and caught.
 
@@ -94,7 +94,7 @@ For the above example, we would have the following decoded values:
 
 #### Encoding withdrawals
 
-In the case of a withdrawal, the back-end code needs to create a [voucher](./components.md#vouchers) that encodes a transfer of assets from the DApp to the target recipient address. For ERC-20, this transfer can be performed by encoding a call to the [transfer(address,uint256)](https://eips.ethereum.org/EIPS/eip-20#transfer) method of the appropriate ERC-20 contract on the base layer.
+In the case of a withdrawal, the back-end code needs to create a [voucher](./components.md#vouchers) that encodes a transfer of assets from the dApp to the target recipient address. For ERC-20, this transfer can be performed by encoding a call to the [transfer(address,uint256)](https://eips.ethereum.org/EIPS/eip-20#transfer) method of the appropriate ERC-20 contract on the base layer.
 
 ```python
 TRANSFER_FUNCTION_SELECTOR = b'\xa9\x05\x9c\xbb'
@@ -152,9 +152,9 @@ def handle_erc721_deposit(data):
 
 Once again, the auxiliary method `decode_packed` is used to interpret the payload that was packed ABI encoded by the portal (in this case, the `ERC721Portal`). For ERC-721, the payload encoding is the following:
 
-* The address of the ERC-721 contract that the deposited token belongs to (**20 bytes**)
-* The address of the account that is making the deposit (**20 bytes**)
-* The unique token ID (**32 bytes**)
+- The address of the ERC-721 contract that the deposited token belongs to (**20 bytes**)
+- The address of the account that is making the deposit (**20 bytes**)
+- The unique token ID (**32 bytes**)
 
 As an example, consider the following sample ERC-721 deposit payload:
 
@@ -168,20 +168,19 @@ For the above example, we would have the following decoded values:
 - `depositor: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"` - the address of the owner of the asset
 - `token_id: "0x000...0001"` - the ID of the token being deposited (1 in this case)
 
-
 #### Encoding withdrawals
 
-Withdrawals for ERC-721 are again very similar to what is done for ERC-20. Once more, a [voucher](./components.md#vouchers) must be emitted that encodes a transfer of the intended asset from the DApp to a target recipient address.
+Withdrawals for ERC-721 are again very similar to what is done for ERC-20. Once more, a [voucher](./components.md#vouchers) must be emitted that encodes a transfer of the intended asset from the dApp to a target recipient address.
 In the case of ERC-721 tokens, the voucher should encode a call to the [safeTransferFrom(address,address,uint256)](https://eips.ethereum.org/EIPS/eip-721#specification) method on the base layer token contract.
 
 ```python
-SAFE_TRANSFER_FUNCTION_SELECTOR = b'\x42\x84\x2e\x0e' 
+SAFE_TRANSFER_FUNCTION_SELECTOR = b'\x42\x84\x2e\x0e'
 transfer_payload = SAFE_TRANSFER_FUNCTION_SELECTOR + encode(['address','address','uint256'], [rollup_address, recipient, token_id])
 voucher = {"destination": erc721, "payload": "0x" + transfer_payload.hex()}
 requests.post(rollup_server + "/voucher", json=voucher)
 ```
 
-In this case, again we use `eth_abi`'s [encode](https://eth-abi.readthedocs.io/en/stable/encoding.html) method to define a payload corresponding to a call to the `safeTransferFrom` function of an ERC-721 contract. This call has three parameters: the address currently owning the asset to transfer (`rollup_address`, which corresponds to the DApp contract address on the base layer), the address to which to transfer the token (`recipient`), and the token's ID (`token_id`).
+In this case, again we use `eth_abi`'s [encode](https://eth-abi.readthedocs.io/en/stable/encoding.html) method to define a payload corresponding to a call to the `safeTransferFrom` function of an ERC-721 contract. This call has three parameters: the address currently owning the asset to transfer (`rollup_address`, which corresponds to the dApp contract address on the base layer), the address to which to transfer the token (`recipient`), and the token's ID (`token_id`).
 
 As was done for ERC-20, the encoded payload is then concatenated with the function selector of the transfer function. This time, the selector corresponds to the first four bytes of the Keccak256 hash of the signature string `"safeTransferFrom(address,address,uint256)"`, which amounts to `0x42842e0e`. Then, the resulting combined bytes object is again converted to a hexadecimal string to produce the complete payload of the voucher.
 
