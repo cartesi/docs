@@ -12,9 +12,9 @@ module.exports = {
         "overview",
         "main-concepts",
         {
-          "type": "doc",
-          "id": "mainnet-risks",
-          "label": "Mainnet Risks"
+          type: "doc",
+          id: "mainnet-risks",
+          label: "Mainnet Risks",
         },
         "sending-requests",
         "reading-outputs",
@@ -27,7 +27,7 @@ module.exports = {
             type: "generated-index",
             slug: "api",
             description:
-              "APIs available for DApp developers to interact with the Cartesi Rollups framework.",
+              "APIs available for dApp developers to interact with the Cartesi Rollups framework.",
           },
           collapsed: true,
           items: [
@@ -79,9 +79,7 @@ module.exports = {
                         slug: "api/json-rpc/relays",
                       },
                       collapsed: true,
-                      items: [
-                        "api/json-rpc/relays/DAppAddressRelay",
-                      ],
+                      items: ["api/json-rpc/relays/DAppAddressRelay"],
                     },
                   ],
                 },
@@ -152,7 +150,7 @@ module.exports = {
                 type: "generated-index",
                 slug: "api/back-end",
                 description:
-                  "API used by DApp back-ends (running inside Cartesi Nodes) to interact with the Cartesi Rollups framework.",
+                  "API used by dApp back-ends (running inside Cartesi Nodes) to interact with the Cartesi Rollups framework.",
               },
               collapsed: true,
               items: [
@@ -171,7 +169,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Build DApps",
+      label: "Build dApps",
       link: {
         type: "generated-index",
         slug: "/build-dapps",
@@ -227,9 +225,7 @@ module.exports = {
         slug: "/challenges",
       },
       collapsed: true,
-      items: [
-        "challenges/overview",
-      ],
+      items: ["challenges/overview"],
     },
   ],
 };

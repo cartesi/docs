@@ -11,7 +11,7 @@ function addInput(bytes _input) external returns (bytes32)
 
 Adds an input to the accumulating epoch's inbox
 
-_There is a maximum size for the input data that is defined by the DApp_
+_There is a maximum size for the input data that is defined by the dApp_
 
 #### Parameters
 

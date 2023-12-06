@@ -122,7 +122,7 @@ const config = {
             title: "Developers",
             items: [
               {
-                label: "Template DApp",
+                label: "Template dApp",
                 to: "https://github.com/cartesi/rollups-examples/tree/main/custom-dapps",
               },
               {

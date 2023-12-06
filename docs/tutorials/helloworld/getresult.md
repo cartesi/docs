@@ -3,8 +3,9 @@ title: Retrieving result
 ---
 
 :::note Section Goal
+
 - implement smart contract `getResult` method to retrieve computation results from Cartesi Compute
-:::
+  :::
 
 Once the [computation has been instantiated](../helloworld/instantiate.md), we need a means to effectively retrieve its result within our smart contract.
 
@@ -68,4 +69,4 @@ contract HelloWorld {
 }
 ```
 
-In the [next section](../helloworld/deploy-run.md), we'll finally deploy and run our DApp, and then we'll explore actual examples of return values for the `getResult` method.
+In the [next section](../helloworld/deploy-run.md), we'll finally deploy and run our dApp, and then we'll explore actual examples of return values for the `getResult` method.

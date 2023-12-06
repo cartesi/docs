@@ -3,7 +3,6 @@ servers:
   - url: https://<dapp_rollup_url>
   - url: http://localhost:5005/rollup
 
-
 info:
   title: Cartesi Rollup HTTP API
   version: 0.5.1
@@ -14,7 +13,7 @@ info:
   description: |
     API that the Cartesi Rollup HTTP Server implements.
 
-    In the box below, there is an example of a DApp backend that uses the Rollup HTTP API.
+    In the box below, there is an example of a dApp backend that uses the Rollup HTTP API.
 
     ```
     import requests
@@ -67,11 +66,11 @@ info:
             break
     ```
 
-    In production mode, if the DApp exits the Rollups initialization script will register a Rollup Exception.
+    In production mode, if the dApp exits the Rollups initialization script will register a Rollup Exception.
     See [/exception](#api-Default-registerException).
 
-    In host mode, the Cartesi Rollups infrastructure is not able to detect that the DApp exited.
-    It is up to the DApp developer to re-launch the DApp.
+    In host mode, the Cartesi Rollups infrastructure is not able to detect that the dApp exited.
+    It is up to the dApp developer to re-launch the dApp.
 
 paths:
   /finish:
@@ -79,7 +78,7 @@ paths:
       operationId: finish
       summary: Finish and get next request
       description: |
-        The DApp backend should call this method to start processing rollup requests.
+        The dApp backend should call this method to start processing rollup requests.
         The Rollup HTTP Server returns the next rollup request in the response body.
 
         The possible values for the request_type field are 'advance_state' and 'inspect_state'.
@@ -87,18 +86,18 @@ paths:
         For advance-state requests, the input data contains the advance-state metadata and the payload.
         For inspect-state requests, the input data contains only the payload.
 
-        After processing a rollup request, the DApp back-end should call again the finish method.
+        After processing a rollup request, the dApp back-end should call again the finish method.
         For advance-state requests, depending on the result of the request processing, it should fill the status field of the request body with 'accept' or 'reject'.
         The Rollup HTTP Server ignores the content of the status field for the first finish request and after an inspect-state request.
 
         If the advance-state request is rejected, the vouchers and notices are discarded.
         In contrast, reports are not discarded in case of rejection.
-        When running inside a Cartesi machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.
+        When running inside a Cartesi Machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.
 
         During a finish call, the next rollup request might not be immediately available.
-        When the DApp backend and the Rollup HTTP Server are running inside a Cartesi machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.
+        When the dApp backend and the Rollup HTTP Server are running inside a Cartesi Machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.
         When running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.
-        When the Rollup HTTP Server returns 202, the DApp backend should retry the call to finish passing the same arguments as before.
+        When the Rollup HTTP Server returns 202, the dApp backend should retry the call to finish passing the same arguments as before.
 
       requestBody:
         content:
@@ -129,7 +128,7 @@ paths:
       operationId: addVoucher
       summary: Add a new voucher
       description: |
-        The DApp backend can call this method to add a new voucher when processing an advance-state request.
+        The dApp backend can call this method to add a new voucher when processing an advance-state request.
         Vouchers are collateral effects actionable in the blockchain.
         Between calls to the finish method, the voucher method can be called up to 32k times.
 
@@ -162,8 +161,8 @@ paths:
       operationId: addNotice
       summary: Add a new notice
       description: |
-        The DApp backend can call this method to add a new notice when processing the advance-state request.
-        A notice describes any changes to the internal state of the DApp that may be relevant to the blockchain.
+        The dApp backend can call this method to add a new notice when processing the advance-state request.
+        A notice describes any changes to the internal state of the dApp that may be relevant to the blockchain.
         Between calls to the finish method, the notice method can be called up to 32k times.
 
         The returned value is the index of the notice for the current advance request.
@@ -195,7 +194,7 @@ paths:
       operationId: addReport
       summary: Add a new report
       description: |
-        The DApp can call this method to add a new report for the given rollup request.
+        The dApp can call this method to add a new report for the given rollup request.
         A report can be a diagnostic or a log; reports are not discarded when a request is rejected.
         Between calls to the finish method, the report method can be called any number of times.
 
@@ -221,8 +220,8 @@ paths:
       operationId: registerException
       summary: Register an exception
       description: |
-        The DApp should call this method when it cannot proceed with the request processing after an exception happens.
-        This method should be the last method ever called by the DApp backend while processing a request.
+        The dApp should call this method when it cannot proceed with the request processing after an exception happens.
+        This method should be the last method ever called by the dApp backend while processing a request.
 
         When running in production mode, the Cartesi Server Manager pauses the Cartesi Machine and reverts the entire state of the machine to what it was before receiving the request.
         No HTTP status code will be sent or received.

@@ -3,14 +3,14 @@ title: Calculator machine
 ---
 
 :::note Section Goal
+
 - build a Cartesi Machine that computes the result of an arbitrary mathematical expression
 - use input drives to parameterize computations using user-defined data
-:::
-
+  :::
 
 ## Performing calculations with a Cartesi Machine
 
-Now that we have the [basic project structure](../calculator/create-project.md) ready, let's focus on the main part of our DApp, which is the off-chain computation to be performed by the Cartesi Machine.
+Now that we have the [basic project structure](../calculator/create-project.md) ready, let's focus on the main part of our dApp, which is the off-chain computation to be performed by the Cartesi Machine.
 
 First of all, let's `cd` into the `cartesi-machine` subdirectory:
 
@@ -70,7 +70,7 @@ exit
 
 Having exercised how our machine will work, we can now turn to building a final version of it that will be used by the Cartesi Compute nodes in our [development environment](../compute-env.md).
 
-Recalling the previous machine built for the [Hello World DApp](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), let's create a bash script called `build-cartesi-machine.sh` back in our `calculator/cartesi-machine` directory:
+Recalling the previous machine built for the [Hello World dApp](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), let's create a bash script called `build-cartesi-machine.sh` back in our `calculator/cartesi-machine` directory:
 
 ```bash
 touch build-cartesi-machine.sh
@@ -134,7 +134,7 @@ fi
 mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
-As explained in more detail in the [Hello World tutorial](../helloworld/cartesi-machine.md), this script will create a *template machine* to be executed upon request, and store its contents in a directory specified by the user. In order to do that, we have specified `max-mcycle=0`, so that the machine halts without running any cycles. Then, we added the parameter `--store="$MACHINE_TEMP_DIR"` to specify that the machine's specification should be stored in the specified directory. Finally, we have removed the `filename` configurations from the flash drives, since the input and output data will now be handled automatically by Cartesi Compute.
+As explained in more detail in the [Hello World tutorial](../helloworld/cartesi-machine.md), this script will create a _template machine_ to be executed upon request, and store its contents in a directory specified by the user. In order to do that, we have specified `max-mcycle=0`, so that the machine halts without running any cycles. Then, we added the parameter `--store="$MACHINE_TEMP_DIR"` to specify that the machine's specification should be stored in the specified directory. Finally, we have removed the `filename` configurations from the flash drives, since the input and output data will now be handled automatically by Cartesi Compute.
 
 With all of this set, build the machine by executing:
 

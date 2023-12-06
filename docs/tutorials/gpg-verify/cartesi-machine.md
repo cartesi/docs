@@ -3,18 +3,18 @@ title: GPG Verify machine
 ---
 
 :::note Section Goal
+
 - build a machine that executes GPG signature verification from arbitrary document and signature data
 - understand limitations of `ext2` file-systems for submitting dynamic data to a Cartesi Machine
-:::
-
+  :::
 
 ## Final execution script
 
-Shifting our focus from understanding and testing GPG usage to an actual implementation of our DApp's Cartesi Machine, we must first of all acknowledge that our final machine cannot simply read the document and signature data from [pre-defined files](../gpg-verify/ext2-gpg.md#test-data). Rather, those two pieces of data should be read as separate input drives, so that they can be submitted in a smart contract request.
+Shifting our focus from understanding and testing GPG usage to an actual implementation of our dApp's Cartesi Machine, we must first of all acknowledge that our final machine cannot simply read the document and signature data from [pre-defined files](../gpg-verify/ext2-gpg.md#test-data). Rather, those two pieces of data should be read as separate input drives, so that they can be submitted in a smart contract request.
 
-Unfortunately, as noted in the [Cartesi Machine section](/machine/host/cmdline#flash-drives), there is no direct way of generating `ext2` file-systems in a reproducible way, so these input drives have to be *raw*. This means that, instead of being mounted as file-systems, the drives' contents are to be read and written directly as plain bytes. Therefore, since we do not know in advance the exact size of the document or the signature, we will choose to *encode* the document and signature content lengths in the first four bytes of the input drives' data, so that we can correctly read the binary contents.
+Unfortunately, as noted in the [Cartesi Machine section](/machine/host/cmdline#flash-drives), there is no direct way of generating `ext2` file-systems in a reproducible way, so these input drives have to be _raw_. This means that, instead of being mounted as file-systems, the drives' contents are to be read and written directly as plain bytes. Therefore, since we do not know in advance the exact size of the document or the signature, we will choose to _encode_ the document and signature content lengths in the first four bytes of the input drives' data, so that we can correctly read the binary contents.
 
-Aside from that, when writing the previous section's [Cartesi Machine example](../gpg-verify/ext2-gpg.md#cartesi-machine-with-gpg), you may have noticed that specifying all those command instructions as a single line was quite cumbersome. Thus, to tackle that issue and better organize our DApp, we will specify our final machine's commands in a separate *shell script* file, and include that file in the `ext2` file-system that our machine is already using to have access to the public key.
+Aside from that, when writing the previous section's [Cartesi Machine example](../gpg-verify/ext2-gpg.md#cartesi-machine-with-gpg), you may have noticed that specifying all those command instructions as a single line was quite cumbersome. Thus, to tackle that issue and better organize our dApp, we will specify our final machine's commands in a separate _shell script_ file, and include that file in the `ext2` file-system that our machine is already using to have access to the public key.
 
 Back in the `gpg-verify/cartesi-machine` directory, create a file called `gpg-verify.sh` and make it executable:
 
@@ -73,10 +73,9 @@ docker run \
 
 After the command completes. a file called `dapp-data.ext2` with the expected contents will be present in the current directory.
 
-
 ## Full machine implementation
 
-After building our `ext2` file-system, we can then proceed to the final implementation of our Cartesi Machine. As done for all the [other tutorials](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), we will code a bash script to make it easy for us to build (and rebuild, if necessary) the final machine's *template specification*, and store it the appropriate location.
+After building our `ext2` file-system, we can then proceed to the final implementation of our Cartesi Machine. As done for all the [other tutorials](../helloworld/cartesi-machine.md#cartesi-machine-for-the-hello-world-dapp), we will code a bash script to make it easy for us to build (and rebuild, if necessary) the final machine's _template specification_, and store it the appropriate location.
 
 In order to that, create a `build-cartesi-machine.sh` file in the `cartesi-machine` directory:
 
@@ -158,7 +157,7 @@ Giving an output such as this:
 %tutorials.gpg-verify.store
 ```
 
-Similar to the issue discussed in the [GenericScript tutorial](../generic-script/cartesi-machine.md#final-cartesi-machine-implementation), the template hash generated for your machine will certainly differ from the one seen here. This is because, as noted in the beginning of this section and explained in the [Cartesi Machine host perspective](/machine/host/cmdline#flash-drives), using the `genext2fs` tool to build a new `ext2` file with the *same contents* will actually always lead to a slightly *different* file, which as a consequence changes the initial state of the machine. Therefore, to produce the same hash `%tutorials.gpg-verify.hash-trunc...` presented above, you should have the exact same `ext2` file used when writing this tutorial. This file is [available in the Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/gpg-verify/cartesi-machine), and as such you can download it and rebuild the machine template with the following commands:
+Similar to the issue discussed in the [GenericScript tutorial](../generic-script/cartesi-machine.md#final-cartesi-machine-implementation), the template hash generated for your machine will certainly differ from the one seen here. This is because, as noted in the beginning of this section and explained in the [Cartesi Machine host perspective](/machine/host/cmdline#flash-drives), using the `genext2fs` tool to build a new `ext2` file with the _same contents_ will actually always lead to a slightly _different_ file, which as a consequence changes the initial state of the machine. Therefore, to produce the same hash `%tutorials.gpg-verify.hash-trunc...` presented above, you should have the exact same `ext2` file used when writing this tutorial. This file is [available in the Cartesi Compute Tutorials GitHub repo](https://github.com/cartesi/compute-tutorials/tree/master/gpg-verify/cartesi-machine), and as such you can download it and rebuild the machine template with the following commands:
 
 ```bash
 rm dapp-data.ext2

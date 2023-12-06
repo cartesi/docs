@@ -1,7 +1,7 @@
 export const learn = [
   {
     category: "by-goal",
-    title: "Hands-on: Build Rollups DApps Now!",
+    title: "Hands-on: Build Rollups dApps Now!",
     links: [
       {
         label: "Step 1: Installing",
@@ -38,7 +38,8 @@ export const learn = [
         href: "/machine/host/overview",
       },
       {
-        label: "Cartesi Machines from the inside: Linux environment and system architecture",
+        label:
+          "Cartesi Machines from the inside: Linux environment and system architecture",
         href: "/machine/target/overview",
       },
       {
@@ -101,23 +102,23 @@ export const learn = [
         href: "/cartesi-rollups/build-dapps/requirements",
       },
       {
-        label: "Quick start to run an existing DApp",
+        label: "Quick start to run an existing dApp",
         href: "/cartesi-rollups/build-dapps/run-dapp",
       },
       {
-        label: "Create your first DApp",
+        label: "Create your first dApp",
         href: "/cartesi-rollups/build-dapps/create-dapp",
       },
       {
-        label: "Run your DApp off-chain",
+        label: "Run your dApp off-chain",
         href: "/new-to-cartesi/onboarding#run-your-dapp-off-chain-using-compute-sdk",
       },
       {
-        label: "Explore DApp architecture",
+        label: "Explore dApp architecture",
         href: "/cartesi-rollups/dapp-architecture",
       },
       {
-        label: "Explore DApp life cycle",
+        label: "Explore dApp life cycle",
         href: "/cartesi-rollups/dapp-life-cycle",
       },
     ],
@@ -143,7 +144,8 @@ export const learn = [
         href: "/machine/host/overview",
       },
       {
-        label: "Cartesi Machines from the inside: Linux environment and system architecture",
+        label:
+          "Cartesi Machines from the inside: Linux environment and system architecture",
         href: "/machine/target/overview",
       },
       {
