@@ -34,12 +34,14 @@ import ApiTabs from "@theme/ApiTabs";
 import MimeTabs from "@theme/MimeTabs";
 import ParamsItem from "@theme/ParamsItem";
 import ResponseSamples from "@theme/ResponseSamples";
-import SchemaItem from "@theme/SchemaItem";
+import SchemaItem from "@theme/SchemaItem"
 import SchemaTabs from "@theme/SchemaTabs";
 import DiscriminatorTabs from "@theme/DiscriminatorTabs";
 import TabItem from "@theme/TabItem";
 
 ## Finish and get next request
+
+
 
 The dApp backend should call this method to start processing rollup requests.
 The Rollup HTTP Server returns the next rollup request in the response body.
@@ -62,6 +64,7 @@ When the dApp backend and the Rollup HTTP Server are running inside a Cartesi Ma
 When running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.
 When the Rollup HTTP Server returns 202, the dApp backend should retry the call to finish passing the same arguments as before.
 
+
 <MimeTabs><TabItem label={"application/json"} value={"application/json-schema"}><details style={{}} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Request Body</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"status"} required={false} schemaDescription={undefined} schemaName={"string"} qualifierMessage={"**Possible values:** [`accept`, `reject`]"} defaultValue={undefined}></SchemaItem></ul></details></TabItem></MimeTabs><div><ApiTabs><TabItem label={"200"} value={"200"}><div>
 
 Finish accepted and next rollup request returned.
@@ -79,3 +82,4 @@ Error response.
 Detailed error message.
 
 </div></div></li></ul></details></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem></ApiTabs></div>
+      
