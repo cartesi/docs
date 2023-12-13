@@ -9,7 +9,7 @@ To start developing applications using Cartesi Rollups, first make sure that the
 :::note Section Goal
 
 - ensure you have all the necessary dependencies for building Cartesi dApps
-  :::
+:::
 
 ## Basic tools
 
@@ -67,6 +67,7 @@ After that, you can check if Docker is property installed by running:
 ```
 docker --version
 ```
+
 
 It is recommended that the installed Docker version be at least `20.10.14` in order to adequately build a development environment and execute [example dApps](https://github.com/cartesi/rollups-examples) made available by Cartesi.
 

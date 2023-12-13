@@ -26,12 +26,14 @@ import ApiTabs from "@theme/ApiTabs";
 import MimeTabs from "@theme/MimeTabs";
 import ParamsItem from "@theme/ParamsItem";
 import ResponseSamples from "@theme/ResponseSamples";
-import SchemaItem from "@theme/SchemaItem";
+import SchemaItem from "@theme/SchemaItem"
 import SchemaTabs from "@theme/SchemaTabs";
 import DiscriminatorTabs from "@theme/DiscriminatorTabs";
 import TabItem from "@theme/TabItem";
 
 ## Inspect dApp state REST API
+
+
 
 This method sends an inspect-state request to the dApp backend passing the payload string in the URL.
 The payload string should be URL-encoded; the inspect server will decode the string to UTF-8.
@@ -46,6 +48,7 @@ When running on machine mode, the whole Cartesi Machine is rolled back after pro
 On host mode, it is advised against changing the dApp backend state when processing an inspect-state request.
 Notice that this method is synchronous, so it is not advised to perform resource-intensive operations.
 
+
 <details style={{"marginBottom":"1rem"}} data-collapsed={false} open={true}><summary style={{}}><strong>Path Parameters</strong></summary><div><ul><ParamsItem className={"paramsItem"} param={{"in":"path","name":"payload","required":true,"schema":{"type":"string"}}}></ParamsItem></ul></div></details><div><ApiTabs><TabItem label={"200"} value={"200"}><div>
 
 Inspect state response.
@@ -59,3 +62,4 @@ Error response.
 Detailed error message.
 
 </div></div></li></ul></details></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem></ApiTabs></div>
+      
