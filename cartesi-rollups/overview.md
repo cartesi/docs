@@ -50,7 +50,7 @@ Non-interactive refers to the fact that the challengers can prove that a state u
 - Executes transaction computations off-chain. This way the computations are not carried out by the base layer. Instead, they are executed in a separate computation environment and the rollup protocol ensures transaction validity via either validity proofs or fraud proofs.
 - Capable of compressing data from several transactions into a bundle to decrease both transaction costs and size, increasing overall efficiency.
 - Allows blockchains to scale while keeping the security guarantees of its consensus mechanism.
-  :::
+:::
 
 ## Cartesi Rollups
 
