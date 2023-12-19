@@ -17,7 +17,7 @@ function Footer() {
             </div>
             <FooterNav />
           </div>
-          <div className="flex items-center justify-between gap-4 text-xs text-background/50">
+          <div className="flex items-center justify-between gap-4 text-xs text-white">
             <p>© 2023 Cartesi Foundation Ltd. All rights reserved.</p>
             <p>
               The Cartesi Project is commissioned by the Cartesi Foundation.
