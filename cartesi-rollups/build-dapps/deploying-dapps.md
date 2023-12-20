@@ -14,17 +14,20 @@ In order to facilitate the instantiation of such nodes, Cartesi provides an infr
 
 As stated above, the first step in the deployment of a new Cartesi dApp to a blockchain requires creating a smart contract on that network that makes use of the Cartesi Rollups smart contracts. For convenience, Cartesi has already deployed the Rollups smart contracts to a number of networks, in order to make it easier for developers to create dApps on them.
 
-The table below shows the list of all [networks that are currently supported](https://github.com/cartesi/rollups/tree/main/onchain/rollups/deployments) in the latest Cartesi Rollups release:
+The table below shows the list of all [networks that are currently supported](https://github.com/cartesi/rollups-contracts/tree/main/onchain/rollups/deployments) in the latest Cartesi Rollups release:
 
 | Network Name    | Chain ID |
 | --------------- | -------- |
-| Arbitrum Goerli | 421613   |
+| Ethereum Mainnet | 1 |
 | Sepolia         | 11155111 |
-| Gnosis Chiado   | 10200    |
-| Optimism Goerli | 420      |
-| Polygon Mumbai  | 80001    |
+| Optimism | 10 |
+| Optimism Sepolia | 11155420 |
+| Arbitrum  | 42161   |
+| Arbitrum Sepolia | 421614 |
 
-## Deploying on a public Testnet with a Cartesi Node running locally
+
+
+## Deploying on Mainnet or Public Testnet with a Cartesi Node running locally
 
 1. Build the dApp's back-end machine. To do this, run the following command from the directory of your dApp:
 
@@ -34,11 +37,12 @@ docker buildx bake machine --load --set *.args.NETWORK=<network>
 
 Replace `<network>` with the name for your preferred network, written in the following way:
 
-- `gnosis_chiado`
-- `arbitrum_goerli`
-- `optimism_goerli`
-- `polygon_mumbai`
+- `mainnet`
 - `sepolia`
+- `optimism`
+- `optimism_sepolia`
+- `arbitrum`
+- `arbitrum_sepolia`
 
 :::note
 If you have PostgreSQL and Redis already installed on your system, you may encounter port conflicts when the Docker containers attempt to start services on ports that are already in use. To resolve these conflicts, edit the ports for Redis and PostgreSQL in the docker-compose.yml file located in the root directory of your dApp.
@@ -47,13 +51,13 @@ If you have PostgreSQL and Redis already installed on your system, you may encou
 2. Deploy the back-end to a corresponding Rollups smart contract by running:
 
 ```shell
-export MNEMONIC=<user sequence of twelve words>
+export MNEMONIC='<user sequence of twelve words>'
 export RPC_URL=<https://your.rpc.gateway>
 ```
 
-The `<user sequence of twelve words>` sets your wallet's mnemonic, a sequence of twelve words used to generate private keys.
+The `'<user sequence of twelve words>'` sets your wallet's mnemonic, a sequence of twelve words used to generate private keys.
 
-The `<https://your.rpc.gateway>` sets the URL for your preferred RPC gateway, a connection point for interacting with the Ethereum network. Replace it with a specific URL, such as `https://eth-goerli.alchemyapi.io/v2/<USER_KEY>`.
+The `<https://your.rpc.gateway>` sets the URL for your preferred RPC gateway, a connection point for interacting with the Ethereum network. Replace it with a specific URL, such as `https://eth-sepolia.alchemyapi.io/v2/<USER_KEY>`.
 
 3. Submit a transaction to the Cartesi dApp Factory contract on the target network by executing the following command
 
@@ -73,7 +77,7 @@ The preferred network must be one that has the Rollups contracts deployed.
 cat ../deployments/<network>/<example>.json
 ```
 
-Replace `<network>` with the name of your preferred network and `<example>` with the name of your dApp. For example, `cat ../deployments/goerli/fortune.json`.
+Replace `<network>` with the name of your preferred network and `<example>` with the name of your dApp. For example, `cat ../deployments/sepolia/fortune.json`.
 
 The output will look similar to this:
 
@@ -94,10 +98,10 @@ DAPP_NAME=<example> docker compose --env-file ../env.<network> -f ../deploy-test
 
 Replace `<network>` with the name for your preferred network.
 
-6. Set a secure websocket endpoint for the RPC gateway (WSS URL) that the local Cartesi Node will use. The command depends on your preferred network. For example, for Goerli and Alchemy, this will look as follows:
+6. Set a secure websocket endpoint for the RPC gateway (WSS URL) that the local Cartesi Node will use. The command depends on your preferred network. For example, for Sepolia and Alchemy, this will look as follows:
 
 ```shell
-export WSS_URL=wss://eth-goerli.alchemyapi.io/v2/<USER_KEY>
+export WSS_URL=wss://eth-sepolia.alchemyapi.io/v2/<USER_KEY>
 ```
 
 7. Now we can start the local Cartesi Node:
@@ -108,7 +112,7 @@ DAPP_NAME=<example> docker compose --env-file ../env.<network> -f ../docker-comp
 
 Replace `<network>` with the name for your preferred network.
 
-8. We can check the application status on Etherscan, for example, `goerli.etherscan.io` by searching by our address, such as `Oxf3C97b309BfBf6bDD3436cC86dEdA6D149e2BD9D`.
+8. We can check the application status on Etherscan, for example, `sepolia.etherscan.io` by searching by our address, such as `Oxf3C97b309BfBf6bDD3436cC86dEdA6D149e2BD9D`.
 
 9. Now let's send inputs to the dApp using the [frontend-console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console).
 
@@ -131,5 +135,5 @@ And send an input as follows:
 yarn start input send --payload “test” --rpc <rpc-address> —address <dapp address>
 ```
 
-- Replace `<rpc-address>` with your preferred RPC address. You can obtain an address [here](https://chainlist.org/chain/5).
+- Replace `<rpc-address>` with your preferred RPC address. You can obtain an address [here](https://chainlist.org/chain/1).
 - Replace `<dapp address>` with the address obtained in step 4.
