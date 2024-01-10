@@ -16,10 +16,8 @@ The _Cartesi Node_ is the L2 component that consists of the combination of the C
 
 In practice, there are two distinct kinds of agents that run Cartesi Nodes: _users_ and _validators_. Each of them interacts with the on-chain rollups in different ways, and thus run different types of Cartesi Nodes:
 
-
-- **User or Reader Nodes (read-only)** retrieve information from the main chain and make it publicly available for use in the Cartesi Virtual Machine. These nodes, currently under active development, do not publish information back to the main chain. Reader Nodes could be run by regular users, providing a crucial function in advancing the off-chain machine state.
-
-- **Validator Nodes (read and write)** are tasked with verifying new information and publishing it to the main chain, similar to regular nodes in L1 networks. In this context, they play a vital role in verifying changes made to on-chain information while it was off-chain in the Cartesi Virtual Machine. Additionally, Validator Nodes are responsible for safeguarding the network against dishonest parties in case of disputes over on-chain information. Given these added responsibilities, Validator Nodes operate in secure environments and remain inaccessible to users.
+- **User or Reader Nodes**, which are only involved in advancing the state of the off-chain machine, and making that state publicly available. They consume information from the blockchain but do not bother to enforce state updates, trusting that validators will ensure the validity of all on-chain state updates.
+- **Validator Nodes**, which have more responsibility: they not only watch the blockchain but also fight possible dishonest validators to ensure the prevalence of honest claims for state updates. On the other hand, if Reader Nodes are available, validators do not need to expose endpoints for retrieving application state. Therefore, they can run in more secure environments and remain inaccessible to external clients and users.
 
 :::note
 Currently, all Cartesi Nodes function as Validator Nodes. The development of Reader Nodes is in progress, adding the capability to fetch and share data. Validator Nodes, in the meantime, are handling both roles effectively.
