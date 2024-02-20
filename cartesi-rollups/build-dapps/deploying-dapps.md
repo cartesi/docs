@@ -14,7 +14,7 @@ In order to facilitate the instantiation of such nodes, Cartesi provides an infr
 
 As stated above, the first step in the deployment of a new Cartesi dApp to a blockchain requires creating a smart contract on that network that makes use of the Cartesi Rollups smart contracts. For convenience, Cartesi has already deployed the Rollups smart contracts to a number of networks, in order to make it easier for developers to create dApps on them.
 
-The table below shows the list of all [networks that are currently supported](https://github.com/cartesi/rollups-contracts/tree/main/onchain/rollups/deployments) in the latest Cartesi Rollups release:
+The table below shows the list of all [networks that are currently supported](https://github.com/cartesi/rollups-contracts/tree/main/deployments) in the latest Cartesi Rollups release:
 
 | Network Name    | Chain ID |
 | --------------- | -------- |
