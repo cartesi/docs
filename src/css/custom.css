@@ -20,9 +20,9 @@ html {
   --ifm-font-weight-semibold: 600;
   --ifm-heading-font-weight: var(--ifm-font-weight-semibold);
 
-  --ifm-menu-color-background-hover: var(--ifm-color-secondary);
-  --ifm-menu-color-background-active: var(--ifm-color-secondary);
-  --ifm-menu-color-active: var(--ifm-font-color-base);
+  --ifm-menu-color-background-hover: transparent;
+  --ifm-menu-color-background-active: transparent;
+  --ifm-menu-color-active: var(--ifm-color-primary);
 
   --ifm-menu-link-padding-vertical: 0.6rem;
   --ifm-menu-link-padding-horizontal: 1rem;
@@ -51,8 +51,8 @@ html[data-theme="dark"] {
 
   --ifm-card-background-color: var(--ifm-background-surface-color);
 
-  --ifm-menu-color-background-hover: var(--ifm-background-surface-color);
-  --ifm-menu-color-background-active: var(--ifm-background-surface-color);
+  --ifm-menu-color-background-hover: transparent;
+  --ifm-menu-color-background-active: transparent;
 }
 
 @-ms-viewport {
@@ -354,6 +354,11 @@ html[data-theme="dark"] {
 
 .theme-doc-sidebar-container .DocSearch-Button {
   @apply w-full;
+}
+
+/* Sidebar */
+.theme-doc-sidebar-menu > li + li {
+  @apply border-t border-b-0 border-l-0 border-r-0 border-solid border-gray-200 py-2 dark:border-gray-700;
 }
 
 @tailwind utilities;
