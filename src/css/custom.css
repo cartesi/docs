@@ -326,10 +326,6 @@ html[data-theme="dark"] {
   max-height: none !important;
 }
 
-.theme-doc-sidebar-container > div {
-  max-height: calc(100vh - 3.5rem) !important;
-}
-
 .theme-doc-version-badge {
   @apply font-serif font-semibold bg-secondary text-gray-900 dark:text-gray-900 px-3 py-2 rounded-full uppercase text-xs border-0;
   margin-left: -2px;
@@ -357,13 +353,22 @@ html[data-theme="dark"] {
   opacity: 0.5;
 }
 
+/* Sidebar */
+
+.theme-doc-sidebar-container > div {
+  max-height: calc(100vh - 3.5rem) !important;
+}
+
 .theme-doc-sidebar-container .DocSearch-Button {
   @apply w-full;
 }
 
-/* Sidebar */
+.theme-doc-sidebar-menu > li {
+  @apply py-2;
+}
+
 .theme-doc-sidebar-menu > li + li {
-  @apply border-t border-b-0 border-l-0 border-r-0 border-solid border-gray-200 py-2 dark:border-gray-700;
+  @apply border-t border-b-0 border-l-0 border-r-0 border-solid border-gray-200  dark:border-gray-700;
 }
 
 @tailwind utilities;
