@@ -123,12 +123,12 @@ const config = {
             ],
           },
 
-          {
-            type: "docsVersionDropdown",
-            position: "right",
-            docsPluginId: "cartesi-rollups",
-            label: "Version",
-          },
+          // {
+          //   type: "docsVersionDropdown",
+          //   position: "right",
+          //   docsPluginId: "cartesi-rollups",
+          //   label: "Version",
+          // },
 
           {
             type: "search",
