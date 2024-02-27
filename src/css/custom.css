@@ -352,13 +352,6 @@ html[data-theme="dark"] {
   opacity: 0.5;
 }
 
-/* search in sidebar */
-@media (min-width: 996px) {
-  .navbar-search-custom {
-    display: none;
-  }
-}
-
 .theme-doc-sidebar-container .DocSearch-Button {
   @apply w-full;
 }
