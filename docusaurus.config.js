@@ -62,15 +62,80 @@ const config = {
 
         items: [
           {
-            to: "/#learn",
-            position: "right",
-            label: "Learn",
+            type: "dropdown",
+            label: "Tools",
+            position: "left",
+            items: [
+              { label: "Sunodo", href: "#" },
+              { label: "Nonodo", href: "#" },
+              { label: "Cartesi explorer", href: "#" },
+              { label: "Frameworks (HLF/wallet)", href: "#" },
+            ],
           },
           {
-            to: "/#qa",
-            position: "right",
-            label: "Help",
+            type: "dropdown",
+            label: "Learn",
+            position: "left",
+            items: [
+              { label: "Core architecture", href: "#" },
+              { label: "Execution layer", href: "#" },
+            ],
           },
+          {
+            label: "Academy",
+            to: "#",
+            position: "left",
+          },
+          {
+            type: "dropdown",
+            label: "Community",
+            position: "left",
+            items: [
+              {
+                label: "Twitter",
+                href: "https://www.twitter.com/cartesiproject",
+              },
+              { label: "Discord", href: "https://discord.gg/uxYE5YNv3N" },
+              { label: "Reddit", href: "https://www.reddit.com/r/cartesi/" },
+              {
+                label: "YouTube",
+                href: "https://www.youtube.com/c/Cartesiproject/videos",
+              },
+              { label: "Telegram", href: "https://t.me/cartesiannouncements" },
+              {
+                label: "LinkedIn",
+                href: "https://www.linkedin.com/company/cartesi/",
+              },
+              {
+                label: "Instagram",
+                href: "https://www.instagram.com/cartesiproject/",
+              },
+              { label: "Vision forum", href: "#" },
+            ],
+          },
+          {
+            type: "dropdown",
+            label: "Developers",
+            position: "left",
+            items: [
+              { label: "Code snippets", href: "#" },
+              { label: "Quick start tutorials", href: "#" },
+            ],
+          },
+
+          {
+            type: "docsVersionDropdown",
+            position: "right",
+            docsPluginId: "cartesi-rollups",
+            label: "Version",
+          },
+
+          {
+            type: "search",
+            className: "navbar-search-custom",
+            position: "right",
+          },
+
           {
             to: "https://discord.gg/uxYE5YNv3N",
             position: "right",
@@ -82,11 +147,6 @@ const config = {
             position: "right",
             className: "header-github-link",
             "aria-label": "GitHub repository",
-          },
-          {
-            type: "search",
-            className: "navbar-search-custom",
-            position: "right",
           },
         ],
       },
