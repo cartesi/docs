@@ -16,7 +16,7 @@ html {
   --ifm-color-secondary: #00f6ff;
 
   --ifm-font-family-base: "Inter", sans-serif;
-  --ifm-heading-font-family: "Plus Jakarta Sans", "serif";
+  --ifm-heading-font-family: "Inter", sans-serif;
   --ifm-font-weight-semibold: 600;
   --ifm-heading-font-weight: var(--ifm-font-weight-semibold);
 
