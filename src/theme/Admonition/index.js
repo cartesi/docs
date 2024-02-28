@@ -7,15 +7,15 @@ function NoteIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-star"
+      className="shrink-0"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
@@ -26,15 +26,15 @@ function TipIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-message-circle-star"
+      className="shrink-0"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M10.517 19.869a9.757 9.757 0 0 1 -2.817 -.869l-4.7 1l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c1.666 1.421 2.594 3.29 2.747 5.21" />
@@ -46,15 +46,15 @@ function DangerIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-flame"
+      className="shrink-0"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 12c2 -2.96 0 -7 -1 -8c0 3.038 -1.773 4.741 -3 6c-1.226 1.26 -2 3.24 -2 5a6 6 0 1 0 12 0c0 -1.532 -1.056 -3.94 -2 -5c-1.786 3 -2.791 3 -4 2z" />
@@ -65,15 +65,15 @@ function InfoIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-info-circle"
+      className="shrink-0"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
@@ -86,15 +86,15 @@ function CautionIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-alert-triangle"
+      className="shrink-0"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 9v4" />
@@ -107,15 +107,15 @@ function GoalIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-target-arrow"
+      className="shrink-0"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
