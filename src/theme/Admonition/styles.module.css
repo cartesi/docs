@@ -41,6 +41,13 @@
   padding: 0.75rem var(--ifm-alert-padding-horizontal);
   background: var(--ifm-color-warning-dark);
   line-height: 1;
+  color: var(--ifm-alert-foreground-color);
+}
+
+html[data-theme="dark"] {
+  .admonition-goal .admonitionHeading {
+    color: var(--ifm-background-color);
+  }
 }
 
 .admonition-goal .admonitionContent {
