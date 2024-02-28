@@ -44,10 +44,8 @@
   color: var(--ifm-alert-foreground-color);
 }
 
-html[data-theme="dark"] {
-  .admonition-goal .admonitionHeading {
-    color: var(--ifm-background-color);
-  }
+html[data-theme="dark"] .admonition-goal .admonitionHeading {
+  color: var(--ifm-background-color);
 }
 
 .admonition-goal .admonitionContent {
