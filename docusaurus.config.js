@@ -31,6 +31,9 @@ const config = {
           remarkPlugins: [replacementPlugin],
           docLayoutComponent: "@theme/DocPage",
           docItemComponent: "@theme/ApiItem",
+          admonitions: {
+            keywords: ["note", "tip", "danger", "info", "caution", "goal"],
+          },
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
