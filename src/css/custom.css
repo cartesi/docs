@@ -44,6 +44,7 @@ html {
   --ifm-breadcrumb-color-active: var(--ifm-font-color-base);
 
   --ifm-leading: calc(1.75 * 1rem);
+  --ifm-color-warning-dark: #ffc700;
 }
 
 /* Dark Theme var */
