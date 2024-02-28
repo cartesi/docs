@@ -59,6 +59,8 @@ html[data-theme="dark"] {
 
   --ifm-menu-color-background-hover: transparent;
   --ifm-menu-color-background-active: transparent;
+
+  --ifm-color-warning-dark: #ffdc5e;
 }
 
 @-ms-viewport {
