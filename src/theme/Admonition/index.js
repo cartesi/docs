@@ -129,7 +129,7 @@ function GoalIcon() {
 // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
 const AdmonitionConfigs = {
   note: {
-    infimaClassName: "secondary",
+    infimaClassName: "info",
     iconComponent: NoteIcon,
     label: (
       <Translate
