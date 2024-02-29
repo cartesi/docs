@@ -32,7 +32,15 @@ const config = {
           docLayoutComponent: "@theme/DocPage",
           docItemComponent: "@theme/ApiItem",
           admonitions: {
-            keywords: ["note", "tip", "danger", "info", "caution", "goal"],
+            keywords: [
+              "note",
+              "tip",
+              "danger",
+              "info",
+              "caution",
+              "goal",
+              "troubleshoot",
+            ],
           },
           showLastUpdateTime: true,
         },

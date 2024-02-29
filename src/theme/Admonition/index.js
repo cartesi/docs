@@ -7,18 +7,38 @@ function NoteIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0"
+      class="icon icon-tabler icon-tabler-star-filled"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      stroke-width="1.5"
       stroke="currentColor"
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
+      <path
+        d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z"
+        stroke-width="0"
+        fill="#008DA5"
+      />
+    </svg>
+  );
+}
+function TroubleshootIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M19 2H5C3.9 2 3 2.9 3 4V18C3 19.1 3.9 20 5 20H9L12 23L15 20H19C20.1 20 21 19.1 21 18V4C21 2.9 20.1 2 19 2ZM19 18H14.17L13.58 18.59L12 20.17L10.41 18.58L9.83 18H5V4H19V18ZM12 17L13.88 12.88L18 11L13.88 9.12L12 5L10.12 9.12L6 11L10.12 12.88L12 17Z"
+        fill="#008DA5"
+      />
     </svg>
   );
 }
@@ -131,6 +151,18 @@ const AdmonitionConfigs = {
   note: {
     infimaClassName: "info",
     iconComponent: NoteIcon,
+    label: (
+      <Translate
+        id="theme.admonition.note"
+        description="The default label used for the Note admonition (:::note)"
+      >
+        note
+      </Translate>
+    ),
+  },
+  troubleshoot: {
+    infimaClassName: "info",
+    iconComponent: TroubleshootIcon,
     label: (
       <Translate
         id="theme.admonition.note"
