@@ -268,6 +268,10 @@ html[data-theme="dark"] {
   @apply mb-0;
 }
 
+.tabs--tabs-only .tabs__item:hover {
+  color: inherit;
+}
+
 .tabs--tabs-only + .margin-top--md {
   @apply hidden;
 }
