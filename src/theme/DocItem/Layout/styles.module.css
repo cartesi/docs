@@ -1,3 +1,8 @@
+.docItemContainer {
+  max-width: 90ch !important;
+  margin: 0 auto;
+}
+
 .docItemContainer header + *,
 .docItemContainer article > *:first-child {
   margin-top: 0;
