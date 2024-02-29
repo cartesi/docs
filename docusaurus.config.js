@@ -34,6 +34,7 @@ const config = {
           admonitions: {
             keywords: ["note", "tip", "danger", "info", "caution", "goal"],
           },
+          showLastUpdateTime: true,
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -291,6 +292,7 @@ const config = {
             label: "1.0",
           },
         },
+        showLastUpdateTime: true,
       },
     ],
     "docusaurus-plugin-hotjar",
