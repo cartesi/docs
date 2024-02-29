@@ -29,8 +29,6 @@ const config = {
           // Please change this to your repo.
           editUrl: "https://github.com/cartesi/docs/tree/develop",
           remarkPlugins: [replacementPlugin],
-          docLayoutComponent: "@theme/DocPage",
-          docItemComponent: "@theme/ApiItem",
           admonitions: {
             keywords: [
               "note",
