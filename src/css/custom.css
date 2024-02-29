@@ -422,7 +422,7 @@ html[data-theme="dark"] {
 }
 
 .theme-doc-sidebar-menu > li {
-  @apply py-2;
+  @apply sm:py-4;
 }
 
 .theme-doc-sidebar-menu > li + li {
