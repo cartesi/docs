@@ -13,7 +13,7 @@ export default function TOC({ className, ...props }) {
   const { frontMatter } = useDoc();
   return (
     <div className={clsx(styles.tableOfContents, "thin-scrollbar", className)}>
-      <h3 class="mt-4 block text-[.8rem]">On this page</h3>
+      <h3 className="mt-4 block text-[.8rem]">On this page</h3>
       <TOCItems
         {...props}
         linkClassName={LINK_CLASS_NAME}
