@@ -9,7 +9,7 @@ html {
 
 @tailwind components;
 
-/* Docusaurus vars */
+
 :root {
   --ifm-font-color-base: #1c1b1f;
   --ifm-color-primary: #008da5;
