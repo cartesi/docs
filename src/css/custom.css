@@ -45,6 +45,8 @@ html {
 
   --ifm-leading: calc(1.75 * 1rem);
   --ifm-color-warning-dark: #ffc700;
+
+  --ifm-tabs-padding-vertical: 0.75rem;
 }
 
 /* Dark Theme var */
@@ -201,8 +203,42 @@ html[data-theme="dark"] {
 
 /* Tabs */
 
+/* tab container */
+.tabs-container {
+  border-radius: var(--ifm-global-radius);
+  border: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tab-item-container {
+  @apply p-4 sm:p-6;
+}
+
+.tabs {
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tabs-container:has(.tabs--tabs-only),
+.tabs-container:has(.tabs--content-only) {
+  border: 0;
+}
+
+.tabs-container:has(.tabs--tabs-only) .tab-item-container,
+.tabs-container:has(.tabs--content-only) .tab-item-container {
+  padding: 0;
+}
+
+.tabs__item {
+  border-width: 0;
+}
+
+.tabs__item:hover {
+  background-color: transparent;
+  color: var(--ifm-color-primary);
+}
+
 .tabs--tabs-only {
   justify-content: left;
+  border: 0;
   @apply mb-0 text-current;
 
   --ifm-tabs-color-active: var(--ifm-card-background-color);
@@ -237,7 +273,7 @@ html[data-theme="dark"] {
 }
 
 .tabs--content-only {
-  @apply mb-0;
+  @apply mb-0 border-0;
 }
 
 .tabs--content-only > li {
