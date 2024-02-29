@@ -31,6 +31,10 @@ html {
   --ifm-card-border-radius: 0.25rem;
 
   --ifm-footer-background-color: #1c1b1f;
+  --ifm-navbar-background-color: #fff;
+
+  --ifm-dropdown-hover-background-color: #00f6ff;
+
   --ifm-footer-color: #fff;
 
   --ifm-h1-font-size: 2rem;
@@ -57,10 +61,15 @@ html[data-theme="dark"] {
   --ifm-background-surface-color: #38373a;
   --ifm-background-color: #1c1b1f;
 
+  --ifm-navbar-background-color: #1c1b1f;
+  --ifm-navbar-shadow: 0 0 1px 0 #dbdbdb;
+
   --ifm-card-background-color: var(--ifm-background-surface-color);
 
   --ifm-menu-color-background-hover: transparent;
   --ifm-menu-color-background-active: transparent;
+
+  --ifm-dropdown-hover-background-color: #00f6ff;
 
   --ifm-color-warning-dark: #ffdc5e;
 }
@@ -76,6 +85,12 @@ html[data-theme="dark"] {
 
 .breadcrumbs__item {
   @apply flex items-center;
+}
+
+/* Dropdown link */
+.dropdown__link:hover,
+.dropdown__link--active {
+  color: #1c1b1f;
 }
 
 /* Markdown */
