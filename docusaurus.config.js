@@ -274,6 +274,11 @@ const config = {
         additionalLanguages: ["lua"],
       },
 
+      tableOfContents: {
+        minHeadingLevel: 2,
+        maxHeadingLevel: 2,
+      },
+
       /*  // Announcemnt bar
       announcementBar: {
         id: "example_bar",
