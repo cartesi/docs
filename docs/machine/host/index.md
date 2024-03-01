@@ -30,9 +30,11 @@ It comes with a pre-built emulator and Lua interpreter accessible within the com
 It also comes with the cross-compiler for the RISC-V architecture on which the Cartesi Machine is based.
 
 To enter the playground, open a terminal, download the Docker image from Cartesi's repository, and run it adequately mapping the current user and group information, as well as making the host's current directory available inside the container:
+
 ```bash
 docker pull cartesi/playground:0.5.0
 ```
+
 ```bash
 docker run -it --rm -h playground \
     -e USER=$(id -u -n) \
@@ -45,29 +47,37 @@ docker run -it --rm -h playground \
 ```
 
 Once inside, you can execute the `cartesi-machine` utility as follows:
+
 ```
 cartesi-machine --help
 ```
+
 ```
 %machine.host.overview.help
 ```
 
 A final check can also be performed to verify if the contents inside the container are as expected:
+
 ```
 sha256sum /opt/cartesi/share/images/linux.bin
 ```
+
 ```
 %machine.host.overview.sha256-linux
 ```
+
 ```
 sha256sum /opt/cartesi/share/images/rom.bin
 ```
+
 ```
 %machine.host.overview.sha256-rom
 ```
+
 ```
 sha256sum /opt/cartesi/share/images/rootfs.ext2
 ```
+
 ```
 %machine.host.overview.sha256-rootfs
 ```
