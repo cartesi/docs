@@ -87,7 +87,7 @@ const config = {
             label: "Learn",
             position: "left",
             items: [
-              { label: "Machine", href: "/cartesi-machine" },
+              { label: "Machine", href: "/machine" },
               { label: "Earn", href: "/earn-ctsi" },
               { label: "Core architecture", href: "#" },
               { label: "Execution layer", href: "#" },
