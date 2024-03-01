@@ -50,7 +50,7 @@ Non-interactive refers to the fact that the challengers can prove that a state u
 - Executes transaction computations off-chain. This way the computations are not carried out by the base layer. Instead, they are executed in a separate computation environment and the rollup protocol ensures transaction validity via either validity proofs or fraud proofs.
 - Capable of compressing data from several transactions into a bundle to decrease both transaction costs and size, increasing overall efficiency.
 - Allows blockchains to scale while keeping the security guarantees of its consensus mechanism.
-:::
+  :::
 
 ## Cartesi Rollups
 
@@ -60,7 +60,7 @@ In the next sections:
 
 1. We will discuss the [main concepts of the Cartesi Rollups framework](./components.md) and how they work
 2. We will explain how to [send requests](./sending-requests.md) to a Cartesi dApp, and how a Cartesi dApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md)
-3. We will dig deeper into the [architecture of dApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](./http-api.md) to communicate with it
+3. We will dig deeper into the [architecture of dApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](/api/index.md) to communicate with it
 4. We will share our vision of a [step-by-step process for developing applications](./dapp-life-cycle.md) on Cartesi Rollups, from the initial design stage up to its final deployment
 
 ## Cartesi Machine
@@ -91,6 +91,5 @@ The integration of the Optimistic Rollups framework with the Cartesi Machine Emu
 ## See Also
 
 - [Everything you need to know about Optimistic Rollup in general](https://www.paradigm.xyz/2021/01/almost-everything-you-need-to-know-about-optimistic-rollup)
-
 
 - [Fraud proofs and virtual machines](https://medium.com/@cpbuckland88/fraud-proofs-and-virtual-machines-2826a3412099) or go into more details [here](https://tlu.tarilabs.com/cryptography/fraud-proofs#what-are-fraud-proofs)

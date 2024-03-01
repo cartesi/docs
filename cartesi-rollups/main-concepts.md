@@ -4,7 +4,7 @@ title: Main concepts
 tags: [learn, rollups, dapps, low-level developer, components]
 ---
 
-As explained in the [previous section](./overview.md), the Cartesi Rollups framework achieves scalability by moving the bulk of the computation outside the blockchain, using the ledger as a data source but not as an execution environment. As such, the solution contains both on-chain (L1) and off-chain (L2) components.
+As explained in the [previous section](./index.md), the Cartesi Rollups framework achieves scalability by moving the bulk of the computation outside the blockchain, using the ledger as a data source but not as an execution environment. As such, the solution contains both on-chain (L1) and off-chain (L2) components.
 
 ## Main concepts
 

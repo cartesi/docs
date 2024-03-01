@@ -3,12 +3,12 @@ id: basics
 title: Introduction
 ---
 
-The [Cartesi Rollups framework](../../overview.md#what-is-a-blockchain-rollup) consists of components on the _base layer_ (the foundational blockchain where a dApp contract is deployed, such as Ethereum) and _execution layer_ (the Cartesi off-chain layer where the dApp runs its backend logic).
+The [Cartesi Rollups framework](../../index.md#what-is-a-blockchain-rollup) consists of components on the _base layer_ (the foundational blockchain where a dApp contract is deployed, such as Ethereum) and _execution layer_ (the Cartesi off-chain layer where the dApp runs its backend logic).
 
 - The base layer components are a set of smart contracts deployed on an Ethereum-compatible blockchain.
 - The execution layer components are the Cartesi Nodes.
 
-In a typical Cartesi dApp architecture, the dApp back-end is running on a Cartesi Node and the dApp front-ends [interact](../../overview.md#how-does-a-rollup-work) with base layer smart contracts to send inputs to the dApp back-end, deposit assets, and process outputs (execute vouchers and validate notices).
+In a typical Cartesi dApp architecture, the dApp back-end is running on a Cartesi Node and the dApp front-ends [interact](../../index.md#how-does-a-rollup-work) with base layer smart contracts to send inputs to the dApp back-end, deposit assets, and process outputs (execute vouchers and validate notices).
 
 To interact with an Ethereum-compatible blockchain, the dApp front-end needs to connect to a blockchain node using [Ethereum's JSON-RPC API](https://ethereum.org/en/developers/docs/apis/json-rpc/). JSON-RPC is a lightweight remote procedure call (RPC) protocol that uses JSON as the data exchange format, and Ethereum has specified an API using this protocol to allow clients to communicate with Ethereum-compatible nodes.
 

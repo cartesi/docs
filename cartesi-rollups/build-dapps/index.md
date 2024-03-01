@@ -39,7 +39,7 @@ In [Host Mode](./dapp-host-mode.md), the back-end logic is executed natively on 
 
 ## Learn more
 
-- [Cartesi Rollups overview](../overview.md)
+- [Cartesi Rollups overview](../index.md)
 - [dApp life cycle explained](../dapp-life-cycle.md)
 - [dApp architecture](../dapp-architecture.md)
-- [Rollups HTTP APIs](../http-api.md)
+- [Rollups HTTP APIs](../api/index.md)

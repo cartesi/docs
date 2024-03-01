@@ -4,7 +4,7 @@ title: Run back-end in Host Mode
 tags: [build, quickstart, dapps, developer]
 ---
 
-When developing an application, it is often important to easily test and debug it. For that matter, it is possible to run the Cartesi Rollups environment in [host mode](./overview.md#host-mode), so that the dApp's back-end can be executed directly on the host machine, allowing it to be debugged using regular development tools such as an IDE.
+When developing an application, it is often important to easily test and debug it. For that matter, it is possible to run the Cartesi Rollups environment in [host mode](./index.md#host-mode), so that the dApp's back-end can be executed directly on the host machine, allowing it to be debugged using regular development tools such as an IDE.
 
 ![img](../../static/img/prodvshost.png)
 
