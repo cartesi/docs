@@ -134,6 +134,11 @@ const config = {
               { label: "Quick start tutorials", href: "#" },
             ],
           },
+          {
+            label: "Cartesi Home",
+            to: "//cartesi.io",
+            position: "left",
+          },
 
           // {
           //   type: "docsVersionDropdown",
@@ -266,6 +271,11 @@ const config = {
             ],
           },
         ],
+      },
+
+      tableOfContents: {
+        minHeadingLevel: 2,
+        maxHeadingLevel: 2,
       },
 
       prism: {
