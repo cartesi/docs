@@ -3,7 +3,7 @@ title: Linux environment
 ---
 
 :::note
-[The host perspective](../host/overview.md) section describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines.
+[The host perspective](../host/index.md) section describes in detail the `cartesi-machine` command-line utility and the general structure of Cartesi Machines.
 In order to avoid repetition, this section assumes familiarity with the material presented there.
 :::
 
@@ -14,11 +14,13 @@ Inside the playground, the following command instructs the emulator to load the 
 ```bash
 cartesi-machine -i -- sh
 ```
+
 Once executed, the Cartesi Machine boots Linux and drops into an interactive shell (The `sh` argument in the command-line.)
 
 ```
 %machine.target.linux.interactive-ls
 ```
+
 The session shows a user changing the working directory to `/bin/` and listing its contents.
 The user then does the same with directory `/usr/bin/`, before finally leaving the emulator with the `exit` command.
 The point of the exercise is that, from the inside, the environment will be familiar to any regular Unix user.
@@ -37,6 +39,7 @@ The same toolchain is available in the `cartesi/playground` Docker image.
 Other than using a cross-compiler in the host to create executables for a different target platform, cross-development is not that different from hosted development.
 As an example, consider the simple task of compiling the ubiquitous &ldquo;Hello world!&rdquo; program in the C++ programming language to run in the target.
 (Printing 5 lines, to at least offer a taste of the programming language.)
+
 ```c++ title="hello.cpp"
 #include <iostream>
 
@@ -49,20 +52,26 @@ int main(int argc, char *argv[]) {
 ```
 
 To produce the binary in the playground, run
+
 ```bash
 riscv64-cartesi-linux-gnu-g++ -O2 -o hello-cpp hello.cpp
 ```
+
 Note the prefix `riscv64-cartesi-linux-gnu-` to the typical `g++` command.
 This prefix identifies the cross-compiler.
 The resulting file is a RISC-V executable suitable for running on the target.
 This can be see by running the command
+
 ```bash
 file hello-cpp
 ```
+
 which produces
+
 ```
 hello-cpp: ELF 64-bit LSB executable, UCB RISC-V, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-riscv64-lp64.so.1, for GNU/Linux 5.5.19, with debug_info, not stripped
 ```
+
 If the bare `gcc` command was used instead, the resulting binary would be suitable for running on the host.
 
 The executable can now be placed inside a new `hello.ext2` file-system:
@@ -72,6 +81,7 @@ mkdir hello
 cp hello-cpp hello
 genext2fs -b 1024 -d hello hello.ext2
 ```
+
 The `hello-cpp` program can then be run from using the `cartesi-machine` command-line utility as follows:
 
 ```bash
@@ -107,39 +117,37 @@ To that end, create a file with the following JSON object:
 
 ```json title="riscv64ima-cartesi-linux-gnu.json"
 {
-    "arch": "riscv64",
-    "code-model": "medium",
-    "cpu": "generic-rv64",
-    "crt-static-respected": true,
-    "data-layout": "e-m:e-p:64:64-i64:64-i128:128-n64-S128",
-    "dynamic-linking": true,
-    "env": "gnu",
-    "executables": true,
-    "features": "+m,+a",
-    "has-rpath": true,
-    "is-builtin": false,
-    "llvm-abiname": "lp64",
-    "llvm-target": "riscv64",
-    "max-atomic-width": 64,
-    "os": "linux",
-    "position-independent-executables": true,
-    "relro-level": "full",
-    "target-family": [
-      "unix"
-    ],
-    "linker-flavor": "gcc",
-    "linker": "riscv64-cartesi-linux-gnu-gcc",
-    "pre-link-args": {
-        "gcc": []
-    },
-    "post-link-args": {
-        "gcc": [
-            "-Wl,--allow-multiple-definition",
-            "-Wl,--start-group,-lc,-lm,-lgcc,-lstdc++,-lsupc++,--end-group"
-        ]
-    },
-    "target-pointer-width": "64",
-    "panic-strategy": "abort"
+  "arch": "riscv64",
+  "code-model": "medium",
+  "cpu": "generic-rv64",
+  "crt-static-respected": true,
+  "data-layout": "e-m:e-p:64:64-i64:64-i128:128-n64-S128",
+  "dynamic-linking": true,
+  "env": "gnu",
+  "executables": true,
+  "features": "+m,+a",
+  "has-rpath": true,
+  "is-builtin": false,
+  "llvm-abiname": "lp64",
+  "llvm-target": "riscv64",
+  "max-atomic-width": 64,
+  "os": "linux",
+  "position-independent-executables": true,
+  "relro-level": "full",
+  "target-family": ["unix"],
+  "linker-flavor": "gcc",
+  "linker": "riscv64-cartesi-linux-gnu-gcc",
+  "pre-link-args": {
+    "gcc": []
+  },
+  "post-link-args": {
+    "gcc": [
+      "-Wl,--allow-multiple-definition",
+      "-Wl,--start-group,-lc,-lm,-lgcc,-lstdc++,-lsupc++,--end-group"
+    ]
+  },
+  "target-pointer-width": "64",
+  "panic-strategy": "abort"
 }
 ```
 
@@ -205,7 +213,7 @@ Here are &ldquo;Hello world!&rdquo; programs for each of these languages:
 #!/usr/bin/env qjs
 
 for (var i = 1; i <= 5; i++) {
-    console.log(i + ": Hello world from JavaScript!")
+  console.log(i + ": Hello world from JavaScript!");
 }
 ```
 
@@ -258,6 +266,7 @@ for {set i 1} {$i <= 5} {incr i} {
 ```
 
 The following shell script invokes all of them:
+
 ```bash title="all.sh"
 #!/bin/sh
 
@@ -276,13 +285,16 @@ cd $(dirname $0)
 ./hello.tcl
 ```
 
-After adding all these files to `hello.ext2` (with *execute* permissions), the result of the command line
+After adding all these files to `hello.ext2` (with _execute_ permissions), the result of the command line
+
 ```bash
 cartesi-machine \
     --flash-drive=label:hello,filename:hello.ext2 \
     -- "/mnt/hello/all.sh"
 ```
+
 is as follows:
+
 ```
 
          .
@@ -354,6 +366,7 @@ is as follows:
 Halted
 Cycles: 205939605
 ```
+
 The take-away message is that developers can use the tools they are most familiar with to accomplish the task at hand.
 
 :::note
@@ -383,11 +396,13 @@ When a valid file-system is detected, the script automatically mounts the file-s
 In this fashion, file-systems present in all flash drives are available for use right after Linux boots.
 
 This was the case with the command
+
 ```bash
 cartesi-machine \
     --flash-drive=label:hello,filename:hello.ext2 \
     -- "/mnt/hello/all.sh"
 ```
+
 The `cartesi-machine` command-line utility instructed the emulator to add a new flash drive, initialized with the contents of the `hello.ext2` image file.
 It gave the label `hello` to that flash drive using the kernel command-line parameter `mtdparts=flash.0:-(root);flash.1:-(hello)`.
 The `/sbin/init` script identified a valid file-system in the device, and used its label to mount it at `/mnt/hello`.
@@ -405,6 +420,7 @@ Another alternative is the `devio` tool.
 Some scripting languages, like the Lua programming language, have packing and unpacking libraries that can be very helpful.
 
 For example, consider the previously discussed Cartesi Machine that operates as an arbitrary-precision calculator
+
 ```bash
 \rm -f output.raw
 truncate -s 4K output.raw
@@ -416,17 +432,20 @@ cartesi-machine \
     -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z", io.read("a"))))\' | bc | dd status=none of=$(flashdrive output)'
 luapp5.3 -e 'print((string.unpack("z", io.read("a"))))' < output.raw
 ```
+
 The input is a null-terminated string containing the expression to be evaluated.
 This string is stored inside a raw flash drive with label `input`.
 The output is once again a null-terminated string with the result, this time stored inside a raw flash drive with label `output`.
 
 The command executed inside the machine is
+
 ```bash
 dd status=none if=$(flashdrive input) | \
     lua -e 'print((string.unpack("z", io.read("a"))))' | \
     bc | \
     dd status=none of=$(flashdrive output)
 ```
+
 The `flashdrive` command-line utility prints the name of the device corresponding to a given label.
 In this case, `flashdrive input` prints `/dev/mtdblock1` and `flashdrive output` prints `/dev/mtdblock2` (recall `/dev/mtdblock0` is the root file-system, defined by default to load the `rootfs.ext2` image).
 
@@ -486,6 +505,7 @@ The `/dev/yield` device can be controlled directly via its `ioctl` interface.
 This is how the `/opt/cartesi/bin/yield` command-line utility operates.
 The only `ioctl` request code exported is `IOCTL_YIELD`.
 It takes as argument a structure `yield_request` defined as follows:
+
 ```C
 struct yield_request {
     __u8 dev;
@@ -494,9 +514,10 @@ struct yield_request {
     __u32 data;
 };
 ```
+
 The `dev` field must take the value `HTIF_DEVICE_YIELD`.
 
-The `cmd` field can take one of two values: `HTIF_YIELD_MANUAL` or  `HTIF_YIELD_AUTOMATIC`.
+The `cmd` field can take one of two values: `HTIF_YIELD_MANUAL` or `HTIF_YIELD_AUTOMATIC`.
 Sending either a manual yield or an automatic yield command to the device causes the emulator to return control to the host, giving it access to the `reason` and `data` fields.
 
 Manual yields are used when the target application needs some kind of manual intervention from the host that modifies the machine state before resuming, typically when it needs some kind of input or throws an exception.
@@ -521,6 +542,7 @@ There are four types of rollup responses: vouchers, notices, reports, and except
 
 The `ioctl` request `IOCTL_ROLLUP_FINISH` is used to transition between one rollup request to the next.
 It takes as argument a structure `rollup_finish` defined as follows:
+
 ```C
 struct rollup_finish {
     /* True if previous request should be accepted */
@@ -531,6 +553,7 @@ struct rollup_finish {
     int next_request_payload_length;
 };
 ```
+
 The `accept_previous_request` field is set to `true` when accepting the previous request, or to `false` when rejecting it.
 As a result, the `/dev/rollup` device will issue an yield manual command to the `/dev/yield` device, passing as `reason` field, respectively, `HTIF_YIELD_REASON_RX_ACCEPTED` or `HTIF_YIELD_REASON_RX_REJECTED`.
 Upon return, the value of field `next_request_type` will contain `CARTESI_ROLLUP_ADVANCE` if the next request is an advance-state request, or `CARTESI_ROLLUP_INSPECT` if the next request is an inspect-state request.
@@ -538,6 +561,7 @@ Moreover, the `next_request_payload_length` field will contain the length of the
 
 To obtain the advance-state request data, the target application should then use the `ioctl` request `IOCTL_ROLLUP_READ_ADVANCE_STATE`.
 It takes as argument a structure `rollup_advance_state` defined as follows:
+
 ```C
 struct rollup_bytes {
     unsigned char *data;
@@ -557,6 +581,7 @@ struct rollup_advance_state {
     struct rollup_bytes payload;
 };
 ```
+
 The `payload` field should contain a `rollup_bytes` structure, where the `payload.data` points to a buffer that can hold `payload.length` bytes.
 Note that the value of `payload.length` should be no less than the value of `next_request_payload_length` returned in the `rollup_finish` argument to the previous `ioctl` request `IOCTL_ROLLUP_FINISH`.
 Upon return, the `payload.data` buffer will contain the advance-state request payload.
@@ -566,11 +591,13 @@ This data comes from what the host wrote to the `rollup.input_metadata` memory r
 
 To obtain the inspect-state request data, the target application should then use the `ioctl` request `IOCTL_ROLLUP_READ_ADVANCE_STATE`.
 It takes as argument a structure `rollup_advance_state` defined as follows:
+
 ```C
 struct rollup_inspect_state {
     struct rollup_bytes payload;
 };
 ```
+
 The `payload` field should contain a `rollup_bytes` structure, where the `payload.data` points to a buffer that can hold `payload.length` bytes.
 Note that the value of `payload.length` should be no less than the value of `next_request_payload_length` returned in the `rollup_finish` argument to the previous `ioctl` request `IOCTL_ROLLUP_FINISH`.
 Upon return, the `payload.data` buffer will contain the inspect-state request payload.
@@ -578,6 +605,7 @@ This data comes from what the host wrote to the `rollup.rx_buffer` memory range.
 
 While processing a request, to produce a voucher, the target application should use the `ioctl` request `IOCTL_ROLLUP_WRITE_VOUCHER`.
 It takes as argument a structure `rollup_voucher` defined as follows:
+
 ```C
 struct rollup_voucher {
     uint8_t address[CARTESI_ROLLUP_ADDRESS_SIZE];
@@ -585,6 +613,7 @@ struct rollup_voucher {
     uint64_t index;
 };
 ```
+
 The `address` field should contain the desired voucher address.
 The `payload` field should contain a `rollup_bytes` structure with the desired voucher payload.
 The `/dev/rollup` device copies this data to the `rollup.tx_buffer` memory range for the host to read.
@@ -593,12 +622,14 @@ Upon return, the `index` field contains the index of the emitted voucher.
 
 While processing a request, to produce a rollup notice, the target application should use the `ioctl` request `IOCTL_ROLLUP_WRITE_NOTICE`.
 It takes as argument a structure `rollup_notice` defined as follows:
+
 ```C
 struct rollup_notice {
     struct rollup_bytes payload;
     uint64_t index;
 };
 ```
+
 The `payload` field should contain a `rollup_bytes` structure with the desired notice payload.
 The `/dev/rollup` device copies this data to the `rollup.tx_buffer` memory range for the host to read.
 Then, the `/dev/rollup` device issues an yield automatic command to the `/dev/yield` device, passing as `reason` field `HTIF_YIELD_REASON_TX_NOTICE`.
@@ -606,11 +637,13 @@ Upon return, the `index` field contains the index of the emitted notice.
 
 While processing a request, to produce a rollup report, the target application should use the `ioctl` request `IOCTL_ROLLUP_WRITE_REPORT`.
 It takes as argument a structure `rollup_report` defined as follows:
+
 ```C
 struct rollup_report {
     struct rollup_bytes payload;
 };
 ```
+
 The `payload` field should contain a `rollup_bytes` structure with the desired report payload.
 The `/dev/rollup` device copies this data to the `rollup.tx_buffer` memory range for the host to read.
 Then, the `/dev/rollup` device issues an yield automatic command to the `/dev/yield` device, passing as `reason` field `HTIF_YIELD_REASON_TX_REPORT`.
@@ -618,11 +651,13 @@ Then, the `/dev/rollup` device issues an yield automatic command to the `/dev/yi
 Finally, to throw a rollup exception, the target application should use the `ioctl` request
 `IOCTL_ROLLUP_THROW_EXCEPTION`.
 It takes as argument a structure `rollup_exception` defined as follows:
+
 ```C
 struct rollup_exception {
     struct rollup_bytes payload;
 };
 ```
+
 The `payload` field should contain a `rollup_bytes` structure with the desired exception payload.
 The `/dev/rollup` device copies this data to the `rollup.tx_buffer` memory range for the host to read.
 Then, the `/dev/rollup` device issues an yield _manual_ command to the `/dev/yield` device, passing as `reason` field `HTIF_YIELD_REASON_TX_EXCEPTION`.
