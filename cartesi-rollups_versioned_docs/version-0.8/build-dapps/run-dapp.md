@@ -4,7 +4,7 @@ title: Quick Start
 tags: [build, quickstart, dapps, developer]
 ---
 
-This article explains how to build and interact with a minimalistic [Cartesi Rollups](../overview.md) application.
+This article explains how to build and interact with a minimalistic [Cartesi Rollups](../index.md) application.
 
 By the end of this tutorial, you will learn how to run a simple existing dApp written in _Python_, called **Echo-Python**.
 

@@ -31,7 +31,7 @@ export const learn = [
     links: [
       {
         label: "Introduction to the Cartesi Machine",
-        href: "/machine/intro",
+        href: "/machine/",
       },
       {
         label: "Setting up and running Cartesi Machines",
@@ -137,7 +137,7 @@ export const learn = [
       },
       {
         label: "Introduction to the Cartesi Machine",
-        href: "/machine/intro",
+        href: "/machine/",
       },
       {
         label: "Setting up and running Cartesi Machines",

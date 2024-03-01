@@ -18,7 +18,7 @@ Cartesi dApps communicate between the front-end and back-end using the Rollups f
 
 When it comes to dApp architecture and APIs, several points are important to highlight:
 
-- The [Cartesi Machine](/machine/intro) serves as the back-end for the dApp, and it is managed by a [Cartesi Node](../components.md#cartesi-nodes), providing a secure and efficient environment for running the dApp
+- The [Cartesi Machine](/machine/) serves as the back-end for the dApp, and it is managed by a [Cartesi Node](../components.md#cartesi-nodes), providing a secure and efficient environment for running the dApp
 - All inputs are sent to the L1 smart contracts
 - You can query the Rollups state using a [GraphQL API](../api/graphql/basics.md). This state includes the received inputs and the associated outputs produced in the form of notices, vouchers and reports
 - You can retrieve arbitrary application state via the [Inspect HTTP API](../api/inspect/inspect.api.mdx). It allows you to implement a REST-like API on the back-end of your dApp to return arbitrary information about it, much like what web2 applications are used to

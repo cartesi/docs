@@ -12,11 +12,11 @@ title: Hello World machine
 
 Now that we have [built our basic dApp project](../helloworld/create-project.md), we will shift our focus towards the off-chain part of the dApp.
 
-As we said before, our dApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a _[reproducible and verifiable Cartesi Machine template](/machine/intro)_, so that on-chain code can safely execute the off-chain computation. This process is described below.
+As we said before, our dApp's goal is to instantiate an off-chain computation that simply returns "Hello World!". In this context, the first step we'll take is to specify this computation as a _[reproducible and verifiable Cartesi Machine template](/machine/)_, so that on-chain code can safely execute the off-chain computation. This process is described below.
 
 ## Cartesi Playground
 
-In order to specify and test our Cartesi Machine, we will make use of the `cartesi/playground` Docker image already showcased in the [Cartesi Machine host perspective section](/machine/host/overview/). With the playground, we will take advantage of numerous [Cartesi Machine features available at the command line interface](/machine/host/cmdline/).
+In order to specify and test our Cartesi Machine, we will make use of the `cartesi/playground` Docker image already showcased in the [Cartesi Machine host perspective section](/machine/host/). With the playground, we will take advantage of numerous [Cartesi Machine features available at the command line interface](/machine/host/cmdline/).
 
 First of all, create a directory called `cartesi-machine` within the `helloworld` project home directory, and `cd` into it:
 
