@@ -3,11 +3,11 @@ module.exports = {
     {
       type: "category",
       label: "Cartesi Rollups",
-      link: {
-        type: "generated-index",
-        slug: "/",
-      },
       collapsed: true,
+      link: {
+        type: "doc",
+        id: "overview",
+      },
       items: [
         "overview",
         "main-concepts",
@@ -23,33 +23,21 @@ module.exports = {
         {
           type: "category",
           label: "Rollups HTTP APIs",
-          link: {
-            type: "generated-index",
-            slug: "api",
-            description:
-              "APIs available for dApp developers to interact with the Cartesi Rollups framework.",
-          },
           collapsed: true,
+          link: {
+            type: "doc",
+            id: "api/http-api",
+          },
           items: [
-            "http-api",
+            "api/http-api",
             {
               type: "category",
               label: "Front-end APIs",
-              link: {
-                type: "generated-index",
-                slug: "api/front-end",
-                description:
-                  "APIs used by front-end clients to interact with the Cartesi Rollups framework.",
-              },
               collapsed: true,
               items: [
                 {
                   type: "category",
                   label: "Smart contracts API",
-                  link: {
-                    type: "generated-index",
-                    slug: "api/json-rpc",
-                  },
                   collapsed: true,
                   items: [
                     "api/json-rpc/basics",
@@ -58,10 +46,6 @@ module.exports = {
                     {
                       type: "category",
                       label: "Portals",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/json-rpc/portals",
-                      },
                       collapsed: true,
                       items: [
                         "api/json-rpc/portals/ERC20Portal",
@@ -74,10 +58,6 @@ module.exports = {
                     {
                       type: "category",
                       label: "Relays",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/json-rpc/relays",
-                      },
                       collapsed: true,
                       items: ["api/json-rpc/relays/DAppAddressRelay"],
                     },
@@ -87,19 +67,15 @@ module.exports = {
                   type: "category",
                   label: "Rollups state GraphQL API",
                   link: {
-                    type: "generated-index",
-                    slug: "api/graphql/index",
+                    type: "doc",
+                    id: "api/graphql/overview",
                   },
                   collapsed: true,
                   items: [
-                    "api/graphql/basics",
+                    "api/graphql/overview",
                     {
                       type: "category",
                       label: "Queries",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/graphql/queries",
-                      },
                       collapsed: true,
                       items: [
                         {
@@ -111,10 +87,6 @@ module.exports = {
                     {
                       type: "category",
                       label: "Objects",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/graphql/objects",
-                      },
                       collapsed: true,
                       items: [
                         {
@@ -126,10 +98,6 @@ module.exports = {
                     {
                       type: "category",
                       label: "Filters",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/graphql/filters",
-                      },
                       collapsed: true,
                       items: [
                         {
@@ -147,10 +115,8 @@ module.exports = {
               type: "category",
               label: "Back-end API",
               link: {
-                type: "generated-index",
-                slug: "api/back-end",
-                description:
-                  "API used by dApp back-ends (running inside Cartesi Nodes) to interact with the Cartesi Rollups framework.",
+                type: "doc",
+                id: "api/rollup/cartesi-rollup-http-api",
               },
               collapsed: true,
               items: [
@@ -171,8 +137,8 @@ module.exports = {
       type: "category",
       label: "Build dApps",
       link: {
-        type: "generated-index",
-        slug: "/build-dapps",
+        type: "doc",
+        id: "build-dapps/overview",
       },
       collapsed: true,
       items: [
@@ -189,10 +155,6 @@ module.exports = {
     {
       type: "category",
       label: "References",
-      link: {
-        type: "generated-index",
-        slug: "/references",
-      },
       collapsed: true,
       items: [
         {
@@ -221,8 +183,8 @@ module.exports = {
       type: "category",
       label: "Future Developments",
       link: {
-        type: "generated-index",
-        slug: "/challenges",
+        type: "doc",
+        id: "challenges/overview",
       },
       collapsed: true,
       items: ["challenges/overview"],
