@@ -320,8 +320,8 @@ const sidebars = {
       type: "category",
       label: "Cartesi Machine",
       link: {
-        type: "generated-index",
-        slug: "cartesi-machine",
+        type: "doc",
+        id: "machine/intro",
       },
       collapsed: true,
       items: [
@@ -330,12 +330,12 @@ const sidebars = {
           type: "category",
           label: "Host perspective",
           link: {
-            type: "generated-index",
-            slug: "/machine/host",
+            type: "doc",
+            id: "machine/host/index",
           },
           collapsed: true,
           items: [
-            "machine/host/overview",
+            "machine/host/index",
             "machine/host/cmdline",
             "machine/host/lua",
           ],
@@ -344,12 +344,12 @@ const sidebars = {
           type: "category",
           label: "Target perspective",
           link: {
-            type: "generated-index",
-            slug: "/machine/target",
+            type: "doc",
+            id: "machine/target/index",
           },
           collapsed: true,
           items: [
-            "machine/target/overview",
+            "machine/target/index",
             "machine/target/linux",
             "machine/target/architecture",
           ],
@@ -358,12 +358,12 @@ const sidebars = {
           type: "category",
           label: "Blockchain perspective",
           link: {
-            type: "generated-index",
-            slug: "/machine/blockchain",
+            type: "doc",
+            id: "machine/blockchain/index",
           },
           collapsed: true,
           items: [
-            "machine/blockchain/intro",
+            "machine/blockchain/index",
             "machine/blockchain/hash",
             "machine/blockchain/vg",
           ],
@@ -373,10 +373,6 @@ const sidebars = {
     {
       type: "category",
       label: "References",
-      link: {
-        type: "generated-index",
-        slug: "/machine/references",
-      },
       collapsed: true,
       items: [
         {
