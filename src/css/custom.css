@@ -9,7 +9,6 @@ html {
 
 @tailwind components;
 
-
 :root {
   --ifm-font-color-base: #1c1b1f;
   --ifm-color-primary: #008da5;
@@ -91,6 +90,30 @@ html[data-theme="dark"] {
 .dropdown__link:hover,
 .dropdown__link--active {
   color: #1c1b1f;
+}
+
+.dropdown__link {
+  padding: 0.5rem 1rem;
+  border-radius: 0;
+  margin: 0;
+}
+
+.dropdown__menu {
+  padding: 0;
+  overflow: hidden;
+}
+
+.dropdown > .navbar__link:after {
+  border-width: 0.3em 0.3em 0;
+  top: 0;
+}
+
+/* logo */
+
+@media (min-width: 1280px) {
+  .navbar__brand {
+    width: calc(var(--doc-sidebar-width) - 2.5rem);
+  }
 }
 
 /* Markdown */

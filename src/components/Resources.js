@@ -4,7 +4,7 @@ import IconExternalLink from "@theme/Icon/ExternalLink";
 import isInternalUrl from "@docusaurus/isInternalUrl";
 export default function Resources({ resources }) {
   return (
-    <div className="flex gap-3 mt-6">
+    <div className="flex gap-3 mt-8">
       <span className="shrink-0 -mt-1">
         <svg
           width="14"
