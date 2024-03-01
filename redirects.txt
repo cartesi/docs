@@ -4,5 +4,23 @@
         "target": "/cartesi-rollups/build-dapps/",
         "status": "301",
         "condition": null
+    },
+    {
+        "source": "/cartesi-rollups/api/front-end/",
+        "target": "/cartesi-rollups/api/json-rpc/",
+        "status": "301",
+        "condition": null
+    },
+    {
+        "source": "/cartesi-rollups/0.9/api/front-end/",
+        "target": "/cartesi-rollups/0.9/api/json-rpc/",
+        "status": "301",
+        "condition": null
+    },
+    {
+        "source": "/cartesi-rollups/0.8/api/front-end/",
+        "target": "/cartesi-rollups/0.8/api/json-rpc/sol-input/",
+        "status": "301",
+        "condition": null
     }
 ]
