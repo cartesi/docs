@@ -9,7 +9,7 @@ The combination of [an Optimistic Rollups framework](https://github.com/cartesi/
 A dApp running on Cartesi Rollups consists of the following main components:
 
 - [**Cartesi Rollups**](./components.md), a set of on-chain and off-chain components that implement an Optimistic Rollups solution and provide the general framework for building dApps.
-- [**Cartesi Machine**](/machine/intro), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's [back-end](./dapp-architecture.md#back-end) is executed.
+- [**Cartesi Machine**](/machine/), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's [back-end](./dapp-architecture.md#back-end) is executed.
 - [**dApp Back-end**](./dapp-architecture.md#back-end), the application's state and verifiable logic, which corresponds to the dApp's smart contract. The back-end runs inside the Cartesi Machine as a regular Linux application.
 - [**dApp Front-end**](./dapp-architecture.md#front-end), the application's user-facing interface, such as a web app.
 
@@ -65,7 +65,7 @@ In the next sections:
 
 ## Cartesi Machine
 
-Central to Cartesi Rollups is the [Cartesi Machine](/machine/intro), which is a virtual machine designed to perform off-chain computations for blockchain applications. When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:
+Central to Cartesi Rollups is the [Cartesi Machine](/machine/), which is a virtual machine designed to perform off-chain computations for blockchain applications. When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:
 
 - **Code execution**: Code is executed based on specific inputs to perform computations, process data, or run custom logic, depending on the requirements of the task at hand.
 - **Abstraction of infrastructure**: The underlying infrastructure is abstracted away, allowing you to focus on writing code without worrying about managing servers, hardware, or networking resources.

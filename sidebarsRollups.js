@@ -38,6 +38,10 @@ module.exports = {
                 {
                   type: "category",
                   label: "Smart contracts API",
+                  link: {
+                    type: "doc",
+                    id: "api/json-rpc/basics",
+                  },
                   collapsed: true,
                   items: [
                     "api/json-rpc/basics",
@@ -170,10 +174,6 @@ module.exports = {
         {
           type: "category",
           label: "Migration guides",
-          link: {
-            type: "generated-index",
-            slug: "/migration-guides",
-          },
           collapsed: true,
           items: ["migration-guides/from-09-to-10"],
         },
