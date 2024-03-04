@@ -76,7 +76,7 @@ import TabItem from '@theme/TabItem';
   </TabItem>
 </Tabs>
 
-:::note
+:::tip
 Sunodo Doctor is a diagnostic tool that declares whether your system is ready and set up for development.
 
 ```shell

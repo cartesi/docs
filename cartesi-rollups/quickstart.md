@@ -13,11 +13,11 @@ resources:
     title: Deploy a Cartesi dApp on a test network
 ---
 
-Welcome to Quickstart. Here is a step-by-step guide to building a decentralized application quickly.
+Welcome to Quickstart. Here, you will see a step-by-step guide on building a decentralized application easily.
 
 ## Set up your environment
 
-The primary requirements for building on Cartesi are Docker Desktop and Sunodo.
+The major requirements for building on Cartesi are Docker Desktop and Sunodo.
 
 :::note
 If you are using Windows, you must have [WSL2 installed and configured](https://learn.microsoft.com/en-us/windows/wsl/install) for building.
@@ -44,8 +44,8 @@ sunodo create <dapp-name> --template <language>
 This creates a new directory with template code in the language you specify.
 
 ```bash
-$ sunodo create js-dapp --template javascript
-✔ Application created at /js-dapp
+$ sunodo create js-app --template javascript
+✔ Application created at /js-app
 ```
 
 Your application entry point will be the `src/index.js` file
@@ -62,9 +62,10 @@ sunodo build
 
 The `sunodo build` command builds a Cartesi machine and compiles your application to be ready to receive requests and inputs.
 
+
 ## Run the application
 
-Running your application starts a local Anvil node on port `8545`.
+Running your application starts a local Anvil chain/node that runs on port 8545.
 
 To run your application:
 
@@ -74,15 +75,15 @@ sunodo run
 
 ## Send inputs to the application
 
-You have some options available to send inputs to your application. The `sunodo send` command is one option that you can use.
+With your application running, you can send inputs by sending transactions with the input payload.
+
+To send inputs to your application, you have a few options available. The `sunodo send` command is one option that you can use.
 
 Another option is [Cast](https://book.getfoundry.sh/cast/), a command-line tool enabling you to make Ethereum RPC calls.
 
-Additionally, you can build a custom web interface to input data into your application.
+Alternativelly, you can build a custom web interface to input data into your application.
 
 ### Using Sunodo
-
-Here is how you can send input to your dApp:
 
 ```shell
 sunodo send
@@ -100,8 +101,6 @@ This guides you through sending inputs with Sunodo interactively.
 ```
 
 ### Using Cast
-
-Here is how you can send input to your dApp with Cast:
 
 ```shell
 cast send <InputBoxAddress> "addInput(address,bytes)" <DAppAddress> <EncodedPayload> -mnemonic <MNEMONIC>
@@ -129,8 +128,9 @@ Here is a [React.js + Typescript starter](https://github.com/prototyp3-dev/front
 
 ## Deploy the application
 
-:::note
+:::danger
 Deployment with Sunodo is under active development
 :::
+
 
 You can use [the guide here to deploy on a test network](https://github.com/Mugen-Builders/deploy-cartesi-dapp) in the interim.

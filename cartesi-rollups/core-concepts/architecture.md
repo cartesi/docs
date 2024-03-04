@@ -20,11 +20,11 @@ A dApp running on Cartesi consists of the following main components:
 
 - [Cartesi Rollups](/cartesi-rollups/core-concepts/optimistic-rollups/#cartesi-rollups), a set of on-chain and off-chain components that implement an [Optimistic Rollups](/cartesi-rollups/core-concepts/optimistic-rollups) solution and provide the general framework for building dApps.
 
-- [Cartesi Machine](https://docs.cartesi.io/cartesi-machine/), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's backend is executed.
+- [Cartesi Machine](https://docs.cartesi.io/cartesi-machine/), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's back-end is executed.
 
-- Backend, the application's state, and verifiable logic. The backend runs inside the Cartesi Machine as a regular Linux application.
+- Back-end, the application's state, and verifiable logic. The back end runs inside the Cartesi Machine as a regular Linux application.
 
-- Frontend, the application's user-facing interface, such as a web app or a CLI tool like Cast
+- Front-end, the application's user-facing interface, such as a web app or a CLI tool like Cast
 
 <video width="100%" controls poster="/img/architecture_dapp.png">
     <source src="/videos/HLA_video.mp4" type="video/mp4" />
@@ -41,42 +41,35 @@ Now, when a request is made to a dApp, the type of request determines how inform
 
 ## On-chain components
 
-The on-chain part of Cartesi Rollups involves deployed base layer smart contracts, each with distinct roles for your dApp. Every Cartesi dApp leverages the functionality these contracts provide. 
+The [on-chain part of Cartesi Rollups](https://github.com/cartesi/rollups-contracts/tree/9436c7a922f459e80b92d9173a95ba82d60ff371) involves [deployed base layer smart contracts](/cartesi-rollups/api/json-rpc/), each with distinct roles for your dApp. Every Cartesi dApp leverages the functionality these contracts provide.
 
+- [InputBox](/cartesi-rollups/api/json-rpc/sol-input/): This contract is responsible for receiving inputs from users who want to interact with applications. All inputs you want to send to your dApp go through this contract.
 
-- [InputBox](../api/json-rpc/input-box.md): This contract receives inputs from users who want to interact with the off-chain layer. All inputs to your dApp go through this contract. 
+- [CartesiDApp](http://localhost:3000/cartesi-rollups/api/json-rpc/sol-output/): This Application contract is instantiated for each dApp (i.e., each dApp has its own `CartesiDApp` address). With this address, an application can hold ownership over digital assets on the base layer, like Ether, ERC-20 tokens, and NFTs.
 
-- [Application](../api/json-rpc/application.md): This `Application` contract is instantiated for each dApp (i.e., each dApp has its own application address). With this address, an application can hold ownership over digital assets on the base layer, like Ether, ERC-20 tokens, and NFTs.
+- CartesiDAppFactory: The Application Factory allows anyone to deploy Application contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
 
-- [ApplicationFactory](../api/json-rpc/application-factory.md): The `ApplicationFactory` contract allows anyone to deploy [`Application`](../api/json-rpc/application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
+- Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your dApp. Currently, there are Portal contracts for [Ether (ETH)](/cartesi-rollups/api/json-rpc/portals/EtherPortal/), [ERC-20](/cartesi-rollups/api/json-rpc/portals/ERC20Portal/), [ERC-721](/cartesi-rollups/api/json-rpc/portals/ERC721Portal/), [ERC-1155 Single transfer](/cartesi-rollups/api/json-rpc/portals/ERC1155SinglePortal/), and [ERC-1155 batch transfers](/cartesi-rollups/api/json-rpc/portals/ERC1155BatchPortal/).
 
-- Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your dApp. Currently, there are Portal contracts for the following types of assets: [Ether (ETH)](../api/json-rpc/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../api/json-rpc/portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](../api/json-rpc//portals/ERC721Portal.md), [ERC-1155 single transfer](../api/json-rpc/portals/ERC1155SinglePortal.md) and [ERC-1155 batch token transfers](../api/json-rpc/portals/ERC1155BatchPortal.md).
-
-
+- [Relays](/cartesi-rollups/api/json-rpc/relays/DAppAddressRelay/): The DAppRelayContract allows anyone to inform the off-chain machine of the address of the dApp contract in a trustless and permissionless way
 
 ## Off-chain layer
 
-The execution layer is off-chain and consists of the Cartesi Node, which handles input processing to change the dApp state.
+The execution layer is off-chain, consisting of the Cartesi Node, which handles input processing to change the dApp state.
 
-It can act as a **validator** and **inspect the dApp state**.
+It can act as a Validator and also for inspecting dApp state.
 
-Here is a high-level overview of the three main features of the Cartesi Node. 
+Here is a high-level overview of the three main features of the Cartesi Node.
 
-- Processes inputs from the blockchain to change the state of decentralized applications 
+- Processes inputs from the blockchain to change the state of decentralized applications (DApps)
 
 - Allows the node to function as a Validator, generating claims at the end of epochs
 
-- Captures and analyzes requests to inspect the state of dApps.
+- Captures and analyzes requests to inspect the state of DApps.
 
-- Manages a graphql server for outputs to be queried by the client.
+As explained, the Cartesi Machine provides dApp developers an environment where large-scale verifiable computations can be executed. This machine is integrated with the on-chain smart contracts by a middleware that manages and controls their communication. As such, this middleware is responsible for first reading data from the L1 smart contracts, then sending them to the machine to be processed, and finally publishing their results to the blockchain.
 
-
-As explained, the Cartesi Machine provides dApp developers an environment where developers can perform large-scale verifiable computations. These machines are integrated with the on-chain smart contracts by a middleware that manages and controls their communication.  As such, this middleware is responsible for first reading data from the L1 InputBox smart contract, then sending them to the machine to be processed, and finally publishing their results to the blockchain.
-
-The Cartesi Node is the L2 component that combines the Cartesi Machine and this middleware and can be used by anyone interested in the rollup's state of affairs. 
-
-Simply put, Cartesi Nodes play a similar role to Geth in the Ethereum ecosystem: execution and retrieval of information.
-
+The Cartesi Node is the L2 component that combines the Cartesi Machine and this middleware and can be used by anyone interested in the rollup's state of affairs. Simply put, Cartesi Nodes play a similar role to what Geth does in the Ethereum ecosystem: execution and retrieval of information.
 
 In practice, two distinct kinds of agents run Cartesi Nodes: users and validators. Each interacts with the on-chain rollups in different ways and thus runs different types of Cartesi Nodes:
 

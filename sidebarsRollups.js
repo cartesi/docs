@@ -18,7 +18,6 @@ module.exports = {
       "core-concepts/why-cartesi",
       "core-concepts/optimistic-rollups",
       "core-concepts/architecture",   
-      "core-concepts/mainnet-considerations", 
         {
           type: "category",
           label: "Rollups HTTP APIs",
@@ -31,22 +30,7 @@ module.exports = {
             "api/http-api",
             {
               type: "category",
-              label: "Backend APIs",
-              link: {
-                type: "doc",
-                id: "api/backend/introduction",
-              },
-              collapsed: true,
-              items: [
-                "api/backend/introduction",
-                "api/backend/notices",
-                "api/backend/vouchers",
-                "api/backend/reports",
-              ],
-            },
-            {
-              type: "category",
-              label: "Frontend APIs",
+              label: "Front-end APIs",
               collapsed: true,
               items: [
                 {
@@ -54,15 +38,13 @@ module.exports = {
                   label: "Smart contracts API",
                   link: {
                     type: "doc",
-                    id:"api/json-rpc/overview"
-                    
+                    id: "api/json-rpc/basics",
                   },
                   collapsed: true,
                   items: [
-                    "api/json-rpc/overview",
-                    "api/json-rpc/input-box",
-                    "api/json-rpc/application",
-                    "api/json-rpc/application-factory",
+                    "api/json-rpc/basics",
+                    "api/json-rpc/sol-input",
+                    "api/json-rpc/sol-output",
                     {
                       type: "category",
                       label: "Portals",
@@ -70,22 +52,22 @@ module.exports = {
                       items: [
                         "api/json-rpc/portals/ERC20Portal",
                         "api/json-rpc/portals/ERC721Portal",
-                        "api/json-rpc/portals/ERC1155SinglePortal",
                         "api/json-rpc/portals/ERC1155BatchPortal",
+                        "api/json-rpc/portals/ERC1155SinglePortal",
                         "api/json-rpc/portals/EtherPortal",
                       ],
                     },
-                    // {
-                    //   type: "category",
-                    //   label: "Relayer",
-                    //   collapsed: true,
-                    //   items: ["api/json-rpc/relays/DAppAddressRelay"],
-                    // },
+                    {
+                      type: "category",
+                      label: "Relays",
+                      collapsed: true,
+                      items: ["api/json-rpc/relays/DAppAddressRelay"],
+                    },
                   ],
                 },
                 {
                   type: "category",
-                  label: "GraphQL API",
+                  label: "Rollups state GraphQL API",
                   link: {
                     type: "doc",
                     id: "api/graphql/overview",
@@ -128,15 +110,29 @@ module.exports = {
                     },
                   ],
                 },
+                "api/inspect/inspect",
               ],
             },
-           
-           
+            {
+              type: "category",
+              label: "Back-end API",
+              link: {
+                type: "doc",
+                id: "api/rollup/cartesi-rollup-http-api",
+              },
+              collapsed: true,
+              items: [
+                "api/rollup/cartesi-rollup-http-api",
+                "api/rollup/add-notice",
+                "api/rollup/add-report",
+                "api/rollup/add-voucher",
+                "api/rollup/finish",
+                "api/rollup/register-exception",
+              ],
+            },
           ],
         },
-        
       ],
-      
     },
     {
       type: "category",
