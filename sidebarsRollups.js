@@ -1,25 +1,23 @@
 module.exports = {
   rollups: [
     {
+      type: "doc",
+      id: "overview",
+      label: "Overview",
+    },
+    {
+      type: "doc",
+      id: "quickstart",
+      label: "Quickstart",
+    },
+    {
       type: "category",
-      label: "Cartesi Rollups",
+      label: "Core Concepts",
       collapsed: true,
-      link: {
-        type: "doc",
-        id: "overview",
-      },
       items: [
-        "overview",
-        "main-concepts",
-        {
-          type: "doc",
-          id: "mainnet-risks",
-          label: "Mainnet Risks",
-        },
-        "sending-requests",
-        "reading-outputs",
-        "assets-handling",
-        "dapp-architecture",
+      "core-concepts/why-cartesi",
+      "core-concepts/optimistic-rollups",
+      "core-concepts/architecture",   
         {
           type: "category",
           label: "Rollups HTTP APIs",
@@ -134,60 +132,62 @@ module.exports = {
             },
           ],
         },
-        "dapp-life-cycle",
       ],
     },
     {
       type: "category",
-      label: "Build dApps",
-      link: {
-        type: "doc",
-        id: "build-dapps/overview",
-      },
+      label: "Development",
       collapsed: true,
       items: [
-        "build-dapps/overview",
-        "build-dapps/requirements",
-        "build-dapps/run-dapp",
-        "build-dapps/create-dapp",
-        "build-dapps/dapp-host-mode",
-        "build-dapps/deploying-dapps",
-        "build-dapps/guidelines",
+        "development/installation",
+        "development/creating-application",
+        "development/building-the-application",
+        "development/running-the-application",
+        "development/node-configuration",
+        "development/send-requests",
+        "development/retrieve-outputs",
+        "development/assets-handling",
       ],
+    },
+    {
+      type: "category",
+      label: "Tutorials",
+      collapsed: true,
+      items: ["tutorials/calculator", "tutorials/machine-learning"],
     },
 
-    {
-      type: "category",
-      label: "References",
-      collapsed: true,
-      items: [
-        {
-          type: "link",
-          label: "Code samples",
-          href: "https://github.com/cartesi/rollups-examples",
-        },
-        {
-          type: "link",
-          label: "Releases",
-          href: "https://github.com/cartesi/rollups/releases",
-        },
-        {
-          type: "category",
-          label: "Migration guides",
-          collapsed: true,
-          items: ["migration-guides/from-09-to-10"],
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Future Developments",
-      link: {
-        type: "doc",
-        id: "challenges/overview",
-      },
-      collapsed: true,
-      items: ["challenges/overview"],
-    },
+    // {
+    //   type: "category",
+    //   label: "References",
+    //   collapsed: true,
+    //   items: [
+    //     {
+    //       type: "link",
+    //       label: "Code samples",
+    //       href: "https://github.com/cartesi/rollups-examples",
+    //     },
+    //     {
+    //       type: "link",
+    //       label: "Releases",
+    //       href: "https://github.com/cartesi/rollups/releases",
+    //     },
+    //     {
+    //       type: "category",
+    //       label: "Migration guides",
+    //       collapsed: true,
+    //       items: ["migration-guides/from-09-to-10"],
+    //     },
+    //   ],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Future Developments",
+    //   link: {
+    //     type: "doc",
+    //     id: "challenges/overview",
+    //   },
+    //   collapsed: true,
+    //   items: ["challenges/overview"],
+    // },
   ],
 };
