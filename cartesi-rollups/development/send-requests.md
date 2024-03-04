@@ -133,15 +133,15 @@ Every starter project you create has this base code as a template, ready to rece
 
 ### Initiate an advance request
 
-You can initiate an advance request by sending input from the CLI using Cast, Sunodo, or a custom frontend client.
+You can initiate an advance request by sending input from the CLI using Cast, Sunodo, or a custom front-end client.
 
-Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp backend and trigger a change in the application's state. 
+Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp back-end and trigger a change in the application's state. 
 
-![img](../../static/img/v1.3/advance.jpg)
+![img](../input.png)
 
 In the dApp architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the [`addInput(address, bytes)`](../api/json-rpc/input-box.md/#addinput) function of the InputBox smart contract. 
+- Step 1: Send an input to the addInput(address, bytes) function of the InputBox smart contract. 
 
 - Step 2: The Cartesi Node reads the data and gives it for processing in the Cartesi machine.
 
@@ -218,11 +218,11 @@ Here is a [React.js + Typescript starter template](https://github.com/prototyp3-
 
 ### Make Inspect calls 
 
-Inspect requests are directly made to the rollup server, and the Cartesi Machine is activated without modifying its state.
+Inspect requests are directly made to the Rollup Node, and the Cartesi Machine is activated without modifying its state.
 
-![img](../../static/img/v1.3/inspect.jpg)
+![img](../inspect.png)
 
-You can make a simple inspect call from your frontend client to retrieve reports.
+You can make a simple call from your front-end client to retrieve reports.
 
 To perform an Inspect call, use an HTTP GET request to `<address of the node>/inspect/<request path>`. For example:
 
@@ -230,7 +230,7 @@ To perform an Inspect call, use an HTTP GET request to `<address of the node>/in
 curl http://localhost:8080/inspect/mypath
 ```
 
-Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs in the form of **reports**.
+Once the call's response is received, the payload is extracted from the response data, allowing the back-end code to examine it and produce outputs in the form of Reports.
 
 From a frontend client, here is an example of extracting the payload from an inspect request:
 

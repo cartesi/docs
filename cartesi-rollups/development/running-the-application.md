@@ -97,7 +97,7 @@ By default, this command creates an Anvil node with the Cartesi Rollups contract
 
 ### Running the application
 
-NoNodo can run the application backend as a sub-process.
+NoNodo can run the application back-end as a sub-process.
 
 This option is helpful to keep the entire development in a single terminal. To use this option, pass the command to run the application after `--`.
 
@@ -109,7 +109,7 @@ nonodo -- ./my-app
 
 NoNodo has a built-in echo application that generates a voucher, a notice, and a report for each advance input.
 
-The echo also generates a report for each inspected input. This option is useful when testing the application frontend without a working backend.
+The echo also generates a report for each inspected input. This option is useful when testing the application front-end without a working back-end.
 
 To start NoNodo with the built-in echo application, use the `--enable-echo` flag.
 
