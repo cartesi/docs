@@ -1,7 +1,7 @@
 ---
 id: assets-handling
 title: Assets handling
-tags: [learn, rollups, dapps, components]
+tags: [learn, rollups, components]
 ---
 
 Assets exist on the base layer, which is where they have actual meaning and value. As with any execution layer solution, a Cartesi dApp that wants to manipulate assets (e.g. to allow players to bet on a game, so that the winner receives the loser's assets) needs a secure way of "teleporting" the assets from the base layer to the execution layer, and then a way to "teleport" them back to the base layer.
