@@ -71,33 +71,31 @@ const config = {
         },
 
         items: [
-          {
-            type: "dropdown",
-            label: "Tools",
-            position: "left",
-            items: [
-              { label: "Sunodo", href: "#" },
-              { label: "Nonodo", href: "#" },
-              { label: "Cartesi explorer", href: "#" },
-              { label: "Frameworks (HLF/wallet)", href: "#" },
-            ],
-          },
+          // {
+          //   type: "dropdown",
+          //   label: "Tools",
+          //   position: "left",
+          //   items: [
+          //     { label: "Sunodo", href: "#" },
+          //     { label: "Nonodo", href: "#" },
+          //     { label: "Cartesi explorer", href: "#" },
+          //     { label: "Frameworks (HLF/wallet)", href: "#" },
+          //   ],
+          // },
           {
             type: "dropdown",
             label: "Learn",
             position: "left",
             items: [
-              { label: "Machine", href: "/machine" },
-              { label: "Earn", href: "/earn-ctsi" },
-              { label: "Core architecture", href: "#" },
-              { label: "Execution layer", href: "#" },
+              { label: "Free Video Tutorial", href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass" },
+             
             ],
           },
-          {
-            label: "Academy",
-            to: "#",
-            position: "left",
-          },
+          // {
+          //   label: "Academy",
+          //   to: "#",
+          //   position: "left",
+          // },
           {
             type: "dropdown",
             label: "Community",
@@ -122,18 +120,21 @@ const config = {
                 label: "Instagram",
                 href: "https://www.instagram.com/cartesiproject/",
               },
-              { label: "Vision forum", href: "#" },
+              {
+                label: "Technical Vision Forum",
+                href: "https://governance.cartesi.io/c/technical-vision-forum/13",
+              },
             ],
           },
-          {
-            type: "dropdown",
-            label: "Developers",
-            position: "left",
-            items: [
-              { label: "Code snippets", href: "#" },
-              { label: "Quick start tutorials", href: "#" },
-            ],
-          },
+          // {
+          //   type: "dropdown",
+          //   label: "Developers",
+          //   position: "left",
+          //   items: [
+          //     { label: "Code snippets", href: "#" },
+          //     { label: "Quick start tutorials", href: "#" },
+          //   ],
+          // },
           {
             label: "Cartesi Home",
             to: "//cartesi.io",
