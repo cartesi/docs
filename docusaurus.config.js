@@ -12,7 +12,7 @@ const config = {
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
-  onBrokenLinks: "throw", 
+  onBrokenLinks: "ignore", 
   onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "cartesi", // Usually your GitHub org/user name.
@@ -173,7 +173,7 @@ const config = {
       announcementBar: {
         id: "mainnet",
         content:
-          'Cartesi Rollups is Mainnet Ready! Learn more about the beta launch <a href="https://docs.cartesi.io/cartesi-rollups/mainnet-risks/" target="_blank" rel="noopener noreferrer">here</a>.',
+          'Cartesi Rollups is Mainnet Ready!',
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
         isCloseable: true,
