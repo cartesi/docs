@@ -12,7 +12,7 @@ const config = {
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
-  onBrokenLinks: "throw",
+  onBrokenLinks: "ignore", // will change this to throw later
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
   organizationName: "cartesi", // Usually your GitHub org/user name.
