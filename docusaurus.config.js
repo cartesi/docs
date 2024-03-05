@@ -89,7 +89,7 @@ const config = {
             label: "Learn",
             position: "left",
             items: [
-              { label: "Free Video Tutorial", href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass" },
+              { label: "Free Udemy Course", href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass" },
              
             ],
           },

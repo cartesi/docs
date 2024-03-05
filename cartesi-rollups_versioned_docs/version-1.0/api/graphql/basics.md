@@ -1,5 +1,5 @@
 ---
-id: overview
+id: graphql-basics
 title: Overview
 ---
 
