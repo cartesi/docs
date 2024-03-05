@@ -12,8 +12,8 @@ const config = {
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
-  onBrokenLinks: "ignore", // will change this to throw later
-  onBrokenMarkdownLinks: "warn",
+  onBrokenLinks: "throw", 
+  onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "cartesi", // Usually your GitHub org/user name.
   projectName: "cartesi", // Usually your repo name.
@@ -21,6 +21,7 @@ const config = {
   presets: [
     [
       "@docusaurus/preset-classic",
+      
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
@@ -48,6 +49,7 @@ const config = {
       }),
     ],
   ],
+ 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
