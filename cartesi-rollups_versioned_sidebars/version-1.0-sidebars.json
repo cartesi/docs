@@ -4,9 +4,8 @@
       "type": "category",
       "label": "Cartesi Rollups",
       "link": {
-        "type": "doc",
-        "id": "overview"
-   
+        "type": "generated-index",
+        "slug": "/"
       },
       "collapsed": true,
       "items": [
@@ -31,7 +30,7 @@
           },
           "collapsed": true,
           "items": [
-            "http-api",
+            "api/http-api",
             {
               "type": "category",
               "label": "Front-end APIs",
@@ -93,7 +92,7 @@
                   },
                   "collapsed": true,
                   "items": [
-                    "api/graphql/basics",
+                    "api/graphql/graphql-basics",
                     {
                       "type": "category",
                       "label": "Queries",

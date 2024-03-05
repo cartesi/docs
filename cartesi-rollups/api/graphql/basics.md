@@ -91,6 +91,4 @@ The [GraphQL Playground](https://github.com/graphql/graphql-playground) is a gra
 
 For local development, the interactive playground is accessible at [http://localhost:4000/graphql](http://localhost:4000/graphql).
 
-:::note
-You can check the list of deployed dApps with the associated GraphQL endpoint URLs by navigating to the section [Explore our dApps](../../build-dapps/run-dapp.md#explore-our-dapps).
-:::
+
