@@ -2,6 +2,13 @@
 id: http-api
 title: Overview
 tags: [learn, rollups, dapps, low-level developer, api, back-end, front-end]
+resources:
+  - url: https://github.com/cartesi/machine-emulator
+    title: Off-chain implementation of the Cartesi Machine
+  - url: https://github.com/cartesi/rollups-node
+    title: Reference implementation of the Rollups Node
+  - url: https://github.com/cartesi/rollups-contracts
+    title: Smart Contracts for Cartesi Rollups
 ---
 
 In a Cartesi dApp, the front-end and back-end parts of the application [communicate with each other through the Rollups framework](../dapp-architecture.md#communication) via a set of HTTP APIs.
