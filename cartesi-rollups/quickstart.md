@@ -62,7 +62,6 @@ sunodo build
 
 The `sunodo build` command builds a Cartesi machine and compiles your application to be ready to receive requests and inputs.
 
-
 ## Run the application
 
 Running your application starts a local Anvil chain/node that runs on port 8545.
@@ -128,9 +127,8 @@ Here is a [React.js + Typescript starter](https://github.com/prototyp3-dev/front
 
 ## Deploy the application
 
-:::danger
+:::note
 Deployment with Sunodo is under active development
 :::
-
 
 You can use [the guide here to deploy on a test network](https://github.com/Mugen-Builders/deploy-cartesi-dapp) in the interim.
