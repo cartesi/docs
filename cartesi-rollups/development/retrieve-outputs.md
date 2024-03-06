@@ -260,7 +260,7 @@ Then, in the bottom-left corner of the Playground, you'll find a section for pro
 }
 ```
 
-:::info
+:::note
 Replace `123` with the value you want to pass for `$inputIndex`.
 :::
 
@@ -467,7 +467,7 @@ Then, in the bottom-left corner of the Playground, you'll find a section for pro
 }
 ```
 
-:::info
+:::note
 Replace `123` with the value you want to pass for `$inputIndex`.
 :::
 
