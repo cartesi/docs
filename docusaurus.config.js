@@ -12,7 +12,7 @@ const config = {
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
-  onBrokenLinks: "ignore", 
+  onBrokenLinks: "ignore",
   onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "cartesi", // Usually your GitHub org/user name.
@@ -21,7 +21,7 @@ const config = {
   presets: [
     [
       "@docusaurus/preset-classic",
-      
+
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
@@ -49,7 +49,7 @@ const config = {
       }),
     ],
   ],
- 
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -73,24 +73,35 @@ const config = {
         },
 
         items: [
-          // {
-          //   type: "dropdown",
-          //   label: "Tools",
-          //   position: "left",
-          //   items: [
-          //     { label: "Sunodo", href: "#" },
-          //     { label: "Nonodo", href: "#" },
-          //     { label: "Cartesi explorer", href: "#" },
-          //     { label: "Frameworks (HLF/wallet)", href: "#" },
-          //   ],
-          // },
+          {
+            type: "dropdown",
+            label: "Tools",
+            position: "left",
+            items: [
+              {
+                label: "Sunodo",
+                href: "https://docs.sunodo.io/guide/introduction/what-is-sunodo",
+              },
+              {
+                label: "NoNodo",
+                href: "https://github.com/gligneul/nonodo/blob/main/README.md",
+              },
+              { label: "Cartesi Scan", href: "https://cartesiscan.io/" },
+            ],
+          },
           {
             type: "dropdown",
             label: "Learn",
             position: "left",
             items: [
-              { label: "Free Udemy Course", href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass" },
-             
+              {
+                label: "Free Udemy Course",
+                href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+              },
+              {
+                label: "Cartesi Machine",
+                href: "https://docs.cartesi.io/cartesi-machine/",
+              },
             ],
           },
           // {
@@ -121,6 +132,10 @@ const config = {
               {
                 label: "Instagram",
                 href: "https://www.instagram.com/cartesiproject/",
+              },
+              {
+                label: "Rolluplab",
+                href: "https://rolluplab.io/",
               },
               {
                 label: "Technical Vision Forum",
@@ -172,8 +187,7 @@ const config = {
       },
       announcementBar: {
         id: "mainnet",
-        content:
-          'Cartesi Rollups is Mainnet Ready!',
+        content: "Cartesi Rollups is Mainnet Ready!",
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
         isCloseable: true,
