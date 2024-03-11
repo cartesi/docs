@@ -30,7 +30,7 @@ module.exports = {
             "api/http-api",
             {
               type: "category",
-              label: "Front-end APIs",
+              label: "Frontend APIs",
               collapsed: true,
               items: [
                 {
@@ -59,7 +59,7 @@ module.exports = {
                     },
                     {
                       type: "category",
-                      label: "Relays",
+                      label: "Relayer",
                       collapsed: true,
                       items: ["api/json-rpc/relays/DAppAddressRelay"],
                     },
@@ -67,7 +67,7 @@ module.exports = {
                 },
                 {
                   type: "category",
-                  label: "Rollups state GraphQL API",
+                  label: "GraphQL API",
                   link: {
                     type: "doc",
                     id: "api/graphql/overview",
@@ -115,7 +115,7 @@ module.exports = {
             },
             {
               type: "category",
-              label: "Back-end API",
+              label: "Backend APIs",
               link: {
                 type: "doc",
                 id: "api/rollup/cartesi-rollup-http-api",
