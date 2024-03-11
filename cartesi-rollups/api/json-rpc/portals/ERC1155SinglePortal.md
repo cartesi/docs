@@ -1,3 +1,9 @@
+---
+resources:
+  - url: https://github.com/cartesi/rollups-contracts/tree/main/contracts/portals
+    title: Portals contract
+---
+
 The **ERC1155SinglePortal** allows anyone to perform single transfers of ERC-1155 tokens to a dApp while informing the off-chain machine.
 
 ### depositSingleERC1155Token

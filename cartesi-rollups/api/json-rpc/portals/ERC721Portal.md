@@ -1,3 +1,9 @@
+---
+resources:
+  - url: https://github.com/cartesi/rollups-contracts/tree/main/contracts/portals
+    title: Portals contract
+---
+
 The **ERC721Portal** allows anyone to perform transfers of
 ERC-721 tokens to a dApp while informing the off-chain machine.
 

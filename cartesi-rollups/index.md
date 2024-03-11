@@ -7,12 +7,11 @@ resources:
     title: Grokking Cartesi Rollups
 ---
 
-Cartesi provides a framework for building decentralized applications using mainstream development tools and having them all on the blockchain.
+Welcome to the framework that helps you build decentralized blockchain applications using well-known and beloved stacks!
 
-Cartesi Rollups provide a modular execution layer, enabling individual dApps to have their dedicated rollup app chains with dedicated CPUs. This ensures that each dApp can perform its computations efficiently without competing for resources with others.
+Cartesi Rollups is a modular execution layer where Linux and blockchain meet. As an app-chain, your dApp will control computation resources, ensuring efficiency and preventing network competition. 
 
-Unlike shared VM environments, Cartesi Rollups prevent resource conflicts among dApps, ensuring cost predictability and allowing developers to focus on their core application functionality.
+At the heart of your dApp, you will find the Cartesi Virtual Machine (based on RISC-V). This allows you to focus more on building and less on the lack of programmability. It has been made possible by deterministically running a full-fledged Linux OS, virtually giving you a blockchain server to run your dApp.
 
-Cartesi Rollups also introduces the concept of a full-fledged operating system within the rollup environment.
+Now, you can leverage industry-grade software tooling and libraries as you do in traditional software development, making it easier to bring your decentralized applications to life.
 
-This means that developers can leverage industry-grade software tooling and libraries, just as you do in traditional software development, making it easier to bring your decentralized applications to life

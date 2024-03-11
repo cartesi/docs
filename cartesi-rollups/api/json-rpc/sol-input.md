@@ -1,22 +1,19 @@
 ---
 id: sol-input
 title: InputBox
+resources:
+    - url: https://github.com/cartesi/rollups-contracts/tree/main/contracts/inputs
+      title: InputBox contract
 ---
 
-The **InputBox** is a trustless and permissionless contract that receives arbitrary blobs
-(called "inputs") from anyone and adds a compound hash to an append-only list
-(called "input box"). Each dApp has its own input box.
+The **InputBox** is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone and adds a compound hash to an append-only list (called "input box"). Each dApp has its input box.
 
-The hash that is stored on-chain is composed by the hash of the input blob,
-the block number and timestamp, the input sender address, and the input index.
+The hash stored on-chain comprises the hash of the input blob, the block number and timestamp, the input sender address, and the input index.
 
-Data availability is guaranteed by the emission of `InputAdded` events
-on every successful call to `addInput`. This ensures that inputs can be
-retrieved by anyone at any time, without having to rely on centralized data
-providers.
+Data availability is guaranteed by the emission of `InputAdded` events on every successful call to addInput. This ensures that inputs can be retrieved by anyone at any time without relying on centralized data providers.
 
-From the perspective of this contract, inputs are encoding-agnostic byte
-arrays. It is up to the dApp to interpret, validate and act upon inputs.
+From the perspective of this contract, inputs are encoding-agnostic byte arrays. It is up to the dApp to interpret, validate, and act upon inputs.
+
 
 ### InputAdded
 
@@ -24,7 +21,7 @@ arrays. It is up to the dApp to interpret, validate and act upon inputs.
 event InputAdded(address dapp, uint256 inboxInputIndex, address sender, bytes input)
 ```
 
-Emitted when an input is added to a dApp's input box
+Emitted when an input is added to a dApp's input box.
 
 #### Parameters
 
