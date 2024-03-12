@@ -23,7 +23,7 @@ Consider a DeFi application built on Cartesi where users want to swap one token 
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The [`Application`](../api/json-rpc/application.md) contract validates and executes the voucher using the executeVoucher() function.
+- The [`Application`](../api/json-rpc/application.md) contract validates and executes the voucher using the [`executeOutput()`](../api/json-rpc/application.md/#executeoutput) function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 

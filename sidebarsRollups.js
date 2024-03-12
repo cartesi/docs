@@ -18,6 +18,7 @@ module.exports = {
       "core-concepts/why-cartesi",
       "core-concepts/optimistic-rollups",
       "core-concepts/architecture",   
+      "core-concepts/mainnet-considerations", 
         {
           type: "category",
           label: "Rollups HTTP APIs",
@@ -28,6 +29,23 @@ module.exports = {
           },
           items: [
             "api/http-api",
+            {
+              type: "category",
+              label: "Backend APIs",
+              link: {
+                type: "doc",
+                id: "api/rollup/cartesi-rollup-http-api",
+              },
+              collapsed: true,
+              items: [
+                "api/rollup/cartesi-rollup-http-api",
+                "api/rollup/add-notice",
+                "api/rollup/add-report",
+                "api/rollup/add-voucher",
+                "api/rollup/finish",
+                "api/rollup/register-exception",
+              ],
+            },
             {
               type: "category",
               label: "Frontend APIs",
@@ -115,27 +133,11 @@ module.exports = {
                 "api/inspect/inspect",
               ],
             },
-            {
-              type: "category",
-              label: "Backend APIs",
-              link: {
-                type: "doc",
-                id: "api/rollup/cartesi-rollup-http-api",
-              },
-              collapsed: true,
-              items: [
-                "api/rollup/cartesi-rollup-http-api",
-                "api/rollup/add-notice",
-                "api/rollup/add-report",
-                "api/rollup/add-voucher",
-                "api/rollup/finish",
-                "api/rollup/register-exception",
-              ],
-            },
+           
            
           ],
         },
-        "core-concepts/mainnet-considerations", 
+        
       ],
       
     },
