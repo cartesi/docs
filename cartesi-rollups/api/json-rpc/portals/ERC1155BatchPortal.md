@@ -7,7 +7,7 @@ resources:
 The **ERC1155BatchPortal** allows anyone to perform batch transfers of
 ERC-1155 tokens to a dApp while informing the off-chain machine.
 
-### depositBatchERC1155Token
+## `depositBatchERC1155Token()`
 
 ```solidity
 function depositBatchERC1155Token(contract IERC1155 _token, address _dapp, uint256[] _tokenIds, uint256[] _values, bytes _baseLayerData, bytes _execLayerData) external

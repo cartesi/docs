@@ -6,7 +6,7 @@ resources:
 
 The **ERC1155SinglePortal** allows anyone to perform single transfers of ERC-1155 tokens to a dApp while informing the off-chain machine.
 
-### depositSingleERC1155Token
+### `depositSingleERC1155Token()`
 
 ```solidity
 function depositSingleERC1155Token(contract IERC1155 _token, address _dapp, uint256 _tokenId, uint256 _value, bytes _baseLayerData, bytes _execLayerData) external

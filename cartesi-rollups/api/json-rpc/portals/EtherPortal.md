@@ -6,7 +6,7 @@ resources:
 The **EtherPortal** allows anyone to perform transfers of
 Ether to a dApp while informing the off-chain machine.
 
-### depositEther
+## `depositEther()`
 
 ```solidity
 function depositEther(address _dapp, bytes _execLayerData) external payable

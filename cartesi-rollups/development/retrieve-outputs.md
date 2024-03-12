@@ -23,7 +23,7 @@ Consider a DeFi application built on Cartesi where users want to swap one token 
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The CartesiDApp contract validates and executes the voucher using the executeVoucher() function.
+- The [`Application`](../api/json-rpc/application.md) contract validates and executes the voucher using the executeVoucher() function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
@@ -41,7 +41,7 @@ Imagine a gaming dApp where players engage in battles. When a player wins a matc
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- On-chain validation of notices is performed using the validateNotice() function of the CartesiDApp contract.
+- On-chain validation of notices is performed using the [`validateOutput()`](../api/json-rpc/application.md/#validateoutput) function of the [`Application`](../api/json-rpc/application.md) contract.
 
 :::note
 Notices enable the dApp to communicate off-chain events without directly triggering smart contract interactions.
@@ -51,7 +51,7 @@ Notices enable the dApp to communicate off-chain events without directly trigger
 
 Let's look at how a Cartesi dApp has its Advance request **calculating and returning the first 5 multiples of a given number**.
 
-We will send the output to the rollup server as a notice
+We will send the output to the rollup server as a notice.
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -170,7 +170,7 @@ The notice can be validated and queried by any interested party.
 
 ### Query all notices
 
-To query the state of a Cartesi Rollups instance, front-end clients can use a GraphQL API exposed by the Cartesi Nodes.
+To query the state of a Cartesi Rollups instance, frontend clients can use a GraphQL API exposed by the Cartesi Nodes.
 
 For local development, you can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql`.
 
@@ -408,7 +408,7 @@ You can use the exposed GraphQL API to query all reports from your dApp.
 
 ### Query all reports
 
-To query the state of a Cartesi Rollups instance, front-end clients can use a GraphQL API exposed by the Cartesi Nodes.
+To query the state of a Cartesi Rollups instance, frontend clients can use a GraphQL API exposed by the Cartesi Nodes.
 
 For local development, you can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql`.
 
