@@ -186,15 +186,15 @@ module.exports = {
     //     },
     //   ],
     // },
-    // {
-    //   type: "category",
-    //   label: "Future Developments",
-    //   link: {
-    //     type: "doc",
-    //     id: "challenges/overview",
-    //   },
-    //   collapsed: true,
-    //   items: ["challenges/overview"],
-    // },
+    {
+      type: "category",
+      label: "Future Developments",
+      link: {
+        type: "doc",
+        id: "challenges/overview",
+      },
+      collapsed: true,
+      items: ["challenges/overview"],
+    },
   ],
 };

@@ -43,7 +43,7 @@ Select send sub-command:
 
 ## Withdrawals
 
-Before you make a withdrawal request to your dApp, the first thing to do is call a function in the [`DAppAddressRelay`](../api/json-rpc/relays/DAppAddressRelay.md) contract that allows you to inform the off-chain machine of the address of the dApp contract in a trustless and permissionless way.
+Before you make a withdrawal request to your dApp, the first thing to do is call a function in the `DAppAddressRelay` contract that allows you to inform the off-chain machine of the address of the dApp contract in a trustless and permissionless way.
 
 Without relaying the address of your dApp, the withdrawal request will fail, and a voucher creation will fail.
 

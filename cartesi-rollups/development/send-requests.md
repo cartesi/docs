@@ -137,11 +137,11 @@ You can initiate an advance request by sending input from the CLI using Cast, Su
 
 Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp back-end and trigger a change in the application's state. 
 
-![img](../input.png)
+![img](../../static/img/v1.3/advance.jpg)
 
 In the dApp architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the addInput(address, bytes) function of the InputBox smart contract. 
+- Step 1: Send an input to the [`addInput(address, bytes)`](../api/json-rpc/input-box.md/#addinput) function of the InputBox smart contract. 
 
 - Step 2: The Cartesi Node reads the data and gives it for processing in the Cartesi machine.
 
@@ -220,7 +220,7 @@ Here is a [React.js + Typescript starter template](https://github.com/prototyp3-
 
 Inspect requests are directly made to the Rollup Node, and the Cartesi Machine is activated without modifying its state.
 
-![img](../inspect.png)
+![img](../../static/img/v1.3/inspect.jpg)
 
 You can make a simple call from your frontend client to retrieve reports.
 

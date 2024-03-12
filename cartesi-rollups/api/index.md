@@ -23,7 +23,7 @@ The dApp's backend interacts with the Cartesi Rollups framework by retrieving pr
 
 This is accomplished by calling a set of HTTP endpoints, as illustrated by the figure below:
 
-![img](../back-end-api.png)
+![img](../../static/img/v1.3/backend.jpg)
 
 First, the backend retrieves a new request as follows:
 
