@@ -7,7 +7,7 @@ resources:
 The **ERC20Portal** allows anyone to perform transfers of
 ERC-20 tokens to a dApp while informing the off-chain machine.
 
-### depositERC20Tokens
+## `depositERC20Tokens()`
 
 ```solidity
 function depositERC20Tokens(contract IERC20 _token, address _dapp, uint256 _amount, bytes _execLayerData) external

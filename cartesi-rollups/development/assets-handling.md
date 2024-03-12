@@ -43,7 +43,7 @@ Select send sub-command:
 
 ## Withdrawals
 
-Before you make a withdrawal request to your dApp, the first thing to do is call a function in the `dAppAddressRelay` contract that allows you to inform the off-chain machine of the address of the dApp contract in a trustless and permissionless way.
+Before you make a withdrawal request to your dApp, the first thing to do is call a function in the [`DAppAddressRelay`](../api/json-rpc/relays/DAppAddressRelay.md) contract that allows you to inform the off-chain machine of the address of the dApp contract in a trustless and permissionless way.
 
 Without relaying the address of your dApp, the withdrawal request will fail, and a voucher creation will fail.
 
@@ -59,4 +59,4 @@ $ sunodo send
 
 Withdrawal requests can now be made. It is important to note that adding vouchers(making withdrawal requests) does not conclude the asset transfer.
 
-These vouchers must be executed using the `executeVoucher()` function from the CartesiDApp contract.
+These vouchers must be executed using the [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) function from the [`Application`](../api/json-rpc/application.md) contract.

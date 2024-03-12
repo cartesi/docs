@@ -1,5 +1,5 @@
 ---
-id: sol-input
+id: input-box
 title: InputBox
 resources:
     - url: https://github.com/cartesi/rollups-contracts/tree/main/contracts/inputs
@@ -15,7 +15,7 @@ Data availability is guaranteed by the emission of `InputAdded` events on every 
 From the perspective of this contract, inputs are encoding-agnostic byte arrays. It is up to the dApp to interpret, validate, and act upon inputs.
 
 
-### InputAdded
+## `InputAdded()`
 
 ```solidity
 event InputAdded(address dapp, uint256 inboxInputIndex, address sender, bytes input)
@@ -32,7 +32,7 @@ Emitted when an input is added to a dApp's input box.
 | sender          | address | The address that sent the input         |
 | input           | bytes   | The contents of the input               |
 
-### addInput
+## `addInput()`
 
 ```solidity
 function addInput(address _dapp, bytes _input) external returns (bytes32)
@@ -55,7 +55,7 @@ _MUST fire an `InputAdded` event accordingly._
 | ---- | ------- | ---------------------------------------------- |
 | [0]  | bytes32 | The hash of the input plus some extra metadata |
 
-### getNumberOfInputs
+## `getNumberOfInputs()`
 
 ```solidity
 function getNumberOfInputs(address _dapp) external view returns (uint256)
@@ -75,7 +75,7 @@ Get the number of inputs in a dApp's input box.
 | ---- | ------- | ---------------------------------------- |
 | [0]  | uint256 | Number of inputs in the dApp's input box |
 
-### getInputHash
+## `getInputHash()`
 
 ```solidity
 function getInputHash(address _dapp, uint256 _index) external view returns (bytes32)

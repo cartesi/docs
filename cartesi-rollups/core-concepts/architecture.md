@@ -22,9 +22,9 @@ A dApp running on Cartesi consists of the following main components:
 
 - [Cartesi Machine](https://docs.cartesi.io/cartesi-machine/), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's back-end is executed.
 
-- Back-end, the application's state, and verifiable logic. The back end runs inside the Cartesi Machine as a regular Linux application.
+- Backend, the application's state, and verifiable logic. The back end runs inside the Cartesi Machine as a regular Linux application.
 
-- Front-end, the application's user-facing interface, such as a web app or a CLI tool like Cast
+- Frontend, the application's user-facing interface, such as a web app or a CLI tool like Cast
 
 <video width="100%" controls poster="/img/architecture_dapp.png">
     <source src="/videos/HLA_video.mp4" type="video/mp4" />
@@ -46,13 +46,13 @@ The on-chain part of Cartesi Rollups involves deployed base layer smart contract
 
 - InputBox: This contract receives inputs from users who want to interact with the off-chain layer. All inputs to your dApp go through this contract. 
 
-- CartesiDApp: This Application contract is instantiated for each dApp (i.e., each dApp has its own CartesiDApp address). With this address, an application can hold ownership over digital assets on the base layer, like Ether, ERC-20 tokens, and NFTs.
+- Application: This Application contract is instantiated for each dApp (i.e., each dApp has its own application address). With this address, an application can hold ownership over digital assets on the base layer, like Ether, ERC-20 tokens, and NFTs.
 
-- CartesiDAppFactory: The Application Factory allows anyone to deploy Application contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
+- ApplicationFactory: The `ApplicationFactory` contract allows anyone to deploy `Application` contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
 
 - Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your dApp. Currently, there are Portal contracts for the following types of assets: Ether (ETH), ERC-20 (Fungible tokens), ERC-721 (Non-fungible tokens), and ERC-1155 (single and batch token transfers)
 
-- Relayer: The DAppRelayContract allows anyone to inform the off-chain machine of the address of the dApp contract in a trustless and permissionless way
+
 
 ## Off-chain layer
 

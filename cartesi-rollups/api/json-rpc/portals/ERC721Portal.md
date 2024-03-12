@@ -7,7 +7,7 @@ resources:
 The **ERC721Portal** allows anyone to perform transfers of
 ERC-721 tokens to a dApp while informing the off-chain machine.
 
-### depositERC721Token
+## `depositERC721Token()`
 
 ```solidity
 function depositERC721Token(contract IERC721 _token, address _dapp, uint256 _tokenId, bytes _baseLayerData, bytes _execLayerData) external

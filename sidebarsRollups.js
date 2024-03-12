@@ -38,13 +38,15 @@ module.exports = {
                   label: "Smart contracts API",
                   link: {
                     type: "doc",
-                    id: "api/json-rpc/basics",
+                    id:"api/json-rpc/overview"
+                    
                   },
                   collapsed: true,
                   items: [
-                    "api/json-rpc/basics",
-                    "api/json-rpc/sol-input",
-                    "api/json-rpc/sol-output",
+                    "api/json-rpc/overview",
+                    "api/json-rpc/input-box",
+                    "api/json-rpc/application",
+                    "api/json-rpc/application-factory",
                     {
                       type: "category",
                       label: "Portals",
@@ -52,17 +54,17 @@ module.exports = {
                       items: [
                         "api/json-rpc/portals/ERC20Portal",
                         "api/json-rpc/portals/ERC721Portal",
-                        "api/json-rpc/portals/ERC1155BatchPortal",
                         "api/json-rpc/portals/ERC1155SinglePortal",
+                        "api/json-rpc/portals/ERC1155BatchPortal",
                         "api/json-rpc/portals/EtherPortal",
                       ],
                     },
-                    {
-                      type: "category",
-                      label: "Relayer",
-                      collapsed: true,
-                      items: ["api/json-rpc/relays/DAppAddressRelay"],
-                    },
+                    // {
+                    //   type: "category",
+                    //   label: "Relayer",
+                    //   collapsed: true,
+                    //   items: ["api/json-rpc/relays/DAppAddressRelay"],
+                    // },
                   ],
                 },
                 {
@@ -130,9 +132,12 @@ module.exports = {
                 "api/rollup/register-exception",
               ],
             },
+           
           ],
         },
+        "core-concepts/mainnet-considerations", 
       ],
+      
     },
     {
       type: "category",
