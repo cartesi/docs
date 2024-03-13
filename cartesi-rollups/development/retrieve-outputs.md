@@ -23,7 +23,7 @@ Consider a DeFi application built on Cartesi where users want to swap one token 
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The [`Application`](../api/json-rpc/application.md) contract validates and executes the voucher using the [`executeOutput()`](../api/json-rpc/application.md/#executeoutput) function.
+- The [`Application`](../api/json-rpc/application.md) contract validates and executes the voucher using the [`_executeVoucher()`](../api/json-rpc/application.md/#executevoucher) function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
@@ -390,7 +390,7 @@ def handle_advance(data):
        msg = f"Error processing data {data}\n{traceback.format_exc()}"
        logger.error(msg)
        response = requests.post(
-           rollup_server + "/report", json={"payload": str2hex(msg)}
+           rollup_server + "/report", json={"payload": msg)}
        )
        logger.info(
            f"Received report status {response.status_code} body {response.content}"

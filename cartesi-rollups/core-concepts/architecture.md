@@ -20,9 +20,9 @@ A dApp running on Cartesi consists of the following main components:
 
 - [Cartesi Rollups](/cartesi-rollups/core-concepts/optimistic-rollups/#cartesi-rollups), a set of on-chain and off-chain components that implement an [Optimistic Rollups](/cartesi-rollups/core-concepts/optimistic-rollups) solution and provide the general framework for building dApps.
 
-- [Cartesi Machine](https://docs.cartesi.io/cartesi-machine/), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's back-end is executed.
+- [Cartesi Machine](https://docs.cartesi.io/cartesi-machine/), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's backend is executed.
 
-- Backend, the application's state, and verifiable logic. The back end runs inside the Cartesi Machine as a regular Linux application.
+- Backend, the application's state, and verifiable logic. The backend runs inside the Cartesi Machine as a regular Linux application.
 
 - Frontend, the application's user-facing interface, such as a web app or a CLI tool like Cast
 

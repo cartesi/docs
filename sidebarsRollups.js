@@ -34,16 +34,14 @@ module.exports = {
               label: "Backend APIs",
               link: {
                 type: "doc",
-                id: "api/rollup/cartesi-rollup-http-api",
+                id: "api/backend/introduction",
               },
               collapsed: true,
               items: [
-                "api/rollup/cartesi-rollup-http-api",
-                "api/rollup/add-notice",
-                "api/rollup/add-report",
-                "api/rollup/add-voucher",
-                "api/rollup/finish",
-                "api/rollup/register-exception",
+                "api/backend/introduction",
+                "api/backend/notices",
+                "api/backend/vouchers",
+                "api/backend/reports",
               ],
             },
             {
@@ -130,7 +128,6 @@ module.exports = {
                     },
                   ],
                 },
-                "api/inspect/inspect",
               ],
             },
            
@@ -186,15 +183,15 @@ module.exports = {
     //     },
     //   ],
     // },
-    {
-      type: "category",
-      label: "Future Developments",
-      link: {
-        type: "doc",
-        id: "challenges/overview",
-      },
-      collapsed: true,
-      items: ["challenges/overview"],
-    },
+    // {
+    //   type: "category",
+    //   label: "Future Developments",
+    //   link: {
+    //     type: "doc",
+    //     id: "challenges/overview",
+    //   },
+    //   collapsed: true,
+    //   items: ["challenges/overview"],
+    // },
   ],
 };

@@ -14,13 +14,12 @@ You can submit inputs describing a person's features to determine if that person
 ## Set up your environment.
 Install these to set up your environment for quick building.
 
-- Sunodo: A simple tool for building applications on Cartesi. Install Sunodo for your OS of choice.
+- Sunodo: A simple tool for building applications on Cartesi. [Install Sunodo for your OS of choice](../development/installation.md).
 
-- Docker Desktop: The tool you need to run the Cartesi Machine and its dependencies. Install Docker for your OS of choice.
+- Docker Desktop: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker](https://www.docker.com/products/docker-desktop/).
 
-- Python: For writing your backend application logic. Install Python3 here.
+- Python: For writing your backend application logic. [Install Python3](https://www.python.org/downloads/).
 
-- The recommended IDEs are VSCode or Pycharm.
 
 ## Understanding the dApp
 
