@@ -92,7 +92,7 @@
                   },
                   "collapsed": true,
                   "items": [
-                    "api/graphql/graphql-basics",
+                    "api/graphql/overview",
                     {
                       "type": "category",
                       "label": "Queries",
