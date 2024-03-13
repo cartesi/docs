@@ -72,3 +72,4 @@ Transactions and computations occur off-chain, leading to more intricate logic w
 
 Cartesi's architecture specializes in app-specific rollups(appchains). Each dApp has its dedicated rollup for off-chain computation, enhancing scalability and performance. 
 
+

@@ -26,6 +26,7 @@ A dApp running on Cartesi consists of the following main components:
 
 - Frontend, the application's user-facing interface, such as a web app or a CLI tool like Cast
 
+
 <video width="100%" controls poster="/img/architecture_dapp.png">
     <source src="/videos/HLA_video.mp4" type="video/mp4" />
     Your browser does not support the video tag.
@@ -41,6 +42,7 @@ Now, when a request is made to a dApp, the type of request determines how inform
 
 ## On-chain components
 
+
 The on-chain part of Cartesi Rollups involves deployed base layer smart contracts, each with distinct roles for your dApp. Every Cartesi dApp leverages the functionality these contracts provide. 
 
 
@@ -51,7 +53,6 @@ The on-chain part of Cartesi Rollups involves deployed base layer smart contract
 - [ApplicationFactory](../api/json-rpc/application-factory.md): The `ApplicationFactory` contract allows anyone to deploy [`Application`](../api/json-rpc/application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
 
 - Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your dApp. Currently, there are Portal contracts for the following types of assets: [Ether (ETH)](../api/json-rpc/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../api/json-rpc/portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](../api/json-rpc//portals/ERC721Portal.md), [ERC-1155 single transfer](../api/json-rpc/portals/ERC1155SinglePortal.md) and [ERC-1155 batch token transfers](../api/json-rpc/portals/ERC1155BatchPortal.md).
-
 
 
 ## Off-chain layer
@@ -76,6 +77,7 @@ As explained, the Cartesi Machine provides dApp developers an environment where 
 The Cartesi Node is the L2 component that combines the Cartesi Machine and this middleware and can be used by anyone interested in the rollup's state of affairs. 
 
 Simply put, Cartesi Nodes play a similar role to Geth in the Ethereum ecosystem: execution and retrieval of information.
+
 
 
 In practice, two distinct kinds of agents run Cartesi Nodes: users and validators. Each interacts with the on-chain rollups in different ways and thus runs different types of Cartesi Nodes:
