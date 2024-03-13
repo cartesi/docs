@@ -1,25 +1,24 @@
 module.exports = {
   rollups: [
     {
+      type: "doc",
+      id: "overview",
+      label: "Overview",
+    },
+    {
+      type: "doc",
+      id: "quickstart",
+      label: "Quickstart",
+    },
+    {
       type: "category",
-      label: "Cartesi Rollups",
+      label: "Core Concepts",
       collapsed: true,
-      link: {
-        type: "doc",
-        id: "overview",
-      },
       items: [
-        "overview",
-        "main-concepts",
-        {
-          type: "doc",
-          id: "mainnet-risks",
-          label: "Mainnet Risks",
-        },
-        "sending-requests",
-        "reading-outputs",
-        "assets-handling",
-        "dapp-architecture",
+      "core-concepts/why-cartesi",
+      "core-concepts/optimistic-rollups",
+      "core-concepts/architecture",   
+      "core-concepts/mainnet-considerations", 
         {
           type: "category",
           label: "Rollups HTTP APIs",
@@ -32,7 +31,22 @@ module.exports = {
             "api/http-api",
             {
               type: "category",
-              label: "Front-end APIs",
+              label: "Backend APIs",
+              link: {
+                type: "doc",
+                id: "api/backend/introduction",
+              },
+              collapsed: true,
+              items: [
+                "api/backend/introduction",
+                "api/backend/notices",
+                "api/backend/vouchers",
+                "api/backend/reports",
+              ],
+            },
+            {
+              type: "category",
+              label: "Frontend APIs",
               collapsed: true,
               items: [
                 {
@@ -40,13 +54,15 @@ module.exports = {
                   label: "Smart contracts API",
                   link: {
                     type: "doc",
-                    id: "api/json-rpc/basics",
+                    id:"api/json-rpc/overview"
+                    
                   },
                   collapsed: true,
                   items: [
-                    "api/json-rpc/basics",
-                    "api/json-rpc/sol-input",
-                    "api/json-rpc/sol-output",
+                    "api/json-rpc/overview",
+                    "api/json-rpc/input-box",
+                    "api/json-rpc/application",
+                    "api/json-rpc/application-factory",
                     {
                       type: "category",
                       label: "Portals",
@@ -54,22 +70,22 @@ module.exports = {
                       items: [
                         "api/json-rpc/portals/ERC20Portal",
                         "api/json-rpc/portals/ERC721Portal",
-                        "api/json-rpc/portals/ERC1155BatchPortal",
                         "api/json-rpc/portals/ERC1155SinglePortal",
+                        "api/json-rpc/portals/ERC1155BatchPortal",
                         "api/json-rpc/portals/EtherPortal",
                       ],
                     },
-                    {
-                      type: "category",
-                      label: "Relays",
-                      collapsed: true,
-                      items: ["api/json-rpc/relays/DAppAddressRelay"],
-                    },
+                    // {
+                    //   type: "category",
+                    //   label: "Relayer",
+                    //   collapsed: true,
+                    //   items: ["api/json-rpc/relays/DAppAddressRelay"],
+                    // },
                   ],
                 },
                 {
                   type: "category",
-                  label: "Rollups state GraphQL API",
+                  label: "GraphQL API",
                   link: {
                     type: "doc",
                     id: "api/graphql/overview",
@@ -112,82 +128,70 @@ module.exports = {
                     },
                   ],
                 },
-                "api/inspect/inspect",
               ],
             },
-            {
-              type: "category",
-              label: "Back-end API",
-              link: {
-                type: "doc",
-                id: "api/rollup/cartesi-rollup-http-api",
-              },
-              collapsed: true,
-              items: [
-                "api/rollup/cartesi-rollup-http-api",
-                "api/rollup/add-notice",
-                "api/rollup/add-report",
-                "api/rollup/add-voucher",
-                "api/rollup/finish",
-                "api/rollup/register-exception",
-              ],
-            },
+           
+           
           ],
         },
-        "dapp-life-cycle",
+        
+      ],
+      
+    },
+    {
+      type: "category",
+      label: "Development",
+      collapsed: true,
+      items: [
+        "development/installation",
+        "development/creating-application",
+        "development/building-the-application",
+        "development/running-the-application",
+        "development/node-configuration",
+        "development/send-requests",
+        "development/retrieve-outputs",
+        "development/assets-handling",
       ],
     },
     {
       type: "category",
-      label: "Build dApps",
-      link: {
-        type: "doc",
-        id: "build-dapps/overview",
-      },
+      label: "Tutorials",
       collapsed: true,
-      items: [
-        "build-dapps/overview",
-        "build-dapps/requirements",
-        "build-dapps/run-dapp",
-        "build-dapps/create-dapp",
-        "build-dapps/dapp-host-mode",
-        "build-dapps/deploying-dapps",
-        "build-dapps/guidelines",
-      ],
+      items: ["tutorials/calculator", "tutorials/machine-learning"],
     },
 
-    {
-      type: "category",
-      label: "References",
-      collapsed: true,
-      items: [
-        {
-          type: "link",
-          label: "Code samples",
-          href: "https://github.com/cartesi/rollups-examples",
-        },
-        {
-          type: "link",
-          label: "Releases",
-          href: "https://github.com/cartesi/rollups/releases",
-        },
-        {
-          type: "category",
-          label: "Migration guides",
-          collapsed: true,
-          items: ["migration-guides/from-09-to-10"],
-        },
-      ],
-    },
-    {
-      type: "category",
-      label: "Future Developments",
-      link: {
-        type: "doc",
-        id: "challenges/overview",
-      },
-      collapsed: true,
-      items: ["challenges/overview"],
-    },
+    // {
+    //   type: "category",
+    //   label: "References",
+    //   collapsed: true,
+    //   items: [
+    //     {
+    //       type: "link",
+    //       label: "Code samples",
+    //       href: "https://github.com/cartesi/rollups-examples",
+    //     },
+    //     {
+    //       type: "link",
+    //       label: "Releases",
+    //       href: "https://github.com/cartesi/rollups/releases",
+    //     },
+    //     {
+    //       type: "category",
+    //       label: "Migration guides",
+    //       collapsed: true,
+    //       items: ["migration-guides/from-09-to-10"],
+    //     },
+    //   ],
+    // },
+    // {
+    //   type: "category",
+    //   label: "Future Developments",
+    //   link: {
+    //     type: "doc",
+    //     id: "challenges/overview",
+    //   },
+    //   collapsed: true,
+    //   items: ["challenges/overview"],
+    // },
   ],
 };

@@ -12,8 +12,8 @@ const config = {
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
+  onBrokenLinks: "ignore",
+  onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "cartesi", // Usually your GitHub org/user name.
   projectName: "cartesi", // Usually your repo name.
@@ -21,6 +21,7 @@ const config = {
   presets: [
     [
       "@docusaurus/preset-classic",
+
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
@@ -48,6 +49,7 @@ const config = {
       }),
     ],
   ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -76,10 +78,15 @@ const config = {
             label: "Tools",
             position: "left",
             items: [
-              { label: "Sunodo", href: "#" },
-              { label: "Nonodo", href: "#" },
-              { label: "Cartesi explorer", href: "#" },
-              { label: "Frameworks (HLF/wallet)", href: "#" },
+              {
+                label: "Sunodo",
+                href: "https://docs.sunodo.io/guide/introduction/what-is-sunodo",
+              },
+              {
+                label: "NoNodo",
+                href: "https://github.com/gligneul/nonodo/blob/main/README.md",
+              },
+              { label: "Cartesi Scan", href: "https://cartesiscan.io/" },
             ],
           },
           {
@@ -87,17 +94,21 @@ const config = {
             label: "Learn",
             position: "left",
             items: [
-              { label: "Machine", href: "/machine" },
-              { label: "Earn", href: "/earn-ctsi" },
-              { label: "Core architecture", href: "#" },
-              { label: "Execution layer", href: "#" },
+              {
+                label: "Free Udemy Course",
+                href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+              },
+              {
+                label: "Cartesi Machine",
+                href: "https://docs.cartesi.io/cartesi-machine/",
+              },
             ],
           },
-          {
-            label: "Academy",
-            to: "#",
-            position: "left",
-          },
+          // {
+          //   label: "Academy",
+          //   to: "#",
+          //   position: "left",
+          // },
           {
             type: "dropdown",
             label: "Community",
@@ -122,18 +133,25 @@ const config = {
                 label: "Instagram",
                 href: "https://www.instagram.com/cartesiproject/",
               },
-              { label: "Vision forum", href: "#" },
+              {
+                label: "Rolluplab",
+                href: "https://rolluplab.io/",
+              },
+              {
+                label: "Technical Vision Forum",
+                href: "https://governance.cartesi.io/c/technical-vision-forum/13",
+              },
             ],
           },
-          {
-            type: "dropdown",
-            label: "Developers",
-            position: "left",
-            items: [
-              { label: "Code snippets", href: "#" },
-              { label: "Quick start tutorials", href: "#" },
-            ],
-          },
+          // {
+          //   type: "dropdown",
+          //   label: "Developers",
+          //   position: "left",
+          //   items: [
+          //     { label: "Code snippets", href: "#" },
+          //     { label: "Quick start tutorials", href: "#" },
+          //   ],
+          // },
           {
             label: "Cartesi Home",
             to: "//cartesi.io",
@@ -169,8 +187,7 @@ const config = {
       },
       announcementBar: {
         id: "mainnet",
-        content:
-          'Cartesi Rollups is Mainnet Ready! Learn more about the beta launch <a href="https://docs.cartesi.io/cartesi-rollups/mainnet-risks/" target="_blank" rel="noopener noreferrer">here</a>.',
+        content: "Cartesi Rollups is Mainnet Ready!",
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
         isCloseable: true,
@@ -307,7 +324,7 @@ const config = {
         lastVersion: "current",
         versions: {
           current: {
-            label: "1.0",
+            label: "1.3",
           },
         },
         showLastUpdateTime: true,

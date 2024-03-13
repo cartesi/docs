@@ -1,0 +1,15 @@
+title Cartesi Rollups Sequence Diagram
+
+participantspacing equal
+participant "++Front-end" as Front-end #FFE95A
+participant "++Cartesi Rollups" as Cartesi Rollups #85B4FF
+participant "++Back-end**" as Back-end #FFE95A
+
+Front-end->Cartesi Rollups:<background:#FFFDF5>Submit input</background>
+note over Cartesi Rollups:<background:#E1EBFF>Process Transaction</background>
+Back-end->Cartesi Rollups:<background:#FFFDF5>Get next request</background>
+note over Back-end:<background:#E1EBFF>Execute dApp logic</background>
+Cartesi Rollups<-Back-end:<background:#FFFDF5>Submit outputs\n(vouchers / notices)</background>
+note over Cartesi Rollups:<background:#E1EBFF>Consensus\n(Optimistic)</background>
+Front-end->Cartesi Rollups:<background:#FFFDF5>Query outputs\n(vouchers / notices)</background>
+Front-end->Cartesi Rollups:<background:#FFFDF5>Execute vouchers</background>
