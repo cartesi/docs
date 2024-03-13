@@ -27,11 +27,23 @@ Currently, Cartesi Rollups support the following types of assets:
 
 The Portal contracts, part of the on-chain components, are responsible for teleporting assets from the base layer blockchain to a Cartesi dApp. You can think of a Portal as a bank account owned by the off-chain machine.
 
-## Deposits
 
-When an asset is deposited, the Portal contract sends an input to the dApp, describing the type of asset, amount, receivers, and some data the depositor might want the dApp to read. This allows deposits and instructions to be sent as a single L1 interaction.
+Once deposited, those L1 assets gain a representation in the execution layer and are owned, there, by whomever the depositor assigned them to. 
 
-Deposit an asset using Sunodo:
+When an asset is deposited, the corresponding Portal contract sends an input via the [`InputBox`](../api/json-rpc/input-box.md) contract, describing the type of asset, amount, receivers, and some data the depositor might want the dApp to read. This allows deposits and instructions to be sent as a single base layer interaction.
+
+Anyone can deposit assets there but only the dApp — through the [`Application`](../api/json-rpc/application.md) contract — can decide on withdrawals. An input is sent requesting a withdrawal, which gets processed and interpreted off-chain. If everything is correct, the machine creates a voucher destined to the appropriate Portal contract, ordering and finalizing that withdrawal request. 
+
+![img](../../static/img/v1.3/assets.jpg)
+
+
+
+
+<!-- ## Deposits
+
+Deposits are made by sending assets to the Portal contracts. The Portal contracts are responsible for teleporting assets from the base layer blockchain to a Cartesi dApp.
+
+
 
 ```shell
 $ sunodo send
@@ -59,4 +71,4 @@ $ sunodo send
 
 Withdrawal requests can now be made. It is important to note that adding vouchers(making withdrawal requests) does not conclude the asset transfer.
 
-These vouchers must be executed using the [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) function from the [`Application`](../api/json-rpc/application.md) contract.
+These vouchers must be executed using the [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) function from the [`Application`](../api/json-rpc/application.md) contract. -->
