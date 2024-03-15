@@ -1,8 +1,3 @@
----
-id: overview
-title: Overview
----
-
 # Overview
 
 In order to query the state of a Cartesi Rollups instance, front-end clients can make use of a [GraphQL API](https://graphql.org/learn/) that is exposed by the [Cartesi Nodes](../../components.md#cartesi-nodes).
@@ -13,7 +8,7 @@ The Cartesi Rollups state query API is fully specified by its [GraphQL schema](h
 
 ## Queries
 
-A number of top-level queries are available in order to retrieve rollup information for a Cartesi dApp.
+A number of [top-level queries](../queries) are available in order to retrieve rollup information for a Cartesi dApp.
 
 In GraphQL, submitting a query involves defining parameters for filtering the entries to retrieve, and also specifying the data fields of interest, which can span any objects linked to the entry being retrieved.
 

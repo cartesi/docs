@@ -29,7 +29,7 @@
             "id": "api/http-api"
           },
           "items": [
-            "api/http-api",
+            "http-api",
             {
               "type": "category",
               "label": "Front-end APIs",
@@ -63,9 +63,7 @@
                       "type": "category",
                       "label": "Relays",
                       "collapsed": true,
-                      "items": [
-                        "api/json-rpc/relays/DAppAddressRelay"
-                      ]
+                      "items": ["api/json-rpc/relays/DAppAddressRelay"]
                     }
                   ]
                 },
@@ -78,7 +76,7 @@
                   },
                   "collapsed": true,
                   "items": [
-                    "api/graphql/overview",
+                    "api/graphql/basics",
                     {
                       "type": "category",
                       "label": "Queries",
@@ -157,6 +155,7 @@
         "build-dapps/guidelines"
       ]
     },
+
     {
       "type": "category",
       "label": "References",
@@ -176,9 +175,7 @@
           "type": "category",
           "label": "Migration guides",
           "collapsed": true,
-          "items": [
-            "migration-guides/from-09-to-10"
-          ]
+          "items": ["migration-guides/from-09-to-10"]
         }
       ]
     },
@@ -190,9 +187,7 @@
         "id": "challenges/overview"
       },
       "collapsed": true,
-      "items": [
-        "challenges/overview"
-      ]
+      "items": ["challenges/overview"]
     }
   ]
 }
