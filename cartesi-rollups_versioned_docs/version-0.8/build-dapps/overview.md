@@ -21,7 +21,7 @@ In particular, during development the Cartesi Rollups infrastructure can be exec
 
 ## Production Mode
 
-In **Production Mode**, the dApp's back-end logic is packaged to run inside a [Cartesi Machine emulator](/machine/), as will be the case when the application is deployed. This means that any code written in compiled languages such as C++ or Rust must be _cross-compiled_ to the Cartesi Machine's RISC-V architecture. In this mode, the computation performed by the back-end is reproducible and hence verifiable, enabling a truly trustless and decentralized execution.
+In **Production Mode**, the dApp's back-end logic is packaged to run inside a [Cartesi Machine emulator](/machine/intro), as will be the case when the application is deployed. This means that any code written in compiled languages such as C++ or Rust must be _cross-compiled_ to the Cartesi Machine's RISC-V architecture. In this mode, the computation performed by the back-end is reproducible and hence verifiable, enabling a truly trustless and decentralized execution.
 
 ## Host Mode
 
@@ -29,7 +29,7 @@ In [Host Mode](./dapp-host-mode.md), the back-end logic is executed natively on 
 
 ## Learn more
 
-- [Cartesi Rollups overview](../index.md)
+- [Cartesi Rollups overview](../overview.md)
 - [dApp life cycle explained](../dapp-life-cycle.md)
 - [dApp architecture](../dapp-architecture.md)
-- [Rollups HTTP APIs](../api/index.md)
+- [Rollups HTTP APIs](../http-api.md)

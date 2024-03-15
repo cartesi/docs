@@ -100,7 +100,7 @@ const config = {
               },
               {
                 label: "Cartesi Machine",
-                href: "https://docs.cartesi.io/cartesi-machine/",
+                href: "/machine/",
               },
             ],
           },

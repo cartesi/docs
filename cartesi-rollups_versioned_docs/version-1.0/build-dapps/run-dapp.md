@@ -4,7 +4,7 @@ title: Run an example dApp
 tags: [build, quickstart, dapps, developer]
 ---
 
-This article explains how to build and interact with a minimalistic [Cartesi Rollups](../index.md) application.
+This article explains how to build and interact with a minimalistic [Cartesi Rollups](../overview.md) application.
 
 ## Run an example application built with Sunodo
 
@@ -236,7 +236,7 @@ After completing all the steps above, you should get a response with the payload
 `"Hello, Cartesi."`
 
 :::tip
-You can run the Cartesi Rollups environment locally in [host mode](./index.md#host-mode). Please follow the guide on [how to run dApp back-ends in Host Mode](./dapp-host-mode.md), but before that make sure to [shutdown the current running environment](#how-to-shutdown-the-environment).
+You can run the Cartesi Rollups environment locally in [host mode](./overview.md#host-mode). Please follow the guide on [how to run dApp back-ends in Host Mode](./dapp-host-mode.md), but before that make sure to [shutdown the current running environment](#how-to-shutdown-the-environment).
 :::
 
 :::note
