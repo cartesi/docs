@@ -10,9 +10,7 @@ In Cartesi Rollups, the outputs include:
 - [Notices](../main-concepts#notices)
 - [Reports](../main-concepts#reports)
 
-
-Vouchers and Notices are intended for on-chain validation by making function calls to the [CartesiDApp](./api/json-rpc/sol-output.md) contract (which is effectively our output contract). We validate and execute Vouchers using the [`executeVoucher()`](./api/json-rpc/sol-output.md#executevoucher) function. We validate Notices using the [`validateOutput()`](./api/json-rpc/sol-output.md#validatenotice) function call. Conversely, Reports serve as stateless logs, providing read-only information without affecting the state.
-
+Vouchers and Notices are intended for on-chain validation by making function calls to the [CartesiDApp](./api/json-rpc/sol-output.md) contract (which is effectively our output contract). We validate and execute Vouchers using the [`executeVoucher()`](./api/json-rpc/sol-output.md#executevoucher) function. We validate Notices using the [`validateNotice()`](./api/json-rpc/sol-output.md#validatenotice) function call. Conversely, Reports serve as stateless logs, providing read-only information without affecting the state.
 
 Let's take a look at how a Cartesi dApp reads Notices. We can send an input to the dApp using [Cast](https://book.getfoundry.sh/cast/):
 

@@ -4,13 +4,13 @@ title: Main concepts
 tags: [learn, rollups, dapps, low-level developer, components]
 ---
 
-As explained in the [previous section](./index.md), the Cartesi Rollups framework achieves scalability by moving the bulk of the computation outside the blockchain, using the ledger as a data source but not as an execution environment. As such, the solution contains both on-chain (L1) and off-chain (L2) components.
+As explained in the [previous section](./overview.md), the Cartesi Rollups framework achieves scalability by moving the bulk of the computation outside the blockchain, using the ledger as a data source but not as an execution environment. As such, the solution contains both on-chain (L1) and off-chain (L2) components.
 
 ## Main concepts
 
 ### Cartesi Nodes
 
-As explained before, [Cartesi Machines](/machine/) provide dApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the L1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
+As explained before, [Cartesi Machines](/machine/intro) provide dApp developers with an environment in which large scale verifiable computations can be executed. These machines are integrated with the on-chain smart contracts by a _middleware_ that manages and controls the communication between them. As such, this middleware is responsible for first reading data from the L1 smart contracts, then sending them to the machine to be processed, and finally publishing their results back to the blockchain.
 
 The _Cartesi Node_ is the L2 component that consists of the combination of the Cartesi Machine and this middleware, and can be used by anyone interested in the rollups state of affairs. Put simply, Cartesi Nodes play a role that is similar to what Geth does on the Ethereum ecosystem: execution and retrieval of information.
 
