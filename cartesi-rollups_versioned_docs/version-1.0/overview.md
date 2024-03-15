@@ -9,7 +9,7 @@ The combination of [an Optimistic Rollups framework](https://github.com/cartesi/
 A dApp running on Cartesi Rollups consists of the following main components:
 
 - [**Cartesi Rollups**](./components.md), a set of on-chain and off-chain components that implement an Optimistic Rollups solution and provide the general framework for building dApps.
-- [**Cartesi Machine**](/machine/), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's [back-end](./dapp-architecture.md#back-end) is executed.
+- [**Cartesi Machine**](/machine/intro), a virtual machine (VM) that runs an entire Linux OS, in which each dApp's [back-end](./dapp-architecture.md#back-end) is executed.
 - [**dApp Back-end**](./dapp-architecture.md#back-end), the application's state and verifiable logic, which corresponds to the dApp's smart contract. The back-end runs inside the Cartesi Machine as a regular Linux application.
 - [**dApp Front-end**](./dapp-architecture.md#front-end), the application's user-facing interface, such as a web app.
 
@@ -60,12 +60,12 @@ In the next sections:
 
 1. We will discuss the [main concepts of the Cartesi Rollups framework](./components.md) and how they work
 2. We will explain how to [send requests](./sending-requests.md) to a Cartesi dApp, and how a Cartesi dApp [reads outputs](./reading-outputs.md) and [manages assets](./assets-handling.md)
-3. We will dig deeper into the [architecture of dApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](/api/index.md) to communicate with it
+3. We will dig deeper into the [architecture of dApps](./dapp-architecture.md) that run on our rollups framework, as well as the [APIs that developers can use](./http-api.md) to communicate with it
 4. We will share our vision of a [step-by-step process for developing applications](./dapp-life-cycle.md) on Cartesi Rollups, from the initial design stage up to its final deployment
 
 ## Cartesi Machine
 
-Central to Cartesi Rollups is the [Cartesi Machine](/machine/), which is a virtual machine designed to perform off-chain computations for blockchain applications. When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:
+Central to Cartesi Rollups is the [Cartesi Machine](/machine/intro), which is a virtual machine designed to perform off-chain computations for blockchain applications. When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:
 
 - **Code execution**: Code is executed based on specific inputs to perform computations, process data, or run custom logic, depending on the requirements of the task at hand.
 - **Abstraction of infrastructure**: The underlying infrastructure is abstracted away, allowing you to focus on writing code without worrying about managing servers, hardware, or networking resources.
@@ -91,5 +91,6 @@ The integration of the Optimistic Rollups framework with the Cartesi Machine Emu
 ## See Also
 
 - [Everything you need to know about Optimistic Rollup in general](https://www.paradigm.xyz/2021/01/almost-everything-you-need-to-know-about-optimistic-rollup)
+
 
 - [Fraud proofs and virtual machines](https://medium.com/@cpbuckland88/fraud-proofs-and-virtual-machines-2826a3412099) or go into more details [here](https://tlu.tarilabs.com/cryptography/fraud-proofs#what-are-fraud-proofs)

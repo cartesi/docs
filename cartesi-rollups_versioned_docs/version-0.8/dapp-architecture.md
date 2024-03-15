@@ -33,7 +33,7 @@ The sequence diagram below illustrates how all of this works:
 ![img](./sequence-diagram.png)
 
 :::note
-The Cartesi Rollups framework provides a set of APIs to specify how the dApp's front-end and back-end should communicate with it. These APIs are explained in detail in the [next section](/api/index.md).
+The Cartesi Rollups framework provides a set of APIs to specify how the dApp's front-end and back-end should communicate with it. These APIs are explained in detail in the [next section](./http-api.md).
 :::
 
 ## Other components
