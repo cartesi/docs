@@ -19,11 +19,11 @@ Consider a DeFi application built on Cartesi where users want to swap one token 
 
 ### How Vouchers Work:
 
-- The dApp backend creates a voucher during its execution on the Cartesi Machine.
+- The dApp backend creates a voucher while executing the Cartesi Machine.
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The CartesiDApp contract validates and executes the voucher using the executeVoucher() function.
+- The [`CartesiDApp`](../api/json-rpc/application.md) contract validates and executes the voucher using the [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
@@ -33,7 +33,7 @@ A notice is a verifiable data declaration that attests to off-chain events or co
 
 They serve as a means for dApp to notify the blockchain about particular events.
 
-Imagine a gaming dApp where players engage in battles. When a player wins a match off-chain, the dApp backend generates a notice declaring the winner. This notice is submitted to the blockchain, allowing on-chain validation of the match outcome.
+Imagine a gaming dApp where players engage in battles. When a player wins an off-chain match, the dApp backend generates a notice declaring the winner. This notice is submitted to the blockchain, allowing on-chain validation of the match outcome.
 
 ### How Notices Work
 
@@ -41,17 +41,18 @@ Imagine a gaming dApp where players engage in battles. When a player wins a matc
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- On-chain validation of notices is performed using the validateNotice() function of the CartesiDApp contract.
+- On-chain validation of notices is performed using the [`validateNotice()`](../api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api/json-rpc/application.md) contract.
 
 :::note
 Notices enable the dApp to communicate off-chain events without directly triggering smart contract interactions.
 :::
 
+
 ### Send a notice
 
 Let's look at how a Cartesi dApp has its Advance request **calculating and returning the first 5 multiples of a given number**.
 
-We will send the output to the rollup server as a notice
+We will send the output to the rollup server as a notice.
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -170,7 +171,7 @@ The notice can be validated and queried by any interested party.
 
 ### Query all notices
 
-To query the state of a Cartesi Rollups instance, front-end clients can use a GraphQL API exposed by the Cartesi Nodes.
+To query the state of a Cartesi Rollups instance, frontend clients can use a GraphQL API exposed by the Cartesi Nodes.
 
 For local development, you can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql`.
 
@@ -260,7 +261,7 @@ Then, in the bottom-left corner of the Playground, you'll find a section for pro
 }
 ```
 
-:::info
+:::note
 Replace `123` with the value you want to pass for `$inputIndex`.
 :::
 
@@ -390,7 +391,7 @@ def handle_advance(data):
        msg = f"Error processing data {data}\n{traceback.format_exc()}"
        logger.error(msg)
        response = requests.post(
-           rollup_server + "/report", json={"payload": str2hex(msg)}
+           rollup_server + "/report", json={"payload": msg)}
        )
        logger.info(
            f"Received report status {response.status_code} body {response.content}"
@@ -408,7 +409,7 @@ You can use the exposed GraphQL API to query all reports from your dApp.
 
 ### Query all reports
 
-To query the state of a Cartesi Rollups instance, front-end clients can use a GraphQL API exposed by the Cartesi Nodes.
+To query the state of a Cartesi Rollups instance, frontend clients can use a GraphQL API exposed by the Cartesi Nodes.
 
 For local development, you can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql`.
 
@@ -467,7 +468,7 @@ Then, in the bottom-left corner of the Playground, you'll find a section for pro
 }
 ```
 
-:::info
+:::note
 Replace `123` with the value you want to pass for `$inputIndex`.
 :::
 

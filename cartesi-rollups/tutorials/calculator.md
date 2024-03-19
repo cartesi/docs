@@ -1,6 +1,6 @@
 ---
 id: calculator
-title: Build a Calculator dApp with Python
+title: Build a calculator dApp with Python
 tags: [calculator, dapps, python, tutorial]
 resources:
   - url: https://github.com/Mugen-Builders/calculator
@@ -9,7 +9,7 @@ resources:
 
 In this tutorial, we will build a simple Calculator dApp that will illustrate how requests are sent and processed within Cartesi Rollups Infrastructure.
 
-This app will be written in Python
+This app will be written in Python.
 
 :::note
 The backend will be written using Python. Feel free to explore [the JavaScript version here](https://github.com/Mugen-Builders/calculator/tree/main/javascript) for added flexibility.
