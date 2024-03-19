@@ -15,3 +15,4 @@ At the heart of your dApp, you will find the Cartesi Virtual Machine (based on R
 
 Now, you can leverage industry-grade software tooling and libraries as you do in traditional software development, making it easier to bring your decentralized applications to life.
 
+![img](../static/img/v1.3/image.png)
