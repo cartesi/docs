@@ -15,7 +15,7 @@ module.exports = {
       label: "Core Concepts",
       collapsed: true,
       items: [
-      "core-concepts/why-cartesi",
+    
       "core-concepts/optimistic-rollups",
       "core-concepts/architecture",   
         {
