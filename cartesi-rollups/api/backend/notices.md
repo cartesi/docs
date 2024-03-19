@@ -7,13 +7,14 @@ A notice is a verifiable data declaration that attests to off-chain events or co
 
 Notices provide a mechanism to communicate essential off-chain events in the execution layer to the base layer in a verifiable manner.
 
-Consider a scenario within a gaming dApp where players engage in battles. Upon the conclusion of a match, the dApp's backend generates a notice proclaiming the victorious player. This notice contains pertinent off-chain data regarding the match outcome. Once created, the notice is submitted to the rollup server, which stands as evidence of the off-chain event.
+Consider a scenario within a gaming dApp where players engage in battles. Upon the conclusion of a match, the dApp's backend generates a notice proclaiming the victorious player. This notice contains pertinent off-chain data regarding the match outcome. Once created, the notice is submitted to the rollup server as evidence of the off-chain event.
 
-Crucially, the base layer conducts on-chain validation of these notices through the [`validateOutput()`](../json-rpc/application.md/#validateoutput) function of the `Application` contract.
+Crucially, the base layer conducts on-chain validation of these notices through the [`validateNotice()`](../json-rpc/application.md/#validatenotice) function of the `CartesiDApp` contract.
 
 This validation process ensures the integrity and authenticity of the submitted notices, enabling the blockchain to verify and authenticate the declared off-chain events or conditions.
 
 Let's see how a Cartesi dApp's **Advance** request sends an output to the rollup server as a notice:
+
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';

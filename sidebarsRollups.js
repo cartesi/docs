@@ -151,7 +151,13 @@ module.exports = {
         "development/node-configuration",
         "development/send-requests",
         "development/retrieve-outputs",
-        "development/assets-handling",
+     
+        {
+          type: "category",
+          label: "Assets Handling",
+          collapsed: true,
+          items: ["development/assets-handling/overview", "development/assets-handling/javascript", "development/assets-handling/python"],
+        },
       ],
     },
     {

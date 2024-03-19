@@ -7,9 +7,10 @@ Reports are stateless logs, offering a means to record read-only information wit
 
 Unlike notices, reports lack any association with proof and are therefore unsuitable for facilitating trustless interactions, such as on-chain processing or convincing independent third parties of dApp outcomes. 
 
-Consider a scenario within a financial dApp where users conduct transactions. In the event of a processing error, such as a failed transaction or insufficient funds, the dApp may generate a report detailing the encountered issue. This report, encapsulating relevant diagnostic data, aids developers in identifying and resolving underlying issues promptly.
+Consider a scenario within a financial dApp where users conduct transactions. In the event of a processing error, such as a failed transaction or insufficient funds, the dApp may generate a report detailing the encountered issue. This report, encapsulating relevant diagnostic data, aids developers in identifying and resolving underlying problems promptly.
 
 Here is how you can write your application to send reports to the rollup server:
+
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';

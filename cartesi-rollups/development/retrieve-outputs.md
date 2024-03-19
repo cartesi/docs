@@ -19,11 +19,11 @@ Consider a DeFi application built on Cartesi where users want to swap one token 
 
 ### How Vouchers Work:
 
-- The dApp backend creates a voucher during its execution on the Cartesi Machine.
+- The dApp backend creates a voucher while executing the Cartesi Machine.
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The [`Application`](../api/json-rpc/application.md) contract validates and executes the voucher using the [`_executeVoucher()`](../api/json-rpc/application.md/#executevoucher) function.
+- The [`CartesiDApp`](../api/json-rpc/application.md) contract validates and executes the voucher using the [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
@@ -33,7 +33,7 @@ A notice is a verifiable data declaration that attests to off-chain events or co
 
 They serve as a means for dApp to notify the blockchain about particular events.
 
-Imagine a gaming dApp where players engage in battles. When a player wins a match off-chain, the dApp backend generates a notice declaring the winner. This notice is submitted to the blockchain, allowing on-chain validation of the match outcome.
+Imagine a gaming dApp where players engage in battles. When a player wins an off-chain match, the dApp backend generates a notice declaring the winner. This notice is submitted to the blockchain, allowing on-chain validation of the match outcome.
 
 ### How Notices Work
 
@@ -41,11 +41,12 @@ Imagine a gaming dApp where players engage in battles. When a player wins a matc
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- On-chain validation of notices is performed using the [`validateOutput()`](../api/json-rpc/application.md/#validateoutput) function of the [`Application`](../api/json-rpc/application.md) contract.
+- On-chain validation of notices is performed using the [`validateNotice()`](../api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api/json-rpc/application.md) contract.
 
 :::note
 Notices enable the dApp to communicate off-chain events without directly triggering smart contract interactions.
 :::
+
 
 ### Send a notice
 

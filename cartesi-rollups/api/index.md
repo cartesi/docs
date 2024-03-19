@@ -48,7 +48,7 @@ The figure below details some of the main use cases for these interactions:
 
 - [`addInput()`](../api/json-rpc/input-box.md/#addinput) — This function submits input data to the InputBox smart contract on the base layer as a regular JSON-RPC blockchain transaction. When that transaction is mined and executed, an event containing the submitted input’s index is emitted, which the frontend can later use to query associated outputs.
 
-- [`executeOutput()`](../api/json-rpc/application.md/#executeoutput) — Submits a JSON-RPC blockchain transaction to request that a given voucher or notice be executed by the [`Application`](../api/json-rpc/application.md) smart contract on the base layer.
+- [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) — Submits a JSON-RPC blockchain transaction to request that a given voucher or notice be executed by the [`CartesiDApp`](../api/json-rpc/application.md) smart contract on the base layer.
 
 - Query outputs — You can submit a query to a Cartesi node to retrieve vouchers, notices and reports, as specified by the Cartesi Rollups GraphQL schema.
 
