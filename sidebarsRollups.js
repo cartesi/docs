@@ -63,6 +63,7 @@ module.exports = {
                     "api/json-rpc/input-box",
                     "api/json-rpc/application",
                     "api/json-rpc/application-factory",
+                  
                     {
                       type: "category",
                       label: "Portals",
@@ -75,12 +76,12 @@ module.exports = {
                         "api/json-rpc/portals/EtherPortal",
                       ],
                     },
-                    // {
-                    //   type: "category",
-                    //   label: "Relayer",
-                    //   collapsed: true,
-                    //   items: ["api/json-rpc/relays/DAppAddressRelay"],
-                    // },
+                    {
+                      type: "category",
+                      label: "Relayer",
+                      collapsed: true,
+                      items: ["api/json-rpc/relays/relays"],
+                    },
                   ],
                 },
                 {
