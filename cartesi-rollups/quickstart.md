@@ -35,7 +35,7 @@ If you are using Windows, you must have [WSL2 installed and configured](https://
 
 ## Create an application
 
-To create the backend application from scratch, run
+To create the backend application from scratch, run:
 
 ```bash
 sunodo create <dapp-name> --template <language>
@@ -48,7 +48,7 @@ $ sunodo create js-dapp --template javascript
 ✔ Application created at /js-dapp
 ```
 
-Your application entry point will be the `src/index.js` file
+Your application entry point will be the `src/index.js` file.
 
 ## Build the application
 
