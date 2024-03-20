@@ -248,7 +248,7 @@ html[data-theme="dark"] {
 }
 
 .tab-item-container {
-  @apply p-4 sm:p-6;
+  @apply p-4 sm:p-6 !important;
 }
 
 .tabs {
@@ -450,6 +450,10 @@ html[data-theme="dark"] {
 
 .theme-doc-sidebar-menu > li + li {
   @apply border-t border-b-0 border-l-0 border-r-0 border-solid border-gray-200  dark:border-gray-700;
+}
+
+.container {
+  max-width: var(--ifm-container-width);
 }
 
 @tailwind utilities;

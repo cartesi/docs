@@ -20,15 +20,17 @@ const config = {
   scripts: ["/js/index.js"],
   presets: [
     [
-      "@docusaurus/preset-classic",
+      "classic",
 
       /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
+      {
         docs: {
+          path: "docs",
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           editUrl: "https://github.com/cartesi/docs/tree/develop",
+
           remarkPlugins: [replacementPlugin],
           admonitions: {
             keywords: [
@@ -46,14 +48,26 @@ const config = {
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
-      }),
+        gtag: {
+          trackingID: "GTM-MS89D9K",
+          anonymizeIP: true,
+        },
+        googleTagManager: {
+          containerId: "GTM-MS89D9K",
+        },
+        sitemap: {
+          changefreq: "weekly",
+          priority: 0.5,
+          ignorePatterns: ["/tags/**"],
+          filename: "sitemap.xml",
+        },
+      },
     ],
   ],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Algolia Search
       algolia: {
         appId: "STJID4NVVG",
         apiKey: "a454730829efd0e7fc91ccb52e1185a6",
@@ -71,7 +85,6 @@ const config = {
           srcDark: "img/logo_dark.svg",
           height: "52px",
         },
-
         items: [
           {
             type: "dropdown",
@@ -192,7 +205,6 @@ const config = {
         textColor: "#FFFFFF",
         isCloseable: true,
       },
-
       footer: {
         links: [
           {
@@ -289,27 +301,15 @@ const config = {
           },
         ],
       },
-
       tableOfContents: {
         minHeadingLevel: 2,
         maxHeadingLevel: 2,
       },
-
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
         additionalLanguages: ["lua"],
       },
-
-      /*  // Announcemnt bar
-      announcementBar: {
-        id: "example_bar",
-        content:
-          'Documentation is under development <a target="_blank" rel="noopener noreferrer" href="#">Read more</a>',
-        backgroundColor: "#2D5ABE",
-        textColor: "#fff",
-        isCloseable: false,
-      },*/
     }),
   plugins: [
     [
@@ -320,11 +320,25 @@ const config = {
         routeBasePath: "cartesi-rollups",
         sidebarPath: require.resolve("./sidebarsRollups.js"),
         editUrl: "https://github.com/cartesi/docs/tree/main",
+        docLayoutComponent: "@theme/DocPage",
+        docItemComponent: "@theme/ApiItem",
         includeCurrentVersion: true,
         lastVersion: "current",
+        admonitions: {
+          keywords: [
+            "note",
+            "tip",
+            "danger",
+            "info",
+            "caution",
+            "goal",
+            "troubleshoot",
+          ],
+        },
         versions: {
           current: {
             label: "1.3",
+            path: "1.3",
           },
         },
         showLastUpdateTime: true,
@@ -342,23 +356,10 @@ const config = {
       };
     },
     [
-      "@docusaurus/plugin-google-gtag",
-      {
-        trackingID: "GTM-MS89D9K",
-        anonymizeIP: true,
-      },
-    ],
-    [
-      "@docusaurus/plugin-google-tag-manager",
-      {
-        containerId: "GTM-MS89D9K",
-      },
-    ],
-    [
       "docusaurus-plugin-openapi-docs",
       {
         id: "apiDocs",
-        docsPluginId: "classic",
+        docsPluginId: "cartesi-rollups",
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
@@ -377,7 +378,8 @@ const config = {
     ],
 
     [
-      "@edno/docusaurus2-graphql-doc-generator",
+      "@graphql-markdown/docusaurus",
+      /** @type {import('@graphql-markdown/types').ConfigOptions} */
       {
         schema: "cartesi-rollups/api/typeDefs.graphql",
         rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
