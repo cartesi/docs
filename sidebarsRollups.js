@@ -15,10 +15,9 @@ module.exports = {
       label: "Core Concepts",
       collapsed: true,
       items: [
-    
-      "core-concepts/optimistic-rollups",
-      "core-concepts/architecture",   
-      "core-concepts/mainnet-considerations", 
+        "core-concepts/optimistic-rollups",
+        "core-concepts/architecture",
+        "core-concepts/mainnet-considerations",
         {
           type: "category",
           label: "Rollups HTTP APIs",
@@ -54,8 +53,7 @@ module.exports = {
                   label: "Smart contracts API",
                   link: {
                     type: "doc",
-                    id:"api/json-rpc/overview"
-                    
+                    id: "api/json-rpc/overview",
                   },
                   collapsed: true,
                   items: [
@@ -63,7 +61,7 @@ module.exports = {
                     "api/json-rpc/input-box",
                     "api/json-rpc/application",
                     "api/json-rpc/application-factory",
-                  
+
                     {
                       type: "category",
                       label: "Portals",
@@ -131,13 +129,9 @@ module.exports = {
                 },
               ],
             },
-           
-           
           ],
         },
-        
       ],
-      
     },
     {
       type: "category",
@@ -151,12 +145,24 @@ module.exports = {
         "development/node-configuration",
         "development/send-requests",
         "development/retrieve-outputs",
-     
+
         {
           type: "category",
           label: "Assets Handling",
           collapsed: true,
-          items: ["development/assets-handling/overview", "development/assets-handling/javascript", "development/assets-handling/python"],
+          items: [
+            "development/assets-handling/overview",
+            {
+              type: "doc",
+              id: "development/assets-handling/javascript",
+              label: "JavaScript",
+            },
+            {
+              type: "doc",
+              id: "development/assets-handling/python",
+              label: "Python",
+            },
+          ],
         },
       ],
     },
@@ -167,29 +173,49 @@ module.exports = {
       items: ["tutorials/calculator", "tutorials/machine-learning"],
     },
 
-    // {
-    //   type: "category",
-    //   label: "References",
-    //   collapsed: true,
-    //   items: [
-    //     {
-    //       type: "link",
-    //       label: "Code samples",
-    //       href: "https://github.com/cartesi/rollups-examples",
-    //     },
-    //     {
-    //       type: "link",
-    //       label: "Releases",
-    //       href: "https://github.com/cartesi/rollups/releases",
-    //     },
-    //     {
-    //       type: "category",
-    //       label: "Migration guides",
-    //       collapsed: true,
-    //       items: ["migration-guides/from-09-to-10"],
-    //     },
-    //   ],
-    // },
+    {
+      type: "category",
+      label: "References",
+      collapsed: true,
+      items: [
+        {
+          type: "category",
+          label: "Releases",
+          items:[
+            
+            {
+              type: "link",
+              label: "Rollups Node",
+              href: "https://github.com/cartesi/rollups-node/releases",
+            },
+            {
+              type: "link",
+              label: "Rollups Contracts",
+              href: "https://github.com/cartesi/rollups-contracts/releases",
+            },
+
+          ],
+        },
+        {
+          type: "category",
+          label: "Changelog",
+          items:[
+            
+            {
+              type: "link",
+              label: "Rollups Node",
+              href: "https://github.com/cartesi/rollups-node/blob/main/CHANGELOG.md",
+            },
+            {
+              type: "link",
+              label: "Rollups Contracts",
+              href: "https://github.com/cartesi/rollups-contracts/blob/main/CHANGELOG.md",
+            },
+
+          ],
+        },
+      ],
+    },
     // {
     //   type: "category",
     //   label: "Future Developments",
