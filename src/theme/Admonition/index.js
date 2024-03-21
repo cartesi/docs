@@ -167,7 +167,7 @@ const AdmonitionConfigs = {
         id="theme.admonition.note"
         description="The default label used for the Note admonition (:::note)"
       >
-        note
+        troubleshoot
       </Translate>
     ),
   },
