@@ -56,9 +56,6 @@ export default function DropdownVersion({ ...props }) {
   }
   return (
     <div className="dropdown-version">
-      <span className="dropdown-version__label">
-        {props.selectversionlabel}
-      </span>
       <DropdownVersionNavbarItem
         {...props}
         mobile={false}

@@ -12,7 +12,7 @@ const DocSidebarMobileSecondaryMenu = ({ sidebar, path }) => {
   const mobileSidebar = useNavbarMobileSidebar();
   return (
     <>
-      <DropdownVersion selectversionlabel="Select Version" position="right" />
+      <DropdownVersion position="right" />
       <ul className={clsx(ThemeClassNames.docs.docSidebarMenu, "menu__list")}>
         <DocSidebarItems
           items={sidebar}
