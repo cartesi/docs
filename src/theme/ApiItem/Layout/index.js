@@ -55,7 +55,11 @@ export default function DocItemLayout({ children }) {
           </div>
         </div>
       </div>
-      {docTOC.desktop && <div className="col col--3">{docTOC.desktop}</div>}
+      {docTOC.desktop && (
+        <div className="col col--3">
+          <div className="toc-column">{docTOC.desktop}</div>
+        </div>
+      )}
     </div>
   );
 }
