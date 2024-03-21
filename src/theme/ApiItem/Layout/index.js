@@ -7,7 +7,6 @@ import DocItemFooter from "@theme/DocItem/Footer";
 import DocItemPaginator from "@theme/DocItem/Paginator";
 import DocItemTOCDesktop from "@theme/DocItem/TOC/Desktop";
 import DocItemTOCMobile from "@theme/DocItem/TOC/Mobile";
-import DocVersionBadge from "@theme/DocVersionBadge";
 import DocVersionBanner from "@theme/DocVersionBanner";
 import clsx from "clsx";
 import styles from "./styles.module.css";
@@ -41,9 +40,8 @@ export default function DocItemLayout({ children }) {
       <div className={clsx("col", !docTOC.hidden && styles.docItemCol)}>
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
-          <article>
+          <article className={clsx("padding-top--md")}>
             <DocBreadcrumbs />
-            <DocVersionBadge />
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <div className={clsx("col", api ? "col--7" : "col--12")}>
