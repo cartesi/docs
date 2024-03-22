@@ -36,7 +36,7 @@ export default function DocItemLayout({ children }) {
       <div className={clsx("col", !docTOC.hidden && styles.docItemCol)}>
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
-          <article>
+          <article className={clsx("padding-top--md")}>
             <DocBreadcrumbs />
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
