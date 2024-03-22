@@ -58,7 +58,7 @@ export default function DropdownVersion({ ...props }) {
     <div className="dropdown-version">
       <DropdownVersionNavbarItem
         {...props}
-        mobile={false}
+        mobile={windowSize === "mobile"}
         label={dropdownLabel}
         to={dropdownTo}
         position={props.position}
