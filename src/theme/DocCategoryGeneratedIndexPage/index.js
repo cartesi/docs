@@ -35,7 +35,7 @@ function DocCategoryGeneratedIndexPageContent({ categoryGeneratedIndex }) {
           <p>{categoryGeneratedIndex.description}</p>
         )}
       </header>
-      <article className="margin-top--lg">
+      <article className={clsx("padding-top--md")}>
         <DocCardList items={category.items} className={styles.list} />
       </article>
       <footer className="margin-top--lg">
