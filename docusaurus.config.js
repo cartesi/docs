@@ -305,6 +305,11 @@ const config = {
         minHeadingLevel: 2,
         maxHeadingLevel: 2,
       },
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
+      },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
