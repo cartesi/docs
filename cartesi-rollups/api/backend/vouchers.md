@@ -18,7 +18,7 @@ The [`CartesiDApp`](../json-rpc/application.md) contract is crucial in validatin
 The result of the voucher execution is recorded on the base layer. This recording typically involves submitting claims by a consensus contract, ensuring the integrity and transparency of the executed on-chain action.
 
 :::note
-[Refer to the documentation here](../../development/assets-handling.md) for asset handling and creating vouchers in your dApp.
+[Refer to the documentation here](../../development/assets-handling/overview.md) for asset handling and creating vouchers in your dApp.
 :::
 
 ## Epoch Configuration and Vouchers
