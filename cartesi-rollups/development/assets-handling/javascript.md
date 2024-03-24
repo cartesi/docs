@@ -55,6 +55,7 @@ const erc20PortalAddress = "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB";
 const erc721PortalAddress = "0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87";
 const dAppAddressRelayContract = "0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE";
 ```
+
 ## Create a helper function
 
 Let’s create a helper function allowing the rollups server to receive requests for the three output instances, i.e., [vouchers](../../api/backend/vouchers.md), [notices](../../api/backend/notices.md), and [reports](../../api/backend/reports.md).
@@ -190,7 +191,6 @@ const payloadStr = hexToString(payload);
 
 ```
 
-
 Finally, let’s update our handle_inspect function to return an account balance of an address.
 
 ```js
@@ -237,7 +237,6 @@ try {
 ```
 
 Our dApp is ready to receive requests for deposits and withdrawals in this state.
-
 
 ##  Frontend Integration
 
