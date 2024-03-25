@@ -27,6 +27,10 @@ Consider a DeFi application built on Cartesi where users want to swap one token 
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
+:::note
+[Refer to the documentation here](./assets-handling/overview.md) for asset handling and creating vouchers in your dApp.
+:::
+
 ## Notices: Off-chain events
 
 A notice is a verifiable data declaration that attests to off-chain events or conditions and is accompanied by proof. Unlike vouchers, notices do not trigger direct interactions with other smart contracts.
@@ -41,7 +45,7 @@ Imagine a gaming dApp where players engage in battles. When a player wins an off
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- On-chain validation of notices is performed using the [`validateNotice()`](../api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api/json-rpc/application.md) contract.
+Notices are validated on-chain using the [`validateNotice()`](../api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api/json-rpc/application.md) contract.
 
 :::note
 Notices enable the dApp to communicate off-chain events without directly triggering smart contract interactions.
@@ -50,7 +54,7 @@ Notices enable the dApp to communicate off-chain events without directly trigger
 
 ### Send a notice
 
-Let's look at how a Cartesi dApp has its Advance request **calculating and returning the first 5 multiples of a given number**.
+Let's examine how a Cartesi dApp has its Advance request **calculating and returning the first five multiples of a given number**.
 
 We will send the output to the rollup server as a notice.
 
@@ -94,7 +98,7 @@ async function handle_advance(data) {
       body: JSON.stringify({ payload: hexresult }),
     });
   } catch (error) {
-    // do something when there is an error
+    //Do something when there is an error
   }
 
   return "accept";
@@ -159,21 +163,21 @@ def handle_advance(data):
 
 </Tabs>
 
-For example, send an input payload of `“2”` to the application using Cast or `sunodo send generic` will log:
+For example, sending an input payload of `“2”` to the application using Cast or `sunodo send generic` will log:
 
 ```bash
 Received finish status 200
 Received advance request data {"metadata":{"msg_sender":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","epoch_index":0,"input_index":0,"block_number":11,"timestamp":1708331280},"payload":"0x32"}
-Adding notice with  value 2, 4, 6, 8, 10
+Adding notice with values 2, 4, 6, 8, 10
 ```
 
 The notice can be validated and queried by any interested party.
 
 ### Query all notices
 
-To query the state of a Cartesi Rollups instance, frontend clients can use a GraphQL API exposed by the Cartesi Nodes.
+Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-For local development, you can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql`.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql` for local development.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -199,7 +203,7 @@ Click the "Play" button (a triangular icon). The Playground will send the reques
 
 <video width="100%" controls>
     <source src="/videos/queryAllNotices.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
+    Your browser does not support video tags.
 </video>
 
 Alternatively, you can use a frontend client to query all the notices of a dApp running in a local environment:
@@ -219,7 +223,7 @@ async function fetchNotices() {
 
     for (const edge of result.data.notices.edges) {
       const payload = edge.node.payload;
-      // Do something with payload
+      // Do something with the payload
     }
   } catch (error) {
     console.error("Error fetching notices:", error);
@@ -233,7 +237,7 @@ fetchNotices();
 
 You can get a notice based on its index.
 
-Input your query in the left pane
+Input your query in the left pane.
 
 ```graphql
 query noticesByInput($inputIndex: Int!) {
@@ -253,7 +257,7 @@ query noticesByInput($inputIndex: Int!) {
 }
 ```
 
-Then, in the bottom-left corner of the Playground, you'll find a section for providing variables. Click on it to expand it, and then you can input your variables like this:
+Then, in the bottom-left corner of the Playground, you'll find a section that provides variables. Click on it to expand it, and then you can input your variables like this:
 
 ```
 {
@@ -267,7 +271,7 @@ Replace `123` with the value you want to pass for `$inputIndex`.
 
 <video width="100%" controls>
     <source src="/videos/queryASingleNotice.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
+    Your browser does not support video tags.
 </video>
 
 With a JavaScript client, you can construct the GraphQL query and variables separately and send them as a JSON object in the request's body.
@@ -309,7 +313,7 @@ for (let edge of result.data.input.notices.edges) {
 
 You can also fetch detailed information about a notice, including its proof information.
 
-Here is the query which takes 2 variables: noticeIndex and inputIndex.
+Here is the query which takes two variables: noticeIndex and inputIndex.
 
 ```graphql
 query notice($noticeIndex: Int!, $inputIndex: Int!) {
@@ -353,7 +357,7 @@ async function handle_advance(data) {
   try {
     // something here
   } catch (e) {
-    // send a report when there is an error
+    //Send a report when there is an error
     const error = viem.stringToHex(`Error:${e}`);
 
     await fetch(rollup_server + "/report", {
@@ -409,9 +413,9 @@ You can use the exposed GraphQL API to query all reports from your dApp.
 
 ### Query all reports
 
-To query the state of a Cartesi Rollups instance, frontend clients can use a GraphQL API exposed by the Cartesi Nodes.
+Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-For local development, you can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql`.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql` for local development.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -460,7 +464,7 @@ query reportsByInput($inputIndex: Int!) {
 
 ```
 
-Then, in the bottom-left corner of the Playground, you'll find a section for providing variables. Click on it to expand it, and then you can input your variables like this:
+Then, in the bottom-left corner of the Playground, you'll find a section that provides variables. Click on it to expand it, and then you can input your variables like this:
 
 ```graphql
 {
@@ -487,5 +491,5 @@ query report($reportIndex: Int!, $inputIndex: Int!) {
 ```
 
 :::note
-Unlike Voucher and Notices, reports are stateless and do need come with attached proof.
+Unlike Vouchers and Notices, reports are stateless and need attached proof.
 :::

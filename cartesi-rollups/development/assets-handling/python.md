@@ -12,7 +12,7 @@ resources:
    - url: https://github.com/Mugen-Builders/sunodo-frontend-console
      title: Frontend Console Application
    - url: https://github.com/jplgarcia/cartesi-angular-frontend
-     title: Angular Starter Template to showcase Wallet functionality of Cartesi dApps
+     title: Angular Starter Template to Showcase Wallet Functionality of Cartesi dApps
 ---
 
 Let’s build a simple dApp that uses the `cartesi-wallet` package to handle different deposits, transfers, and withdrawals of various assets.
@@ -168,7 +168,7 @@ wallet.erc721_withdraw(rollup_address, sender, erc721, token_id):
 wallet.erc721_transfer(account, to, erc721, token_id):
 ```
 
-Ensure to set the `rollup_address` for withdrawal operations in a trustless manner. Here's an example:
+Ensure that the `rollup_address` for withdrawal operations is set trustless. Here's an example:
 
 ```python
 if msg_sender.lower() == dapp_relay_address.lower():
@@ -396,7 +396,7 @@ balance/erc721/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0xae7f61eCf06C65405560
 
 You can use a couple of options for frontend integration in your backend wallet. 
 
-- Frontend Console: You can use the terminal to interact with your backend wallet directly. Here is [a sample frontend console application](https://github.com/Mugen-Builders/sunodo-frontend-console) ready to be used!
+- Frontend Console: The terminal can interact directly with your backend wallet. Here is [a sample frontend console application](https://github.com/Mugen-Builders/sunodo-frontend-console) ready to be used!
 
+- Web User Interface: Alternatively, you can develop a user-friendly web interface for your dApp. This approach offers a more polished user experience and is suitable for production-ready applications. Here are [React.js starter](https://github.com/Mugen-Builders/frontend-cartesi-wallet-x) and [Angular starter](https://github.com/jplgarcia/cartesi-angular-frontend) templates you can use.
 
-- Web User Interface : Alternatively, you can develop a user-friendly web interface for your dApp. This approach offers a more polished user experience and is suitable for production-ready applications. Here is a [React.js starter](https://github.com/Mugen-Builders/frontend-cartesi-wallet-x) and [Angular starter](https://github.com/jplgarcia/cartesi-angular-frontend) templates you can use.

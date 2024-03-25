@@ -1,18 +1,18 @@
 ---
 id: calculator
 title: Build a calculator dApp with Python
-tags: [calculator, dapps, python, tutorial]
+tags: [calculator, apps, python, tutorial]
 resources:
   - url: https://github.com/Mugen-Builders/calculator
     title: Source code for the Calculator dApp
 ---
 
-In this tutorial, we will build a simple Calculator dApp that will illustrate how requests are sent and processed within Cartesi Rollups Infrastructure.
+In this tutorial, we will build a simple Calculator dApp to illustrate how requests are sent and processed within Cartesi Rollups Infrastructure.
 
 This app will be written in Python.
 
 :::note
-The backend will be written using Python. Feel free to explore [the JavaScript version here](https://github.com/Mugen-Builders/calculator/tree/main/javascript) for added flexibility.
+The backend will be written using Python. For added flexibility, feel free to explore [the JavaScript version here](https://github.com/Mugen-Builders/calculator/tree/main/javascript).
 :::
 
 ## Set up your environment
@@ -23,11 +23,11 @@ Install these to set up your environment for quick building.
 
 - Docker Desktop: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker for your OS of choice](https://www.docker.com/products/docker-desktop/)
 
-- Python: For writing your backend application logic. [Install Python3 here](https://www.python.org/downloads/).
+- Python: This is used to write your backend application logic. [Install Python3 here](https://www.python.org/downloads/).
 
 ## Create the backend application
 
-To create a backend application with Python, simply run:
+To create a backend application with Python, run:
 
 ```shell
 sunodo create calculator --template python
@@ -43,7 +43,7 @@ This creates a `calculator/` directory with essential files for your development
 
 - `requirements.txt`: The Python dependencies required for your application
 
-Let’s review the backend code in the `dapp.py` file
+Let’s review the backend code in the `dapp.py` file.
 
 ```python
 from os import environ
@@ -95,7 +95,7 @@ while True:
 
 This Python script establishes a communication loop with the Cartesi rollup server.
 
-Two functions, `handle_advance`, and `handle_inspect`, are defined to process “advance” and “inspect” requests.
+Two functions, `handle_advance` and `handle_inspect,` are defined to process “advance” and “inspect” requests.
 
 The script enters an infinite loop, continually listening and sending finish requests to the rollup server.
 
@@ -112,7 +112,7 @@ requests == 2.31.0
 py_expression_eval == 0.3.14
 ```
 
-Import the Parser from `py_expression_eval`, which is the main class of the library that contains the methods to parse, evaluate and simplify mathematical expressions.
+Import the Parser from `py_expression_eval,` the main class of the library, which contains the methods to parse, evaluate, and simplify mathematical expressions.
 
 ```python
 from py_expression_eval import Parser
@@ -250,7 +250,7 @@ With Docker running, “build your backend” application by running:
 sunodo build
 ```
 
-“Building” in this context installs the libraries in the requirements.txt, compiles your application into RISC-V architecture, and consequently builds a Cartesi machine which contains your backend application
+“Building” in this context installs the libraries in the requirements.txt, compiles your application into RISC-V architecture, and consequently builds a Cartesi machine which contains your backend application.
 
 The anvil node can now run your application.
 
@@ -264,7 +264,7 @@ sunodo run
 
 We can send inputs to our application with a custom JavaScript frontend, Cast, or Sunodo.
 
-To send generic inputs to our application quickly, run:
+To send generic inputs to our application quickly, run the following:
 
 ```shell
 sunodo send generic
@@ -272,7 +272,7 @@ sunodo send generic
 
 <video width="100%" controls>
     <source src="/videos/sunodoSendGeneric.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
+    Your browser does not support video tags.
 </video>
 
 ## Retrieving outputs from the application
@@ -316,3 +316,4 @@ for (let edge of result.data.notices.edges) {
 You can also [query a notice based on its input index](../development/retrieve-outputs.md/#query-a-single-notice).
 
 Congratulations, you have successfully built a dApp on Cartesi Rollups!
+

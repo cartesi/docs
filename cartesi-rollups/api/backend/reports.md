@@ -26,7 +26,7 @@ async function handle_advance(data) {
   try {
     // something here
   } catch (e) {
-    // send a report when there is an error
+    //Send a report when there is an error
     const error = viem.stringToHex(`Error:${e}`);
 
     await fetch(rollup_server + "/report", {

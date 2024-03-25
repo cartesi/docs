@@ -1,6 +1,7 @@
 ---
 id: vouchers
 title: Vouchers
+tags: [output, vouchers]
 ---
 
 Vouchers serve as a mechanism for facilitating on-chain actions initiated in the execution layer.
@@ -27,11 +28,12 @@ Epoch configuration is crucial when working with vouchers.
 
 Vouchers allow dApps in the execution layer to interact with contracts on the base layer through message calls. A voucher can only be executed once the corresponding epoch is closed. By default, Cartesi nodes close one epoch a day.
 
-One common use of vouchers in Cartesi dApps is withdrawing assets. Users initiate asset withdrawals by generating vouchers, which are then executed on the blockchain upon the closure of the corresponding epoch.
+One everyday use of vouchers in Cartesi dApps is to withdraw assets. Users initiate asset withdrawals by generating vouchers, which are then executed on the blockchain upon the closure of the corresponding epoch.
 
 During the development and testing phases, where rapid asset deposits and withdrawals are required, the default epoch duration of once a day may not be practical. In such cases, you can manually set the epoch duration to facilitate quicker asset deposits and withdrawals.
 
 :::note
 [Refer to the documentation here](../../development/node-configuration.md/#epoch-duration) to manually configure epoch duration during development.
 :::
+
 

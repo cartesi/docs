@@ -1,8 +1,8 @@
 ---
 id: notices
 title: Notices
+tags: [output, notices]
 ---
-
 A notice is a verifiable data declaration that attests to off-chain events or conditions and is accompanied by proof.
 
 Notices provide a mechanism to communicate essential off-chain events in the execution layer to the base layer in a verifiable manner.
@@ -39,7 +39,7 @@ async function handle_advance(data) {
       body: JSON.stringify({ payload: inputPayload }),
     });
   } catch (error) {
-    // do something when there is an error
+    //Do something when there is an error
   }
 
   return "accept";
@@ -60,7 +60,7 @@ def handle_advance(data):
    status = "accept"
    try:
        inputPayload = data["payload"]
-       ## send the inputPayload as a notice
+       ## Send the input payload as a notice
        response = requests.post(
            rollup_server + "/notice", json={"payload": inputPayload}
        )

@@ -39,11 +39,11 @@ Manual yield rx-accepted (0x100000000 data)
 Cycles: 2767791744
 2767791744: b740d27cf75b6cb10b1ab18ebd96be445ca8011143d94d8573221342108822f5
 Storing machine: please wait
+Successfully copied 288MB to /Users/michaelasiedu/Code/calculator/python/.sunodo/image
 ```
 
-The successful build of your application will be stored in the Cartesi machine and will be ready to receive requests and inputs.
 
-:::note Troubleshoot
+:::troubleshoot
 
 ```
 Error: Command failed with exit code 1
