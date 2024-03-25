@@ -6,15 +6,15 @@ resources:
   - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
     title: The Cartesi dApp Developer Free Course
   - url: https://github.com/jjhbk/cartesi-wallet
-    title: "Cartesi-Wallet: TypeScript based Wallet implementation for Cartesi dApps"
+    title: "Cartesi-Wallet: TypeScript-based Wallet Implementation for Cartesi dApps"
   - url: https://github.com/jjhbk/cartesi-router
-    title: "Cartesi-Router: TypeScript based Router implementation for Cartesi dApps"
+    title: "Cartesi-Router: TypeScript-based Router Implementation for Cartesi dApps"
   - url: https://github.com/Mugen-Builders/frontend-cartesi-wallet-x
     title: "Frontend-Cartesi-Wallet: A React frontend to showcase wallet functionality of Cartesi dApps"
   - url: https://github.com/Mugen-Builders/sunodo-frontend-console
     title: Frontend Console Application
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
-    title: Angular Starter Template to showcase Wallet functionality of Cartesi dApps
+    title: Angular Starter Template to Showcase Wallet Functionality of Cartesi dApps
 ---
 
 Let’s build a simple dApp that uses the `cartesi-wallet` and `cartesi-router` packages to handle different deposits and withdrawals.
@@ -31,7 +31,7 @@ Let’s build a simple dApp that uses the `cartesi-wallet` and `cartesi-router` 
 sunodo create js-wallet-dapp --template javascript
 ```
 
-2. In the `js-wallet-dapp` directory, install `cartesi-router`, `cartesi-wallet`, and `viem`.
+2. In the `js-wallet-dapp` directory, install `cartesi-router,` `cartesi-wallet,` and `viem.`
 
 ```shell
 npm install viem cartesi-router cartesi-wallet
@@ -136,7 +136,7 @@ Our application is ready to process deposits and withdrawals in this state. 
 ## Implementing Deposits
 
 
-In the `handle_advance()` function of our application entry point, let’s create instances for depositing various asset types to our dApp.
+In our application entry point’s `handle_advance()` function, let’s create instances for depositing various asset types to our dApp.
 
 ```js
 async function handle_advance(data) {
@@ -204,7 +204,7 @@ return router.process(url[0], url[1]); // balance/account
 ```
 
 ## Implementing withdrawals
-In the `handle_advance()` function, first, add an implementation to set the dApp address so that withdrawals can happen trustless.
+In the `handle_advance()` function, add an implementation to set the dApp address so that withdrawals can happen trustless.
 
 ```js 
 // set dapp address
@@ -242,7 +242,6 @@ Our dApp is ready to receive requests for deposits and withdrawals in this state
 
 You can use a couple of options for frontend integration in your backend wallet. 
 
-- Frontend Console: You can use the terminal to interact with your backend wallet directly. Here is [a sample frontend console application](https://github.com/Mugen-Builders/sunodo-frontend-console) ready to be used!
+- Frontend Console: The terminal can interact directly with your backend wallet. Here is [a sample frontend console application](https://github.com/Mugen-Builders/sunodo-frontend-console) ready to be used!
 
-
-- Web User Interface : Alternatively, you can develop a user-friendly web interface for your dApp. This approach offers a more polished user experience and is suitable for production-ready applications. Here is a [React.js starter](https://github.com/Mugen-Builders/frontend-cartesi-wallet-x) and [Angular starter](https://github.com/jplgarcia/cartesi-angular-frontend) templates you can use.
+- Web User Interface: Alternatively, you can develop a user-friendly web interface for your dApp. This approach offers a more polished user experience and is suitable for production-ready applications. Here are [React.js starter](https://github.com/Mugen-Builders/frontend-cartesi-wallet-x) and [Angular starter](https://github.com/jplgarcia/cartesi-angular-frontend) templates you can use.

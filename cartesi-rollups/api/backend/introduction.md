@@ -1,6 +1,7 @@
 ---
 id: introduction
 title: Introduction
+tags: [advance, inspect]
 ---
 
 The dApp's backend interacts with the Cartesi Rollups framework by processing requests and submitting corresponding outputs.
@@ -11,9 +12,9 @@ This is accomplished by calling a set of HTTP endpoints, as illustrated by the f
 
 First, the backend retrieves a new request as follows:
 
-- Finish — Communicates that any previous processing has been completed and that the backend is ready to handle the next request. This next request is returned as the call's response and can be of the following types:
+- Finish — Communicates that any previous processing has been completed and that the backend is ready to handle the subsequent request. This following request is returned as the call's response and can be of the following types:
 
-  - **Advance** — Provides input to be processed by the backend to advance the application's state. When processing an `Advance` request, the backend can call the methods `/voucher`, `/notice`, and `/report`. For such requests, the input data contains the payload and metadata, such as the account address that submitted the input.
+  - **Advance** — Provides input to be processed by the backend to advance the application's state. When processing an `Advance` request, the backend can call the methods `/voucher,` `/notice,` and `/report.` For such requests, the input data contains the payload and metadata, such as the account address that submitted the input.
 
   - **Inspect** — This function submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged since the machine is reverted to its exact previous condition after processing. For Inspect requests, the input data has only a payload.
 
@@ -135,7 +136,7 @@ In the dApp architecture, here is how an advance request plays out.
 
 - Step 1: Send an input to the [`addInput(address, bytes)`](../json-rpc/input-box.md/#addinput) function of the InputBox smart contract.
 
-- Step 2: The HTTP Rollups Server reads the data and gives it for processing in the Cartesi machine.
+- Step 2: The HTTP Rollups Server reads the data and gives it to the Cartesi machine for processing.
 
 - Step 3: After the computation, the state is updated, and the results are returned to the rollup server. 
 
@@ -152,7 +153,7 @@ To perform an Inspect call, use an HTTP GET request to `<address of the node>/in
 curl http://localhost:8080/inspect/mypath
 ```
 
-Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs in the form of **reports**.
+Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
 
 The direct output types for **Advance** and **Inspect** are [vouchers](./vouchers.md), [notices](./notices.md), and [reports](./reports.md).
@@ -163,8 +164,9 @@ As the backend processes each request, it can access a set of HTTP endpoints pro
 
 - `/voucher` — Called to specify a collateral effect in the form of a transaction that can be carried out on L1 (e.g., a transfer of ERC-20 tokens). The backend can only add new vouchers when processing an Advance request.
 
-- `/notice` — Provides information in a form that any third party on base layer can verify. Notices inform users about a new relevant application state. Like vouchers, you can only add notices when processing an Advance request.
+- `/notice` — Provides information in a form that any third party on the base layer can verify. Notices inform users about a new relevant application state. Like vouchers, you can only add notices when processing an Advance request.
 
 - `/report` — Outputs arbitrary data in a non-provable form. Reports provide diagnostics and logs associated with requests. You can generate a report in an Advance request. Inspect requests return reports as output.
 
 After handling each request, the backend should always initiate a call to `"Finish"` to signal the completion of processing and retrieve the subsequent request for processing as a response.
+
