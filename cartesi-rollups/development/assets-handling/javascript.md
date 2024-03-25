@@ -15,6 +15,8 @@ resources:
     title: Frontend Console Application
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
     title: Angular Starter Template to Showcase Wallet Functionality of Cartesi dApps
+  - url: https://github.com/Mugen-Builders/simple-cartesi-jsapp
+    title: "Simple Cartesi dApp: This example showcases how to build a simple Cartesi dApp using Cartesi Wallet and Cartesi Router modules."
 ---
 
 Let’s build a simple dApp that uses the `cartesi-wallet` and `cartesi-router` packages to handle different deposits and withdrawals.
