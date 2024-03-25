@@ -15,7 +15,7 @@ In a Cartesi dApp, the frontend and backend components communicate through the R
 
 When designing the APIs for this communication with the framework, we wanted to ensure developers could create their applications without worrying too much about the low-level components of Cartesi Rollups. In particular, we wanted to allow the backend code to abstract away whether it ran inside a specific virtual machine.
 
-With this in mind, we decided to offer APIs on top of HTTP as a convenience layer for this communication, leveraging a well-known standards in software engineering.
+With this in mind, we decided to offer APIs on top of HTTP as a convenience layer for this communication, leveraging well-known standards in software engineering.
 
 ## Backend APIs
 
@@ -50,10 +50,11 @@ The figure below details some of the main use cases for these interactions:
 
 - [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) — Submits a JSON-RPC blockchain transaction to request that a given voucher or notice be executed by the [`CartesiDApp`](../api/json-rpc/application.md) smart contract on the base layer.
 
-- Query outputs — You can submit a query to a Cartesi node to retrieve vouchers, notices and reports, as specified by the Cartesi Rollups GraphQL schema.
+- Query outputs — You can submit a query to a Cartesi node to retrieve vouchers, notices, and reports, as specified by the Cartesi Rollups GraphQL schema.
 
-- Inspect state — You can make a HTTP call to the Cartesi node to retrieve arbitrary dApp-specific application state.
+- Inspect state — You can make an HTTP call to the Cartesi node to retrieve arbitrary dApp-specific application state.
 
 :::note
 The complete specification for these endpoints can be found in the Rollups HTTP APIs reference.
 :::
+

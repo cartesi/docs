@@ -1,6 +1,6 @@
 ---
 id: creating-application
-title: Creating application
+title: Creating an application
 tags: [create, dapp, developer]
 ---
 
@@ -28,8 +28,9 @@ This command creates a `new-app` directory with essential files for your dApp de
 
 - `requirements.txt`: Lists the Python dependencies required for your application.
 
-Sunodo has templates for the following languages – `cpp`,`cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
+Sunodo has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
 
 :::note Next Steps
 Modify the application’s entry point to write your application logic.
 :::
+

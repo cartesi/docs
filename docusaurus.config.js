@@ -86,22 +86,22 @@ const config = {
           height: "52px",
         },
         items: [
-          {
-            type: "dropdown",
-            label: "Tools",
-            position: "left",
-            items: [
-              {
-                label: "Sunodo",
-                href: "https://docs.sunodo.io/guide/introduction/what-is-sunodo",
-              },
-              {
-                label: "NoNodo",
-                href: "https://github.com/gligneul/nonodo/blob/main/README.md",
-              },
-              { label: "Cartesi Scan", href: "https://cartesiscan.io/" },
-            ],
-          },
+          // {
+          //   type: "dropdown",
+          //   label: "Tools",
+          //   position: "left",
+          //   items: [
+          //     {
+          //       label: "Sunodo",
+          //       href: "https://docs.sunodo.io/guide/introduction/what-is-sunodo",
+          //     },
+          //     {
+          //       label: "NoNodo",
+          //       href: "https://github.com/gligneul/nonodo/blob/main/README.md",
+          //     },
+          //     { label: "Cartesi Scan", href: "https://cartesiscan.io/" },
+          //   ],
+          // },
           {
             type: "dropdown",
             label: "Learn",

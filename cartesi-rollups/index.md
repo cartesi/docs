@@ -34,6 +34,6 @@ Application-specific rollups are designed with a 1-of-N security model, which me
 
 ## Programmability
 
-Cartesi bridges the gap between blockchain and traditional software development by incorporating a full-fledged Linux operating system (OS) within its rollup solution.
+Cartesi bridges the gap between blockchain and traditional software development by incorporating a full-fledged Linux operating system (OS) within the optimistic rollup solution.
 
-Think of building smart contracts by porting compilers, libraries, database systems, frameworks, and software stacks previously inconceivable on blockchain platforms.
+You can build decentralized applications by porting compilers, libraries, database systems, frameworks, and traditional software stacks.
