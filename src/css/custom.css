@@ -420,7 +420,7 @@ html[data-theme="dark"] {
 
 .dropdown-version .navbar__item--version {
   border-radius: 3em;
-  background: var(--ifm-card-background-color);
+  background: var(--ifm-color-secondary);
   border: 0;
   font-size: 0.75rem;
 }
