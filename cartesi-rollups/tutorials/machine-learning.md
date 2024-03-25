@@ -248,7 +248,7 @@ sunodo send generic
 
 ## Changing the application
 
-This dApp was created generically, so you can change the target dataset and predictor algorithm.
+This dApp was created generically, so that you can change the target dataset and predictor algorithm.
 
 To change those, open the file `model/build_model.py` and change the following variables defined at the beginning of the script:
 

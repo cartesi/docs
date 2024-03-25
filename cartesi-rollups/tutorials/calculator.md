@@ -1,7 +1,7 @@
 ---
 id: calculator
 title: Build a calculator dApp with Python
-tags: [calculator, apps, python, tutorial]
+tags: [calculator, dapp, python, tutorial]
 resources:
   - url: https://github.com/Mugen-Builders/calculator
     title: Source code for the Calculator dApp
@@ -9,7 +9,7 @@ resources:
 
 In this tutorial, we will build a simple Calculator dApp to illustrate how requests are sent and processed within Cartesi Rollups Infrastructure.
 
-This app will be written in Python.
+This dApp will be written in Python.
 
 :::note
 The backend will be written using Python. For added flexibility, feel free to explore [the JavaScript version here](https://github.com/Mugen-Builders/calculator/tree/main/javascript).
@@ -33,7 +33,7 @@ To create a backend application with Python, run:
 sunodo create calculator --template python
 ```
 
-This creates a `calculator/` directory with essential files for your development in Python.
+This creates a `calculator/` directory with essential files for your Python development.
 
 - `Dockerfile`: Contains configurations to boot a complete Cartesi machine.
 
@@ -250,7 +250,8 @@ With Docker running, “build your backend” application by running:
 sunodo build
 ```
 
-“Building” in this context installs the libraries in the requirements.txt, compiles your application into RISC-V architecture, and consequently builds a Cartesi machine which contains your backend application.
+“Building” in this context installs the libraries in the `requirements.txt`, compiles your application into RISC-V architecture, and consequently builds a Cartesi machine that contains your backend application.
+
 
 The anvil node can now run your application.
 
