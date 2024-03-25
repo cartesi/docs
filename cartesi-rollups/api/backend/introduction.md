@@ -18,9 +18,7 @@ First, the backend retrieves a new request as follows:
 
   - **Inspect** — This function submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged since the machine is reverted to its exact previous condition after processing. For Inspect requests, the input data has only a payload.
 
-
 ## Advance and Inspect
-
 
 Here is a simple boilerplate application that handles Advance and Inspect requests:
 
@@ -127,7 +125,6 @@ while True:
 
 </Tabs>
 
-
 An **Advance** request involves sending input data to the base layer via JSON-RPC so they can reach the dApp backend to change the application's state.
 
 ![img](../../../static/img/v1.3/advance.jpg)
@@ -138,8 +135,7 @@ In the dApp architecture, here is how an advance request plays out.
 
 - Step 2: The HTTP Rollups Server reads the data and gives it to the Cartesi machine for processing.
 
-- Step 3: After the computation, the state is updated, and the results are returned to the rollup server. 
-
+- Step 3: After the computation, the machine state is updated, and the results are returned to the rollup server.
 
 An **Inspect** request involves making an external HTTP API call to the rollups server to read the dApp state without changing it.
 
@@ -155,7 +151,6 @@ curl http://localhost:8080/inspect/mypath
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
-
 The direct output types for **Advance** and **Inspect** are [vouchers](./vouchers.md), [notices](./notices.md), and [reports](./reports.md).
 
 ## Output Types
@@ -169,4 +164,3 @@ As the backend processes each request, it can access a set of HTTP endpoints pro
 - `/report` — Outputs arbitrary data in a non-provable form. Reports provide diagnostics and logs associated with requests. You can generate a report in an Advance request. Inspect requests return reports as output.
 
 After handling each request, the backend should always initiate a call to `"Finish"` to signal the completion of processing and retrieve the subsequent request for processing as a response.
-

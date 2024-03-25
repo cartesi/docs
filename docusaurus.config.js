@@ -111,10 +111,10 @@ const config = {
                 label: "Free Udemy Course",
                 href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
               },
-              {
-                label: "Cartesi Machine",
-                href: "/machine/",
-              },
+              // {
+              //   label: "Cartesi Machine",
+              //   href: "/machine/",
+              // },
             ],
           },
           // {
