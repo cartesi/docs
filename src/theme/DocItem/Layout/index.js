@@ -4,7 +4,6 @@ import { useWindowSize } from "@docusaurus/theme-common";
 import { useDoc } from "@docusaurus/theme-common/internal";
 import DocItemPaginator from "@theme/DocItem/Paginator";
 import DocVersionBanner from "@theme/DocVersionBanner";
-import DocVersionBadge from "@theme/DocVersionBadge";
 import DocItemFooter from "@theme/DocItem/Footer";
 import DocItemTOCMobile from "@theme/DocItem/TOC/Mobile";
 import DocItemTOCDesktop from "@theme/DocItem/TOC/Desktop";
@@ -37,9 +36,8 @@ export default function DocItemLayout({ children }) {
       <div className={clsx("col", !docTOC.hidden && styles.docItemCol)}>
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
-          <article>
+          <article className={clsx("padding-top--md")}>
             <DocBreadcrumbs />
-            <DocVersionBadge />
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <DocItemFooter />
@@ -47,7 +45,11 @@ export default function DocItemLayout({ children }) {
           <DocItemPaginator />
         </div>
       </div>
-      {docTOC.desktop && <div className="col col--3">{docTOC.desktop}</div>}
+      {docTOC.desktop && (
+        <div className="col col--3">
+          <div className="toc-column">{docTOC.desktop}</div>
+        </div>
+      )}
     </div>
   );
 }

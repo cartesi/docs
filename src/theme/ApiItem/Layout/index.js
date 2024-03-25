@@ -1,21 +1,19 @@
 import React from "react";
-import { useWindowSize } from "@docusaurus/theme-common"; // @ts-ignore
-
+import { useWindowSize } from "@docusaurus/theme-common";
 import { useDoc } from "@docusaurus/theme-common/internal";
 import DocBreadcrumbs from "@theme/DocBreadcrumbs";
-import DocVersionBadge from "@theme/DocVersionBadge";
+import DocItemContent from "@theme/DocItem/Content";
+import DocItemFooter from "@theme/DocItem/Footer";
+import DocItemPaginator from "@theme/DocItem/Paginator";
+import DocItemTOCDesktop from "@theme/DocItem/TOC/Desktop";
+import DocItemTOCMobile from "@theme/DocItem/TOC/Mobile";
 import DocVersionBanner from "@theme/DocVersionBanner";
 import clsx from "clsx";
-import DocItemContent from "../Content";
-import DocItemFooter from "../Footer";
-import DocItemPaginator from "../Paginator";
-import DocItemTOCDesktop from "../TOC/Desktop";
-import DocItemTOCMobile from "../TOC/Mobile";
 import styles from "./styles.module.css";
+
 /**
  * Decide if the toc should be rendered, on mobile or desktop viewports
  */
-
 function useDocTOC() {
   const { frontMatter, toc } = useDoc();
   const windowSize = useWindowSize();
@@ -32,7 +30,6 @@ function useDocTOC() {
     desktop,
   };
 }
-
 export default function DocItemLayout({ children }) {
   const docTOC = useDocTOC();
   const {
@@ -43,9 +40,8 @@ export default function DocItemLayout({ children }) {
       <div className={clsx("col", !docTOC.hidden && styles.docItemCol)}>
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
-          <article>
+          <article className={clsx("padding-top--md")}>
             <DocBreadcrumbs />
-            <DocVersionBadge />
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <div className={clsx("col", api ? "col--7" : "col--12")}>
@@ -57,7 +53,11 @@ export default function DocItemLayout({ children }) {
           </div>
         </div>
       </div>
-      {docTOC.desktop && <div className="col col--3">{docTOC.desktop}</div>}
+      {docTOC.desktop && (
+        <div className="col col--3">
+          <div className="toc-column">{docTOC.desktop}</div>
+        </div>
+      )}
     </div>
   );
 }

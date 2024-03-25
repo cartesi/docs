@@ -4,7 +4,7 @@ title: dApp life cycle
 tags: [learn, rollups, dapps, low-level developer, cycle]
 ---
 
-Now that we have described the [architecture of a Cartesi dApp](./dapp-architecture.md) and how [the front-end and back-end communicate with the Cartesi Rollups framework](/api/index.md), let’s step back a bit to discuss how a dApp can be implemented in practice.
+Now that we have described the [architecture of a Cartesi dApp](./dapp-architecture.md) and how [the front-end and back-end communicate with the Cartesi Rollups framework](./http-api.md), let’s step back a bit to discuss how a dApp can be implemented in practice.
 
 As mentioned before, we at Cartesi wanted to provide a development experience that would feel as familiar as possible for mainstream developers. With that in mind, we defined a series of _stages_ covering the entire life cycle of a Cartesi dApp’s development. The intention here is to allow developers to use their usual mainstream development environment for the larger part of their projects, and to make that possible Cartesi will provide the necessary tools and infrastructure.
 

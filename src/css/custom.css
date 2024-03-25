@@ -19,8 +19,8 @@ html {
   --ifm-font-weight-semibold: 600;
   --ifm-heading-font-weight: var(--ifm-font-weight-semibold);
 
-  --ifm-menu-color-background-hover: transparent;
-  --ifm-menu-color-background-active: transparent;
+  --ifm-menu-color-background-hover: var(--ifm-card-background-color);
+  --ifm-menu-color-background-active: var(--ifm-card-background-color);
   --ifm-menu-color-active: var(--ifm-color-primary);
 
   --ifm-menu-link-padding-vertical: 0.6rem;
@@ -65,8 +65,8 @@ html[data-theme="dark"] {
 
   --ifm-card-background-color: var(--ifm-background-surface-color);
 
-  --ifm-menu-color-background-hover: transparent;
-  --ifm-menu-color-background-active: transparent;
+  --ifm-menu-color-background-hover: var(--ifm-background-surface-color);
+  --ifm-menu-color-background-active: var(--ifm-background-surface-color);
 
   --ifm-dropdown-hover-background-color: #00f6ff;
 
@@ -221,7 +221,7 @@ html[data-theme="dark"] {
 }
 
 .menu__link:hover {
-  @apply text-gray-900 dark:text-gray-100;
+  @apply text-primary dark:text-secondary;
 }
 
 /* Theme Footer adjustments */
@@ -248,7 +248,7 @@ html[data-theme="dark"] {
 }
 
 .tab-item-container {
-  @apply p-4 sm:p-6;
+  @apply p-4 sm:p-6 !important;
 }
 
 .tabs {
@@ -415,23 +415,18 @@ html[data-theme="dark"] {
 
 /* // Version Dropdown */
 .dropdown-version {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0 0.5rem 0.5rem 0rem;
-  justify-content: flex-end;
+  @apply flex items-center gap-2 px-2 sm:px-4 py-2 sm:pt-6 pb-6 sm:pb-2;
 }
 
-@media (min-width: 996px) {
-  .dropdown-version {
-    padding: 1rem 0.5rem 0.5rem 1.5rem;
-    justify-content: flex-start;
-  }
+.dropdown-version .navbar__item--version {
+  border-radius: 3em;
+  background: var(--ifm-card-background-color);
+  border: 0;
+  font-size: 0.75rem;
 }
-
-.dropdown-version__label {
-  font-size: 0.815rem;
-  opacity: 0.5;
+.dropdown-version .navbar__item--version::before {
+  content: "Version ";
+  color: var(--ifm-font-color-base);
 }
 
 /* Sidebar */
@@ -450,6 +445,32 @@ html[data-theme="dark"] {
 
 .theme-doc-sidebar-menu > li + li {
   @apply border-t border-b-0 border-l-0 border-r-0 border-solid border-gray-200  dark:border-gray-700;
+}
+
+.container {
+  max-width: var(--ifm-container-width);
+}
+
+/* hotjar */
+[class^="_hj-"] {
+  font-family: inherit;
+}
+[class^="_hj-"] [class$="__inlineSurvey"] {
+  padding: 0 !important;
+  margin-top: 1rem !important;
+}
+[class^="_hj-"] [aria-label="Survey"] > div {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* TOC Column */
+.toc-column {
+  max-height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
+  overflow-y: auto;
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 1rem);
 }
 
 @tailwind utilities;

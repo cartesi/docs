@@ -1,17 +1,17 @@
-import React from 'react';
+import React from "react";
+import clsx from "clsx";
 import {
   PageMetadata,
   useCurrentSidebarCategory,
-} from '@docusaurus/theme-common';
-import useBaseUrl from '@docusaurus/useBaseUrl';
-import DocCardList from '@theme/DocCardList';
-import DocPaginator from '@theme/DocPaginator';
-import DocVersionBanner from '@theme/DocVersionBanner';
-import DocVersionBadge from '@theme/DocVersionBadge';
-import DocBreadcrumbs from '@theme/DocBreadcrumbs';
-import Heading from '@theme/Heading';
-import styles from './styles.module.css';
-function DocCategoryGeneratedIndexPageMetadata({categoryGeneratedIndex}) {
+} from "@docusaurus/theme-common";
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import DocCardList from "@theme/DocCardList";
+import DocPaginator from "@theme/DocPaginator";
+import DocVersionBanner from "@theme/DocVersionBanner";
+import DocBreadcrumbs from "@theme/DocBreadcrumbs";
+import Heading from "@theme/Heading";
+import styles from "./styles.module.css";
+function DocCategoryGeneratedIndexPageMetadata({ categoryGeneratedIndex }) {
   return (
     <PageMetadata
       title={categoryGeneratedIndex.title}
@@ -22,13 +22,12 @@ function DocCategoryGeneratedIndexPageMetadata({categoryGeneratedIndex}) {
     />
   );
 }
-function DocCategoryGeneratedIndexPageContent({categoryGeneratedIndex}) {
+function DocCategoryGeneratedIndexPageContent({ categoryGeneratedIndex }) {
   const category = useCurrentSidebarCategory();
   return (
     <div className={styles.generatedIndexPage}>
       <DocVersionBanner />
       <DocBreadcrumbs />
-      <DocVersionBadge />
       <header>
         <Heading as="h1" className={styles.title}>
           {categoryGeneratedIndex.title}
@@ -37,7 +36,7 @@ function DocCategoryGeneratedIndexPageContent({categoryGeneratedIndex}) {
           <p>{categoryGeneratedIndex.description}</p>
         )}
       </header>
-      <article className="margin-top--lg">
+      <article className={clsx("padding-top--md")}>
         <DocCardList items={category.items} className={styles.list} />
       </article>
       <footer className="margin-top--lg">
