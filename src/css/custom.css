@@ -490,4 +490,9 @@ html[data-theme="dark"] {
   font-size: smaller;
 }
 
+/* hash link */
+.hash-link::before {
+  content: none !important;
+}
+
 @tailwind utilities;
