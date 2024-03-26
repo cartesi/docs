@@ -14,7 +14,7 @@ Docker is the required tool to distribute the Cartesi Rollups framework and its 
 
 Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building dApps Cartesi:
 
-- Docker Buildx 
+- Docker Buildx
 - Docker Compose.
 
 Follow [the instructions here to install Docker Desktop](https://www.docker.com/products/docker-desktop/) for your operating system.
@@ -57,11 +57,7 @@ import TabItem from '@theme/TabItem';
   </TabItem>
 
   <TabItem value="Linux" label="Linux">
-  <p>Install Sunodo with Homebrew for Linux:</p>
-    <pre><code>
-    brew install sunodo/tap/sunodo
-    </code></pre>
-    <p> Alternatively, you can use Node.js to install Sunodo:</p>
+  <p>Install Sunodo with Node.js:</p>
     <pre><code>
     npm install -g @sunodo/cli
     </code></pre>
@@ -76,6 +72,9 @@ import TabItem from '@theme/TabItem';
   </TabItem>
 </Tabs>
 
+:::note
+For a seamless development workflow on Windows, do not execute Docker commands within Powershell. Instead, open the latest Ubuntu terminal that you have installed and perform all coding and command execution within that Linux environment.
+:::
 
 Sunodo Doctor is a diagnostic tool that declares whether your system is ready and set up for development.
 
@@ -83,5 +82,3 @@ Sunodo Doctor is a diagnostic tool that declares whether your system is ready an
 $ sunodo doctor
 ✔ Your system is ready for sunodo.
 ```
-
-

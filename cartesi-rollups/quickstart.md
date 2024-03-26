@@ -20,7 +20,7 @@ Welcome to Quickstart. Here is a step-by-step guide to building a decentralized 
 The primary requirements for building on Cartesi are Docker Desktop and Sunodo.
 
 :::note
-If you use Windows, you must have [WSL2 installed and configured](https://learn.microsoft.com/en-us/windows/wsl/install) for building.
+If you use Windows, you must have [WSL2 installed and configured](https://learn.microsoft.com/en-us/windows/wsl/install) for building. In Docker Desktop settings, confirm that the WSL2-based engine configurations are enabled.
 :::
 
 ### Install Docker Desktop and Sunodo

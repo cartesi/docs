@@ -3,17 +3,17 @@ id: running-the-application
 title: Running the application
 tags: [nonodo, sunodo]
 resources:
-   - url: https://github.com/gligneul/nonodo/tree/main
-     title: NoNodo
+  - url: https://github.com/gligneul/nonodo/tree/main
+    title: NoNodo
 ---
 
-Running your application creates a local anvil chain/node on port `8545`.
+Running your application starts your backend on port `8080` and local Anvil node on port `8545`.
 
 In essence, the node also logs all outputs received by your backend.
 
 You can run your application in 2 different modes — **production** or **NoNodo**.
 
-NoNodo is a light development tool that does not require Docker.
+NoNodo is a light development tool that does not require Docker running and allows running the backend application without a node.
 
 ## Production Mode
 
@@ -53,16 +53,15 @@ TX_DEFAULT_CONFIRMATIONS=1
 
 NoNodo is a development tool for Cartesi Rollups designed to work with applications running in the host machine instead of the Cartesi machine. With NoNodo, you don’t need to run Docker or compile the application to RISC-V.
 
-
 :::note
-Applications may require RISC-V compilation for interpreted languages. NoNodo allows unrestricted operations outside Cartesi's sandbox but lacks support for Cartesi-specific behaviors like full machine reversion. 
+Applications may require RISC-V compilation for interpreted languages. NoNodo allows unrestricted operations outside Cartesi's sandbox but lacks support for Cartesi-specific behaviors like full machine reversion.
 
 Additionally, NoNodo exclusively supports applications utilizing the Cartesi Rollups HTTP API, with performance degradation and input delays compared to running locally.
 :::
 
 ### Prerequisites
-Set up Anvil on your system. Refer to [the instructions in the Foundry book for Anvil installation](https://book.getfoundry.sh/anvil/) details.
 
+Set up Anvil on your system. Refer to [the instructions in the Foundry book for Anvil installation](https://book.getfoundry.sh/anvil/) details.
 
 ### Install from source
 
@@ -131,4 +130,3 @@ NoNodo provides configuration flags to customize the behavior of the Anvil node.
 NoNodo binds to the HTTP address and port specified by the `--http-address` and `--http-port` flags.
 
 By default, it binds to `http://127.0.0.1:8080/`.
-

@@ -201,7 +201,7 @@ const config = {
       announcementBar: {
         id: "mainnet",
         content:
-          'Cartesi Rollups is Mainnet Ready! Learn more about the beta launch <a href="https://docs-azure-two.vercel.app/cartesi-rollups/core-concepts/mainnet-considerations/" target="_blank" rel="noopener noreferrer">here</a>.',
+          'Cartesi Rollups is Mainnet Ready! Learn more about the launch <a href="https://docs-azure-two.vercel.app/cartesi-rollups/core-concepts/mainnet-considerations/" target="_blank" rel="noopener noreferrer">here</a>.',
       
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
