@@ -13,7 +13,7 @@ In essence, the node also logs all outputs received by your backend.
 
 You can run your application in 2 different modes — **production** or **NoNodo**.
 
-NoNodo is a light local Cartesi node for development and testing that does not require Docker.
+NoNodo is a light development tool that does not require Docker.
 
 ## Production Mode
 
@@ -51,11 +51,18 @@ TX_DEFAULT_CONFIRMATIONS=1
 
 ## NoNodo (Testing & Development)
 
-NoNodo is a development node for Cartesi Rollups designed to work with applications running in the host machine instead of the Cartesi machine. With NoNodo, you don’t need to run Docker or compile the application to RISC-V.
+NoNodo is a development tool for Cartesi Rollups designed to work with applications running in the host machine instead of the Cartesi machine. With NoNodo, you don’t need to run Docker or compile the application to RISC-V.
 
-:::note Prerequisites
-Set up Anvil on your system. Refer to [the instructions in the Foundry book for Anvil installation](https://book.getfoundry.sh/anvil/) details.
+
+:::note
+Applications may require RISC-V compilation for interpreted languages. NoNodo allows unrestricted operations outside Cartesi's sandbox but lacks support for Cartesi-specific behaviors like full machine reversion. 
+
+Additionally, NoNodo exclusively supports applications utilizing the Cartesi Rollups HTTP API, with performance degradation and input delays compared to running locally.
 :::
+
+### Prerequisites
+Set up Anvil on your system. Refer to [the instructions in the Foundry book for Anvil installation](https://book.getfoundry.sh/anvil/) details.
+
 
 ### Install from source
 

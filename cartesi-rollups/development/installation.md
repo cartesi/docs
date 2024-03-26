@@ -14,7 +14,7 @@ Docker is the required tool to distribute the Cartesi Rollups framework and its 
 
 Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building dApps Cartesi:
 
-- Docker Buildx and
+- Docker Buildx 
 - Docker Compose.
 
 Follow [the instructions here to install Docker Desktop](https://www.docker.com/products/docker-desktop/) for your operating system.

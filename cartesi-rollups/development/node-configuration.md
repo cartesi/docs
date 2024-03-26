@@ -53,3 +53,13 @@ To change the default epoch duration, run:
 sunodo run --epoch-duration <seconds>
 ```
 
+
+## Memory
+
+To change the default memory size for the Cartesi Machine, you can personalize it by adding a specific label in your Dockerfile. 
+
+The line below lets you define the memory size in megabytes (MB):
+
+```dockerfile
+LABEL io.cartesi.rollups.ram_size=128Mi
+```
