@@ -477,4 +477,11 @@ html[data-theme="dark"] {
   background: transparent;
 }
 
+/* edit this page */
+.theme-edit-this-page {
+  @apply flex items-center gap-2 ml-px;
+
+  font-size: smaller;
+}
+
 @tailwind utilities;
