@@ -22,7 +22,7 @@ Now, you can leverage industry-grade software tooling and libraries as you do in
 
 Cartesi is pioneering the implementation of application-specific rollups, offering solutions to the scalability issues plaguing existing blockchain networks.
 
-Application-specific rollups act as off-chain execution layers that inherit security and censorship guarantees from the base layer. But now, instead of sharing space inside a single rollup, each dApp has its dedicated rollup to process off-chain computation.
+Our application-specific rollups act as off-chain execution layers that inherit security and censorship guarantees from the base layer. But now, instead of sharing space inside a single rollup, each dApp has its dedicated rollup to process off-chain computation.
 
 There are significantly lower costs for dApp development and operation. By providing dedicated computational resources for each dApp, Cartesi eliminates the competitive pressure for block space, resulting in more predictable and manageable costs for developers and users alike.
 
