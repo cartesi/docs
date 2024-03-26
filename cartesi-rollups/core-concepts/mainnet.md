@@ -9,7 +9,7 @@ resources:
 
 Cartesi Rollups are app-specific execution environments that can be deployed as L2, L3, or sovereign rollups. It's not your typical L1 blockchain, so the idea of a "Mainnet launch" is slightly different. What goes to mainnet are the dApps built using Cartesi! And with the launch of the Honeypot dApp, Cartesi Rollups is officially ready for mainnet!
 
-## About Mainnet Beta
+## About Mainnet 
 
 Now that Cartesi has reached a Mainnet Ready stage, developers can build dApps with Cartesi Rollups and deploy on Ethereum, Optimism, and Arbitrum Mainnets!
 
