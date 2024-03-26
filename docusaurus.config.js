@@ -102,26 +102,26 @@ const config = {
           //     { label: "Cartesi Scan", href: "https://cartesiscan.io/" },
           //   ],
           // },
-          {
-            type: "dropdown",
-            label: "Learn",
-            position: "left",
-            items: [
-              {
-                label: "Free Udemy Course",
-                href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
-              },
-              // {
-              //   label: "Cartesi Machine",
-              //   href: "/machine/",
-              // },
-            ],
-          },
           // {
-          //   label: "Academy",
-          //   to: "#",
+          //   type: "dropdown",
+          //   label: "Learn",
           //   position: "left",
+          //   items: [
+          //     {
+          //       label: "Free Udemy Course",
+          //       href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+          //     },
+          //     // {
+          //     //   label: "Cartesi Machine",
+          //     //   href: "/machine/",
+          //     // },
+          //   ],
           // },
+          {
+            label: "Video Tutorial",
+            href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+            position: "left",
+          },
           {
             type: "dropdown",
             label: "Community",
