@@ -41,22 +41,3 @@ Successfully copied 288MB to /Users/michaelasiedu/Code/calculator/python/.sunodo
 ```
 
 
-:::troubleshoot
-
-```
-Error: Command failed with exit code 1
-permission denied why trying to connect to the docker daemon.
-```
-
-This error is associated with permissions associated with Docker. Fix this by running the commands as super user
-
-```shell
-sudo sunodo <subcommand>
-```
-
-To allow non-root users to manage Docker and avoid having to type sudo for every Docker command:
-
-```shell
-sudo usermod -aG docker $USER
-newgrp docker
-```
