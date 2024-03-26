@@ -50,6 +50,8 @@ html {
   --ifm-color-warning-dark: #ffc700;
 
   --ifm-tabs-padding-vertical: 0.75rem;
+
+  --ifm-navbar-link-hover-color: var(--ifm-font-color-base);
 }
 
 /* Dark Theme var */
