@@ -204,7 +204,12 @@ html[data-theme="dark"] {
 
 /* Menu */
 .menu {
-  @apply font-serif;
+  @apply font-serif overflow-hidden hover:overflow-y-auto;
+  scrollbar-width: auto;
+}
+
+.menu::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .menu__link--sublist {
@@ -431,14 +436,6 @@ html[data-theme="dark"] {
 
 /* Sidebar */
 
-.theme-doc-sidebar-container > div {
-  max-height: calc(100vh - 3.5rem) !important;
-}
-
-.theme-doc-sidebar-container .DocSearch-Button {
-  @apply w-full;
-}
-
 .theme-doc-sidebar-menu > li {
   @apply sm:py-4;
 }
@@ -467,10 +464,15 @@ html[data-theme="dark"] {
 
 /* TOC Column */
 .toc-column {
+  @apply overflow-hidden hover:overflow-y-auto overflow-x-hidden sticky;
   max-height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
-  overflow-y: auto;
-  position: sticky;
   top: calc(var(--ifm-navbar-height) + 1rem);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+
+.toc-column::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @tailwind utilities;
