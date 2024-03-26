@@ -112,7 +112,7 @@ This command sends an input payload to your application through the `InputBox` c
 1. Replace placeholders like `0xInputBoxAddress123`, `0xDAppAddress456`, `0xEncodedPayload789`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 :::note
-If you are on the local anvil node, `0xDAppAddress456` is `0x70ac08179605AF2D9e75782b8DEcD3c22aA4D0C` and `0xInputBoxAddress123` is `0x59b22D57D4f067708AB0c00552767405926dc768`.
+If you are on the local anvil node,  `0xInputBoxAddress123` is `0x59b22D57D4f067708AB0c00552767405926dc768`and  `0xDAppAddress456` is `0x70ac08179605AF2D9e75782b8DEcD3c22aA4D0C`.
 :::
 
 2. Send `“Hello World”` which is hex-encoded into `0x48656c6c6f20776f726c64` to your application using Cast:
