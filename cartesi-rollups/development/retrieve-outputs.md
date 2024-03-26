@@ -270,7 +270,7 @@ Replace `123` with the value you want to pass for `$inputIndex`.
 :::
 
 <video width="100%" controls>
-    <source src="/videos/queryASingleNotice.mp4" type="video/mp4" />
+    <source src="/videos/QueryASingleNotice.mp4" type="video/mp4" />
     Your browser does not support video tags.
 </video>
 
