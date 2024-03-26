@@ -269,10 +269,10 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 Replace `123` with the value you want to pass for `$inputIndex`.
 :::
 
-<video width="100%" controls>
+<!-- <video width="100%" controls>
     <source src="/videos/QueryASingleNotice.mp4" type="video/mp4" />
     Your browser does not support video tags.
-</video>
+</video> -->
 
 With a JavaScript client, you can construct the GraphQL query and variables separately and send them as a JSON object in the request's body.
 
