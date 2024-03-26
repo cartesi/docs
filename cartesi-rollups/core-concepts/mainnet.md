@@ -17,7 +17,7 @@ At this first stage, the validation remains permissive, with no support for disp
 
 ## Undiscovered Bugs
 
-While Cartesi Rollups is in the beta stage of development, the codebase may contain some undiscovered vulnerabilities that might put user funds at risk.
+The codebase may contain some undiscovered vulnerabilities that might put user funds at risk.
 
 Developers and users should factor this risk into their decision to use Cartesi Rollups and decide how much of their value to entrust to the system.
 
