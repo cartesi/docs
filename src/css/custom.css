@@ -233,6 +233,10 @@ html[data-theme="dark"] {
   @apply text-primary dark:text-secondary;
 }
 
+.menu__list-item:not(:first-child) {
+  @apply m-0;
+}
+
 /* Theme Footer adjustments */
 .footer {
   @apply text-sm;
