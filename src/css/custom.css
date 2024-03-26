@@ -501,4 +501,9 @@ html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
   content: none !important;
 }
 
+/* doc search */
+.DocSearch-Button {
+  border-radius: var(--ifm-global-radius) !important;
+}
+
 @tailwind utilities;
