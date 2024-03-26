@@ -7,9 +7,7 @@ resources:
     title: Node configuration with Sunodo
 ---
 
-Sunodo comes pre-configured with some default settings for Cartesi nodes.
-
-You can manually configure things like epoch duration, block time, environment variables, and the content of the information you want your node to preview.
+Sunodo comes pre-configured with some default settings for Cartesi nodes. You can manually configure things like epoch duration, block time, environment variables, memory and the content of the information you want your node to preview.
 
 :::note
 You can create a `.sunodo.env` in the project's root and override any variable controlling the rollups-node.
@@ -53,10 +51,9 @@ To change the default epoch duration, run:
 sunodo run --epoch-duration <seconds>
 ```
 
-
 ## Memory
 
-To change the default memory size for the Cartesi Machine, you can personalize it by adding a specific label in your Dockerfile. 
+To change the default memory size for the Cartesi Machine, you can personalize it by adding a specific label in your Dockerfile.
 
 The line below lets you define the memory size in megabytes (MB):
 
