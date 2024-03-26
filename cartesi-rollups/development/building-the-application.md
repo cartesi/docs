@@ -4,11 +4,9 @@ title: Building the application
 tags: [build, machine, dapp, developer]
 ---
 
-“Building” in this context compiles your application into RISC-V architecture and consequently builds a Cartesi machine containing your application.
+“Building” in this context compiles your application into RISC-V architecture and consequently builds a Cartesi machine containing your application. This architecture enables computation done by your application to be reproducible and verifiable.
 
-This architecture enables computation done by your application to be reproducible and verifiable.
-
-With the Docker engine running, change the directory to your application and build by running.
+With the Docker engine running, change the directory to your application and build by running:
 
 ```shell
 sunodo build
