@@ -9,6 +9,8 @@ resources:
     title: Next.js starter template
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
     title: Angular starter template
+  - url: https://github.com/Mugen-Builders/sunodo-frontend-console
+    title: Frontend Console Application
 
 ---
 
