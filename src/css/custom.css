@@ -432,11 +432,17 @@ html[data-theme="dark"] {
 }
 
 .dropdown-version .navbar__item--version {
-  border-radius: 3em;
+  border-radius: var(--ifm-global-radius);
   background: var(--ifm-color-secondary);
   border: 0;
   font-size: 0.75rem;
 }
+
+html[data-theme="dark"] .dropdown-version .navbar__item--version > *,
+html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
+  color: #000;
+}
+
 .dropdown-version .navbar__item--version::before {
   content: "Version ";
   color: var(--ifm-font-color-base);
