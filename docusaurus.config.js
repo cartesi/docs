@@ -147,6 +147,10 @@ const config = {
                 href: "https://www.instagram.com/cartesiproject/",
               },
               {
+                label:"Blog",
+                href:"https://cartesi.io/blog/"
+              },
+              {
                 label: "Rolluplab",
                 href: "https://rolluplab.io/",
               },
