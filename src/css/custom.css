@@ -447,6 +447,11 @@ html[data-theme="dark"] {
   @apply min-w-0 w-full;
 }
 
+.dropdown-version .dropdown__link {
+  font-size: 0.75rem;
+  text-align: center;
+}
+
 html[data-theme="dark"] .dropdown-version .navbar__item--version > *,
 html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
   color: #000;
