@@ -360,7 +360,7 @@ const config = {
       {
         createRedirects(existingPath) {
           if (existingPath.includes("/cartesi-rollups/1.0/")) {
-            // Redirect from /docs/team/X to /community/X and /docs/support/X to /community/X
+            // only top level URLs needed. All sub levels will be matched automatically. i.e. if /cartesi-rollups/api/ added, the plugin will automatically capture /cartesi-rollups/api/json-rpc/relays/DAppAddressRelay/ etc.
             return [
               existingPath.replace(
                 "/cartesi-rollups/1.0/overview",
@@ -401,6 +401,22 @@ const config = {
               existingPath.replace(
                 "/cartesi-rollups/1.0/dapp-life-cycle",
                 "/cartesi-rollups/dapp-life-cycle"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/build-dapps",
+                "/cartesi-rollups/build-dapps"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/references",
+                "/cartesi-rollups/references"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/migration-guides",
+                "/cartesi-rollups/migration-guides"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/challenges",
+                "/cartesi-rollups/challenges"
               ),
             ];
           }
