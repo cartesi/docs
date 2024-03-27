@@ -11,7 +11,7 @@ resources:
     title: Smart Contracts for Cartesi Rollups
 ---
 
-In a Cartesi dApp, the frontend and backend components communicate through the Rollups framework via HTTP APIs.
+In a Cartesi dApp, the frontend and backend components communicate through the Rollups framework using HTTP and GraphQL APIs.
 
 When designing the APIs for this communication with the framework, we wanted to ensure developers could create their applications without worrying too much about the low-level components of Cartesi Rollups. In particular, we wanted to allow the backend code to abstract away whether it ran inside a specific virtual machine.
 
