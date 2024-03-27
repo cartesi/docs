@@ -506,4 +506,9 @@ html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
   border-radius: var(--ifm-global-radius) !important;
 }
 
+/* nav item search fix padding */
+.navbar__items--right > :last-child {
+  margin-left: 0.5rem;
+}
+
 @tailwind utilities;
