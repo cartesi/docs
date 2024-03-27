@@ -216,6 +216,11 @@ html[data-theme="dark"] {
 
 .menu__link--sublist {
   @apply font-semibold;
+  color: var(--ifm-menu-color);
+}
+.menu__list-item-collapsible.menu__list-item-collapsible--active {
+  color: var(--ifm-menu-color);
+  background: transparent !important;
 }
 
 /* Theme Menu adjustments */
