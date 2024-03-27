@@ -1,8 +1,0 @@
-[
-    {
-        "source": "/build-dapps/",
-        "target": "/cartesi-rollups/build-dapps/",
-        "status": "301",
-        "condition": null
-    }
-]
