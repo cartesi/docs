@@ -21,7 +21,7 @@ Install these to set up your environment for quick building.
 
 - Sunodo: A simple tool for building applications on Cartesi. [Install Sunodo for your OS of choice](../development/installation.md)
 
-- Docker Desktop: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker for your OS of choice](https://www.docker.com/products/docker-desktop/)
+- Docker Desktop: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker for your OS of choice](https://www.docker.com/products/docker-desktop/).
 
 - Python: This is used to write your backend application logic. [Install Python3 here](https://www.python.org/downloads/).
 

@@ -15,7 +15,7 @@ Docker is the required tool to distribute the Cartesi Rollups framework and its 
 Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building dApps Cartesi:
 
 - Docker Buildx
-- Docker Compose.
+- Docker Compose
 
 Follow [the instructions here to install Docker Desktop](https://www.docker.com/products/docker-desktop/) for your operating system.
 
@@ -28,7 +28,7 @@ Error: Invalid image Architecture: Expected riscv64
 Check if your Docker supports the RISCV platform by running:
 
 ```
-docker buildx ls.
+docker buildx ls
 ```
 
 If you do not see `linux/riscv64` in the platforms list, install `QEMU` by running:
