@@ -23,7 +23,7 @@ Consider a DeFi application built on Cartesi where users want to swap one token 
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The [`CartesiDApp`](../api/json-rpc/application.md) contract validates and executes the voucher using the [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) function.
+- The [`CartesiDApp`](../core-concepts/rollup-http-api/json-rpc/application.md) contract validates and executes the voucher using the [`executeVoucher()`](../core-concepts/rollup-http-api/json-rpc/application.md/#executevoucher) function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
@@ -45,7 +45,7 @@ Imagine a gaming dApp where players engage in battles. When a player wins an off
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-Notices are validated on-chain using the [`validateNotice()`](../api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api/json-rpc/application.md) contract.
+Notices are validated on-chain using the [`validateNotice()`](../core-concepts/rollup-http-api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../core-concepts/rollup-http-api/json-rpc/application.md) contract.
 
 :::note
 Notices enable the dApp to communicate off-chain events without directly triggering smart contract interactions.

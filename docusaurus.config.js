@@ -12,7 +12,7 @@ const config = {
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
-  onBrokenLinks: "ignore",
+  onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "cartesi", // Usually your GitHub org/user name.
@@ -374,15 +374,15 @@ const config = {
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath: "cartesi-rollups/api/rollup.yaml", // Path to designated spec file
-            outputDir: "cartesi-rollups/api/rollup", // Output directory for generated .mdx docs
+            specPath: "cartesi-rollups/core-concepts/rollup-http-api/rollup.yaml", // Path to designated spec file
+            outputDir: "cartesi-rollups/core-concepts/rollup-http-api/rollup", // Output directory for generated .mdx docs
             sidebarOptions: {
               groupPathsBy: "tag",
             },
           },
           frontEndApi: {
-            specPath: "cartesi-rollups/api/inspect.yaml",
-            outputDir: "cartesi-rollups/api/inspect",
+            specPath: "cartesi-rollups/core-concepts/rollup-http-api/inspect.yaml",
+            outputDir: "cartesi-rollups/core-concepts/rollup-http-api/inspect",
           },
         },
       },
@@ -392,7 +392,7 @@ const config = {
       "@graphql-markdown/docusaurus",
       /** @type {import('@graphql-markdown/types').ConfigOptions} */
       {
-        schema: "cartesi-rollups/api/typeDefs.graphql",
+        schema: "cartesi-rollups/core-concepts/rollup-http-api/typeDefs.graphql",
         rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
         baseURL: "api/graphql",
       },
