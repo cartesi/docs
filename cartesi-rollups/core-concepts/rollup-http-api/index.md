@@ -34,10 +34,6 @@ You can send two requests to an application depending on whether you want to cha
 - **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the dApp state without changing it.
 
 
-The direct output types for this interaction are [vouchers](./backend/vouchers.md), [notices](./backend/notices.md), and [reports](./backend/reports.md).
-
-
-
 ## Frontend APIs
 
 The frontend component of the dApp needs to access the Cartesi Rollups framework to submit user requests and retrieve the corresponding outputs produced by the backend.

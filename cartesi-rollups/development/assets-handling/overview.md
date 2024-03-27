@@ -53,7 +53,7 @@ Users can deposit assets to a Cartesi dApp, but only the dApp can initiate withd
 
 Vouchers are crucial in allowing dApps in the execution layer to interact with contracts in the base layer through message calls. They are emitted by the off-chain machine and executed by any participant in the base layer. Each voucher includes a destination address and a payload, typically encoding a function call for Solidity contracts.
 
-The dApp’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals. This address is obtained via the [`relayDAppAddress()`](../../core-concepts/rollup-http-api/json-rpc/relays/relays.md/#relaydappaddress) function of the `DAppAddressRelay` contract, which adds the dApp's address as input.
+The dApp’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals. This address is obtained via the [`relaydAppAddress()`](../../core-concepts/rollup-http-api/json-rpc/relays/relays.md) function of the `DAppAddressRelay` contract, which adds the dApp's address as input.
 
 Subsequently, the off-chain machine uses this address to generate a voucher for execution by the [`executeVoucher()`](../../core-concepts/rollup-http-api/json-rpc/application.md/#executevoucher) function of the`CartesiDApp` contract.
 
