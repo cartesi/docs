@@ -9,7 +9,7 @@ resources:
 
 The Cartesi Rollups framework consists of components on the base layer (the foundational blockchain where a dApp contract is deployed, such as Ethereum) and the execution layer (the Cartesi off-chain layer where the dApp runs its backend logic).
 
-In a typical Cartesi dApp architecture, the dApp backend runs on a Cartesi Node. The frontend interacts with base layer smart contracts to send inputs to the backend, deposit assets, and process outputs (execute vouchers and validate notices).
+The frontend interacts with base layer smart contracts to send inputs to the backend, deposit assets, and process outputs.
 
 To interact with an Ethereum-compatible blockchain, the dApp frontend must connect to a blockchain node using Ethereum's JSON-RPC API. 
 

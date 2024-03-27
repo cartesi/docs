@@ -6,7 +6,6 @@ tags: [advance, inspect]
 
 The dApp's backend interacts with the Cartesi Rollups framework by processing requests and submitting corresponding outputs.
 
-This is accomplished by calling a set of HTTP endpoints, as illustrated by the figure below:
 
 ![img](../../../../static/img/v1.3/backend.jpg)
 
