@@ -349,7 +349,7 @@ const config = {
         versions: {
           current: {
             label: "1.3",
-            path: "1.3",
+            path: "1.3/",
           },
         },
         showLastUpdateTime: true,
@@ -358,6 +358,12 @@ const config = {
     [
       "@docusaurus/plugin-client-redirects",
       {
+        redirects: [
+          {
+            to: "/cartesi-rollups/1.3/", // Redirects /cartesi-rollups/ to the latest version
+            from: "/cartesi-rollups/",
+          },
+        ],
         createRedirects(existingPath) {
           if (existingPath.includes("/cartesi-rollups/1.0/")) {
             // only top level URLs needed. All sub levels will be matched automatically. i.e. if /cartesi-rollups/api/ added, the plugin will automatically capture /cartesi-rollups/api/json-rpc/relays/DAppAddressRelay/ etc.
