@@ -349,6 +349,59 @@ const config = {
         showLastUpdateTime: true,
       },
     ],
+    [
+      "@docusaurus/plugin-client-redirects",
+      {
+        createRedirects(existingPath) {
+          if (existingPath.includes("/cartesi-rollups/1.0/")) {
+            // Redirect from /docs/team/X to /community/X and /docs/support/X to /community/X
+            return [
+              existingPath.replace(
+                "/cartesi-rollups/1.0/overview",
+                "/cartesi-rollups/overview"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/main-concepts",
+                "/cartesi-rollups/main-concepts"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/mainnet-risks",
+                "/cartesi-rollups/mainnet-risks"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/sending-requests",
+                "/cartesi-rollups/sending-requests"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/reading-outputs",
+                "/cartesi-rollups/reading-outputs"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/assets-handling",
+                "/cartesi-rollups/assets-handling"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/dapp-architecture",
+                "/cartesi-rollups/dapp-architecture"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/api",
+                "/cartesi-rollups/api"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/http-api",
+                "/cartesi-rollups/http-api"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/dapp-life-cycle",
+                "/cartesi-rollups/dapp-life-cycle"
+              ),
+            ];
+          }
+          return undefined; // Return a falsy value: no redirect created
+        },
+      },
+    ],
     "docusaurus-plugin-hotjar",
     async function AddTailwindCss(context, options) {
       return {
