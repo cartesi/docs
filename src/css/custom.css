@@ -433,7 +433,7 @@ html[data-theme="dark"] {
 
 /* // Version Dropdown */
 .dropdown-version {
-  @apply flex items-center gap-2 px-2 sm:px-4 py-2 sm:pt-6 pb-6 sm:pb-2;
+  @apply flex items-center gap-2 px-2 sm:px-4 py-2 sm:pt-6 pb-6 sm:pb-2 relative;
 }
 
 .dropdown-version .navbar__item--version {
@@ -441,6 +441,10 @@ html[data-theme="dark"] {
   background: var(--ifm-color-secondary);
   border: 0;
   font-size: 0.75rem;
+}
+
+.dropdown-version .dropdown__menu {
+  @apply min-w-0 w-full;
 }
 
 html[data-theme="dark"] .dropdown-version .navbar__item--version > *,
