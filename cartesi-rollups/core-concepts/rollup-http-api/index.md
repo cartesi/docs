@@ -25,7 +25,7 @@ The dApp's backend interacts with the Cartesi Rollups framework by retrieving pr
 
 This is accomplished by calling a set of HTTP endpoints, as illustrated by the figure below:
 
-![img](../../static/img/v1.3/backend.jpg)
+![img](../../../static/img/v1.3/backend.jpg)
 
 You can send two requests to an application depending on whether you want to change or read the state.
 
@@ -34,7 +34,7 @@ You can send two requests to an application depending on whether you want to cha
 - **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the dApp state without changing it.
 
 
-The direct output types for this interaction are [vouchers](../api/backend/vouchers.md), [notices](../api/backend/notices.md), and [reports](../api/backend/reports.md).
+The direct output types for this interaction are [vouchers](./backend/vouchers.md), [notices](./backend/notices.md), and [reports](./backend/reports.md).
 
 
 
@@ -44,11 +44,11 @@ The frontend component of the dApp needs to access the Cartesi Rollups framework
 
 The figure below details some of the main use cases for these interactions:
 
-![img](../../static/img/v1.3/frontend.jpg)
+![img](../../../static/img/v1.3/frontend.jpg)
 
-- [`addInput()`](../api/json-rpc/input-box.md/#addinput) — This function submits input data to the InputBox smart contract on the base layer as a regular JSON-RPC blockchain transaction. When that transaction is mined and executed, an event containing the submitted input’s index is emitted, which the frontend can later use to query associated outputs.
+- [`addInput()`](./json-rpc/input-box.md/#addinput) — This function submits input data to the InputBox smart contract on the base layer as a regular JSON-RPC blockchain transaction. When that transaction is mined and executed, an event containing the submitted input’s index is emitted, which the frontend can later use to query associated outputs.
 
-- [`executeVoucher()`](../api/json-rpc/application.md/#executevoucher) — Submits a JSON-RPC blockchain transaction to request that a given voucher or notice be executed by the [`CartesiDApp`](../api/json-rpc/application.md) smart contract on the base layer.
+- [`executeVoucher()`](./json-rpc/application.md/#executevoucher) — Submits a JSON-RPC blockchain transaction to request that a given voucher or notice be executed by the [`CartesiDApp`](./json-rpc/application.md) smart contract on the base layer.
 
 - Query outputs — You can submit a query to a Cartesi node to retrieve vouchers, notices, and reports, as specified by the Cartesi Rollups GraphQL schema.
 

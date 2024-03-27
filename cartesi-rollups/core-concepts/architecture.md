@@ -18,9 +18,9 @@ The Cartesi Rollups framework comprises two main parts: **the on-chain base laye
 
 A dApp running on Cartesi consists of the following main components:
 
-- [Cartesi Rollups](/cartesi-rollups/core-concepts/optimistic-rollups/#cartesi-rollups), a set of on-chain and off-chain components that implement an [Optimistic Rollups](/cartesi-rollups/core-concepts/optimistic-rollups) solution and provide the general framework for building dApps.
+- [Cartesi Rollups](./optimistic-rollups.md/#cartesi-rollups), a set of on-chain and off-chain components that implement an Optimistic Rollup solution and provide the general framework for building dApps.
 
-- [Cartesi Machine](https://docs-azure-two.vercel.app/machine), a virtual machine (VM) that runs an entire Linux OS, in which the dApp's backend is executed.
+- [Cartesi Machine](https://docs.cartesi.io/machine/), a virtual machine (VM) that runs an entire Linux OS, in which a dApp's backend is executed.
 
 - Backend, the application's state, and verifiable logic. The backend runs inside the Cartesi Machine as a regular Linux application.
 
@@ -46,13 +46,13 @@ Now, when a request is made to a dApp, the type of request determines how inform
 The on-chain part of Cartesi Rollups involves deployed base layer smart contracts, each with distinct roles for your dApp. Every Cartesi dApp leverages the functionality these contracts provide. 
 
 
-- [InputBox](../api/json-rpc/input-box.md): This contract receives inputs from users who want to interact with the off-chain layer. All inputs to your dApp go through this contract. 
+- [InputBox](./rollup-http-api/json-rpc/input-box.md): This contract receives inputs from users who want to interact with the off-chain layer. All inputs to your dApp go through this contract. 
 
-- [Application](../api/json-rpc/application.md): This `Application` contract is instantiated for each dApp (i.e., each dApp has its application address). With this address, an application can hold ownership over digital assets on the base layer, like Ether, ERC-20 tokens, and NFTs.
+- [Application](./rollup-http-api/json-rpc/application.md): This `Application` contract is instantiated for each dApp (i.e., each dApp has its application address). With this address, an application can hold ownership over digital assets on the base layer, like Ether, ERC-20 tokens, and NFTs.
 
-- [ApplicationFactory](../api/json-rpc/application-factory.md): The `ApplicationFactory` contract allows anyone to deploy [`Application`](../api/json-rpc/application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
+- [ApplicationFactory](./rollup-http-api/json-rpc/application-factory.md): The `ApplicationFactory` contract allows anyone to deploy [`Application`](./rollup-http-api/json-rpc/application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
 
-- Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your dApp. Currently, there are Portal contracts for the following types of assets: [Ether (ETH)](../api/json-rpc/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../api/json-rpc/portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](../api/json-rpc//portals/ERC721Portal.md), [ERC-1155 single transfer](../api/json-rpc/portals/ERC1155SinglePortal.md) and [ERC-1155 batch token transfers](../api/json-rpc/portals/ERC1155BatchPortal.md).
+- Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your dApp. Currently, there are Portal contracts for the following types of assets: [Ether (ETH)](./rollup-http-api/json-rpc/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](./rollup-http-api/json-rpc/portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](./rollup-http-api/json-rpc//portals/ERC721Portal.md), [ERC-1155 single transfer](./rollup-http-api/json-rpc/portals/ERC1155SinglePortal.md) and [ERC-1155 batch token transfers](./rollup-http-api/json-rpc/portals/ERC1155BatchPortal.md).
 
 
 ## Off-chain layer

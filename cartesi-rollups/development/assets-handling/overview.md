@@ -19,11 +19,11 @@ As with any execution layer solution, a Cartesi dApp that wants to manipulate as
 
 Currently, Cartesi Rollups support the following types of assets:
 
-- [Ether (ETH)](../../api/json-rpc/portals/EtherPortal.md)
-- [ERC-20](../../api/json-rpc/portals/ERC20Portal.md)
-- [ERC-721](../../api/json-rpc/portals/ERC721Portal.md)
-- [ERC-1155 Single](../../api/json-rpc/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch](../../api/json-rpc/portals/ERC1155BatchPortal.md)
+- [Ether (ETH)](../../core-concepts/rollup-http-api/json-rpc/portals/EtherPortal.md)
+- [ERC-20](../../core-concepts/rollup-http-api/json-rpc/portals/ERC20Portal.md)
+- [ERC-721](../../core-concepts/rollup-http-api/json-rpc/portals/ERC721Portal.md)
+- [ERC-1155 Single](../../core-concepts/rollup-http-api/json-rpc/portals/ERC1155SinglePortal.md)
+- [ERC-1155 Batch](../../core-concepts/rollup-http-api/json-rpc/portals/ERC1155BatchPortal.md)
 
 ![img](../../../static/img/v1.3/assets.jpg)
 
@@ -53,19 +53,19 @@ Users can deposit assets to a Cartesi dApp, but only the dApp can initiate withd
 
 Vouchers are crucial in allowing dApps in the execution layer to interact with contracts in the base layer through message calls. They are emitted by the off-chain machine and executed by any participant in the base layer. Each voucher includes a destination address and a payload, typically encoding a function call for Solidity contracts.
 
-The dApp’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals. This address is obtained via the [`relayDAppAddress()`](../../api/json-rpc/relays/relays.md) function of the `DAppAddressRelay` contract, which adds the dApp's address as input.
+The dApp’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals. This address is obtained via the [`relayDAppAddress()`](../../core-concepts/rollup-http-api/json-rpc/relays/relays.md/#relaydappaddress) function of the `DAppAddressRelay` contract, which adds the dApp's address as input.
 
-Subsequently, the off-chain machine uses this address to generate a voucher for execution by the [`executeVoucher()`](../../api/json-rpc/application.md/#executevoucher) function of the`CartesiDApp` contract.
+Subsequently, the off-chain machine uses this address to generate a voucher for execution by the [`executeVoucher()`](../../core-concepts/rollup-http-api/json-rpc/application.md/#executevoucher) function of the`CartesiDApp` contract.
 
 :::note
-By default, Cartesi nodes close one epoch a day. You can [manually set the epoch duration](../../development/node-configuration.md#epoch-duration) to facilitate quicker asset-handling methods.
+By default, Cartesi nodes close one epoch a day. You can [manually set the epoch duration](../../development/node-configuration.md/#epoch-duration) to facilitate quicker asset-handling methods.
 :::
 
 Here are the function signatures used by vouchers to withdraw the different types of assets:
 
 | Asset    | Destination    | Function signature                                                                                                                          |
 | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../../api/json-rpc/application.md)                                                      |
+| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../../core-concepts/rollup-http-api/json-rpc/application.md)                                                      |
 | ERC-20   | Token contract | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
 | ERC-20   | Token contract | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |

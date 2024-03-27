@@ -8,7 +8,7 @@ The dApp's backend interacts with the Cartesi Rollups framework by processing re
 
 This is accomplished by calling a set of HTTP endpoints, as illustrated by the figure below:
 
-![img](../../../static/img/v1.3/backend.jpg)
+![img](../../../../static/img/v1.3/backend.jpg)
 
 First, the backend retrieves a new request as follows:
 
@@ -127,7 +127,7 @@ while True:
 
 An **Advance** request involves sending input data to the base layer via JSON-RPC so they can reach the dApp backend to change the application's state.
 
-![img](../../../static/img/v1.3/advance.jpg)
+![img](../../../../static/img/v1.3/advance.jpg)
 
 In the dApp architecture, here is how an advance request plays out.
 
@@ -139,7 +139,7 @@ In the dApp architecture, here is how an advance request plays out.
 
 An **Inspect** request involves making an external HTTP API call to the rollups server to read the dApp state without changing it.
 
-![img](../../../static/img/v1.3/inspect.jpg)
+![img](../../../../static/img/v1.3/inspect.jpg)
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 

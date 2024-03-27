@@ -81,5 +81,5 @@ def handle_advance(data):
 
 
 :::note
-Frontend clients can query notices using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation here](../../development/retrieve-outputs.md#query-all-notices) to query notices from the rollup server. 
+Frontend clients can query notices using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation here](../../../development/retrieve-outputs.md/#query-all-reports) to query notices from the rollup server. 
 :::
