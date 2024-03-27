@@ -343,7 +343,7 @@ const config = {
         versions: {
           current: {
             label: "1.3",
-            path: "1.3/",
+            path: "1.3",
           },
         },
         showLastUpdateTime: true,
