@@ -147,8 +147,8 @@ const config = {
                 href: "https://www.instagram.com/cartesiproject/",
               },
               {
-                label:"Blog",
-                href:"https://cartesi.io/blog/"
+                label: "Blog",
+                href: "https://cartesi.io/blog/",
               },
               {
                 label: "Built with Cartesi",
@@ -205,8 +205,8 @@ const config = {
       announcementBar: {
         id: "mainnet",
         content:
-          'Cartesi Rollups is Mainnet Ready! Learn more about the launch <a href="https://docs-azure-two.vercel.app/cartesi-rollups/core-concepts/mainnet-considerations/" target="_blank" rel="noopener noreferrer">here</a>.',
-      
+          'Cartesi Rollups is Mainnet Ready! Over 200K in CTSI is up for grabs... if you can <a href="https://docs-azure-two.vercel.app/cartesi-rollups/core-concepts/mainnet-considerations/" target="_blank" rel="noopener noreferrer">hack Cartesi Rollups</a>.',
+
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
         isCloseable: true,
@@ -449,14 +449,16 @@ const config = {
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath: "cartesi-rollups/core-concepts/rollup-http-api/rollup.yaml", // Path to designated spec file
+            specPath:
+              "cartesi-rollups/core-concepts/rollup-http-api/rollup.yaml", // Path to designated spec file
             outputDir: "cartesi-rollups/core-concepts/rollup-http-api/rollup", // Output directory for generated .mdx docs
             sidebarOptions: {
               groupPathsBy: "tag",
             },
           },
           frontEndApi: {
-            specPath: "cartesi-rollups/core-concepts/rollup-http-api/inspect.yaml",
+            specPath:
+              "cartesi-rollups/core-concepts/rollup-http-api/inspect.yaml",
             outputDir: "cartesi-rollups/core-concepts/rollup-http-api/inspect",
           },
         },
@@ -467,7 +469,8 @@ const config = {
       "@graphql-markdown/docusaurus",
       /** @type {import('@graphql-markdown/types').ConfigOptions} */
       {
-        schema: "cartesi-rollups/core-concepts/rollup-http-api/typeDefs.graphql",
+        schema:
+          "cartesi-rollups/core-concepts/rollup-http-api/typeDefs.graphql",
         rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
         baseURL: "api/graphql",
       },
