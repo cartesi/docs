@@ -17,9 +17,11 @@ The combination of an Optimistic Rollups framework and the Cartesi Machine Emula
 
 ## What is a Blockchain Rollup?
 
-A rollup is a blockchain scalability solution that pushes complex computations "off-chain," meaning that they run on a separate computing environment (execution layer) outside the base layer, such as Ethereum.
 
-When employing rollups, the blockchain receives and logs transactions. Occasionally, parties disagree with a computation’s outcomes, and the blockchain resolves these disputes.
+A rollup is a blockchain scalability solution that offloads complex computations "off-chain," meaning they run on a separate computing environment (execution layer) outside the base layer, such as Ethereum.
+
+When employing rollups, the blockchain receives and logs transactions. In rare instances of an active attack or the involvement of a malicious agent, parties may disagree with a computation’s outcomes, and the blockchain will resolve these disputes. However, it's important to note that disagreements are not expected to occur under normal circumstances.
+
 
 
 ## How do Rollups Work?
