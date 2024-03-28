@@ -20,7 +20,7 @@ module.exports = {
         "core-concepts/mainnet-considerations",
         {
           type: "category",
-          label: "Rollups HTTP APIs",
+          label: "Rollups APIs",
           collapsed: true,
        
           items: [
