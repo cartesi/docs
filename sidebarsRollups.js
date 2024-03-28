@@ -22,19 +22,13 @@ module.exports = {
           type: "category",
           label: "Rollups HTTP APIs",
           collapsed: true,
-          link: {
-            type: "doc",
-            id: "core-concepts/rollup-http-api/http-api",
-          },
+       
           items: [
             "core-concepts/rollup-http-api/http-api",
             {
               type: "category",
               label: "Backend APIs",
-              link: {
-                type: "doc",
-                id: "core-concepts/rollup-http-api/backend/introduction",
-              },
+            
               collapsed: true,
               items: [
                 "core-concepts/rollup-http-api/backend/introduction",
@@ -51,10 +45,7 @@ module.exports = {
                 {
                   type: "category",
                   label: "Smart contracts API",
-                  link: {
-                    type: "doc",
-                    id: "core-concepts/rollup-http-api/json-rpc/overview",
-                  },
+                 
                   collapsed: true,
                   items: [
                     "core-concepts/rollup-http-api/json-rpc/overview",
@@ -85,10 +76,7 @@ module.exports = {
                 {
                   type: "category",
                   label: "GraphQL API",
-                  link: {
-                    type: "doc",
-                    id: "core-concepts/rollup-http-api/graphql/overview",
-                  },
+               
                   collapsed: true,
                   items: [
                     "core-concepts/rollup-http-api/graphql/overview",
