@@ -20,7 +20,7 @@ Welcome to Quickstart. Here is a step-by-step guide to building a decentralized 
 The primary requirements for building on Cartesi are Docker Desktop and Sunodo.
 
 :::note
-If you are using Windows, you must have [WSL2 installed and configured](https://learn.microsoft.com/en-us/windows/wsl/install) for building.
+If you use Windows, you must have [WSL2 installed and configured](https://learn.microsoft.com/en-us/windows/wsl/install) for building. In Docker Desktop settings, confirm that the WSL2-based engine configurations are enabled.
 :::
 
 ### Install Docker Desktop and Sunodo
@@ -35,7 +35,7 @@ If you are using Windows, you must have [WSL2 installed and configured](https://
 
 ## Create an application
 
-To create the backend application from scratch, run
+To create the backend application from scratch, run:
 
 ```bash
 sunodo create <dapp-name> --template <language>
@@ -48,7 +48,7 @@ $ sunodo create js-dapp --template javascript
 ✔ Application created at /js-dapp
 ```
 
-Your application entry point will be the `src/index.js` file
+Your application entry point will be the `src/index.js` file.
 
 ## Build the application
 
@@ -60,7 +60,7 @@ After that, you can run the command provided below:
 sunodo build
 ```
 
-The `sunodo build` command builds a Cartesi machine and compiles your application to be ready to receive requests and inputs.
+The `sunodo build` command builds a Cartesi machine and compiles your application so that it is ready to receive requests and inputs.
 
 ## Run the application
 
@@ -74,7 +74,7 @@ sunodo run
 
 ## Send inputs to the application
 
-You have some options available to send inputs to your application. The `sunodo send` command is one option that you can use.
+You have some options available for sending inputs to your application. One option is the `sunodo send` command.
 
 Another option is [Cast](https://book.getfoundry.sh/cast/), a command-line tool enabling you to make Ethereum RPC calls.
 
@@ -112,7 +112,7 @@ This command sends an input payload to your application through the `InputBox` c
 1. Replace placeholders like `0xInputBoxAddress123`, `0xDAppAddress456`, `0xEncodedPayload789`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 :::note
-If you are on the local anvil node, `0xDAppAddress456` is `0x70ac08179605AF2D9e75782b8DEcD3c22aA4D0C` and `0xInputBoxAddress123` is `0x59b22D57D4f067708AB0c00552767405926dc768`.
+If you are on the local anvil node,  `0xInputBoxAddress123` is `0x59b22D57D4f067708AB0c00552767405926dc768`and  `0xDAppAddress456` is `0x70ac08179605AF2D9e75782b8DEcD3c22aA4D0C`.
 :::
 
 2. Send `“Hello World”` which is hex-encoded into `0x48656c6c6f20776f726c64` to your application using Cast:
@@ -125,7 +125,7 @@ cast send 0x59b22D57D4f067708AB0c00552767405926dc768 "addInput(address,bytes)" 0
 
 You can create a custom frontend that interacts with your application.
 
-Here is a [React.js + Typescript starter](https://github.com/prototyp3-dev/frontend-web-cartesi) template with all the major functionalities to build on Cartesi.
+Here is a [React.js + Typescript starter](https://github.com/prototyp3-dev/frontend-web-cartesi) template with all the significant functionalities to build on Cartesi.
 
 ## Deploy the application
 
@@ -133,4 +133,5 @@ Here is a [React.js + Typescript starter](https://github.com/prototyp3-dev/front
 Deployment with Sunodo is under active development
 :::
 
-You can use [the guide here to deploy on a test network](https://github.com/Mugen-Builders/deploy-cartesi-dapp) in the interim.
+In the interim, you can use [the guide here to deploy on a test network](https://github.com/Mugen-Builders/deploy-cartesi-dapp).
+

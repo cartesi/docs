@@ -1,6 +1,6 @@
 ---
 id: machine-learning
-title: Integrating Machine Learning with Cartesi
+title: Integrating machine learning with Cartesi
 tags: [ml, dapps, mc2gen]
 resources:
     - url: https://github.com/Mugen-Builders/m2cgen
@@ -14,18 +14,18 @@ You can submit inputs describing a person's features to determine if that person
 ## Set up your environment.
 Install these to set up your environment for quick building.
 
-- Sunodo: A simple tool for building applications on Cartesi. [Install Sunodo for your OS of choice](../development/installation.md).
+- Sunodo is a simple tool for building applications on Cartesi. [Install Sunodo for your OS of choice](../development/installation.md).
 
-- Docker Desktop: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker](https://www.docker.com/products/docker-desktop/).
+- Docker Desktop is the tool you need to run the Cartesi Machine and its dependencies. [Install Docker](https://www.docker.com/products/docker-desktop/).
 
-- Python: For writing your backend application logic. [Install Python3](https://www.python.org/downloads/).
+- Python: This is used to write your backend application logic. [Install Python3](https://www.python.org/downloads/).
 
 
 ## Understanding the dApp
 
 - ML Model Generation: The dApp generates a logistic regression model using sci-kit-learn, NumPy, and pandas 
 
-- m2cgen Transpilation: The dApp uses the m2cgen (Model to Code Generator) library to transpile the ML model into pure Python code with no external dependencies. This translation simplifies the execution process, particularly in the Cartesi Machine environment. 
+- m2cgen Transpilation: The dApp uses the m2cgen (Model to Code Generator) library to transpile the ML model into pure Python code without external dependencies. This translation simplifies the execution process, particularly in the Cartesi Machine environment. 
 
 The practical goal of the application is to predict a classification based on the Titanic dataset. 
 
@@ -35,7 +35,7 @@ The model currently considers only three characteristics of a person to predict 
 
 1. Age
 2. Sex, which can be `male` or `female`
-- Embarked, which corresponds to the port of embarkation and can be `C` (Cherbourg), `Q` (Queenstown), or `S` (Southampton)
+3. Embarked, which corresponds to the port of embarkation and can be `C` (Cherbourg), `Q` (Queenstown), or `S` (Southampton)
 
 As such, inputs to the dApp should be given as a JSON string such as the following:
 
@@ -43,23 +43,23 @@ As such, inputs to the dApp should be given as a JSON string such as the followi
 { "Age": 37, "Sex": "male", "Embarked": "S" }
 ```
 
-The predicted classification result will be given as 0 (did not survive) or 1 (did survive).
+The predicted classification result will be `0` (did not survive) or `1` (did survive).
 
-Clone the repo for this project and let’s go through it:
+Clone the repo for this project, and let’s go through it:
 
 ```shell
 git clone https://github.com/Mugen-Builders/m2cgen.git
 ```
 
 
-The `m2cgen` folder contains a model folder, with a Python script and a `requirements.txt` file. 
+The `m2cgen` folder contains a model folder with a Python script and a `requirements.txt` file. 
 
-The `build_model.py` file contains the logic that creates the model for our solution, while the requirements.txt is has the libraries needed for the script. 
+The `build_model.py` file contains the logic for creating the model for our solution, while the requirements.txt contains the libraries needed for the script. 
 
-You can think of the `build_model.py` as a jupyter-notebook file which we experiment and create models before using. Let's look at what the `build_model.py` does.
+You can think of the `build_model.py` as a jupyter-notebook file, which we experiment with and create models before using. Let's look at what the `build_model.py` does.
 
 
-```shell
+```python
 import pandas as pd
 import m2cgen as m2c 
 from sklearn.linear_model import LogisticRegression
@@ -100,7 +100,7 @@ print("Model exported successfully")
 ```
 
 
-The script’s primary purpose is to export the ML model and prepare it for integration into our Cartesi application. It includes the necessary libraries and functions to read data, preprocess it, train a model, and export it to a `model.py` file.
+The script primarily aims to export and prepare the ML model for integration into our Cartesi application. It includes the necessary libraries and functions to read data, preprocess it, train a model, and export it to a `model.py` file.
 
 The `m2cgen.py` file in the root folder contains the application logic.
 
@@ -197,17 +197,17 @@ while True:
 
 This script is the core of our application, responsible for interacting with the Cartesi Rollups infrastructure. 
 
-It leverages the pre-trained Machine Learning model that we create with the `build_model.py` script and receives input data from the Cartesi Rollup server. 
+It leverages the pre-trained Machine Learning model we create with the `build_model.py` script and receives input data from the Cartesi Rollup server. 
 
-The script then processes this data, applies the model to make predictions, and communicates the results back to the Rollup server. 
+The script then processes this data, applies the model to make predictions, and communicates the results to the Rollup server. 
 
 The primary functions of this script include data conversion, model prediction, and communication with the Cartesi infrastructure. It ensures our ML-based application seamlessly integrates into Cartesi’, allowing us to harness the power of machine learning within the blockchain environment. 
 
-Now let’s build and send inputs to the application.
+Now, let’s build and send inputs to the application.
 
 ## Build and run the m2cgen application
 
-To build the container of the m2cgen is very straightforward. Simply run:
+To build the container of the m2cgen is very straightforward. Run:
 
 ```shell
 sunodo build
@@ -219,11 +219,11 @@ After the build process is complete, run the node with the command:
 sunodo run
 ```
 
-Your application is now ready to receive inputs.
+Your application is now ready to receive input.
 
 ## Sending inputs to the application
 
-To interact with the application, provide the input in JSON. The input should include key-value pairs for specific features that the ML model uses for prediction. Here’s an example:
+To interact with the application, provide the input in JSON. The input should include key-value pairs for specific features the ML model uses for prediction. Here’s an example:
 
 ```json
 {
@@ -243,19 +243,20 @@ sunodo send generic
 
 <video width="100%" controls>
     <source src="/videos/m2cgen.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
+    Your browser does not support video tags.
 </video>
 
 ## Changing the application
 
-This dApp was created in a generic way and, as such you can change the target dataset as well as the predictor algorithm.
+This dApp was created generically, so that you can change the target dataset and predictor algorithm.
 
 To change those, open the file `model/build_model.py` and change the following variables defined at the beginning of the script:
 
 - `model`: defines the sci-kit-learn predictor algorithm to use. While it currently uses sklearn.linear_model.LogisticRegression, many other possibilities are available, from several types of linear regressions to solutions such as support vector machines (SVMs).
 
-- `train_csv`: a URL or file path to a CSV file containing the dataset. It should contain a first row with the feature names, followed by the data.
+- `train_csv`: a URL or file path to a CSV file containing the dataset. It should include a first row with the feature names, followed by the data.
 
 - `include`: an optional list indicating a subset of the dataset's features to be used in the prediction model.
 
 - `dependent_var`: the feature to be predicted, such as the entry's classification
+

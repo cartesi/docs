@@ -86,42 +86,42 @@ const config = {
           height: "52px",
         },
         items: [
-          {
-            type: "dropdown",
-            label: "Tools",
-            position: "left",
-            items: [
-              {
-                label: "Sunodo",
-                href: "https://docs.sunodo.io/guide/introduction/what-is-sunodo",
-              },
-              {
-                label: "NoNodo",
-                href: "https://github.com/gligneul/nonodo/blob/main/README.md",
-              },
-              { label: "Cartesi Scan", href: "https://cartesiscan.io/" },
-            ],
-          },
-          {
-            type: "dropdown",
-            label: "Learn",
-            position: "left",
-            items: [
-              {
-                label: "Free Udemy Course",
-                href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
-              },
-              {
-                label: "Cartesi Machine",
-                href: "/machine/",
-              },
-            ],
-          },
           // {
-          //   label: "Academy",
-          //   to: "#",
+          //   type: "dropdown",
+          //   label: "Tools",
           //   position: "left",
+          //   items: [
+          //     {
+          //       label: "Sunodo",
+          //       href: "https://docs.sunodo.io/guide/introduction/what-is-sunodo",
+          //     },
+          //     {
+          //       label: "NoNodo",
+          //       href: "https://github.com/gligneul/nonodo/blob/main/README.md",
+          //     },
+          //     { label: "Cartesi Scan", href: "https://cartesiscan.io/" },
+          //   ],
           // },
+          // {
+          //   type: "dropdown",
+          //   label: "Learn",
+          //   position: "left",
+          //   items: [
+          //     {
+          //       label: "Free Udemy Course",
+          //       href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+          //     },
+          //     // {
+          //     //   label: "Cartesi Machine",
+          //     //   href: "/machine/",
+          //     // },
+          //   ],
+          // },
+          {
+            label: "Video Tutorial",
+            href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+            position: "left",
+          },
           {
             type: "dropdown",
             label: "Community",
@@ -145,6 +145,10 @@ const config = {
               {
                 label: "Instagram",
                 href: "https://www.instagram.com/cartesiproject/",
+              },
+              {
+                label:"Blog",
+                href:"https://cartesi.io/blog/"
               },
               {
                 label: "Rolluplab",
@@ -200,7 +204,9 @@ const config = {
       },
       announcementBar: {
         id: "mainnet",
-        content: "Cartesi Rollups is Mainnet Ready!",
+        content:
+          'Cartesi Rollups is Mainnet Ready! Learn more about the launch <a href="https://docs-azure-two.vercel.app/cartesi-rollups/core-concepts/mainnet-considerations/" target="_blank" rel="noopener noreferrer">here</a>.',
+      
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
         isCloseable: true,
@@ -443,15 +449,15 @@ const config = {
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath: "cartesi-rollups/api/rollup.yaml", // Path to designated spec file
-            outputDir: "cartesi-rollups/api/rollup", // Output directory for generated .mdx docs
+            specPath: "cartesi-rollups/core-concepts/rollup-http-api/rollup.yaml", // Path to designated spec file
+            outputDir: "cartesi-rollups/core-concepts/rollup-http-api/rollup", // Output directory for generated .mdx docs
             sidebarOptions: {
               groupPathsBy: "tag",
             },
           },
           frontEndApi: {
-            specPath: "cartesi-rollups/api/inspect.yaml",
-            outputDir: "cartesi-rollups/api/inspect",
+            specPath: "cartesi-rollups/core-concepts/rollup-http-api/inspect.yaml",
+            outputDir: "cartesi-rollups/core-concepts/rollup-http-api/inspect",
           },
         },
       },
@@ -461,7 +467,7 @@ const config = {
       "@graphql-markdown/docusaurus",
       /** @type {import('@graphql-markdown/types').ConfigOptions} */
       {
-        schema: "cartesi-rollups/api/typeDefs.graphql",
+        schema: "cartesi-rollups/core-concepts/rollup-http-api/typeDefs.graphql",
         rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
         baseURL: "api/graphql",
       },

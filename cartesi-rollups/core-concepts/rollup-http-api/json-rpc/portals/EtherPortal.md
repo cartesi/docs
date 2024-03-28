@@ -1,8 +1,9 @@
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/main/contracts/portals
-    title: Portals contract
+  - url: https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/portals/EtherPortal.sol
+    title: EtherPortal contract
 ---
+
 The **EtherPortal** allows anyone to perform transfers of
 Ether to a dApp while informing the off-chain machine.
 

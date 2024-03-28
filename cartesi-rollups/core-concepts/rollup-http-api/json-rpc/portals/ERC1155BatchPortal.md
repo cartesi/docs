@@ -1,7 +1,7 @@
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/main/contracts/portals
-    title: Portals contract
+  - url: https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/portals/ERC1155BatchPortal.sol
+    title: ERC1155BatchPortal contract
 ---
 
 The **ERC1155BatchPortal** allows anyone to perform batch transfers of
