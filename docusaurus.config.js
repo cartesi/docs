@@ -151,7 +151,7 @@ const config = {
                 href:"https://cartesi.io/blog/"
               },
               {
-                label: "Rolluplab",
+                label: "Built with Cartesi",
                 href: "https://rolluplab.io/",
               },
               {
