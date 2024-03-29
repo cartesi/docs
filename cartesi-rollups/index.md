@@ -5,37 +5,61 @@ tags: [rollups, dapps, linux]
 resources:
   - url: https://cartesi.io/blog/understanding-cartesi-rollups/
     title: Grokking Cartesi Rollups
-  - url: https://medium.com/cartesi/application-specific-rollups-e12ed5d9de01
+  - ur;: https://medium.com/cartesi/application-specific-rollups-e12ed5d9de01
     title: Application-Specific Rollups
 ---
 
-Welcome to the framework that helps you build decentralized blockchain applications using well-known and beloved stacks!
 
-Cartesi Rollups is a modular execution layer where Linux and blockchain meet. As an app-chain, your dApp will control computation resources, ensuring efficiency and preventing network competition.
+Welcome to Cartesi Rollups, where decentralized application development meets unprecedented flexibility. With a foundation built on the Linux operating system, Cartesi Rollups offers modular stacks that allow developers to tailor consensus, data availability, and settlement layers according to their project requirements.
 
-At the heart of your dApp, you will find the Cartesi Virtual Machine (based on RISC-V). This allows you to focus more on building and less on the need for programmability. It has been made possible by deterministically running a full-fledged Linux OS, virtually giving you a blockchain server to run your dApp.
-
-Now, you can leverage industry-grade software tooling and libraries as you do in traditional software development, making it easier to bring your decentralized applications to life.
+Utilizing the Cartesi Machine for transaction processing, developers can effortlessly implement sophisticated logic using their preferred programming language or tool. Explore the possibilities and streamline your decentralized application development journey with Cartesi Rollups.
 
 ![img](../static/img/v1.3/image.png)
 
 
-## Scalability
+## Introduction 
 
-Cartesi is pioneering the implementation of application-specific rollups, offering solutions to the scalability issues plaguing existing blockchain networks.
+Let's delve into the workings of a Cartesi Rollup at a high level.
 
-Our application-specific rollups act as off-chain execution layers that inherit security and censorship guarantees from the base layer. But now, instead of sharing space inside a single rollup, each dApp has its dedicated rollup to process off-chain computation.
+![img](./overview-diagram.jpg)
 
-There are significantly lower costs for dApp development and operation. By providing dedicated computational resources for each dApp, Cartesi eliminates the competitive pressure for block space, resulting in more predictable and manageable costs for developers and users alike.
 
-## Security and Decentralization
+At its core, the Cartesi Rollup executes the Cartesi Machine - a robust RISCV deterministic emulator running Linux OS - fueled by ordered inputs and custom application code. Inputs from the data-availability layer are read by the Cartesi Node, where the Cartesi Machine processes them and generates outputs. After the optimistic rollup dispute window passes, these outputs are verifiable and possibly executable on the settlement layer.
 
-Cartesi's approach to rollups preserves the strong security guarantees of the underlying blockchain while offering a scalable and efficient execution environment.
+In its simplest configuration, the Cartesi Rollup framework seamlessly integrates with Ethereum, acting as the sole data availability, consensus, and settlement layer. Input transactions are directed to specific smart contracts, where the dApp code operates to produce outputs. Following the settlement period, these outputs are verified and may also be executed on Ethereum, as required.
 
-Application-specific rollups are designed with a 1-of-N security model, which means that the integrity of dApps is preserved even if only one honest validator is present. This ensures correct results on-chain without depending on the honesty of the majority.
+## Show me the code
+Below is a simple NodeJS example demonstrating how to read an input and reply with a [notice](./core-concepts/rollup-http-api/backend/notices.md) (a type of output).
 
-## Programmability
+```javascript
+const { ethers } = require("ethers");
+const axios = require("axios");
 
-Cartesi bridges the gap between blockchain and traditional software development by incorporating a full-fledged Linux operating system (OS) within an optimistic rollup solution.
+const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 
-You can build decentralized applications by porting compilers, libraries, database systems, frameworks, and traditional software stacks.
+let finish = { status: "accept" };
+
+(async () => {
+
+  while (true) {
+    const { data } = await axios.post(rollup_server + "/finish", finish);
+    const rollup_message = data;
+
+    if (rollup_message.request_type === "advance_state")  {
+      const decodedMsg = ethers.toUtf8String(rollup_message.data.payload);
+      const payload = ethers.encodeBytes32String(`Got your message: ${decodedMsg}`);
+      await axios.post(rollup_server + "/notice", { payload });
+    }
+    finish.status = "accept";
+})();
+
+```
+
+To ensure flexibility across different programming languages and stacks, Cartesi dApps are implemented as infinite loops that manage their transaction cycles through HTTP POST requests to the `/finish` endpoint. You can learn more about this abstraction [here](./core-concepts/rollup-http-api/backend/introduction.md).
+
+In the Cartesi Rollup framework, all inputs sent to the base layer trigger an "advance_state" [request](./development/send-requests.md#initiate-an-advance-request), which alters the state of the Cartesi Machine and consequently the Rollup. Since inputs originate on-chain, they are hex-encoded following the EVM message standard.
+
+Notices can be understood as "provable" events, as such they can be sent to an EVM chain to be verified, so it follows that they are also hex-encoded.
+ 
+Finally, in this example no errors a treated, thus, we end the cycle accepting the input (`status: accept`). However, if any input causes the application to enter a faulty state or violates business logic, the application can end the process by calling the endpoint `/finish` with `status: reject` to revert the state of the machine (and rollup) to the state before the arrival of the current input. 
+
