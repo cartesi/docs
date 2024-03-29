@@ -4,12 +4,7 @@ title: Introduction
 tags: [advance, inspect]
 ---
 
-The dApp's backend interacts with the Cartesi Rollups framework by processing requests and submitting corresponding outputs.
-
-
-![img](../../../../static/img/v1.3/backend.jpg)
-
-First, the backend retrieves a new request as follows:
+The backend of a Cartesi dApp retrieves a new request as follows:
 
 - Finish — Communicates that any previous processing has been completed and that the backend is ready to handle the subsequent request. This following request is returned as the call's response and can be of the following types:
 
@@ -152,14 +147,4 @@ Once the call's response is received, the payload is extracted from the response
 
 The direct output types for **Advance** and **Inspect** are [vouchers](./vouchers.md), [notices](./notices.md), and [reports](./reports.md).
 
-## Output Types
 
-As the backend processes each request, it can access a set of HTTP endpoints provided by the Rollups framework to inform it of the computed results and consequences, as shown below:
-
-- `/voucher` — Called to specify a collateral effect in the form of a transaction that can be carried out on L1 (e.g., a transfer of ERC-20 tokens). The backend can only add new vouchers when processing an Advance request.
-
-- `/notice` — Provides information in a form that any third party on the base layer can verify. Notices inform users about a new relevant application state. Like vouchers, you can only add notices when processing an Advance request.
-
-- `/report` — Outputs arbitrary data in a non-provable form. Reports provide diagnostics and logs associated with requests. You can generate a report in an Advance request. Inspect requests return reports as output.
-
-After handling each request, the backend should always initiate a call to `"Finish"` to signal the completion of processing and retrieve the subsequent request for processing as a response.
