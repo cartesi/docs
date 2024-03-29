@@ -13,9 +13,7 @@ resources:
 
 In a Cartesi dApp, the frontend and backend components communicate through the Rollups framework using HTTP and GraphQL APIs.
 
-When designing the APIs for this communication with the framework, we wanted to ensure developers could create their applications without worrying too much about the low-level components of Cartesi Rollups. In particular, we wanted to allow the backend code to abstract away whether it ran inside a specific virtual machine.
-
-With this in mind, we decided to offer APIs on top of HTTP as a convenience layer for this communication, leveraging well-known standards in software engineering.
+When designing the APIs for this communication with the framework, we wanted to ensure developers could create their applications without worrying too much about the low-level components of Cartesi Rollups. 
 
 ## Backend APIs
 
