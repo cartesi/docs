@@ -108,3 +108,4 @@ The Cartesi Machine is a state machine that remains idle until a new request ari
 
 - Determinism: Given the same initial state and input, the Cartesi Machine will always produce the same output and final state to ensure that off-chain computations can be verified and agreed upon.
 
+- The Cartesi machine is self-contained and can't make an external request. To achieve reproducibility,it runs in isolation from any external influence on the computation. 

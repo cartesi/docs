@@ -23,8 +23,6 @@ A rollup is a blockchain scalability solution that offloads complex computations
 When employing rollups, the blockchain receives and logs transactions. In rare instances of an active attack or the involvement of a malicious agent, parties may disagree with a computation’s outcomes, and the blockchain will resolve these disputes. However, it's important to note that disagreements are not expected to occur under normal circumstances.
 
 
-## How do Rollups Work?
-
 Users interact with a rollup through transactions on the base layer. They send messages (inputs) to the rollup on-chain smart contracts to define a computation to be processed and, as such, advance the state of the computing environment on the execution layer. Interested parties run an off-chain component (a node on the execution layer) that watches the blockchain for inputs, understanding and executing the state updates.
 
 Once in a while, the state is checkpointed on the chain, at which point it is considered finalized and can thus be accepted by any smart contract on the base layer.
