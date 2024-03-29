@@ -112,7 +112,7 @@ This command sends an input payload to your application through the `InputBox` c
 1. Replace placeholders like `0xInputBoxAddress123`, `0xDAppAddress456`, `0xEncodedPayload789`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 :::note
-If you are on the local anvil node,  `0xInputBoxAddress123` is `0x59b22D57D4f067708AB0c00552767405926dc768`and  `0xDAppAddress456` is `0x70ac08179605AF2D9e75782b8DEcD3c22aA4D0C`.
+If you are on the local anvil node, `0xInputBoxAddress123` is `0x59b22D57D4f067708AB0c00552767405926dc768`and `0xDAppAddress456` is `0x70ac08179605AF2D9e75782b8DEcD3c22aA4D0C`.
 :::
 
 2. Send `“Hello World”` which is hex-encoded into `0x48656c6c6f20776f726c64` to your application using Cast:
@@ -135,3 +135,11 @@ Deployment with Sunodo is under active development
 
 In the interim, you can use [the guide here to deploy on a test network](https://github.com/Mugen-Builders/deploy-cartesi-dapp).
 
+## Community tools
+
+Several tools created and maintained by the community streamline the dApp creation process on Cartesi Rollups.
+
+- [Deroll](https://github.com/tuler/deroll): TypeScript framework for building on Cartesi.
+- [cartesi-ts-sqlite](https://github.com/doiim/cartesi-ts-sqlite): A TypeScript + SQLite template.
+- [Rollmellete](https://github.com/gligneul/rollmelette): Go framework for building on Cartesi.
+- [Cartesify](https://github.com/Calindra/cartesify): A web3 client to interact with the Cartesi machine.
