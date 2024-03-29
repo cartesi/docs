@@ -3,8 +3,8 @@ id: retrieve-outputs
 title: Retrieve outputs
 tags: [notices, vouchers, reports]
 resources:
-   - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
-     title: The Cartesi dApp Developer Free Course
+  - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
+    title: The Cartesi dApp Developer Free Course
 ---
 
 In Cartesi Rollups, outputs are essential in interacting with the blockchain. The direct output types are vouchers, notices, and reports.
@@ -17,7 +17,7 @@ Think of it as a digital authorization ticket that enables a dApp to perform spe
 
 ### How Vouchers Work:
 
-- The dApp backend creates a voucher while executing the Cartesi Machine.
+- The dApp backend creates a voucher while executing in the Cartesi Machine.
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
@@ -35,19 +35,17 @@ A notice is a verifiable data declaration that attests to off-chain events or co
 
 They serve as a means for dApp to notify the blockchain about particular events.
 
-
 ### How Notices Work
 
 - The dApp backend creates a notice containing relevant off-chain data.
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-Notices are validated on-chain using the [`validateNotice()`](../core-concepts/rollup-http-api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../core-concepts/rollup-http-api/json-rpc/application.md) contract.
+- Notices are validated on-chain using the [`validateNotice()`](../core-concepts/rollup-http-api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../core-concepts/rollup-http-api/json-rpc/application.md) contract.
 
 :::note
 Notices enable the dApp to communicate off-chain events without directly triggering smart contract interactions.
 :::
-
 
 ### Send a notice
 
@@ -458,7 +456,6 @@ query reportsByInput($inputIndex: Int!) {
     }
   }
 }
-
 ```
 
 Then, in the bottom-left corner of the Playground, you'll find a section that provides variables. Click on it to expand it, and then you can input your variables like this:

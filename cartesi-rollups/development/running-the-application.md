@@ -54,10 +54,12 @@ TX_DEFAULT_CONFIRMATIONS=1
 NoNodo is a development tool for Cartesi Rollups designed to work with applications running in the host machine instead of the Cartesi machine. With NoNodo, you don’t need to run Docker or compile the application to RISC-V.
 
 :::note
-Applications may still require RISC-V compilation even for interpreted languages, as they use libraries with binaries for x64 platforms.  
+- Applications may still require RISC-V compilation even for interpreted languages, as they use libraries with binaries for x64 platforms.  
 
-NoNodo works for applications that use the Cartesi Rollups HTTP API and doesn't work with applications using the low-level API. 
-NoNodo offers an improved speed and performance compared to running your application inside a Cartesi machine.
+- NoNodo works for applications that use the Cartesi Rollups HTTP API and doesn't work with applications using the low-level API. 
+
+- NoNodo offers an improved speed and performance compared to running your application inside a Cartesi machine.
+
 :::
 
 ### Prerequisites
