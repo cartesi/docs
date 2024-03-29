@@ -9,6 +9,8 @@ resources:
     title: Everything you need to know about Optimistic Rollups
   - url: https://cartesi.io/blog/grokking-dave/
     title: Fraud-proof protocols | Grokking Dave
+  - url: https://github.com/cartesi/dave
+    title: Dave repository
 ---
 
 Cartesi implements a rollup design known as Optimistic Rollups.
@@ -16,7 +18,6 @@ Cartesi implements a rollup design known as Optimistic Rollups.
 The combination of an Optimistic Rollups framework and the Cartesi Machine Emulator enables the development of dApps using any package or library available for Linux.
 
 ## What is a Blockchain Rollup?
-
 
 A rollup is a blockchain scalability solution that offloads complex computations "off-chain," meaning they run on a separate computing environment (execution layer) outside the base layer, such as Ethereum.
 
@@ -70,4 +71,11 @@ Transactions and computations occur off-chain, leading to more intricate logic w
 Cartesi's architecture specializes in app-specific rollups(appchains). Each dApp has its dedicated rollup for off-chain computation, enhancing scalability and performance. 
 
 
+## Introduction Dave — an interactive fraud-proof system
+
+[Dave](https://github.com/cartesi/dave) is Cartesi's dispute resolution algorithm designed to address shortcomings in existing fraud-proof protocols. Traditional fraud-proof systems often face challenges such as delay attacks and vulnerability to Sybil attacks, where malicious nodes can disrupt operations by continuously challenging transactions or overwhelming honest validators.
+
+Dave introduces an approach where the resources required to defend against disputes grow logarithmically with the number of opponents. This means that defending against challenges remains affordable for a single honest node, even in the face of multiple attackers.
+
+With Dave, a single honest participant can effectively defend their claims on-chain, ensuring the integrity of transactions without relying on trust in validators. Based on the [Permissionless Refereed Tournaments algorithm](https://arxiv.org/abs/2212.12439), this protocol empowers anyone to validate rollups and uphold correct states on-chain, enhancing transaction security and reliability.
 
