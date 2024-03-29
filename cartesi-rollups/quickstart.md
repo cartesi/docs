@@ -4,11 +4,11 @@ title: Quickstart
 tags: [quickstart, dapps, developer]
 resources:
   - url: https://github.com/prototyp3-dev/frontend-web-cartesi
-    title: React.js + Typescript starter template
+    title: React.js + Typescript  template
   - url: https://github.com/masiedu4/nextjs-web-cartesi
-    title: Next.js starter template
+    title: Next.js template
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
-    title: Angular starter template
+    title: Angular template
   - url: https://github.com/Mugen-Builders/deploy-cartesi-dapp
     title: Deploy a Cartesi dApp on a test network
 ---
@@ -109,23 +109,20 @@ cast send <InputBoxAddress> "addInput(address,bytes)" <DAppAddress> <EncodedPayl
 
 This command sends an input payload to your application through the `InputBox` contract.
 
-1. Replace placeholders like `0xInputBoxAddress123`, `0xDAppAddress456`, `0xEncodedPayload789`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
+Replace placeholders like `0xInputBoxAddress123`, `0xDAppAddress456`, `0xEncodedPayload789`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 :::note
-If you are on the local anvil node, `0xInputBoxAddress123` is `0x59b22D57D4f067708AB0c00552767405926dc768`and `0xDAppAddress456` is `0x70ac08179605AF2D9e75782b8DEcD3c22aA4D0C`.
+You can obtain the relevant addresses by running `sunodo address-book`.
 :::
 
-2. Send `“Hello World”` which is hex-encoded into `0x48656c6c6f20776f726c64` to your application using Cast:
-
-```shell
-cast send 0x59b22D57D4f067708AB0c00552767405926dc768 "addInput(address,bytes)" 0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C 0x48656c6c6f20776f726c64 --mnemonic 'test test test test test test test test test test test junk'
-```
 
 ### Using a custom web interface
 
 You can create a custom frontend that interacts with your application.
 
-Here is a [React.js + Typescript starter](https://github.com/prototyp3-dev/frontend-web-cartesi) template with all the significant functionalities to build on Cartesi.
+Here are frontend templates created by the community with all the significant functionalities to build on Cartesi. 
+- [React + TypeScript template](https://github.com/prototyp3-dev/frontend-web-cartesi)
+- [Angular template](https://github.com/jplgarcia/cartesi-angular-frontend) 
 
 ## Deploy the application
 
@@ -143,3 +140,4 @@ Several tools created and maintained by the community streamline the dApp creati
 - [cartesi-ts-sqlite](https://github.com/doiim/cartesi-ts-sqlite): A TypeScript + SQLite template.
 - [Rollmellete](https://github.com/gligneul/rollmelette): Go framework for building on Cartesi.
 - [Cartesify](https://github.com/Calindra/cartesify): A web3 client to interact with the Cartesi machine.
+```
