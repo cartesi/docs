@@ -31,9 +31,8 @@ Currently, Cartesi Rollups support the following types of assets:
 
 Portals enable the safe transfer of assets from the base layer to the execution layer. Users authorize portals to deduct assets from their accounts and initiate transfers to dApps.
 
-Once deposited, those L1 assets gain a representation in the execution layer and are owned by whomever the depositor assigned them to.
+When an asset is deposited, it is on the base layer but gains a representation in the execution layer. The corresponding Portal contract sends an input via the `InputBox` contract describing the type of asset, amount, and some data the depositor might want the dApp to read. The off-chain machine will then interpret and validate the input payload.
 
-When an asset is deposited, the corresponding Portal contract sends an input via the InputBox contract describing the type of asset, amount, and some data the depositor might want the dApp to read. The off-chain machine will then interpret and validate the input payload.
 
 Deposit input payloads are always specified as packed ABI-encoded parameters, as detailed below.
 
