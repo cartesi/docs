@@ -29,7 +29,8 @@ At its core, the Cartesi Rollup executes the Cartesi Machine - a robust RISCV de
 In its simplest configuration, the Cartesi Rollup framework seamlessly integrates with Ethereum, acting as the sole data availability, consensus, and settlement layer. Input transactions are directed to specific smart contracts, where the dApp code operates to produce outputs. Following the settlement period, these outputs are verified and may also be executed on Ethereum, as required.
 
 ## Show me the code
-Below is a simple NodeJS example demonstrating how to read an input and reply with a [notice](./core-concepts/rollup-http-api/backend/notices.md) (a type of output).
+
+Below is a simple Node.js example demonstrating how to read an input and reply with a [notice](./core-concepts/rollup-http-api/backend/notices.md) (a type of output).
 
 ```javascript
 const { ethers } = require("ethers");
