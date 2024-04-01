@@ -137,7 +137,7 @@ In the interim, you can use [the guide here to deploy on a test network](https:/
 Several tools created and maintained by the community streamline the dApp creation process on Cartesi Rollups.
 
 - [Deroll](https://github.com/tuler/deroll): TypeScript framework for building on Cartesi.
+- [python-cartesi](https://github.com/prototyp3-dev/python-cartesi): Python framework for building on Cartesi.
 - [cartesi-ts-sqlite](https://github.com/doiim/cartesi-ts-sqlite): A TypeScript + SQLite template.
 - [Rollmellete](https://github.com/gligneul/rollmelette): Go framework for building on Cartesi.
 - [Cartesify](https://github.com/Calindra/cartesify): A web3 client to interact with the Cartesi machine.
-```
