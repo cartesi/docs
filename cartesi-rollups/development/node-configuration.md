@@ -7,7 +7,7 @@ resources:
     title: Node configuration with Sunodo
 ---
 
-Sunodo comes pre-configured with some default settings for Cartesi nodes. You can manually configure things like epoch duration, block time, environment variables, memory and the content of the information you want your node to preview.
+Sunodo comes pre-configured with some default settings for Cartesi nodes. You can configure epoch duration, block time, environment variables, memory and the content of the information you want your node to preview.
 
 :::note
 You can create a `.sunodo.env` in the project's root and override any variable controlling the rollups-node.
