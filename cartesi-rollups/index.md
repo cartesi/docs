@@ -21,7 +21,7 @@ Utilizing the Cartesi Machine for transaction processing, developers can effortl
 
 Let's delve into the workings of a Cartesi Rollup at a high level.
 
-![img](./overview-diagram.jpg)
+![img](../static/img/v1.3/overview.jpg)
 
 
 At its core, the Cartesi Rollup executes the Cartesi Machine - a robust RISCV deterministic emulator running Linux OS - fueled by ordered inputs and custom application code. Inputs from the data-availability layer are read by the Cartesi Node, where the Cartesi Machine processes them and generates outputs. After the optimistic rollup dispute window passes, these outputs are verifiable and possibly executable on the settlement layer.
