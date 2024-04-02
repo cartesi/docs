@@ -3,21 +3,21 @@ id: running-the-application
 title: Running the application
 tags: [nonodo, sunodo]
 resources:
-   - url: https://github.com/gligneul/nonodo/tree/main
-     title: NoNodo
+  - url: https://github.com/gligneul/nonodo/tree/main
+    title: NoNodo
 ---
 
-Running your application creates a local anvil chain/node on port `8545`.
+Running your application starts your backend on port `8080` and local Anvil node on port `8545`.
 
 In essence, the node also logs all outputs received by your backend.
 
 You can run your application in 2 different modes — **production** or **NoNodo**.
 
-NoNodo is a light local Cartesi node for development and testing that does not require Docker.
+NoNodo is a light development tool that does not require Docker running and allows running the backend application without a node.
 
 ## Production Mode
 
-You must successfully build a Cartesi machine snapshot with sunodo build before running in this mode.
+Before running in this mode, you must successfully build a Cartesi machine snapshot with sunodo build.
 
 To start in production mode, the Docker Engine must be on. Run the following command:
 
@@ -29,7 +29,7 @@ sunodo run
 
 After successfully running a node, your application can receive inputs.
 
-:::note Troubleshoot
+:::troubleshoot
 
 ```
 Error: Depth Too High
@@ -41,7 +41,7 @@ Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
 
 This error happens when the node reads too many blocks behind the blockchain.
 
-To fix this, create a a `.sunodo.env.` and overwrite the set `TX_DEFAULT_CONFIRMATIONS` to 1, as in:
+To fix this, create a `.sunodo.env.` and overwrite the set `TX_DEFAULT_CONFIRMATIONS` to 1, as in:
 
 ```
 TX_DEFAULT_CONFIRMATIONS=1
@@ -51,11 +51,20 @@ TX_DEFAULT_CONFIRMATIONS=1
 
 ## NoNodo (Testing & Development)
 
-NoNodo is a development node for Cartesi Rollups designed to work with applications running in the host machine instead of the Cartesi machine. With NoNodo, you don’t need to run Docker or compile the application to RISC-V.
+NoNodo is a development tool for Cartesi Rollups designed to work with applications running in the host machine instead of the Cartesi machine. With NoNodo, you don’t need to run Docker or compile the application to RISC-V.
 
-:::note Prerequisites
-Set up Anvil on your system. Refer to [the instructions in the Foundry book for Anvil installation](https://book.getfoundry.sh/anvil/) details.
+:::note
+- Applications may still require RISC-V compilation even for interpreted languages, as they use libraries with binaries for x64 platforms.  
+
+- NoNodo works for applications that use the Cartesi Rollups HTTP API and doesn't work with applications using the low-level API. 
+
+- NoNodo offers an improved speed and performance compared to running your application inside a Cartesi machine.
+
 :::
+
+### Prerequisites
+
+Set up Anvil on your system. Refer to [the instructions in the Foundry book for Anvil installation](https://book.getfoundry.sh/anvil/) details.
 
 ### Install from source
 
@@ -85,13 +94,13 @@ To start NoNodo with the default configuration, run:
 nonodo
 ```
 
-By default, this command creates an Anvil node with the Cartesi Rollups contracts deployed. NoNodo uses the same deployment as Sunodo, so the contract addresses remain the same.
+This command creates an Anvil node with the Cartesi Rollups contracts deployed by default. NoNodo uses the same deployment as Sunodo, so the contract addresses remain the same.
 
 ### Exposed APIs
 
-- GraphQL API: Accessible via `/graphql`; this API is designed for frontend clients to query notices, vouchers, and reports.
+GraphQL API: This API is accessible via `/graphql` and is designed for front-end clients to query notices, vouchers, and reports.
 
-- Inspect API: Accessible via `/inspect`; this API is useful for frontend clients to inspect internal state.
+- Inspect API: Accessible via `/inspect`; this API is useful for frontend clients who want to inspect the internal state.
 
 - Rollup API: Accessible via `/rollup`, this API serves as the application backend.
 
@@ -99,7 +108,7 @@ By default, this command creates an Anvil node with the Cartesi Rollups contract
 
 NoNodo can run the application backend as a sub-process.
 
-This option is helpful to keep the entire development in a single terminal. To use this option, pass the command to run the application after `--`.
+This option helps keep the entire development in a single terminal. To use it, pass the command to run the application after `--`.
 
 ```
 nonodo -- ./my-app
@@ -124,3 +133,13 @@ NoNodo provides configuration flags to customize the behavior of the Anvil node.
 NoNodo binds to the HTTP address and port specified by the `--http-address` and `--http-port` flags.
 
 By default, it binds to `http://127.0.0.1:8080/`.
+
+
+## CartesiScan
+
+[CartesiScan](https://cartesiscan.io/) is a valuable tool for developers and users alike, offering a comprehensive overview of Cartesi Rollups applications and their interactions with the blockchain.
+
+Key features include a Connect Wallet option, a list of dApps built on Cartesi Rollups, a log of inputs for Cartesi Rollups, and detailed information about inputs such as sender, receiver, portal used, asset amount, and the method employed. 
+
+Additionally, it provides expandable data regarding outputs, encompassing notices, vouchers, and reports. 
+

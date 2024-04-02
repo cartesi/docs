@@ -1,12 +1,10 @@
 ---
 id: creating-application
-title: Creating application
+title: Creating an application
 tags: [create, dapp, developer]
 ---
 
-Sunodo simplifies creating dApps on Cartesi
-
-To create a new application, run:
+Sunodo simplifies creating dApps on Cartesi. To create a new application, run:
 
 ```shell
 sunodo create <dapp-name> --template <language>
@@ -28,8 +26,9 @@ This command creates a `new-dapp` directory with essential files for your dApp d
 
 - `requirements.txt`: Lists the Python dependencies required for your application.
 
-Sunodo has templates for the following languages – `cpp`,`cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
+Sunodo has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
 
 :::note Next Steps
 Modify the application’s entry point to write your application logic.
 :::
+

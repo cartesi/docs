@@ -50,6 +50,8 @@ html {
   --ifm-color-warning-dark: #ffc700;
 
   --ifm-tabs-padding-vertical: 0.75rem;
+
+  --ifm-navbar-link-hover-color: var(--ifm-font-color-base);
 }
 
 /* Dark Theme var */
@@ -204,15 +206,27 @@ html[data-theme="dark"] {
 
 /* Menu */
 .menu {
-  @apply font-serif;
+  @apply font-serif overflow-hidden hover:overflow-y-auto;
+  scrollbar-width: auto;
+}
+
+.menu::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .menu__link--sublist {
   @apply font-semibold;
+  color: var(--ifm-menu-color);
+}
+.menu__list-item-collapsible.menu__list-item-collapsible--active {
+  color: var(--ifm-menu-color);
+  background: transparent !important;
 }
 
 /* Theme Menu adjustments */
-.menu__caret::before {
+.menu__caret::before,
+.menu__link--sublist-caret::after,
+.menu__link--sublist-caret::before {
   background: var(--ifm-menu-link-sublist-icon) 50% / 1.5rem 1.5rem;
 }
 
@@ -222,6 +236,10 @@ html[data-theme="dark"] {
 
 .menu__link:hover {
   @apply text-primary dark:text-secondary;
+}
+
+.menu__list-item:not(:first-child) {
+  @apply m-0;
 }
 
 /* Theme Footer adjustments */
@@ -415,29 +433,36 @@ html[data-theme="dark"] {
 
 /* // Version Dropdown */
 .dropdown-version {
-  @apply flex items-center gap-2 px-2 sm:px-4 py-2 sm:pt-6 pb-6 sm:pb-2;
+  @apply flex items-center gap-2 px-2 sm:px-4 py-2 sm:pt-6 pb-6 sm:pb-2 relative;
 }
 
 .dropdown-version .navbar__item--version {
-  border-radius: 3em;
+  border-radius: var(--ifm-global-radius);
   background: var(--ifm-color-secondary);
   border: 0;
   font-size: 0.75rem;
 }
+
+.dropdown-version .dropdown__menu {
+  @apply min-w-0 w-full;
+}
+
+.dropdown-version .dropdown__link {
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+html[data-theme="dark"] .dropdown-version .navbar__item--version > *,
+html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
+  color: #000;
+}
+
 .dropdown-version .navbar__item--version::before {
   content: "Version ";
   color: var(--ifm-font-color-base);
 }
 
 /* Sidebar */
-
-.theme-doc-sidebar-container > div {
-  max-height: calc(100vh - 3.5rem) !important;
-}
-
-.theme-doc-sidebar-container .DocSearch-Button {
-  @apply w-full;
-}
 
 .theme-doc-sidebar-menu > li {
   @apply sm:py-4;
@@ -467,10 +492,37 @@ html[data-theme="dark"] {
 
 /* TOC Column */
 .toc-column {
+  @apply overflow-hidden hover:overflow-y-auto overflow-x-hidden sticky;
   max-height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
-  overflow-y: auto;
-  position: sticky;
   top: calc(var(--ifm-navbar-height) + 1rem);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+
+.toc-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* edit this page */
+.theme-edit-this-page {
+  @apply flex items-center gap-2 ml-px;
+
+  font-size: smaller;
+}
+
+/* hash link */
+.hash-link::before {
+  content: none !important;
+}
+
+/* doc search */
+.DocSearch-Button {
+  border-radius: var(--ifm-global-radius) !important;
+}
+
+/* nav item search fix padding */
+.navbar__items--right > :last-child {
+  margin-left: 0.5rem;
 }
 
 @tailwind utilities;

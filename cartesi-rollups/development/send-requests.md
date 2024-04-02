@@ -4,12 +4,13 @@ title: Send requests
 tags: [Advance, Inspect, Requests]
 resources:
   - url: https://github.com/prototyp3-dev/frontend-web-cartesi
-    title: React.js + Typescript starter template
+    title: React.js + Typescript template
   - url: https://github.com/masiedu4/nextjs-web-cartesi
-    title: Next.js starter template
+    title: Next.js template
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
-    title: Angular starter template
-
+    title: Angular template
+  - url: https://github.com/Mugen-Builders/sunodo-frontend-console
+    title: Frontend Console Application
 ---
 
 You can send two requests to an application depending on whether you want to change or read the state.
@@ -72,6 +73,7 @@ var finish = { status: "accept" };
   }
 })();
 ```
+
 </code></pre>
 </TabItem>
 
@@ -118,16 +120,15 @@ while True:
        finish["status"] = handler(rollup_request["data"])
 
 ```
+
 </code></pre>
 </TabItem>
- 
 
 </Tabs>
 
+In a typical Cartesi backend application, two functions, `handle_advance` and `handle_inspect,` are defined to handle the two different types of requests.
 
-In a typical Cartesi backend application, you have two functions `handle_advance` and `handle_inspect` that are defined to handle the two different types of requests.
-
-This script listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status back to the rollup server.
+This script listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status to the rollup server.
 
 Every starter project you create has this base code as a template, ready to receive inputs!
 
@@ -135,28 +136,19 @@ Every starter project you create has this base code as a template, ready to rece
 
 You can initiate an advance request by sending input from the CLI using Cast, Sunodo, or a custom frontend client.
 
-Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp backend and trigger a change in the application's state. 
+Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp backend and trigger a change in the application's state.
 
 ![img](../../static/img/v1.3/advance.jpg)
 
 In the dApp architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the [`addInput(address, bytes)`](../api/json-rpc/input-box.md/#addinput) function of the InputBox smart contract. 
+- Step 1: Send an input to the [`addInput(address, bytes)`](../core-concepts/rollup-http-api/json-rpc/input-box.md/#addinput) function of the InputBox smart contract.
 
-- Step 2: The Cartesi Node reads the data and gives it for processing in the Cartesi machine.
+- Step 2: The Cartesi Node reads the data and gives it to the Cartesi machine for processing.
 
-- Step 3: After the computation, the state is updated, and the results is sent back to the rollup server
+- Step 3: After the computation, the state is updated, and the results are sent back to the rollup server
 
-
-
-:::note 
-Unlike Cast, Sunodo handles all function calls and smart contract addresses under the hood, so you don’t specify address and function calls. 
-:::
-
-To send inputs to your application, you have a few options available. The `sunodo send` command is one option that you can use. 
-
-Another option is Cast, a command-line tool enabling you to make Ethereum RPC calls. Alternatively, you can build a custom web interface to input data into your application.
-
+You can send inputs to your application with [Cast](https://book.getfoundry.sh/cast/), Sunodo, or a custom web interface. 
 
 #### 1. Send inputs with Cast
 
@@ -164,21 +156,22 @@ Another option is Cast, a command-line tool enabling you to make Ethereum RPC ca
 cast send 0xInputBoxAddress123 "addInput(address,bytes)" 0xDAppAddress456 0xEncodedPayload789 --mnemonic <MNEMONIC>
 ```
 
-This command sends the payload to the InputBox smart contract, initiating the advance request. 
+This command sends the payload to the InputBox smart contract, initiating the advance request.
 
-Send a hex encoded `“Hello World”` input payload to your local application with Cast:
+Replace placeholders like `0xInputBoxAddress123`, `0xDAppAddress456`, `0xEncodedPayload789`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
-```
-cast send 0x59b22D57D4f067708AB0c00552767405926dc768 "addInput(address,bytes)" 0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C  0x48656c6c6f20776f726c64    --mnemonic 'test test test test test test test test test test test junk'' 
-```
+:::note
+You can obtain the relevant addresses by running `sunodo address-book`.
+:::
 
 #### 2. Send inputs with Sunodo
+
 Sunodo provides a convenient way of sending inputs to a dApp.
 
 To send an input, run:
 
 ```
-sunodo send 
+sunodo send
 ```
 
 ```
@@ -191,7 +184,7 @@ $ sunodo send
   Send generic input to the application.
 ```
 
-There are five types of inputs using a sub-command: `dapp-address`, `erc20`, `erc721`, `ether`, `generic`. 
+There are five types of inputs using a sub-command: `dapp-address`, `erc20`, `erc721`, `ether`, `generic`.
 
 Unlike the asset-type sub-commands (Ether, ERC20, and ERC721), the generic input command allows you to send inputs with any payload format (hex, string, and ABI)
 
@@ -211,12 +204,12 @@ $ sunodo send generic
 ```
 
 #### 3. Send inputs via a custom web app
-You can create a custom frontend that interacts with your application. 
 
-Here is a [React.js + Typescript starter template](https://github.com/prototyp3-dev/frontend-web-cartesi) with all the major functionalities to build on Cartesi.  
+You can create a custom frontend that interacts with your application.
 
+Here is a [React.js + Typescript template](https://github.com/prototyp3-dev/frontend-web-cartesi) with the functionalities to build on Cartesi.
 
-### Make Inspect calls 
+### Make Inspect calls
 
 Inspect requests are directly made to the rollup server, and the Cartesi Machine is activated without modifying its state.
 
@@ -230,10 +223,9 @@ To perform an Inspect call, use an HTTP GET request to `<address of the node>/in
 curl http://localhost:8080/inspect/mypath
 ```
 
-Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs in the form of **reports**.
+Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
 From a frontend client, here is an example of extracting the payload from an inspect request:
-
 
 ```javascript
 const response = await fetch("http://localhost:8080/inspect/mypath");
