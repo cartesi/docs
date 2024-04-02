@@ -156,6 +156,12 @@ module.exports = {
     },
     {
       type: "category",
+      label: "Deployment",
+      collapsed: true,
+      items: ["deployment/overview"],
+    },
+    {
+      type: "category",
       label: "Tutorials",
       collapsed: true,
       items: ["tutorials/calculator", "tutorials/machine-learning"],
