@@ -104,7 +104,7 @@ This guides you through sending inputs with Sunodo interactively.
 Here is how you can send input to your dApp with Cast:
 
 ```shell
-cast send <InputBoxAddress> "addInput(address,bytes)" <DAppAddress> <EncodedPayload> -mnemonic <MNEMONIC>
+cast send <InputBoxAddress> "addInput(address,bytes)" <DAppAddress> <EncodedPayload> --mnemonic <MNEMONIC>
 ```
 
 This command sends an input payload to your application through the `InputBox` contract.
