@@ -1,7 +1,7 @@
 ---
-id: overview
-title: Overview
-tags: [rollups, deploy, linux]
+id: introduction
+title: Introduction
+tags: [rollups, deploy, node]
 ---
 
 Applications built on Cartesi Rollups are intended to be deployed to public blockchains so users can access them. This can be done by taking advantage of a cloud-based infrastructure.
@@ -27,9 +27,13 @@ The smart contract that represents the application on the base layer can be depl
 
 There are two methods to deploy an application:
 
-1. Self-hosted deployment: Deploy the application node using your infrastructure. 
+1. [Self-hosted deployment](../deployment/self-hosted.md): Deploy the application node using your infrastructure. 
 
 2. Third-party service provider: Outsource running the application node to a service provider. 
+
+:::note
+Deployment with a third-party service provider is under development and will be available in a future release.
+:::
 
 ## Supported networks
 
