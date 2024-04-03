@@ -272,7 +272,7 @@ sunodo send generic
 ```
 
 <video width="100%" controls>
-    <source src="/videos/sunodoSendGeneric.mp4" type="video/mp4" />
+    <source src="/videos/Sunodo_Send.mp4" type="video/mp4" />
     Your browser does not support video tags.
 </video>
 
