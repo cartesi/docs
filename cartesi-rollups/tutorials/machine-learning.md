@@ -241,7 +241,7 @@ To send inputs, run:
 sunodo send generic
 ```
 
-<video width="100%" controls>
+<video width="100%" controls poster="/static/img/v1.3/calculatorPoster.png">
     <source src="/videos/M_Cgen.mp4" type="video/mp4" />
     Your browser does not support video tags.
 </video>
