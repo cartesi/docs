@@ -83,6 +83,28 @@ You can use any PostgreSQL database, whether managed by a cloud provider or set 
 Check the useful resources on the right sidebar to create a Postgres database.
 :::
 
+
+### Configuration sample
+
+Here is a sample of a complete `.env` configuration file:
+
+```bash
+CARTESI_BLOCKCHAIN_FINALITY_OFFSET=1
+CARTESI_BLOCKCHAIN_ID=11155111
+CARTESI_CONTRACTS_APPLICATION_ADDRESS=0x29baf2a0A8E9056fc3dC84abEebeDA81d65B91eB
+CARTESI_CONTRACTS_APPLICATION_DEPLOYMENT_BLOCK_NUMBER=5619154
+CARTESI_CONTRACTS_AUTHORITY_ADDRESS=0xE45D4be3237caCabB332e4dA39fba0be3D796934
+CARTESI_CONTRACTS_HISTORY_ADDRESS=0x7D0DAe68e63138Ed169e413a65B352E05D844883
+CARTESI_CONTRACTS_INPUT_BOX_ADDRESS=0x59b22D57D4f067708AB0c00552767405926dc768
+CARTESI_CONTRACTS_INPUT_BOX_DEPLOYMENT_BLOCK_NUMBER=3963384
+CARTESI_EPOCH_DURATION=86400
+CARTESI_AUTH_MNEMONIC=strong alcohol supply mesh manage hill valid cage such item random diamond
+CARTESI_BLOCKCHAIN_HTTP_ENDPOINT=https://eth-sepolia.alchemy.com/v2/uyEr4yOnUduAxKwUVgYB-bpDR749lkw0
+CARTESI_BLOCKCHAIN_WS_ENDPOINT=wss://eth-sepolia.alchemy.com/v2/uyEr4yOnUduAxKwUVgYB-bpDR749lkw0
+CARTESI_POSTGRES_ENDPOINT=postgres://xxocfzrmjjyimu:76c3c8b40731fb6be5eb0f7cfad26bd3bf7fd2dc15b1d29e9b1e94c97d26afd0@ec2-18-213-181-126.compute-1.amazonaws.com:5432/d10b3lm0kbqe16
+
+```
+
 ## Hosting the node
 
 You’ll need a server to host the application node and keep it operational 24/7. This server will expose a single port for client access to the rollups node APIs through GraphQL or Inspect requests.
