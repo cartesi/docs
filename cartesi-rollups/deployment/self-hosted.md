@@ -56,8 +56,8 @@ You can use [Cast](https://book.getfoundry.sh/reference/cast/cast-wallet-new-mne
 
 3. After successful deployment, the node’s configuration is presented in a `.env` file format. This config file includes the addresses of the deployed smart contracts and information on the base layer chain.
 
-<video width="100%" controls>
-    <source src="/videos/deploysuccess.mp4" type="video/mp4" />
+<video width="100%" controls poster="/static/img/v1.3/deploy.png">
+    <source src="/videos/Deploy_Success.mp4" type="video/mp4" />
     Your browser does not support video tags.
 </video>
 
@@ -83,7 +83,6 @@ You can use any PostgreSQL database, whether managed by a cloud provider or set 
 Check the useful resources on the right sidebar to create a Postgres database.
 :::
 
-
 ### Configuration sample
 
 Here is a sample of a complete `.env` configuration file:
@@ -106,7 +105,7 @@ CARTESI_POSTGRES_ENDPOINT=postgres://xxocfzrmjjyimu:76c3c8b40731fb6be5eb0f7cfad2
 ```
 
 :::note
-The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times. 
+The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times.
 :::
 
 ## Hosting the node
