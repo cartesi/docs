@@ -369,28 +369,28 @@ def handle_inspect(data):
         return "reject"
 ```
 
-:::note
+
 The routes for the Balance inspects implemented above are as follows:
 
-- Ether
+#### Ether
 ```shell
 balance/ether/{wallet}
 balance/ether/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 ```
 
 
-- ERC20:
+#### ERC20:
 ```shell
 balance/ether/{wallet}/{token_address}
 balance/erc20/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0xae7f61eCf06C65405560166b259C54031428A9C4
 ```
 
-- ERC721:
+#### ERC721:
 ```shell
 balance/ether/{wallet}/{token_addres}/{token_id}
 balance/erc721/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0xae7f61eCf06C65405560166b259C54031428A9C4/0
 ```
-:::
+
 
 ##  Frontend Integration
 
