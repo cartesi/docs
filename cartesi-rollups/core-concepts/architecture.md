@@ -86,7 +86,7 @@ In practice, two distinct kinds of agents run Cartesi Nodes: users and validator
 
 - **Validator Nodes**, which have more responsibility: they not only watch the blockchain but also fight possible dishonest validators to ensure the prevalence of honest claims for state updates. On the other hand, if Reader Nodes are available, validators do not need to expose endpoints to retrieve the application state. Therefore, they can run in more secure environments and remain inaccessible to external clients and users.
 
-:::note
+:::caution important
 Currently, all Cartesi Nodes function as Validator Nodes. Reader Nodes are being developed, adding the capability to fetch and share data. In the meantime, Validator Nodes are handling both roles effectively.
 :::
 
