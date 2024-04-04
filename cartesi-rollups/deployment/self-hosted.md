@@ -42,7 +42,7 @@ The command generates a Docker image containing the Cartesi rollups node and Car
 
 ![img](../../static/img/v1.3/deploy.png)
 
-## Deploying the contracts
+## Preparing the requirements
 
 On the deploy web interface, the hash of the Cartesi machine will be automatically configured.
 
@@ -63,25 +63,25 @@ On the deploy web interface, the hash of the Cartesi machine will be automatical
 
 4. Download the `.env` configuration file and paste it into the root directory of your application.
 
+  :::note
+  By default epoch duration is set to 86400 seconds. You can configure this based on your application needs.
+  :::
+
 5. Obtain HTTP and WebSocket URLs from a web3 provider for the `CARTESI_BLOCKCHAIN_HTTP_ENDPOINT` and `CARTESI_BLOCKCHAIN_WS_ENDPOINT` variables.
 
   Here is an example from [Alchemy](https://dashboard.alchemy.com/):
 
   ![img](../../static/img/v1.3/alchemy.png)
 
-:::note
-By default is set to 86400 seconds. You can configure this based on your application needs.
-:::
+6. Create a PostgreSQL database and configure the connection string in the `.env` file.
 
-## Create a PostgreSQL database
+  The connection string for a PostgreSQL database must be configured at the `CARTESI_POSTGRES_ENDPOINT` variable.
 
-The connection string for a PostgreSQL database must be configured at the `CARTESI_POSTGRES_ENDPOINT` variable in the config env file.
+  You can use any PostgreSQL database, whether managed by a cloud provider or set up on your local infrastructure. The key configuration required is the connection string, encompassing the database URL, username, password, and name. The node necessitates a PostgreSQL database to store the application state, which is accessible via the [GraphQL API](../core-concepts/rollup-http-api/graphql/basics.md).
 
-You can use any PostgreSQL database, whether managed by a cloud provider or set up on your local infrastructure. The key configuration required is the connection string, encompassing the database URL, username, password, and name. The node necessitates a PostgreSQL database to store the application state, which is accessible via the [GraphQL API](../core-concepts/rollup-http-api/graphql/basics.md).
-
-:::note
-Check the useful resources on the right sidebar to create a Postgres database.
-:::
+  :::note
+  Check the useful resources on the right sidebar to create a Postgres database.
+  :::
 
 ### Configuration sample
 
