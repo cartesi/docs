@@ -56,10 +56,10 @@ On the deploy web interface, the hash of the Cartesi machine will be automatical
 
 3. After successful deployment, the node’s configuration is presented in a `.env` file format. This config file includes the addresses of the deployed smart contracts and information on the base layer chain.
 
-<video width="100%" controls poster="/static/img/v1.3/deploy.png">
+<!-- <video width="100%" controls poster="/static/img/v1.3/deploy.png">
     <source src="/videos/Deploy_Success.mp4" type="video/mp4" />
     Your browser does not support video tags.
-</video>
+</video> -->
 
 4. Download the `.env` configuration file and paste it into the root directory of your application.
 
