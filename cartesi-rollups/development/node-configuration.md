@@ -9,10 +9,6 @@ resources:
 
 Sunodo comes pre-configured with some default settings for Cartesi nodes. You can configure epoch duration, block time, environment variables, memory and the content of the information you want your node to preview.
 
-:::note
-You can create a `.sunodo.env` in the project's root and override any variable controlling the rollups-node.
-:::
-
 ## Verbosity
 
 By default, the node works in non-verbose mode and only outputs logs from the user’s backend application. In case the user needs more information, there is the `--verbose` flag.
@@ -60,3 +56,7 @@ The line below lets you define the memory size in megabytes (MB):
 ```dockerfile
 LABEL io.cartesi.rollups.ram_size=128Mi
 ```
+
+:::note environment variables
+You can create a `.sunodo.env` in the project's root and override any variable controlling the rollups-node.
+:::
