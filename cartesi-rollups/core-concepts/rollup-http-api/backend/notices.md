@@ -3,6 +3,7 @@ id: notices
 title: Notices
 tags: [output, notices]
 ---
+
 A notice is a verifiable data declaration that attests to off-chain events or conditions and is accompanied by proof.
 
 Notices provide a mechanism to communicate essential off-chain events in the execution layer to the base layer in a verifiable manner.
@@ -15,7 +16,6 @@ This validation process ensures the integrity and authenticity of the submitted 
 
 Let's see how a Cartesi dApp's **Advance** request sends an output to the rollup server as a notice:
 
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -24,7 +24,6 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-
 async function handle_advance(data) {
   console.log("Received advance request data " + JSON.stringify(data));
 
@@ -78,8 +77,6 @@ def handle_advance(data):
 
 </Tabs>
 
-
-
-:::note
-Frontend clients can query notices using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation here](../../../development/retrieve-outputs.md/#query-all-reports) to query notices from the rollup server. 
+:::note querying notices
+Frontend clients can query notices using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation here](../../../development/retrieve-outputs.md/#query-all-reports) to query notices from the rollup server.
 :::
