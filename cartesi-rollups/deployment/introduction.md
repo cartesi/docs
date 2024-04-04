@@ -19,9 +19,8 @@ The deployment of an application involves building a Cartesi machine and deployi
 
 The `sunodo build` command produces the Cartesi genesis machine, which contains a hash representing the application and its initial state. 
 
-:::note
+
 After deployment, any changes to the application code will generate a different hash and, hence, require another deployment.
-:::
 
 The smart contract that represents the application on the base layer can be deployed using the [`CartesiDAppFactory`](../core-concepts/rollup-http-api/json-rpc/application-factory.md) smart contract.
 
@@ -31,7 +30,7 @@ There are two methods to deploy an application:
 
 2. Third-party service provider: Outsource running the application node to a service provider. 
 
-:::note
+:::caution important
 Deployment with a third-party service provider is under development and will be available in a future release.
 :::
 

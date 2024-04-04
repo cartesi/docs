@@ -11,7 +11,7 @@ In this tutorial, we will build a simple Calculator dApp to illustrate how reque
 
 This dApp will be written in Python.
 
-:::note
+:::note source code
 The backend will be written using Python. For added flexibility, feel free to explore [the JavaScript version here](https://github.com/Mugen-Builders/calculator/tree/main/javascript).
 :::
 
