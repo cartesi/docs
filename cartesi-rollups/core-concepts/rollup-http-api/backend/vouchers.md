@@ -12,16 +12,15 @@ The voucher explicitly specifies the action that the dApp intends to execute on 
 
 For instance, in a DeFi application built on Cartesi, users may want to swap one token for another. The dApp generates a voucher that authorizes the on-chain smart contract to execute the swap on the user's behalf.
 
-
 The [`CartesiDApp`](../json-rpc/application.md) contract is crucial in validating and executing the received voucher on the blockchain. This execution process occurs through the [`executeVoucher()`](../json-rpc/application.md/#executevoucher) function, ensuring that the action specified in the voucher is legitimate and authorized.
 
 The result of the voucher execution is recorded on the base layer. This recording typically involves submitting claims by a consensus contract, ensuring the integrity and transparency of the executed on-chain action.
 
-:::note
+:::note create a voucher
 [Refer to the documentation here](../../../development/assets-handling/overview.md) for asset handling and creating vouchers in your dApp.
 :::
 
-## Epoch Configuration and Vouchers
+## Epoch configuration
 
 Epoch configuration is crucial when working with vouchers.
 
@@ -31,8 +30,6 @@ One everyday use of vouchers in Cartesi dApps is to withdraw assets. Users initi
 
 During the development and testing phases, where rapid asset deposits and withdrawals are required, the default epoch duration may not be practical. In such cases, you can manually set the epoch duration to facilitate quicker asset deposits and withdrawals.
 
-:::note
+:::note epoch duration
 [Refer to the documentation here](../../../development/node-configuration.md/#epoch-duration) to manually configure epoch duration during development.
 :::
-
-
