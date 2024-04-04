@@ -50,9 +50,9 @@ On the deploy web interface, the hash of the Cartesi machine will be automatical
 
 2. Create a wallet specifically for Cartesi rollups node transactions. The Cartesi rollups node will use this wallet to submit transactions to the base layer. Paste the public address of this wallet.
 
-:::note
-You can use [Cast](https://book.getfoundry.sh/reference/cast/cast-wallet-new-mnemonic) to create a new wallet by running `cast wallet new-mnemonic --words 24`. For increased security, you can use a wallet managed by [AWS KMS](https://aws.amazon.com/blogs/database/part1-use-aws-kms-to-securely-manage-ethereum-accounts/).
-:::
+  :::note
+  You can use [Cast](https://book.getfoundry.sh/reference/cast/cast-wallet-new-mnemonic) to create a new wallet by running `cast wallet new-mnemonic --words 24`. For increased security, you can use a wallet managed by [AWS KMS](https://aws.amazon.com/blogs/database/part1-use-aws-kms-to-securely-manage-ethereum-accounts/).
+  :::
 
 3. After successful deployment, the node’s configuration is presented in a `.env` file format. This config file includes the addresses of the deployed smart contracts and information on the base layer chain.
 
@@ -65,9 +65,9 @@ You can use [Cast](https://book.getfoundry.sh/reference/cast/cast-wallet-new-mne
 
 5. Obtain HTTP and WebSocket URLs from a web3 provider for the `CARTESI_BLOCKCHAIN_HTTP_ENDPOINT` and `CARTESI_BLOCKCHAIN_WS_ENDPOINT` variables.
 
-Here is an example from [Alchemy](https://dashboard.alchemy.com/):
+  Here is an example from [Alchemy](https://dashboard.alchemy.com/):
 
-![img](../../static/img/v1.3/alchemy.png)
+  ![img](../../static/img/v1.3/alchemy.png)
 
 :::note
 By default is set to 86400 seconds. You can configure this based on your application needs.
