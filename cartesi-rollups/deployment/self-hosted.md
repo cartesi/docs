@@ -131,9 +131,13 @@ You can use any managed container solution, like Kubernetes.
 
 Fly.io is a platform where you can conveniently deploy applications packaged as Docker containers.
 
-1. [Create an account ](https://fly.io/docs/hands-on/sign-up-sign-in/)
+:::caution important
+If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for `linux/amd64` with: `sunodo deploy build --platform linux/amd64`
+:::
 
 1. [Install the flyctl CLI](https://fly.io/docs/hands-on/install-flyctl/)
+
+1. [Create an account](https://fly.io/docs/hands-on/sign-up-sign-in/)
 
 1. Create an application:
 
@@ -148,17 +152,19 @@ Fly.io is a platform where you can conveniently deploy applications packaged as
    fly postgres create --initial-cluster-size 1 --name <app-name>-database --vm-size shared-cpu-1x --volume-size 1
    ```
 
+   Save the connection string provided by the command output.
+
 1. Attach database to the node application:
 
    ```shell
    fly postgres attach <app-name>-database -a <app-name>
    ```
 
-1. Download `fly.toml` file from [deployment](#deploying-the-contracts) and move it to your application directory:
+1. Download `fly.toml` file from deploying the contracts and move it to your application directory:
 
    ![deploy self-hosted config](../../static/img/v1.3/fly.png)
 
-1. Edit the `fly.toml` file to change all occurrences of `<app-name>` to the name of your application;
+1. Edit the `fly.toml` file to change all occurrences of `<app-name>` to the name of your application
 
 1. Create secrets for sensitive configuration with the actual values:
 
@@ -179,9 +185,7 @@ Fly.io is a platform where you can conveniently deploy applications packaged as
    flyctl auth docker
    docker image tag <image-id> registry.fly.io/<app-name>
    docker image push registry.fly.io/<app-name>
-   fly deploy
+   fly deploy -a <app-name>
    ```
 
-   :::caution important
-   If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for `linux/amd64` with: `sunodo deploy build --platform linux/amd64`
-   :::
+  
