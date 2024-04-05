@@ -1,13 +1,11 @@
 # Cartesi Documentation
 
-Cartesi Docs has been built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+Cartesi Docs is built with [Docusaurus 2.4.3](https://docusaurus.io/)
 
 ## Requirements
 
-* Install [Node.js](https://nodejs.org/en/download/) version >= 12.13
+* Install [Node.js](https://nodejs.org/en/download/) version >= 20.x
 * Install [Yarn](https://yarnpkg.com/getting-started/install) version >= 1.5  
-
-> Note that on macOS you also need Xcode and Command Line Tools.
 
 ## Run the Docs locally
 
@@ -40,19 +38,14 @@ Cartesi Docs has been built using [Docusaurus 2](https://docusaurus.io/), a mode
     yarn install
     ```
 
-   The site is built using Docusaurus. You may need to install Docusaurus before running the Docs locally.
+   The site is built using Docusaurus. You need to install Docusaurus before running the Docs locally.
 
    ```
    yarn add docusaurus
    ```
 
-   Alternatively, you can upgrade Docusaurus.
-
-   ```
-   yarn upgrade @docusaurus/core@latest @docusaurus/preset-classic@latest
-   ```
-
 6. Run the Docs locally:
+
    The following command will start a local development server and open a browser window.
    Most changes are reflected live without having to restart the server.
 
@@ -60,7 +53,7 @@ Cartesi Docs has been built using [Docusaurus 2](https://docusaurus.io/), a mode
     yarn start
     ```
 
-And then point your browser to `http://localhost:3000`.
+Launch the docs on `http://localhost:3000`.
 
 ## Build
 
@@ -68,7 +61,7 @@ And then point your browser to `http://localhost:3000`.
 $ yarn build
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+This command generates static content in the `build` directory, which can be served using any static content hosting service.
 
 ## Deployment
 
@@ -84,3 +77,4 @@ The following branches and pull requests are deployed to the following URLs:
 
 * [Learn Markdown features](https://docusaurus.io/docs/markdown-features)
 * [Understand docs structure rundown](https://docusaurus.io/docs/installation#project-structure-rundown)
+
