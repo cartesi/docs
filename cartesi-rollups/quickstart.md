@@ -9,6 +9,8 @@ resources:
     title: Next.js template
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
     title: Angular template
+  - url: https://github.com/Mugen-Builders/deploy-cartesi-dapp
+    title: Deploy a Cartesi dApp on a test network
 ---
 
 Welcome to Quickstart. Here is a step-by-step guide to building a decentralized application quickly.
@@ -124,15 +126,11 @@ Here are frontend templates created by the community with all the significant fu
 
 ## Deploy the application
 
-There are two methods to deploy an application:
-
-1. [Self-hosted deployment](./deployment/self-hosted.md): Deploy the application node using your infrastructure. 
-
-2. Third-party service provider: Outsource running the application node to a service provider. 
-
 :::note
-Deployment with a third-party service provider is under development and will be available in a future release.
+Deployment with Sunodo is under active development
 :::
+
+In the interim, you can use [the guide here to deploy on a test network](https://github.com/Mugen-Builders/deploy-cartesi-dapp).
 
 ## Community tools
 
