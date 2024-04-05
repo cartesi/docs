@@ -197,7 +197,7 @@ query notices {
 Click the "Play" button (a triangular icon). The Playground will send the request to the server, and you'll see the response in the right pane.
 
 <video width="100%" controls>
-    <source src="/videos/Query_Allnotices.mp4" type="video/mp4" />
+    <source src="/videos/queryAllNotices.mp4" type="video/mp4" />
     Your browser does not support video tags.
 </video>
 
