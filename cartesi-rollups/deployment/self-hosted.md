@@ -38,9 +38,9 @@ Here are the requirements:
      sunodo deploy --hosting self-hosted
    ```
 
-The command generates a Docker image containing the Cartesi rollups node and Cartesi machine. You will be redirected to a web application to deploy the necessary smart contracts.
+  The command generates a Docker image containing the Cartesi rollups node and Cartesi machine. You will be redirected to a web application to deploy the necessary smart contracts.
 
-![img](../../static/img/v1.3/deploy.png)
+  ![img](../../static/img/v1.3/deploy.png)
 
 ## Preparing the requirements
 
@@ -50,7 +50,7 @@ On the deploy web interface, the hash of the Cartesi machine will be automatical
 
 2. Create a wallet specifically for Cartesi rollups node transactions. The Cartesi rollups node will use this wallet to submit transactions to the base layer. Paste the public address of this wallet.
 
-  :::note create a wallet
+  :::note
   You can use [Cast](https://book.getfoundry.sh/reference/cast/cast-wallet-new-mnemonic) to create a new wallet by running `cast wallet new-mnemonic --words 24`. For increased security, you can use a wallet managed by [AWS KMS](https://aws.amazon.com/blogs/database/part1-use-aws-kms-to-securely-manage-ethereum-accounts/).
   :::
 
@@ -63,6 +63,10 @@ On the deploy web interface, the hash of the Cartesi machine will be automatical
 
 4. Download the `.env` configuration file and paste it into the root directory of your application.
 
+  :::note
+  By default epoch duration is set to 86400 seconds. You can configure this based on your application needs.
+  :::
+
 5. Obtain HTTP and WebSocket URLs from a web3 provider for the `CARTESI_BLOCKCHAIN_HTTP_ENDPOINT` and `CARTESI_BLOCKCHAIN_WS_ENDPOINT` variables.
 
   Here is an example from [Alchemy](https://dashboard.alchemy.com/):
@@ -74,6 +78,10 @@ On the deploy web interface, the hash of the Cartesi machine will be automatical
   The connection string for a PostgreSQL database must be configured at the `CARTESI_POSTGRES_ENDPOINT` variable.
 
   You can use any PostgreSQL database, whether managed by a cloud provider or set up on your local infrastructure. The key configuration required is the connection string, encompassing the database URL, username, password, and name. The node necessitates a PostgreSQL database to store the application state, which is accessible via the [GraphQL API](../core-concepts/rollup-http-api/graphql/basics.md).
+
+  :::note
+  Check the useful resources on the right sidebar to create a Postgres database.
+  :::
 
 ### Configuration sample
 
@@ -96,17 +104,17 @@ CARTESI_POSTGRES_ENDPOINT=postgres://xxocfzrmjjyimu:76c3c8b40731fb6be5eb0f7cfad2
 
 ```
 
-:::caution important
-The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times.
+:::note
+The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times. 
 :::
 
 ## Hosting the node
 
 You’ll need a server to host the application node and keep it operational 24/7. This server will expose a single port for client access to the rollups node APIs through GraphQL or Inspect requests.
 
-
+:::note
 The server requirements depend on your application's expected usage and the specifications of the Cartesi machine you're using, such as its RAM size and total capacity. Consider a minimum of 8GB of RAM, and adjust as needed.
-
+:::
 
 The Cartesi rollups node is distributed as a Docker image. Any popular cloud provider, like AWS, GCP, Azure, Digital Ocean, or Linode, can run docker containers and hence can be used to host the rollups node.
 
@@ -124,8 +132,9 @@ Replace `<env-file>` and `<image-id>` with the `.env` file name and `sha256` has
 
 The image can be tagged using [docker tag](https://docs.docker.com/reference/cli/docker/image/tag/).
 
-
-You can use any managed container solution, like Kubernetes. 
+:::note
+You can use any managed container solution, like Kubernetes. The useful resources on the right sidebar explain how to deploy Docker containers.
+:::
 
 ### Hosting on fly.io
 
@@ -182,6 +191,6 @@ Fly.io is a platform where you can conveniently deploy applications packaged as
    fly deploy
    ```
 
-   :::caution important
+   :::note
    If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for `linux/amd64` with: `sunodo deploy build --platform linux/amd64`
    :::

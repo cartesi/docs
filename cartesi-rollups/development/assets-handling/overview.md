@@ -114,7 +114,7 @@ The dApp’s off-chain layer often requires knowledge of its address to facilita
 
 By calling [`relayDAppAddress()`](../../core-concepts/rollup-http-api/json-rpc/relays/relays.md/#relaydappaddress), function of the `DAppAddressRelay` contract, it adds the dApp’s address as a new input for the Cartesi dApp to process. Next, the off-chain machine uses this address to generate a voucher for execution at the [`executeVoucher()`](../../core-concepts/rollup-http-api/json-rpc/application.md/#executevoucher) function of the `CartesiDApp` contract.
 
-:::note epoch duration
+:::note
 By default, Cartesi nodes close one epoch every couple of days. You can [manually set the epoch duration](../../development/node-configuration.md/#epoch-duration) to facilitate quicker asset-handling methods.
 :::
 

@@ -72,7 +72,7 @@ import TabItem from '@theme/TabItem';
   </TabItem>
 </Tabs>
 
-:::note building on windows?
+:::note
 For a seamless development workflow on Windows, do not execute Docker commands within Powershell. Instead, open the latest Ubuntu terminal that you have installed and perform all coding and command execution within that Linux environment.
 :::
 
