@@ -54,11 +54,11 @@ The assumption that state updates will likely be honest often gives solutions li
 
 This optimism is reinforced by financial incentives that reward honest behavior. Furthermore, any proposed false state will only be accepted if it remains undisputed for a prolonged period.
 
-
+:::info
 The main advantage of Optimistic Rollups is that they are much cheaper than ZK Rollups. Posting a state update on-chain is minimal, and challenging a state update is also low.
 
 The main disadvantage is that state updates are not immediately final. It takes time for a state update to be fully accepted, and during this period, the state update is considered "optimistic" and can be challenged.
-
+:::
 
 ## Cartesi Rollups
 

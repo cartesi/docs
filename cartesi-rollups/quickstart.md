@@ -17,7 +17,7 @@ Welcome to Quickstart. Here is a step-by-step guide to building a decentralized 
 
 The primary requirements for building on Cartesi are Docker Desktop and Sunodo.
 
-:::note windows os configuration
+:::note
 If you use Windows, you must have [WSL2 installed and configured](https://learn.microsoft.com/en-us/windows/wsl/install) for building. In Docker Desktop settings, confirm that the WSL2-based engine configurations are enabled.
 :::
 
@@ -109,27 +109,28 @@ This command sends an input payload to your application through the `InputBox` c
 
 Replace placeholders like `0xInputBoxAddress123`, `0xDAppAddress456`, `0xEncodedPayload789`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
-
+:::note
 You can obtain the relevant addresses by running `sunodo address-book`.
+:::
+
 
 ### Using a custom web interface
 
 You can create a custom frontend that interacts with your application.
 
-Here are frontend templates created by the community with all the significant functionalities to build on Cartesi.
-
+Here are frontend templates created by the community with all the significant functionalities to build on Cartesi. 
 - [React + TypeScript template](https://github.com/prototyp3-dev/frontend-web-cartesi)
-- [Angular template](https://github.com/jplgarcia/cartesi-angular-frontend)
+- [Angular template](https://github.com/jplgarcia/cartesi-angular-frontend) 
 
 ## Deploy the application
 
 There are two methods to deploy an application:
 
-1. [Self-hosted deployment](./deployment/self-hosted.md): Deploy the application node using your infrastructure.
+1. [Self-hosted deployment](./deployment/self-hosted.md): Deploy the application node using your infrastructure. 
 
-2. Third-party service provider: Outsource running the application node to a service provider.
+2. Third-party service provider: Outsource running the application node to a service provider. 
 
-:::caution important
+:::note
 Deployment with a third-party service provider is under development and will be available in a future release.
 :::
 
