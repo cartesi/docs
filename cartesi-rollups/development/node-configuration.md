@@ -33,7 +33,7 @@ sunodo run --block-time <seconds>
 
 Epoch configuration is crucial when working with vouchers.
 
-Vouchers allow your dApps in the execution layer(off-chain machine) to interact with contracts on the base layer through message calls.
+Vouchers allow your dApps in the execution layer to interact with contracts on the base layer through message calls.
 
 One everyday use of vouchers in Cartesi dApps is to withdraw assets.
 

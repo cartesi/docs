@@ -13,10 +13,10 @@ sunodo create <dapp-name> --template <language>
 For example, create a Python project.
 
 ```
-sunodo create new-app --template python.
+sunodo create new-dapp --template python.
 ```
 
-This command creates a `new-app` directory with essential files for your dApp development.
+This command creates a `new-dapp` directory with essential files for your dApp development.
 
 - `Dockerfile`: Contains configurations to build a complete Cartesi machine with your app's dependencies. Your backend code will run in this environment.
 
