@@ -1,231 +1,224 @@
 module.exports = {
   rollups: [
     {
+      type: "doc",
+      id: "overview",
+      label: "Overview",
+    },
+    {
+      type: "doc",
+      id: "quickstart",
+      label: "Quickstart",
+    },
+    {
       type: "category",
-      label: "Cartesi Rollups",
-      link: {
-        type: "generated-index",
-        slug: "/",
-      },
+      label: "Core Concepts",
       collapsed: true,
       items: [
-        "overview",
-        "main-concepts",
-        {
-          type: "doc",
-          id: "mainnet-risks",
-          label: "Mainnet Risks",
-        },
-        "sending-requests",
-        "reading-outputs",
-        "assets-handling",
-        "dapp-architecture",
+        "core-concepts/optimistic-rollups",
+        "core-concepts/architecture",
+        "core-concepts/mainnet-considerations",
         {
           type: "category",
-          label: "Rollups HTTP APIs",
-          link: {
-            type: "generated-index",
-            slug: "api",
-            description:
-              "APIs available for dApp developers to interact with the Cartesi Rollups framework.",
-          },
+          label: "Rollups APIs",
           collapsed: true,
+       
           items: [
-            "http-api",
+            "core-concepts/rollup-http-api/http-api",
             {
               type: "category",
-              label: "Front-end APIs",
-              link: {
-                type: "generated-index",
-                slug: "api/front-end",
-                description:
-                  "APIs used by front-end clients to interact with the Cartesi Rollups framework.",
-              },
+              label: "Backend APIs",
+            
+              collapsed: true,
+              items: [
+                "core-concepts/rollup-http-api/backend/introduction",
+                "core-concepts/rollup-http-api/backend/notices",
+                "core-concepts/rollup-http-api/backend/vouchers",
+                "core-concepts/rollup-http-api/backend/reports",
+              ],
+            },
+            {
+              type: "category",
+              label: "Frontend APIs",
               collapsed: true,
               items: [
                 {
                   type: "category",
                   label: "Smart contracts API",
-                  link: {
-                    type: "generated-index",
-                    slug: "api/json-rpc",
-                  },
+                 
                   collapsed: true,
                   items: [
-                    "api/json-rpc/basics",
-                    "api/json-rpc/sol-input",
-                    "api/json-rpc/sol-output",
+                    "core-concepts/rollup-http-api/json-rpc/overview",
+                    "core-concepts/rollup-http-api/json-rpc/input-box",
+                    "core-concepts/rollup-http-api/json-rpc/application",
+                    "core-concepts/rollup-http-api/json-rpc/application-factory",
+
                     {
                       type: "category",
                       label: "Portals",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/json-rpc/portals",
-                      },
                       collapsed: true,
                       items: [
-                        "api/json-rpc/portals/ERC20Portal",
-                        "api/json-rpc/portals/ERC721Portal",
-                        "api/json-rpc/portals/ERC1155BatchPortal",
-                        "api/json-rpc/portals/ERC1155SinglePortal",
-                        "api/json-rpc/portals/EtherPortal",
+                        "core-concepts/rollup-http-api/json-rpc/portals/ERC20Portal",
+                        "core-concepts/rollup-http-api/json-rpc/portals/ERC721Portal",
+                        "core-concepts/rollup-http-api/json-rpc/portals/ERC1155SinglePortal",
+                        "core-concepts/rollup-http-api/json-rpc/portals/ERC1155BatchPortal",
+                        "core-concepts/rollup-http-api/json-rpc/portals/EtherPortal",
                       ],
                     },
                     {
                       type: "category",
-                      label: "Relays",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/json-rpc/relays",
-                      },
+                      label: "Relayer",
                       collapsed: true,
-                      items: ["api/json-rpc/relays/DAppAddressRelay"],
+                      items: ["core-concepts/rollup-http-api/json-rpc/relays/relays"],
                     },
                   ],
                 },
                 {
                   type: "category",
-                  label: "Rollups state GraphQL API",
-                  link: {
-                    type: "generated-index",
-                    slug: "api/graphql/index",
-                  },
+                  label: "GraphQL API",
+               
                   collapsed: true,
                   items: [
-                    "api/graphql/basics",
+                    "core-concepts/rollup-http-api/graphql/overview",
                     {
                       type: "category",
                       label: "Queries",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/graphql/queries",
-                      },
                       collapsed: true,
                       items: [
                         {
                           type: "autogenerated",
-                          dirName: "api/graphql/queries",
+                          dirName: "core-concepts/rollup-http-api/graphql/queries",
                         },
                       ],
                     },
                     {
                       type: "category",
                       label: "Objects",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/graphql/objects",
-                      },
                       collapsed: true,
                       items: [
                         {
                           type: "autogenerated",
-                          dirName: "api/graphql/objects",
+                          dirName: "core-concepts/rollup-http-api/graphql/objects",
                         },
                       ],
                     },
                     {
                       type: "category",
                       label: "Filters",
-                      link: {
-                        type: "generated-index",
-                        slug: "api/graphql/filters",
-                      },
                       collapsed: true,
                       items: [
                         {
                           type: "autogenerated",
-                          dirName: "api/graphql/inputs",
+                          dirName: "core-concepts/rollup-http-api/graphql/inputs",
                         },
                       ],
                     },
                   ],
                 },
-                "api/inspect/inspect",
-              ],
-            },
-            {
-              type: "category",
-              label: "Back-end API",
-              link: {
-                type: "generated-index",
-                slug: "api/back-end",
-                description:
-                  "API used by dApp back-ends (running inside Cartesi Nodes) to interact with the Cartesi Rollups framework.",
-              },
-              collapsed: true,
-              items: [
-                "api/rollup/cartesi-rollup-http-api",
-                "api/rollup/add-notice",
-                "api/rollup/add-report",
-                "api/rollup/add-voucher",
-                "api/rollup/finish",
-                "api/rollup/register-exception",
               ],
             },
           ],
         },
-        "dapp-life-cycle",
       ],
     },
     {
       type: "category",
-      label: "Build dApps",
-      link: {
-        type: "generated-index",
-        slug: "/build-dapps",
-      },
+      label: "Development",
       collapsed: true,
       items: [
-        "build-dapps/overview",
-        "build-dapps/requirements",
-        "build-dapps/run-dapp",
-        "build-dapps/create-dapp",
-        "build-dapps/dapp-host-mode",
-        "build-dapps/deploying-dapps",
-        "build-dapps/guidelines",
+        "development/installation",
+        "development/creating-application",
+        "development/building-the-application",
+        "development/running-the-application",
+        "development/node-configuration",
+        "development/send-requests",
+        "development/retrieve-outputs",
+
+        {
+          type: "category",
+          label: "Assets Handling",
+          collapsed: true,
+          items: [
+            "development/assets-handling/overview",
+            {
+              type: "doc",
+              id: "development/assets-handling/javascript",
+              label: "JavaScript",
+            },
+            {
+              type: "doc",
+              id: "development/assets-handling/python",
+              label: "Python",
+            },
+          ],
+        },
       ],
+    },
+    {
+      type: "category",
+      label: "Deployment",
+      collapsed: true,
+      items: ["deployment/introduction", "deployment/self-hosted"],
+    },
+    {
+      type: "category",
+      label: "Tutorials",
+      collapsed: true,
+      items: ["tutorials/calculator", "tutorials/machine-learning"],
     },
 
     {
       type: "category",
       label: "References",
-      link: {
-        type: "generated-index",
-        slug: "/references",
-      },
       collapsed: true,
       items: [
         {
-          type: "link",
-          label: "Code samples",
-          href: "https://github.com/cartesi/rollups-examples",
-        },
-        {
-          type: "link",
+          type: "category",
           label: "Releases",
-          href: "https://github.com/cartesi/rollups/releases",
+          items:[
+            
+            {
+              type: "link",
+              label: "Rollups Node",
+              href: "https://github.com/cartesi/rollups-node/releases",
+            },
+            {
+              type: "link",
+              label: "Rollups Contracts",
+              href: "https://github.com/cartesi/rollups-contracts/releases",
+            },
+
+          ],
         },
         {
           type: "category",
-          label: "Migration guides",
-          link: {
-            type: "generated-index",
-            slug: "/migration-guides",
-          },
-          collapsed: true,
-          items: ["migration-guides/from-09-to-10"],
+          label: "Changelog",
+          items:[
+            
+            {
+              type: "link",
+              label: "Rollups Node",
+              href: "https://github.com/cartesi/rollups-node/blob/main/CHANGELOG.md",
+            },
+            {
+              type: "link",
+              label: "Rollups Contracts",
+              href: "https://github.com/cartesi/rollups-contracts/blob/main/CHANGELOG.md",
+            },
+
+          ],
         },
       ],
     },
-    {
-      type: "category",
-      label: "Future Developments",
-      link: {
-        type: "generated-index",
-        slug: "/challenges",
-      },
-      collapsed: true,
-      items: ["challenges/overview"],
-    },
+    // {
+    //   type: "category",
+    //   label: "Future Developments",
+    //   link: {
+    //     type: "doc",
+    //     id: "challenges/overview",
+    //   },
+    //   collapsed: true,
+    //   items: ["challenges/overview"],
+    // },
   ],
 };

@@ -12,36 +12,62 @@ const config = {
   url: "https://docs.cartesi.io",
   baseUrl: "/",
   trailingSlash: true,
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
+  onBrokenLinks: "ignore",
+  onBrokenMarkdownLinks: "throw",
   favicon: "img/favicon.ico",
   organizationName: "cartesi", // Usually your GitHub org/user name.
   projectName: "cartesi", // Usually your repo name.
   scripts: ["/js/index.js"],
   presets: [
     [
-      "@docusaurus/preset-classic",
+      "classic",
+
       /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
+      {
         docs: {
+          path: "docs",
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           editUrl: "https://github.com/cartesi/docs/tree/develop",
+
           remarkPlugins: [replacementPlugin],
-          docLayoutComponent: "@theme/DocPage",
-          docItemComponent: "@theme/ApiItem",
+          admonitions: {
+            keywords: [
+              "note",
+              "tip",
+              "danger",
+              "info",
+              "caution",
+              "goal",
+              "troubleshoot",
+            ],
+          },
+          showLastUpdateTime: true,
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
-      }),
+        gtag: {
+          trackingID: "GTM-MS89D9K",
+          anonymizeIP: true,
+        },
+        googleTagManager: {
+          containerId: "GTM-MS89D9K",
+        },
+        sitemap: {
+          changefreq: "weekly",
+          priority: 0.5,
+          ignorePatterns: ["/tags/**"],
+          filename: "sitemap.xml",
+        },
+      },
     ],
   ],
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Algolia Search
       algolia: {
         appId: "STJID4NVVG",
         apiKey: "a454730829efd0e7fc91ccb52e1185a6",
@@ -59,18 +85,109 @@ const config = {
           srcDark: "img/logo_dark.svg",
           height: "52px",
         },
-
         items: [
+          // {
+          //   type: "dropdown",
+          //   label: "Tools",
+          //   position: "left",
+          //   items: [
+          //     {
+          //       label: "Sunodo",
+          //       href: "https://docs.sunodo.io/guide/introduction/what-is-sunodo",
+          //     },
+          //     {
+          //       label: "NoNodo",
+          //       href: "https://github.com/gligneul/nonodo/blob/main/README.md",
+          //     },
+          //     { label: "Cartesi Scan", href: "https://cartesiscan.io/" },
+          //   ],
+          // },
+          // {
+          //   type: "dropdown",
+          //   label: "Learn",
+          //   position: "left",
+          //   items: [
+          //     {
+          //       label: "Free Udemy Course",
+          //       href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+          //     },
+          //     // {
+          //     //   label: "Cartesi Machine",
+          //     //   href: "/machine/",
+          //     // },
+          //   ],
+          // },
           {
-            to: "/#learn",
-            position: "right",
-            label: "Learn",
+            label: "Video Tutorial",
+            href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+            position: "left",
           },
           {
-            to: "/#qa",
-            position: "right",
-            label: "Help",
+            type: "dropdown",
+            label: "Community",
+            position: "left",
+            items: [
+              {
+                label: "Twitter",
+                href: "https://www.twitter.com/cartesiproject",
+              },
+              { label: "Discord", href: "https://discord.gg/uxYE5YNv3N" },
+              { label: "Reddit", href: "https://www.reddit.com/r/cartesi/" },
+              {
+                label: "YouTube",
+                href: "https://www.youtube.com/c/Cartesiproject/videos",
+              },
+              { label: "Telegram", href: "https://t.me/cartesiannouncements" },
+              {
+                label: "LinkedIn",
+                href: "https://www.linkedin.com/company/cartesi/",
+              },
+              {
+                label: "Instagram",
+                href: "https://www.instagram.com/cartesiproject/",
+              },
+              {
+                label: "Blog",
+                href: "https://cartesi.io/blog/",
+              },
+              {
+                label: "Built with Cartesi",
+                href: "https://rolluplab.io/",
+              },
+              {
+                label: "Technical Vision Forum",
+                href: "https://governance.cartesi.io/c/technical-vision-forum/13",
+              },
+            ],
           },
+          // {
+          //   type: "dropdown",
+          //   label: "Developers",
+          //   position: "left",
+          //   items: [
+          //     { label: "Code snippets", href: "#" },
+          //     { label: "Quick start tutorials", href: "#" },
+          //   ],
+          // },
+          {
+            label: "Cartesi Home",
+            to: "//cartesi.io",
+            position: "left",
+          },
+
+          // {
+          //   type: "docsVersionDropdown",
+          //   position: "right",
+          //   docsPluginId: "cartesi-rollups",
+          //   label: "Version",
+          // },
+
+          {
+            type: "search",
+            className: "navbar-search-custom",
+            position: "right",
+          },
+
           {
             to: "https://discord.gg/uxYE5YNv3N",
             position: "right",
@@ -83,22 +200,17 @@ const config = {
             className: "header-github-link",
             "aria-label": "GitHub repository",
           },
-          {
-            type: "search",
-            className: "navbar-search-custom",
-            position: "right",
-          },
         ],
       },
       announcementBar: {
         id: "mainnet",
         content:
-          'Cartesi Rollups is Mainnet Ready! Learn more about the beta launch <a href="https://docs.cartesi.io/cartesi-rollups/mainnet-risks/" target="_blank" rel="noopener noreferrer">here</a>.',
+          'Cartesi Rollups is Mainnet Ready! Over 200K in CTSI is up for grabs... if you can <a href="https://docs-azure-two.vercel.app/cartesi-rollups/core-concepts/mainnet-considerations/" target="_blank" rel="noopener noreferrer">hack Cartesi Rollups</a>.',
+
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
         isCloseable: true,
       },
-
       footer: {
         links: [
           {
@@ -195,22 +307,20 @@ const config = {
           },
         ],
       },
-
+      tableOfContents: {
+        minHeadingLevel: 2,
+        maxHeadingLevel: 2,
+      },
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
+      },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
         additionalLanguages: ["lua"],
       },
-
-      /*  // Announcemnt bar
-      announcementBar: {
-        id: "example_bar",
-        content:
-          'Documentation is under development <a target="_blank" rel="noopener noreferrer" href="#">Read more</a>',
-        backgroundColor: "#2D5ABE",
-        textColor: "#fff",
-        isCloseable: false,
-      },*/
     }),
   plugins: [
     [
@@ -221,12 +331,102 @@ const config = {
         routeBasePath: "cartesi-rollups",
         sidebarPath: require.resolve("./sidebarsRollups.js"),
         editUrl: "https://github.com/cartesi/docs/tree/main",
+        docLayoutComponent: "@theme/DocPage",
+        docItemComponent: "@theme/ApiItem",
         includeCurrentVersion: true,
         lastVersion: "current",
+        admonitions: {
+          keywords: [
+            "note",
+            "tip",
+            "danger",
+            "info",
+            "caution",
+            "goal",
+            "troubleshoot",
+          ],
+        },
         versions: {
           current: {
-            label: "1.0",
+            label: "1.3",
+            path: "1.3",
           },
+        },
+        showLastUpdateTime: true,
+      },
+    ],
+    [
+      "@docusaurus/plugin-client-redirects",
+      {
+        redirects: [
+          {
+            to: "/cartesi-rollups/1.3/", // Redirects /cartesi-rollups/ to the latest version
+            from: "/cartesi-rollups/",
+          },
+        ],
+        createRedirects(existingPath) {
+          if (existingPath.includes("/cartesi-rollups/1.0/")) {
+            // only top level URLs needed. All sub levels will be matched automatically. i.e. if /cartesi-rollups/api/ added, the plugin will automatically capture /cartesi-rollups/api/json-rpc/relays/DAppAddressRelay/ etc.
+            return [
+              existingPath.replace(
+                "/cartesi-rollups/1.0/overview",
+                "/cartesi-rollups/overview"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/main-concepts",
+                "/cartesi-rollups/main-concepts"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/mainnet-risks",
+                "/cartesi-rollups/mainnet-risks"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/sending-requests",
+                "/cartesi-rollups/sending-requests"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/reading-outputs",
+                "/cartesi-rollups/reading-outputs"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/assets-handling",
+                "/cartesi-rollups/assets-handling"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/dapp-architecture",
+                "/cartesi-rollups/dapp-architecture"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/api",
+                "/cartesi-rollups/api"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/http-api",
+                "/cartesi-rollups/http-api"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/dapp-life-cycle",
+                "/cartesi-rollups/dapp-life-cycle"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/build-dapps",
+                "/cartesi-rollups/build-dapps"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/references",
+                "/cartesi-rollups/references"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/migration-guides",
+                "/cartesi-rollups/migration-guides"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/challenges",
+                "/cartesi-rollups/challenges"
+              ),
+            ];
+          }
+          return undefined; // Return a falsy value: no redirect created
         },
       },
     ],
@@ -242,44 +442,35 @@ const config = {
       };
     },
     [
-      "@docusaurus/plugin-google-gtag",
-      {
-        trackingID: "GTM-MS89D9K",
-        anonymizeIP: true,
-      },
-    ],
-    [
-      "@docusaurus/plugin-google-tag-manager",
-      {
-        containerId: "GTM-MS89D9K",
-      },
-    ],
-    [
       "docusaurus-plugin-openapi-docs",
       {
         id: "apiDocs",
-        docsPluginId: "classic",
+        docsPluginId: "cartesi-rollups",
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath: "cartesi-rollups/api/rollup.yaml", // Path to designated spec file
-            outputDir: "cartesi-rollups/api/rollup", // Output directory for generated .mdx docs
+            specPath:
+              "cartesi-rollups/core-concepts/rollup-http-api/rollup.yaml", // Path to designated spec file
+            outputDir: "cartesi-rollups/core-concepts/rollup-http-api/rollup", // Output directory for generated .mdx docs
             sidebarOptions: {
               groupPathsBy: "tag",
             },
           },
           frontEndApi: {
-            specPath: "cartesi-rollups/api/inspect.yaml",
-            outputDir: "cartesi-rollups/api/inspect",
+            specPath:
+              "cartesi-rollups/core-concepts/rollup-http-api/inspect.yaml",
+            outputDir: "cartesi-rollups/core-concepts/rollup-http-api/inspect",
           },
         },
       },
     ],
 
     [
-      "@edno/docusaurus2-graphql-doc-generator",
+      "@graphql-markdown/docusaurus",
+      /** @type {import('@graphql-markdown/types').ConfigOptions} */
       {
-        schema: "cartesi-rollups/api/typeDefs.graphql",
+        schema:
+          "cartesi-rollups/core-concepts/rollup-http-api/typeDefs.graphql",
         rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
         baseURL: "api/graphql",
       },

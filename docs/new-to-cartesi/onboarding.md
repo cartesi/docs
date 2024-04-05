@@ -63,10 +63,10 @@ As a developer, you can use all the programming languages, tools, libraries, sof
 The fastest way of getting started is by [Running a Simple dApp](/cartesi-rollups/build-dapps/run-dapp) that we already built using Python.
 
 :::tip
-Check the section [**Cartesi Rollups**](/cartesi-rollups/overview) to learn theoretical concepts such as dApp architecture, available APIs, and how Cartesi's off-chain and on-chain components work under the hood.
+Check the section [**Cartesi Rollups**](/cartesi-rollups/) to learn theoretical concepts such as dApp architecture, available APIs, and how Cartesi's off-chain and on-chain components work under the hood.
 :::
 
-- Navigate to [Build dApps](/cartesi-rollups/build-dapps/overview) section for more guides:
+- Navigate to [Build dApps](/cartesi-rollups/build-dapps/) section for more guides:
 
   - [Technical Prerequisites](/cartesi-rollups/build-dapps/requirements)
   - [Steps to create a dApp](/cartesi-rollups/build-dapps/create-dapp)
@@ -95,7 +95,7 @@ This section targets researchers and low-level programmers who want to dive into
 
 <h3> Cartesi Machine </h3>
 
-You can dive deeper into Cartesi's core technology by reading the section about [the Cartesi Machine](/machine/intro.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
+You can dive deeper into Cartesi's core technology by reading the section about [the Cartesi Machine](/machine/index.md), which is a **virtual machine** that allows for verifiable computing using a Linux operating system.
 
 <h3> Cartesi Compute SDK to run a dApp off-chain </h3>
 

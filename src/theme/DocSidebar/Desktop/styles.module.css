@@ -9,6 +9,7 @@
     padding-top: var(--ifm-navbar-height);
     width: var(--doc-sidebar-width);
     transition: opacity 50ms ease;
+    padding-right: 0.5rem;
   }
 
   .sidebarWithHideableNavbar {

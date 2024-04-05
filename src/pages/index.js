@@ -1,17 +1,9 @@
 import React from "react";
-import Layout from "@theme/Layout";
-import { Hello } from "../components/Hello";
-import { Learn } from "../components/Learn";
-import { Faq } from "../components/Faq";
+import { Redirect } from "@docusaurus/router";
 
 function Home() {
-  return (
-    <Layout title="Homepage" description="Cartesi">
-      <Hello />
-      <Learn />
-      <Faq />
-    </Layout>
-  );
+  // return <Redirect to="/cartesi-rollups" />;
+  return <Redirect to="/cartesi-rollups/1.3/" />;
 }
 
 export default Home;

@@ -5,7 +5,7 @@ tags: [maintain, sdk, off-chain, low-level developer]
 
 **Cartesi Compute** allows you to implement a function in which you receive a set of inputs and it provides an output. So you can think of a Compute dApp as a computational oracle that tells you the result of a computation.
 
-[Cartesi Rollups](/cartesi-rollups/overview) adds on top of this to preserve state, allowing the application to be called multiple times with each call's effects on its internal state being carried over to subsequent interactions. As such, it can keep a counter, a balance, and basically anything you would expect from a smart contract.
+[Cartesi Rollups](/cartesi-rollups/) adds on top of this to preserve state, allowing the application to be called multiple times with each call's effects on its internal state being carried over to subsequent interactions. As such, it can keep a counter, a balance, and basically anything you would expect from a smart contract.
 
 For example, if you want to implement a Chess game that has two players exchanging moves, you can implement it as a **Rollups dApp** that keeps the state (e.g., the chess board). However, you could also simply play the game off-chain and if there is a disagreement then collect all of both players' moves and send it to a **Compute dApp** for it to tell the winner.
 
