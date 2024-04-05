@@ -105,7 +105,7 @@ CARTESI_POSTGRES_ENDPOINT=postgres://xxocfzrmjjyimu:76c3c8b40731fb6be5eb0f7cfad2
 ```
 
 :::note
-The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times. 
+The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times.
 :::
 
 ## Hosting the node
