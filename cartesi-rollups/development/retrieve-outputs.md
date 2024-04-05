@@ -196,7 +196,7 @@ query notices {
 
 Click the "Play" button (a triangular icon). The Playground will send the request to the server, and you'll see the response in the right pane.
 
-<video width="100%" controls poster="/static/img/v1.3/graphqlPoster.png">
+<video width="100%" controls>
     <source src="/videos/Query_Allnotices.mp4" type="video/mp4" />
     Your browser does not support video tags.
 </video>
@@ -264,10 +264,10 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 Replace `123` with the value you want to pass for `$inputIndex`.
 :::
 
-<video width="100%" controls poster="/static/img/v1.3/graphqlPoster.png">
-    <source src="/videos/Query_Singlenotice.mp4" type="video/mp4" />
+<!-- <video width="100%" controls>
+    <source src="/videos/QueryASingleNotice.mp4" type="video/mp4" />
     Your browser does not support video tags.
-</video>
+</video> -->
 
 With a JavaScript client, you can construct the GraphQL query and variables separately and send them as a JSON object in the request's body.
 

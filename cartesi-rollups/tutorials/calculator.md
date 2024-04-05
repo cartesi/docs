@@ -271,7 +271,7 @@ To send generic inputs to our application quickly, run the following:
 sunodo send generic
 ```
 
-<video width="100%" controls poster="/static/img/v1.3/calculatorPoster.png">
+<video width="100%" controls>
     <source src="/videos/Sunodo_Send.mp4" type="video/mp4" />
     Your browser does not support video tags.
 </video>
