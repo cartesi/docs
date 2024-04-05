@@ -48,4 +48,7 @@ The figure below details some of the main use cases for these interactions:
 
 - Inspect state — You can make an HTTP call to the Cartesi node to retrieve arbitrary dApp-specific application state.
 
+:::note
+The complete specification for these endpoints can be found in the Rollups HTTP APIs reference.
+:::
 
