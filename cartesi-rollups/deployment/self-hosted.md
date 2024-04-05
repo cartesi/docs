@@ -38,7 +38,7 @@ Here are the requirements:
      sunodo deploy --hosting self-hosted
    ```
 
-  The command generates a Docker image containing the Cartesi rollups node and Cartesi machine. You will be redirected to a web application to deploy the necessary smart contracts.
+  The command generates a Docker image containing the rollups node and machine. You will be redirected to a web application to deploy the necessary smart contracts.
 
   ![img](../../static/img/v1.3/deploy.png)
 
