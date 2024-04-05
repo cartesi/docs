@@ -25,7 +25,7 @@ Think of it as a digital authorization ticket that enables a dApp to perform spe
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
-:::note create a voucher
+:::note
 [Refer to the documentation here](./assets-handling/overview.md) for asset handling and creating vouchers in your dApp.
 :::
 
@@ -43,6 +43,9 @@ They serve as a means for dApp to notify the blockchain about particular events.
 
 - Notices are validated on-chain using the [`validateNotice()`](../core-concepts/rollup-http-api/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../core-concepts/rollup-http-api/json-rpc/application.md) contract.
 
+:::note
+Notices enable the dApp to communicate off-chain events without directly triggering smart contract interactions.
+:::
 
 ### Send a notice
 
@@ -257,8 +260,9 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 }
 ```
 
+:::note
 Replace `123` with the value you want to pass for `$inputIndex`.
-
+:::
 
 <!-- <video width="100%" controls poster="/static/img/v1.3/graphqlPoster.png">
     <source src="/videos/Query_Singlenotice.mp4" type="video/mp4" />
@@ -462,8 +466,9 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 }
 ```
 
+:::note
 Replace `123` with the value you want to pass for `$inputIndex`.
-
+:::
 
 You can also fetch information about a report with its `reportIndex` and `inputIndex`.
 
@@ -479,5 +484,6 @@ query report($reportIndex: Int!, $inputIndex: Int!) {
 }
 ```
 
-
+:::note
 Unlike Vouchers and Notices, reports are stateless and need attached proof.
+:::

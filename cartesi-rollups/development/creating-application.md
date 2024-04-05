@@ -28,5 +28,7 @@ This command creates a `new-dapp` directory with essential files for your dApp d
 
 Sunodo has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
 
-After creating your application, you can start building your dApp by adding your logic to the `dapp.py` file.
+:::note Next Steps
+Modify the application’s entry point to write your application logic.
+:::
 

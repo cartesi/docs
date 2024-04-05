@@ -160,9 +160,9 @@ This command sends the payload to the InputBox smart contract, initiating the ad
 
 Replace placeholders like `0xInputBoxAddress123`, `0xDAppAddress456`, `0xEncodedPayload789`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
-
+:::note
 You can obtain the relevant addresses by running `sunodo address-book`.
-
+:::
 
 #### 2. Send inputs with Sunodo
 
