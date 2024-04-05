@@ -105,10 +105,6 @@ CARTESI_POSTGRES_ENDPOINT=postgres://xxocfzrmjjyimu:76c3c8b40731fb6be5eb0f7cfad2
 
 ```
 
-:::note
-The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times. 
-:::
-
 ## Hosting the node
 
 You’ll need a server to host the application node and keep it operational 24/7. This server will expose a single port for client access to the rollups node APIs through GraphQL or Inspect requests.
