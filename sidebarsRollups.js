@@ -158,7 +158,7 @@ module.exports = {
       type: "category",
       label: "Deployment",
       collapsed: true,
-      items: ["deployment/introduction", "deployment/self-hosted"],
+      items: ["deployment/overview"],
     },
     {
       type: "category",
