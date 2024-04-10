@@ -7,6 +7,11 @@ import GdrpBar from "./gdrpBar";
 import FooterNav from "./FooterNav";
 
 function Footer() {
+  function getCurrentYear() {
+    const date = new Date();
+    return date.getFullYear();
+  }
+  
   return (
     <div className="bg-gray-900 py-8 sm:py-16 text-sm">
       <div className="container">
@@ -18,7 +23,7 @@ function Footer() {
             <FooterNav />
           </div>
           <div className="flex items-center justify-between gap-4 text-xs text-white">
-            <p>© 2023 Cartesi Foundation Ltd. All rights reserved.</p>
+            <p>© {getCurrentYear()} Cartesi Foundation Ltd. All rights reserved.</p>
             <p>
               The Cartesi Project is commissioned by the Cartesi Foundation.
             </p>

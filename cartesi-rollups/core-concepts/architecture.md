@@ -50,7 +50,7 @@ The on-chain part of Cartesi Rollups involves deployed base layer smart contract
 
 - [CartesiDApp](./rollup-http-api/json-rpc/application.md): This `CartesiDApp` contract is instantiated for each dApp (i.e., each dApp has its application address). With this address, an application can hold ownership over digital assets on the base layer, like Ether, ERC-20 tokens, and NFTs.
 
-- [CartesiDAppFactory](./rollup-http-api/json-rpc/application-factory.md): The `CartesiDAppFactory` contract allows anyone to deploy [`CartesiDApp`](./rollup-http-api/json-rpc/application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
+- [CartesiDAppFactory](./rollup-http-api/json-rpc/application-factory.md): The `CartesiDAppFactory` contract allows anyone to deploy `CartesiDApp` contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
 
 - Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your dApp. Currently, there are Portal contracts for the following types of assets: [Ether (ETH)](./rollup-http-api/json-rpc/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](./rollup-http-api/json-rpc/portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](./rollup-http-api/json-rpc//portals/ERC721Portal.md), [ERC-1155 single transfer](./rollup-http-api/json-rpc/portals/ERC1155SinglePortal.md) and [ERC-1155 batch token transfers](./rollup-http-api/json-rpc/portals/ERC1155BatchPortal.md).
 

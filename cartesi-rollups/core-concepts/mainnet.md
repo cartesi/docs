@@ -22,7 +22,7 @@ The codebase may contain some undiscovered vulnerabilities that might put user f
 Developers and users should factor this risk into their decision to use Cartesi Rollups and decide how much of their value to entrust to the system.
 
 ## Security
-So, what steps are we taking to keep user funds safe? [Honeypot](https://honeypot.cartesi.io/) is a dApp designed to prove Cartesi Rollups' security.
+So, what steps are we taking to keep user funds safe? **Honeypot** is a dApp designed to prove Cartesi Rollups' security.
 
 As the Honeypot is tested and fortified, users and developers will have increased confidence in the security of Cartesi’s tech when launching and using new apps that hold tangible assets. Want to help test the security of Cartesi Rollups? [Try your hand at cracking the Honeypot](https://honeypot.cartesi.io/).
 

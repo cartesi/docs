@@ -5,7 +5,7 @@ tags: [rollups, dapps, linux]
 resources:
   - url: https://cartesi.io/blog/understanding-cartesi-rollups/
     title: Grokking Cartesi Rollups
-  - ur;: https://medium.com/cartesi/application-specific-rollups-e12ed5d9de01
+  - url: https://medium.com/cartesi/application-specific-rollups-e12ed5d9de01
     title: Application-Specific Rollups
 ---
 
