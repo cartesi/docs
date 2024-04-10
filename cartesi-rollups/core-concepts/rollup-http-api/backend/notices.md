@@ -1,7 +1,7 @@
 ---
 id: notices
 title: Notices
-tags: [output, notices]
+
 ---
 
 A notice is a verifiable data declaration that attests to off-chain events or conditions and is accompanied by proof.

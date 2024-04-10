@@ -1,7 +1,6 @@
 ---
 id: node-configuration
 title: Node configuration
-tags: [node, configuration, sunodo]
 resources:
   - url: https://docs.sunodo.io/guide/running/running-application
     title: Node configuration with Sunodo

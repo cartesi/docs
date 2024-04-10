@@ -1,7 +1,6 @@
 ---
 id: mainnet-considerations
 title: Mainnet considerations
-tags: [mainnet, EVM]
 resources:
     - url: https://honeypot.cartesi.io/
       title: Honeypot dApp

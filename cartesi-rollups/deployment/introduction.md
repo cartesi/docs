@@ -1,7 +1,6 @@
 ---
 id: introduction
 title: Introduction
-tags: [rollups, deploy, node]
 ---
 
 Applications built on Cartesi Rollups are intended to be deployed to public blockchains so users can access them. This can be done by taking advantage of a cloud-based infrastructure.

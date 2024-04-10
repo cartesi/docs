@@ -1,7 +1,6 @@
 ---
 id: machine-learning
 title: Integrating machine learning with Cartesi
-tags: [ml, dapps, mc2gen]
 resources:
     - url: https://github.com/Mugen-Builders/m2cgen
       title: Source code for the m2cgen application

@@ -1,7 +1,6 @@
 ---
 id: building-the-application
 title: Building the application
-tags: [build, machine, dapp, developer]
 ---
 
 “Building” in this context compiles your application into RISC-V architecture and consequently builds a Cartesi machine containing your application. This architecture enables computation done by your application to be reproducible and verifiable.

@@ -1,7 +1,6 @@
 ---
 id: creating-application
 title: Creating an application
-tags: [create, dapp, developer]
 ---
 
 Sunodo simplifies creating dApps on Cartesi. To create a new application, run:

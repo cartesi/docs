@@ -1,7 +1,6 @@
 ---
 id: send-requests
 title: Send requests
-tags: [Advance, Inspect, Requests]
 resources:
   - url: https://github.com/prototyp3-dev/frontend-web-cartesi
     title: React.js + Typescript template

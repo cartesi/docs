@@ -1,7 +1,6 @@
 ---
 id: retrieve-outputs
 title: Retrieve outputs
-tags: [notices, vouchers, reports]
 resources:
   - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
     title: The Cartesi dApp Developer Free Course

@@ -1,7 +1,6 @@
 ---
 id: installation
 title: Installation
-tags: [Sunodo, Installation, Docker]
 ---
 
 The primary requirements for building on Cartesi are Sunodo and Docker Desktop for your operating system of choice.

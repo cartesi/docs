@@ -1,7 +1,7 @@
 ---
 id: vouchers
 title: Vouchers
-tags: [output, vouchers]
+
 ---
 
 Vouchers serve as a mechanism for facilitating on-chain actions initiated in the execution layer.

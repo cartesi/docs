@@ -1,7 +1,6 @@
 ---
 id: python
 title: Assets handling with Python
-tags: [assets, portals, vouchers]
 resources:
    - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
      title: The Cartesi dApp Developer Free Course
