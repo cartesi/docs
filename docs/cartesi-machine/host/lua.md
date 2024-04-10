@@ -1,9 +1,9 @@
 ---
 title: Lua interface
-tags: [machine, low-level developer, researcher]
+
 ---
 
-:::warning
+:::caution
 This entire chapter is for advanced users only, since typical users of the Cartesi platform will likely never need to programmatically control a Cartesi Machine.
 :::
 

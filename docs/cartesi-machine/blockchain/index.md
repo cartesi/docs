@@ -1,6 +1,6 @@
 ---
 title: Introduction
-tags: [maintain, machine, low-level developer]
+
 ---
 
 This section describes the Cartesi Machine from the perspective of the blockchain.

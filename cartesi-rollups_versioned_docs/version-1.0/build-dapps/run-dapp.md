@@ -92,7 +92,7 @@ For other calls, access the [GraphQL playground](https://github.com/graphql/grap
 
 By the end of this tutorial, you will learn how to run a simple existing dApp written in _Python_, called **Echo-Python**.
 
-:::warning
+:::caution
 This guide is tailored for Ubuntu or similar Linux distributions. Adjustments might be required for other operating systems.
 :::
 

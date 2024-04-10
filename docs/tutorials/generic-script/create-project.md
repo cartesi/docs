@@ -12,7 +12,7 @@ tags: [sdk, tutorials, low-level developer]
 
 In the [previous tutorial](../calculator/create-project.md), we learned how to build a Cartesi Compute dApp that is capable of receiving input data as a string and performing a mathematical calculation using the Linux `bc` tool. In this project, we will generalize this idea to show how Cartesi Compute can be leveraged to allow a smart contract to perform a _generic_ computation by receiving an arbitrary script as input and using _any_ interpreter of choice, such as Python or Lua, including any required libraries, to execute it. And without compromising on decentralization.
 
-:::warning DISCLAIMER
+:::caution DISCLAIMER
 Despite being included as a tutorial, it should be noted that this is **NOT** the recommended way of implementing a dApp using Cartesi Compute. It usually makes little sense to waste resources building a full script on-chain - all possible logic should rather be moved over to the off-chain Cartesi Machine. However, this strategy is used here for the purposes of illustrating Cartesi Compute's potential for running any generic computation in a verifiable way. Furthermore, this approach allows us to play with the possibilities without the need of building a different machine for every script we want to try out.
 :::
 
