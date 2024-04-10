@@ -1,7 +1,6 @@
 ---
 title: Introduction
 id: intro
-tags: [maintain, machine, low-level developer, researcher]
 ---
 
 The Cartesi Machine is Cartesi's solution for verifiable computation.

@@ -319,53 +319,41 @@ const sidebars = {
     {
       type: "category",
       label: "Cartesi Machine",
-      link: {
-        type: "doc",
-        id: "machine/intro",
-      },
+     
       collapsed: true,
       items: [
-        "machine/intro",
+        "cartesi-machine/intro", 
         {
           type: "category",
           label: "Host perspective",
-          link: {
-            type: "doc",
-            id: "machine/host/index",
-          },
+         
           collapsed: true,
           items: [
-            "machine/host/index",
-            "machine/host/cmdline",
-            "machine/host/lua",
+            "cartesi-machine/host/index", 
+            "cartesi-machine/host/cmdline",
+            "cartesi-machine/host/lua",
           ],
         },
         {
           type: "category",
           label: "Target perspective",
-          link: {
-            type: "doc",
-            id: "machine/target/index",
-          },
+       
           collapsed: true,
           items: [
-            "machine/target/index",
-            "machine/target/linux",
-            "machine/target/architecture",
+            "cartesi-machine/target/index", 
+            "cartesi-machine/target/linux",
+            "cartesi-machine/target/architecture",
           ],
         },
         {
           type: "category",
           label: "Blockchain perspective",
-          link: {
-            type: "doc",
-            id: "machine/blockchain/index",
-          },
+        
           collapsed: true,
           items: [
-            "machine/blockchain/index",
-            "machine/blockchain/hash",
-            "machine/blockchain/vg",
+            "cartesi-machine/blockchain/index", 
+            "cartesi-machine/blockchain/hash",
+            "cartesi-machine/blockchain/vg",
           ],
         },
       ],
@@ -388,6 +376,7 @@ const sidebars = {
       ],
     },
   ],
+  
 
   staking: [
     {

@@ -1,6 +1,6 @@
 ---
 title: Verification game
-tags: [machine, low-level developer, researcher]
+
 ---
 
 :::danger EDITOR NOTE

@@ -1,6 +1,6 @@
 ---
 title: Hash view of state
-tags: [machine, low-level developer, researcher]
+
 ---
 
 One of the key goals of moving computations off-chain is to allow them to manipulate vast amounts of data: so much data that it becomes economically prohibitive to explicitly store them in the blockchain.
