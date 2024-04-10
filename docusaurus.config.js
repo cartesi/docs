@@ -68,10 +68,25 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      algolia: {
-        appId: "STJID4NVVG",
-        apiKey: "a454730829efd0e7fc91ccb52e1185a6",
-        indexName: "cartesi",
+      typesense: {
+        typesenseCollectionName: 'cartesi_1712788548',
+  
+        typesenseServerConfig: {
+          nodes: [
+            {
+              host: 'ofpew9nhydv5264qp-1.a1.typesense.net',
+              port: 443,
+              protocol: 'https',
+            }
+          
+          ],
+          apiKey: 'OqZU4j8aAYx08wExdilTddIDGDh4QJov',
+        },
+  
+        // Optional: Typesense search parameters: https://typesense.org/docs/0.24.0/api/search.html#search-parameters
+        typesenseSearchParameters: {},
+  
+        // Optional
         contextualSearch: true,
       },
       hotjar: {
@@ -476,7 +491,7 @@ const config = {
       },
     ],
   ],
-  themes: ["docusaurus-theme-openapi-docs"],
+  themes: ["docusaurus-theme-openapi-docs", "docusaurus-theme-search-typesense"],
 };
 
 module.exports = config;
