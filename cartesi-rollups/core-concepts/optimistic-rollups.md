@@ -1,7 +1,6 @@
 ---
 id: optimistic-rollups
 title: Optimistic Rollups
-tags: [ZK Rollups, Optimistic Rollups, Ethereum]
 resources:
   - url: https://ethereum.org/en/developers/docs/scaling/optimistic-rollups/
     title: Optimistic Rollups

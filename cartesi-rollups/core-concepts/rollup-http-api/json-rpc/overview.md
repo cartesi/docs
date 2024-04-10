@@ -1,7 +1,6 @@
 ---
 id: overview
 title: Overview
-tags: [rollups, api, contracts]
 resources:
   - url: https://github.com/cartesi/rollups-contracts
     title: Smart Contracts for Cartesi Rollups

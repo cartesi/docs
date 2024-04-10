@@ -1,7 +1,6 @@
 ---
 id: http-api
 title: Overview
-tags: [learn, rollups, dapps, low-level developer, api, backend, frontend]
 resources:
   - url: https://github.com/cartesi/machine-emulator
     title: Off-chain implementation of the Cartesi Machine

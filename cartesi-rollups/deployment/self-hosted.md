@@ -1,7 +1,6 @@
 ---
 id: self-hosted
 title: Self-hosted deployment
-tags: [rollups, deploy, self-hosted]
 resources:
   - url: https://www.codecademy.com/article/installing-and-using-postgresql-locally
     title: Installing and Using PostgreSQL Locally

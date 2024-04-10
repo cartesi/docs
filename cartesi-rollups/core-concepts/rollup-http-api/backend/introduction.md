@@ -1,7 +1,6 @@
 ---
 id: introduction
 title: Introduction
-tags: [advance, inspect]
 ---
 
 The backend of a Cartesi dApp retrieves a new request as follows:

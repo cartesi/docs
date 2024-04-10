@@ -1,7 +1,6 @@
 ---
 id: running-the-application
 title: Running the application
-tags: [nonodo, sunodo]
 resources:
   - url: https://github.com/gligneul/nonodo/tree/main
     title: NoNodo

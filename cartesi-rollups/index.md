@@ -1,7 +1,6 @@
 ---
 id: overview
 title: Overview
-tags: [rollups, dapps, linux]
 resources:
   - url: https://cartesi.io/blog/understanding-cartesi-rollups/
     title: Grokking Cartesi Rollups

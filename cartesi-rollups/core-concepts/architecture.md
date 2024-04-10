@@ -1,7 +1,6 @@
 ---
 id: architecture
 title: Architecture
-tags: [Cartesi Rollups, Cartesi Machine]
 resources:
   - url: https://cartesi.io/blog/grokking-cartesi-virtual-machine/
     title: Grokking the Cartesi Virtual Machine

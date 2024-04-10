@@ -1,7 +1,6 @@
 ---
 id: quickstart
 title: Quickstart
-tags: [quickstart, dapps, developer]
 resources:
   - url: https://github.com/prototyp3-dev/frontend-web-cartesi
     title: React.js + Typescript  template
