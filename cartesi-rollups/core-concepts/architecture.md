@@ -24,7 +24,7 @@ A dApp running on Cartesi consists of the following main components:
 
 - Backend, the application's state, and verifiable logic. The backend runs inside the Cartesi Machine as a regular Linux application.
 
-- Frontend, the application's user-facing interface, such as a web app or a CLI tool like Cast
+- Frontend, the application's user-facing interface, such as a web app or a CLI tool like Cast.
 
 
 <video width="100%" controls poster="/img/architecture_dapp.png">
@@ -41,7 +41,6 @@ As the Cartesi Machine and on-chain components live in different environments, t
 Now, when a request is made to a dApp, the type of request determines how information flows between the on-chain and off-chain components. For example, it could involve sending data to the off-chain Cartesi Machine for computation and then returning the results to the on-chain smart contracts.
 
 ## On-chain components
-
 
 The on-chain part of Cartesi Rollups involves deployed base layer smart contracts, each with distinct roles for your dApp. Every Cartesi dApp leverages the functionality these contracts provide. 
 
@@ -63,9 +62,9 @@ It can act as a **validator** and **inspect the dApp state**.
 
 Here is a high-level overview of the three main features of the Cartesi Node. 
 
-- Processes inputs from the blockchain to change the state of decentralized applications 
+- Processes inputs from the blockchain to change the state of decentralized applications.
 
-- Allows the node to function as a Validator, generating claims at the end of epochs
+- Allows the node to function as a Validator, generating claims at the end of epochs.
 
 - Captures and analyzes requests to inspect the state of dApps.
 
@@ -97,7 +96,7 @@ Central to Cartesi Rollups is the Cartesi Machine, a virtual machine designed to
 
 - Abstraction of infrastructure: The underlying infrastructure is abstracted away, allowing you to focus on writing code without worrying about managing servers, hardware, or networking resources.
 
-- Flexibility in programming languages and libraries: You have flexibility in the choice of programming languages and all open-source libraries available on Linux
+- Flexibility in programming languages and libraries: You have flexibility in the choice of programming languages and all open-source libraries available on Linux.
 
 
 The Cartesi Machine is a state machine that remains idle until a new request arises. The concept of state, in this case, is tied to both the input requests that the Cartesi Machine receives and the execution of the RISC-V instructions that the machine follows in processing those requests. The Cartesi Machine handles:

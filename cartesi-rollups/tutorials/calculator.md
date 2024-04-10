@@ -17,9 +17,9 @@ The backend will be written using Python. For added flexibility, feel free to ex
 
 ## Set up your environment
 
-Install these to set up your environment for quick building.
+Install these to set up your environment for quick building:
 
-- Sunodo: A simple tool for building applications on Cartesi. [Install Sunodo for your OS of choice](../development/installation.md)
+- Sunodo: A simple tool for building applications on Cartesi. [Install Sunodo for your OS of choice](../development/installation.md).
 
 - Docker Desktop: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker for your OS of choice](https://www.docker.com/products/docker-desktop/).
 
@@ -37,11 +37,11 @@ This creates a `calculator/` directory with essential files for your Python deve
 
 - `Dockerfile`: Contains configurations to boot a complete Cartesi machine.
 
-- `README.md`: A markdown file
+- `README.md`: A markdown file.
 
 - `dapp.py`: A Python file with template backend code that serves as your application's endpoint.
 
-- `requirements.txt`: The Python dependencies required for your application
+- `requirements.txt`: The Python dependencies required for your application.
 
 Let’s review the backend code in the `dapp.py` file.
 

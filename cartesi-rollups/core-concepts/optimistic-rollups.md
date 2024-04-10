@@ -34,7 +34,7 @@ Consider this question: _"How does Ethereum know that the data posted by an off-
 
 The answer depends on the rollup implementation, which falls within one of two categories according to the type of proof used:
 
-1. **Zero-knowledge Rollups (ZK Rollups)**, which use validity proofs
+1. **Zero-knowledge Rollups (ZK Rollups)**, which use validity proofs.
 
 2. **Optimistic Rollups (ORs)**, which use fraud proofs.
 

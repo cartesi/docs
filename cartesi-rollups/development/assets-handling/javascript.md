@@ -33,7 +33,7 @@ Let’s build a simple dApp that uses the `cartesi-wallet` and `cartesi-router` 
 sunodo create js-wallet-dapp --template javascript
 ```
 
-2. In the `js-wallet-dapp` directory, install `cartesi-router,` `cartesi-wallet,` and `viem.`
+2. In the `js-wallet-dapp` directory, install `cartesi-router,` `cartesi-wallet,` and `viem`.
 
 ```shell
 npm install viem cartesi-router cartesi-wallet
@@ -41,7 +41,7 @@ npm install viem cartesi-router cartesi-wallet
 
 ## Usage
 
-Import essential functions and classes from external modules
+Import essential functions and classes from external modules:
 
 ```js
 import { hexToString } from "viem";
@@ -49,7 +49,7 @@ import { Router } from "cartesi-router";
 import { Wallet, Notice, Error_out } from "cartesi-wallet";
 ```
 
-Initialize variables for the portal contract and relay addresses.
+Initialize variables for the portal contract and relay addresses:
 
 ```js
 const etherPortalAddress = "0xFfdbe43d4c855BF7e0f105c400A50857f53AB044";
