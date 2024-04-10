@@ -15,7 +15,7 @@ resources:
 
 You can send two requests to an application depending on whether you want to change or read the state.
 
-- **Advance**: In this request, any input data changes the state of the dApp
+- **Advance**: In this request, any input data changes the state of the dApp.
 
 - **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the dApp state without changing it.
 
@@ -146,7 +146,7 @@ In the dApp architecture, here is how an advance request plays out.
 
 - Step 2: The Cartesi Node reads the data and gives it to the Cartesi machine for processing.
 
-- Step 3: After the computation, the state is updated, and the results are sent back to the rollup server
+- Step 3: After the computation, the state is updated, and the results are sent back to the rollup server.
 
 You can send inputs to your application with [Cast](https://book.getfoundry.sh/cast/), Sunodo, or a custom web interface. 
 
@@ -186,7 +186,7 @@ $ sunodo send
 
 There are five types of inputs using a sub-command: `dapp-address`, `erc20`, `erc721`, `ether`, `generic`.
 
-Unlike the asset-type sub-commands (Ether, ERC20, and ERC721), the generic input command allows you to send inputs with any payload format (hex, string, and ABI)
+Unlike the asset-type sub-commands (Ether, ERC20, and ERC721), the generic input command allows you to send inputs with any payload format (hex, string, and ABI).
 
 ```shell
 $ sunodo send generic

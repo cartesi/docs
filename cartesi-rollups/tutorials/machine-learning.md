@@ -23,7 +23,7 @@ Install these to set up your environment for quick building.
 
 ## Understanding the dApp
 
-- ML Model Generation: The dApp generates a logistic regression model using sci-kit-learn, NumPy, and pandas 
+- ML Model Generation: The dApp generates a logistic regression model using sci-kit-learn, NumPy, and pandas. 
 
 - m2cgen Transpilation: The dApp uses the m2cgen (Model to Code Generator) library to transpile the ML model into pure Python code without external dependencies. This translation simplifies the execution process, particularly in the Cartesi Machine environment. 
 
@@ -33,9 +33,9 @@ Users can submit inputs describing a person’s features (e.g., age, sex, embark
 
 The model currently considers only three characteristics of a person to predict their survival, even though other attributes are available in the dataset:
 
-1. Age
-2. Sex, which can be `male` or `female`
-3. Embarked, which corresponds to the port of embarkation and can be `C` (Cherbourg), `Q` (Queenstown), or `S` (Southampton)
+1. Age.
+2. Sex, which can be `male` or `female`.
+3. Embarked, which corresponds to the port of embarkation and can be `C` (Cherbourg), `Q` (Queenstown), or `S` (Southampton).
 
 As such, inputs to the dApp should be given as a JSON string such as the following:
 
@@ -219,7 +219,7 @@ After the build process is complete, run the node with the command:
 sunodo run
 ```
 
-Your application is now ready to receive input.
+Your application is now ready to receive inputs.
 
 ## Sending inputs to the application
 
@@ -258,5 +258,5 @@ To change those, open the file `model/build_model.py` and change the following v
 
 - `include`: an optional list indicating a subset of the dataset's features to be used in the prediction model.
 
-- `dependent_var`: the feature to be predicted, such as the entry's classification
+- `dependent_var`: the feature to be predicted, such as the entry's classification.
 

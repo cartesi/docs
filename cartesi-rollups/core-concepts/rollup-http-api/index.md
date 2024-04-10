@@ -27,7 +27,7 @@ This is accomplished by calling a set of HTTP endpoints, as illustrated by the f
 
 You can send two requests to an application depending on whether you want to change or read the state.
 
-- **Advance**: In this request, any input data changes the state of the dApp
+- **Advance**: In this request, any input data changes the state of the dApp.
 
 - **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the dApp state without changing it.
 
