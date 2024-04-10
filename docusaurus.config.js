@@ -131,7 +131,7 @@ const config = {
                 label: "Twitter",
                 href: "https://www.twitter.com/cartesiproject",
               },
-              { label: "Discord", href: "https://discord.gg/uxYE5YNv3N" },
+              { label: "Discord", href: "https://discord.gg/cWGbyFkQ2W" },
               { label: "Reddit", href: "https://www.reddit.com/r/cartesi/" },
               {
                 label: "YouTube",
@@ -189,7 +189,7 @@ const config = {
           },
 
           {
-            to: "https://discord.gg/uxYE5YNv3N",
+            to: "https://discord.gg/cWGbyFkQ2W",
             position: "right",
             className: "header-discord-link",
             "aria-label": "Discord",
@@ -285,7 +285,7 @@ const config = {
               },
               {
                 label: "Discord",
-                to: "https://discord.gg/uxYE5YNv3N",
+                to: "https://discord.gg/cWGbyFkQ2W",
               },
               {
                 label: "Medium",

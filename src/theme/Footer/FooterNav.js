@@ -18,8 +18,8 @@ function FooterNav() {
     governance: "https://cartesi.io/governance",
     docs: "https://docs.cartesi.io/",
     whitepaper: "https://cartesi.io/cartesi_whitepaper.pdf",
-    foundationNotice: "https://cartesi.io/",
-    usagePolicy: "https://cartesi.io/",
+    foundationNotice: "https://cdn.sanity.io/files/zg5gx8g4/production/b63a469a52ba0e7db65060e4b072be7074f2822f.pdf",
+    usagePolicy: "https://cdn.sanity.io/files/zg5gx8g4/production/ddd64effd0cbf8ff1b4193fe4ee85c7016e7c168.pdf",
     examples: "https://docs.cartesi.io/",
     showcase: "https://rolluplab.io/",
     bugBounty:
@@ -27,11 +27,11 @@ function FooterNav() {
     staking: "https://explorer.cartesi.io/stake",
     grantsProgram: "https://governance.cartesi.io/",
     cgpVoting: "https://snapshot.org/#/cartesi-community-grants-program.eth",
-    discord: "https://discord.gg/pfXMwXDDfW",
+    discord: "https://discord.gg/cWGbyFkQ2W",
     github: "https://www.github.com/cartesi",
     telegram: "https://t.me/CartesiProject",
     twitter: "https://www.twitter.com/cartesiproject",
-    medium: "https://medium.com/cartesi",
+   
     youtube: "https://www.youtube.com/@Cartesiproject/featured",
     reddit: "https://www.reddit.com/r/cartesi/",
     linkedin: "https://www.linkedin.com/company/cartesi/",
@@ -65,18 +65,21 @@ function FooterNav() {
         <a
           className="text-white hover:text-white/80 no-underline hover:no-underline"
           href={routes.whitepaper}
+          target="_blank"
         >
           Whitepaper
         </a>
         <a
           className="text-white hover:text-white/80 no-underline hover:no-underline"
           href={routes.foundationNotice}
+          target="_blank"
         >
           Foundation Notice
         </a>
         <a
           className="text-white hover:text-white/80 no-underline hover:no-underline"
           href={routes.usagePolicy}
+          target="_blank"
         >
           Usage Policy
         </a>
@@ -84,6 +87,7 @@ function FooterNav() {
       <div className="col-span-2 flex flex-row gap-4 sm:col-span-1 sm:flex-col">
         <a
           href={routes.discord}
+          target="_blank"
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconDiscord alt="" className="h-5 w-5 sm:hidden" />
@@ -91,6 +95,7 @@ function FooterNav() {
         </a>
         <a
           href={routes.github}
+          target="_blank"
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconGithub alt="" className="h-5 w-5 sm:hidden" />
@@ -98,6 +103,7 @@ function FooterNav() {
         </a>
         <a
           href={routes.telegram}
+          target="_blank"
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconTelegram alt="" className="h-5 w-5 sm:hidden" />
@@ -105,22 +111,18 @@ function FooterNav() {
         </a>
         <a
           href={routes.twitter}
+          target="_blank"
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconTwitter alt="" className="h-5 w-5 sm:hidden" />
           <span className="hidden sm:block">Twitter</span>
         </a>
-        <a
-          href={routes.medium}
-          className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
-        >
-          <IconMedium alt="" className="h-5 w-5 sm:hidden" />
-          <span className="hidden sm:block">Medium</span>
-        </a>
+    
       </div>
       <div className="col-span-2 flex flex-row gap-4 sm:col-span-1 sm:flex-col">
         <a
           href={routes.youtube}
+          target="_blank"
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconYoutube alt="" className="h-5 w-5 sm:hidden" />
@@ -128,6 +130,7 @@ function FooterNav() {
         </a>
         <a
           href={routes.reddit}
+          target="_blank"
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconReddit alt="" className="h-5 w-5 sm:hidden" />
@@ -135,6 +138,7 @@ function FooterNav() {
         </a>
         <a
           href={routes.linkedin}
+          target="_blank"
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconLinkedin alt="" className="h-5 w-5 sm:hidden" />
@@ -142,6 +146,7 @@ function FooterNav() {
         </a>
         <a
           href={routes.instagram}
+            target="_blank"
           className="p-2 sm:p-0 text-white hover:text-white/80 no-underline hover:no-underline"
         >
           <IconInstagram alt="" className="h-5 w-5 sm:hidden" />
