@@ -31,6 +31,10 @@ sunodo run --block-time <seconds>
 
 ## Epoch duration
 
+To avoid over-interacting with the blockchain, validators don’t check every new state update on the off-chain machine. They do it at the end of an **epoch** — a batch of inputs following the same cycle. 
+
+To end an epoch, all validators must reach a consensus about the machine’s state after processing all the batched inputs. At this point, the outputs are considered final, meaning their contents can no longer be disputed.
+
 Epoch configuration is crucial when working with vouchers.
 
 Vouchers allow your dApps in the execution layer to interact with contracts on the base layer through message calls.
@@ -39,7 +43,6 @@ One everyday use of vouchers in Cartesi dApps is to withdraw assets.
 
 A voucher can only be executed once the dApp's consensus submits a claim containing it, i.e., when their corresponding epoch is closed.
 
-By default, the node closes an epoch once a day, which is not practical for development and testing purposes - where you may want to deposit and withdraw assets quickly.
 
 To change the default epoch duration, run:
 
