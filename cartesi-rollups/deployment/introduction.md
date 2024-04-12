@@ -39,12 +39,13 @@ As stated above, the first step in deploying a new Cartesi dApp to a blockchain 
 
 The table below shows the list of all [networks that are currently supported](https://github.com/cartesi/rollups-contracts/tree/main/deployments) in the latest release:
 
-| Network Name    | Chain ID |
-| --------------- | -------- |
-| Ethereum Mainnet | 1 |
-| Sepolia         | 11155111 |
-| Optimism | 10 |
+| Network Name     | Chain ID |
+| ---------------- | -------- |
+| Ethereum Mainnet | 1        |
+| Sepolia          | 11155111 |
+| Optimism         | 10       |
 | Optimism Sepolia | 11155420 |
-| Arbitrum  | 42161   |
-| Arbitrum Sepolia | 421614 |
-
+| Arbitrum         | 42161    |
+| Arbitrum Sepolia | 421614   |
+| Base             | 8453     |
+| Base Sepolia     | 84532    |
