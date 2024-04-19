@@ -1,5 +1,5 @@
 ---
-id: python
+id: python-wallet
 title: Assets handling with Python
 resources:
    - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass

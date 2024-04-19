@@ -1,6 +1,6 @@
 ---
-id: overview
-title: Overview
+id: asset-handling
+title: Asset Handling
 resources:
   - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
     title: The Cartesi dApp Developer Free Course
@@ -18,13 +18,13 @@ As with any execution layer solution, a Cartesi dApp that wants to manipulate as
 
 Currently, Cartesi Rollups support the following types of assets:
 
-- [Ether (ETH)](../../rollups-apis/json-rpc/portals/EtherPortal.md)
-- [ERC-20](../../rollups-apis/json-rpc/portals/ERC20Portal.md)
-- [ERC-721](../../rollups-apis/json-rpc/portals/ERC721Portal.md)
-- [ERC-1155 Single](../../rollups-apis/json-rpc/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch](../../rollups-apis/json-rpc/portals/ERC1155BatchPortal.md)
+- [Ether (ETH)](../rollups-apis/json-rpc/portals/)
+- [ERC-20](../rollups-apis/json-rpc/portals/ERC20Portal.md)
+- [ERC-721](../rollups-apis/json-rpc/portals/ERC721Portal.md)
+- [ERC-1155 Single](../rollups-apis/json-rpc/portals/ERC1155SinglePortal.md)
+- [ERC-1155 Batch](../rollups-apis/json-rpc/portals/ERC1155BatchPortal.md)
 
-![img](../../../static/img/v1.3/assets.jpg)
+![img](../../static/img/v1.3/assets.jpg)
 
 ## Deposits
 
@@ -111,17 +111,17 @@ Vouchers are crucial in allowing dApps in the execution layer to interact with c
 
 The dApp’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals, for example: `transferFrom(sender, recipient, amount)`. In this case, the sender is the dApp itself.
 
-By calling [`relayDAppAddress()`](../../rollups-apis/json-rpc/relays/relays.md), function of the `DAppAddressRelay` contract, it adds the dApp’s address as a new input for the Cartesi dApp to process. Next, the off-chain machine uses this address to generate a voucher for execution at the [`executeVoucher()`](../../rollups-apis/json-rpc/application.md/#executevoucher) function of the `CartesiDApp` contract.
+By calling [`relayDAppAddress()`](../rollups-apis/json-rpc/relays/relays.md), function of the `DAppAddressRelay` contract, it adds the dApp’s address as a new input for the Cartesi dApp to process. Next, the off-chain machine uses this address to generate a voucher for execution at the [`executeVoucher()`](../rollups-apis/json-rpc/application.md/#executevoucher) function of the `CartesiDApp` contract.
 
 :::note epoch duration
-By default, Cartesi nodes close one epoch every couple of days. You can [manually set the epoch duration](../../development/node-configuration.md/#epoch-duration) to facilitate quicker asset-handling methods.
+By default, Cartesi nodes close one epoch every couple of days. You can [manually set the epoch duration](./node-configuration.md/#epoch-duration) to facilitate quicker asset-handling methods.
 :::
 
 Here are the function signatures used by vouchers to withdraw the different types of assets:
 
 | Asset    | Destination    | Function signature                                                                                                                          |
 | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../../rollups-apis/json-rpc/application.md/#withdrawether)                            |
+| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../rollups-apis/json-rpc/application.md/#withdrawether)                            |
 | ERC-20   | Token contract | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
 | ERC-20   | Token contract | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
