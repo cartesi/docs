@@ -59,7 +59,7 @@ const dAppAddressRelayContract = "0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE";
 
 ## Create a helper function
 
-Let’s create a helper function allowing the rollups server to receive requests for the three output instances, i.e., [vouchers](../../core-concepts/rollup-http-api/backend/vouchers.md), [notices](../../core-concepts/rollup-http-api/backend/notices.md), and [reports](../../core-concepts/rollup-http-api/backend/reports.md).
+Let’s create a helper function allowing the rollups server to receive requests for the three output instances, i.e., [vouchers](../../rollups-apis/backend/vouchers.md), [notices](../../rollups-apis/backend/notices.md), and [reports](../../rollups-apis/backend/reports.md).
 
 ```js
 const send_request = async (output) => {

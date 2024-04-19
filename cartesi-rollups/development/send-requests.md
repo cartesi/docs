@@ -141,7 +141,7 @@ Advance requests involve sending input data to the L1 through a JSON-RPC call, a
 
 In the dApp architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the [`addInput(address, bytes)`](../core-concepts/rollup-http-api/json-rpc/input-box.md/#addinput) function of the InputBox smart contract.
+- Step 1: Send an input to the [`addInput(address, bytes)`](../rollups-apis/json-rpc/input-box.md/#addinput) function of the InputBox smart contract.
 
 - Step 2: The Cartesi Node reads the data and gives it to the Cartesi machine for processing.
 

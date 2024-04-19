@@ -120,11 +120,11 @@ while True:
 
 An **Advance** request involves sending input data to the base layer via JSON-RPC so they can reach the dApp backend to change the application's state.
 
-![img](../../../../static/img/v1.3/advance.jpg)
+![img](../../../static/img/v1.3/advance.jpg)
 
 In the dApp architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the [`addInput(address, bytes)`](../json-rpc/input-box.md/#addinput) function of the InputBox smart contract.
+- Step 1: Send an input to the [`addInput(address, bytes)`](../json-rpc/input-box.md) function of the InputBox smart contract.
 
 - Step 2: The HTTP Rollups Server reads the data and gives it to the Cartesi machine for processing.
 
@@ -132,7 +132,7 @@ In the dApp architecture, here is how an advance request plays out.
 
 An **Inspect** request involves making an external HTTP API call to the rollups server to read the dApp state without changing it.
 
-![img](../../../../static/img/v1.3/inspect.jpg)
+![img](../../../static/img/v1.3/inspect.jpg)
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
