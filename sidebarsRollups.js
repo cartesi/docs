@@ -135,24 +135,7 @@ module.exports = {
         "development/send-requests",
         "development/retrieve-outputs",
 
-        {
-          type: "category",
-          label: "Assets Handling",
-          collapsed: true,
-          items: [
-            "development/assets-handling/overview",
-            {
-              type: "doc",
-              id: "development/assets-handling/javascript",
-              label: "JavaScript",
-            },
-            {
-              type: "doc",
-              id: "development/assets-handling/python",
-              label: "Python",
-            },
-          ],
-        },
+        "development/asset-handling",
       ],
     },
     {
@@ -165,7 +148,12 @@ module.exports = {
       type: "category",
       label: "Tutorials",
       collapsed: true,
-      items: ["tutorials/calculator", "tutorials/machine-learning"],
+      items: [
+        "tutorials/calculator",
+        "tutorials/machine-learning",
+        "tutorials/javascript-wallet",
+        "tutorials/python-wallet"
+      ],
     },
 
     {
