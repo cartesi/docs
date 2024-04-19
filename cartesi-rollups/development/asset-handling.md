@@ -34,7 +34,10 @@ When an asset is deposited, it is on the base layer but gains a representation i
 
 Deposit input payloads are always specified as packed ABI-encoded parameters, as detailed below.
 
+![img](../..//static/img/v1.3/abi.jpg)
+
 ### ABI encoding for deposits
+
 
 | Asset             | Packed ABI-encoded payload fields                                                                                                                       | Standard ABI-encoded payload fields                                                                                              |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------- |
@@ -44,64 +47,6 @@ Deposit input payloads are always specified as packed ABI-encoded parameters, as
 | ERC-1155 (single) | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 tokenId`,</li><li>`uint256 value`,</li><li>standard ABI-encoded fields...</li></ul> | <ul><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul>                                                           |
 | ERC-1155 (batch)  | <ul><li>`address token`,</li><li>`address sender`,</li><li>standard ABI-encoded fields...</li></ul>                                                     | <ul><li>`uint256[] tokenIds`,</li><li>`uint256[] values`,</li><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul> |
 
-Here is a Python example of an `Advance` handler that processes an ERC-20 deposit with an ABI-encoded payload:
-
-```python
-
-from os import environ
-import traceback
-import logging
-import requests
-from eth_abi.abi import encode
-from eth_abi_ext import decode_packed
-
-(...)
-
-def handle_advance(data):
-    logger.info(f"Received advance request data {data}")
-
-    try:
-        # Check whether an input was sent by the ERC20 Portal,
-        # which is where all deposits must come from
-        if data["metadata"]["msg_sender"].lower() != erc20Portal['address'].lower():
-            return reject_input(f"Input does not come from the ERC20 Portal", data["payload"])
-
-        # Attempt to decode input as an ABI-packed-encoded ERC20 deposit
-        binary = bytes.fromhex(data["payload"][2:])
-        try:
-            decoded = decode_packed(['bool','address','address','uint256'],binary)
-        except Exception as e:
-            msg = "Payload does not conform to ERC20 deposit ABI"
-            logger.error(f"{msg}\n{traceback.format_exc()}")
-            return reject_input(msg, data["payload"])
-
-        success = decoded[0]
-        erc20 = decoded[1]
-        depositor = decoded[2]
-        amount = decoded[3]
-
-        # Post notice about the deposit
-        notice_str = f"Deposit received from: {depositor}; ERC-20: {erc20}; Amount: {amount}"
-        logger.info(f"Adding notice: {notice_str}")
-        notice = {"payload": str2hex(notice_str)}
-        response = requests.post(rollup_server + "/notice", json=notice)
-        logger.info(f"Received notice status {response.status_code} body {response.content}")
-
-        # Encode a transfer function call that returns the amount back to the depositor
-        transfer_payload = TRANSFER_FUNCTION_SELECTOR + encode(['address','uint256'], [depositor, amount])
-        # Post voucher executing the transfer on the ERC-20 contract: "I don't want your money"!
-        voucher = {"destination": erc20, "payload": "0x" + transfer_payload.hex()}
-        logger.info(f"Issuing voucher {voucher}")
-        response = requests.post(rollup_server + "/voucher", json=voucher)
-        logger.info(f"Received voucher status {response.status_code} body {response.content}")
-
-        return "accept"
-
-    except Exception as e:
-        return reject_input(f"Error processing data {data}\n{traceback.format_exc()}")
-
-(...)
-```
 
 ## Withdrawing assets
 
