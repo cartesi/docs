@@ -29,7 +29,7 @@ In its simplest configuration, the Cartesi Rollup framework seamlessly integrate
 
 ## Example
 
-Below is a simple Node.js example demonstrating how to read an input and reply with a [notice](./core-concepts/rollup-http-api/backend/notices.md) (a type of output).
+Below is a simple Node.js example demonstrating how to read an input and reply with a [notice](./rollups-apis/backend/notices.md) (a type of output).
 
 ```javascript
 const { ethers } = require("ethers");
@@ -55,7 +55,7 @@ let finish = { status: "accept" };
 
 ```
 
-To ensure flexibility across different programming languages and stacks, Cartesi dApps are implemented as infinite loops that manage their transaction cycles through HTTP POST requests to the `/finish` endpoint. You can learn more about this abstraction [here](./core-concepts/rollup-http-api/backend/introduction.md).
+To ensure flexibility across different programming languages and stacks, Cartesi dApps are implemented as infinite loops that manage their transaction cycles through HTTP POST requests to the `/finish` endpoint. You can learn more about this abstraction [here](./rollups-apis/backend/introduction.md).
 
 In the Cartesi Rollup framework, all inputs sent to the base layer trigger an "advance_state" [request](./development/send-requests.md#initiate-an-advance-request), which alters the state of the Cartesi Machine and consequently the Rollup. Since inputs originate on-chain, they are hex-encoded following the EVM message standard.
 

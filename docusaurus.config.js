@@ -69,23 +69,22 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       typesense: {
-        typesenseCollectionName: 'cartesi_1712788548',
-  
+        typesenseCollectionName: "cartesi_1712788548",
+
         typesenseServerConfig: {
           nodes: [
             {
-              host: 'ofpew9nhydv5264qp-1.a1.typesense.net',
+              host: "ofpew9nhydv5264qp-1.a1.typesense.net",
               port: 443,
-              protocol: 'https',
-            }
-          
+              protocol: "https",
+            },
           ],
-          apiKey: 'OqZU4j8aAYx08wExdilTddIDGDh4QJov',
+          apiKey: "OqZU4j8aAYx08wExdilTddIDGDh4QJov",
         },
-  
+
         // Optional: Typesense search parameters: https://typesense.org/docs/0.24.0/api/search.html#search-parameters
         typesenseSearchParameters: {},
-  
+
         // Optional
         contextualSearch: true,
       },
@@ -464,17 +463,15 @@ const config = {
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath:
-              "cartesi-rollups/core-concepts/rollup-http-api/rollup.yaml", // Path to designated spec file
-            outputDir: "cartesi-rollups/core-concepts/rollup-http-api/rollup", // Output directory for generated .mdx docs
+            specPath: "cartesi-rollups/rollups-apis/rollup.yaml", // Path to designated spec file
+            outputDir: "cartesi-rollups/rollups-apis/rollup", // Output directory for generated .mdx docs
             sidebarOptions: {
               groupPathsBy: "tag",
             },
           },
           frontEndApi: {
-            specPath:
-              "cartesi-rollups/core-concepts/rollup-http-api/inspect.yaml",
-            outputDir: "cartesi-rollups/core-concepts/rollup-http-api/inspect",
+            specPath: "cartesi-rollups/rollups-apis/inspect.yaml",
+            outputDir: "cartesi-rollups/rollups-apis/inspect",
           },
         },
       },
@@ -484,14 +481,16 @@ const config = {
       "@graphql-markdown/docusaurus",
       /** @type {import('@graphql-markdown/types').ConfigOptions} */
       {
-        schema:
-          "cartesi-rollups/core-concepts/rollup-http-api/typeDefs.graphql",
+        schema: "cartesi-rollups/rollups-apis/typeDefs.graphql",
         rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
         baseURL: "api/graphql",
       },
     ],
   ],
-  themes: ["docusaurus-theme-openapi-docs", "docusaurus-theme-search-typesense"],
+  themes: [
+    "docusaurus-theme-openapi-docs",
+    "docusaurus-theme-search-typesense",
+  ],
 };
 
 module.exports = config;

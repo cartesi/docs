@@ -80,5 +80,5 @@ def handle_advance(data):
 
 
 :::note querying reports
-Frontend clients can query reports using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation to query reports](../../../development/retrieve-outputs.md/#query-all-reports) from your dApp. 
+Frontend clients can query reports using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation to query reports](../../development/retrieve-outputs.md/#query-all-reports) from your dApp. 
 :::

@@ -17,7 +17,7 @@ The [`CartesiDApp`](../json-rpc/application.md) contract is crucial in validatin
 The result of the voucher execution is recorded on the base layer. This recording typically involves submitting claims by a consensus contract, ensuring the integrity and transparency of the executed on-chain action.
 
 :::note create a voucher
-[Refer to the documentation here](../../../development/assets-handling/overview.md) for asset handling and creating vouchers in your dApp.
+[Refer to the documentation here](../../development/assets-handling/overview.md) for asset handling and creating vouchers in your dApp.
 :::
 
 ## Epoch configuration
@@ -29,5 +29,5 @@ One everyday use of vouchers in Cartesi dApps is to withdraw assets. Users initi
 You can manually set the epoch duration to facilitate quicker asset deposits and withdrawals.
 
 :::note epoch duration
-[Refer to the documentation here](../../../development/node-configuration.md/#epoch-duration) to manually configure epoch duration during development.
+[Refer to the documentation here](../../development/node-configuration.md/#epoch-duration) to manually configure epoch duration during development.
 :::
