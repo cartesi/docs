@@ -23,7 +23,7 @@ Let's delve into the workings of a Cartesi Rollup at a high level.
 ![img](../static/img/v1.3/overview.jpg)
 
 
-At its core, the Cartesi Rollup executes the Cartesi Machine - a robust RISCV deterministic emulator running Linux OS - fueled by ordered inputs and custom application code. Inputs from the data-availability layer are read by the Cartesi Node, where the Cartesi Machine processes them and generates outputs. After the optimistic rollup dispute window passes, these outputs are verifiable and possibly executable on the settlement layer. 
+At its core, the Cartesi Rollup executes the Cartesi Machine - a robust RISCV deterministic emulator running Linux OS - fueled by ordered inputs and custom application code. Inputs sourced from the data availability layer are read by the Cartesi Node, inside of which the Cartesi Machine processes them and generates outputs. After the optimistic rollup dispute window passes, these outputs are verifiable and possibly executable on the settlement layer. 
 
 The Cartesi Rollup architecture is application-specific, meaning each dApp within Cartesi's ecosystem runs on its unique, high-performance rollup app chain with its CPU. This prevents resource sharing with other dApps, significantly enhances computational scalability, and preserves the strong security guarantees of the underlying base layer.
 

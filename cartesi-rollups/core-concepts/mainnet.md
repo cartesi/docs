@@ -22,11 +22,15 @@ Developers and users should factor this risk into their decision to use Cartesi 
 
 ## Security
 
-The Cartesi Rollups infrastructure is being built based on careful design decisions and a strong code review process that aligns with the mainstream dogma of blockchain technology. 
 
- **Honeypot** is a dApp designed to prove Cartesi Rollups' security.
+The Cartesi Rollups infrastructure is being built based on careful design decisions and a strong code review process that aligns with the mainstream dogma of blockchain technology.
 
-As the Honeypot is tested and fortified, users and developers will have increased confidence in the security of Cartesi’s tech when launching and using new apps that hold tangible assets. Want to help test the security of Cartesi Rollups? [Try your hand at cracking the Honeypot](https://honeypot.cartesi.io/).
+When it comes to dApp safety, the developers must also implement the same level of concern in their process. A culture of code reviews, auditing, and extensively testing their code is paramount to avoid hacks or bugs that would lead to loss of funds from users.
+
+ The Honeypot, a dApp specifically designed, is a testament to the security of Cartesi Rollups.
+
+As the Honeypot is tested and fortified, users and developers will have increased confidence in the security of Cartesi’s tech when launching and using new apps with tangible assets. Want to help test the security of Cartesi Rollups? [Try your hand at cracking the Honeypot](https://honeypot.cartesi.io/).
+
 
 ## Scams
 Like Ethereum, Cartesi Rollups are permissionless—anybody can deploy any smart contract code they want. Interact with contracts on Cartesi Rollups precisely as you do with Ethereum, only doing so if you’ve independently verified that the application is secure.
