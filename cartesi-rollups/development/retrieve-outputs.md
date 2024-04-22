@@ -25,7 +25,7 @@ Think of it as a digital authorization ticket that enables a dApp to perform spe
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
 :::note create a voucher
-[Refer to the documentation here](./assets-handling/overview.md) for asset handling and creating vouchers in your dApp.
+[Refer to the documentation here](./asset-handling.md) for asset handling and creating vouchers in your dApp.
 :::
 
 ## Notices: Off-chain events
