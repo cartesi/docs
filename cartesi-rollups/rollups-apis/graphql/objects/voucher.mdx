@@ -20,27 +20,27 @@ type Voucher {
 
 ### Fields
 
-#### [`index`](#) ([`Int!`](../../scalars/int))
+#### `index` ([`Int!`](../../scalars/int))
 
 Voucher index within the context of the input that produced it
 
 
-#### [`input`](#) ([`Input!`](../../objects/input))
+#### `input` ([`Input!`](../../objects/input))
 
 Input whose processing produced the voucher
 
 
-#### [`destination`](#) ([`String!`](../../scalars/string))
+#### `destination` ([`String!`](../../scalars/string))
 
 Transaction destination address in Ethereum hex binary format (20 bytes), starting with '0x'
 
 
-#### [`payload`](#) ([`String!`](../../scalars/string))
+#### `payload` ([`String!`](../../scalars/string))
 
 Transaction payload in Ethereum hex binary format, starting with '0x'
 
 
-#### [`proof`](#) ([`Proof`](../../objects/proof))
+#### `proof` ([`Proof`](../../objects/proof))
 
 Proof object that allows this voucher to be validated and executed on the base layer blockchain
 
