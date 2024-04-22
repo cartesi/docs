@@ -106,7 +106,7 @@ cast send <InputBoxAddress> "addInput(address,bytes)" <DAppAddress> <EncodedPayl
 
 This command sends an input payload to your application through the `InputBox` contract.
 
-Replace placeholders like `<InputBoxAddress123>`, `<DAppAddress456>`, `<EncodedPayload789>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
+Replace placeholders like `<InputBoxAddress>`, `<DAppAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 
 You can obtain the relevant addresses by running `sunodo address-book`.
