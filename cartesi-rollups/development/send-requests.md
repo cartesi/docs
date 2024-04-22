@@ -152,12 +152,12 @@ You can send inputs to your application with [Cast](https://book.getfoundry.sh/c
 #### 1. Send inputs with Cast
 
 ```shell
-cast send <InputBoxAddress123> "addInput(address,bytes)" <DAppAddress456> <EncodedPayload789> --mnemonic <MNEMONIC>
+cast send <InputBoxAddress> "addInput(address,bytes)" <DAppAddress> <EncodedPayload> --mnemonic <MNEMONIC>
 ```
 
 This command sends the payload to the InputBox smart contract, initiating the advance request.
 
-Replace placeholders like `<InputBoxAddress123>`, `<DAppAddress456>`, `<EncodedPayload789>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
+Replace placeholders like `<InputBoxAddress>`, `<DAppAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 
 You can obtain the relevant addresses by running `sunodo address-book`.
