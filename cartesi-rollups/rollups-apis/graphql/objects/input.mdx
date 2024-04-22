@@ -47,117 +47,117 @@ type Input {
 
 ### Fields
 
-#### [`index`](#) ([`Int!`](../../scalars/int))
+#### `index` ([`Int!`](../../scalars/int))
 
 Input index starting from genesis
 
 
-#### [`msgSender`](#) ([`String!`](../../scalars/string))
+#### `msgSender` ([`String!`](../../scalars/string))
 
 Address responsible for submitting the input
 
 
-#### [`timestamp`](#) ([`BigInt!`](../../scalars/big-int))
+#### `timestamp` ([`BigInt!`](../../scalars/big-int))
 
 Timestamp associated with the input submission, as defined by the base layer's block in which it was recorded
 
 
-#### [`blockNumber`](#) ([`BigInt!`](../../scalars/big-int))
+#### `blockNumber` ([`BigInt!`](../../scalars/big-int))
 
 Number of the base layer block in which the input was recorded
 
 
-#### [`payload`](#) ([`String!`](../../scalars/string))
+#### `payload` ([`String!`](../../scalars/string))
 
 Input payload in Ethereum hex binary format, starting with '0x'
 
 
-#### [`voucher`](#) ([`Voucher!`](../../objects/voucher))
+#### `voucher` ([`Voucher!`](../../objects/voucher))
 
 Get voucher from this particular input given the voucher's index
-- ##### [`index`](#) ([`Int!`](../../scalars/int))
+- ##### `index` ([`Int!`](../../scalars/int))
 
 
 
 
-#### [`notice`](#) ([`Notice!`](../../objects/notice))
+#### `notice` ([`Notice!`](../../objects/notice))
 
 Get notice from this particular input given the notice's index
-- ##### [`index`](#) ([`Int!`](../../scalars/int))
+- ##### `index` ([`Int!`](../../scalars/int))
 
 
 
 
-#### [`report`](#) ([`Report!`](../../objects/report))
+#### `report` ([`Report!`](../../objects/report))
 
 Get report from this particular input given the report's index
-- ##### [`index`](#) ([`Int!`](../../scalars/int))
+- ##### `index` ([`Int!`](../../scalars/int))
 
 
 
 
-#### [`vouchers`](#) ([`VoucherConnection!`](../../objects/voucher-connection))
+#### `vouchers` ([`VoucherConnection!`](../../objects/voucher-connection))
 
 Get vouchers from this particular input with support for pagination
-- ##### [`first`](#) ([`Int`](../../scalars/int))
+- ##### `first` ([`Int`](../../scalars/int))
 
 
 
 
-- ##### [`last`](#) ([`Int`](../../scalars/int))
+- ##### `last` ([`Int`](../../scalars/int))
 
 
 
 
-- ##### [`after`](#) ([`String`](../../scalars/string))
+- ##### `after` ([`String`](../../scalars/string))
 
 
 
 
-- ##### [`before`](#) ([`String`](../../scalars/string))
+- ##### `before` ([`String`](../../scalars/string))
 
 
 
 
-#### [`notices`](#) ([`NoticeConnection!`](../../objects/notice-connection))
+#### `notices` ([`NoticeConnection!`](../../objects/notice-connection))
 
 Get notices from this particular input with support for pagination
-- ##### [`first`](#) ([`Int`](../../scalars/int))
+- ##### `first` ([`Int`](../../scalars/int))
 
 
 
 
-- ##### [`last`](#) ([`Int`](../../scalars/int))
+- ##### `last` ([`Int`](../../scalars/int))
 
 
 
 
-- ##### [`after`](#) ([`String`](../../scalars/string))
+- ##### `after` ([`String`](../../scalars/string))
 
 
 
 
-- ##### [`before`](#) ([`String`](../../scalars/string))
+- ##### `before` ([`String`](../../scalars/string))
 
 
 
 
-#### [`reports`](#) ([`ReportConnection!`](../../objects/report-connection))
+#### `reports` ([`ReportConnection!`](../../objects/report-connection))
 
 Get reports from this particular input with support for pagination
-- ##### [`first`](#) ([`Int`](../../scalars/int))
+- ##### `first` ([`Int`](../../scalars/int))
 
 
 
 
-- ##### [`last`](#) ([`Int`](../../scalars/int))
+- ##### `last` ([`Int`](../../scalars/int))
 
 
 
 
-- ##### [`after`](#) ([`String`](../../scalars/string))
+- ##### `after` ([`String`](../../scalars/string))
 
 
 
 
-- ##### [`before`](#) ([`String`](../../scalars/string))
+- ##### `before` ([`String`](../../scalars/string))

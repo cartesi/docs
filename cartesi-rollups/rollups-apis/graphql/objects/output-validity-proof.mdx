@@ -23,41 +23,41 @@ type OutputValidityProof {
 
 ### Fields
 
-#### [`inputIndexWithinEpoch`](#) ([`Int!`](../../scalars/int))
+#### `inputIndexWithinEpoch` ([`Int!`](../../scalars/int))
 
 Local input index within the context of the related epoch
 
 
-#### [`outputIndexWithinInput`](#) ([`Int!`](../../scalars/int))
+#### `outputIndexWithinInput` ([`Int!`](../../scalars/int))
 
 Output index within the context of the input that produced it
 
 
-#### [`outputHashesRootHash`](#) ([`String!`](../../scalars/string))
+#### `outputHashesRootHash` ([`String!`](../../scalars/string))
 
 Merkle root of all output hashes of the related input, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`vouchersEpochRootHash`](#) ([`String!`](../../scalars/string))
+#### [vouchersEpochRootHash` ([`String!`](../../scalars/string))
 
 Merkle root of all voucher hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`noticesEpochRootHash`](#) ([`String!`](../../scalars/string))
+#### `noticesEpochRootHash` ([`String!`](../../scalars/string))
 
 Merkle root of all notice hashes of the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`machineStateHash`](#) ([`String!`](../../scalars/string))
+#### `machineStateHash` ([`String!`](../../scalars/string))
 
 Hash of the machine state claimed for the related epoch, given in Ethereum hex binary format (32 bytes), starting with '0x'
 
 
-#### [`outputHashInOutputHashesSiblings`](#) ([`[String!]!`](../../scalars/string))
+#### `outputHashInOutputHashesSiblings` ([`[String!]!`](../../scalars/string))
 
 Proof that this output hash is in the output-hashes merkle tree. This array of siblings is bottom-up ordered (from the leaf to the root). Each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'.
 
 
-#### [`outputHashesInEpochSiblings`](#) ([`[String!]!`](../../scalars/string))
+#### `outputHashesInEpochSiblings` ([`[String!]!`](../../scalars/string))
 
 Proof that this output-hashes root hash is in epoch's output merkle tree. This array of siblings is bottom-up ordered (from the leaf to the root). Each hash is given in Ethereum hex binary format (32 bytes), starting with '0x'.

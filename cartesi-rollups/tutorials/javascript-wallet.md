@@ -56,10 +56,10 @@ let wallet = new Wallet(new Map());
 Initialize variables for the portal contract and relay addresses:
 
 ```js
-const etherPortalAddress = "0x…44";
-const erc20PortalAddress = "0x9…DB";
-const erc721PortalAddress = "0x..87";
-const dAppAddressRelayContract = "0x..aE";
+const etherPortalAddress = "0x...44";
+const erc20PortalAddress = "0x...DB";
+const erc721PortalAddress = "0x...87";
+const dAppAddressRelayContract = "0x...aE";
 ```
 
 You can obtain the relevant addresses by running `sunodo address-book`.

@@ -16,7 +16,7 @@ resources:
 
 Let’s build a simple dApp that uses the `cartesi-wallet` package to handle different deposits, transfers, and withdrawals of various assets.
 
-- **Cartesi Wallet** is a Python-based wallet implementation for asset handling within Cartesi dApps.
+[Cartesi Wallet](https://github.com/jplgarcia/python-wallet/tree/main) is a Python-based wallet implementation for asset handling within Cartesi dApps.
 
 ## Installation
 
@@ -53,11 +53,12 @@ rollup_address = ""
 Initialize the wallet with the portal contract and relay addresses:
 
 ```python
-dapp_relay_address = "0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE"
-ether_portal_address = "0xFfdbe43d4c855BF7e0f105c400A50857f53AB044"
-erc20_portal_address = "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB"
-erc721_portal_address = "0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87"
+dapp_relay_address = "0x...aE"
+ether_portal_address = "0x...44"
+erc20_portal_address = "0x...DB"
+erc721_portal_address = "0x...87"
 ```
+You can obtain the relevant addresses by running `sunodo address-book`.
 
 
 ## Checking Balance
