@@ -2,6 +2,9 @@
 title: How to stake
 ---
 
+<iframe width="480" height="270" src="https://www.youtube.com/embed/7VAYt3qHpSI">
+</iframe>
+
 ## Prerequisites
 
 First, you need to have [Metamask installed](https://metamask.io/download/) or other crypto wallets such as Ledger, Coinbase wallet or using WalletConnect.
@@ -15,7 +18,10 @@ First, you need to have [Metamask installed](https://metamask.io/download/) or o
 5. Select a pool to delegate your stake and earn rewards. In the example below, we selected the [first pool](https://explorer.cartesi.io/stake/0x5149f711ff8e4b36bba09685ec5f9ad32edce3bf). ![img](./selectpool.png)
 6. Navigate to the tab **Stake**.
 7. Click on the button **Deposit**. ![img](./allowance.png)
-8. Set an allowance for that particular pool, click on the button **APPROVE**, and then confirm the transaction via Metamask. The allowance is the maximum amount of tokens the pool smart contract can transfer out of your wallet. You can set it to any value you want: equal to/larger than/less than the wallet amount. ![img](allowanceamount.png)
+8. Set an allowance for that particular pool, click on the button **SAVE**, and then confirm the transaction via Metamask. The allowance is the maximum amount of tokens the pool smart contract can transfer out of your wallet. You can set it to any value you want: equal to/larger than/less than the wallet amount. 
+     
+![img](allowanceamount.png)
+
 9. Click again on the button **Deposit** to specify the amount of CTSI tokens that you want to deposit to the pool and then confirm the transaction via Metamask. ![img](./selectamount.png)
 10. You should see results similar to the following: ![img](depositResults.png)
 11. Finally, click on the button **Stake** to specify the amount of CTSI tokens that you want to delegate and then confirm the transaction via Metamask. ![img](stakeAmount.png)
