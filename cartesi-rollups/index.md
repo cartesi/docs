@@ -25,9 +25,9 @@ Let's delve into the workings of a Cartesi Rollup at a high level.
 
 At its core, the Cartesi Rollup executes the Cartesi Machine - a robust RISCV deterministic emulator running Linux OS - fueled by ordered inputs and custom application code. Inputs sourced from the data availability layer are read by the Cartesi Node, inside of which the Cartesi Machine processes them and generates outputs. After the optimistic rollup dispute window passes, these outputs are verifiable and possibly executable on the settlement layer. 
 
-The Cartesi Rollup architecture is application-specific, meaning each dApp within Cartesi's ecosystem runs on its unique rollup app chain with its CPU. This prevents resource sharing with other dApps, significantly enhances computational scalability, and preserves the strong security guarantees of the underlying base layer.
+The Cartesi Rollup framework is application-specific, assigning each dApp its rollup app chain and CPU while linking its optimistic rollups' consensus directly to the base layer. This structure ensures that validators—whether permissioned or not—can leverage the security features of the base layer, allowing any honest validator to enforce correct outcomes independently. 
 
-The Cartesi Rollup framework seamlessly integrates with Ethereum, acting as the sole data availability, consensus, and settlement layer in its most straightforward configuration. Input transactions are directed to specific smart contracts, where the dApp code operates to produce outputs. Following the settlement period, these outputs are verified and may be executed on Ethereum.
+In its simplest form, the Cartesi framework integrates tightly with the base layer, which serves as the sole platform for data availability, consensus, and settlement. Transactions are directed to specific smart contracts where DApp code is executed to produce outputs on the base layer after a verification period.
 
 ## Example
 
