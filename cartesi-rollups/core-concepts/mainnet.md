@@ -27,7 +27,7 @@ The Cartesi Rollups infrastructure is being built based on careful design decisi
 
 When it comes to dApp safety, the developers must also implement the same level of concern in their process. A culture of code reviews, auditing, and extensively testing their code is paramount to avoid hacks or bugs that would lead to loss of funds from users.
 
-**The Honeypot**, a dApp specifically designed, is a testament to the security of Cartesi Rollups.
+**The Honeypot** is a dApp designed to demonstrate the security capabilities of Cartesi Rollups.
 
 As the Honeypot is tested and fortified, users and developers will have increased confidence in the security of Cartesi Rollups. Want to help test the security of Cartesi Rollups? [Try your hand at cracking the Honeypot](https://honeypot.cartesi.io/).
 
