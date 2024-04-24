@@ -70,7 +70,7 @@ Transactions and computations occur off-chain, leading to more intricate logic w
 Cartesi's architecture specializes in app-specific rollups(appchains). Each dApp has its dedicated rollup for off-chain computation, enhancing scalability and performance. 
 
 
-## Introduction Dave — an interactive fraud-proof system
+## Introducing Dave — an interactive fraud-proof system
 
 [Dave](https://github.com/cartesi/dave) is Cartesi's dispute resolution algorithm designed to address shortcomings in existing fraud-proof protocols. Traditional fraud-proof systems often face challenges such as delay attacks and vulnerability to Sybil attacks, where malicious nodes can disrupt operations by continuously challenging transactions or overwhelming honest validators.
 

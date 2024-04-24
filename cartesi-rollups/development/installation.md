@@ -18,23 +18,26 @@ Docker Desktop is a must-have requirement that comes pre-configured with two nec
 
 Follow [the instructions here to install Docker Desktop](https://www.docker.com/products/docker-desktop/) for your operating system.
 
-:::troubleshoot
+:::troubleshoot troubleshooting common errors
 
+#### Error: Invalid image Architecture
 ```
 Error: Invalid image Architecture: Expected riscv64
 ```
 
-Check if your Docker supports the RISCV platform by running:
+#### Solution:
 
-```
-docker buildx ls
-```
+1. Check if your Docker supports the RISCV platform by running:
 
-If you do not see `linux/riscv64` in the platforms list, install `QEMU` by running:
+  ```
+  docker buildx ls
+  ```
 
-```
-apt install qemu-user-static
-```
+2. If you do not see `linux/riscv64` in the platforms list, install `QEMU` by running:
+
+  ```
+  apt install qemu-user-static
+  ```
 
 :::
 
