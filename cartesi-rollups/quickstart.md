@@ -24,6 +24,8 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
 
 1. [Install Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
 
+1. [Download and install the latest version of Node.js](https://nodejs.org/en/download).
+
 2. Sunodo is an easy-to-use CLI tool to build and deploy your dApps. To install Sunodo, run:
 
    ```shell
