@@ -29,11 +29,17 @@ pip install cartesi-wallet
 You must compile some source code for this lib to run on Docker. Include `build-essential` in your Dockerfile in the apt-get install. Like this:
 
 ```dockerfile
-apt-get install -y --no-install-recommends build-essential=12.9ubuntu3 busybox-static=1:1.30.1-7ubuntu3 ca-certificates=20230311ubuntu0.22.04.1 curl=7.81.0-1ubuntu1.15
+apt-get install -y --no-install-recommends build-essential=12.9ubuntu3 busybox-static=1:1.30.1-7ubuntu3 ca-certificates=20230311ubuntu0.22.04.1 curl=7.81.0-1ubuntu1.16
 ```
 
 
 ## Usage
+
+Add the `cartesi-wallet` module to your `requirements.txt` file:
+
+```shell
+cartesi-wallet == 0.0.4
+```
 
 To use the `cartesi-wallet` module in your project, you need to import the module and necessary utilities:
 
@@ -103,6 +109,9 @@ Below is an example of `ERC20` transfer and withdrawal:
 ```python 
 msg_sender = data["metadata"]["msg_sender"]
 payload = data["payload"]
+
+def decode_json(data):
+    return json.loads(hex_to_str(data))
 
 try:
     req_json = decode_json(payload)
@@ -198,7 +207,12 @@ erc721_portal_address = "0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87"
 
 wallet = Wallet
 rollup_address = ""
+
+# define a function to convert a hexadecimal string to a json
+def decode_json(data):
+    return json.loads(hex_to_str(data))
 ```
+
 
 
 ### Ether
@@ -257,6 +271,7 @@ def handle_advance(data):
     logger.info(f"Received advance request data {data}")
     msg_sender = data["metadata"]["msg_sender"]
     payload = data["payload"]
+
     
     # Deposit      
     try:
