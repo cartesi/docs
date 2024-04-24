@@ -38,6 +38,15 @@ apt install qemu-user-static
 
 :::
 
+
+## Install Node.js
+
+To download the latest version of Node.js, visit [nodejs.org/en/download](https://nodejs.org/en/download).
+
+After downloading, run the installer and follow the instructions to complete the installation.
+
+Verify the installation by running `node -v`, which will display the version of Node.js that was installed.
+
 ## Install Sunodo
 
 import Tabs from '@theme/Tabs';
