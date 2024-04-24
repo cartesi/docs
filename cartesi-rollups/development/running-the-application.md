@@ -16,37 +16,53 @@ NoNodo is a light development tool that does not require Docker running and allo
 
 ## Production Mode
 
-Before running in this mode, you must successfully build a Cartesi machine snapshot with sunodo build.
+Here are the prerequisites to run the node in production mode:
 
-To start in production mode, the Docker Engine must be on. Run the following command:
+- Docker Engine must be active.
+- Cartesi machine snapshot successfully built with `sunodo build`.
+
+To start the node in production mode:
 
 ```
 sunodo run
 ```
 
-`sunodo run` will run a node with your backend compiled to RISC-V and packaged as a Cartesi machine.
+This command runs your backend compiled to RISC-V and packages it as a Cartesi machine.
 
-After successfully running a node, your application can receive inputs.
+:::troubleshoot troubleshooting common errors
 
-:::troubleshoot
-
+##### Error: Depth Too High
 ```
-Error: Depth Too High
-
 Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
 2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
 2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
 ```
 
-This error happens when the node reads too many blocks behind the blockchain.
+This indicates that the node is reading blocks too far behind the current blockchain state.
 
-To fix this, create a `.sunodo.env.` and overwrite the set `TX_DEFAULT_CONFIRMATIONS` to 1, as in:
+##### Solution:
+
+Create or modify a `.sunodo.env` file in your project directory and set:
 
 ```
 TX_DEFAULT_CONFIRMATIONS=1
 ```
+This adjustment should align the node's block reading with the blockchain's current state.
 
 :::
+
+### Overview of Node Services
+
+The `sunodo run` command activates several services essential for node operation:
+
+- **Anvil Chain**: Runs a local blockchain available at `http://localhost:8545`.
+
+- **GraphQL Playground**: An interactive IDE at `http://localhost:8080/graphql` for exploring the GraphQL server.
+
+- **Blockchain Explorer**: Monitors node activity and manages transactions via `http://localhost:8080/explorer/`.
+
+- **Inspect**: A diagnostic tool accessible at `http://localhost:8080/inspect/` to inspect the node’s state.
+
 
 ## NoNodo (Testing & Development)
 
