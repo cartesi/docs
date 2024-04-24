@@ -31,7 +31,7 @@ This command runs your backend compiled to RISC-V and packages it as a Cartesi m
 
 :::troubleshoot troubleshooting common errors
 
-##### Error: Depth Too High
+#### Error: Depth Too High
 ```
 Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
 2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
@@ -40,7 +40,7 @@ Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
 
 This indicates that the node is reading blocks too far behind the current blockchain state.
 
-##### Solution:
+#### Solution:
 
 Create or modify a `.sunodo.env` file in your project directory and set:
 

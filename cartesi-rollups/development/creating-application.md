@@ -12,7 +12,7 @@ sunodo create <dapp-name> --template <language>
 For example, create a Python project.
 
 ```
-sunodo create new-dapp --template python.
+sunodo create new-dapp --template python
 ```
 
 This command creates a `new-dapp` directory with essential files for your dApp development.
