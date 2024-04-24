@@ -270,6 +270,21 @@ To send generic inputs to our application quickly, run the following:
 sunodo send generic
 ```
 
+Example: Send `1+2` as an input to the application.
+
+```shell
+> sunodo send generic
+? Chain Foundry
+? RPC URL http://127.0.0.1:8545
+? Wallet Mnemonic
+? Mnemonic test test test test test test test test test test test junk
+? Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9999.970671818064986684 ETH
+? Application address 0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e
+? Input String encoding
+? Input (as string) 1+2
+✔ Input sent: 0xe2a2ba347659e53c53f3089ff3268255842c03bafbbf185375f94c7a78f3f98a
+```
+
 <!-- <video width="100%" controls poster="/static/img/v1.3/calculatorPoster.png">
     <source src="/videos/Sunodo_Send.mp4" type="video/mp4" />
     Your browser does not support video tags.
@@ -278,6 +293,10 @@ sunodo send generic
 ## Retrieving outputs from the application
 
 The `sunodo send generic` sends a notice containing a payload to the Rollup Server's `/notice` endpoint.
+
+:::note querying noticees
+Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.
+:::
 
 We can query these notices using the GraphQL playground hosted on `http://localhost:8080/graphql` or with a custom frontend client.
 
@@ -312,6 +331,8 @@ for (let edge of result.data.notices.edges) {
   let payload = edge.node.payload;
 }
 ```
+
+
 
 You can also [query a notice based on its input index](../development/retrieve-outputs.md/#query-a-single-notice).
 
