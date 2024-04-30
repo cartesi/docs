@@ -22,20 +22,19 @@ Let’s build a simple dApp that uses the `cartesi-wallet` package to handle dif
 
 [Cartesi Wallet](https://github.com/jjhbk/cartesi-wallet) is a JavaScript/TypeScript-based wallet implementation for Cartesi dApps.
 
-
 ## Installation
 
 1. Create a backend application by running:
 
-```shell
-sunodo create js-wallet-dapp --template javascript
-```
+    ```shell
+    cartesi create js-wallet-dapp --template javascript
+    ```
 
 2. In the `js-wallet-dapp` directory, install `cartesi-wallet,` and `viem`.
 
-```shell
-npm install viem cartesi-wallet
-```
+    ```shell
+    npm install viem cartesi-wallet
+    ```
 
 ## Usage
 
@@ -52,7 +51,6 @@ Create an instance of the Wallet by initializing it with an empty Map object:
 let wallet = new Wallet(new Map());
 ```
 
-
 Initialize variables for the portal contract and relay addresses:
 
 ```js
@@ -62,14 +60,11 @@ const erc721PortalAddress = "0x...87";
 const dAppAddressRelayContract = "0x...aE";
 ```
 
-You can obtain the relevant addresses by running `sunodo address-book`.
-
-
+You can obtain the relevant addresses by running `cartesi address-book`.
 
 ## Implementing Deposits
 
 In the application entry point’s `handle_advance()` function, create instances for depositing various asset types to our dApp.
-
 
 ```js
 if (data.metadata.msg_sender.toLowerCase() == erc20PortalAddress.toLowerCase()) {

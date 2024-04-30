@@ -1,19 +1,16 @@
 ---
 id: node-configuration
 title: Node configuration
-resources:
-  - url: https://docs.sunodo.io/guide/running/running-application
-    title: Node configuration with Sunodo
 ---
 
-Sunodo comes pre-configured with some default settings for Cartesi nodes. You can configure epoch duration, block time, environment variables, memory and the content of the information you want your node to preview.
+Cartesi CLI comes pre-configured with some default settings for Cartesi nodes. You can configure epoch duration, block time, environment variables, memory and the content of the information you want your node to preview.
 
 ## Verbosity
 
 By default, the node works in non-verbose mode and only outputs logs from the user’s backend application. In case the user needs more information, there is the `--verbose` flag.
 
-```
-sunodo run --verbose
+```shell
+cartesi run --verbose
 ```
 
 ## Block time
@@ -24,8 +21,8 @@ By default, the node processes a block every 5 seconds.
 
 You can configure the block time by running:
 
-```
-sunodo run --block-time <seconds>
+```shell
+cartesi run --block-time <seconds>
 ```
 
 ## Epoch duration
@@ -42,11 +39,10 @@ One everyday use of vouchers in Cartesi dApps is to withdraw assets.
 
 A voucher can only be executed once the dApp's consensus submits a claim containing it, i.e., when their corresponding epoch is closed.
 
-
 To change the default epoch duration, run:
 
-```
-sunodo run --epoch-duration <seconds>
+```shell
+cartesi run --epoch-duration <seconds>
 ```
 
 ## Memory
@@ -60,5 +56,5 @@ LABEL io.cartesi.rollups.ram_size=128Mi
 ```
 
 :::note environment variables
-You can create a `.sunodo.env` in the project's root and override any variable controlling the rollups-node.
+You can create a `.cartesi.env` in the project's root and override any variable controlling the rollups-node.
 :::

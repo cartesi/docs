@@ -19,12 +19,12 @@ NoNodo is a light development tool that does not require Docker running and allo
 Here are the prerequisites to run the node in production mode:
 
 - Docker Engine must be active.
-- Cartesi machine snapshot successfully built with `sunodo build`.
+- Cartesi machine snapshot successfully built with `cartesi build`.
 
 To start the node in production mode:
 
-```
-sunodo run
+```shell
+cartesi run
 ```
 
 This command runs your backend compiled to RISC-V and packages it as a Cartesi machine.
@@ -32,7 +32,8 @@ This command runs your backend compiled to RISC-V and packages it as a Cartesi m
 :::troubleshoot troubleshooting common errors
 
 #### Error: Depth Too High
-```
+
+```shell
 Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
 2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
 2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
@@ -40,20 +41,21 @@ Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
 
 This indicates that the node is reading blocks too far behind the current blockchain state.
 
-#### Solution:
+#### Solution
 
-Create or modify a `.sunodo.env` file in your project directory and set:
+Create or modify a `.cartesi.env` file in your project directory and set:
 
-```
+```shell
 TX_DEFAULT_CONFIRMATIONS=1
 ```
+
 This adjustment should align the node's block reading with the blockchain's current state.
 
 :::
 
 ### Overview of Node Services
 
-The `sunodo run` command activates several services essential for node operation:
+The `cartesi run` command activates several services essential for node operation:
 
 - **Anvil Chain**: Runs a local blockchain available at `http://localhost:8545`.
 
@@ -62,7 +64,6 @@ The `sunodo run` command activates several services essential for node operation
 - **Blockchain Explorer**: Monitors node activity and manages transactions via `http://localhost:8080/explorer/`.
 
 - **Inspect**: A diagnostic tool accessible at `http://localhost:8080/inspect/` to inspect the node’s state.
-
 
 ## NoNodo (Testing & Development)
 
@@ -88,7 +89,7 @@ Install Go by following [the instructions on the official Go website](https://go
 
 Run the following command to install NoNodo:
 
-```
+```shell
 go install github.com/gligneul/nonodo@latest
 ```
 
@@ -98,7 +99,7 @@ Set `GOPATH` to use the NoNodo command directly.
 
 To use the NoNodo command directly, add it to the PATH variable by running:
 
-```
+```shell
 export PATH="$HOME/go/bin:$PATH"
 ```
 
@@ -106,11 +107,11 @@ export PATH="$HOME/go/bin:$PATH"
 
 To start NoNodo with the default configuration, run:
 
-```
+```shell
 nonodo
 ```
 
-This command creates an Anvil node with the Cartesi Rollups contracts deployed by default. NoNodo uses the same deployment as Sunodo, so the contract addresses remain the same.
+This command creates an Anvil node with the Cartesi Rollups contracts deployed by default. NoNodo uses the same deployment as the Cartesi CLI, so the contract addresses remain the same.
 
 ### Exposed APIs
 
@@ -126,7 +127,7 @@ NoNodo can run the application backend as a sub-process.
 
 This option helps keep the entire development in a single terminal. To use it, pass the command to run the application after `--`.
 
-```
+```shell
 nonodo -- ./my-app
 ```
 
@@ -138,7 +139,7 @@ The echo also generates a report for each inspected input. This option is useful
 
 To start NoNodo with the built-in echo application, use the `--enable-echo` flag.
 
-```
+```shell
 nonodo --enable-echo
 ```
 

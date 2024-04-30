@@ -27,14 +27,14 @@ Here are the requirements:
 
 1. Compile your application into RISC-V architecture and consequently build a Cartesi machine by running:
 
-   ```
-    sunodo build
+   ```shell
+    cartesi build
    ```
 
 2. Run the command below to start the deployment process.
 
-   ```
-     sunodo deploy --hosting self-hosted
+   ```shell
+     cartesi deploy --hosting self-hosted --webapp https://sunodo.io/deploy
    ```
 
   The command generates a Docker image containing the rollups node and machine. You will be redirected to a web application to deploy the necessary smart contracts.
@@ -112,7 +112,7 @@ Alternatively, you can use a service like [Fly.io](https://fly.io/) to deploy yo
 Fly.io is a platform where you can conveniently deploy applications packaged as Docker containers.
 
 :::caution important
-If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for `linux/amd64` with: `sunodo deploy build --platform linux/amd64`
+If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for `linux/amd64` with: `cartesi deploy build --platform linux/amd64`
 :::
 
 1. [Install the flyctl CLI](https://fly.io/docs/hands-on/install-flyctl/)

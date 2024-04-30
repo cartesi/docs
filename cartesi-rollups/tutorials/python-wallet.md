@@ -32,7 +32,6 @@ You must compile some source code for this lib to run on Docker. Include `build-
 apt-get install -y --no-install-recommends build-essential=12.9ubuntu3 busybox-static=1:1.30.1-7ubuntu3 ca-certificates=20230311ubuntu0.22.04.1 curl=7.81.0-1ubuntu1.16
 ```
 
-
 ## Usage
 
 Add the `cartesi-wallet` module to your `requirements.txt` file:
@@ -64,8 +63,8 @@ ether_portal_address = "0x...44"
 erc20_portal_address = "0x...DB"
 erc721_portal_address = "0x...87"
 ```
-You can obtain the relevant addresses by running `sunodo address-book`.
 
+You can obtain the relevant addresses by running `cartesi address-book`.
 
 ## Checking Balance
 
@@ -100,13 +99,11 @@ return "accept"
 
 ```
 
-
 ### Transfers and Withdrawals
 
 Below is an example of `ERC20` transfer and withdrawal:
 
-
-```python 
+```python
 msg_sender = data["metadata"]["msg_sender"]
 payload = data["payload"]
 
@@ -263,7 +260,6 @@ def handle_advance(data):
         return "reject"
 ```
 
-
 ### ERC20
 
 ```python
@@ -304,7 +300,6 @@ def handle_advance(data):
         logger.debug(error_msg, exc_info=True)
         return "reject"
 ```
-
 
 ### ERC721
 
@@ -384,34 +379,33 @@ def handle_inspect(data):
         return "reject"
 ```
 
-
 The routes for the Balance inspects implemented above are as follows:
 
 #### Ether
+
 ```shell
 balance/ether/{wallet}
 balance/ether/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 ```
 
+#### ERC20
 
-#### ERC20:
 ```shell
 balance/ether/{wallet}/{token_address}
 balance/erc20/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0xae7f61eCf06C65405560166b259C54031428A9C4
 ```
 
-#### ERC721:
+#### ERC721
+
 ```shell
 balance/ether/{wallet}/{token_addres}/{token_id}
 balance/erc721/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0xae7f61eCf06C65405560166b259C54031428A9C4/0
 ```
 
-
-##  Frontend Integration
+## Frontend Integration
 
 You can use a couple of options for frontend integration in your backend wallet. 
 
 - Frontend Console: The terminal can interact directly with your backend wallet. Here is [a sample frontend console application](https://github.com/Mugen-Builders/sunodo-frontend-console) ready to be used!
 
 - Web User Interface: Alternatively, you can develop a user-friendly web interface for your dApp. This approach offers a more polished user experience and is suitable for production-ready applications. Here are [React.js starter](https://github.com/Mugen-Builders/frontend-cartesi-wallet-x) and [Angular starter](https://github.com/jplgarcia/cartesi-angular-frontend) templates you can use.
-

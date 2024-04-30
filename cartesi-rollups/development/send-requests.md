@@ -133,7 +133,7 @@ Every starter project you create has this base code as a template, ready to rece
 
 ### Initiate an advance request
 
-You can initiate an advance request by sending input from the CLI using Cast, Sunodo, or a custom frontend client.
+You can initiate an advance request by sending input from the CLI using Cast, Cartesi CLI, or a custom frontend client.
 
 Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp backend and trigger a change in the application's state.
 
@@ -147,7 +147,7 @@ In the dApp architecture, here is how an advance request plays out.
 
 - Step 3: After the computation, the state is updated, and the results are sent back to the rollup server.
 
-You can send inputs to your application with [Cast](https://book.getfoundry.sh/cast/), Sunodo, or a custom web interface. 
+You can send inputs to your application with [Cast](https://book.getfoundry.sh/cast/), Cartesi CLI, or a custom web interface.
 
 #### 1. Send inputs with Cast
 
@@ -159,22 +159,20 @@ This command sends the payload to the InputBox smart contract, initiating the ad
 
 Replace placeholders like `<InputBoxAddress>`, `<DAppAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
+You can obtain the relevant addresses by running `cartesi address-book`.
 
-You can obtain the relevant addresses by running `sunodo address-book`.
+#### 2. Send inputs with Cartesi CLI
 
-
-#### 2. Send inputs with Sunodo
-
-Sunodo provides a convenient way of sending inputs to a dApp.
+Cartesi CLI provides a convenient way of sending inputs to a dApp.
 
 To send an input, run:
 
-```
-sunodo send
+```shell
+cartesi send
 ```
 
-```
-$ sunodo send
+```shell
+$ cartesi send
 ? Select send sub-command (Use arrow keys)
 ❯ Send DApp address input to the application.
   Send ERC-20 deposit to the application.
@@ -188,7 +186,7 @@ There are five types of inputs using a sub-command: `dapp-address`, `erc20`, `er
 Unlike the asset-type sub-commands (Ether, ERC20, and ERC721), the generic input command allows you to send inputs with any payload format (hex, string, and ABI).
 
 ```shell
-$ sunodo send generic
+$ cartesi send generic
 ? Chain (Use arrow keys)
 ❯ Foundry
 ? Chain Foundry
