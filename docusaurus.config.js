@@ -106,10 +106,6 @@ const config = {
           //   position: "left",
           //   items: [
           //     {
-          //       label: "Sunodo",
-          //       href: "https://docs.sunodo.io/guide/introduction/what-is-sunodo",
-          //     },
-          //     {
           //       label: "NoNodo",
           //       href: "https://github.com/gligneul/nonodo/blob/main/README.md",
           //     },

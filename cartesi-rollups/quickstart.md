@@ -14,22 +14,22 @@ Welcome to Quickstart. Here is a step-by-step guide to building a decentralized 
 
 ## Set up your environment
 
-The primary requirements for building on Cartesi are Docker Desktop and Sunodo.
+The primary requirements for building on Cartesi are Docker Desktop and the Cartesi CLI.
 
 :::note windows os configuration
 If you use Windows, you must have [WSL2 installed and configured](https://learn.microsoft.com/en-us/windows/wsl/install) for building. In Docker Desktop settings, confirm that the WSL2-based engine configurations are enabled.
 :::
 
-### Install Docker Desktop and Sunodo
+### Install Docker Desktop and Cartesi CLI
 
 1. [Install Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
 
 1. [Download and install the latest version of Node.js](https://nodejs.org/en/download).
 
-2. Sunodo is an easy-to-use CLI tool to build and deploy your dApps. To install Sunodo, run:
+2. Cartesi CLI is an easy-to-use tool to build and deploy your dApps. To install it, run:
 
    ```shell
-    npm i -g @sunodo/cli
+    npm i -g @cartesi/cli
    ```
 
 ## Create an application
@@ -37,13 +37,13 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
 To create the backend application from scratch, run:
 
 ```bash
-sunodo create <dapp-name> --template <language>
+cartesi create <dapp-name> --template <language>
 ```
 
 This creates a new directory with template code in the language you specify.
 
 ```bash
-$ sunodo create js-dapp --template javascript
+$ cartesi create js-dapp --template javascript
 ✔ Application created at /js-dapp
 ```
 
@@ -56,10 +56,10 @@ To build your application, ensure you have Docker Desktop running.
 After that, you can run the command provided below:
 
 ```bash
-sunodo build
+cartesi build
 ```
 
-The `sunodo build` command builds a Cartesi machine and compiles your application so that it is ready to receive requests and inputs.
+The `cartesi build` command builds a Cartesi machine and compiles your application so that it is ready to receive requests and inputs.
 
 ## Run the application
 
@@ -67,29 +67,29 @@ Running your application starts a local Anvil node on port `8545`.
 
 To run your application:
 
-```
-sunodo run
+```shell
+cartesi run
 ```
 
 ## Send inputs to the application
 
-You have some options available for sending inputs to your application. One option is the `sunodo send` command.
+You have some options available for sending inputs to your application. One option is the `cartesi send` command.
 
 Another option is [Cast](https://book.getfoundry.sh/cast/), a command-line tool enabling you to make Ethereum RPC calls.
 
 Additionally, you can build a custom web interface to input data into your application.
 
-### Using Sunodo
+### Using Cartesi CLI
 
 Here is how you can send input to your dApp:
 
 ```shell
-sunodo send
+cartesi send
 ```
 
-This guides you through sending inputs with Sunodo interactively.
+This guides you through sending inputs with the CLI interactively.
 
-```
+```shell
 ? Select the send sub-command (Use arrow keys)
 ❯ Send DApp address input to the application.
   Send ERC-20 deposit to the application.
@@ -111,7 +111,7 @@ This command sends an input payload to your application through the `InputBox` c
 Replace placeholders like `<InputBoxAddress>`, `<DAppAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 
-You can obtain the relevant addresses by running `sunodo address-book`.
+You can obtain the relevant addresses by running `cartesi address-book`.
 
 ### Using a custom web interface
 

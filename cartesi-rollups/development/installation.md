@@ -3,9 +3,9 @@ id: installation
 title: Installation
 ---
 
-The primary requirements for building on Cartesi are Sunodo and Docker Desktop for your operating system of choice.
+The primary requirements for building on Cartesi are the Cartesi CLI and Docker Desktop for your operating system of choice.
 
-Sunodo is an easy-to-use CLI tool with which you can develop and deploy your dApps without getting lost in intricate commands and configurations of Docker and the node itself.
+Cartesi CLI is an easy-to-use tool with which you can develop and deploy your dApps without getting lost in intricate commands and configurations of Docker and the node itself.
 
 Docker is the required tool to distribute the Cartesi Rollups framework and its dependencies.
 
@@ -21,18 +21,20 @@ Follow [the instructions here to install Docker Desktop](https://www.docker.com/
 :::troubleshoot troubleshooting common errors
 
 #### Error: Invalid image Architecture
-```
+```shell
 Error: Invalid image Architecture: Expected riscv64
 ```
 
 #### Solution:
 
+```shell
 1. Check if your Docker supports the RISCV platform by running:
 
   ```
   docker buildx ls
   ```
 
+```shell
 2. If you do not see `linux/riscv64` in the platforms list, install `QEMU` by running:
 
   ```
@@ -50,35 +52,35 @@ After downloading, run the installer and follow the instructions to complete the
 
 Verify the installation by running `node -v`, which will display the version of Node.js that was installed.
 
-## Install Sunodo
+## Install Cartesi CLI
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 <Tabs>
   <TabItem value="macOS" label="macOS" default>
-  <p>Install Sunodo with Homebrew:</p>
+  <p>Install Cartesi CLI with Homebrew:</p>
     <pre><code>
-    brew install sunodo/tap/sunodo
+    brew install cartesi/tap/cartesi
     </code></pre>
-    <p> Alternatively, you can use Node.js to install Sunodo:</p>
+    <p> Alternatively, you can use Node.js to install Cartesi CLI:</p>
     <pre><code>
-    npm install -g @sunodo/cli
+    npm install -g @cartesi/cli
     </code></pre>
   </TabItem>
 
   <TabItem value="Linux" label="Linux">
-  <p>Install Sunodo with Node.js:</p>
+  <p>Install Cartesi CLI with Node.js:</p>
     <pre><code>
-    npm install -g @sunodo/cli
+    npm install -g @cartesi/cli
     </code></pre>
   </TabItem>
 
   <TabItem value="Windows" label="Windows">
     <p>1. Install <a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL2</a> and Ubuntu from the Microsoft store</p>
-    <p>2. Install Sunodo with Node.js </p>
+    <p>2. Install Cartesi CLI with Node.js </p>
     <pre><code>
-    npm install -g @sunodo/cli
+    npm install -g @cartesi/cli
     </code></pre>
   </TabItem>
 </Tabs>
@@ -87,9 +89,9 @@ import TabItem from '@theme/TabItem';
 For a seamless development workflow on Windows, do not execute Docker commands within Powershell. Instead, open the latest Ubuntu terminal that you have installed and perform all coding and command execution within that Linux environment.
 :::
 
-Sunodo Doctor is a diagnostic tool that declares whether your system is ready and set up for development.
+Cartesi CLI doctor is a diagnostic tool that declares whether your system is ready and set up for development.
 
 ```shell
-$ sunodo doctor
-✔ Your system is ready for sunodo.
+$ cartesi doctor
+✔ Your system is ready for cartesi.
 ```

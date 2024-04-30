@@ -6,27 +6,27 @@ resources:
       title: Source code for the m2cgen application
 ---
 
-In this machine learning tutorial, we will predict a classification based on the Titanic dataset, which shows the characteristics of people onboard the Titanic and whether those people survived the disaster. 
+In this machine learning tutorial, we will predict a classification based on the Titanic dataset, which shows the characteristics of people onboard the Titanic and whether those people survived the disaster.
 
 You can submit inputs describing a person's features to determine if that person is likely to have survived.
 
-## Set up your environment.
+## Set up your environment
+
 Install these to set up your environment for quick building.
 
-- Sunodo is a simple tool for building applications on Cartesi. [Install Sunodo for your OS of choice](../development/installation.md).
+- Cartesi CLI is a simple tool for building applications on Cartesi. [Install Cartesi CLI for your OS of choice](../development/installation.md).
 
 - Docker Desktop is the tool you need to run the Cartesi Machine and its dependencies. [Install Docker](https://www.docker.com/products/docker-desktop/).
 
 - Python: This is used to write your backend application logic. [Install Python3](https://www.python.org/downloads/).
 
-
 ## Understanding the dApp
 
-- ML Model Generation: The dApp generates a logistic regression model using sci-kit-learn, NumPy, and pandas. 
+- ML Model Generation: The dApp generates a logistic regression model using sci-kit-learn, NumPy, and pandas.
 
-- m2cgen Transpilation: The dApp uses the m2cgen (Model to Code Generator) library to transpile the ML model into pure Python code without external dependencies. This translation simplifies the execution process, particularly in the Cartesi Machine environment. 
+- m2cgen Transpilation: The dApp uses the m2cgen (Model to Code Generator) library to transpile the ML model into pure Python code without external dependencies. This translation simplifies the execution process, particularly in the Cartesi Machine environment.
 
-The practical goal of the application is to predict a classification based on the Titanic dataset. 
+The practical goal of the application is to predict a classification based on the Titanic dataset.
 
 Users can submit inputs describing a person’s features (e.g., age, sex, embarked port), and the application predicts whether that person is likely to have survived the Titanic disaster.
 
@@ -50,13 +50,11 @@ Clone the repo for this project, and let’s go through it:
 git clone https://github.com/Mugen-Builders/m2cgen.git
 ```
 
+The `m2cgen` folder contains a model folder with a Python script and a `requirements.txt` file.
 
-The `m2cgen` folder contains a model folder with a Python script and a `requirements.txt` file. 
-
-The `build_model.py` file contains the logic for creating the model for our solution, while the requirements.txt contains the libraries needed for the script. 
+The `build_model.py` file contains the logic for creating the model for our solution, while the requirements.txt contains the libraries needed for the script.
 
 You can think of the `build_model.py` as a jupyter-notebook file, which we experiment with and create models before using. Let's look at what the `build_model.py` does.
-
 
 ```python
 import pandas as pd
@@ -97,7 +95,6 @@ with open("model.py", "w") as text_file:
 
 print("Model exported successfully")
 ```
-
 
 The script primarily aims to export and prepare the ML model for integration into our Cartesi application. It includes the necessary libraries and functions to read data, preprocess it, train a model, and export it to a `model.py` file.
 
@@ -194,13 +191,13 @@ while True:
         finish["status"] = handler(rollup_request["data"])
 ```
 
-This script is the core of our application, responsible for interacting with the Cartesi Rollups infrastructure. 
+This script is the core of our application, responsible for interacting with the Cartesi Rollups infrastructure.
 
-It leverages the pre-trained Machine Learning model we create with the `build_model.py` script and receives input data from the Cartesi Rollup server. 
+It leverages the pre-trained Machine Learning model we create with the `build_model.py` script and receives input data from the Cartesi Rollup server.
 
-The script then processes this data, applies the model to make predictions, and communicates the results to the Rollup server. 
+The script then processes this data, applies the model to make predictions, and communicates the results to the Rollup server.
 
-The primary functions of this script include data conversion, model prediction, and communication with the Cartesi infrastructure. It ensures our ML-based application seamlessly integrates into Cartesi’, allowing us to harness the power of machine learning within the blockchain environment. 
+The primary functions of this script include data conversion, model prediction, and communication with the Cartesi infrastructure. It ensures our ML-based application seamlessly integrates into Cartesi’, allowing us to harness the power of machine learning within the blockchain environment.
 
 Now, let’s build and send inputs to the application.
 
@@ -209,13 +206,13 @@ Now, let’s build and send inputs to the application.
 To build the container of the m2cgen is very straightforward. Run:
 
 ```shell
-sunodo build
+cartesi build
 ```
 
 After the build process is complete, run the node with the command:
 
 ```shell
-sunodo run
+cartesi run
 ```
 
 Your application is now ready to receive inputs.
@@ -233,14 +230,14 @@ The application responds with a predicted classification result, where 0 indicat
 To send inputs, run:
 
 ```shell
-sunodo send generic
+cartesi send generic
 ```
 
 
 Example: Send an input to the application.
 
 ```shell
-> sunodo send generic
+> cartesi send generic
 ? Chain Foundry
 ? RPC URL http://127.0.0.1:8545
 ? Wallet Mnemonic
@@ -257,9 +254,9 @@ Example: Send an input to the application.
     Your browser does not support video tags.
 </video> -->
 
-## Retrieving outputs 
+## Retrieving outputs
 
-The `sunodo send generic` sends a notice containing a payload to the Rollup Server's `/notice` endpoint.
+The `cartesi send generic` sends a notice containing a payload to the Rollup Server's `/notice` endpoint.
 
 :::note querying noticees
 Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.
@@ -315,4 +312,3 @@ To change those, open the file `model/build_model.py` and change the following v
 - `include`: an optional list indicating a subset of the dataset's features to be used in the prediction model.
 
 - `dependent_var`: the feature to be predicted, such as the entry's classification.
-

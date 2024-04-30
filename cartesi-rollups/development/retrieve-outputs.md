@@ -154,7 +154,7 @@ def handle_advance(data):
 
 </Tabs>
 
-For example, sending an input payload of `“2”` to the application using Cast or `sunodo send generic` will log:
+For example, sending an input payload of `“2”` to the application using Cast or `cartesi send generic` will log:
 
 ```bash
 Received finish status 200

@@ -11,13 +11,11 @@ To facilitate the instantiation of such nodes, Cartesi provides an infrastructur
 
 The Cartesi rollups node is distributed as a Docker image. Any popular cloud provider, like AWS, GCP, Azure, Digital Ocean, or Linode, can run docker containers and hence can be used to host the rollups node. 
 
-
 ## Deployment process
 
 The deployment of an application involves building a Cartesi machine and deploying a smart contract to a supported network.
 
-The `sunodo build` command produces the Cartesi genesis machine, which contains a hash representing the application and its initial state. 
-
+The `cartesi build` command produces the Cartesi genesis machine, which contains a hash representing the application and its initial state.
 
 After deployment, any changes to the application code will generate a different hash and, hence, require another deployment.
 

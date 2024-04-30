@@ -8,7 +8,7 @@ title: Building the application
 With the Docker engine running, change the directory to your application and build by running:
 
 ```shell
-sunodo build
+cartesi build
 ```
 
 The successful execution of this step will log this in your terminal:
@@ -36,7 +36,5 @@ Manual yield rx-accepted (0x100000000 data)
 Cycles: 2767791744
 2767791744: b740d27cf75b6cb10b1ab18ebd96be445ca8011143d94d8573221342108822f5
 Storing machine: please wait
-Successfully copied 288MB to /Users/michaelasiedu/Code/calculator/python/.sunodo/image
+Successfully copied 288MB to /Users/michaelasiedu/Code/calculator/python/.cartesi/image
 ```
-
-

@@ -18,7 +18,7 @@ The backend will be written using Python. For added flexibility, feel free to ex
 
 Install these to set up your environment for quick building:
 
-- Sunodo: A simple tool for building applications on Cartesi. [Install Sunodo for your OS of choice](../development/installation.md).
+- Cartesi CLI: A simple tool for building applications on Cartesi. [Install Cartesi CLI for your OS of choice](../development/installation.md).
 
 - Docker Desktop: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker for your OS of choice](https://www.docker.com/products/docker-desktop/).
 
@@ -29,7 +29,7 @@ Install these to set up your environment for quick building:
 To create a backend application with Python, run:
 
 ```shell
-sunodo create calculator --template python
+cartesi create calculator --template python
 ```
 
 This creates a `calculator/` directory with essential files for your Python development.
@@ -246,7 +246,7 @@ while True:
 With Docker running, “build your backend” application by running:
 
 ```shell
-sunodo build
+cartesi build
 ```
 
 “Building” in this context installs the libraries in the `requirements.txt`, compiles your application into RISC-V architecture, and consequently builds a Cartesi machine that contains your backend application.
@@ -256,24 +256,24 @@ The anvil node can now run your application.
 
 To run your application, enter the command:
 
-```
-sunodo run
+```shell
+cartesi run
 ```
 
 ### Sending inputs with the CLI
 
-We can send inputs to our application with a custom JavaScript frontend, Cast, or Sunodo.
+We can send inputs to our application with a custom JavaScript frontend, Cast, or Cartesi CLI.
 
 To send generic inputs to our application quickly, run the following:
 
 ```shell
-sunodo send generic
+cartesi send generic
 ```
 
 Example: Send `1+2` as an input to the application.
 
 ```shell
-> sunodo send generic
+> cartesi send generic
 ? Chain Foundry
 ? RPC URL http://127.0.0.1:8545
 ? Wallet Mnemonic
@@ -292,7 +292,7 @@ Example: Send `1+2` as an input to the application.
 
 ## Retrieving outputs from the application
 
-The `sunodo send generic` sends a notice containing a payload to the Rollup Server's `/notice` endpoint.
+The `cartesi send generic` sends a notice containing a payload to the Rollup Server's `/notice` endpoint.
 
 :::note querying noticees
 Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.
@@ -337,4 +337,3 @@ for (let edge of result.data.notices.edges) {
 You can also [query a notice based on its input index](../development/retrieve-outputs.md/#query-a-single-notice).
 
 Congratulations, you have successfully built a dApp on Cartesi Rollups!
-
