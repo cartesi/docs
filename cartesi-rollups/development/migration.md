@@ -35,7 +35,7 @@ Follow these simple steps to migrate your application from Sunodo CLI to Cartesi
 
 ## Update Project Configuration
 
-1. Update your `Dockerfile` to have the latest from [the Cartesi application templates](https://github.com/cartesi/application-templates).
+1. Modify your `Dockerfile` to have the latest updates from [the Cartesi application templates](https://github.com/cartesi/application-templates).
 
 1. Change the `.sunodo` directory to `.cartesi`.
 
