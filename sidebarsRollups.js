@@ -136,6 +136,7 @@ module.exports = {
         "development/retrieve-outputs",
 
         "development/asset-handling",
+        "development/migration"
       ],
     },
     {
