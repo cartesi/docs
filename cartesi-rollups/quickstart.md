@@ -32,6 +32,7 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
     npm i -g @cartesi/cli
    ```
 
+
 ## Create an application
 
 To create the backend application from scratch, run:
