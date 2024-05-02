@@ -27,17 +27,17 @@ Error: Invalid image Architecture: Expected riscv64
 
 #### Solution:
 
-```shell
+
 1. Check if your Docker supports the RISCV platform by running:
 
-  ```
+  ```shell
   docker buildx ls
   ```
 
-```shell
+
 2. If you do not see `linux/riscv64` in the platforms list, install `QEMU` by running:
 
-  ```
+  ```shell
   apt install qemu-user-static
   ```
 
