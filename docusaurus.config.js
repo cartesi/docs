@@ -373,6 +373,47 @@ const config = {
             to: "/cartesi-rollups/1.3/", // Redirects /cartesi-rollups/ to the latest version
             from: "/cartesi-rollups/",
           },
+          {
+            to: "/cartesi-machine/",
+            from: ["/machine/", "/machine/intro/"],
+          },
+
+          {
+            to: "/cartesi-machine/host/",
+            from: ["/machine/host/"],
+          },
+          {
+            to: "/cartesi-machine/host/cmdline/",
+            from: ["/machine/host/cmdline/"],
+          },
+          {
+            to: "/cartesi-machine/host/lua/",
+            from: ["/machine/host/lua/"],
+          },
+          {
+            to: "/cartesi-machine/target/",
+            from: ["/machine/target/"],
+          },
+          {
+            to: "/cartesi-machine/target/linux/",
+            from: ["/machine/target/linux/"],
+          },
+          {
+            to: "/cartesi-machine/target/architecture/",
+            from: ["/machine/target/architecture/"],
+          },
+          {
+            to: "/cartesi-machine/blockchain/",
+            from: ["/machine/blockchain/"],
+          },
+          {
+            to: "/cartesi-machine/blockchain/hash/",
+            from: ["/machine/blockchain/hash"],
+          },
+          {
+            to: "/cartesi-machine/blockchain/vg/",
+            from: ["/machine/blockchain/vg/"],
+          },
         ],
         createRedirects(existingPath) {
           if (existingPath.includes("/cartesi-rollups/1.0/")) {
