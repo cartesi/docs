@@ -4,8 +4,7 @@ title: input
 hide_table_of_contents: false
 ---
 
-
-Get input based on its identifier
+Get input based on its identifier:
 
 ```graphql
 input(
@@ -13,16 +12,33 @@ input(
 ): Input!
 ```
 
-
-### Arguments
+## Arguments
 
 #### `index` ([`Int!`](../../scalars/int))
 
-
-
-
-### Type
+## Type
 
 #### [`Input`](../../objects/input)
 
-Request submitted to the application to advance its state
+Request submitted to the application to advance its state.
+
+## Example usage
+
+1. Get an input based on its `inputIndex`:
+
+  ```graphql
+  query inputByIndex($inputIndex: Int!) {
+    input(index: $inputIndex) {
+      index
+      payload
+    }
+  }
+  ```
+
+  ```graphql
+  {
+    "inputIndex": 0
+  }
+  ```
+
+  In this example, the query is set to retrieve the input at `inputIndex` `0`.

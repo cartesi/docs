@@ -5,7 +5,7 @@ hide_table_of_contents: false
 ---
 
 
-Get reports with support for pagination
+Get reports with support for pagination:
 
 ```graphql
 reports(
@@ -17,30 +17,50 @@ reports(
 ```
 
 
-### Arguments
+## Arguments
 
 #### `first` ([`Int`](../../scalars/int))
-Get at most the first `n` entries (forward pagination)
+Get at most the first `n` entries(forward pagination).
 
 
 
 #### `last` ([`Int`](../../scalars/int))
-Get at most the last `n` entries (backward pagination)
+Get at most the last `n` entries(backward pagination).
 
 
 
 #### `after` ([`String`](../../scalars/string))
-Get entries that come after the provided cursor (forward pagination)
+Get entries that come after the provided cursor(forward pagination).
 
 
 
 #### `before` ([`String`](../../scalars/string))
-Get entries that come before the provided cursor (backward pagination)
+Get entries that come before the provided cursor(backward pagination).
 
 
 
-### Type
+## Type
 
 #### [`ReportConnection`](../../objects/report-connection)
 
 Pagination result
+
+## Example usage
+
+1. Query all reports:
+
+  ```graphql
+  query reports {
+    reports {
+      edges {
+        node {
+          index
+          input {
+            index
+          }
+          payload
+        }
+      }
+    }
+  }
+  ```

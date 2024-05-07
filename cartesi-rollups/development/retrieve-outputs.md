@@ -303,7 +303,7 @@ for (let edge of result.data.input.notices.edges) {
 
 You can also fetch detailed information about a notice, including its proof information.
 
-Here is the query which takes two variables: noticeIndex and inputIndex.
+Here is the query which takes two variables: `noticeIndex` and `inputIndex`.
 
 ```graphql
 query notice($noticeIndex: Int!, $inputIndex: Int!) {

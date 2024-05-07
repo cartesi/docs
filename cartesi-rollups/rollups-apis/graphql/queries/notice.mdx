@@ -5,7 +5,7 @@ hide_table_of_contents: false
 ---
 
 
-Get notice based on its index
+Get notice based on its index:
 
 ```graphql
 notice(
@@ -15,7 +15,7 @@ notice(
 ```
 
 
-### Arguments
+## Arguments
 
 #### `noticeIndex` ([`Int!`](../../scalars/int))
 
@@ -27,8 +27,77 @@ notice(
 
 
 
-### Type
+## Type
 
 #### [`Notice`](../../objects/notice)
 
-Informational statement that can be validated in the base layer blockchain
+Informational statement that can be validated in the base layer blockchain.
+
+
+## Example usage
+
+1. Get a notice based on its `inputIndex`:
+
+  ```graphql
+  query noticesByInput($inputIndex: Int!) {
+    input(index: $inputIndex) {
+      notices {
+        edges {
+          node {
+            index
+            input {
+              index
+            }
+            payload
+          }
+        }
+      }
+    }
+  }
+  ```
+
+  ```graphql
+  {
+    "inputIndex": 1
+  }
+
+  ```
+
+  In this example, the query is set to retrieve the notice at `inputIndex` `1`.
+
+
+2. Get detailed information including proof based on `noticeIndex` and `inputIndex`:
+
+  ```graphql
+  query notice($noticeIndex: Int!, $inputIndex: Int!) {
+    notice(noticeIndex: $noticeIndex, inputIndex: $inputIndex) {
+      index
+      input {
+        index
+      }
+      payload
+      proof {
+        validity {
+          inputIndexWithinEpoch
+          outputIndexWithinInput
+          outputHashesRootHash
+          vouchersEpochRootHash
+          noticesEpochRootHash
+          machineStateHash
+          outputHashInOutputHashesSiblings
+          outputHashesInEpochSiblings
+        }
+        context
+      }
+    }
+  }
+  ```
+
+  Here, the query takes two variables: `noticeIndex` and `inputIndex`.
+
+  ```graphql
+  {
+    "noticeIndex": 123,
+    "inputIndex": 1
+  }
+  ```
