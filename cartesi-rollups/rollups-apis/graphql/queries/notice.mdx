@@ -36,37 +36,7 @@ Informational statement that can be validated in the base layer blockchain.
 
 ## Example usage
 
-1. Get a notice based on its `inputIndex`:
-
-  ```graphql
-  query noticesByInput($inputIndex: Int!) {
-    input(index: $inputIndex) {
-      notices {
-        edges {
-          node {
-            index
-            input {
-              index
-            }
-            payload
-          }
-        }
-      }
-    }
-  }
-  ```
-
-  ```graphql
-  {
-    "inputIndex": 1
-  }
-
-  ```
-
-  In this example, the query is set to retrieve the notice at `inputIndex` `1`.
-
-
-2. Get detailed information including proof based on `noticeIndex` and `inputIndex`:
+1. Retrieve a detailed notice, including proof, using both the `noticeIndex` and `inputIndex`:
 
   ```graphql
   query notice($noticeIndex: Int!, $inputIndex: Int!) {

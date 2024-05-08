@@ -36,37 +36,7 @@ Representation of a transaction that can be carried out on the base layer blockc
 ## Example usage
 
 
-1. Get a voucher based on its `inputIndex`:
-
-  ```graphql
-  query vouchersByInput($inputIndex: Int!) {
-    input(index: $inputIndex) {
-      vouchers {
-        edges {
-          node {
-            index
-            input {
-              index
-            }
-            destination
-            payload
-          }
-        }
-      }
-    }
-  }
-  ```
-
-  ```graphql
-  {
-    "inputIndex": 1
-  }
-
-  ```
-
-  In this example, the query is set to retrieve the voucher created at `inputIndex` `1`
-
-1. Get detailed information including proof based on `voucherIndex` and `inputIndex`:
+1.  Retrieve a detailed voucher, including proof, using both the `voucherIndex` and `inputIndex`:
 
   ```graphql
   query voucher($voucherIndex: Int!, $inputIndex: Int!) {

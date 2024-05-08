@@ -66,3 +66,33 @@ Pagination result.
     }
   }
   ```
+
+  1. Retrieve vouchers based on their `inputIndex`:
+
+  ```graphql
+  query vouchersByInput($inputIndex: Int!) {
+    input(index: $inputIndex) {
+      vouchers {
+        edges {
+          node {
+            index
+            input {
+              index
+            }
+            destination
+            payload
+          }
+        }
+      }
+    }
+  }
+  ```
+
+  ```graphql
+  {
+    "inputIndex": 1
+  }
+
+  ```
+
+  In this example, the query is set to retrieve all vouchers at `inputIndex` `1`
