@@ -64,3 +64,31 @@ Pagination result
     }
   }
   ```
+
+  1. Retrieve notices based on their `inputIndex`:
+
+  ```graphql
+  query noticesByInput($inputIndex: Int!) {
+    input(index: $inputIndex) {
+      notices {
+        edges {
+          node {
+            index
+            input {
+              index
+            }
+            payload
+          }
+        }
+      }
+    }
+  }
+  ```
+
+  ```graphql
+  {
+    "inputIndex": 1
+  }
+  ```
+
+  In this example, the query is set to retrieve all notices at `inputIndex` `1`.

@@ -17,7 +17,7 @@ The Cartesi Rollups framework comprises two main parts: **the on-chain base laye
 
 A dApp running on Cartesi consists of the following main components:
 
-- [Cartesi Rollups](./optimistic-rollups.md/#cartesi-rollups), a set of on-chain and off-chain components that implement an Optimistic Rollup solution and provide the general framework for building dApps.
+- [Cartesi Rollups](./optimistic-rollups.md/), a set of on-chain and off-chain components that implement an Optimistic Rollup solution and provide the general framework for building dApps.
 
 - [Cartesi Machine](./cartesi-machine.md), a virtual machine (VM) that runs an entire Linux OS, in which a dApp's backend is executed.
 

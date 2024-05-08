@@ -224,9 +224,7 @@ async function fetchNotices() {
 fetchNotices();
 ```
 
-### Query a single notice
-
-You can get a notice based on its index.
+You can get notices based on their `inputIndex`:
 
 Input your query in the left pane.
 
@@ -301,7 +299,9 @@ for (let edge of result.data.input.notices.edges) {
 }
 ```
 
-You can also fetch detailed information about a notice, including its proof information.
+### Query a single notice
+
+You can retrieve detailed information about a notice, including its proof information:
 
 Here is the query which takes two variables: `noticeIndex` and `inputIndex`.
 
@@ -429,11 +429,10 @@ query reports {
 
 Click the "Play" button (a triangular icon). The Playground will send the request to the server, and you'll see the response in the right pane.
 
-### Query a single report
 
-You can get a report based on its index.
+You can retrieve reports based on their `inputIndex`.
 
-Input your query in the left pane.
+Input your query in the left pane:
 
 ```graphql
 query reportsByInput($inputIndex: Int!) {
@@ -463,8 +462,9 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 
 Replace `123` with the value you want to pass for `$inputIndex`.
 
+### Query a single report
 
-You can also fetch information about a report with its `reportIndex` and `inputIndex`.
+You can retrieve a report with its `reportIndex` and `inputIndex`.
 
 ```graphql
 query report($reportIndex: Int!, $inputIndex: Int!) {

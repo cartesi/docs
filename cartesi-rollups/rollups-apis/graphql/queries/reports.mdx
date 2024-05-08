@@ -64,3 +64,31 @@ Pagination result
     }
   }
   ```
+
+  1. Retrieve reports based on their `inputIndex`:
+
+  ```graphql
+  query reportsByInput($inputIndex: Int!) {
+    input(index: $inputIndex) {
+      reports {
+        edges {
+          node {
+            index
+            input {
+              index
+            }
+            payload
+          }
+        }
+      }
+    }
+  }
+  ```
+
+  ```graphql
+    {
+      "inputIndex": 2
+    }
+    ```
+
+    In this example, the query is set to retrieve all reports at `inpuIndex` `2`.
