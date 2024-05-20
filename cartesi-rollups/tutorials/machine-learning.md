@@ -16,9 +16,9 @@ Install these to set up your environment for quick building.
 
 - Cartesi CLI is a simple tool for building applications on Cartesi. [Install Cartesi CLI for your OS of choice](../development/installation.md).
 
-- Docker Desktop is the tool you need to run the Cartesi Machine and its dependencies. [Install Docker](https://www.docker.com/products/docker-desktop/).
+- Docker Desktop is the tool you need to run the Cartesi Machine and its dependencies. [Install Docker 4.x](https://www.docker.com/products/docker-desktop/).
 
-- Python: This is used to write your backend application logic. [Install Python3](https://www.python.org/downloads/).
+- Python 3.x: This is used to write your backend application logic. [Install Python](https://www.python.org/downloads/).
 
 ## Understanding the dApp
 
