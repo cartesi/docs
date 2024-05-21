@@ -83,24 +83,12 @@ NoNodo is a development tool for Cartesi Rollups designed to work with applicati
 
 Set up Anvil on your system. Refer to [the instructions in the Foundry book for Anvil installation](https://book.getfoundry.sh/anvil/) details.
 
-### Install from source
+### Install NoNodo
 
-Install Go by following [the instructions on the official Go website](https://go.dev/doc/install).
-
-Run the following command to install NoNodo:
+After setting up Anvil, install NoNodo by running:
 
 ```shell
-go install github.com/gligneul/nonodo@latest
-```
-
-This command will install NoNodo into the bin directory inside the directory specified by the `GOPATH` environment variable.
-
-Set `GOPATH` to use the NoNodo command directly.
-
-To use the NoNodo command directly, add it to the PATH variable by running:
-
-```shell
-export PATH="$HOME/go/bin:$PATH"
+npm i -g nonodo
 ```
 
 ### Usage
