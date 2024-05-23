@@ -10,25 +10,21 @@ export default function AnnouncementBar() {
   const { announcementBar } = useThemeConfig();
   const { isActive, close } = useAnnouncementBar();
 
-  const COOKIE_EXPIRY = 1000 * 60 * 60 * 48;
+  const COOKIE_EXPIRY = 1000 * 60 * 60 * 24 * 2;
   // const COOKIE_EXPIRY = 1000 * 10;
   const COOKIE_NAME = "docusaurus.announcement.dismissExpiry";
 
   const [cookies, setCookie] = useCookies([COOKIE_NAME]);
 
   const handleClose = () => {
-    setCookie(COOKIE_NAME, new Date(), {
-      maxAge: COOKIE_EXPIRY,
+    setCookie(COOKIE_NAME, true, {
+      expires: new Date(Date.now() + COOKIE_EXPIRY),
     });
     close();
   };
 
   const cookieExpired = useMemo(() => {
-    const dismissExpiry = cookies[COOKIE_NAME];
-    return (
-      dismissExpiry &&
-      new Date(dismissExpiry).getTime() + COOKIE_EXPIRY < Date.now()
-    );
+    return !cookies[COOKIE_NAME];
   }, [cookies]);
 
   const showAnnouncementBar = useMemo(() => {
