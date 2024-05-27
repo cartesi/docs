@@ -69,17 +69,17 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       typesense: {
-        typesenseCollectionName: "cartesi_1712788548",
+        typesenseCollectionName: "cartesi_1716805080",
 
         typesenseServerConfig: {
           nodes: [
             {
-              host: "ofpew9nhydv5264qp-1.a1.typesense.net",
+              host: "chlxtu308rv7ijsfp-1.a1.typesense.net",
               port: 443,
               protocol: "https",
             },
           ],
-          apiKey: "OqZU4j8aAYx08wExdilTddIDGDh4QJov",
+          apiKey: "LfQmZC376xclgoL1ftRvR5Ap1XlVVlyz",
         },
 
         // Optional: Typesense search parameters: https://typesense.org/docs/0.24.0/api/search.html#search-parameters
