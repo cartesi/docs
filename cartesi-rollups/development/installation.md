@@ -1,17 +1,26 @@
 ---
 id: installation
 title: Installation
+resources: 
+  - url: https://www.docker.com/products/docker-desktop/
+    title: Install Docker Desktop
+  - url: https://nodejs.org/en/download/
+    title: Install Node.js and NPM
+  - url: https://learn.microsoft.com/en-us/windows/wsl/install
+    title: Install WSL2
+  - url: https://ubuntu.com/download/desktop
+    title: Install Ubuntu LTS
 ---
 
 The primary requirements for building on Cartesi are:
 
-- [Cartesi CLI](#cartesi-cli): An easy-to-use tool for developing and deploying your dApps.
+- Cartesi CLI: An easy-to-use tool for developing and deploying your dApps.
 
-- [Docker Desktop 4.x](#docker-desktop): The required tool to distribute the Cartesi Rollups framework and its dependencies.
+- Docker Desktop 4.x: The required tool to distribute the Cartesi Rollups framework and its dependencies.
 
-- [Node and NPM](#nodejs): A JavaScript runtime needed to install Cartesi CLI and run various scripts. We recommend installing the **LTS version** to ensure best compatibility.
+- Node and NPM: A JavaScript runtime needed to install Cartesi CLI and run various scripts. We recommend installing the **LTS version** to ensure best compatibility.
 
-- [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) and [Ubuntu 24.04 LTS](https://ubuntu.com/download/desktop) **(for Windows users only)**.
+- WSL2 and Ubuntu 24.04 LTS **(for Windows users only)**.
 
   :::note building on windows?
   Avoid running commands in Powershell. Instead, use the latest installed Ubuntu distro for all coding and command execution.
