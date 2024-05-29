@@ -2,8 +2,10 @@
 id: running-the-application
 title: Running the application
 resources:
-  - url: https://github.com/gligneul/nonodo/tree/main
+  - url: https://github.com/Calindra/nonodo
     title: NoNodo
+  - url: https://cartesiscan.io/
+    title: CartesiScan
 ---
 
 Running your application starts your backend on port `8080` and local Anvil node on port `8545`.

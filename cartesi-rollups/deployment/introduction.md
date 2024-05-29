@@ -1,6 +1,10 @@
 ---
 id: introduction
 title: Introduction
+resources:
+  - url: https://github.com/cartesi/rollups-contracts/tree/main/deployments
+    title: Supported networks
+
 ---
 
 Applications built on Cartesi Rollups are intended to be deployed to public blockchains so users can access them. This can be done by taking advantage of a cloud-based infrastructure.
