@@ -1,11 +1,56 @@
 ---
-id: reports
-title: reports
+id: list_reports
+title: List Reports
 hide_table_of_contents: false
 ---
 
+## Get report based on its index
 
-Get reports with support for pagination:
+```graphql
+report(
+  reportIndex: Int!
+  inputIndex: Int!
+): Report!
+```
+
+### Arguments
+
+#### `reportIndex` ([`Int!`](../../scalars/int))
+
+#### `inputIndex` ([`Int!`](../../scalars/int))
+
+### Type
+
+#### [`Report`](../../objects/report)
+
+Application log or diagnostic information.
+
+### Example usage
+
+#### 1. Query a report with its `reportIndex` and `inputIndex`:
+
+```graphql
+query report($reportIndex: Int!, $inputIndex: Int!) {
+  report(reportIndex: $reportIndex, inputIndex: $inputIndex) {
+    index
+    input {
+      index
+    }
+    payload
+  }
+}
+```
+
+```graphql
+{
+  "reportIndex": 1,
+  "inputIndex": 2
+}
+```
+
+In this example, the query is set to retrieve the report at `reportIndex` `1` and `inputIndex` `2`.
+
+## Get reports with support for pagination
 
 ```graphql
 reports(
@@ -16,41 +61,55 @@ reports(
 ): ReportConnection!
 ```
 
-
-## Arguments
+### Arguments
 
 #### `first` ([`Int`](../../scalars/int))
-Get at most the first `n` entries(forward pagination).
 
-
+Get at most the first `n` entries (forward pagination).
 
 #### `last` ([`Int`](../../scalars/int))
-Get at most the last `n` entries(backward pagination).
 
-
+Get at most the last `n` entries (backward pagination).
 
 #### `after` ([`String`](../../scalars/string))
-Get entries that come after the provided cursor(forward pagination).
 
-
+Get entries that come after the provided cursor (forward pagination).
 
 #### `before` ([`String`](../../scalars/string))
-Get entries that come before the provided cursor(backward pagination).
 
+Get entries that come before the provided cursor (backward pagination).
 
-
-## Type
+### Type
 
 #### [`ReportConnection`](../../objects/report-connection)
 
 Pagination result
 
-## Example usage
+### Example usage
 
-1. Query all reports:
+#### 1. Query all reports:
 
-  ```graphql
-  query reports {
+```graphql
+query reports {
+  reports {
+    edges {
+      node {
+        index
+        input {
+          index
+        }
+        payload
+      }
+    }
+  }
+}
+```
+
+#### 2. Query reports based on their `inputIndex`:
+
+```graphql
+query reportsByInput($inputIndex: Int!) {
+  input(index: $inputIndex) {
     reports {
       edges {
         node {
@@ -63,32 +122,13 @@ Pagination result
       }
     }
   }
-  ```
+}
+```
 
-  1. Retrieve reports based on their `inputIndex`:
+```graphql
+{
+  "inputIndex": 2
+}
+```
 
-  ```graphql
-  query reportsByInput($inputIndex: Int!) {
-    input(index: $inputIndex) {
-      reports {
-        edges {
-          node {
-            index
-            input {
-              index
-            }
-            payload
-          }
-        }
-      }
-    }
-  }
-  ```
-
-  ```graphql
-    {
-      "inputIndex": 2
-    }
-    ```
-
-    In this example, the query is set to retrieve all reports at `inpuIndex` `2`.
+In this example, the query is set to retrieve all reports at `inputIndex` `2`.

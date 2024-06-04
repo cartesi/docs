@@ -1,11 +1,71 @@
 ---
-id: vouchers
-title: vouchers
+id: list-vouchers
+title: List Vouchers
 hide_table_of_contents: false
 ---
 
+## Get voucher based on its index:
 
-Get vouchers with support for pagination:
+```graphql
+voucher(
+  voucherIndex: Int!
+  inputIndex: Int!
+): Voucher!
+```
+
+
+### Arguments
+
+#### `voucherIndex` ([`Int!`](../../scalars/int))
+
+#### `inputIndex` ([`Int!`](../../scalars/int))
+
+### Type
+
+#### [`Voucher`](../../objects/voucher)
+
+Representation of a transaction that can be carried out on the base layer blockchain, such as a transfer of assets.
+
+### Example usage
+
+#### 1. Query a detailed voucher, including proof, using both the `voucherIndex` and `inputIndex`:
+
+  ```graphql
+  query voucher($voucherIndex: Int!, $inputIndex: Int!) {
+    voucher(voucherIndex: $voucherIndex, inputIndex: $inputIndex) {
+      index
+      input {
+        index
+      }
+      destination
+      payload
+      proof {
+        validity {
+          inputIndexWithinEpoch
+          outputIndexWithinInput
+          outputHashesRootHash
+          vouchersEpochRootHash
+          noticesEpochRootHash
+          machineStateHash
+          outputHashInOutputHashesSiblings
+          outputHashesInEpochSiblings
+        }
+        context
+      }
+    }
+  }
+  ```
+
+  Here, the query takes two variables: `voucherIndex` and `inputIndex`.
+
+  ```graphql
+  {
+    "voucherIndex": 1,
+    "inputIndex": 5
+  }
+  ```
+
+## Get vouchers with support for pagination:
 
 ```graphql
 vouchers(
@@ -17,12 +77,10 @@ vouchers(
 ```
 
 
-## Arguments
+### Arguments
 
 #### `first` ([`Int`](../../scalars/int))
 Get at most the first `n` entries(forward pagination).
-
-
 
 #### `last` ([`Int`](../../scalars/int))
 Get at most the last `n` entries(backward pagination).
@@ -39,16 +97,16 @@ Get entries that come before the provided cursor(backward pagination).
 
 
 
-## Type
+### Type
 
 #### [`VoucherConnection`](../../objects/voucher-connection)
 
 Pagination result.
 
 
-## Example usage
+### Example usage
 
-1. Query all vouchers:
+#### 1. Query all vouchers:
 
   ```graphql
   query vouchers {
@@ -67,7 +125,7 @@ Pagination result.
   }
   ```
 
-  1. Retrieve vouchers based on their `inputIndex`:
+#### 2. Query vouchers based on their `inputIndex`:
 
   ```graphql
   query vouchersByInput($inputIndex: Int!) {

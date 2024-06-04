@@ -1,11 +1,49 @@
 ---
-id: inputs
-title: inputs
+id: list_inputs
+title: List Inputs
 hide_table_of_contents: false
 ---
 
+## Get input based on its identifier
 
-Get inputs with support for pagination:
+```graphql
+input(
+  index: Int!
+): Input!
+```
+
+### Arguments
+
+#### `index` ([`Int!`](../../scalars/int))
+
+### Type
+
+#### [`Input`](../../objects/input)
+
+Request submitted to the application to advance its state.
+
+### Example usage
+
+#### 1. Get an input based on its `inputIndex`:
+
+```graphql
+query inputByIndex($inputIndex: Int!) {
+  input(index: $inputIndex) {
+    index
+    payload
+  }
+}
+```
+
+```graphql
+{
+  "inputIndex": 0
+}
+```
+
+In this example, the query is set to retrieve the input at `inputIndex` `0`.
+
+## Get inputs with support for pagination
 
 ```graphql
 inputs(
@@ -17,55 +55,47 @@ inputs(
 ): InputConnection!
 ```
 
-
-## Arguments
+### Arguments
 
 #### `first` ([`Int`](../../scalars/int))
-Get at most the first `n` entries(forward pagination).
 
-
-
+Get at most the first `n` entries (forward pagination).
 
 #### `last` ([`Int`](../../scalars/int))
-Get at most the last `n` entries(backward pagination).
 
-
+Get at most the last `n` entries (backward pagination).
 
 #### `after` ([`String`](../../scalars/string))
-Get entries that come after the provided cursor(forward pagination).
 
-
+Get entries that come after the provided cursor (forward pagination).
 
 #### `before` ([`String`](../../scalars/string))
-Get entries that come before the provided cursor(backward pagination).
 
-
+Get entries that come before the provided cursor (backward pagination).
 
 #### `where` ([`InputFilter`](../../inputs/input-filter))
 
-
-
-
-## Type
+### Type
 
 #### [`InputConnection`](../../objects/input-connection)
 
 Pagination result.
 
+### Example usage
 
-## Example usage
+#### 1. Query all inputs:
 
-1. Query all inputs:
-
-  ```graphql
-  query inputs {
-    inputs {
-      edges {
-        node {
-          index
-          payload
-        }
+```graphql
+query inputs {
+  inputs {
+    edges {
+      node {
+        index
+        payload
       }
     }
   }
-  ```
+}
+```
+
+In this example, the query retrieves all inputs with their respective indices and payloads.
