@@ -1,11 +1,69 @@
 ---
-id: notices
-title: notices
+id: list_notices
+title: List Notices
 hide_table_of_contents: false
 ---
 
+## Get notice based on its index
 
-Get notices with support for pagination:
+```graphql
+notice(
+  noticeIndex: Int!
+  inputIndex: Int!
+): Notice!
+```
+
+### Arguments
+
+#### `noticeIndex` ([`Int!`](../../scalars/int))
+
+#### `inputIndex` ([`Int!`](../../scalars/int))
+
+### Type
+
+#### [`Notice`](../../objects/notice)
+
+Informational statement that can be validated in the base layer blockchain.
+
+### Example usage
+
+#### 1. Retrieve a detailed notice, including proof, using both the `noticeIndex` and `inputIndex`:
+
+```graphql
+query notice($noticeIndex: Int!, $inputIndex: Int!) {
+  notice(noticeIndex: $noticeIndex, inputIndex: $inputIndex) {
+    index
+    input {
+      index
+    }
+    payload
+    proof {
+      validity {
+        inputIndexWithinEpoch
+        outputIndexWithinInput
+        outputHashesRootHash
+        vouchersEpochRootHash
+        noticesEpochRootHash
+        machineStateHash
+        outputHashInOutputHashesSiblings
+        outputHashesInEpochSiblings
+      }
+      context
+    }
+  }
+}
+```
+
+Here, the query takes two variables: `noticeIndex` and `inputIndex`.
+
+```graphql
+{
+  "noticeIndex": 0,
+  "inputIndex": 1
+}
+```
+
+## Get notices with support for pagination
 
 ```graphql
 notices(
@@ -16,41 +74,55 @@ notices(
 ): NoticeConnection!
 ```
 
-
-## Arguments
+### Arguments
 
 #### `first` ([`Int`](../../scalars/int))
-Get at most the first `n` entries(forward pagination).
 
-
+Get at most the first `n` entries (forward pagination).
 
 #### `last` ([`Int`](../../scalars/int))
-Get at most the last `n` entries(backward pagination).
 
-
+Get at most the last `n` entries (backward pagination).
 
 #### `after` ([`String`](../../scalars/string))
-Get entries that come after the provided cursor(forward pagination).
 
-
+Get entries that come after the provided cursor (forward pagination).
 
 #### `before` ([`String`](../../scalars/string))
-Get entries that come before the provided cursor(backward pagination).
 
+Get entries that come before the provided cursor (backward pagination).
 
-
-## Type
+### Type
 
 #### [`NoticeConnection`](../../objects/notice-connection)
 
 Pagination result
 
-## Example usage
+### Example usage
 
-1. Query all notices:
+#### 1. Query all notices:
 
-  ```graphql
-  query notices {
+```graphql
+query notices {
+  notices {
+    edges {
+      node {
+        index
+        input {
+          index
+        }
+        payload
+      }
+    }
+  }
+}
+```
+
+#### 2. Query notices based on their `inputIndex`:
+
+```graphql
+query noticesByInput($inputIndex: Int!) {
+  input(index: $inputIndex) {
     notices {
       edges {
         node {
@@ -63,32 +135,13 @@ Pagination result
       }
     }
   }
-  ```
+}
+```
 
-  1. Retrieve notices based on their `inputIndex`:
+```graphql
+{
+  "inputIndex": 1
+}
+```
 
-  ```graphql
-  query noticesByInput($inputIndex: Int!) {
-    input(index: $inputIndex) {
-      notices {
-        edges {
-          node {
-            index
-            input {
-              index
-            }
-            payload
-          }
-        }
-      }
-    }
-  }
-  ```
-
-  ```graphql
-  {
-    "inputIndex": 1
-  }
-  ```
-
-  In this example, the query is set to retrieve all notices at `inputIndex` `1`.
+In this example, the query is set to retrieve all notices at `inputIndex` `1`.
