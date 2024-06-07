@@ -32,6 +32,11 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
     npm i -g @cartesi/cli
    ```
 
+If not using Docker Desktop, Docker RISC-V support can be installed by running the following command:
+
+   ```shell
+    docker run --privileged --rm tonistiigi/binfmt:riscv
+   ```
 
 ## Create an application
 
