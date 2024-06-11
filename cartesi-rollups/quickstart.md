@@ -24,6 +24,12 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
 
 1. [Install Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
 
+    To install Docker RISC-V support without using Docker Desktop, run the following command:
+    
+   ```shell
+    docker run --privileged --rm tonistiigi/binfmt:riscv
+   ```
+
 1. [Download and install the latest version of Node.js](https://nodejs.org/en/download).
 
 2. Cartesi CLI is an easy-to-use tool to build and deploy your dApps. To install it, run:
@@ -32,11 +38,6 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
     npm i -g @cartesi/cli
    ```
 
-If not using Docker Desktop, Docker RISC-V support can be installed by running the following command:
-
-   ```shell
-    docker run --privileged --rm tonistiigi/binfmt:riscv
-   ```
 
 ## Create an application
 

@@ -35,31 +35,11 @@ Docker Desktop is a must-have requirement that comes pre-configured with two nec
 
 [Install the latest version of Docker Desktop](https://www.docker.com/products/docker-desktop/) for your operating system.
 
-:::troubleshoot troubleshooting common errors
+To install Docker RISC-V support without using Docker Desktop, run the following command:
 
-#### Error: Invalid image Architecture
 ```shell
-Error: Invalid image Architecture: Expected riscv64
+docker run --privileged --rm tonistiigi/binfmt:riscv
 ```
-
-#### Solution:
-
-
-1. Check if your Docker supports the RISCV platform by running:
-
-  ```shell
-  docker buildx ls
-  ```
-
-
-2. If you do not see `linux/riscv64` in the platforms list, install `QEMU` by running:
-
-  ```shell
-  apt install qemu-user-static
-  ```
-
-:::
-
 
 ## Node and NPM
 
