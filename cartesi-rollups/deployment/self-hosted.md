@@ -151,7 +151,7 @@ If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for 
    ```shell
    fly secrets set -a <app-name> CARTESI_BLOCKCHAIN_HTTP_ENDPOINT=<web3-provider-http-endpoint>
    fly secrets set -a <app-name> CARTESI_BLOCKCHAIN_WS_ENDPOINT=<web3-provider-ws-endpoint>
-   fly secrets set -a <app-name> CARTESI_AUTH_MNEMONIC=<mnemonic>
+   fly secrets set -a <app-name> CARTESI_AUTH_MNEMONIC=`<mnemonic>`
    fly secrets set -a <app-name> CARTESI_POSTGRES_ENDPOINT=<connection_string>
    ```
 
