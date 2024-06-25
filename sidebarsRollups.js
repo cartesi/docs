@@ -152,8 +152,8 @@ module.exports = {
       items: [
         "tutorials/calculator",
         "tutorials/machine-learning",
+        "tutorials/python-wallet",
         "tutorials/javascript-wallet",
-        "tutorials/python-wallet"
       ],
     },
 
