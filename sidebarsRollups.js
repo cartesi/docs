@@ -153,7 +153,7 @@ module.exports = {
         "tutorials/calculator",
         "tutorials/machine-learning",
         "tutorials/python-wallet",
-        "tutorials/javascript-wallet",
+        "tutorials/deroll",
       ],
     },
 
