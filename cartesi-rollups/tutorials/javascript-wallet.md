@@ -1,5 +1,5 @@
 ---
-id: deroll
+id: javascript-wallet
 title: "Deroll: A TypeScript Framework"
 resources:
   - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
