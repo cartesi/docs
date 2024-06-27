@@ -28,3 +28,8 @@ This command creates a `new-dapp` directory with essential files for your dApp d
 Cartesi CLI has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
 
 After creating your application, you can start building your dApp by adding your logic to the `dapp.py` file.
+
+
+:::note Building with Go?
+For Go applications on Cartesi, we recommend using [Rollmelette](https://github.com/rollmelette/rollmelette). It’s a high-level Go framework and an alternative template that simplifies development and enhances input management, providing a smoother and more efficient experience.
+:::
