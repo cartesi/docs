@@ -148,7 +148,7 @@ Several tools created and maintained by the community streamline the dApp creati
 - [Deroll](https://github.com/tuler/deroll): TypeScript framework for building on Cartesi.
 - [python-cartesi](https://github.com/prototyp3-dev/python-cartesi): Python framework for building on Cartesi.
 - [cartesi-ts-sqlite](https://github.com/doiim/cartesi-ts-sqlite): A TypeScript + SQLite template.
-- [Rollmellete](https://github.com/gligneul/rollmelette): Go framework for building on Cartesi.
+- [Rollmelette](https://github.com/gligneul/rollmelette): Go framework for building on Cartesi.
 - [Cartesify](https://github.com/Calindra/cartesify): A web3 client to interact with the Cartesi machine.
 - [cartesi-router](https://github.com/jjhbk/cartesi-router): TypeScript-based Router Implementation for Cartesi dApps.
 - [cartesi-wallet](https://github.com/jjhbk/cartesi-wallet): TypeScript-based Wallet Implementation for Cartesi dApps.
