@@ -511,9 +511,9 @@ html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
 }
 
 /* hash link */
-.hash-link::before {
+/* .hash-link::before {
   content: none !important;
-}
+} */
 
 /* doc search */
 .DocSearch-Button {
