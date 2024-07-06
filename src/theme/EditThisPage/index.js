@@ -5,7 +5,7 @@ import IconEdit from "@theme/Icon/Edit";
 export default function EditThisPage({ editUrl }) {
   return (
     <a
-      href={editUrl}
+      href="https://github.com/cartesi/docs/issues/new"
       target="_blank"
       rel="noreferrer noopener"
       className={ThemeClassNames.common.editThisPage}
