@@ -148,4 +148,5 @@ curl http://localhost:8080/inspect/mypath
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
-The direct output types for **Advance** and **Inspect** are [vouchers](./vouchers.md), [notices](./notices.md), and [reports](./reports.md).
+
+The direct output types for **Advance** requests are [vouchers](./vouchers.md), [notices](./notices.md), and [reports](./reports.md), while **Inspect** requests generate only [reports](./reports.md).
