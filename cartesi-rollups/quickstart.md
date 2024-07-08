@@ -146,6 +146,7 @@ Deployment with a third-party service provider is under development and will be 
 Several tools created and maintained by the community streamline the dApp creation process on Cartesi Rollups.
 
 - [Deroll](https://github.com/tuler/deroll): TypeScript framework for building on Cartesi.
+- [NoNodo](https://github.com/Calindra/nonodo/tree/main): NoNodo is a lightweight development tool that runs the backend application without requiring Docker or a node.
 - [python-cartesi](https://github.com/prototyp3-dev/python-cartesi): Python framework for building on Cartesi.
 - [cartesi-ts-sqlite](https://github.com/doiim/cartesi-ts-sqlite): A TypeScript + SQLite template.
 - [Rollmelette](https://github.com/gligneul/rollmelette): Go framework for building on Cartesi.
