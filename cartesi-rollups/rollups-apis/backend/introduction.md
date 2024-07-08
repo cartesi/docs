@@ -11,6 +11,10 @@ The backend of a Cartesi dApp retrieves a new request as follows:
 
   - **Inspect** — This function submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged since the machine is reverted to its exact previous condition after processing. For Inspect requests, the input data has only a payload.
 
+  :::caution Inspect requests
+  Inspect requests are best suited for non-production use, such as debugging and testing. They may not function reliably in production environments, potentially leading to errors or disruptions.
+  :::
+
 ## Advance and Inspect
 
 Here is a simple boilerplate application that handles Advance and Inspect requests:
