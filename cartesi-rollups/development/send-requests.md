@@ -4,12 +4,8 @@ title: Send requests
 resources:
   - url: https://github.com/prototyp3-dev/frontend-web-cartesi
     title: React.js + Typescript template
-  - url: https://github.com/masiedu4/nextjs-web-cartesi
-    title: Next.js template
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
     title: Angular template
-  - url: https://github.com/Mugen-Builders/sunodo-frontend-console
-    title: Frontend Console Application
 ---
 
 You can send two requests to an application depending on whether you want to change or read the state.

@@ -129,7 +129,7 @@ const config = {
           // },
           {
             label: "Video Tutorial",
-            href: "https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass",
+            href: "https://www.udemy.com/course/cartesi-masterclass/",
             position: "left",
           },
           {

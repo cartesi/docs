@@ -2,16 +2,14 @@
 id: python-wallet
 title: Build a wallet dApp with Python
 resources:
-   - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
+   - url: https://www.udemy.com/course/cartesi-masterclass/
      title: The Cartesi dApp Developer Free Course
    - url: https://github.com/jplgarcia/python-wallet/tree/main
      title: "Cartesi-Wallet: Python based Wallet implementation for Cartesi dApps"
    - url: https://github.com/Mugen-Builders/frontend-cartesi-wallet-x
      title: "Frontend-Cartesi-Wallet: A React frontend to showcase wallet functionality of Cartesi dApps" 
-   - url: https://github.com/Mugen-Builders/sunodo-frontend-console
-     title: Frontend Console Application
    - url: https://github.com/jplgarcia/cartesi-angular-frontend
-     title: Angular Starter Template to Showcase Wallet Functionality of Cartesi dApps
+     title: Angular template
 ---
 
 Let’s build a simple dApp that uses the `cartesi-wallet` package to handle different deposits, transfers, and withdrawals of various assets.

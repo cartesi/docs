@@ -2,20 +2,18 @@
 id: javascript-wallet
 title: Build a wallet dApp with JavaScript
 resources:
-  - url: https://www.udemy.com/course/the-cartesi-dapp-developer-masterclass
+  - url: https://www.udemy.com/course/cartesi-masterclass/
     title: The Cartesi dApp Developer Free Course
   - url: https://github.com/jjhbk/cartesi-wallet
     title: "Cartesi-Wallet: TypeScript-based Wallet Implementation for Cartesi dApps"
   - url: https://github.com/jjhbk/cartesi-router
     title: "Cartesi-Router: TypeScript-based Router Implementation for Cartesi dApps"
   - url: https://github.com/Mugen-Builders/frontend-cartesi-wallet-x
-    title: "Frontend-Cartesi-Wallet: A React frontend to showcase wallet functionality of Cartesi dApps"
-  - url: https://github.com/Mugen-Builders/sunodo-frontend-console
-    title: Frontend Console Application
+    title: A React frontend to showcase wallet functionality of Cartesi dApps"
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
-    title: Angular Starter Template to Showcase Wallet Functionality of Cartesi dApps
+    title: Angular template
   - url: https://github.com/Mugen-Builders/simple-cartesi-jsapp
-    title: "Simple Cartesi dApp: This example showcases how to build a simple Cartesi dApp using Cartesi Wallet and Cartesi Router modules."
+    title: A simple Cartesi dApp using Cartesi Wallet and Cartesi Router modules.
 ---
 
 Let’s build a simple dApp that uses the `cartesi-wallet` package to handle different deposits and withdrawals.
