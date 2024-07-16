@@ -12,18 +12,12 @@ Running your application starts your backend on port `8080` and local Anvil node
 
 In essence, the node also logs all outputs received by your backend.
 
-You can run your application in 2 different modes — **production** or **NoNodo**.
-
-NoNodo is a light development tool that does not require Docker running and allows running the backend application without a node.
-
-## Production Mode
-
-Here are the prerequisites to run the node in production mode:
+Here are the prerequisites to run the node:
 
 - Docker Engine must be active.
 - Cartesi machine snapshot successfully built with `cartesi build`.
 
-To start the node in production mode:
+To start the node, run:
 
 ```shell
 cartesi run
@@ -67,84 +61,15 @@ The `cartesi run` command activates several services essential for node operatio
 
 - **Inspect**: A diagnostic tool accessible at `http://localhost:8080/inspect/` to inspect the node’s state.
 
-## NoNodo (Testing & Development)
-
-NoNodo is a development tool for Cartesi Rollups designed to work with applications running in the host machine instead of the Cartesi machine. With NoNodo, you don’t need to run Docker or compile the application to RISC-V.
-
-:::caution important
-
-- Applications may still require RISC-V compilation even for interpreted languages, as they use libraries with binaries for x64 platforms.
-
-- NoNodo works for applications that use the Cartesi Rollups HTTP API and doesn't work with applications using the low-level API.
-
-- NoNodo offers an improved speed and performance compared to running your application inside a Cartesi machine.
-
-:::
-
-### Prerequisites
-
-Set up Anvil on your system. Refer to [the instructions in the Foundry book for Anvil installation](https://book.getfoundry.sh/anvil/) details.
-
-### Install NoNodo
-
-After setting up Anvil, install NoNodo by running:
-
-```shell
-npm i -g nonodo
-```
-
-### Usage
-
-To start NoNodo with the default configuration, run:
-
-```shell
-nonodo
-```
-
-This command creates an Anvil node with the Cartesi Rollups contracts deployed by default. NoNodo uses the same deployment as the Cartesi CLI, so the contract addresses remain the same.
-
-### Exposed APIs
-
-GraphQL API: This API is accessible via `/graphql` and is designed for frontend clients to query notices, vouchers, and reports.
-
-- Inspect API: Accessible via `/inspect`; this API is useful for frontend clients who want to inspect the internal state.
-
-- Rollup API: Accessible via `/rollup`, this API serves as the application backend.
-
-### Running the application
-
-NoNodo can run the application backend as a sub-process.
-
-This option helps keep the entire development in a single terminal. To use it, pass the command to run the application after `--`.
-
-```shell
-nonodo -- ./my-app
-```
-
-### Built-in Echo Application
-
-NoNodo has a built-in echo application that generates a voucher, a notice, and a report for each advance input.
-
-The echo also generates a report for each inspected input. This option is useful when testing the application frontend without a working backend.
-
-To start NoNodo with the built-in echo application, use the `--enable-echo` flag.
-
-```shell
-nonodo --enable-echo
-```
-
-### Configuration
-
-NoNodo provides configuration flags to customize the behavior of the Anvil node. Flags begin with `--anvil-*`.
-
-NoNodo binds to the HTTP address and port specified by the `--http-address` and `--http-port` flags.
-
-By default, it binds to `http://127.0.0.1:8080/`.
 
 ## CartesiScan
 
 [CartesiScan](https://cartesiscan.io/) is a valuable tool for developers and users alike, offering a comprehensive overview of Cartesi Rollups applications and their interactions with the blockchain.
 
-Key features include a Connect Wallet option, a list of dApps built on Cartesi Rollups, a log of inputs for Cartesi Rollups, and detailed information about inputs such as sender, receiver, portal used, asset amount, and the method employed.
-
 Additionally, it provides expandable data regarding outputs, encompassing notices, vouchers, and reports.
+
+When you run your application with `cartesi run` , there is a local instance of CartesiScan on `http://localhost:8080/explorer`.
+
+:::note Testing tools
+[NoNodo](https://github.com/Calindra/nonodo) is a Cartesi Rollups testing tool that works with host machine applications, eliminating the need for Docker or RISC-V compilation.
+:::
