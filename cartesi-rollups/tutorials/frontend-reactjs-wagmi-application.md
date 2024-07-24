@@ -1630,33 +1630,5 @@ They are validated and executed on the blockchain using the [`executeVoucher(add
 
 For example, users might generate vouchers to withdraw assets, which are executed on the base later.
 
-```typescript
-
-
-
-// sample code to execute a voucher
-
-import { useWriteContract } from "wagmi";
-
-const executeVoucher = async (voucher: any) => {
-  const { writeContractAsync } = useWriteContract();
-
-  if (voucher.proof) {
-    const newVoucherToExecute = { ...voucher };
-    try {
-      const hash = await writeContractAsync({
-        address, // CartesiDApp contract address
-        abi, // CartesiDApp contract 
-        functionName: "executeVoucher",
-        args: [voucher.destination, voucher.payload, voucher.proof],
-      });
-    } catch (e) {
-      console.error("Error executing voucher:", e);
-    }
-  }
-};
-
-```
-
 At this stage, you can now interact with the Cartesi backend using the frontend you've built.
 
