@@ -193,7 +193,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       </QueryClientProvider>
     </WagmiProvider>
   </React.StrictMode>
-);
+); 
 ```
 
 </code></pre>
@@ -424,313 +424,68 @@ export default App;
 
 
 
-### Define the ABIs and contract addresses
+## Define the ABIs, contract addresses and hooks
 
-In a Cartesi dApp, the frontend sends inputs to the backend via the base layer chain as JSON-RPC transactions.
+In a Cartesi dApp, the frontend sends inputs to the backend via the base layer chain using JSON-RPC transactions.
 
-Pre-deployed smart contracts on supported chains handle generic inputs and assets. We only need their ABIs and addresses to send transactions using Wagmi.
+Pre-deployed smart contracts on supported chains handle generic inputs and assets. 
 
-Cartesi Rollups contracts have consistent ABIs and addresses across all supported chains, including Anvil testnet.
+We only need their ABIs and addresses to send transactions using Wagmi.
 
-Supported input types: generic inputs, Ether, ERC20, ERC721, and ERC1155.
+However, manually specifying the ABIs and addresses for all the Cartesi Rollups contracts when making function calls can be a hassle.
 
-Create a `src/utils` directory to store the following ABIs and contract addresses:
+Thanks to [`@wagmi/cli`](https://wagmi.sh/cli/why), we can be more efficient by **autogenerating Cartesi-specific hooks**. 
 
+:::note 
+These hooks come preconfigured with all the ABIs and addresses needed for any function calls to Cartesi. We just need to add the custom arguments for our specific use case.
+:::
+
+In other words, instead of using the basic [`useWriteContract()`](https://wagmi.sh/react/api/hooks/useWriteContract) hook from Wagmi, where we have to specify the function names, ABIs, and addresses ourselves, we use a more advanced version where these details are already set up. 
+
+This will automate manual work so we can build faster! We simply import the hooks, call the functions, and pass in the custom arguments.
+
+Note the differences in the implementation of sending an input to the `InputBox` contract using the generic `useWriteContract()` hook and the Cartesi-specific `useWriteInputBoxAddInput()` hook:
 
 <Tabs>
 
-<TabItem value="addresses" label="src/utils/addresses.ts" default>
+<TabItem value="generic" label="generic" default>
 <pre><code>
 
 ```javascript
-export const contractAddresses = {
-  InputBox: "0x59b22D57D4f067708AB0c00552767405926dc768",
-  EtherPortal: "0xFfdbe43d4c855BF7e0f105c400A50857f53AB044",
-  Erc20Portal: "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB",
-  Erc721Portal: "0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87",
-  Erc1155SinglePortal: "0x7CFB0193Ca87eB6e48056885E026552c3A941FC4",
-  Erc1155BatchPortal: "0xedB53860A6B52bbb7561Ad596416ee9965B055Aa",
-  DAppAddressRelay: "0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE"
-};
+
+import { useWriteContract } from "wagmi";
+
+const { writeContractAsync } = useWriteContract();
+
+async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await writeContractAsync({
+      address: // import Address here
+      abi: // import ABI here,
+      functionName: "addInput",
+      args: ["0xDAppAddress", "OxHello"],
+    });
+  }
 ```
 
 </code></pre>
 </TabItem>
 
-  <TabItem value="abis" label="src/utils/abi.ts">
+  <TabItem value="cartesi-specific" label="cartesi-specific">
 <pre><code>
 
 ```typescript
-export const ABIs = {
-  DAppAddressRelayABI: [
-    {
-      inputs: [
-        {
-          internalType: "contract IInputBox",
-          name: "_inputBox",
-          type: "address",
-        },
-      ],
-      stateMutability: "nonpayable",
-      type: "constructor",
-    },
-    {
-      inputs: [],
-      name: "getInputBox",
-      outputs: [
-        { internalType: "contract IInputBox", name: "", type: "address" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "_dapp", type: "address" }],
-      name: "relayDAppAddress",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-  ],
+import { useWriteInputBoxAddInput } from "../hooks/generated"; // generated hooks
 
-  ERC1155BatchPortalABI: [
-    {
-      inputs: [
-        {
-          internalType: "contract IInputBox",
-          name: "_inputBox",
-          type: "address",
-        },
-      ],
-      stateMutability: "nonpayable",
-      type: "constructor",
-    },
-    {
-      inputs: [
-        { internalType: "contract IERC1155", name: "_token", type: "address" },
-        { internalType: "address", name: "_dapp", type: "address" },
-        { internalType: "uint256[]", name: "_tokenIds", type: "uint256[]" },
-        { internalType: "uint256[]", name: "_values", type: "uint256[]" },
-        { internalType: "bytes", name: "_baseLayerData", type: "bytes" },
-        { internalType: "bytes", name: "_execLayerData", type: "bytes" },
-      ],
-      name: "depositBatchERC1155Token",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "getInputBox",
-      outputs: [
-        { internalType: "contract IInputBox", name: "", type: "address" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-  ],
+const { writeContractAsync } = useWriteInputBoxAddInput();
 
-  ERC1155SinglePortalABI: [
-    {
-      inputs: [
-        {
-          internalType: "contract IInputBox",
-          name: "_inputBox",
-          type: "address",
-        },
-      ],
-      stateMutability: "nonpayable",
-      type: "constructor",
-    },
-    {
-      inputs: [
-        { internalType: "contract IERC1155", name: "_token", type: "address" },
-        { internalType: "address", name: "_dapp", type: "address" },
-        { internalType: "uint256", name: "_tokenId", type: "uint256" },
-        { internalType: "uint256", name: "_value", type: "uint256" },
-        { internalType: "bytes", name: "_baseLayerData", type: "bytes" },
-        { internalType: "bytes", name: "_execLayerData", type: "bytes" },
-      ],
-      name: "depositSingleERC1155Token",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "getInputBox",
-      outputs: [
-        { internalType: "contract IInputBox", name: "", type: "address" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-  ],
-
-  ERC20PortalABI: [
-    {
-      inputs: [
-        {
-          internalType: "contract IInputBox",
-          name: "_inputBox",
-          type: "address",
-        },
-      ],
-      stateMutability: "nonpayable",
-      type: "constructor",
-    },
-    {
-      inputs: [
-        { internalType: "contract IERC20", name: "_token", type: "address" },
-        { internalType: "address", name: "_dapp", type: "address" },
-        { internalType: "uint256", name: "_amount", type: "uint256" },
-        { internalType: "bytes", name: "_execLayerData", type: "bytes" },
-      ],
-      name: "depositERC20Tokens",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "getInputBox",
-      outputs: [
-        { internalType: "contract IInputBox", name: "", type: "address" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-  ],
-
-  ERC721PortalABI: [
-    {
-      inputs: [
-        {
-          internalType: "contract IInputBox",
-          name: "_inputBox",
-          type: "address",
-        },
-      ],
-      stateMutability: "nonpayable",
-      type: "constructor",
-    },
-    {
-      inputs: [
-        { internalType: "contract IERC721", name: "_token", type: "address" },
-        { internalType: "address", name: "_dapp", type: "address" },
-        { internalType: "uint256", name: "_tokenId", type: "uint256" },
-        { internalType: "bytes", name: "_baseLayerData", type: "bytes" },
-        { internalType: "bytes", name: "_execLayerData", type: "bytes" },
-      ],
-      name: "depositERC721Token",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "getInputBox",
-      outputs: [
-        { internalType: "contract IInputBox", name: "", type: "address" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-  ],
-
-  EtherPortalABI: [
-    {
-      inputs: [
-        {
-          internalType: "contract IInputBox",
-          name: "_inputBox",
-          type: "address",
-        },
-      ],
-      stateMutability: "nonpayable",
-      type: "constructor",
-    },
-    {
-      inputs: [],
-      name: "EtherTransferFailed",
-      type: "error",
-    },
-    {
-      inputs: [
-        { internalType: "address", name: "_dapp", type: "address" },
-        { internalType: "bytes", name: "_execLayerData", type: "bytes" },
-      ],
-      name: "depositEther",
-      outputs: [],
-      stateMutability: "payable",
-      type: "function",
-    },
-    {
-      inputs: [],
-      name: "getInputBox",
-      outputs: [
-        { internalType: "contract IInputBox", name: "", type: "address" },
-      ],
-      stateMutability: "view",
-      type: "function",
-    },
-  ],
-
-  InputBoxABI: [
-    {
-      inputs: [],
-      name: "InputSizeExceedsLimit",
-      type: "error",
-    },
-    {
-      anonymous: false,
-      inputs: [
-        { indexed: true, internalType: "address", name: "dapp", type: "address" },
-        {
-          indexed: true,
-          internalType: "uint256",
-          name: "inputIndex",
-          type: "uint256",
-        },
-        {
-          indexed: false,
-          internalType: "address",
-          name: "sender",
-          type: "address",
-        },
-        { indexed: false, internalType: "bytes", name: "input", type: "bytes" },
-      ],
-      name: "InputAdded",
-      type: "event",
-    },
-    {
-      inputs: [
-        { internalType: "address", name: "_dapp", type: "address" },
-        { internalType: "bytes", name: "_input", type: "bytes" },
-      ],
-      name: "addInput",
-      outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [
-        { internalType: "address", name: "_dapp", type: "address" },
-        { internalType: "uint256", name: "_index", type: "uint256" },
-      ],
-      name: "getInputHash",
-      outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-      stateMutability: "view",
-      type: "function",
-    },
-    {
-      inputs: [{ internalType: "address", name: "_dapp", type: "address" }],
-      name: "getNumberOfInputs",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-      stateMutability: "view",
-      type: "function",
-    },
-  ],
-};
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await writeContractAsync({
+      // no need to specify address, abi, and functionName
+      args: ["0xDAppAddress", "OxHello"],
+    });
+  }
 ```
 
 </code></pre>
@@ -740,11 +495,70 @@ export const ABIs = {
 
 </Tabs>
 
+
+### Install the dependencies
+
+We will install the following dependencies to our project:
+
+- [`@wagmi/cli`](https://wagmi.sh/cli/why): The Wagmi CLI tool for ABI-specific hooks.
+- [`@cartesi/rollups`](https://www.npmjs.com/package/@cartesi/rollups): The Cartesi Rollups contract implementations.
+- [`sunodo/wagmi-plugin-hardhat-deploy`](https://www.npmjs.com/package/@sunodo/wagmi-plugin-hardhat-deploy): Wagmi CLI plugin that loads contracts and deployments from the `@cartesi/rollups` package.
+
+```bash
+npm i  @wagmi/cli @cartesi/rollups @sunodo/wagmi-plugin-hardhat-deploy 
+```
+
+### Create a configuration file
+
+Run the `init` command to generate a configuration file: `wagmi.config.ts`
+
+```bash
+npx wagmi init
+```
+
+Once the configuration file is set up, you can add contracts and plugins for Cartesi Rollups:
+
+<Tabs>
+  
+<TabItem value="wagmi-config" label="wagmi.config.ts" default>
+<pre><code>
+
+```typescript
+import { defineConfig } from "@wagmi/cli";
+import { react } from "@wagmi/cli/plugins";
+import { erc20Abi, erc721Abi } from "viem";
+import hardhatDeploy from "@sunodo/wagmi-plugin-hardhat-deploy";
+
+export default defineConfig({
+  out: "src/hooks/generated.ts", // Specifies the output file for the hooks
+  contracts: [
+    {
+      abi: erc20Abi,
+      name: "erc20",
+    },
+    { abi: erc721Abi, name: "erc721" },
+  ],
+  plugins: [
+    hardhatDeploy({
+        directory: "node_modules/@cartesi/rollups/export/abi",
+    }),
+    react(),
+],
+});
+```
+
+</code></pre>
+</TabItem>
+
+</Tabs>
+
+The configuration sets up the Wagmi CLI to autogenerate TypeScript hooks for ERC20 and ERC721 contracts, as well as for any contracts in the specified Cartesi Rollups ABI directory.
+
 ## Sending a generic input
 
 The [`InputBox`](../rollups-apis/json-rpc/input-box.md) contract is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone.
 
-The `InputBox` contract is deployed on all supported chains. We will use the `InputBox` contract address and ABI to send an input from the frontend.
+The `InputBox` contract is deployed on all supported chains. We will use a React hook to send an input to the backend via the `InputBox` contracct. 
 
 Create a new file `src/components/SimpleInput.tsx` and follow the implementation below:
 
@@ -753,12 +567,11 @@ Create a new file `src/components/SimpleInput.tsx` and follow the implementation
 
 ```javascript
 import React, { useState } from "react";
-import { BaseError, useWriteContract } from "wagmi";
-import { ABIs } from "../utils/abi";
-import { contractAddresses } from "../utils/addresses";
-import { Hex,stringToHex } from "viem";
+import { BaseError } from "wagmi";
+import { useWriteInputBoxAddInput } from "../hooks/generated";
+import { stringToHex } from "viem";
 ```
-Here, we are importing Wagmi's `useWriteContract` hook, our ABI and address utilities, and Viem's `Hex` type and `stringToHex` function for data conversion.
+Here, we are importing the generated `useWriteInputBoxAddInput` hook and Viem's `stringToHex` function for data conversion.
 
 
 ### Component definition and state
@@ -777,12 +590,12 @@ We define the `dAppAddress` and create a state variable `inputValue` to manage t
 
 The `dAppAddress` is the address of the Cartesi backend that will receive the input. In this case, we are using a hardcoded address of a local dApp instance for demonstration purposes.
 
-### Using the `useWriteContract` Hook
+### Using the  Hook
 
-We'll use the `useWriteContract` hook to interact with the `InputBox` contract:
+We'll use the `useWriteInputBoxAddInput` hook to interact with the `InputBox` contract:
 
 ```javascript
-const { isPending, isSuccess, error, writeContractAsync } = useWriteContract();
+const { isPending, isSuccess, error, writeContractAsync } = useWriteInputBoxAddInput();
 ```
 
 This hook provides us with state variables and a `writeContractAsync` function to write to the smart contract.
@@ -794,9 +607,6 @@ This hook provides us with state variables and a `writeContractAsync` function t
 async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     await writeContractAsync({
-      address: contractAddresses.InputBox as Hex,
-      abi: ABIs.InputBoxABI,
-      functionName: "addInput",
       args: [dAppAddress, stringToHex(inputValue)],
     });
   }
@@ -813,37 +623,37 @@ Now, let us build our component JSX with an input field and a submit button, sty
 
 ```javascript
 return (
-  <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-xl">
-    <h2 className="text-3xl font-bold text-white mb-6">Send Generic Input</h2>
-    <form onSubmit={submit} className="space-y-4">
-      <div>
-        <input
-          type="text"
-          className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          placeholder="Enter something"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-      </div>
-      <button
-        type="submit"
-        className="w-full px-4 py-2 bg-white text-purple-600 rounded-md hover:bg-purple-100 transition-colors duration-300 font-medium"
-      >
-        {isPending ? "Sending..." : "Send"}
-      </button>
-    </form>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-xl">
+      <h2 className="text-3xl font-bold text-white mb-6">Send Generic Input</h2>
+      <form onSubmit={submit} className="space-y-4">
+        <div>
+          <input
+            type="text"
+            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="Enter something"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full px-4 py-2 bg-white text-purple-600 rounded-md hover:bg-purple-100 transition-colors duration-300 font-medium"
+        >
+          {isPending ? "Sending..." : "Send"}
+        </button>
+      </form>
 
-    {isSuccess && (
-      <p className="mt-4 text-green-300 font-bold">Transaction Sent</p>
-    )}
+      {isSuccess && (
+        <p className="mt-4 text-green-300 font-bold">Transaction Sent</p>
+      )}
 
-    {error && (
-      <div className="mt-4 text-red-300">
-        Error: {(error as BaseError).shortMessage || error.message}
-      </div>
-    )}
-  </div>
-);
+      {error && (
+        <div className="mt-4 text-red-300">
+          Error: {(error as BaseError).shortMessage || error.message}
+        </div>
+      )}
+    </div>
+  );
 ```
 
 ### Final Component
@@ -856,24 +666,20 @@ Putting it all together, our complete `<SimpleInput/>` component and `App.tsx` l
 
 ```typescript
 import React, { useState } from "react";
-import { BaseError, useWriteContract } from "wagmi";
-import { ABIs } from "../utils/abi";
-import { contractAddresses } from "../utils/addresses";
-import { Hex, stringToHex } from "viem";
+import { BaseError } from "wagmi";
+import { useWriteInputBoxAddInput } from "../hooks/generated";
+import { stringToHex } from "viem";
 
 const SimpleInput = () => {
   const dAppAddress = `0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e`;
   const [inputValue, setInputValue] = useState("");
 
   const { isPending, isSuccess, error, writeContractAsync } =
-    useWriteContract();
+    useWriteInputBoxAddInput();
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     await writeContractAsync({
-      address: contractAddresses.InputBox as Hex,
-      abi: ABIs.InputBoxABI,
-      functionName: "addInput",
       args: [dAppAddress, stringToHex(inputValue)],
     });
   }
@@ -914,6 +720,7 @@ const SimpleInput = () => {
 
 export default SimpleInput;
 
+
 ```
 
 </code></pre>
@@ -948,36 +755,39 @@ export default App;
 
 The [`EtherPortal`](../rollups-apis/json-rpc/portals/EtherPortal.md) contract is a pre-deployed smart contract that allows users to deposit Ether to the Cartesi backend.
 
-We will use the `EtherPortal` contract address and ABI to send Ether from the frontend.
 
 This implementation will be similar to the generic input, but with a few changes to handle Ether transactions.
 
-The key changes in this compared to [SimpleInput](#sending-a-generic-input) are:
+The key changes in this are:
 
   - The input field now will accept **Ether** values instead of generic text.
 
   - The `submit` function creates a data string representing the Ether deposit and uses `parseEther` to convert the input value.
 
-  - The `writeContractAsync` call is adjusted to use the [`depositEther(address _dapp, bytes _execLayerData)`](../rollups-apis/json-rpc/portals/EtherPortal.md/#depositether) function of the `EtherPortal` contract, including the Ether value in the transaction.
+  - We will use the `useWriteEtherPortalDepositEther` hook to send Ether.
+
+
 
   ```typescript
+    import { useWriteEtherPortalDepositEther } from "../hooks/generated";
 
-    // imports here
+    // other imports here
 
     const [etherValue, setEtherValue] = useState("");
 
     // rest of the code
+
+    const {isPending,isSuccess,error,writeContractAsync: depositToken} = useWriteEtherPortalDepositEther();
+
     async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = stringToHex(`Deposited (${etherValue}) ether.`);
-    await writeContractAsync({
-      address: contractAddresses.EtherPortal as Hex,
-      abi: ABIs.EtherPortalABI,
-      functionName: "depositEther",
-      args: [dAppAddress, data],
-      value: parseEther(etherValue),
-    });
-  }
+      event.preventDefault();
+      const data = stringToHex(`Deposited (${etherValue}) ether.`);
+      await depositToken({
+        args: [dAppAddress, data],
+        value: parseEther(etherValue),
+      });
+    }
+
 
   // rest of the code
   ```
@@ -992,25 +802,26 @@ Create a new file `src/components/SendEther.tsx` and paste the complete code:
 
 ```typescript
 import React, { useState } from "react";
-import { BaseError, useWriteContract } from "wagmi";
-import { ABIs } from "../utils/abi";
-import { contractAddresses } from "../utils/addresses";
+import { BaseError } from "wagmi";
+import { useWriteEtherPortalDepositEther } from "../hooks/generated";
 
-import { Hex, parseEther, stringToHex } from "viem";
+import { parseEther, stringToHex } from "viem";
 
 const SendEther = () => {
   const dAppAddress = `0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e`;
   const [etherValue, setEtherValue] = useState("");
 
-  const { isPending, isSuccess, error, writeContractAsync } = useWriteContract();
+  const {
+    isPending,
+    isSuccess,
+    error,
+    writeContractAsync: depositToken,
+  } = useWriteEtherPortalDepositEther();
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = stringToHex(`Deposited (${etherValue}) ether.`);
-    await writeContractAsync({
-      address: contractAddresses.EtherPortal as Hex,
-      abi: ABIs.EtherPortalABI,
-      functionName: "depositEther",
+    await depositToken({
       args: [dAppAddress, data],
       value: parseEther(etherValue),
     });
@@ -1057,32 +868,6 @@ export default SendEther;
 </code></pre>
 </TabItem>
 
-<TabItem value="app-ts2" label="src/App.tsx" default>
-<pre><code>
-
-```typescript
-import Account from "./components/Account";
-import SimpleInput from "./components/SimpleInput";
-import SendEther from "./components/SendEther";
-
-function App() {
-  return (
-    <>
-      <Account />
-      <SimpleInput />
-      <SendEther />
-    </>
-  );
-}
-
-export default App;
-
-
-```
-
-</code></pre>
-</TabItem>
-
 </Tabs>
 
 
@@ -1090,7 +875,6 @@ export default App;
 
 The [`ERC20Portal`](../rollups-apis/json-rpc/portals/ERC20Portal.md) contract is a pre-deployed smart contract that allows users to deposit ERC20 tokens to the Cartesi backend.
 
-We will use the `ERC20Portal` contract address and ABI to send ERC20 tokens from the frontend.
 
 This implementation will be similar to the [depositing Ether](#depositing-ether), but with a few changes to handle ERC20 token transactions.
 
@@ -1106,47 +890,46 @@ Here are the key differences in depositing ERC20 tokens compared to Ether:
   Without this approval, contracts like ERC20Portal cannot move your tokens to the Cartesi backend.
   :::
 
-  - The `writeContractAsync` call is adjusted to use the [`depositERC20Tokens(address _token, uint256 _amount, bytes _execLayerData)`](../rollups-apis/json-rpc/portals/ERC20Portal.md/#depositerc20tokens) function of the `ERC20Portal` contract.
-
+  - We will use the `useWriteErc20Approve` hook to approve the deposit and `useWriteErc20PortalDepositErc20Tokens` hook to make the deposit.
 
   ```typescript
-    import { Address, erc20Abi, parseEther, stringToHex } from "viem";
+    import {
+      erc20PortalAddress,
+      useWriteErc20Approve,
+      useWriteErc20PortalDepositErc20Tokens,
+    } from "../hooks/generated";
+
+    import { Address, parseEther, stringToHex, Hex } from "viem";
 
     // other imports here
 
     const [erc20Value, setErc20Value] = useState("");
     const [tokenAddress, setTokenAddress] = useState<Address | null>();
 
-    const approveERC20 = async (tokenAddress: Address, amount: string) => {
+    const { writeContractAsync: approveToken } = useWriteErc20Approve();
+    const { writeContractAsync: depositToken} = useWriteErc20PortalDepositErc20Token();
 
-    try {
-      await writeContractAsync({
-        address: tokenAddress,
-        abi: erc20Abi, // this type is imported from viem
-        functionName: "approve",
-        args: [contractAddresses.Erc20PortalAddress, parseEther(amount)],
-      });
-      console.log("ERC20 Approval successful");
-    } catch (error) {
-      console.error("Error in approving ERC20:", error);
-      throw error;
-    }
-  };
+    const approve = async (address: Address, amount: string) => {
+      try {
+        await approveToken({
+          address,
+          args: [erc20PortalAddress, parseEther(amount)],
+        });
+        console.log("ERC20 Approval successful");
+      } catch (error) {
+        console.error("Error in approving ERC20:", error);
+        throw error;
+      }
+    };
 
     async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const data = stringToHex(`Deposited (${erc20Value}).`);
-
-    await approveERC20(tokenAddress as Address, erc20Value);
-
-    await writeContractAsync({
-      address: contractAddresses.Erc20Portal as Hex,
-      abi: ABIs.ERC20PortalABI,
-      functionName: "depositERC20Tokens",
-      args: [tokenAddress, dAppAddress, parseEther(erc20Value), data],
-    });
-  }
+      event.preventDefault();
+      const data = stringToHex(`Deposited (${erc20Value}).`);
+      await approve(tokenAddress as Address, erc20Value);
+      await depositToken({
+        args: [tokenAddress as Hex, dAppAddress, parseEther(erc20Value), data],
+      });
+    }
 
     // rest of the code
    
@@ -1164,27 +947,34 @@ Create a new file `src/components/SendERC20.tsx` and paste the complete code:
 <pre><code>
 
 ```typescript
-iimport React, { useState } from "react";
-import { BaseError, useWriteContract } from "wagmi";
-import { ABIs } from "../utils/abi";
-import { contractAddresses } from "../utils/addresses";
-import { Address, erc20Abi, parseEther, stringToHex, Hex } from "viem";
+import React, { useState } from "react";
+import { BaseError } from "wagmi";
+import {
+  erc20PortalAddress,
+  useWriteErc20Approve,
+  useWriteErc20PortalDepositErc20Tokens,
+} from "../hooks/generated";
+import { Address, parseEther, stringToHex, Hex } from "viem";
 
 const SendERC20 = () => {
   const dAppAddress = `0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e`;
   const [erc20Value, setErc20Value] = useState("");
   const [tokenAddress, setTokenAddress] = useState<Address | null>();
 
-  const { isPending, isSuccess, error, writeContractAsync } =
-    useWriteContract();
+  const {
+    isPending,
+    isSuccess,
+    error,
+    writeContractAsync: depositToken,
+  } = useWriteErc20PortalDepositErc20Tokens();
 
-  const approveERC20 = async (tokenAddress: Address, amount: string) => {
+  const { writeContractAsync: approveToken } = useWriteErc20Approve();
+
+  const approve = async (address: Address, amount: string) => {
     try {
-      await writeContractAsync({
-        address: tokenAddress,
-        abi: erc20Abi,  // this type is imported from viem
-        functionName: "approve",
-        args: [contractAddresses.Erc20Portal as Hex, parseEther(amount)],
+      await approveToken({
+        address,
+        args: [erc20PortalAddress, parseEther(amount)],
       });
       console.log("ERC20 Approval successful");
     } catch (error) {
@@ -1196,12 +986,9 @@ const SendERC20 = () => {
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = stringToHex(`Deposited (${erc20Value}).`);
-    await approveERC20(tokenAddress as Address, erc20Value);
-    await writeContractAsync({
-      address: contractAddresses.Erc20Portal as Hex,
-      abi: ABIs.ERC20PortalABI,
-      functionName: "depositERC20Tokens",
-      args: [tokenAddress, dAppAddress, parseEther(erc20Value), data],
+    await approve(tokenAddress as Address, erc20Value);
+    await depositToken({
+      args: [tokenAddress as Hex, dAppAddress, parseEther(erc20Value), data],
     });
   }
 
@@ -1250,7 +1037,6 @@ const SendERC20 = () => {
 
 export default SendERC20;
 
-
 ```
 
 </code></pre>
@@ -1291,15 +1077,13 @@ export default App;
 
 The [`ERC721Portal`](../rollups-apis/json-rpc/portals/ERC721Portal.md) contract is a pre-deployed smart contract that allows users to deposit ERC721 tokens to the Cartesi backend.
 
-We will use the `ERC721Portal` contract address and ABI to send ERC721 tokens from the frontend.
-
 This implementation will be similar to the [depositing ERC20 tokens](#depositing-erc20-tokens), but with a few changes to handle ERC721 token transactions.
 
-Here are the key differences in depositing ERC721 tokens compared to ERC20:
+Here are the key differences in depositing ERC721 tokens:
 
   - ERC721 deposits require both the **ERC721 token address** and **token ID**.
 
-  - The `writeContractAsync` call is adjusted to use the [`depositERC721Token(address _token, uint256 _tokenId, bytes _execLayerData)`](../rollups-apis/json-rpc/portals/ERC721Portal.md/#depositerc721token) function of the `ERC721Portal` contract.
+  - We will use the `useWriteErc721Approve` hook to approve the deposit and `useWriteErc721PortalDepositErc721Tokens` hook to make the deposit.
 
   ```typescript
     import { Address, erc721Abi, parseEther, stringToHex } from "viem";
@@ -1309,37 +1093,41 @@ Here are the key differences in depositing ERC721 tokens compared to ERC20:
     const [tokenId, setTokenId] = useState<string>("");
     const [tokenAddress, setTokenAddress] = useState("");
 
-    const approveERC721 = async (tokenAddress: Address, tokenId: bigint) => {
-    try {
-      await writeContractAsync({
-        address: tokenAddress,
-        abi: erc721Abi, // this type is imported from viem
-        functionName: "approve",
-        args: [contractAddresses.Erc721Portal as Hex, tokenId],
-      });
+    const {
+    isPending,
+    isSuccess,
+    error,
+    writeContractAsync: depositToken,
+  } = useWriteErc721PortalDepositErc721Token();
 
-      console.log("Approval successful");
-    } catch (error) {
-      console.error("Error in approving ERC721:", error);
-      throw error; // Re-throw the error to be handled by the caller
-    }
-  };
+    const { writeContractAsync: approveToken } = useWriteErc721Approve();
+
+    const approve = async (address: Address, tokenId: bigint) => {
+      try {
+        await approveToken({
+          address,
+          args: [erc721PortalAddress, tokenId],
+        });
+
+        console.log("Approval successful");
+      } catch (error) {
+        console.error("Error in approving ERC721:", error);
+        throw error; // Re-throw the error to be handled by the caller
+      }
+    };
 
     async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+      event.preventDefault();
 
-    const bigIntTokenId = BigInt(tokenId);
-    const data = stringToHex(`Deposited NFT of token id:(${bigIntTokenId}).`);
+      const bigIntTokenId = BigInt(tokenId);
+      const data = stringToHex(`Deposited NFT of token id:(${bigIntTokenId}).`);
 
-    await approveERC721(tokenAddress as Address, bigIntTokenId);
+      await approve(tokenAddress as Address, bigIntTokenId);
 
-    writeContractAsync({
-      address: contractAddresses.Erc721Portal as Hex,
-      abi: ABIs.ERC721PortalABI,
-      functionName: "depositERC721Token",
-      args: [tokenAddress, dAppAddress, bigIntTokenId, "0x", data],
-    });
-  }
+      depositToken({
+        args: [tokenAddress as Hex, dAppAddress, bigIntTokenId, "0x", data],
+      });
+    }
 
     // rest of the code
    
@@ -1358,25 +1146,33 @@ Create a new file `src/components/SendERC721.tsx` and paste the complete code:
 
 ```typescript
 import React, { useState } from "react";
-import { BaseError, useWriteContract } from "wagmi";
-import { ABIs } from "../utils/abi";
-import { contractAddresses } from "../utils/addresses";
-import { stringToHex, erc721Abi, Address, Hex } from "viem";
+import { BaseError } from "wagmi";
+import {
+  erc721PortalAddress,
+  useWriteErc721Approve,
+  useWriteErc721PortalDepositErc721Token,
+} from "../hooks/generated";
+import { stringToHex, Address, Hex } from "viem";
 
 const SendERC721 = () => {
   const dAppAddress = `0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e`;
   const [tokenId, setTokenId] = useState<string>("");
   const [tokenAddress, setTokenAddress] = useState("");
 
-  const { isPending, isSuccess, error, writeContractAsync } = useWriteContract();
+  const {
+    isPending,
+    isSuccess,
+    error,
+    writeContractAsync: depositToken,
+  } = useWriteErc721PortalDepositErc721Token();
 
-  const approveERC721 = async (tokenAddress: Address, tokenId: bigint) => {
+  const { writeContractAsync: approveToken } = useWriteErc721Approve();
+
+  const approve = async (address: Address, tokenId: bigint) => {
     try {
-      await writeContractAsync({
-        address: tokenAddress,
-        abi: erc721Abi,
-        functionName: "approve",
-        args: [contractAddresses.Erc721Portal as Hex, tokenId],
+      await approveToken({
+        address,
+        args: [erc721PortalAddress, tokenId],
       });
 
       console.log("Approval successful");
@@ -1392,19 +1188,18 @@ const SendERC721 = () => {
     const bigIntTokenId = BigInt(tokenId);
     const data = stringToHex(`Deposited NFT of token id:(${bigIntTokenId}).`);
 
-    await approveERC721(tokenAddress as Address, bigIntTokenId);
+    await approve(tokenAddress as Address, bigIntTokenId);
 
-    writeContractAsync({
-      address: contractAddresses.Erc721Portal as Hex,
-      abi: ABIs.ERC721PortalABI,
-      functionName: "depositERC721Token",
-      args: [tokenAddress, dAppAddress, bigIntTokenId, "0x", data],
+    depositToken({
+      args: [tokenAddress as Hex, dAppAddress, bigIntTokenId, "0x", data],
     });
   }
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-xl">
-      <h2 className="text-3xl font-bold text-white mb-6">Deposit ERC721 Token</h2>
+      <h2 className="text-3xl font-bold text-white mb-6">
+        Deposit ERC721 Token
+      </h2>
       <form onSubmit={submit} className="space-y-4">
         <div>
           <input
@@ -1433,7 +1228,9 @@ const SendERC721 = () => {
       </form>
 
       {isSuccess && (
-        <p className="mt-4 text-green-300 font-bold">NFT of Token number: {tokenId} sent!</p>
+        <p className="mt-4 text-green-300 font-bold">
+          NFT of Token number: {tokenId} sent!
+        </p>
       )}
 
       {error && (
