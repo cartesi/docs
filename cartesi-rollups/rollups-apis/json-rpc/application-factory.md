@@ -2,7 +2,7 @@
 id: application-factory
 title: CartesiDAppFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/dapp/CartesiDAppFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v1.4.0/onchain/rollups/contracts/dapp/CartesiDAppFactory.sol
     title: CartesiDAppFactory contract
 ---
 

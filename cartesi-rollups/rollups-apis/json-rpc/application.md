@@ -2,7 +2,7 @@
 id: application
 title: CartesiDApp
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/dapp/CartesiDApp.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v1.4.0/onchain/rollups/contracts/dapp/CartesiDApp.sol
     title: CartesiDApp contract
   - url: https://docs.openzeppelin.com/contracts/5.x/
     title: OpenZeppelin Contracts
