@@ -1,0 +1,37 @@
+---
+id: report-connection
+title: ReportConnection
+hide_table_of_contents: false
+---
+
+
+Pagination result
+
+```graphql
+type ReportConnection {
+  totalCount: Int!
+  edges: [ReportEdge!]!
+  pageInfo: PageInfo!
+}
+```
+
+
+### Fields
+
+#### `totalCount` ([`Int!`](../../scalars/int))
+
+Total number of entries that match the query
+
+
+#### `edges` ([`[ReportEdge!]!`](../../objects/report-edge))
+
+Pagination entries returned for the current page
+
+
+#### `pageInfo` ([`PageInfo!`](../../objects/page-info))
+
+Pagination metadata
+
+
+
+

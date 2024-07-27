@@ -358,8 +358,8 @@ const config = {
         },
         versions: {
           current: {
-            label: "1.3",
-            path: "1.3",
+            label: "1.5",
+            path: "1.5",
           },
         },
         showLastUpdateTime: true,
