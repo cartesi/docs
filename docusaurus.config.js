@@ -374,11 +374,7 @@ const config = {
             from: "/cartesi-rollups/",
           },
           {
-            to:"/cartesi-rollups/1.5/development/cli-commands/",
-            from:"/cartesi-rollups/1.5/development/node-configuration/"
-          },
-          {
-            to:"/cartesi-rollups/1.5/",
+            to:"/cartesi-rollups/1.3/",
             from:"/cartesi-rollups/overview"
           },
           {
@@ -428,6 +424,7 @@ const config = {
             // only top level URLs needed. All sub levels will be matched automatically. i.e. if /cartesi-rollups/api/ added, the plugin will automatically capture /cartesi-rollups/api/json-rpc/relays/DAppAddressRelay/ etc.
             return [
               existingPath.replace(
+                "/cartesi-rollups/1.5/",
                 "/cartesi-rollups/1.5/",
                 "/cartesi-rollups/overview"
               ),
