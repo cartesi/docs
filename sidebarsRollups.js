@@ -132,9 +132,9 @@ module.exports = {
         "development/building-the-application",
         "development/running-the-application",
         "development/node-configuration",
+        "development/cli-commands",
         "development/send-requests",
         "development/retrieve-outputs",
-
         "development/asset-handling",
         "development/migration"
       ],
