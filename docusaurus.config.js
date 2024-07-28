@@ -428,6 +428,10 @@ const config = {
                 "/cartesi-rollups/overview"
               ),
               existingPath.replace(
+                "/cartesi-rollups/1.5/development/node-configuration/",
+                "/cartesi-rollups/1.5/development/cli-commands/",
+              ),
+              existingPath.replace(
                 "/cartesi-rollups/1.0/main-concepts",
                 "/cartesi-rollups/main-concepts"
               ),

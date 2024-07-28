@@ -38,3 +38,16 @@ Cycles: 2767791744
 Storing machine: please wait
 Successfully copied 288MB to /Users/michaelasiedu/Code/calculator/python/.cartesi/image
 ```
+## Memory
+
+To change the default memory size for the Cartesi Machine, you can personalize it by adding a specific label in your Dockerfile.
+
+The line below lets you define the memory size in megabytes (MB):
+
+```dockerfile
+LABEL io.cartesi.rollups.ram_size=128Mi
+```
+
+:::note environment variables
+You can create a `.cartesi.env` in the project's root and override any variable controlling the rollups-node.
+:::
