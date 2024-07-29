@@ -24,10 +24,12 @@ The result of the voucher execution is recorded on the base layer. This recordin
 
 An epoch refers to a specific period during which a batch of updates is processed off-chain, and upon agreement by validators, the finalized state is recorded on-chain.
 
+Epoch Length is the number of blocks that make up an epoch. It determines how long each epoch lasts in terms of block counts. For instance, if an epoch length is set to 7200 blocks, the epoch will end once 7200 blocks have been processed. This length directly influences how frequently updates are finalized and recorded on the blockchain.
+
 One everyday use of vouchers in Cartesi dApps is to withdraw assets. Users initiate asset withdrawals by generating vouchers, which are then executed on the blockchain upon the closure of the corresponding epoch.
 
-You can manually set the epoch duration to facilitate quicker asset deposits and withdrawals.
+You can manually set the epoch length to facilitate quicker asset deposits and withdrawals.
 
 :::note epoch duration
-[Refer to the documentation here](../../development/node-configuration.md/#epoch-duration) to manually configure epoch duration during development.
+[Refer to the documentation here](../../development/cli-commands.md/#run) to manually configure epoch length during development.
 :::
