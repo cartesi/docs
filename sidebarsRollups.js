@@ -166,6 +166,11 @@ module.exports = {
           label: "Releases",
           items: [
             {
+              type:"link",
+              label:"Cartesi CLI",
+              href:"https://github.com/cartesi/cli/releases",
+            },
+            {
               type: "link",
               label: "Rollups Node",
               href: "https://github.com/cartesi/rollups-node/releases",
@@ -181,6 +186,7 @@ module.exports = {
           type: "category",
           label: "Changelog",
           items: [
+           
             {
               type: "link",
               label: "Rollups Node",
