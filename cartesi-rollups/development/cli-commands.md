@@ -72,7 +72,7 @@ Run a local Cartesi node for the application.
 
 #### Usage:
 ```bash
-cartesi run [--block-time <value>] [--epoch-duration <value>] [--no-backend] [-v] [--listen-port <value>]
+cartesi run [--block-time <value>] [--epoch-length <value>] [--no-backend] [-v] [--listen-port <value>]
 ```
 
 #### Flags:
