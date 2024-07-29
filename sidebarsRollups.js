@@ -150,9 +150,6 @@ module.exports = {
       collapsed: true,
       items: [
         "tutorials/calculator",
-        "tutorials/machine-learning",
-        "tutorials/javascript-wallet",
-        "tutorials/python-wallet"
       ],
     },
 
