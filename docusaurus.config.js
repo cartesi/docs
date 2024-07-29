@@ -374,6 +374,10 @@ const config = {
             from: "/cartesi-rollups/",
           },
           {
+            to:"/cartesi-rollups/1.5/development/cli-commands/",
+            from:"/cartesi-rollups/1.5/development/node-configuration/"
+          },
+          {
             to:"/cartesi-rollups/1.3/",
             from:"/cartesi-rollups/overview"
           },
