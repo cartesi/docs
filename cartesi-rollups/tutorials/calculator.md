@@ -1,6 +1,6 @@
 ---
 id: calculator
-title: Build a calculator dApp with Python
+title: Build a calculator dApp
 resources:
   - url: https://github.com/Mugen-Builders/calculator
     title: Source code for the Calculator dApp
