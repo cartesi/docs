@@ -150,6 +150,7 @@ module.exports = {
       collapsed: true,
       items: [
         "tutorials/calculator",
+        "tutorials/react-frontend-application"
       ],
     },
 
