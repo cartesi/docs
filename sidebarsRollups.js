@@ -135,7 +135,8 @@ module.exports = {
         "development/send-requests",
         "development/retrieve-outputs",
         "development/asset-handling",
-        "development/migration"
+        "development/migration",
+        "development/community-tools"
       ],
     },
     {
