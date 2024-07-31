@@ -266,19 +266,16 @@ These hooks come preconfigured with all the ABIs and addresses needed for any fu
 This will automate manual work so we can build faster! We simply import the hooks, call the functions, and pass in the custom arguments.
 
 
-### Install the dependencies
-
 We will install the following dependencies to our project:
 
 - [`@wagmi/cli`](https://wagmi.sh/cli/why): The Wagmi CLI tool for ABI-specific hooks.
 - [`@cartesi/rollups`](https://www.npmjs.com/package/@cartesi/rollups): The Cartesi Rollups contract implementations.
-- [`sunodo/wagmi-plugin-hardhat-deploy`](https://www.npmjs.com/package/@sunodo/wagmi-plugin-hardhat-deploy): Wagmi CLI plugin that loads contracts and deployments from the `@cartesi/rollups` package.
+- [`@sunodo/wagmi-plugin-hardhat-deploy`](https://www.npmjs.com/package/@sunodo/wagmi-plugin-hardhat-deploy): Wagmi CLI plugin that loads contracts and deployments from the `@cartesi/rollups` package.
 
 ```bash
 npm i  @wagmi/cli @cartesi/rollups @sunodo/wagmi-plugin-hardhat-deploy 
 ```
 
-### Create a configuration file
 
 Creata a config file in the root of your project: `wagmi.config.ts`
 
@@ -318,7 +315,14 @@ export default defineConfig({
 
 </Tabs>
 
-The configuration sets up the Wagmi CLI to autogenerate TypeScript hooks for ERC20 and ERC721 contracts, as well as for any contracts in the specified Cartesi Rollups ABI directory.
+
+The configuration sets up the Wagmi CLI to generate TypeScript hooks for ERC20 and ERC721 contracts, as well as for any contracts in the specified Cartesi Rollups ABI directory, i.e `src/hooks/generated`.
+
+To generate, run:
+
+```bash
+npx wagmi generate
+```
 
 ## Sending a generic input
 
