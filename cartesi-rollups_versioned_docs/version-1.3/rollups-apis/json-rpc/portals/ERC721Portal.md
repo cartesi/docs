@@ -1,7 +1,7 @@
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/portals/ERC721Portal.sol
-    title: ERC721Portals contract
+  - url: https://github.com/cartesi/rollups-contracts/blob/v1.4.0/onchain/rollups/contracts/portals/ERC721Portal.sol
+    title: ERC721Portal contract
 ---
 
 The **ERC721Portal** allows anyone to perform transfers of

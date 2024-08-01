@@ -2,7 +2,7 @@
 id: relays
 title: DAppAddressRelay
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/relays/DAppAddressRelay.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v1.4.0/onchain/rollups/contracts/relays/DAppAddressRelay.sol
     title: DAppAddressRelay contract
 ---
 
