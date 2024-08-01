@@ -153,6 +153,7 @@ module.exports = {
         "tutorials/calculator",
         "tutorials/ether-wallet",
         "tutorials/erc-20-token-wallet",
+        "tutorials/erc-721-token-wallet",
         "tutorials/react-frontend-application"
       ],
     },
