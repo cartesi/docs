@@ -9,7 +9,7 @@ This tutorial will guide you through creating a basic ERC721(NFT) token wallet f
 First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md/#setting-up-the-project). Make sure you have the necessary dependencies installed.
 
 
-## Building the ERC20 wallet
+## Building the ERC721 wallet
 
 Create a file named `balance.ts` in the `src/wallet` directory and add the following code:
 
