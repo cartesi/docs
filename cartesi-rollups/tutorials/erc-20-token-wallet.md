@@ -364,7 +364,7 @@ To deposit ERC20 tokens, use the `cartesi send erc20` command and follow the pro
 To inspect balance, make an HTTP call to:
 
 ```
-http://localhost:8080/inspect/{address}
+http://localhost:8080/inspect/{address}/{tokenAddress}
 ```
 
 
