@@ -16,8 +16,8 @@ module.exports = {
       collapsed: true,
       items: [
         "core-concepts/optimistic-rollups",
-        "core-concepts/cartesi-machine",
         "core-concepts/architecture",
+        // "core-concepts/cartesi-machine",
         "core-concepts/mainnet-considerations",
       ],
     },

@@ -3,7 +3,7 @@ id: migration
 title: Migration guide
 ---
 
-## Migrating to Cartesi Rollups Node v1.5.x
+## Migrating from Cartesi Rollups Node v1.4 to v1.5.x
 
 Release `v1.5.0` introduces a critical change in how epochs are closed in the Cartesi Rollups Node, transitioning from a **timestamp-based** system to a **block number-based** system.
 
