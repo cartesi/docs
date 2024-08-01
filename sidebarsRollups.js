@@ -152,6 +152,7 @@ module.exports = {
       items: [
         "tutorials/calculator",
         "tutorials/ether-wallet",
+        "tutorials/erc-20-token-wallet",
         "tutorials/react-frontend-application"
       ],
     },
