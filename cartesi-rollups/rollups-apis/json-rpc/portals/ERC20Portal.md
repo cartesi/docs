@@ -1,7 +1,7 @@
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/main/contracts/portals
-    title: Portals contract
+  - url: https://github.com/cartesi/rollups-contracts/blob/v1.4.0/onchain/rollups/contracts/portals/ERC20Portal.sol
+    title: ERC20Portal contract
 ---
 
 The **ERC20Portal** allows anyone to perform transfers of

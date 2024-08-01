@@ -2,7 +2,7 @@
 id: input-box
 title: InputBox
 resources:
-    - url: https://github.com/cartesi/rollups-contracts/tree/main/contracts/inputs
+    - url: https://github.com/cartesi/rollups-contracts/blob/v1.4.0/onchain/rollups/contracts/inputs/InputBox.sol
       title: InputBox contract
 ---
 

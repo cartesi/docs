@@ -1,6 +1,6 @@
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/portals/ERC1155SinglePortal.sol
+  - url: ttps://github.com/cartesi/rollups-contracts/blob/v1.4.0/onchain/rollups/contracts/portals/ERC1155SinglePortal.sol
     title: ERC1155SinglePortal contract
 ---
 

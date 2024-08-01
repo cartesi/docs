@@ -2,7 +2,7 @@
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts
+  - url: https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/contracts
     title: Smart Contracts for Cartesi Rollups
 ---
 
