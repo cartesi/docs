@@ -38,7 +38,7 @@ Docker Desktop is a must-have requirement that comes pre-configured with two nec
 To install Docker RISC-V support without using Docker Desktop, run the following command:
 
 ```shell
-docker run --privileged --rm tonistiigi/binfmt:riscv
+docker run --privileged --rm tonistiigi/binfmt --install all
 ```
 
 ## Node and NPM
