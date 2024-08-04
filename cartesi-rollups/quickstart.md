@@ -25,7 +25,7 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
     To install Docker RISC-V support without using Docker Desktop, run the following command:
     
    ```shell
-    docker run --privileged --rm tonistiigi/binfmt:riscv
+    docker run --privileged --rm tonistiigi/binfmt --install all
    ```
 
 1. [Download and install the latest version of Node.js](https://nodejs.org/en/download).
