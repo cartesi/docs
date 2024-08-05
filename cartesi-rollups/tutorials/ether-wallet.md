@@ -7,6 +7,10 @@ This tutorial will build a basic Ether wallet inside a Cartesi backend applicati
 
 The goal is to have a backend application to track balances, receive, transfer, and withdraw Ether.
 
+:::note community tools
+This tutorial is for educational purposes. For production dApps, we recommend using [Deroll](https://deroll.dev/), a TypeScript package that simplifies app and wallet functionality across all token standards for Cartesi applications.
+:::
+
 ## Setting up the project
 
 First, let's create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
@@ -420,7 +424,3 @@ Here are the sample payloads as one-liners, ready to be used in your code:
   ```js
   {"operation":"withdraw","from":"0xAddress345","amount":"500000000000000000"}
   ```
-
-:::note community tools
-This tutorial is for educational purposes. For production dApps, we recommend using [Deroll](https://deroll.dev/), a TypeScript package that simplifies app and wallet functionality across all token standards for Cartesi applications.
-:::
