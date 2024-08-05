@@ -80,7 +80,7 @@ cartesi run [--block-time <value>] [--epoch-length <value>] [--no-backend] [-v] 
 - `--block-time=<value>`: Interval between blocks in seconds (default: 5).
 -  `--epoch-length=<value>`: length of an epoch in blocks (default: 720).
 - `--no-backend`: Run a node without the application code.
-- `-v`, `--verbose`: Verbose output.
+- `-v`, `--verbose`: Run node with detailed container logs.
 - `--listen-port=<value>`: Port to listen for incoming connections (default: 8080).
 
 ---
