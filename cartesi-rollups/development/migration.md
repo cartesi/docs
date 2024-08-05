@@ -35,6 +35,11 @@ This process allows inputs, outputs, and locked funds to remain unchanged but is
 A new _History_ will have no claims. Upon restarting the node with a new _History_, previous claims will be resubmitted, incurring additional costs for the _Authority_ owner.
 :::
 
+:::caution
+Instances of the [_History_](https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/history/History.sol) contract from [rollups-contracts v1.2.0](https://github.com/cartesi/rollups-contracts/releases/tag/v1.2.0) may be used simultaneously by several applications through their associated _Authority_ instance.
+Application owners must consider that and exercise care when performing the steps listed below.
+:::
+
 It's recommended to use the deterministic deployment functions available in the Rollups contracts.
 
 #### 1. Define the environment variables
