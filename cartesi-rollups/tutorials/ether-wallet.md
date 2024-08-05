@@ -100,7 +100,7 @@ rm -rf "$TEMP_DIR"
 echo "ABI generation complete"
 ```
 
-This script will: - Look for all specified `.sol` files - Create the TypeScript files with the ABIs in the `src/wallet/abi` directory.
+This script will look for all specified `.sol` files and create a TypeScript file with the ABIs in the `src/wallet/abi` directory.
 
 Now, let's make the script executable:
 

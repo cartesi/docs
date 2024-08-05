@@ -20,6 +20,7 @@ A low-level verifiable fantasy console for building small games on a special RIS
 - **Resources**:
 	- [RIVES Documentation](https://rives.io/docs/category/riv)
 	- [RIVES Playground](https://rives.io/playground)
+	- [RIVES in action](https://app.rives.io/)
 
 ---
 

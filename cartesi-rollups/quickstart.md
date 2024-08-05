@@ -2,8 +2,6 @@
 id: quickstart
 title: Quickstart
 resources:
-  - url: https://github.com/prototyp3-dev/frontend-web-cartesi
-    title: React.js + Typescript  template
   - url: https://github.com/jplgarcia/cartesi-angular-frontend
     title: Angular template
 ---
@@ -122,10 +120,7 @@ You can obtain the relevant addresses by running `cartesi address-book`.
 
 You can create a custom frontend that interacts with your application.
 
-Here are frontend templates created by the community with all the significant functionalities to build on Cartesi.
-
-- [React + TypeScript template](https://github.com/prototyp3-dev/frontend-web-cartesi)
-- [Angular template](https://github.com/jplgarcia/cartesi-angular-frontend)
+Follow [the React.js tutorial to build a frontend for your application](./tutorials/react-frontend-application.md).
 
 ## Deploy the application
 
