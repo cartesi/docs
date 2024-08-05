@@ -5,6 +5,10 @@ title: Integrating ERC721 token wallet functionality
 
 This tutorial will guide you through creating a basic ERC721(NFT) token wallet for a Cartesi backend application using TypeScript.
 
+:::note community tools
+This tutorial is for educational purposes. For production dApps, we recommend using [Deroll](https://deroll.dev/), a TypeScript package that simplifies app and wallet functionality across all token standards for Cartesi applications.
+:::
+
 ## Setting up the project
 First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md/#setting-up-the-project). Make sure you have the necessary dependencies installed.
 
@@ -356,8 +360,6 @@ Use the `cartesi send generic` command and follow the prompts. Here are sample p
 	{"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}
 	```
 
-:::note community tools
-This tutorial is for educational purposes. For production dApps, we recommend using [Deroll](https://deroll.dev/), a TypeScript package that simplifies app and wallet functionality across all token standards for Cartesi applications.
-:::
+
 
 
