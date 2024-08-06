@@ -95,7 +95,7 @@ cartesi send
 
 #### Sub-commands:
 
-- `send dapp-address`: Send DApp address input.
+- `send dapp-address`: Send dApp address input.
 - `send erc20`: Send ERC-20 deposit.
 - `send erc721`: Send ERC-721 deposit.
 - `send ether`: Send ether deposit.

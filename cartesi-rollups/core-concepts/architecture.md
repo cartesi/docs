@@ -18,7 +18,7 @@ The Cartesi Rollups framework is designed to enable complex computations off-cha
 
 A decentralized application (dApp) built on Cartesi incorporates several key elements:
 
-- Cartesi Rollups: A set of _on-chain(rollups rontracts)_ and _off-chain(rollups node)_ components that implement an Optimistic Rollup solution, providing the general framework for building dApps.
+- Cartesi Rollups: A set of _on-chain(rollups contracts)_ and _off-chain(rollups node)_ components that implement an Optimistic Rollup solution, providing the general framework for building dApps.
 
 - Cartesi Machine: A virtual machine (VM) that runs a complete Linux operating system, serving as the environment for executing the dApp's backend.
 
