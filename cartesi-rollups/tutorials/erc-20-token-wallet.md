@@ -388,21 +388,21 @@ main().catch((e) => {
 
 
 Here is a breakdown of the wallet functionality:
+
 - We handle deposits when the sender is the `ERC20Portal`.
 
 - For other senders, we parse the payload to determine the operation (`transfer` or `withdraw`).
 
-- For `transfers`, we call `wallet.transferEther` and create a notice with the parsed parameters.
+- For `transfers`, we call `wallet.transferErc20` and create a notice with the parsed parameters.
 
-- For `withdrawals`, we call `wallet.withdrawEther` and create voucher using the dApp dress and the parsed parameters. 
+- For `withdrawals`, we call `wallet.withdrawErc20` and create voucher using the dApp dress and the parsed parameters. 
 
 - We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
 
-- We created helper functions to `sendNotice` for deposits and transfers, `sendReport` for balance checks and `sendVoucher` for withdrawals.
 
 ## Build and run the application
 
-With Docker running, “build your backend” application by running:
+With Docker running, [build your backend application](../development/building-the-application.md) by running:
 
 ```shell
 cartesi build
@@ -415,6 +415,16 @@ cartesi run
 ```
 
 #### Deposits
+
+:::caution token approvals
+ For the [**ERC20 token stanard**](https://ethereum.org/en/developers/docs/standards/tokens/), an approval step is need. This ensures you grant explicit permission for `ERC20Portal` to transfer tokens on your behalf. 
+  
+  Without this approval, the `ERC20Portal` cannot deposit your tokens to the Cartesi backend.
+
+  You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
+
+  `ContractFunctionExecutionError: The contract function "depositERC20Tokens" reverted with the following reason: ERC20: insufficient allowance`
+:::
 
 To deposit ERC20 tokens, use the `cartesi send erc20` command and follow the prompts.
 
