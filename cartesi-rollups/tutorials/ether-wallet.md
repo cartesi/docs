@@ -299,7 +299,7 @@ The [`EtherPortal`](../rollups-apis/json-rpc/portals/EtherPortal.md) contract al
 The [`DAppAddressRelay`](../rollups-apis/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its own on-chain address, making it impossible to create valid vouchers for withdrawals.
 
 :::note
-Run `cartesi address-book` to get the address of the `EtherPortal` and `DAppAddressRelay` contract. Save these as consts in the `index.ts` file.
+Run `cartesi address-book` to get the addresses of the `EtherPortal` and `DAppAddressRelay` contracts. Save these as consts in the `index.ts` file.
 :::
 
 ```typescript
@@ -459,6 +459,7 @@ main().catch((e) => {
 This code sets up a simple application that listens for requests from the Cartesi rollup server. It processes the requests and sends responses back to the server.
 
 Here is a breakdown of the wallet functionality:
+
 - The `handle_advance` handles three main scenarios: dApp address relay, Ether deposits, and user operations (transfers/withdrawals).
 
 - We relay the address when the sender is `DAppAddressRelay`.
@@ -484,7 +485,7 @@ To relay the dApp address, run: `cartesi send dapp-address`
 
 ## Build and run the application
 
-With Docker running, “build your backend” application by running:
+With Docker running, [build your backend application](../development/building-the-application.md) by running:
 
 ```shell
 cartesi build

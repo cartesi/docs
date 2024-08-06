@@ -71,27 +71,45 @@ import { ethers } from "ethers";
 import { Balance } from "./balance";
 
 import { erc721Abi } from "viem";
+import { Voucher } from "..";
 
 export class Wallet {
   private accounts: Map<Address, Balance> = new Map();
 
   private getOrCreateBalance(address: Address): Balance {
-    let balance = this.accounts.get(address);
-    if (!balance) {
-      balance = new Balance(address, new Map());
-      this.accounts.set(address, balance);
-    }
-    return balance;
-  }
+	let balance = this.accounts.get(address);
+	if (!balance) {
+	  balance = new Balance(address, new Map());
+	  this.accounts.set(address, balance);
+	}
+	return balance;
+      }
+    
+      getBalance(address: Address): Balance {
+	return this.getOrCreateBalance(address);
+      }
 
-  getBalance(address: Address): Balance {
-    return this.getOrCreateBalance(address);
-  }
+      getErc721Balance(address: Address, erc721: Address): { address: string; erc721: string; tokenIds: number[] } {
+	const balance = this.getOrCreateBalance(address);
+	const tokens = balance.getErc721Tokens(erc721) || new Set<number>();;
+	const tokenIdsArray = Array.from(tokens);
+	
+	const result = {
+	  address: address,
+	  erc721: erc721,
+	  tokenIds: tokenIdsArray
+	};
+    
+	console.info(`ERC721 balance for ${address} and contract ${erc721}: ${JSON.stringify(result, null, 2)}`);
+	return result;
+      }
 
   processErc721Deposit(payload: string): string {
     try {
       const [erc721, account, tokenId] = this.parseErc721Deposit(payload);
-      console.info(`Token ERC-721 ${erc721} id: ${tokenId} deposited in ${account}`);
+      console.info(
+        `Token ERC-721 ${erc721} id: ${tokenId} deposited in ${account}`
+      );
       return this.depositErc721(account, erc721, tokenId);
     } catch (e) {
       return `Error depositing ERC721 token: ${e}`;
@@ -105,7 +123,11 @@ export class Wallet {
     return [erc721, account, tokenId];
   }
 
-  private depositErc721(account: Address, erc721: Address, tokenId: number): string {
+  private depositErc721(
+    account: Address,
+    erc721: Address,
+    tokenId: number
+  ): string {
     const balance = this.getOrCreateBalance(account);
     balance.addErc721Token(erc721, tokenId);
     const noticePayload = {
@@ -119,7 +141,12 @@ export class Wallet {
     return JSON.stringify(noticePayload);
   }
 
-  withdrawErc721(rollupAddress: Address, account: Address, erc721: Address, tokenId: number): string {
+  withdrawErc721(
+    rollupAddress: Address,
+    account: Address,
+    erc721: Address,
+    tokenId: number
+  ): Voucher {
     try {
       const balance = this.getOrCreateBalance(account);
       balance.removeErc721Token(erc721, tokenId);
@@ -128,14 +155,26 @@ export class Wallet {
         functionName: "safeTransferFrom",
         args: [rollupAddress, account, BigInt(tokenId)],
       });
-      console.info(`Token ERC-721:${erc721}, id:${tokenId} withdrawn from ${account}`);
-      return JSON.stringify(hexToBytes(call))
+      console.log("Voucher creator success", {
+        destination: erc721,
+        payload: call,
+      });
+
+      return {
+        destination: erc721,
+        payload: call,
+      };
     } catch (e) {
-      return `Error withdrawing ERC721 token: ${e}`;
+      throw Error(`Error withdrawing ERC721 token: ${e}`);
     }
   }
 
-  transferErc721(from: Address, to: Address, erc721: Address, tokenId: number): string {
+  transferErc721(
+    from: Address,
+    to: Address,
+    erc721: Address,
+    tokenId: number
+  ): string {
     try {
       const balanceFrom = this.getOrCreateBalance(from);
       const balanceTo = this.getOrCreateBalance(to);
@@ -150,20 +189,24 @@ export class Wallet {
           tokenId: tokenId.toString(),
         },
       };
-      console.info(`Token ERC-721 ${erc721} id:${tokenId} transferred from ${from} to ${to}`);
+      console.info(
+        `Token ERC-721 ${erc721} id:${tokenId} transferred from ${from} to ${to}`
+      );
       return JSON.stringify(noticePayload);
     } catch (e) {
       return `Error transferring ERC721 token: ${e}`;
     }
   }
 }
-```
 
+```
 ## Using the wallet
 
 Now, let's create a simple wallet app in the entrypoint, `src/index.ts` to test the wallet functionality.
 
-Run `cartesi address-book` to get the contract address of the `ERC20Portal` contract. Save this as a const in the `index.ts` file.
+:::note
+Run `cartesi address-book` to get the addresses of the `ERC721Portal` and `DAppAddressRelay` contracts. Save these as consts in the `index.ts` file.
+:::
 
 ```typescript
 import createClient from "openapi-fetch";
@@ -188,6 +231,9 @@ type AdvanceRequestHandler = (
 const wallet = new Wallet();
 
 const ERC721Portal = `0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87`;
+const dAppAddresRelay = `0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE`;
+
+let dAppAddress: Address;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollupServer);
@@ -198,14 +244,22 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
 
+  if (sender.toLowerCase() === dAppAddresRelay.toLowerCase()) {
+    dAppAddress = data.payload;
+
+    return "accept";
+  }
+
   if (sender.toLowerCase() === ERC721Portal.toLowerCase()) {
     // Handle deposit
     const deposit = wallet.processErc721Deposit(payload);
-    await sendNotice(stringToHex(deposit));
+    await createNotice({ payload: stringToHex(deposit) });
   } else {
     // Handle transfer or withdrawal
     try {
-      const { operation, erc721, from, to, tokenId } = JSON.parse(hexToString(payload));
+      const { operation, erc721, from, to, tokenId } = JSON.parse(
+        hexToString(payload)
+      );
 
       if (operation === "transfer") {
         const transfer = wallet.transferErc721(
@@ -214,17 +268,17 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
           getAddress(erc721 as Address),
           parseInt(tokenId)
         );
-        console.log(transfer);
-        await sendNotice(stringToHex(transfer));
+
+        await createNotice({ payload: stringToHex(transfer) });
       } else if (operation === "withdraw") {
-        const withdraw = wallet.withdrawErc721(
-          getAddress(ERC721Portal as Address),
+        const voucher = wallet.withdrawErc721(
+          getAddress(dAppAddress as Address),
           getAddress(from as Address),
           getAddress(erc721 as Address),
           parseInt(tokenId)
         );
-        console.log(withdraw);
-        await sendVoucher(JSON.parse(withdraw));
+
+        await createVoucher(voucher);
       } else {
         console.log("Unknown operation");
       }
@@ -241,26 +295,25 @@ const handleInspect: InspectRequestHandler = async (data) => {
 
   try {
     const payloadString = hexToString(data.payload);
-    const address = '0x' + payloadString.slice(0, 40);
-    const erc721 = '0x' + payloadString.slice(40, 80);
 
-    const balance = wallet.getBalance(getAddress(address as Address));
-    let erc721balance = balance.getErc721Tokens(erc721 as Address);
+    const [address, erc721] = payloadString.split("/");
 
-    if (erc721balance === undefined) {
+    const balance = wallet.getErc721Balance(
+      address as Address,
+      erc721 as Address
+    );
+
+    if (balance === undefined) {
       throw new Error("ERC721 balance is undefined");
     }
 
-    // Convert Set<number> to Uint8Array
-    const erc721balanceArray = new Uint8Array(Array.from(erc721balance));
-
-    await sendReport({ payload: toHex(erc721balanceArray) });
+    await createReport({ payload: toHex(JSON.stringify(balance)) });
   } catch (error) {
     console.error("Error processing inspect payload:", error);
   }
 };
 
-const sendNotice = async (payload: Payload) => {
+const createNotice = async (payload: Notice) => {
   await fetch(`${rollupServer}/notice`, {
     method: "POST",
     headers: {
@@ -270,23 +323,23 @@ const sendNotice = async (payload: Payload) => {
   });
 };
 
-const sendVoucher = async (payload: Voucher) => {
+const createVoucher = async (payload: Voucher) => {
   await fetch(`${rollupServer}/voucher`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ payload }),
+    body: JSON.stringify(payload),
   });
 };
 
-const sendReport = async (payload: Report) => {
+const createReport = async (payload: Report) => {
   await fetch(`${rollupServer}/report`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ payload }),
+    body: JSON.stringify(payload),
   });
 };
 
@@ -322,17 +375,48 @@ main().catch((e) => {
 
 ```
 
-
-
 Here is a breakdown of the wallet functionality:
+
 - We handle deposits when the sender is the `ERC721Portal`.
+
+- We relay the dApp address when the sender is `DAppAddressRelay`.
+
 - For other senders, we parse the payload to determine the operation (`transfer` or `withdraw`).
-- For `transfers`, we call `wallet.transferERC721` with the parsed parameters.
-- For `withdrawals`, we call `wallet.withdrawERC721` with the parsed parameters.
-- We created helper functions to `sendNotice` for deposits and transfers, `sendReport` for balance checks and `sendVoucher` for withdrawals.
+
+- For `transfers`, we call `wallet.transferErc721` and create a notice with the parsed parameters.
+
+- For `withdrawals`, we call `wallet.withdrawErc721` and create voucher using the dApp dress and the parsed parameters. 
+
+- We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
+
+
+## Build and run the application
+
+With Docker running, [build your backend application](../development/building-the-application.md) by running:
+
+```shell
+cartesi build
+```
+
+To run your application, enter the command:
+
+```shell
+cartesi run
+```
 
 
 #### Deposits
+
+:::caution token approvals
+ For the [**ERC721 token stanard**](https://ethereum.org/en/developers/docs/standards/tokens/), an approval step is need. This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf. 
+  
+  Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cartesi backend.
+
+  You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
+
+  `ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
+:::
+
 To deposit ERC721 tokens, use the `cartesi send erc721` command and follow the prompts.
 
 #### Balance checks(used in Inspect requests)
