@@ -26,9 +26,10 @@ yarn
 yarn run codegen
 ```
 
-Now, navigate to the project directory and install the [`@cartesi/rollups`](https://www.npmjs.com/package/@cartesi/rollups) package:
+Now, navigate to the project directory and install [`ethers`](https://docs.ethers.org/v5/), [`viem`](https://viem.sh/) and [`@cartesi/rollups`](https://www.npmjs.com/package/@cartesi/rollups) package:
 
 ```bash
+yarn add ethers viem
 yarn add -D @cartesi/rollups
 ```
 
