@@ -103,7 +103,7 @@ Let's create an implementation for easy network switching and a comprehensive wa
 
 Move the account connection and management logic to a separate component for a cleaner and more organized `App.tsx`. 
 
-We will add [Tailwind CSS classes](https://tailwindcss.com/docs/guides/vite) ensure visual appeal.
+We will add [Tailwind CSS classes](https://tailwindcss.com/docs/guides/vite) to ensure visual appeal.
 
 Create a new file `src/components/Account.tsx` and edit the `App.tsx`:
 <Tabs>
