@@ -518,7 +518,7 @@ http://localhost:8080/inspect/{address}
 
 #### Transfer and Withdrawals
 
-Transfers and withdrawal request will be sent as generic json string that will be parsed and processed.
+Transfers and withdrawal requests will be sent as generic json strings that will be parsed and processed.
 
 To process transfers and withdrawals, run the command below and follow the prompts:
 

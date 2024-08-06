@@ -277,7 +277,7 @@ npm i  @wagmi/cli @cartesi/rollups @sunodo/wagmi-plugin-hardhat-deploy
 ```
 
 
-Creata a config file in the root of your project: `wagmi.config.ts`
+Create a config file in the root of your project: `wagmi.config.ts`
 
 Then, add contracts and plugins for Cartesi Rollups:
 
@@ -328,7 +328,7 @@ npx wagmi generate
 
 The [`InputBox`](../rollups-apis/json-rpc/input-box.md) contract is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone.
 
-The `InputBox` contract is deployed on all supported chains. We will use a React hook to send an input to the backend via the `InputBox` contracct. 
+The `InputBox` contract is deployed on all supported chains. We will use a React hook to send an input to the backend via the `InputBox` contract. 
 
 Create a new file `src/components/SimpleInput.tsx` and follow the implementation below:
 

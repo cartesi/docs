@@ -80,7 +80,7 @@ Cartesify is a robust Web3 client designed for seamless interaction with the Car
 
 ## Tikua
 
-Tikua is a versatile JS Cartesi package designed for seamless integration with any visual library, whether in Browser or Terminal environments
+Tikua is a versatile JS Cartesi package designed for seamless integration with any visual library, whether in browser or terminal environments
 
 - **Features**:
 	- Integrates smoothly with any visual library on both Browser and Terminal.
