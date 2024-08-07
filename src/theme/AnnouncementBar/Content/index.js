@@ -2,33 +2,46 @@ import React, { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { useThemeConfig } from "@docusaurus/theme-common";
 import styles from "./styles.module.css";
+
+import { http, createPublicClient } from "viem";
+import { mainnet } from "viem/chains";
+import { formatEther } from "viem";
+import { wagmiContract } from "./contracts/contracts";
+
+const transport = http(
+  "https://eth-mainnet.g.alchemy.com/v2/cBxzBgf91hVaZIV-gnC0kuc-K1WGd2xX"
+);
+const symbol = "CTSI";
+const defaultBalance = 0;
+const defaultFrom = 0;
+
+const client = createPublicClient({
+  chain: mainnet,
+  transport,
+});
+
 export default function AnnouncementBarContent(props) {
   const { announcementBar } = useThemeConfig();
   const { content } = announcementBar;
 
   const [dynamicContent, setDynamicContent] = useState(content);
+  const [balanceLoaded, setBalanceLoaded] = useState(false);
 
   // Fetch data for variables in the content
-  const varNameFetcher = async () => {
-    const response = await fetch(
-      "https://jsonplaceholder.typicode.com/todos/1"
-    );
-    const data = await response.json();
-    return data.title;
-  };
-
-  const varNameFetcher2 = async () => {
-    const response = await fetch(
-      "https://jsonplaceholder.typicode.com/todos/2"
-    );
-    const data = await response.json();
-    return data.title;
+  const getBalance = async () => {
+    const contractRead = await client.readContract({
+      ...wagmiContract,
+      functionName: "balanceOf",
+      args: ["0x0974CC873dF893B302f6be7ecf4F9D4b1A15C366"],
+    });
+    setBalanceLoaded(true);
+    return new Intl.NumberFormat().format(parseInt(formatEther(contractRead)));
   };
 
   // Add all variables and fetchers here
   const fetchMap = {
-    varName: varNameFetcher(),
-    varName2: varNameFetcher2(),
+    balance: getBalance(),
+    symbol: symbol,
   };
 
   // Extract variables from the content
@@ -60,7 +73,7 @@ export default function AnnouncementBarContent(props) {
     }
 
     updateContent();
-  }, [contentVars]);
+  }, [contentVars, balanceLoaded]);
 
   return (
     <div

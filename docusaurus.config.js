@@ -215,8 +215,7 @@ const config = {
       announcementBar: {
         id: "mainnet",
         content:
-          'Cartesi Rollups is Mainnet Ready! Over 1M in CTSI is up for grabs...{{varName}} AND {{varName2}} if you can <a href="https://honeypot.cartesi.io/" target="_blank" rel="noopener noreferrer">hack Cartesi Rollups</a>.',
-
+          'Cartesi Rollups is Mainnet Ready! {{balance}} in {{symbol}} is up for grabs... if you can <a href="https://honeypot.cartesi.io/" target="_blank" rel="noopener noreferrer">hack Cartesi Rollups</a>.',
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
         isCloseable: true,
