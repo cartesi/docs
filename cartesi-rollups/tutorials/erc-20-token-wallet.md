@@ -69,7 +69,7 @@ export class Balance {
 }
 ```
 
-The `Balance` class represents an individual account's balance. It includes methods to list ERC20 tokens, get, increase, and decrease the ERC20 balance.
+The `Balance` class represents an individual account's balance. It includes methods to list ERC20 tokens and get, increase, and decrease the ERC20 balance.
 
 Now, create a file named `wallet.ts` in the `src/wallet` directory and add the following code:
 
@@ -219,7 +219,7 @@ export class Wallet {
 
 ## Using the ERC20 wallet
 
-Now, let's create a simple wallet app in the entrypoint, `src/index.ts` to test the wallet functionality.
+Now, let's create a simple wallet app at the entry point `src/index.ts` to test the wallet’s functionality.
 
 :::note
 Run `cartesi address-book` to get the contract address of the `ERC20Portal` contract. Save this as a const in the `index.ts` file.
@@ -391,7 +391,7 @@ Here is a breakdown of the wallet functionality:
 
 - We handle deposits when the sender is the `ERC20Portal`.
 
-- For other senders, we parse the payload to determine the operation (`transfer` or `withdraw`).
+- We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
 - For `transfers`, we call `wallet.transferErc20` and create a notice with the parsed parameters.
 
@@ -417,7 +417,7 @@ cartesi run
 #### Deposits
 
 :::caution token approvals
- For the [**ERC20 token stanard**](https://ethereum.org/en/developers/docs/standards/tokens/), an approval step is need. This ensures you grant explicit permission for `ERC20Portal` to transfer tokens on your behalf. 
+ An approval step is needed for the [**ERC20 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC20Portal` to transfer tokens on your behalf. 
   
   Without this approval, the `ERC20Portal` cannot deposit your tokens to the Cartesi backend.
 
@@ -430,7 +430,7 @@ To deposit ERC20 tokens, use the `cartesi send erc20` command and follow the pro
 
 #### Balance checks(used in Inspect requests)
 
-To inspect balance, make an HTTP call to:
+To inspect the balance, make an HTTP call to:
 
 ```
 http://localhost:8080/inspect/{address}/{tokenAddress}
@@ -443,12 +443,13 @@ Use the `cartesi send generic` command and follow the prompts. Here are sample p
 
 1. For transfers:
 
-	```js
-	{"operation":"transfer","erc20":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","amount":"1000000000000000000"}
-	```
+  ```js
+  {"operation":"transfer","erc20":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","amount":"1000000000000000000"}
+  ```
 
 2. For withdrawals:
 
-	```js
-	{"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}
-	```
+  ```js
+  {"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}
+  ```
+

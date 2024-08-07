@@ -21,9 +21,9 @@ A rollup is a blockchain scalability solution that offloads complex computations
 When employing rollups, the blockchain receives and logs transactions. In rare instances of an active attack or the involvement of a malicious agent, parties may disagree with a computation’s outcomes, and the blockchain will resolve these disputes. However, it's important to note that disagreements are not expected to occur under normal circumstances.
 
 
-Users interact with a rollup through transactions on the base layer. They send messages (inputs) to the rollup on-chain smart contracts to define a computation to be processed and, as such, advance the state of the computing environment on the execution layer. Interested parties run an off-chain component (a node on the execution layer) that watches the blockchain for inputs, understanding and executing the state updates.
+Users interact with a rollup through transactions on the base layer. They send messages (inputs) to the rollup on-chain smart contracts to define a computation to be processed and, as such, advance the state of the computing environment on the execution layer. Interested parties run an off-chain component (a node on the execution layer) that watches the blockchain for inputs, understanding, and executing the state updates.
 
-Once in a while, the state is checkpointed on the chain, at which point it is considered finalized and can thus be accepted by any smart contract on the base layer.
+Once in a while, the state is checkpointed on the chain; at this point, it is considered finalized and can thus be accepted by any smart contract on the base layer.
 
 Ensuring this operation is secure is vital, meaning that the execution layer node must somehow prove the new state to the base layer.
 
@@ -54,7 +54,7 @@ This optimism is reinforced by financial incentives that reward honest behavior.
 
 The main advantage of Optimistic Rollups is that they are much cheaper than ZK Rollups. Posting a state update on-chain is minimal, and challenging a state update is also low.
 
-The main disadvantage is that state updates are not immediately final. It takes time for a state update to be fully accepted, and during this period, the state update is considered "optimistic" and can be challenged.
+The main disadvantage is that state updates take time to finalize and are not entirely accepted immediately. During this period, they are considered "optimistic" and can be challenged.
 
 
 ## Cartesi Rollups
@@ -66,4 +66,5 @@ The base layer isn't burdened with executing all computations, allowing for more
 Transactions and computations occur off-chain, leading to more intricate logic within transactions; hence, applications leverage powerful virtual machines (VMs) on the execution layer for complex computations.
 
 Cartesi's architecture specializes in app-specific rollups(appchains). Each dApp has its dedicated rollup for off-chain computation, enhancing scalability and performance. 
+
 

@@ -5,7 +5,7 @@ title: Migration guide
 
 ## Migrating from Cartesi Rollups Node v1.4 to v1.5.x
 
-Release `v1.5.0` introduces a critical change in how epochs are closed in the Cartesi Rollups Node, transitioning from a **timestamp-based** system to a **block number-based** system.
+Release `v1.5.0` introduces a critical change in how epochs are closed in the Cartesi Rollups Node, transitioning from a **timestamp-based system to a block number-based system**.
 
 Epoch closure is now determined by the `CARTESI_EPOCH_LENGTH` environment variable (in blocks) instead of `CARTESI_EPOCH_DURATION` (in seconds).
 
@@ -21,7 +21,7 @@ Where `BLOCK_TIME` is the time to generate a block in the target network.
 
 Redeploy all contracts and your application with the new configuration.
 
-For detailed deployment instructions, refer to the [self-hosted deployment guide](../deployment/self-hosted.md).
+Refer to the [self-hosted deployment guide](../deployment/self-hosted.md) for detailed deployment instructions.
 
 :::caution
 Redeploying creates a new application instance. All previous inputs, outputs, claims, and funds locked in the application contract will remain associated with the old application address.
@@ -62,12 +62,12 @@ This is a two-step process. First calculate the address of the new History. Afte
 
   ```shell
   cast call \
-  	--trace --verbose \
-  	$HISTORY_FACTORY_ADDRESS \
-  	"calculateHistoryAddress(address,bytes32)(address)" \
-  	$AUTHORITY_ADDRESS \
-  	$SALT \
-  	--rpc-url "$RPC_URL"
+    --trace --verbose \
+    $HISTORY_FACTORY_ADDRESS \
+    "calculateHistoryAddress(address,bytes32)(address)" \
+    $AUTHORITY_ADDRESS \
+    $SALT \
+    --rpc-url "$RPC_URL"
   ```
 
   If the command executes successfully, it will display the address of the new History contract. Store this address in the environment variable `NEW_HISTORY_ADDRESS` for later use.
@@ -85,13 +85,13 @@ This is a two-step process. First calculate the address of the new History. Afte
   --rpc-url "$RPC_URL"
   ```
 
-  The `cast send` command will fail if the `History` type is not recognized by Cast at the time of execution. In such cases, replace `History` with `address` as the return type for `newHistory()` and execute the command again.
+  The `cast send` command will fail if Cast does not recognize the _History_ type during execution. In such cases, replace _History_ with `address` as the return type for `newHistory()` and execute the command again.
 
-  Additionally, the `cast send` command may fail due to gas estimation issues. To circumvent this, provide gas constraints with the `--gas-limit` parameter (e.g., `--gas-limit 7000000`).
+ The `cast send` command may also fail due to gas estimation issues. To circumvent this, provide gas constraints with the `--gas-limit` parameter (e.g., `--gas-limit 7000000`).
 
 #### 3. Replace the _History_
 
-Make sure the environment variables from the previous step are set, including `NEW_HISTORY_ADDRESS`, which should have the address of the new History.
+Ensure the environment variables from the previous step are set, including `NEW_HISTORY_ADDRESS`, which should have the address of the new History.
 
 To replace the _History_ used by the _Authority_, run this command:
 
@@ -107,7 +107,8 @@ cast send \
 
 After replacing the _History_, update the `CARTESI_CONTRACTS_HISTORY_ADDRESS` in the application configuration with the new _History_ address. Then, upgrade the Cartesi Rollups Node as usual.
 
-When the Cartesi Rollups Node restarts, it will process all existing inputs, recalculate the epochs, and send the claims to the new _History_ based on the updated configuration.
+When the Cartesi Rollups Node restarts, it processes all existing inputs, recalculates the epochs, and sends the claims to the new _History_ based on the updated configuration.
+
 
 
 

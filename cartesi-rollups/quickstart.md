@@ -76,9 +76,9 @@ cartesi run
 
 ## Send inputs to the application
 
-You have some options available for sending inputs to your application. One option is the `cartesi send` command.
+You have some options for sending input to your application. One option is the `cartesi send` command.
 
-Another option is [Cast](https://book.getfoundry.sh/cast/), a command-line tool enabling you to make Ethereum RPC calls.
+Another option is [Cast](https://book.getfoundry.sh/cast/), a command-line tool for making Ethereum RPC calls.
 
 Additionally, you can build a custom web interface to input data into your application.
 
@@ -133,3 +133,4 @@ There are two methods to deploy an application:
 :::caution important
 Deployment with a third-party service provider is under development and will be available in a future release.
 :::
+

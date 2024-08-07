@@ -14,7 +14,7 @@ resources:
     title: Dave
 ---
 
-The Cartesi Rollups framework is designed to enable complex computations off-chain while maintaining the security guarantees of blockchain technology. It consists of two primary components: **the on-chain base layer** (such as Ethereum) where the dApp contract is deployed, and **the off-chain execution layer** where the dApp's backend logic operates.
+The Cartesi Rollups framework is designed to enable complex computations off-chain while maintaining the security guarantees of blockchain technology. It consists of two primary components: **the on-chain base layer** (such as Ethereum), where the dApp contract is deployed, and **the off-chain execution layer**, where the dApp's backend logic operates.
 
 A decentralized application (dApp) built on Cartesi incorporates several key elements:
 
@@ -22,9 +22,9 @@ A decentralized application (dApp) built on Cartesi incorporates several key ele
 
 - Cartesi Machine: A virtual machine (VM) that runs a complete Linux operating system, serving as the environment for executing the dApp's backend.
 
-- Backend: The application's state and verifiable logic, which runs inside the Cartesi Machine as a standard Linux application.
+- Backend: The application's state and verifiable logic run inside the Cartesi Machine as a standard Linux application.
 
-- Frontend: The user-facing interface of the application, typically implemented as a web application or a command-line interface tool.
+- Frontend: The application’s user-facing interface, typically implemented as a web application or a command-line interface tool.
 
 
 ![img](../../static/img/v1.5/architecture-overview.jpg)
@@ -41,7 +41,7 @@ Key features of the Cartesi Machine include:
 
 - Scalability: By leveraging significant off-chain computing power, the Cartesi Machine enables complex computations while maintaining blockchain-level security.
 
-- The Cartesi machine is self-contained and can't make an external request. To achieve reproducibility,it runs in isolation from any external influence on the computation.
+- The Cartesi machine is self-contained and can't make an external request. It runs in isolation from any external influence on the computation to achieve reproducibility.
 
 The Cartesi Machine achieves its unique balance of scalability and security by performing computations off-chain but providing mechanisms to verify these computations on-chain when necessary.
 
@@ -71,10 +71,10 @@ Portal contracts facilitate the secure transfer of assets between the base layer
 - [ERC-1155 Single transfers](../rollups-apis/json-rpc/portals/ERC1155SinglePortal.md)
 - [ERC-1155 Batch transfers](../rollups-apis/json-rpc/portals/ERC1155BatchPortal.md)
 
-These Portal contracts implement the logic to "teleport" assets safely between layers, maintaining the integrity and ownership of the assets throughout the transfer process.
+These Portal contracts implement the logic to "teleport" assets safely between layers, maintaining their integrity and ownership throughout the transfer process.
  
 ## Off-chain layer
-The off-chain execution layer is centered around the Cartesi Rollups Node, which serves as the crucial middleware between the on-chain contracts and the Cartesi Machine. The node is responsible for:
+The off-chain execution layer is centered around the Cartesi Rollups Node, the crucial middleware between the on-chain contracts and the Cartesi Machine. The node is responsible for:
 
 1. Processing inputs: It reads inputs from the base layer and forwards them to the Cartesi Machine for processing.
 
@@ -93,7 +93,7 @@ The Cartesi Rollups Node can operate in two primary modes:
 **2. Reader Nodes (In Development)**: These nodes focus on advancing the off-chain state and making it publicly available. They consume information from the blockchain but do not participate in the validation process.
 
 :::caution important
-Currently, all Cartesi Nodes function as Validator Nodes, with Reader Node functionality under active development.
+All Cartesi Nodes function as Validator Nodes, with Reader Node functionality under active development.
 :::
 
 
@@ -105,23 +105,23 @@ The Cartesi architecture facilitates several key processes that enable the funct
 
 ![img](../../static/img/v1.5/node-advance.jpg)
 
-The advance state process changes the application state and it involves the following steps:
+The `advance-state` process changes the application state, and it involves the following steps:
 
 - The application frontend submits an advance-state input to the `InputBox` smart contract on the base layer.
 
 - The node monitors events from the `InputBox` contract and retrieves the input data.
 
-- The node sends the input to the application backend running inside the Cartesi Machine.
+- The node sends the input to the application backend inside the Cartesi Machine.
 
 - The Cartesi Machine processes the input and generates verifiable outputs ([vouchers](../rollups-apis/backend/vouchers.md), [notices](../rollups-apis/backend/notices.md), and [reports](../rollups-apis/backend/reports.md)).
 
-- The application frontend can then query these outputs using the node's [GraphQL API](../rollups-apis/graphql/basics.md).
+- The application frontend can query these outputs using the node's [GraphQL API](../rollups-apis/graphql/basics.md).
 
 ### Inspect state
 
 ![img](../../static/img/v1.5/node-inspect.jpg)
 
-The inspect state process allows for querying the application backend without altering its state:
+The `inspect-state` process allows for querying the application backend without altering its state:
 
 - The application frontend sends an inspect-state input directly to the Cartesi Node.
 
@@ -132,7 +132,7 @@ The inspect state process allows for querying the application backend without al
 - The node returns this report to the frontend via a [REST API](../rollups-apis/backend/introduction.md/#advance-and-inspect).
 
 :::note Inspect requests
-It's important to note that inspect-state inputs do not produce vouchers or notices, and the current implementation processes inputs sequentially, which may impact scalability for applications heavily reliant on inspect-state functionality.
+It's important to note that `inspect-state` inputs do not produce vouchers or notices, and the current implementation processes inputs sequentially, which may impact scalability for applications heavily reliant on inspect-state functionality.
 :::
 
 ### Validation
@@ -141,7 +141,7 @@ It's important to note that inspect-state inputs do not produce vouchers or noti
 
 The validation process ensures the integrity of the off-chain computations:
 
-- The Cartesi Node bundles multiple advance-state inputs into an epoch.
+- The Cartesi Node bundles multiple `advance-state` inputs into an epoch.
 
 - At the end of an epoch, the node computes a claim summarizing the epoch's state changes.
 
@@ -149,7 +149,7 @@ The validation process ensures the integrity of the off-chain computations:
 
 - The application frontend can fetch proofs for specific outputs within a closed epoch.
 
-- These proofs can be used to validate outputs on-chain, such as validating notices or executing vouchers.
+- These proofs can validate outputs on-chain, such as validating notices or executing vouchers.
 
 ## Introducing Dave — an interactive fraud-proof system
 
@@ -159,4 +159,4 @@ Dave introduces an approach where the resources required to defend against dispu
 
 With Dave, a single honest participant can effectively defend their claims on-chain, ensuring the integrity of transactions without relying on trust in validators. Based on the [Permissionless Refereed Tournaments algorithm](https://arxiv.org/abs/2212.12439), this protocol empowers anyone to validate rollups and uphold correct states on-chain, enhancing transaction security and reliability.
 
-In a way similar to how a consensus algorithm is crucial for achieving agreement on a single state of the blockchain among all nodes in a base layer chain, Dave plays a fundamental role in ensuring the integrity and trustworthiness of state transitions within Cartesi Rollups.
+Similar to how a consensus algorithm is crucial for achieving agreement on a single state of the blockchain among all nodes in a base-layer chain, Dave plays a fundamental role in ensuring the integrity and trustworthiness of state transitions within Cartesi Rollups.

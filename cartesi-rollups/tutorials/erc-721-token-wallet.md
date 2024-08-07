@@ -3,7 +3,7 @@ id: erc-721-token-wallet
 title: Integrating ERC721 token wallet functionality
 ---
 
-This tutorial will guide you through creating a basic ERC721(NFT) token wallet for a Cartesi backend application using TypeScript.
+This tutorial will guide you through creating a basic ERC721(NFT) token wallet using TypeScript for a Cartesi backend application.
 
 :::note community tools
 This tutorial is for educational purposes. For production dApps, we recommend using [Deroll](https://deroll.dev/), a TypeScript package that simplifies app and wallet functionality across all token standards for Cartesi applications.
@@ -77,31 +77,31 @@ export class Wallet {
   private accounts: Map<Address, Balance> = new Map();
 
   private getOrCreateBalance(address: Address): Balance {
-	let balance = this.accounts.get(address);
-	if (!balance) {
-	  balance = new Balance(address, new Map());
-	  this.accounts.set(address, balance);
-	}
-	return balance;
+  let balance = this.accounts.get(address);
+  if (!balance) {
+    balance = new Balance(address, new Map());
+    this.accounts.set(address, balance);
+  }
+  return balance;
       }
     
       getBalance(address: Address): Balance {
-	return this.getOrCreateBalance(address);
+  return this.getOrCreateBalance(address);
       }
 
       getErc721Balance(address: Address, erc721: Address): { address: string; erc721: string; tokenIds: number[] } {
-	const balance = this.getOrCreateBalance(address);
-	const tokens = balance.getErc721Tokens(erc721) || new Set<number>();;
-	const tokenIdsArray = Array.from(tokens);
-	
-	const result = {
-	  address: address,
-	  erc721: erc721,
-	  tokenIds: tokenIdsArray
-	};
+  const balance = this.getOrCreateBalance(address);
+  const tokens = balance.getErc721Tokens(erc721) || new Set<number>();;
+  const tokenIdsArray = Array.from(tokens);
+  
+  const result = {
+    address: address,
+    erc721: erc721,
+    tokenIds: tokenIdsArray
+  };
     
-	console.info(`ERC721 balance for ${address} and contract ${erc721}: ${JSON.stringify(result, null, 2)}`);
-	return result;
+  console.info(`ERC721 balance for ${address} and contract ${erc721}: ${JSON.stringify(result, null, 2)}`);
+  return result;
       }
 
   processErc721Deposit(payload: string): string {
@@ -202,10 +202,10 @@ export class Wallet {
 ```
 ## Using the wallet
 
-Now, let's create a simple wallet app in the entrypoint, `src/index.ts` to test the wallet functionality.
+Now, let's create a simple wallet app at the entry point `src/index.ts` to test the wallet’s functionality.
 
 :::note
-Run `cartesi address-book` to get the addresses of the `ERC721Portal` and `DAppAddressRelay` contracts. Save these as consts in the `index.ts` file.
+Run `cartesi address-book` to get the addresses of the `ERC721Portal` and `DAppAddressRelay` contracts. Save these as constants in the `index.ts` file.
 :::
 
 ```typescript
@@ -381,7 +381,7 @@ Here is a breakdown of the wallet functionality:
 
 - We relay the dApp address when the sender is `DAppAddressRelay`.
 
-- For other senders, we parse the payload to determine the operation (`transfer` or `withdraw`).
+- We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
 - For `transfers`, we call `wallet.transferErc721` and create a notice with the parsed parameters.
 
@@ -408,7 +408,7 @@ cartesi run
 #### Deposits
 
 :::caution token approvals
- For the [**ERC721 token stanard**](https://ethereum.org/en/developers/docs/standards/tokens/), an approval step is need. This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf. 
+ An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf. 
   
   Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cartesi backend.
 
@@ -421,7 +421,7 @@ To deposit ERC721 tokens, use the `cartesi send erc721` command and follow the p
 
 #### Balance checks(used in Inspect requests)
 
-To inspect balance, make an HTTP call to:
+To inspect the balance, make an HTTP call to:
 
 ```
 http://localhost:8080/inspect/{address}/{tokenAddress}
@@ -434,15 +434,16 @@ Use the `cartesi send generic` command and follow the prompts. Here are sample p
 
 1. For transfers:
 
-	```js
-	{"operation":"transfer","erc721":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","tokenId":"1"}
-	```
+  ```js
+  {"operation":"transfer","erc721":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","tokenId":"1"}
+  ```
 
 2. For withdrawals:
 
-	```js
-	{"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}
-	```
+  ```js
+  {"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}
+  ```
+
 
 
 
