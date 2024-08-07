@@ -20,6 +20,10 @@ To build a frontend for Cartesi dApps, we'll use React.js along with [Wagmi](htt
 
 To get started quickly with a pre-configured React project that includes Wagmi, you can use the `create-wagmi` CLI command. For detailed instructions on setting up a Wagmi project, refer to [the official Wagmi documentation](https://wagmi.sh/react/getting-started).
 
+Install the following dependencies:
+- [TailwindCSS](https://tailwindcss.com/docs/guides/vite)
+- [Axios](https://axios-http.com/docs/intro)
+
 Once you've set up your project, you'll have a basic structure that includes:
 
 - A main configuration file for blockchain interactions
@@ -110,7 +114,7 @@ Create a new file `src/components/Account.tsx` and edit the `App.tsx`:
   <TabItem value="account" label="src/components/Account.tsx" default>
 <pre><code>
 
-```javascript
+```jsx
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { useState } from "react";
 
@@ -122,98 +126,121 @@ const Account = () => {
   const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-xl">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-4">Account</h2>
+  <div className="max-w-2xl mx-auto mt-10 p-6 bg-gradient-to-r
+    from-purple-500 to-indigo-600 rounded-lg shadow-xl">
+    <div className="mb-8">
+      <h2 className="text-3xl font-bold text-white mb-4">Account</h2>
 
-        <div className="bg-white bg-opacity-20 rounded-lg p-4 text-white">
-          <p className="mb-2">
-            <span className="font-semibold">Status:</span> <span className="text-white font-semibold"> {account.status.toLocaleUpperCase()} </span>
-          </p>
-          <p className="mb-2 font-semibold">
-            <span>Address:</span>{" "}
-           {account.addresses?.[0]}
-          </p>
-          <p className="font-semibold">
-            <span>Chain ID:</span> {account.chain?.name} | {account.chainId}
-          </p>
-        </div>
-
-        {/* Display chain switching and disconnect options when connected */}
-        {account.status === "connected" && (
-          <div className="space-y-4 mt-4">
-            {/* Chain switching dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsChainDropdownOpen(!isChainDropdownOpen)}
-                className="w-full flex justify-between items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-              >
-                Switch Chain
-                <svg
-                  className="h-5 w-5 text-gray-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-              {/* Dropdown menu for chain options */}
-              {isChainDropdownOpen && (
-                <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1">
-                  {chains.map((chainOption) => (
-                    <button
-                      key={chainOption.id}
-                      onClick={() => {
-                        switchChain({ chainId: chainOption.id });
-                        setIsChainDropdownOpen(false);
-                      }}
-                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      {chainOption.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            {/* Disconnect button */}
-            <button
-              type="button"
-              onClick={() => disconnect()}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
-            >
-              Disconnect
-            </button>
-          </div>
-        )}
+      <div className="bg-white bg-opacity-20 rounded-lg p-4 text-white">
+        <p className="mb-2">
+          <span className="font-semibold">Status:</span> 
+          <span className="text-white font-semibold"> 
+          {account.status.toLocaleUpperCase()} </span>
+        </p>
+        <p className="mb-2 font-semibold">
+          <span>Address:</span>{" "}
+          {account.addresses?.[0]}
+        </p>
+        <p className="font-semibold">
+          <span>Chain ID:</span> {account.chain?.name} | {account.chainId}
+        </p>
       </div>
 
-      {/* Connect section */}
-      <div>
-        <h2 className="text-3xl font-bold text-white mb-4">Connect</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {connectors.map((connector) => (
+      {/* Display chain switching and disconnect options when connected */}
+      {account.status === "connected" && (
+        <div className="space-y-4 mt-4">
+          {/* Chain switching dropdown */}
+          <div className="relative">
             <button
-              key={connector.uid}
-              onClick={() => connect({ connector })}
               type="button"
-              className="px-4 py-2 bg-white text-purple-600 rounded-md hover:bg-purple-100 transition-colors duration-300"
+              onClick={() => setIsChainDropdownOpen(!isChainDropdownOpen)}
+              className="w-full flex justify-between items-center 
+              py-2 px-4 border border-gray-300 rounded-md 
+              shadow-sm text-sm font-medium
+                text-gray-700 bg-white hover:bg-gray-50 
+                focus:outline-none focus:ring-2 focus:ring-offset-2
+                 focus:ring-indigo-500 transition-colors duration-200"
             >
-              {connector.name}
+              Switch Chain
+              <svg
+                className="h-5 w-5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 
+                  0L10 10.586l3.293-3.293a1 1 0 111.414 
+                  1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
             </button>
-          ))}
+            {/* Dropdown menu for chain options */}
+            {isChainDropdownOpen && (
+              <div className="absolute z-10 mt-1 w-full
+               bg-white shadow-lg rounded-md py-1">
+                {chains.map((chainOption) => (
+                  <button
+                    key={chainOption.id}
+                    onClick={() => {
+                      switchChain({ chainId: chainOption.id });
+                      setIsChainDropdownOpen(false);
+                    }}
+                    className="block w-full text-left 
+                    px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    {chainOption.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* Disconnect button */}
+          <button
+            type="button"
+            onClick={() => disconnect()}
+            className="w-full flex justify-center py-2 
+            px-4 border border-transparent rounded-md 
+            shadow-sm text-sm font-medium text-white 
+            bg-red-600 hover:bg-red-700 focus:outline-none 
+            focus:ring-2 focus:ring-offset-2
+             focus:ring-red-500 transition-colors duration-200"
+          >
+            Disconnect
+          </button>
         </div>
-        <div className="mt-4 text-white">Status: {status.toLocaleUpperCase()}</div>
-        <div className="mt-2 text-red-300">{error?.message}</div>
+      )}
+    </div>
+
+    {/* Connect section */}
+    <div>
+      <h2 className="text-3xl font-bold text-white mb-4">Connect</h2>
+      <div className="grid grid-cols-2 gap-4">
+        {connectors.map((connector) => (
+          <button
+            key={connector.uid}
+            onClick={() => connect({ connector })}
+            type="button"
+            className="px-4 py-2 bg-white
+             text-purple-600 rounded-md hover:bg-purple-100
+              transition-colors duration-300"
+          >
+            {connector.name}
+          </button>
+        ))}
+      </div>
+      <div className="mt-4 text-white">
+      Status: {status.toLocaleUpperCase()}
+      </div>
+      <div className="mt-2 text-red-300">
+      {error?.message}
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default Account;
@@ -434,7 +461,7 @@ Putting it all together, our complete `<SimpleInput/>` component and `App.tsx` l
   <TabItem value="simple-input" label="src/components/SimpleInput.tsx" default>
 <pre><code>
 
-```typescript
+```jsx
 import React, { useState } from "react";
 import { BaseError } from "wagmi";
 import { useWriteInputBoxAddInput } from "../hooks/generated";
@@ -455,13 +482,16 @@ const SimpleInput = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-xl">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r
+     from-purple-500 to-indigo-600 rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold text-white mb-6">Send Generic Input</h2>
       <form onSubmit={submit} className="space-y-4">
         <div>
           <input
             type="text"
-            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-2 rounded-md border
+             border-gray-300 focus:outline-none focus:ring-2
+              focus:ring-purple-500"
             placeholder="Enter something"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -469,7 +499,9 @@ const SimpleInput = () => {
         </div>
         <button
           type="submit"
-          className="w-full px-4 py-2 bg-white text-purple-600 rounded-md hover:bg-purple-100 transition-colors duration-300 font-medium"
+          className="w-full px-4 py-2 bg-white text-purple-600
+           rounded-md hover:bg-purple-100 transition-colors 
+           duration-300 font-medium"
         >
           {isPending ? "Sending..." : "Send"}
         </button>
@@ -570,7 +602,7 @@ Create a new file `src/components/SendEther.tsx` and paste the complete code:
   <TabItem value="send-ether" label="src/components/SendEther.tsx" default>
 <pre><code>
 
-```typescript
+```jsx
 import React, { useState } from "react";
 import { BaseError } from "wagmi";
 import { useWriteEtherPortalDepositEther } from "../hooks/generated";
@@ -598,13 +630,16 @@ const SendEther = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-xl">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r
+     from-purple-500 to-indigo-600 rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold text-white mb-6">Deposit Ether</h2>
       <form onSubmit={submit} className="space-y-4">
         <div>
           <input
             type="text"
-            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-2 rounded-md border
+             border-gray-300 focus:outline-none focus:ring-2
+              focus:ring-purple-500"
             placeholder="Enter Ether amount"
             value={etherValue}
             onChange={(e) => setEtherValue(e.target.value)}
@@ -612,7 +647,9 @@ const SendEther = () => {
         </div>
         <button
           type="submit"
-          className="w-full px-4 py-2 bg-white text-purple-600 rounded-md hover:bg-purple-100 transition-colors duration-300 font-medium"
+          className="w-full px-4 py-2 bg-white
+           text-purple-600 rounded-md 
+           hover:bg-purple-100 transition-colors duration-300 font-medium"
         >
           {isPending ? "Sending..." : "Send"}
         </button>
@@ -716,7 +753,7 @@ Create a new file `src/components/SendERC20.tsx` and paste the complete code:
   <TabItem value="send-erc20" label="src/components/SendERC20.tsx" default>
 <pre><code>
 
-```typescript
+```jsx
 import React, { useState } from "react";
 import { BaseError } from "wagmi";
 import {
@@ -763,20 +800,25 @@ const SendERC20 = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-xl">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r
+     from-purple-500 to-indigo-600 rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold text-white mb-6">Deposit ERC20</h2>
       <form onSubmit={submit} className="space-y-4">
         <div>
           <input
             type="text"
-            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 mb-4"
+            className="w-full px-4 py-2 rounded-md border
+             border-gray-300 focus:outline-none 
+             focus:ring-2 focus:ring-purple-500 mb-4"
             placeholder="ERC20 Token Address"
             value={tokenAddress as Address}
             onChange={(e) => setTokenAddress(e.target.value as Address)}
           />
           <input
             type="text"
-            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-2 rounded-md border
+             border-gray-300 focus:outline-none 
+             focus:ring-2 focus:ring-purple-500"
             placeholder="Enter ERC20 amount"
             value={erc20Value}
             onChange={(e) => setErc20Value(e.target.value)}
@@ -784,7 +826,9 @@ const SendERC20 = () => {
         </div>
         <button
           type="submit"
-          className="w-full px-4 py-2 bg-white text-purple-600 rounded-md hover:bg-purple-100 transition-colors duration-300 font-medium"
+          className="w-full px-4 py-2 bg-white
+           text-purple-600 rounded-md hover:bg-purple-100
+            transition-colors duration-300 font-medium"
         >
           {isPending ? "Sending..." : "Send"}
         </button>
@@ -914,7 +958,7 @@ Create a new file `src/components/SendERC721.tsx` and paste the complete code:
   <TabItem value="send-erc721" label="src/components/SendERC721.tsx" default>
 <pre><code>
 
-```typescript
+```jsx
 import React, { useState } from "react";
 import { BaseError } from "wagmi";
 import {
@@ -966,7 +1010,8 @@ const SendERC721 = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-lg shadow-xl">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gradient-to-r
+     from-purple-500 to-indigo-600 rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold text-white mb-6">
         Deposit ERC721 Token
       </h2>
@@ -974,7 +1019,9 @@ const SendERC721 = () => {
         <div>
           <input
             type="text"
-            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-2 rounded-md 
+            borderborder-gray-300 focus:outline-none 
+            focus:ring-2 focus:ring-purple-500"
             placeholder="ERC721 Token Address"
             value={tokenAddress}
             onChange={(e) => setTokenAddress(e.target.value)}
@@ -983,7 +1030,9 @@ const SendERC721 = () => {
         <div>
           <input
             type="text"
-            className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-2 rounded-md border
+             border-gray-300 focus:outline-none 
+             focus:ring-2 focus:ring-purple-500"
             placeholder="Token ID"
             value={tokenId}
             onChange={(e) => setTokenId(e.target.value)}
@@ -991,7 +1040,9 @@ const SendERC721 = () => {
         </div>
         <button
           type="submit"
-          className="w-full px-4 py-2 bg-white text-purple-600 rounded-md hover:bg-purple-100 transition-colors duration-300 font-medium"
+          className="w-full px-4 py-2 bg-white
+           text-purple-600 rounded-md hover:bg-purple-100
+            transition-colors duration-300 font-medium"
         >
           {isPending ? "Sending..." : "Send"}
         </button>
@@ -1173,11 +1224,12 @@ export type GraphQLResponse<T> = {
 ```typescript
 // api.ts
 
-import axios from 'axios';  // install axios by running `npm i axios`
+import axios from 'axios';  
 import { GraphQLResponse } from './types';
 
 export const fetchGraphQLData = async <T>(query: string) => {
-  const response = await axios.post<GraphQLResponse<T>>('http://localhost:8080/graphql', {
+  const response = await 
+  axios.post<GraphQLResponse<T>>('http://localhost:8080/graphql', {
     query,
   });
   return response.data.data;
@@ -1196,8 +1248,7 @@ Let's have 3 components for Notices, Reports, and Vouchers that queries from the
 <TabItem value="notices" label="Notices.tsx" default>
 <pre><code>
 
-```typescript
-
+```jsx
 import { useEffect, useState } from 'react';
 import { fetchGraphQLData } from '../utils/api';
 import { Notice } from '../utils/types';
@@ -1211,7 +1262,9 @@ const Notices = () => {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
-        const data = await fetchGraphQLData<{ notices: { edges: { node: Notice }[] } }>(NOTICES_QUERY);
+        const data = 
+        await fetchGraphQLData<{ notices: 
+        { edges: { node: Notice }[] } }>(NOTICES_QUERY);
         setNotices(data.notices.edges.map(edge => edge.node));
       } catch (err) {
         setError('Error fetching notices.');
@@ -1227,9 +1280,12 @@ const Notices = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
+    <div className="max-w-4xl mx-auto mt-10 p-6
+     bg-white rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold text-center mb-6">Notices</h2>
-      <table className="min-w-full divide-y divide-gray-200 bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+      <table className="min-w-full divide-y
+       divide-gray-200 bg-gradient-to-r
+        from-purple-500 to-indigo-600 text-white">
         <thead>
           <tr>
             <th className="px-4 py-2">Index</th>
@@ -1239,7 +1295,8 @@ const Notices = () => {
         </thead>
         <tbody>
           {notices.map((notice, idx) => (
-            <tr key={idx} className="hover:bg-purple-700 transition-colors duration-300">
+            <tr key={idx} className="hover:bg-purple-700 
+            transition-colors duration-300">
               <td className="px-4 py-2">{notice.index}</td>
               <td className="px-4 py-2">{notice.input.index}</td>
               <td className="px-4 py-2">{notice.payload}</td>
@@ -1260,14 +1317,11 @@ export default Notices;
   <TabItem value="reports" label="Reports.tsx">
 <pre><code>
 
-```typescript
-
-
+```jsx
 import { useEffect, useState } from 'react';
 import { fetchGraphQLData } from '../utils/api';
 import { Report } from '../utils/types';
 import { REPORTS_QUERY } from '../utils/queries';
-
 
 const Reports = () => {
   const [reports, setReports] = useState<Report[]>([]);
@@ -1277,7 +1331,9 @@ const Reports = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const data = await fetchGraphQLData<{ reports: { edges: { node: Report }[] } }>(REPORTS_QUERY);
+        const data = 
+        await fetchGraphQLData<{ reports: 
+        { edges: { node: Report }[] } }>(REPORTS_QUERY);
         setReports(data.reports.edges.map(edge => edge.node));
       } catch (err) {
         setError('Error fetching reports.');
@@ -1293,9 +1349,12 @@ const Reports = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
+    <div className="max-w-4xl mx-auto mt-10 p-6
+     bg-white rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold text-center mb-6">Reports</h2>
-      <table className="min-w-full divide-y divide-gray-200 bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+      <table className="min-w-full divide-y
+       divide-gray-200 bg-gradient-to-r
+        from-purple-500 to-indigo-600 text-white">
         <thead>
           <tr>
             <th className="px-4 py-2">Index</th>
@@ -1305,7 +1364,8 @@ const Reports = () => {
         </thead>
         <tbody>
           {reports.map((report, idx) => (
-            <tr key={idx} className="hover:bg-purple-700 transition-colors duration-300">
+            <tr key={idx} className="hover:bg-purple-700 
+            transition-colors duration-300">
               <td className="px-4 py-2">{report.index}</td>
               <td className="px-4 py-2">{report.input.index}</td>
               <td className="px-4 py-2">{report.payload}</td>
@@ -1326,9 +1386,7 @@ export default Reports;
 <TabItem value="vouchers" label="Vouchers.tsx">
 <pre><code>
 
-```typescript
-
-
+```jsx
 import { useEffect, useState } from 'react';
 import { fetchGraphQLData } from '../utils/api';
 import { Voucher } from '../utils/types';
@@ -1342,7 +1400,9 @@ const Vouchers = () => {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        const data = await fetchGraphQLData<{ vouchers: { edges: { node: Voucher }[] } }>(VOUCHERS_QUERY);
+        const data = 
+        await fetchGraphQLData<{ vouchers: 
+        { edges: { node: Voucher }[] } }>(VOUCHERS_QUERY);
         setVouchers(data.vouchers.edges.map(edge => edge.node));
       } catch (err) {
         setError('Error fetching vouchers.');
@@ -1358,9 +1418,12 @@ const Vouchers = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
+    <div className="max-w-4xl mx-auto mt-10 p-6
+     bg-white rounded-lg shadow-xl">
       <h2 className="text-3xl font-bold text-center mb-6">Vouchers</h2>
-      <table className="min-w-full divide-y divide-gray-200 bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+      <table className="min-w-full divide-y 
+      divide-gray-200 bg-gradient-to-r
+       from-purple-500 to-indigo-600 text-white">
         <thead>
           <tr>
             <th className="px-4 py-2">Index</th>
@@ -1371,7 +1434,8 @@ const Vouchers = () => {
         </thead>
         <tbody>
           {vouchers.map((voucher, idx) => (
-            <tr key={idx} className="hover:bg-purple-700 transition-colors duration-300">
+            <tr key={idx} className="hover:bg-purple-700 
+            transition-colors duration-300">
               <td className="px-4 py-2">{voucher.index}</td>
               <td className="px-4 py-2">{voucher.input.index}</td>
               <td className="px-4 py-2">{voucher.destination}</td>
