@@ -1,6 +1,9 @@
 ---
 id: ether-wallet
 title: Integrating Ether wallet functionality
+- resources: 
+  - url: https://github.com/masiedu4/ether-wallet-tutorial
+    title: Source code for Ether wallet tutorial
 ---
 
 This tutorial will build a basic Ether wallet inside a Cartesi backend application using TypeScript.

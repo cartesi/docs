@@ -1,6 +1,9 @@
 ---
 id: erc-20-token-wallet
 title: Integrating ERC20 token wallet functionality
+resources:
+  - url: https://github.com/masiedu4/erc20-wallet-tutorial
+    title: Source code for ERC20 wallet tutorial
 ---
 
 This tutorial will guide you through creating a basic ERC20 token wallet for a Cartesi backend application using TypeScript.
