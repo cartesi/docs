@@ -5,7 +5,7 @@ title: Integrating Ether wallet functionality
 
 This tutorial will build a basic Ether wallet inside a Cartesi backend application using TypeScript.
 
-The goal is to have a backend application to track balances, receive, transfer, and withdraw Ether.
+The goal is to have a backend application to track balances and receive, transfer, and withdraw Ether.
 
 :::note community tools
 This tutorial is for educational purposes. For production dApps, we recommend using [Deroll](https://deroll.dev/), a TypeScript package that simplifies app and wallet functionality across all token standards for Cartesi applications.
@@ -13,7 +13,7 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 
 ## Setting up the project
 
-First, let's create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
+First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
 
 ```bash
 cartesi create ether-wallet-dapp --template typescript
@@ -39,7 +39,7 @@ yarn add -D @cartesi/rollups
 
 Let's write a configuration to generate the ABIs of the Cartesi Rollups Contracts.
 
-We will the Solidity compiler and the contract code from the `@cartesi/rollups` package to generate the ABIs as consts.
+We will the Solidity compiler and the contract code from the `@cartesi/rollups` package to generate the ABIs as constants.
 
 1. [Install the Solidity compiler](https://docs.soliditylang.org/en/latest/installing-solidity.html).
 
@@ -84,7 +84,7 @@ generate_abi() {
     
     echo "Extracted ABI for $contract_name"
     
-    # Create TypeScript file with exported ABI
+    # Create a TypeScript file with exported ABI
     echo "export const ${contract_name}Abi = $abi as const;" > "$output_file"
     
     echo "Generated ABI for $contract_name"
@@ -116,7 +116,7 @@ And run it:
 
 ## Building the Ether wallet
 
-Our wallet will consist of two main classes: `Balance` and `Wallet`. Let's implement each of these:
+Our wallet will have two main classes: `Balance` and `Wallet`. Let's implement each of these:
 
 Create a file named `balance.ts` in the `src/wallet` directory and add the following code:
 
@@ -146,7 +146,7 @@ export class Balance {
 }
 ```
 
-The `Balance` class represents an individual account's balance. It includes methods to get, increase, and decrease the Ether balance.
+The `Balance` class represents an individual account's balance. It includes methods for getting, increasing, and decreasing the Ether balance.
 
 Now, create a file named `wallet.ts` in the `src/wallet` directory and add the following code:
 
@@ -264,16 +264,16 @@ export class Wallet {
 
 
 ```
-The `Wallet` class manages multiple accounts and provides methods for common wallet operations. Key features include storing balances, centralizing the logic for retrieving or creating a balance and depositing, withdrawing, and transferring Ether.
+The `Wallet` class manages multiple accounts and provides methods for everyday wallet operations. Key features include storing balances, centralizing the logic for retrieving or creating a balance, and depositing, withdrawing, and transferring Ether.
 
 `parseDepositPayload` and `encodeWithdrawCall` handle the low-level details of working with the base layer data.
 
 
 ### Voucher creation
 
-The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a key concept in Cartesi rollups for executing withdrawal operations on the base layer chain.
+The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a crucial concept in Cartesi rollups for executing withdrawal operations on the base layer chain.
 
-The voucher creation process occurs during the withdrawal of Ether. Here's how it works in this application:
+The voucher creation process occurs during Ether’s withdrawal. Here's how it works in this application:
 
 1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../rollups-apis/json-rpc/application.md/#withdrawether) on the `CartesiDApp` contract.
 
@@ -292,14 +292,14 @@ The voucher creation process occurs during the withdrawal of Ether. Here's how i
 
 ## Using the Ether wallet
 
-Now, let's create a simple application in the entrypoint, `src/index.ts` to test the wallet functionality.
+Now, let's create a simple application at the entry point, `src/index.ts,` to test the wallet functionality.
 
-The [`EtherPortal`](../rollups-apis/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp is done via the `EtherPortal` contract.
+The [`EtherPortal`](../rollups-apis/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
 
-The [`DAppAddressRelay`](../rollups-apis/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its own on-chain address, making it impossible to create valid vouchers for withdrawals.
+The [`DAppAddressRelay`](../rollups-apis/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its on-chain address, making it impossible to create valid vouchers for withdrawals.
 
 :::note
-Run `cartesi address-book` to get the addresses of the `EtherPortal` and `DAppAddressRelay` contracts. Save these as consts in the `index.ts` file.
+Run `cartesi address-book` to get the addresses of the `EtherPortal` and `DAppAddressRelay` contracts. Save these as constants in the `index.ts` file.
 :::
 
 ```typescript
@@ -466,17 +466,17 @@ Here is a breakdown of the wallet functionality:
 
 - We handle deposits and create a notice when the sender is the `EtherPortal`.
 
-- For other senders, we parse the payload to determine the operation (`transfer` or `withdraw`).
+- We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
 - For `transfers`, we call `wallet.transferEther` and create a notice with the parsed parameters.
 
-- For `withdrawals`, we call `wallet.withdrawEther` and create voucher using the dApp dress and the parsed parameters. 
+For `withdrawals,` we call `wallet.withdrawEther` and create a voucher using the dApp dress and the parsed parameters. 
 
 - We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
 
 
 :::caution important
-The dApp address strictly needs to be relayed before withdrawal requests. 
+The dApp address needs to be relayed strictly before withdrawal requests. 
 
 To relay the dApp address, run: `cartesi send dapp-address`
 :::
