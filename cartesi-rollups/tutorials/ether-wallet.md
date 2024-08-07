@@ -1,7 +1,7 @@
 ---
 id: ether-wallet
 title: Integrating Ether wallet functionality
-- resources: 
+resources: 
   - url: https://github.com/masiedu4/ether-wallet-tutorial
     title: Source code for Ether wallet tutorial
 ---
