@@ -1,6 +1,9 @@
 ---
 id: erc-721-token-wallet
 title: Integrating ERC721 token wallet functionality
+resources:
+  - url: https://github.com/masiedu4/erc721-wallet-tutorials
+    title: Source code for ERC721 wallet tutorial
 ---
 
 This tutorial will guide you through creating a basic ERC721(NFT) token wallet using TypeScript for a Cartesi backend application.
