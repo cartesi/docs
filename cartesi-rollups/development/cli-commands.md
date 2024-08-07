@@ -54,7 +54,7 @@ cartesi create NAME --template <template-name> [--branch <value>]
 
 
 ### `build`
-Build the application, creating a Cartesi Machine snapshot.
+Compiles your application to RISC-V and builds a Cartesi machine snapshot.
 
 #### Usage:
 ```bash
@@ -86,7 +86,7 @@ cartesi run [--block-time <value>] [--epoch-length <value>] [--no-backend] [-v] 
 ---
 
 ### `send`
-Send input to the application in interactive mode.
+Send generic, Ether, ERC20, ERC721 and dApp address inputs to the application in interactive mode.
 
 #### Usage:
 ```bash
@@ -104,7 +104,9 @@ cartesi send
 
 
 ### `deploy`
+
 Deploy the application to a live network.
+
 
 #### Usage:
 ```bash
@@ -119,7 +121,7 @@ cartesi deploy --webapp <value> [--hosting self-hosted|third-party]
 
 
 ### `address-book`
-Prints addresses of deployed smart contracts.
+Prints addresses of the deployed ollups smart contracts.
 
 #### Usage:
 ```bash
@@ -133,7 +135,7 @@ cartesi address-book [--json]
 
 ### `shell`
 
-Start a shell in the Cartesi machine of the application.
+Starts the Cartesi Machine in interactive mode, providing a shell interface.
 
 #### Usage:
 ```bash
