@@ -12,8 +12,6 @@ const transport = http(
   "https://eth-mainnet.g.alchemy.com/v2/cBxzBgf91hVaZIV-gnC0kuc-K1WGd2xX"
 );
 const symbol = "CTSI";
-const defaultBalance = 0;
-const defaultFrom = 0;
 
 const client = createPublicClient({
   chain: mainnet,
