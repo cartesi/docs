@@ -22,7 +22,7 @@ The dApp's backend interacts with the Cartesi Rollups framework by retrieving pr
 
 This is accomplished by calling a set of HTTP endpoints, as illustrated by the figure below:
 
-![img](../../static/img/v1.3/backend.jpg)
+![img](../../../static/img/v1.3/backend.jpg)
 
 You can send two requests to an application depending on whether you want to change or read the state.
 
@@ -37,7 +37,7 @@ The frontend component of the dApp needs to access the Cartesi Rollups framework
 
 The figure below details some of the main use cases for these interactions:
 
-![img](../../static/img/v1.3/frontend.jpg)
+![img](../../../static/img/v1.3/frontend.jpg)
 
 - [`addInput()`](./json-rpc/input-box.md/#addinput) — This function submits input data to the InputBox smart contract on the base layer as a regular JSON-RPC blockchain transaction. When that transaction is mined and executed, an event containing the submitted input’s index is emitted, which the frontend can later use to query associated outputs.
 

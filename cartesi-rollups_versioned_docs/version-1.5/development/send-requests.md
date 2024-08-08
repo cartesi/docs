@@ -133,7 +133,7 @@ You can initiate an advance request by sending input from the CLI using Cast, Ca
 
 Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp backend and trigger a change in the application's state.
 
-![img](../../static/img/v1.3/advance.jpg)
+![img](../../../static/img/v1.3/advance.jpg)
 
 In the dApp architecture, here is how an advance request plays out.
 
@@ -210,7 +210,7 @@ Inspect requests are directly made to the rollup server, and the Cartesi Machine
 Inspect requests are best suited for non-production use, such as debugging and testing. They may not function reliably in production environments, potentially leading to errors or disruptions.
 :::
 
-![img](../../static/img/v1.3/inspect.jpg)
+![img](../../../static/img/v1.3/inspect.jpg)
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
