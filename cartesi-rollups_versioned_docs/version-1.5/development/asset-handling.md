@@ -18,7 +18,7 @@ Currently, Cartesi Rollups support the following types of assets:
 - [ERC-1155 Single](../rollups-apis/json-rpc/portals/ERC1155SinglePortal.md)
 - [ERC-1155 Batch](../rollups-apis/json-rpc/portals/ERC1155BatchPortal.md)
 
-![img](../../static/img/v1.3/assets.jpg)
+![img](../../../static/img/v1.3/assets.jpg)
 
 ## Deposits
 
@@ -28,7 +28,7 @@ When an asset is deposited, it is on the base layer but gains a representation i
 
 Deposit input payloads are always specified as packed ABI-encoded parameters, as detailed below.
 
-![img](../..//static/img/v1.3/abi.jpg)
+![img](../../..//static/img/v1.3/abi.jpg)
 
 ### ABI encoding for deposits
 

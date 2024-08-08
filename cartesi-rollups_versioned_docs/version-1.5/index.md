@@ -13,14 +13,14 @@ Welcome to Cartesi Rollups, where decentralized application development meets un
 
 Utilizing the Cartesi Machine for transaction processing, developers can effortlessly implement sophisticated logic using their preferred programming language or tool. Explore the possibilities and streamline your decentralized application development journey with Cartesi Rollups.
 
-![img](../static/img/v1.3/image.png)
+![img](../../static/img/v1.3/image.png)
 
 
 ## Introduction 
 
 Let's delve into the workings of a Cartesi Rollup at a high level.
 
-![img](../static/img/v1.3/overview.jpg)
+![img](../../static/img/v1.3/overview.jpg)
 
 
 At its core, the Cartesi Rollup executes the Cartesi Machine - a robust RISCV deterministic emulator running Linux OS - fueled by ordered inputs and custom application code. Inputs sourced from the data availability layer are read by the Cartesi Node, inside of which the Cartesi Machine processes them and generates outputs. After the optimistic rollup dispute window passes, these outputs are verifiable and possibly executable on the settlement layer. 
