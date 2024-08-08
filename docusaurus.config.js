@@ -339,12 +339,12 @@ const config = {
         id: "cartesi-rollups",
         path: "cartesi-rollups",
         routeBasePath: "cartesi-rollups",
-        sidebarPath: require.resolve("./sidebarsRollups.js"),
+        // sidebarPath: require.resolve("./sidebarsRollups.js"),
         editUrl: "https://github.com/cartesi/docs/tree/main",
         docLayoutComponent: "@theme/DocPage",
         docItemComponent: "@theme/ApiItem",
-        includeCurrentVersion: true,
-        lastVersion: "current",
+        includeCurrentVersion: false,
+        lastVersion: "1.5",
         admonitions: {
           keywords: [
             "note",
@@ -357,7 +357,7 @@ const config = {
           ],
         },
         versions: {
-          current: {
+          "1.5": {
             label: "1.5",
             path: "1.5",
           },
@@ -513,15 +513,15 @@ const config = {
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath: "cartesi-rollups/rollups-apis/rollup.yaml", // Path to designated spec file
-            outputDir: "cartesi-rollups/rollups-apis/rollup", // Output directory for generated .mdx docs
+            specPath: "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup.yaml", // Path to designated spec file
+            outputDir: "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup", // Output directory for generated .mdx docs
             sidebarOptions: {
               groupPathsBy: "tag",
             },
           },
           frontEndApi: {
-            specPath: "cartesi-rollups/rollups-apis/inspect.yaml",
-            outputDir: "cartesi-rollups/rollups-apis/inspect",
+            specPath: "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect.yaml",
+            outputDir: "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect",
           },
         },
       },
