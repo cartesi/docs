@@ -27,7 +27,7 @@ A decentralized application (dApp) built on Cartesi incorporates several key ele
 - Frontend: The application’s user-facing interface, typically implemented as a web application or a command-line interface tool.
 
 
-![img](../../static/img/v1.5/architecture-overview.jpg)
+![img](../../../static/img/v1.5/architecture-overview.jpg)
 
 ## Cartesi Machine
 
@@ -103,7 +103,7 @@ The Cartesi architecture facilitates several key processes that enable the funct
 
 ### Advance state
 
-![img](../../static/img/v1.5/node-advance.jpg)
+![img](../../../static/img/v1.5/node-advance.jpg)
 
 The `advance-state` process changes the application state, and it involves the following steps:
 
@@ -119,7 +119,7 @@ The `advance-state` process changes the application state, and it involves the f
 
 ### Inspect state
 
-![img](../../static/img/v1.5/node-inspect.jpg)
+![img](../../../static/img/v1.5/node-inspect.jpg)
 
 The `inspect-state` process allows for querying the application backend without altering its state:
 
@@ -137,7 +137,7 @@ It's important to note that `inspect-state` inputs do not produce vouchers or no
 
 ### Validation
 
-![img](../../static/img/v1.5/node-validate.jpg)
+![img](../../../static/img/v1.5/node-validate.jpg)
 
 The validation process ensures the integrity of the off-chain computations:
 

@@ -39,7 +39,7 @@ Here are the requirements:
 
   The command generates a Docker image containing the rollups node and machine. You will be redirected to a web application to deploy the necessary smart contracts.
 
-  ![img](../../static/img/v1.3/deploy.png)
+  ![img](../../../static/img/v1.3/deploy.png)
 
 ## Deploying the contracts
 
@@ -83,7 +83,7 @@ Alternatively, you can use a service like [Fly.io](https://fly.io/) to deploy yo
 
   Here is an example from [Alchemy](https://dashboard.alchemy.com/):
 
-  ![img](../../static/img/v1.3/alchemy.png)
+  ![img](../../../static/img/v1.3/alchemy.png)
 
   :::caution important
   The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times.
@@ -142,7 +142,7 @@ If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for 
 
 1. Download `fly.toml` file from deploying the contracts and move it to your application directory:
 
-   ![deploy self-hosted config](../../static/img/v1.3/fly.png)
+   ![deploy self-hosted config](../../../static/img/v1.3/fly.png)
 
 1. Edit the `fly.toml` file to change all occurrences of `<app-name>` to the name of your application
 
