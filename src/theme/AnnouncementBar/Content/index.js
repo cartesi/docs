@@ -22,6 +22,7 @@ export default function AnnouncementBarContent(props) {
   const { announcementBar } = useThemeConfig();
   const { content } = announcementBar;
 
+  const [loaded, setLoaded] = useState(false);
   const [dynamicContent, setDynamicContent] = useState(content);
   const [balanceLoaded, setBalanceLoaded] = useState(false);
 
@@ -68,6 +69,7 @@ export default function AnnouncementBarContent(props) {
         newContent = newContent.replace(`{{${v}}}`, values[i]);
       });
       setDynamicContent(newContent);
+      setLoaded(true);
     }
 
     updateContent();
@@ -79,7 +81,9 @@ export default function AnnouncementBarContent(props) {
       className={clsx(styles.content, props.className)}
       // Developer provided the HTML, so assume it's safe.
       // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: dynamicContent }}
+      dangerouslySetInnerHTML={{
+        __html: loaded ? dynamicContent : null,
+      }}
     />
   );
 }
