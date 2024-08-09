@@ -200,7 +200,7 @@ $ cartesi send generic
 
 You can create a custom frontend that interacts with your application.
 
-Here is a [React.js + Typescript template](https://github.com/prototyp3-dev/frontend-web-cartesi) with the functionalities to build on Cartesi.
+Follow [the React.js tutorial to build a frontend for your application](../tutorials/react-frontend-application.md).
 
 ### Make Inspect calls
 
