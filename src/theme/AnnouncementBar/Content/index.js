@@ -26,24 +26,23 @@ export default function AnnouncementBarContent(props) {
   const [dynamicContent, setDynamicContent] = useState(content);
   const [balanceLoaded, setBalanceLoaded] = useState(false);
 
-
   const formatLargeNumber = (num) => {
     const absNum = Math.abs(num);
     if (absNum >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
+      return (num / 1000000).toFixed(1) + "M";
     } else if (absNum >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
+      return (num / 1000).toFixed(1) + "K";
     } else {
       return num.toString();
     }
   };
 
   // Fetch data for variables in the content
- 
-  
+
   const getBalance = async () => {
     const contractRead = await client.readContract({
-      ...wagmiContract,
+      address: wagmiContract.address,
+      abi: wagmiContract.abi,
       functionName: "balanceOf",
       args: ["0x0974CC873dF893B302f6be7ecf4F9D4b1A15C366"],
     });
