@@ -5,25 +5,6 @@ title: Community tools
 
 Several tools created and maintained by the community streamline the dApp creation process on Cartesi Rollups.
 
-
-## RISC-V Verifiable Entertainment System (RIVES)
-
-A low-level verifiable fantasy console for building small games on a special RISC-V Linux machine.
-
-- **Features**:
-	- Create small games using a minimal API and simple tools.
-	- Use any programming language with support for RISC-V.
-	- Play games on any device with WebAssembly support.
-	- Record game sessions into tiny tapes for replay and verification.
-	- Custom leaderboards for each cartridge.
-
-- **Resources**:
-	- [RIVES Documentation](https://rives.io/docs/category/riv)
-	- [RIVES Playground](https://rives.io/playground)
-	- [RIVES in action](https://app.rives.io/)
-
----
-
 ## Deroll
 
 Introducing Deroll, a powerful TypeScript framework designed to simplify the development of dApps on Cartesi.
