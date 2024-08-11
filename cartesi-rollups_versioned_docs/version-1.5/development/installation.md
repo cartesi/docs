@@ -90,6 +90,3 @@ $ cartesi doctor
 ✔ Your system is ready for cartesi.
 ```
 
-:::caution deprecation notice
-The Sunodo CLI has been deprecated. We recommend that all developers [migrate their existing applications to the new Cartesi CLI tool](../development/migration.md) as soon as possible. 
-:::
