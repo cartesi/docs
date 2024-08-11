@@ -2,21 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { useThemeConfig } from "@docusaurus/theme-common";
 import styles from "./styles.module.css";
+import { JsonRpcProvider, Contract, formatEther } from "ethers";
 
-import { http, createPublicClient } from "viem";
-import { mainnet } from "viem/chains";
-import { formatEther } from "viem";
 import { wagmiContract } from "./contracts/contracts";
-
-const transport = http(
-  "https://eth-mainnet.g.alchemy.com/v2/cBxzBgf91hVaZIV-gnC0kuc-K1WGd2xX"
-);
-const symbol = "CTSI";
-
-const client = createPublicClient({
-  chain: mainnet,
-  transport,
-});
 
 export default function AnnouncementBarContent(props) {
   const { announcementBar } = useThemeConfig();
@@ -38,23 +26,29 @@ export default function AnnouncementBarContent(props) {
   };
 
   // Fetch data for variables in the content
-
   const getBalance = async () => {
-    const contractRead = await client.readContract({
-      address: wagmiContract.address,
-      abi: wagmiContract.abi,
-      functionName: "balanceOf",
-      args: ["0x0974CC873dF893B302f6be7ecf4F9D4b1A15C366"],
-    });
+    const provider = new JsonRpcProvider(
+      "https://eth-mainnet.g.alchemy.com/v2/cBxzBgf91hVaZIV-gnC0kuc-K1WGd2xX"
+    );
+    const contract = new Contract(
+      wagmiContract.address,
+      wagmiContract.abi,
+      provider
+    );
+
+    const balance = await contract.balanceOf(
+      "0x0974CC873dF893B302f6be7ecf4F9D4b1A15C366"
+    );
     setBalanceLoaded(true);
-    const balanceInEther = parseFloat(formatEther(contractRead));
+
+    const balanceInEther = parseFloat(formatEther(balance));
     return formatLargeNumber(balanceInEther);
   };
 
   // Add all variables and fetchers here
   const fetchMap = {
     balance: getBalance(),
-    symbol: symbol,
+    symbol: "CTSI",
   };
 
   // Extract variables from the content
