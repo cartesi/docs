@@ -26,6 +26,22 @@ export default function AnnouncementBarContent(props) {
   const [dynamicContent, setDynamicContent] = useState(content);
   const [balanceLoaded, setBalanceLoaded] = useState(false);
 
+  function formatNumber(num) {
+    const absNum = Math.abs(num);
+
+    if (absNum >= 1000000000000) {
+      return (num / 1000000000000).toFixed(1) + "T";
+    } else if (absNum >= 1000000000) {
+      return (num / 1000000000).toFixed(1) + "B";
+    } else if (absNum >= 1000000) {
+      return (num / 1000000).toFixed(1) + "M";
+    } else if (absNum >= 1000) {
+      return (num / 1000).toFixed(1) + "K";
+    } else {
+      return num.toString();
+    }
+  }
+
   // Fetch data for variables in the content
   const getBalance = async () => {
     if (typeof window === "undefined") {
@@ -37,7 +53,8 @@ export default function AnnouncementBarContent(props) {
       args: ["0x0974CC873dF893B302f6be7ecf4F9D4b1A15C366"],
     });
     setBalanceLoaded(true);
-    return new Intl.NumberFormat().format(parseInt(formatEther(contractRead)));
+    const balanceInEther = parseFloat(formatEther(contractRead));
+    return formatNumber(balanceInEther);
   };
 
   // Add all variables and fetchers here
