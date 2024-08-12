@@ -215,7 +215,7 @@ const config = {
       announcementBar: {
         id: "mainnet",
         content:
-          `Cartesi Rollups is Mainnet Ready! Over 1M in CTSI is up for grabs... if you can <a href="https://honeypot.cartesi.io/" target="_blank" rel="noopener noreferrer">hack Cartesi Rollups</a>.`,
+          'Cartesi Rollups is Mainnet Ready! {{balance}} in {{symbol}} is up for grabs... if you can <a href="https://honeypot.cartesi.io/" target="_blank" rel="noopener noreferrer">hack Cartesi Rollups</a>.',
 
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
@@ -357,7 +357,7 @@ const config = {
           ],
         },
         versions: {
-          "1.5": {
+          1.5: {
             label: "1.5",
             path: "1.5",
           },
@@ -374,12 +374,12 @@ const config = {
             from: "/cartesi-rollups/",
           },
           {
-            to:"/cartesi-rollups/1.5/development/cli-commands/",
-            from:"/cartesi-rollups/1.5/development/node-configuration/"
+            to: "/cartesi-rollups/1.5/development/cli-commands/",
+            from: "/cartesi-rollups/1.5/development/node-configuration/",
           },
           {
-            to:"/cartesi-rollups/1.3/",
-            from:"/cartesi-rollups/overview"
+            to: "/cartesi-rollups/1.3/",
+            from: "/cartesi-rollups/overview",
           },
           {
             to: "/cartesi-machine/",
@@ -434,7 +434,7 @@ const config = {
               ),
               existingPath.replace(
                 "/cartesi-rollups/1.5/development/node-configuration/",
-                "/cartesi-rollups/1.5/development/cli-commands/",
+                "/cartesi-rollups/1.5/development/cli-commands/"
               ),
               existingPath.replace(
                 "/cartesi-rollups/1.0/main-concepts",
@@ -513,15 +513,19 @@ const config = {
         config: {
           backEndApi: {
             // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath: "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup.yaml", // Path to designated spec file
-            outputDir: "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup", // Output directory for generated .mdx docs
+            specPath:
+              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup.yaml", // Path to designated spec file
+            outputDir:
+              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup", // Output directory for generated .mdx docs
             sidebarOptions: {
               groupPathsBy: "tag",
             },
           },
           frontEndApi: {
-            specPath: "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect.yaml",
-            outputDir: "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect",
+            specPath:
+              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect.yaml",
+            outputDir:
+              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect",
           },
         },
       },
