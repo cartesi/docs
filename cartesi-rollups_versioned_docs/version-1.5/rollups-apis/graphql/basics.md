@@ -3,89 +3,92 @@ id: overview
 title: Overview
 ---
 
-# Overview
+# GraphQL API Overview
 
-To query the state of a Cartesi Rollups instance, frontend clients can make use of a GraphQL API that is exposed by the Cartesi Nodes.
+The Cartesi Rollups GraphQL API provides a powerful interface for querying the state of a Cartesi Rollups instance. This API allows frontend clients to retrieve detailed information about inputs processed by the rollup and the outputs produced by the dApp's backend in response to these inputs.
 
-This API allows any client to retrieve outputs produced by a dApp's backend, and to link those outputs to the corresponding inputs that triggered them. Outputs can generally come in the form of vouchers, notices and reports, and allow clients to both receive dApp updates and enforce consequences on the base layer. 
+The API primarily deals with four main types of entities:
 
-The Cartesi Rollups state query API is fully specified by its GraphQL schema. 
+1. [Inputs](./queries/inputs.md): Requests submitted to the application to advance its state.
+2. [Notices](./queries/notices.md): Informational statements that can be validated in the base layer blockchain.
+3. [Vouchers](./queries/vouchers.md): Representations of transactions that can be carried out on the base layer blockchain.
+4. [Reports](./queries/reports.md): Application logs or diagnostic information.
 
-This specification is displayed in a more accessible and navigable way in the next sections.
 
+Some key features of the GraphQL API include the ability to:
 
-## Queries
+- Retrieve detailed information about individual inputs, notices, vouchers, and reports.
+- List and paginate through collections of these entities.
+- Access proof data for notices and vouchers, allowing for validation on the base layer.
+- Filter and sort results based on various criteria.
 
-A number of top-level queries are available in order to retrieve rollup information for a Cartesi dApp.
+## Basic Query Structure
 
-In GraphQL, submitting a query involves defining parameters for filtering the entries to retrieve, and also specifying the data fields of interest, which can span any objects linked to the entry being retrieved.
+GraphQL queries in the Cartesi Rollups API typically involve specifying:
 
-For example, the following query retrieves the number of the base layer block in which the [input](./objects/input.mdx) was recorded:
+1. The type of entity you're querying (input, notice, voucher, or report).
+2. Any necessary arguments (e.g., index values, pagination parameters).
+3. The fields you want to retrieve from the entity.
 
-```
-input(index: "1") {
-    blockNumber
-  }
-```
+Here's a basic example of querying an input:
 
-You can submit the query above as an HTTP POST request, specifying the Content-Type as `application/json`. For instance, using `curl` you could submit it as follows:
-
-```
-curl 'https://<graphql_url>' -H 'Content-Type: application/json' -d '{"query":"{ input(index:1) {blockNumber} }"}'
-```
-
-The response of which would be something like this:
-
-```
-{
-  "data": {
-    "input": {
-      "blockNumber": 8629116
-    }
+```graphql
+query {
+  input(index: 1) {
+    index
+    status
+    timestamp
+    msgSender
+    payload
   }
 }
 ```
 
-You can also retrieve linked information from the input. For example, the following query would retrieve notices from this particular input with support for pagination and with total number of entries that match the query:
+## Pagination
 
-```
-input(index: "1") {
-    notices {
-      totalCount
-    }
-  }
-```
+The API uses cursor-based pagination for queries that return collections of entities (e.g., listing all notices). This is implemented through connection types (e.g.,[`InputConnection`](./objects/input-connection.md), [`NoticeConnection`](./objects/notice-connection.md)) that include `edges` and `pageInfo` fields.
 
-The response of which would be something like this:
+Example of a paginated query:
 
-```
-{
-  "data": {
-    "input": {
-      "notices": {
-        "totalCount": 6
+```graphql
+query {
+  notices(first: 5, after: "cursor_value") {
+    edges {
+      node {
+        index
+        payload
       }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
 }
 ```
 
-## Response format
+## Proof Data
 
-As exemplified above, GraphQL query responses are given in JSON format. In practice, a query might result in some data and some errors, and as such the specification of the returned JSON object is actually of the following form:
+For notices and vouchers, the API provides access to proof data that can be used for validation on the base layer blockchain. This proof data is accessible through the [`Proof`](./objects/proof.md) field on notice and voucher objects.
 
-```
+## Response Format
+
+API responses are in JSON format and typically have the following structure:
+
+```json
 {
-  "data": { ... },
-  "errors": [ ... ]
+  "data": {
+    // Requested data here
+  },
+  "errors": [
+    // Any errors encountered during query execution
+  ]
 }
 ```
-
 
 ## GraphQL Playground
 
-The [GraphQL Playground](https://github.com/graphql/graphql-playground) is a graphical, interactive, in-browser GraphQL IDE. It is a tool that can be used to explore the contents of a GraphQL server, and as such can be used to navigate the inputs and outputs of a Cartesi Rollups dApp.
-
-For local development, the interactive playground is accessible at [http://localhost:8080/graphql](http://localhost:8080/graphql).
+You can use the GraphQL Playground, an interactive in-browser IDE, to test and explore the API. For local development, it's typically accessible at `http://localhost:8080/graphql`.
 
 
