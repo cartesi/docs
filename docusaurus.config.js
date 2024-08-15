@@ -69,17 +69,17 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       typesense: {
-        typesenseCollectionName: "cartesi_1716805080",
+        typesenseCollectionName: "cartesi_1723235151",
 
         typesenseServerConfig: {
           nodes: [
             {
-              host: "chlxtu308rv7ijsfp-1.a1.typesense.net",
+              host: "rjh5fcveu4z3l7oqp-1.a1.typesense.net",
               port: 443,
               protocol: "https",
             },
           ],
-          apiKey: "LfQmZC376xclgoL1ftRvR5Ap1XlVVlyz",
+          apiKey: "FMbnaJ3rp6NHGCzzi6obgDTDy2lGoAiv",
         },
 
         // Optional: Typesense search parameters: https://typesense.org/docs/0.24.0/api/search.html#search-parameters
@@ -374,16 +374,16 @@ const config = {
             from: "/cartesi-rollups/",
           },
           {
-            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_inputs/",
-            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/inputs/",
+            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/inputs/",
+            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_inputs/",
           },
           {
-            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_notices/",
-            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/notices/",
+            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/notices/",
+            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_notices/",
           },
           {
-            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list-vouchers/",
-            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/vouchers/",
+            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/vouchers/",
+            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list-vouchers/",
           },
           {
             to: "/cartesi-rollups/1.5/development/cli-commands/",
