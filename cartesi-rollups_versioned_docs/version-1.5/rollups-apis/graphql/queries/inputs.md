@@ -1,5 +1,5 @@
 ---
-id: list_inputs
+id: inputs
 title: Inputs
 hide_table_of_contents: false
 ---

@@ -374,6 +374,18 @@ const config = {
             from: "/cartesi-rollups/",
           },
           {
+            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_inputs/",
+            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/inputs/",
+          },
+          {
+            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_notices/",
+            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/notices/",
+          },
+          {
+            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list-vouchers/",
+            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/vouchers/",
+          },
+          {
             to: "/cartesi-rollups/1.5/development/cli-commands/",
             from: "/cartesi-rollups/1.5/development/node-configuration/",
           },

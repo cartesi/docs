@@ -1,5 +1,5 @@
 ---
-id: list_notices
+id: notices
 title: Notices
 hide_table_of_contents: false
 ---
