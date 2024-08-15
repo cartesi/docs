@@ -1,5 +1,5 @@
 ---
-id: list-vouchers
+id: vouchers
 title: Vouchers
 hide_table_of_contents: false
 ---
