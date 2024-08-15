@@ -49,11 +49,12 @@ const config = {
           customCss: require.resolve("./src/css/custom.css"),
         },
         gtag: {
-          trackingID: "GTM-MS89D9K",
+          trackingID: "GTM-NGX36B79",
           anonymizeIP: true,
         },
+        
         googleTagManager: {
-          containerId: "GTM-MS89D9K",
+          containerId: "GTM-NGX36B79",
         },
         sitemap: {
           changefreq: "weekly",
