@@ -7,7 +7,7 @@ hide_table_of_contents: false
 
 Vouchers represent transactions that can be carried out on the base layer blockchain, such as asset transfers. They are used to effect changes in the base layer based on the application's state.
 
-## Get Voucher by Index
+## 1. Get Voucher by Index
 
 Retrieve a specific voucher based on its index and associated input index.
 
@@ -55,7 +55,7 @@ For vouchers, the API provides access to proof data that can be used for validat
 [`Voucher`](../../objects/voucher)
 
 
-## Get Vouchers
+## 2. Get Vouchers
 
 Retrieve a list of vouchers with support for pagination.
 
@@ -97,7 +97,7 @@ query vouchers($first: Int, $after: String) {
 [`VoucherConnection`](../../objects/voucher-connection)
 
 
-## Get Vouchers by Input
+## 3. Get Vouchers by Input
 
 Retrieve vouchers associated with a specific input.
 
