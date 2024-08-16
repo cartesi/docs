@@ -25,7 +25,7 @@ enum CompletionStatus {
 | ---- | ----------- |
 | `Unprocessed` | The input has not been processed yet. |
 | `Accepted` | The input was accepted and processed successfully. |
-| `Rejected` | The input was rejected and not processed. |
+| `Rejected` | The input was processed and the results were rejected. |
 | `Exception` | An exception occurred during the processing of the input. |
 | `MachineHalted` | The machine halted during the processing of the input. |
 | `CycleLimitExceeded` | The cycle limit was exceeded during the processing of the input. |

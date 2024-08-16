@@ -1,10 +1,10 @@
 ---
-id: list_reports
+id: reports
 title: Reports
 hide_table_of_contents: false
 ---
 
-reports contain application logs or diagnostic information and cannot be validated on-chain. 
+Reports contain application logs or diagnostic information and cannot be validated on-chain. 
 
 ## 1. Get Report by Index
 
