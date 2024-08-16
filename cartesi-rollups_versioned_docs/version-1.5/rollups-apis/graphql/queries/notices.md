@@ -139,7 +139,7 @@ query noticesByInput($inputIndex: Int!) {
   }
   ```
 
-2. Listing recent notices:
+2. Listing earlier(first 5) notices:
 
   ```graphql
   query {
