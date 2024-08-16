@@ -156,7 +156,7 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
     }
   ```
 
-2. Listing recent vouchers:
+2. Listing earlier(first 5) vouchers:
 
   ```graphql
   query {

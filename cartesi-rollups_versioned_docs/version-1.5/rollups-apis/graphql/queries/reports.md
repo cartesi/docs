@@ -124,7 +124,7 @@ query reportsByInput($inputIndex: Int!) {
   }
   ```
 
-2. Listing recent reports:
+2. Listing earlier(first 5) reports:
 
   ```graphql
   query {

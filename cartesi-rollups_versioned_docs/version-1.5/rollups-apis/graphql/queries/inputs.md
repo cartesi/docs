@@ -178,7 +178,7 @@ query getInputResult($inputIndex: Int!) {
   }
   ```
 
-2. Listing recent inputs:
+2. Listing earlier(first 5) inputs:
 
   ```graphql
   query {
