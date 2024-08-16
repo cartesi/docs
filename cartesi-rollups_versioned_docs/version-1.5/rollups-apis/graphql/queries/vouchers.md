@@ -39,6 +39,7 @@ query voucher($voucherIndex: Int!, $inputIndex: Int!) {
   }
 }
 ```
+For vouchers, the API provides access to proof data that can be used for validation on the base layer blockchain. This proof data is accessible through the [`Proof`](../objects/proof.md) field on voucher objects.
 
 ### Arguments
 
