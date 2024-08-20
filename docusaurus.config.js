@@ -70,7 +70,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       typesense: {
-        typesenseCollectionName: "cartesi_1723235151",
+        typesenseCollectionName: "cartesi_1724150916",
 
         typesenseServerConfig: {
           nodes: [
