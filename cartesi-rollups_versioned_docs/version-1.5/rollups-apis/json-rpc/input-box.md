@@ -18,7 +18,7 @@ From the perspective of this contract, inputs are encoding-agnostic byte arrays.
 ## `InputAdded()`
 
 ```solidity
-event InputAdded(address dapp, uint256 inboxInputIndex, address sender, bytes input)
+event InputAdded(address dapp, uint256 inputIndex, address sender, bytes input)
 ```
 
 Emitted when an input is added to a dApp's input box.
@@ -28,7 +28,7 @@ Emitted when an input is added to a dApp's input box.
 | Name            | Type    | Description                             |
 | --------------- | ------- | --------------------------------------- |
 | dapp            | address | The address of the dApp                 |
-| inboxInputIndex | uint256 | The index of the input in the input box |
+| inputIndex | uint256 | The index of the input in the input box |
 | sender          | address | The address that sent the input         |
 | input           | bytes   | The contents of the input               |
 
