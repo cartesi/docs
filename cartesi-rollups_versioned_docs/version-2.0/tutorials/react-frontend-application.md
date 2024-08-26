@@ -355,6 +355,7 @@ npx wagmi generate
 
 The [`InputBox`](../api/base-layer-contracts/input-box.md) contract is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone.
 
+
 The `InputBox` contract is deployed on all supported chains. We will use a React hook to send an input to the backend via the `InputBox` contract. 
 
 Create a new file `src/components/SimpleInput.tsx` and follow the implementation below:
@@ -415,7 +416,9 @@ This hook provides us with state variables and a `writeContractAsync` function t
 
 The `submit` function is called when the form is submitted. 
 
+
 It uses the `writeContractAsync` function to send the input to the [`addInput(address _dapp, bytes _input)`](../api/base-layer-contracts/input-box.md) function of the  `InputBox`. 
+
 
 The `inputValue` will be received by the particular backend address is `dAppAddress`.
 
@@ -535,7 +538,9 @@ export default App;
 
 ## Depositing Ether
 
+
 The [`EtherPortal`](../api/base-layer-contracts/portals/EtherPortal.md) contract is a pre-deployed smart contract that allows users to deposit Ether to the Cartesi backend.
+
 
 
 This implementation will be similar to the generic input, but with a few changes to handle Ether transactions.
@@ -659,6 +664,7 @@ export default SendEther;
 
 
 ## Depositing ERC20 Tokens
+
 
 The [`ERC20Portal`](../api/base-layer-contracts/portals/ERC20Portal.md) contract is a pre-deployed smart contract that allows users to deposit ERC20 tokens to the Cartesi backend.
 
@@ -869,7 +875,9 @@ export default App;
 
 ## Depositing ERC721 Tokens (NFTs)
 
+
 The [`ERC721Portal`](../api/base-layer-contracts/portals/ERC721Portal.md) contract is a pre-deployed smart contract that allows users to deposit ERC721 tokens to the Cartesi backend.
+
 
 This implementation will be similar to the [depositing ERC20 tokens](#depositing-erc20-tokens), but with a few changes to handle ERC721 token transactions.
 
@@ -1085,6 +1093,7 @@ export default App;
 
 
 ## Listing Notices, Reports, and Vouchers
+
 
 All inputs sent to the Cartesi backend are processed by the Cartesi Machine. The Cartesi Machine produces three types of outputs: [Notices](../api/backend/notices.md), [Reports](../api/backend/reports.md), and [Vouchers](../api/backend/vouchers.md).
 
@@ -1439,6 +1448,7 @@ export default Vouchers;
 ### Executing vouchers
 
 Vouchers in Cartesi dApps authorize specific on-chain actions, such as token swaps or asset transfers, by encapsulating the details of these actions. 
+
 
 They are validated and executed on the blockchain using the [`executeVoucher(address _destination, bytes _payload, struct Proof _proof)`](../api/base-layer-contracts/application.md#executevoucher) function in the [`CartesiDApp`](../api/base-layer-contracts/application.md/) contract, ensuring legitimacy and transparency. 
 

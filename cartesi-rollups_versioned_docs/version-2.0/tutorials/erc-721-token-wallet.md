@@ -1,4 +1,5 @@
 ---
+
 id: erc721-wallet
 title: Integrating ERC721 token wallet functionality
 resources:
@@ -395,7 +396,9 @@ Here is a breakdown of the wallet functionality:
 
 ## Build and run the application
 
+
 With Docker running, build your backend application by running:
+
 
 ```shell
 cartesi build

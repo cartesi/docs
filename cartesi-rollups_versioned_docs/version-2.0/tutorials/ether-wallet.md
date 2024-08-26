@@ -16,7 +16,9 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 
 ## Setting up the project
 
+
 First, create a new TypeScript project using the Cartesi CLI.
+
 
 ```bash
 cartesi create ether-wallet-dapp --template typescript
@@ -280,6 +282,7 @@ The voucher creation process occurs during Ether’s withdrawal. Here's how it w
 
 1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../api/base-layer-contracts/application.md/#withdrawether) on the `CartesiDApp` contract.
 
+
   It returns a Voucher object with two properties:
 
     - `destination`: The address of the Cartesi dApp
@@ -297,9 +300,11 @@ The voucher creation process occurs during Ether’s withdrawal. Here's how it w
 
 Now, let's create a simple application at the entry point, `src/index.ts,` to test the wallet functionality.
 
+
 The [`EtherPortal`](../api/base-layer-contracts/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
 
 The `DAppAddressRelay` contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its on-chain address, making it impossible to create valid vouchers for withdrawals.
+
 
 :::note
 Run `cartesi address-book` to get the addresses of the `EtherPortal` and `DAppAddressRelay` contracts. Save these as constants in the `index.ts` file.
@@ -488,7 +493,9 @@ To relay the dApp address, run: `cartesi send dapp-address`
 
 ## Build and run the application
 
+
 With Docker running, build your backend application by running:
+
 
 ```shell
 cartesi build
@@ -552,4 +559,6 @@ For end-to-end functionality, developers will likely build their [custom user-fa
 
 When you run your application with `cartesi run`, there is a local instance of CartesiScan on `http://localhost:8080/explorer`.
 
+
 You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api/backend/vouchers.md/#epoch-configuration). 
+
