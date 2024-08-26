@@ -1,5 +1,5 @@
 ---
-id: erc-20-token-wallet
+id: erc20-wallet
 title: Integrating ERC20 token wallet functionality
 resources:
   - url: https://github.com/masiedu4/erc20-wallet-tutorial
@@ -405,7 +405,7 @@ Here is a breakdown of the wallet functionality:
 
 ## Build and run the application
 
-With Docker running, [build your backend application](../development/building-the-application.md) by running:
+With Docker running,build your backend application by running:
 
 ```shell
 cartesi build

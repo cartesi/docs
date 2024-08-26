@@ -371,7 +371,7 @@ const config = {
       {
         redirects: [
           {
-            to: "/cartesi-rollups/1.5/", // Redirects /cartesi-rollups/ to the latest version
+            to: "/cartesi-rollups/2.0/", // Redirects /cartesi-rollups/ to the latest version
             from: "/cartesi-rollups/",
           },
           {
