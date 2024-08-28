@@ -38,7 +38,7 @@ NoNodo is a cutting-edge development tool for Cartesi Rollups that allows applic
 - **Getting Started**:
 	- Install NoNodo by running:
 		```bash
-		npm install -g @nonodo/cli
+		npm i -g nonodo
 		```
 - **Resources**:
 	- [NoNodo GitHub Repository](https://github.com/Calindra/nonodo)
