@@ -489,6 +489,11 @@ html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
   max-width: 100% !important;
   width: 100% !important;
 }
+[class^="_hj-"] [class*="__styles__surveyContainer"] {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
 
 /* TOC Column */
 .toc-column {
