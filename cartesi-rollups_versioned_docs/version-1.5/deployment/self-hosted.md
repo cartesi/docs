@@ -79,7 +79,7 @@ Alternatively, you can use a service like [Fly.io](https://fly.io/) to deploy yo
 
 A reader node consumes information from the blockchain but does not participate in the validation process. It will not generate any claims. 
 
-To make your node a reader node create or modify a `.cartesi.env` file in your project directory and set:
+To configure your node as a reader node, create or modify a `.cartesi.env` file in your project directory and set:
 
 ```shell
 CARTESI_FEATURE_READER_MODE_ENABLED="true"
