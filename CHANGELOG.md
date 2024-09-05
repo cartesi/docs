@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CLI commands page
 - Community tools page
 
-
 ### Changed
 - Revised core concepts explanations to reflect epoch length
 - Improved the troubleshooting guide with more common scenarios
