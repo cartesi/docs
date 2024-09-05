@@ -75,18 +75,6 @@ The Cartesi rollups node is distributed as a Docker image. Any popular cloud pro
 
 Alternatively, you can use a service like [Fly.io](https://fly.io/) to deploy your application node.
 
-:::note deploying a reader node
-
-A reader node consumes information from the blockchain but does not participate in the validation process. It will not generate any claims. 
-
-To configure your node as a reader node, create or modify a `.cartesi.env` file in your project directory and set:
-
-```shell
-CARTESI_FEATURE_READER_MODE_ENABLED="true"
-```
-
-:::
-
 ### Hosting on a cloud provider
 
 1. Download the `.env` configuration file into the root directory of your application.
