@@ -31,7 +31,7 @@ A decentralized application (dApp) built on Cartesi incorporates several key ele
 
 ## Cartesi Machine
 
-The Cartesi Machine forms the core of Cartesi's off-chain computation capabilities. It is a virtual machine based on the [RISC-V](https://riscv.org/) instruction set architecture (ISA), designed to provide a deterministic and isolated execution environment.
+The [Cartesi Machine](/cartesi-machine) forms the core of Cartesi's off-chain computation capabilities. It is a virtual machine based on the [RISC-V](https://riscv.org/) instruction set architecture (ISA), designed to provide a deterministic and isolated execution environment.
 
 Key features of the Cartesi Machine include:
 
