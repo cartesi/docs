@@ -4,6 +4,18 @@ All notable changes to the Cartesi documentation will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v.1.5.1](https://github.com/cartesi/docs/releases/latest) - 2024-09-05
+
+### Added
+- CLI flags for CPU and Memory of the node on CLI commands page
+- Note regarding enviroment variable for reader node configurations on deployment page
+
+### Changed
+- Added link to Machine Docs on the Architecture Page
+
+### Removed
+- Removed comments on reader node being still in development on Architecture Page
+
 ## [v.1.5.0](https://github.com/cartesi/docs/releases/latest) - 2024-08-09
 
 ### Added
