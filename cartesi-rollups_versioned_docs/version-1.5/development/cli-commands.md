@@ -78,10 +78,14 @@ cartesi run [--block-time <value>] [--epoch-length <value>] [--no-backend] [-v] 
 #### Flags:
 
 - `--block-time=<value>`: Interval between blocks in seconds (default: 5).
--  `--epoch-length=<value>`: length of an epoch in blocks (default: 720).
+- `--epoch-length=<value>`: length of an epoch in blocks (default: 720).
 - `--no-backend`: Run a node without the application code.
 - `-v`, `--verbose`: Run node with detailed container logs.
 - `--listen-port=<value>`: Port to listen for incoming connections (default: 8080).
+- `--dry-run`: Shows the docker compose configuration.
+- `--cpus=<value>`: Define the number of CPUs (eg.: 1) for the rollups-node (default is not limited).
+- `--memory=<value>`: Define the amount of memory (eg.: 1024) for the rollups-node in MB (default is not limited).
+
 
 ---
 

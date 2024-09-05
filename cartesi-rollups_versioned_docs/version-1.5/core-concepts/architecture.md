@@ -92,11 +92,6 @@ The Cartesi Rollups Node can operate in two primary modes:
 
 **2. Reader Nodes (In Development)**: These nodes focus on advancing the off-chain state and making it publicly available. They consume information from the blockchain but do not participate in the validation process.
 
-:::caution important
-All Cartesi Nodes function as Validator Nodes, with Reader Node functionality under active development.
-:::
-
-
 ## Data Flow and Processes
 
 The Cartesi architecture facilitates several key processes that enable the functioning of dApps. These processes include:
