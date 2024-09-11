@@ -226,8 +226,8 @@ Data used to prove the validity of an output (notices and vouchers)
 
 ```solidity
 struct OutputValidityProof {
-  uint256 inputIndexWithinEpoch;
-  uint256 outputIndexWithinInput;
+  uint64 inputIndexWithinEpoch;
+  uint64 outputIndexWithinInput;
   bytes32 outputHashesRootHash;
   bytes32 vouchersEpochRootHash;
   bytes32 noticesEpochRootHash;
@@ -241,8 +241,8 @@ struct OutputValidityProof {
 
 | Name                             | Type      | Description                                                       |
 | -------------------------------- | --------- | ----------------------------------------------------------------- |
-| inputIndexWithinEpoch            | uint256   | Which input, inside the epoch, the output belongs to              |
-| outputIndexWithinInput           | uint256   | Index of output emitted by the input                              |
+| inputIndexWithinEpoch            | uint64   | Which input, inside the epoch, the output belongs to              |
+| outputIndexWithinInput           | uint64   | Index of output emitted by the input                              |
 | outputHashesRootHash             | bytes32   | Merkle root of hashes of outputs emitted by the input             |
 | vouchersEpochRootHash            | bytes32   | Merkle root of all epoch's voucher metadata hashes                |
 | noticesEpochRootHash             | bytes32   | Merkle root of all epoch's notice metadata hashes                 |
