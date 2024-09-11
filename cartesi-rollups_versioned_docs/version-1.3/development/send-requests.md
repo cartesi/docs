@@ -207,7 +207,7 @@ Here is a [React.js + Typescript template](https://github.com/prototyp3-dev/fron
 Inspect requests are directly made to the rollup server, and the Cartesi Machine is activated without modifying its state.
 
 :::caution Inspect requests
-Inspect requests are best suited for non-production use, such as debugging and testing. They may not function reliably in production environments, potentially leading to errors or disruptions.
+Inspect requests should be used cautiously in production environments with heavy traffic or limited resources. Performing thorough stress testing in a staging environment is recommended to assess the impact of Inspect calls on node performance.
 :::
 
 ![img](../../../static/img/v1.3/inspect.jpg)
