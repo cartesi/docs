@@ -1,6 +1,6 @@
 ---
 id: cli-account-abstraction-feauture
-title: Utilizing the CLI account abstraction (AA) feature 
+title: Utilizing the account abstraction (AA) feature of the CLI 
 resources:
   - url: https://github.com/tuler/aa-examples
     title: AA Examples
