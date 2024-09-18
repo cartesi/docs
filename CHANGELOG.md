@@ -4,6 +4,12 @@ All notable changes to the Cartesi documentation will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [v.1.5.2](https://github.com/cartesi/docs/releases/latest) - 2024-09-20
+
+### Added
+- Tutorial for utilizing the account abstraction feauture of the cartesi CLI.
+
 ## [v.1.5.1](https://github.com/cartesi/docs/releases/latest) - 2024-09-05
 
 ### Added
