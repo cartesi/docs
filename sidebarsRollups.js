@@ -154,7 +154,8 @@ module.exports = {
         "tutorials/ether-wallet",
         "tutorials/erc-20-token-wallet",
         "tutorials/erc-721-token-wallet",
-        "tutorials/react-frontend-application"
+        "tutorials/react-frontend-application",
+        "tutorials/cli-account-abstraction-feauture"
       ],
     },
 
@@ -168,9 +169,9 @@ module.exports = {
           label: "Releases",
           items: [
             {
-              type:"link",
-              label:"Cartesi CLI",
-              href:"https://github.com/cartesi/cli/releases",
+              type: "link",
+              label: "Cartesi CLI",
+              href: "https://github.com/cartesi/cli/releases",
             },
             {
               type: "link",
@@ -188,7 +189,7 @@ module.exports = {
           type: "category",
           label: "Changelog",
           items: [
-           
+
             {
               type: "link",
               label: "Rollups Node",
