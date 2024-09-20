@@ -16,6 +16,7 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
+    "@cookbookdev/docsbot": "^4.21.23",
     "@docusaurus/core": "2.4.3",
     "@docusaurus/plugin-client-redirects": "^2.4.3",
     "@docusaurus/plugin-google-tag-manager": "^2.4.3",
