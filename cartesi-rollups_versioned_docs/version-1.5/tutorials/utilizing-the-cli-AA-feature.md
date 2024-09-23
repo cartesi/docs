@@ -41,7 +41,7 @@ This command would create a new React application with a simple UI and wallet co
 
 Next, we install other dependencies we would be using by running this code in the terminal: 
 
-```javascript
+```shell
     npm i permissionless@0.1.43 encoding @alchemy/aa-core @alchemy/aa-accounts @cartesi/rollups 
 ```
 
