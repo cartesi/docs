@@ -32,7 +32,7 @@ We’ll be using React.js along with Wagmi to build this simple frontend applica
 
 To bootstrap a React project with Wagmi already configured, we’ll use the CLI command 
 
-```javascript
+```shell
     npm create wagmi@latest
 ```
 
