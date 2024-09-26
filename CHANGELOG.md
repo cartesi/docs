@@ -43,7 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `cartesi-wallet` tutorials
 
 
-
 ## [1.3.0](https://github.com/cartesi/docs/releases/tag/v1.3.0) - 2024-04-09
 ### Added
 - Quickstart guide for building Cartesi dApps
