@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v.1.5.2](https://github.com/cartesi/docs/releases/latest) - 2024-09-20
 
 ### Added
-- Tutorial for utilizing the account abstraction feauture of the cartesi CLI.
+- Tutorial on account abstraction feauture of the cartesi CLI.
 
 ## [v.1.5.1](https://github.com/cartesi/docs/releases/latest) - 2024-09-05
 
