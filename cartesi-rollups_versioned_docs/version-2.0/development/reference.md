@@ -1,6 +1,6 @@
 ---
-id: migration-guide
-title: Migration Guide
+id: reference
+title: Reference
 ---
 
 ## Migrating from Cartesi Rollups v1.5.x to v2.0
