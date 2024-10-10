@@ -1,6 +1,6 @@
 ---
-id: send-requests
-title: Send requests
+id: send-inputs
+title: Send inputs
 resources:
   - url: https://github.com/prototyp3-dev/frontend-web-cartesi
     title: React.js + Typescript template
