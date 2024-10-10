@@ -1,6 +1,6 @@
 ---
-id: retrieve-outputs
-title: Retrieve outputs
+id: query-outputs
+title: Query outputs
 resources:
   - url: https://www.udemy.com/course/cartesi-masterclass/
     title: The Cartesi dApp Developer Free Course
