@@ -398,7 +398,7 @@ Here is a breakdown of the wallet functionality:
 
 ## Build and run the application
 
-With Docker running, [build your backend application](../development/running-an-application.md) by running:
+With Docker running, [build your backend application](../development/building-a-dapp.md) by running:
 
 ```shell
 cartesi build
