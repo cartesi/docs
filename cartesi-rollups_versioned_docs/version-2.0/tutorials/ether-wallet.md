@@ -331,6 +331,11 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
 
+  if (sender.toLowerCase() === dAppAddressRelay.toLowerCase()) {
+    dAppAddress = data.payload;
+    return "accept";
+  }
+
   if (sender.toLowerCase() === EtherPortal.toLowerCase()) {
     // Handle deposit
     const deposit = wallet.depositEther(payload);
@@ -468,7 +473,7 @@ To relay the dApp address, run: `cartesi send dapp-address`
 
 ## Build and run the application
 
-With Docker running, [build your backend application](../development/running-an-application.md) by running:
+With Docker running, [build your backend application](../development/building-a-dapp.md) by running:
 
 ```shell
 cartesi build
@@ -528,4 +533,4 @@ For end-to-end functionality, developers will likely build their [custom user-fa
 
 When you run your application with `cartesi run`, there is a local instance of CartesiScan on `http://localhost:8080/explorer`.
 
-You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
+You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../rollups-apis/backend/vouchers.md/#epoch-configuration).
