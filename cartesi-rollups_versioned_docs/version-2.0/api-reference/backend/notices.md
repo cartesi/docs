@@ -74,5 +74,5 @@ emit_notice("hello world")
 </Tabs>
 
 :::note querying notices
-Frontend clients can query notices using a GraphQL API exposed by Cartesi Nodes. [Refer to the documentation here](../../development/query-outputs.md/#query-all-reports) to query notices from the rollup server.
+Frontend clients can query notices using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation here](../../development/query-outputs.md/#query-all-reports) to query notices from the rollup server.
 :::
