@@ -13,8 +13,8 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 :::
 
 ## Setting up the project
-First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md/#setting-up-the-project). Make sure you have the necessary dependencies installed.
 
+First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md/#setting-up-the-project). Make sure you have the necessary dependencies installed.
 
 ## Building the ERC20 wallet
 
@@ -42,30 +42,43 @@ export class Balance {
 
   increaseErc20Balance(erc20: Address, amount: bigint): void {
     if (amount < 0n) {
-      throw new Error(`Failed to increase balance of ${erc20} for ${this.account}`);
+      throw new Error(
+        `Failed to increase balance of ${erc20} for ${this.account}`
+      );
     }
     try {
       if (this.erc20Balances.get(erc20) === undefined) {
         this.erc20Balances.set(erc20, 0n);
       }
-      this.erc20Balances.set(erc20, (this.erc20Balances.get(erc20) || 0n) + amount);
+      this.erc20Balances.set(
+        erc20,
+        (this.erc20Balances.get(erc20) || 0n) + amount
+      );
       console.log("ERC20 balance is", this.erc20Balances);
     } catch (e) {
-      throw new Error(`Failed to increase balance of ${erc20} for ${this.account}: ${e}`);
+      throw new Error(
+        `Failed to increase balance of ${erc20} for ${this.account}: ${e}`
+      );
     }
   }
 
   decreaseErc20Balance(erc20: Address, amount: bigint): void {
     if (amount < 0n) {
-      throw new Error(`Failed to decrease balance of ${erc20} for ${this.account}: invalid amount specified`);
+      throw new Error(
+        `Failed to decrease balance of ${erc20} for ${this.account}: invalid amount specified`
+      );
     }
     if (this.erc20Balances.get(erc20) === undefined) {
       this.erc20Balances.set(erc20, 0n);
-      throw new Error(`Failed to decrease balance of ${erc20} for ${this.account}: not found with ERC20 balance`);
+      throw new Error(
+        `Failed to decrease balance of ${erc20} for ${this.account}: not found with ERC20 balance`
+      );
     }
     let erc20Balance = this.erc20Balances.get(erc20) || 0n;
     if (erc20Balance < amount) {
-      throw new Error(`Failed to decrease balance of ${erc20} for ${this.account}: insufficient ERC20 balance`);
+      throw new Error(
+        `Failed to decrease balance of ${erc20} for ${this.account}: insufficient ERC20 balance`
+      );
     }
     this.erc20Balances.set(erc20, erc20Balance - amount);
   }
@@ -178,7 +191,7 @@ export class Wallet {
         destination: erc20,
         payload: call,
       });
-      
+
       return {
         destination: erc20,
         payload: call,
@@ -217,7 +230,6 @@ export class Wallet {
     }
   };
 }
-
 ```
 
 ## Using the ERC20 wallet
@@ -287,7 +299,7 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
           getAddress(erc20 as Address),
           BigInt(amount)
         );
-        
+
         await createVoucher(voucher);
       } else {
         console.log("Unknown operation");
@@ -306,10 +318,12 @@ const handleInspect: InspectRequestHandler = async (data) => {
   try {
     const payloadString = hexToString(data.payload);
 
-    const [address, erc20] = payloadString.split('/');
+    const [address, erc20] = payloadString.split("/");
 
-    const balance = wallet.getAccountBalance(address as Address, erc20 as Address);
-
+    const balance = wallet.getAccountBalance(
+      address as Address,
+      erc20 as Address
+    );
 
     if (balance === undefined) {
       throw new Error("ERC20 balance is undefined");
@@ -386,9 +400,7 @@ main().catch((e) => {
   console.log(e);
   process.exit(1);
 });
-
 ```
-
 
 Here is a breakdown of the wallet functionality:
 
@@ -398,14 +410,13 @@ Here is a breakdown of the wallet functionality:
 
 - For `transfers`, we call `wallet.transferErc20` and create a notice with the parsed parameters.
 
-- For `withdrawals`, we call `wallet.withdrawErc20` and create voucher using the dApp dress and the parsed parameters. 
+- For `withdrawals`, we call `wallet.withdrawErc20` and create voucher using the dApp dress and the parsed parameters.
 
 - We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
 
-
 ## Build and run the application
 
-With Docker running, [build your backend application](../development/building-the-application.md) by running:
+With Docker running, [build your backend application](../development/building-a-dapp.md) by running:
 
 ```shell
 cartesi build
@@ -420,13 +431,13 @@ cartesi run
 #### Deposits
 
 :::caution token approvals
- An approval step is needed for the [**ERC20 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC20Portal` to transfer tokens on your behalf. 
-  
-  Without this approval, the `ERC20Portal` cannot deposit your tokens to the Cartesi backend.
+An approval step is needed for the [**ERC20 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC20Portal` to transfer tokens on your behalf.
 
-  You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
+Without this approval, the `ERC20Portal` cannot deposit your tokens to the Cartesi backend.
 
-  `ContractFunctionExecutionError: The contract function "depositERC20Tokens" reverted with the following reason: ERC20: insufficient allowance`
+You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
+
+`ContractFunctionExecutionError: The contract function "depositERC20Tokens" reverted with the following reason: ERC20: insufficient allowance`
 :::
 
 To deposit ERC20 tokens, use the `cartesi send erc20` command and follow the prompts.
@@ -439,20 +450,18 @@ To inspect the balance, make an HTTP call to:
 http://localhost:8080/inspect/{address}/{tokenAddress}
 ```
 
-
 #### Transfers and Withdrawals
 
 Use the `cartesi send generic` command and follow the prompts. Here are sample payloads:
 
 1. For transfers:
 
-  ```js
-  {"operation":"transfer","erc20":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","amount":"1000000000000000000"}
-  ```
+```js
+{"operation":"transfer","erc20":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","amount":"1000000000000000000"}
+```
 
 2. For withdrawals:
 
-  ```js
-  {"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}
-  ```
-
+```js
+{"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}
+```
