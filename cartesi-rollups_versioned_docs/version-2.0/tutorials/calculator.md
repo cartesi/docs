@@ -251,7 +251,6 @@ cartesi build
 
 “Building” in this context installs the libraries in the `requirements.txt`, compiles your application into RISC-V architecture, and consequently builds a Cartesi machine that contains your backend application.
 
-
 The anvil node can now run your application.
 
 To run your application, enter the command:
@@ -332,8 +331,6 @@ for (let edge of result.data.notices.edges) {
 }
 ```
 
-
-
-You can also [query a notice based on its input index](../development/retrieve-outputs.md/#query-a-single-notice).
+You can also [query a notice based on its input index](../development/query-outputs.md/#query-a-single-notice).
 
 Congratulations, you have successfully built a dApp on Cartesi Rollups!

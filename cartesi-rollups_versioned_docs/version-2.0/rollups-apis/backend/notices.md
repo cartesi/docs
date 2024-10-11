@@ -1,7 +1,6 @@
 ---
 id: notices
 title: Notices
-
 ---
 
 A notice is a verifiable data declaration that attests to off-chain events or conditions and is accompanied by proof.
@@ -78,5 +77,5 @@ def handle_advance(data):
 </Tabs>
 
 :::note querying notices
-Frontend clients can query notices using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation here](../../development/retrieve-outputs.md/#query-all-reports) to query notices from the rollup server.
+Frontend clients can query notices using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation here](../../development/query-outputs.md/#query-all-reports) to query notices from the rollup server.
 :::
