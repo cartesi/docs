@@ -1,14 +1,13 @@
 {
     "rollups": [
         {
-            "type": "doc",
-            "id": "overview",
-            "label": "Overview"
-        },
-        {
-            "type": "doc",
-            "id": "quickstart",
-            "label": "Quickstart"
+            "type": "category",
+            "label": "Getting Started",
+            "collapsed": true,
+            "items": [
+                "getting-started/overview",
+                "getting-started/quickstart"
+            ]
         },
         {
             "type": "category",
