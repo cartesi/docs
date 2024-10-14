@@ -119,13 +119,13 @@ You can obtain the relevant addresses by running `cartesi address-book`.
 
 You can create a custom frontend that interacts with your application.
 
-Follow [the React.js tutorial to build a frontend for your application](/cartesi-rollups/1.5/tutorials/react-frontend-application/).
+Follow [the React.js tutorial to build a frontend for your application](../tutorials/react-frontend-application.md).
 
 ## Deploy the application
 
 There are two methods to deploy an application:
 
-1. [Self-hosted deployment](/cartesi-rollups/1.5/deployment/self-hosted/): Deploy the application node using your infrastructure.
+1. [Self-hosted deployment](../deployment/self-hosted.md): Deploy the application node using your infrastructure.
 
 2. Third-party service provider: Outsource running the application node to a service provider.
 
