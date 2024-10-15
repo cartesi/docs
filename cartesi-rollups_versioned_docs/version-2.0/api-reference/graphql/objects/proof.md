@@ -4,33 +4,24 @@ title: Proof
 hide_table_of_contents: false
 ---
 
-Data that can be used as proof to validate notices and execute vouchers on the base layer blockchain.
+Represents the proof of validity for a notice or voucher.
 
 ```graphql
 type Proof {
-  "Index of the output in the output box"
-  outputIndex: BigInt!
-  "Array of sibling hashes in the output box merkle tree"
-  outputHashesSiblings: [String]!
+  validity: OutputValidityProof!
+  context: String!
 }
 ```
+
 
 ## Fields
 
 | Name | Type | Description |
 | ---- |------| ----------- |
-| `outputIndex` | [`BigInt!`](../../scalars/bigint) | Index of the output in the output box. |
-| `outputHashesSiblings` | [`[String]!`](../../scalars/string) | Array of sibling hashes in the output box merkle tree. |
+| `validity`| [`OutputValidityProof!`](../../objects/output-validity-proof) | Validity proof for an output. |
+| `context`| [`String!`](../../scalars/string) | Data that allows the validity proof to be contextualized within submitted claims, given as a payload in Ethereum hex binary format, starting with '0x'. |
 
-## Example Query
 
-```graphql
-query {
-  voucher(outputIndex: 1) {
-    proof {
-      outputIndex
-      outputHashesSiblings
-    }
-  }
-}
-```
+
+
+
