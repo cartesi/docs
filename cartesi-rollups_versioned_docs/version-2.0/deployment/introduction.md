@@ -23,7 +23,7 @@ The `cartesi build` command produces the Cartesi genesis machine, which contains
 
 After deployment, any changes to the application code will generate a different hash and, hence, require another deployment.
 
-The smart contract that represents the application on the base layer can be deployed using the [`CartesiDAppFactory`](../rollups-apis/json-rpc/application-factory.md) smart contract.
+The smart contract that represents the application on the base layer can be deployed using the [`CartesiDAppFactory`](../api-reference/json-rpc/application-factory.md) smart contract.
 
 There are two methods to deploy an application:
 
