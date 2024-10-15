@@ -22,106 +22,99 @@
         },
         {
             "type": "category",
-            "label": "Rollups APIs",
+            "label": "API Reference",
             "collapsed": true,
             "items": [
-                "rollups-apis/http-api",
+                "api-reference/http-api",
                 {
                     "type": "category",
-                    "label": "Backend APIs",
+                    "label": "Base Layer Contracts",
                     "collapsed": true,
                     "items": [
-                        "rollups-apis/backend/introduction",
-                        "rollups-apis/backend/notices",
-                        "rollups-apis/backend/vouchers",
-                        "rollups-apis/backend/reports"
+                        "api-reference/json-rpc/overview",
+                        "api-reference/json-rpc/input-box",
+                        "api-reference/json-rpc/application",
+                        "api-reference/json-rpc/application-factory",
+                        {
+                            "type": "category",
+                            "label": "Portals",
+                            "collapsed": true,
+                            "items": [
+                                "api-reference/json-rpc/portals/ERC20Portal",
+                                "api-reference/json-rpc/portals/ERC721Portal",
+                                "api-reference/json-rpc/portals/ERC1155SinglePortal",
+                                "api-reference/json-rpc/portals/ERC1155BatchPortal",
+                                "api-reference/json-rpc/portals/EtherPortal"
+                            ]
+                        },
+                        {
+                            "type": "category",
+                            "label": "Relayer",
+                            "collapsed": true,
+                            "items": [
+                                "api-reference/json-rpc/relays/relays"
+                            ]
+                        }
                     ]
                 },
                 {
                     "type": "category",
-                    "label": "Frontend APIs",
+                    "label": "Backend API",
                     "collapsed": true,
                     "items": [
+                        "api-reference/backend/introduction",
+                        "api-reference/backend/notices",
+                        "api-reference/backend/vouchers",
+                        "api-reference/backend/reports"
+                    ]
+                },
+                {
+                    "type": "category",
+                    "label": "GraphQL API",
+                    "collapsed": true,
+                    "items": [
+                        "api-reference/graphql/overview",
                         {
                             "type": "category",
-                            "label": "Smart contracts API",
+                            "label": "Queries",
                             "collapsed": true,
                             "items": [
-                                "rollups-apis/json-rpc/overview",
-                                "rollups-apis/json-rpc/input-box",
-                                "rollups-apis/json-rpc/application",
-                                "rollups-apis/json-rpc/application-factory",
+                                "api-reference/graphql/queries/inputs",
+                                "api-reference/graphql/queries/notices",
+                                "api-reference/graphql/queries/vouchers",
+                                "api-reference/graphql/queries/reports"
+                            ]
+                        },
+                        {
+                            "type": "category",
+                            "label": "Objects",
+                            "collapsed": true,
+                            "items": [
                                 {
-                                    "type": "category",
-                                    "label": "Portals",
-                                    "collapsed": true,
-                                    "items": [
-                                        "rollups-apis/json-rpc/portals/ERC20Portal",
-                                        "rollups-apis/json-rpc/portals/ERC721Portal",
-                                        "rollups-apis/json-rpc/portals/ERC1155SinglePortal",
-                                        "rollups-apis/json-rpc/portals/ERC1155BatchPortal",
-                                        "rollups-apis/json-rpc/portals/EtherPortal"
-                                    ]
-                                },
-                                {
-                                    "type": "category",
-                                    "label": "Relayer",
-                                    "collapsed": true,
-                                    "items": [
-                                        "rollups-apis/json-rpc/relays/relays"
-                                    ]
+                                    "type": "autogenerated",
+                                    "dirName": "api-reference/graphql/objects"
                                 }
                             ]
                         },
                         {
                             "type": "category",
-                            "label": "GraphQL API",
+                            "label": "Filters",
                             "collapsed": true,
                             "items": [
-                                "rollups-apis/graphql/overview",
                                 {
-                                    "type": "category",
-                                    "label": "Queries",
-                                    "collapsed": true,
-                                    "items": [
-                                        "rollups-apis/graphql/queries/inputs",
-                                        "rollups-apis/graphql/queries/notices",
-                                        "rollups-apis/graphql/queries/vouchers",
-                                        "rollups-apis/graphql/queries/reports"
-                                    ]
-                                },
+                                    "type": "autogenerated",
+                                    "dirName": "api-reference/graphql/inputs"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "category",
+                            "label": "Scalars",
+                            "collapsed": true,
+                            "items": [
                                 {
-                                    "type": "category",
-                                    "label": "Objects",
-                                    "collapsed": true,
-                                    "items": [
-                                        {
-                                            "type": "autogenerated",
-                                            "dirName": "rollups-apis/graphql/objects"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "category",
-                                    "label": "Filters",
-                                    "collapsed": true,
-                                    "items": [
-                                        {
-                                            "type": "autogenerated",
-                                            "dirName": "rollups-apis/graphql/inputs"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "category",
-                                    "label": "Scalars",
-                                    "collapsed": true,
-                                    "items": [
-                                        {
-                                            "type": "autogenerated",
-                                            "dirName": "rollups-apis/graphql/scalars"
-                                        }
-                                    ]
+                                    "type": "autogenerated",
+                                    "dirName": "api-reference/graphql/scalars"
                                 }
                             ]
                         }
