@@ -93,7 +93,7 @@ Alternatively, you can use a service like [Fly.io](https://fly.io/) to deploy yo
 
   The connection string for a PostgreSQL database must be configured at the `CARTESI_POSTGRES_ENDPOINT` variable.
 
-  You can use any PostgreSQL database, whether managed by a cloud provider or set up on your local infrastructure. The key configuration required is the connection string, encompassing the database URL, username, password, and name. The node necessitates a PostgreSQL database to store the application state, which is accessible via the [GraphQL API](../rollups-apis/graphql/basics.md).
+  You can use any PostgreSQL database, whether managed by a cloud provider or set up on your local infrastructure. The key configuration required is the connection string, encompassing the database URL, username, password, and name. The node necessitates a PostgreSQL database to store the application state, which is accessible via the [GraphQL API](../api-reference/graphql/basics.md).
 
 1. With all the config variables set, here is how you can run the node on your local machine:
 
