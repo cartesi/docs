@@ -167,6 +167,17 @@
                 "tutorials/cli-account-abstraction-feauture"
             ]
         },
+
+        {
+            "type": "category",
+            "label": "External Resources",
+            "collapsed": true,
+            "items": [
+                "external-resources/community-tools",
+                "external-resources/integration-guides"
+
+            ]
+        },
         {
             "type": "category",
             "label": "References",
@@ -209,16 +220,6 @@
                         }
                     ]
                 }
-            ]
-        },
-        {
-            "type": "category",
-            "label": "External Resources",
-            "collapsed": true,
-            "items": [
-                "external-resources/community-tools",
-                "external-resources/integration-guides"
-
             ]
         }
     ]
