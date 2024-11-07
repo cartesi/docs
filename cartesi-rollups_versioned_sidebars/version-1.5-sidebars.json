@@ -221,16 +221,6 @@
                     ]
                 }
             ]
-        },
-        {
-            "type": "category",
-            "label": "External Resources",
-            "collapsed": true,
-            "items": [
-                "external-resources/community-tools",
-                "external-resources/integration-guides"
-
-            ]
         }
     ]
 }
