@@ -142,8 +142,7 @@
                 "development/send-requests",
                 "development/retrieve-outputs",
                 "development/asset-handling",
-                "development/migration",
-                "development/community-tools"
+                "development/migration"
             ]
         },
         {
@@ -210,6 +209,16 @@
                         }
                     ]
                 }
+            ]
+        },
+        {
+            "type": "category",
+            "label": "External Resources",
+            "collapsed": true,
+            "items": [
+                "external-resources/community-tools",
+                "external-resources/integration-guides"
+
             ]
         }
     ]
