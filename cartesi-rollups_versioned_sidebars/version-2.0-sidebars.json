@@ -62,14 +62,6 @@
                                         "rollups-apis/json-rpc/portals/ERC1155BatchPortal",
                                         "rollups-apis/json-rpc/portals/EtherPortal"
                                     ]
-                                },
-                                {
-                                    "type": "category",
-                                    "label": "Relayer",
-                                    "collapsed": true,
-                                    "items": [
-                                        "rollups-apis/json-rpc/relays/relays"
-                                    ]
                                 }
                             ]
                         },
