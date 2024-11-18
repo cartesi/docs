@@ -10,7 +10,7 @@ Ether to a dApp while informing the off-chain machine.
 ## `depositEther()`
 
 ```solidity
-function depositEther(address _dapp, bytes _execLayerData) external payable
+function depositEther(address appContract, bytes execLayerData) external payable
 ```
 
 Transfer Ether to a dApp and add an input to
@@ -20,7 +20,7 @@ All the value sent through this function is forwarded to the dApp.
 
 #### Parameters
 
-| Name            | Type    | Description                                              |
-| --------------- | ------- | -------------------------------------------------------- |
-| \_dapp          | address | The address of the dApp                                  |
-| \_execLayerData | bytes   | Additional data to be interpreted by the execution layer |
+| Name          | Type    | Description                                              |
+| ------------- | ------- | -------------------------------------------------------- |
+| appContract   | address | The address of the dApp                                  |
+| execLayerData | bytes   | Additional data to be interpreted by the execution layer |
