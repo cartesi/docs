@@ -6,17 +6,8 @@
             "collapsed": true,
             "items": [
                 "getting-started/overview",
-                "getting-started/quickstart"
-            ]
-        },
-        {
-            "type": "category",
-            "label": "Core Concepts",
-            "collapsed": true,
-            "items": [
-                "core-concepts/optimistic-rollups",
-                "core-concepts/architecture",
-                "core-concepts/mainnet-considerations"
+                "getting-started/quickstart",
+                "getting-started/installation"
             ]
         },
         {
@@ -25,6 +16,7 @@
             "collapsed": true,
             "items": [
                 "api-reference/http-api",
+                "api-reference/architecture",
                 {
                     "type": "category",
                     "label": "Base Layer Contracts",
@@ -39,19 +31,11 @@
                             "label": "Portals",
                             "collapsed": true,
                             "items": [
+                                "api-reference/json-rpc/portals/EtherPortal",
                                 "api-reference/json-rpc/portals/ERC20Portal",
                                 "api-reference/json-rpc/portals/ERC721Portal",
                                 "api-reference/json-rpc/portals/ERC1155SinglePortal",
-                                "api-reference/json-rpc/portals/ERC1155BatchPortal",
-                                "api-reference/json-rpc/portals/EtherPortal"
-                            ]
-                        },
-                        {
-                            "type": "category",
-                            "label": "Relayer",
-                            "collapsed": true,
-                            "items": [
-                                "api-reference/json-rpc/relays/relays"
+                                "api-reference/json-rpc/portals/ERC1155BatchPortal"
                             ]
                         }
                     ]
@@ -126,14 +110,11 @@
             "label": "Development",
             "collapsed": true,
             "items": [
-                "development/installation",
                 "development/building-a-dapp",
-                "development/cli-commands",
                 "development/send-inputs",
                 "development/query-outputs",
                 "development/asset-handling",
-                "development/reference",
-                "development/community-tools"
+                "development/cli-commands"
             ]
         },
         {
@@ -156,6 +137,16 @@
                 "tutorials/erc-721-token-wallet",
                 "tutorials/react-frontend-application",
                 "tutorials/cli-account-abstraction-feauture"
+            ]
+        },
+        {
+            "type": "category",
+            "label": "Resources",
+            "collapsed": true,
+            "items": [
+                "resources/community-tools",
+                "resources/mainnet-considerations",
+                "resources/migration-guide"
             ]
         },
         {
