@@ -18,7 +18,7 @@ The backend will be written using Python. For added flexibility, feel free to ex
 
 Install these to set up your environment for quick building:
 
-- Cartesi CLI: A simple tool for building applications on Cartesi. [Install Cartesi CLI for your OS of choice](../development/installation.md).
+- Cartesi CLI: A simple tool for building applications on Cartesi. [Install Cartesi CLI for your OS of choice](../getting-started/installation.md).
 
 - Docker Desktop 4.x: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker for your OS of choice](https://www.docker.com/products/docker-desktop/).
 
