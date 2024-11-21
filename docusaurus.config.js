@@ -430,8 +430,136 @@ const config = {
             from: "/cartesi-rollups/2.0/development/migration/",
           },
           {
+            to: "/cartesi-machine/blockchain/",
+            from: ["/machine/blockchain/"],
+          },
+          {
+            to: "/cartesi-machine/blockchain/hash/",
+            from: ["/machine/blockchain/hash"],
+          },
+          {
+            to: "/cartesi-machine/blockchain/vg/",
+            from: ["/machine/blockchain/vg/"],
+          },
+          {
+            to: "/cartesi-rollups/2.0/getting-started/quickstart/",
+            from: "/cartesi-rollups/2.0/quickstart/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/getting-started/installation/",
+            from: "/cartesi-rollups/2.0/development/installation/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/api-reference/architecture/",
+            from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/api-reference/architecture/",
+            from: "/cartesi-rollups/2.0/core-concepts/architecture/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/resources/mainnet-considerations/",
+            from: "/cartesi-rollups/2.0/core-concepts/mainnet-considerations/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/getting-started/installation/",
+            from: "/cartesi-rollups/2.0/development/installation/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
+            from: "/cartesi-rollups/2.0/development/creating-application/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
+            from: "/cartesi-rollups/2.0/development/building-the-application/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
+            from: "/cartesi-rollups/2.0/development/running-the-application/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/send-inputs/",
+            from: "/cartesi-rollups/2.0/development/send-requests/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/query-outputs/",
+            from: "/cartesi-rollups/2.0/development/retrieve-outputs/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/resources/migration-guide/",
+            from: "/cartesi-rollups/2.0/development/migration/",
+          },
+          {
             to: "/cartesi-rollups/2.0/resources/community-tools/",
             from: "/cartesi-rollups/2.0/development/community-tools/",
+          }
+        ],
+        createRedirects(existingPath) {
+          if (existingPath.includes("/cartesi-rollups/1.0/")) {
+            // only top level URLs needed. All sub levels will be matched automatically. i.e. if /cartesi-rollups/api/ added, the plugin will automatically capture /cartesi-rollups/api/json-rpc/relays/DAppAddressRelay/ etc.
+            return [
+              existingPath.replace(
+                "/cartesi-rollups/1.5/",
+                "/cartesi-rollups/1.5/",
+                "/cartesi-rollups/overview"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.5/development/node-configuration/",
+                "/cartesi-rollups/1.5/development/cli-commands/"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/main-concepts",
+                "/cartesi-rollups/main-concepts"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/mainnet-risks",
+                "/cartesi-rollups/mainnet-risks"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/sending-requests",
+                "/cartesi-rollups/sending-requests"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/reading-outputs",
+                "/cartesi-rollups/reading-outputs"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/assets-handling",
+                "/cartesi-rollups/assets-handling"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/dapp-architecture",
+                "/cartesi-rollups/dapp-architecture"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/api",
+                "/cartesi-rollups/api"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/http-api",
+                "/cartesi-rollups/http-api"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/dapp-life-cycle",
+                "/cartesi-rollups/dapp-life-cycle"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/build-dapps",
+                "/cartesi-rollups/build-dapps"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/references",
+                "/cartesi-rollups/references"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/migration-guides",
+                "/cartesi-rollups/migration-guides"
+              ),
+              existingPath.replace(
+                "/cartesi-rollups/1.0/challenges",
+                "/cartesi-rollups/challenges"
+              ),
+            ];
           }
         ],
       },
