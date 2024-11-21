@@ -3,207 +3,112 @@ id: migration-guide
 title: Migration Guide
 ---
 
-## Migrating from Cartesi Rollups v1.5.x to v2.0
+## Migrating from Cartesi Rollups Node v1.4 to v1.5.x
 
-Rollups node v2.0 introduces some major changes in how the node works internally and how the application code interacts with it. Not all the breaking changes affect all applications. To identify which changes might affect your application, check if any of the following cases apply:
+Release `v1.5.0` introduces a critical change in how epochs are closed in the Cartesi Rollups Node, transitioning from a **timestamp-based system to a block number-based system**.
 
-### My back-end...
-- handles ERC-20 token deposit inputs. See the [ERC-20 token deposit inputs](#erc-20-token-deposit-inputs) section.
-- handles application address relay inputs. See the [Application address](#application-address) section.
-- generates Ether withdrawal vouchers. See the [Ether withdrawal vouchers](#ether-withdrawal-vouchers) section.
+Epoch closure is now determined by the `CARTESI_EPOCH_LENGTH` environment variable (in blocks) instead of `CARTESI_EPOCH_DURATION` (in seconds).
 
-### My front-end...
-- validates notices. See the [Outputs](#outputs) section.
-- executes vouchers. See the [Outputs](#outputs) section.
-- listens to voucher execution events. See the [Outputs](#outputs) section.
-- checks if a voucher was executed. See the [Outputs](#outputs) section.
-- uses inspect calls. See the [Inspect calls](#inspect-calls) section.
-- uses GraphQL queries. See the [GraphQL queries](#graphql-queries) section.
+```plaintext
+CARTESI_EPOCH_LENGTH = CARTESI_EPOCH_DURATION / BLOCK_TIME
+```
 
-:::note
-If your application uses a high-level framework(ex. Deroll, Rollmelette etc.) for either backend or frontend, check if the framework has already implemented the changes described in this guide.
+Where `BLOCK_TIME` is the time to generate a block in the target network.
+
+**Example**: If a block is generated every 12 seconds and `CARTESI_EPOCH_DURATION` is set to 86400 seconds (24 hours), `CARTESI_EPOCH_LENGTH = 86400 / 12 = 7200`
+
+### Option 1: Redeploy all contracts
+
+Redeploy all contracts and your application with the new configuration.
+
+Refer to the [self-hosted deployment guide](../deployment/self-hosted.md) for detailed deployment instructions.
+
+:::caution
+Redeploying creates a new application instance. All previous inputs, outputs, claims, and funds locked in the application contract will remain associated with the old application address.
 :::
 
-### ERC-20 token deposit inputs
+### Option 2: Replace Application's History
 
-In SDK v1, ERC-20 token deposit inputs start with a 1-byte Boolean field which indicates whether the transfer was successful or not:
-
-```
-{
-    success: Byte[1],
-    tokenAddress: Byte[20],
-    senderAddress: Byte[20],
-    amount: Byte[32],
-    execLayerData: Byte[],
-}
-```
-
-In SDK v2, we modified the ERC-20 portal to only accept successful transactions. With this change, the success field would always be true, so it has been removed:
-
-```
-{ 
-    tokenAddress: Byte[20],
-    senderAddress: Byte[20],
-    amount: Byte[32],
-    execLayerData: Byte[],
-}
-```
-
-### Ether withdrawal vouchers
-
-In SDK v1, Ether withdrawals were issued as vouchers targeting the application contract, and calling the withdrawEther function:
-
-```
-{
-    destination: applicationAddress,
-    payload: abi.encodeWithSignature("withdrawEther(address,uint256)", recipient, value),
-}
-```
-
-In SDK v2, we have removed this function in favor of a simpler way, which uses the newly-added value field:
-
-```
-{
-    destination: recipient,
-    payload: "0x",
-    value: value,
-}
-```
+This process allows inputs, outputs, and locked funds to remain unchanged but is more involved.
 
 :::note
-This value field can be used to pass Ether to payable functions.
+A new _History_ will have no claims. Upon restarting the node with a new _History_, previous claims will be resubmitted, incurring additional costs for the _Authority_ owner.
 :::
 
-### Application address
+:::caution
+Instances of the [_History_](https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/history/History.sol) contract from [rollups-contracts v1.2.0](https://github.com/cartesi/rollups-contracts/releases/tag/v1.2.0) may be used simultaneously by several applications through their associated _Authority_ instance.
+Application owners must consider that and exercise care when performing the steps listed below.
+:::
 
-In SDK v1, the application address could be sent to the machine via an input through the DAppAddressRelay contract.
+It's recommended to use the deterministic deployment functions available in the Rollups contracts.
 
-In SDK v2, the application address has been added to the input metadata, making it available in every input. This change allowed us to remove the DAppAddressRelay contract.
+#### 1. Define the environment variables
 
-Here is an example of a finish request response, according to the OpenAPI interface of the Rollup HTTP server:
+- `SALT`: A random 32-byte value for the deterministic deployment functions.
+- `RPC_URL`: The RPC endpoint to be used.
+- `MNEMONIC`: The mnemonic phrase for the Authority owner's wallet (other wallet options may be used).
+- `HISTORY_FACTORY_ADDRESS`: The address of a valid HistoryFactory instance.
+- `AUTHORITY_ADDRESS`: The address of the Authority instance used by the application.
 
-```json
-{
-  "request_type": "advance_state",
-  "data": {
-    "metadata": {
-      "chain_id": 42,
-      "app_contract": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-      "msg_sender": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-      "input_index": 123,
-      "block_number": 10000000,
-      "block_timestamp": 1588598533000,
-      "prev_randao": "0x0000000000000000000000000000000000000000000000000000000000000001"
-    },
-    "payload": "0xdeadbeef"
-  }
-}
+  :::note environment variables
+  A `HistoryFactory` is deployed at `0x1f158b5320BBf677FdA89F9a438df99BbE560A26` for all supported networks, including Ethereum, Optimism, Arbitrum, Base, and their respective Sepolia-based testnets.
+  :::
+
+#### 2. Instantiate a New _History_
+
+This is a two-step process. First calculate the address of the new History. After that, the new instance of History may be created.
+
+- To calculate the address of a new _History_ contract call the `calculateHistoryAddress(address,bytes32)(address)` function with the help of Foundry's Cast:
+
+  ```shell
+  cast call \
+    --trace --verbose \
+    $HISTORY_FACTORY_ADDRESS \
+    "calculateHistoryAddress(address,bytes32)(address)" \
+    $AUTHORITY_ADDRESS \
+    $SALT \
+    --rpc-url "$RPC_URL"
+  ```
+
+  If the command executes successfully, it will display the address of the new History contract. Store this address in the environment variable `NEW_HISTORY_ADDRESS` for later use.
+
+- Create a new instance of _History_ may be created by calling function `newHistory(address,bytes32)`:
+
+  ```shell
+  cast send \
+  --json \
+  --mnemonic "$MNEMONIC" \
+  $HISTORY_FACTORY_ADDRESS \
+  "newHistory(address,bytes32)(History)" \
+  $AUTHORITY_ADDRESS \
+  $SALT \
+  --rpc-url "$RPC_URL"
+  ```
+
+  The `cast send` command will fail if Cast does not recognize the _History_ type during execution. In such cases, replace _History_ with `address` as the return type for `newHistory()` and execute the command again.
+
+ The `cast send` command may also fail due to gas estimation issues. To circumvent this, provide gas constraints with the `--gas-limit` parameter (e.g., `--gas-limit 7000000`).
+
+#### 3. Replace the _History_
+
+Ensure the environment variables from the previous step are set, including `NEW_HISTORY_ADDRESS`, which should have the address of the new History.
+
+To replace the _History_ used by the _Authority_, run this command:
+
+```shell
+cast send \
+    --json \
+    --mnemonic "$MNEMONIC" \
+    "$AUTHORITY_ADDRESS" \
+    "setHistory(address)" \
+    "$NEW_HISTORY_ADDRESS" \
+    --rpc-url "$RPC_URL"
 ```
 
-### Outputs
+After replacing the _History_, update the `CARTESI_CONTRACTS_HISTORY_ADDRESS` in the application configuration with the new _History_ address. Then, upgrade the Cartesi Rollups Node as usual.
 
-In SDK v2, vouchers and notices are now stored in the same buffer inside the machine and in the same tree of the proof structure. They are encoded as Solidity function calls, each with its own signature.
+When the Cartesi Rollups Node restarts, it processes all existing inputs, recalculates the epochs, and sends the claims to the new _History_ based on the updated configuration.
 
-Now, any output can be validated, not just notices. We've also added a new type of executable output: `DELEGATECALL` vouchers.
 
-#### Encoding
 
-Outputs are encoded as Solidity function calls. For supported signatures, see the Outputs interface. Here are some examples:
-
-```
-// Notice with payload "Hello, World!" encoded using ASCII
-Notice(hex"48656c6c6f2c20576f726c6421")  // 0xc258d6e50000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d48656c6c6f2c20576f726c642100000000000000000000000000000000000000
-
-// Voucher to WETH token contract (on Mainnet), passing 1 ETH, calling the deposit() function
-Voucher(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, 1000000000000000000, hex"d0e30db0")  // 0x237a816f000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000de0b6b3a764000000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000004d0e30db000000000000000000000000000000000000000000000000000000000
-
-// DELEGATECALL voucher to Safe ERC-20 library (on Sepolia)
-DelegateCallVoucher(0x817b126F242B5F184Fa685b4f2F91DC99D8115F9, hex"d1660f99000000000000000000000000491604c0fdf08347dd1fa4ee062a822a5dd06b5d000000000000000000000000d8da6bf26964af9d7eed9e03e53415d37aa960450000000000000000000000000000000000000000000000000de0b6b3a7640000")  // 0x10321e8b000000000000000000000000817b126f242b5f184fa685b4f2f91dc99d8115f900000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000064d1660f99000000000000000000000000491604c0fdf08347dd1fa4ee062a822a5dd06b5d000000000000000000000000d8da6bf26964af9d7eed9e03e53415d37aa960450000000000000000000000000000000000000000000000000de0b6b3a764000000000000000000000000000000000000000000000000000000000000
-```
-
-#### Validation
-
-In SDK v1, only notices could be validated through the `validateNotice` function:
-
-```solidity
-function validateNotice(
-    bytes calldata notice,
-    Proof calldata proof
-) external view returns (bool success);
-```
-
-In SDK v2, any output can be validated with the function `validateOutput`:
-
-```solidity
-function validateOutput(
-    bytes calldata output,
-    OutputValidityProof calldata proof
-) external view;
-```
-
-#### Execution
-
-In SDK v1, only vouchers could be executed through the `executeVoucher` function:
-
-```solidity
-function executeVoucher(
-    address destination,
-    bytes calldata payload,
-    Proof calldata proof
-) external returns (bool success);
-```
-
-In SDK v2, both `CALL` and `DELEGATECALL` vouchers can be executed through the `executeOutput` function:
-
-```solidity
-function executeOutput(
-    bytes calldata output,
-    OutputValidityProof calldata proof
-) external;
-```
-
-#### Execution event
-
-In SDK v1, whenever a voucher was executed, a `VoucherExecution` event would be emitted:
-
-```solidity
-event VoucherExecuted(uint256 voucherId);
-```
-
-In SDK v2, this event was renamed as `OutputExecuted`, and the parameters have changed:
-
-```solidity
-event OutputExecuted(uint64 outputIndex, bytes output);
-```
-
-#### Execution check
-
-In SDK v1, one could check whether a voucher has been executed already by calling the `wasVoucherExecuted` function:
-
-```solidity
-function wasVoucherExecuted(
-    uint256 inputIndex,
-    uint256 outputIndexWithinInput
-) external view returns (bool executed);
-```
-
-In SDK v2, outputs are no longer attached to the inputs that generated them, so the now-called `wasOutputExecuted` function just receives the output index:
-
-```solidity
-function wasOutputExecuted(
-    uint256 outputIndex
-) external view returns (bool executed);
-```
-
-### Inspect calls
-
-In SDK v1, the `inspect` REST API call was GET type and the endpoint was `<node-url>/inspect/<payload>`.
-
-In SDK v2, the `inspect` REST API call is POST type and the endpoint is `<node-url>/inspect/<application-address>/<uri-encoded-payload>`.
-
-### GraphQL queries
-
-In SDK v1, the GraphQL server was available at `<node-url>/graphql`.
-
-In SDK v2, the GraphQL server is available at `<node-url>/graphql/<application-address>`. Although, in a single app environment, the SDK v1 endpoint should still work. Application address is relevant when multiple applications are deployed in the same node.
 
