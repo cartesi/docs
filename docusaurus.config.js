@@ -365,6 +365,10 @@ const config = {
             label: "1.5",
             path: "1.5",
           },
+          "2.0": {
+            label: "2.0",
+            path: "2.0",
+          }
         },
         showLastUpdateTime: true,
       },
@@ -377,6 +381,58 @@ const config = {
             from: '/cartesi-rollups',      // the old/base route
             to:   '/cartesi-rollups/1.5/', // the new route to redirect to
           },
+          {
+            to: "/cartesi-rollups/2.0/getting-started/quickstart/",
+            from: "/cartesi-rollups/2.0/quickstart/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/getting-started/installation/",
+            from: "/cartesi-rollups/2.0/development/installation/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/api-reference/architecture/",
+            from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/api-reference/architecture/",
+            from: "/cartesi-rollups/2.0/core-concepts/architecture/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/resources/mainnet-considerations/",
+            from: "/cartesi-rollups/2.0/core-concepts/mainnet-considerations/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/getting-started/installation/",
+            from: "/cartesi-rollups/2.0/development/installation/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
+            from: "/cartesi-rollups/2.0/development/creating-application/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
+            from: "/cartesi-rollups/2.0/development/building-the-application/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
+            from: "/cartesi-rollups/2.0/development/running-the-application/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/send-inputs/",
+            from: "/cartesi-rollups/2.0/development/send-requests/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/development/query-outputs/",
+            from: "/cartesi-rollups/2.0/development/retrieve-outputs/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/resources/migration-guide/",
+            from: "/cartesi-rollups/2.0/development/migration/",
+          },
+          {
+            to: "/cartesi-rollups/2.0/resources/community-tools/",
+            from: "/cartesi-rollups/2.0/development/community-tools/",
+          }
         ],
       },
     ],
