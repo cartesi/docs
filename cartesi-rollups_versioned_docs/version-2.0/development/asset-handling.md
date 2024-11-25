@@ -18,7 +18,7 @@ Currently, Cartesi Rollups support the following types of assets:
 - [ERC-1155 Single](../api-reference/json-rpc/portals/ERC1155SinglePortal.md)
 - [ERC-1155 Batch](../api-reference/json-rpc/portals/ERC1155BatchPortal.md)
 
-![img](../../../static/img/v1.3/assets.jpg)
+![img](../../..//static/img/v2.0/onchain-contracts.jpg)
 
 ## Deposits
 
@@ -28,19 +28,17 @@ When an asset is deposited, it is on the base layer but gains a representation i
 
 Deposit input payloads are always specified as packed ABI-encoded parameters, as detailed below.
 
-![img](../../..//static/img/v1.3/abi.jpg)
+![img](../../..//static/img/v2.0/deposit-payload.jpg)
 
 ### ABI encoding for deposits
-
 
 | Asset             | Packed ABI-encoded payload fields                                                                                                                       | Standard ABI-encoded payload fields                                                                                              |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------- |
 | Ether             | <ul><li>`address sender`,</li><li>`uint256 value`,</li><li>`bytes execLayerData`</li></ul>                                                              | none                                                                                                                             |
-| ERC-20            | <ul><li>`bool success`,</li><li>`address token`,</li><li>`address sender`,</li><li>`uint256 amount`,</li><li>`bytes execLayerData`</li></ul>            | none                                                                                                                             |
+| ERC-20            | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 amount`,</li><li>`bytes execLayerData`</li></ul>                                    | none                                                                                                                             |
 | ERC-721           | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 tokenId`,</li><li>standard ABI-encoded fields...</li></ul>                          | <ul><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul>                                                           |
 | ERC-1155 (single) | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 tokenId`,</li><li>`uint256 value`,</li><li>standard ABI-encoded fields...</li></ul> | <ul><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul>                                                           |
 | ERC-1155 (batch)  | <ul><li>`address token`,</li><li>`address sender`,</li><li>standard ABI-encoded fields...</li></ul>                                                     | <ul><li>`uint256[] tokenIds`,</li><li>`uint256[] values`,</li><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul> |
-
 
 ## Withdrawing assets
 
