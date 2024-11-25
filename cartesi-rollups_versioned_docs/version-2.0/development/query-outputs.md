@@ -42,7 +42,6 @@ They serve as a means for application to notify the blockchain about particular 
 
 - Notices are validated on-chain using the [`validateNotice()`](../api-reference/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api-reference/json-rpc/application.md) contract.
 
-
 ### Send a notice
 
 Let's examine how an Application has its Advance request **calculating and returning the first five multiples of a given number**.
@@ -168,7 +167,7 @@ The notice can be validated and queried by any interested party.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{application_address}` for local development. Note that you'll have to replace `{application_address}` with the address of your application.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development. Note that you'll have to replace '{dapp_address}' with the address of your application.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -272,7 +271,7 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 }
 ```
 
-Replace `0` with the value you want to pass for `$inputIndex`.
+Replace `123` with the value you want to pass for `$inputIndex`.
 
 <!-- <video width="100%" controls poster="/static/img/v1.3/graphqlPoster.png">
     <source src="/videos/Query_Singlenotice.mp4" type="video/mp4" />
@@ -430,7 +429,7 @@ You can use the exposed GraphQL API to query all reports from your application.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{application_address}` for local development.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
