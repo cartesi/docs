@@ -14,7 +14,6 @@ Every dApp is subscribed to a consensus contract and governed by a single addres
 
 The dApp developer can choose whichever ownership and consensus models it wants.
 
-
 Examples of dApp ownership models include:
 
 - no owner (address zero)
