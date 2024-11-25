@@ -536,4 +536,4 @@ For end-to-end functionality, developers will likely build their [custom user-fa
 
 When you run your application with `cartesi run`, there is a local instance of CartesiScan on `http://localhost:8080/explorer`.
 
-You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../rollups-apis/backend/vouchers.md/#epoch-configuration).
+You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
