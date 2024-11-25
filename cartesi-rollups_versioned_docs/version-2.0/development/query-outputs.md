@@ -42,7 +42,6 @@ They serve as a means for dApp to notify the blockchain about particular events.
 
 - Notices are validated on-chain using the [`validateNotice()`](../api-reference/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api-reference/json-rpc/application.md) contract.
 
-
 ### Send a notice
 
 Let's examine how a Cartesi dApp has its Advance request **calculating and returning the first five multiples of a given number**.
@@ -168,7 +167,8 @@ The notice can be validated and queried by any interested party.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql` for local development.
+
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development. Note that you'll have to replace '{dapp_address}' with the address of your application.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -204,11 +204,14 @@ async function fetchNotices() {
   const query = '{ "query": "{ notices { edges { node { payload } } } }" }';
 
   try {
-    const response = await fetch("http://localhost:8080/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: query,
-    });
+    const response = await fetch(
+      "http://localhost:8080/graphql/0x75135d8ADb7180640d29d822D9AD59E83E8695b2",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: query,
+      }
+    );
 
     const result = await response.json();
 
@@ -287,11 +290,14 @@ const variables = {
   inputIndex: 123, // Replace 123 with the desired value
 };
 
-const response = await fetch("http://localhost:8080/graphql", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ query, variables }),
-});
+const response = await fetch(
+  "http://localhost:8080/graphql/0x75135d8ADb7180640d29d822D9AD59E83E8695b2",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables }),
+  }
+);
 
 const result = await response.json();
 for (let edge of result.data.input.notices.edges) {
@@ -405,7 +411,7 @@ You can use the exposed GraphQL API to query all reports from your dApp.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql` for local development.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -428,7 +434,6 @@ query reports {
 ```
 
 Click the "Play" button (a triangular icon). The Playground will send the request to the server, and you'll see the response in the right pane.
-
 
 You can retrieve reports based on their `inputIndex`.
 
@@ -477,6 +482,5 @@ query report($reportIndex: Int!, $inputIndex: Int!) {
   }
 }
 ```
-
 
 Unlike Vouchers and Notices, reports are stateless and need attached proof.

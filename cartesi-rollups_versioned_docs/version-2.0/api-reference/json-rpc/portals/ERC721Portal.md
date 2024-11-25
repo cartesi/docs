@@ -10,7 +10,7 @@ ERC-721 tokens to a dApp while informing the off-chain machine.
 ## `depositERC721Token()`
 
 ```solidity
-function depositERC721Token(contract IERC721 _token, address _dapp, uint256 _tokenId, bytes _baseLayerData, bytes _execLayerData) external
+function depositERC721Token( IERC721 token, address appContract, uint256 tokenId, bytes baseLayerData, bytes execLayerData) external
 ```
 
 Transfer an ERC-721 token to a dApp and add an input to
@@ -22,10 +22,11 @@ token contract.
 
 #### Parameters
 
-| Name            | Type             | Description                                              |
-| --------------- | ---------------- | -------------------------------------------------------- |
-| \_token         | contract IERC721 | The ERC-721 token contract                               |
-| \_dapp          | address          | The address of the dApp                                  |
-| \_tokenId       | uint256          | The identifier of the token being transferred            |
-| \_baseLayerData | bytes            | Additional data to be interpreted by the base layer      |
-| \_execLayerData | bytes            | Additional data to be interpreted by the execution layer |
+| Name          | Type    | Description                                              |
+| ------------- | ------- | -------------------------------------------------------- |
+| token         | IERC721 | The ERC-721 token contract address                       |
+| appContract   | address | The address of the dApp                                  |
+| tokenId       | uint256 | The identifier of the token being transferred            |
+| baseLayerData | bytes   | Additional data to be interpreted by the base layer      |
+| execLayerData | bytes   | Additional data to be interpreted by the execution layer |
+

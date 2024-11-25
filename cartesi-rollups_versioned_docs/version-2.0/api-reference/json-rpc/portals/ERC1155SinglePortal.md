@@ -9,7 +9,7 @@ The **ERC1155SinglePortal** allows anyone to perform single transfers of ERC-115
 ### `depositSingleERC1155Token()`
 
 ```solidity
-function depositSingleERC1155Token(contract IERC1155 _token, address _dapp, uint256 _tokenId, uint256 _value, bytes _baseLayerData, bytes _execLayerData) external
+function depositSingleERC1155Token( IERC1155 token, address appContract, uint256 tokenId, uint256 value, bytes calldata baseLayerData, bytes calldata execLayerData) external;
 ```
 
 Transfer an ERC-1155 token to a dApp and add an input to
@@ -20,11 +20,12 @@ beforehand, by calling the `setApprovalForAll` function in the token contract.
 
 #### Parameters
 
-| Name            | Type              | Description                                              |
-| --------------- | ----------------- | -------------------------------------------------------- |
-| \_token         | contract IERC1155 | The ERC-1155 token contract                              |
-| \_dapp          | address           | The address of the dApp                                  |
-| \_tokenId       | uint256           | The identifier of the token being transferred            |
-| \_value         | uint256           | Transfer amount                                          |
-| \_baseLayerData | bytes             | Additional data to be interpreted by the base layer      |
-| \_execLayerData | bytes             | Additional data to be interpreted by the execution layer |
+| Name          | Type     | Description                                              |
+| ------------- | -------- | -------------------------------------------------------- |
+| token         | IERC1155 | The ERC-1155 token contract                              |
+| appContract   | address  | The address of the dApp                                  |
+| tokenId       | uint256  | The identifier of the token being transferred            |
+| value         | uint256  | Transfer amount                                          |
+| baseLayerData | bytes    | Additional data to be interpreted by the base layer      |
+| execLayerData | bytes    | Additional data to be interpreted by the execution layer |
+

@@ -16,7 +16,7 @@ Utilizing the Cartesi Machine for transaction processing, developers can effortl
 ![img](../../../static/img/v1.3/image.png)
 
 
-## Introduction 
+## Introduction
 
 Let's delve into the workings of a Cartesi Rollup at a high level.
 
@@ -62,7 +62,6 @@ Cartesi dApps are implemented as infinite loops that manage their transaction cy
 In the Cartesi Rollup framework, all inputs sent to the base layer trigger an "advance_state" [request](../development/send-inputs.md#initiate-an-advance-request), which alters the state of the Cartesi Machine and consequently the Rollup. Since inputs originate on-chain, they are hex-encoded following the EVM message standard.
 
 Notices can be understood as "provable" events; as such, they can be sent to an EVM chain to be verified, so they are also hex-encoded.
- 
-Finally, in this example, no errors are treated; thus, we end the cycle accepting the input (`status: accept`). However, suppose any input causes the application to enter a faulty state or violates business logic. In that case, the application can end the process by calling the endpoint `/finish` with `status: reject` to revert the machine’s (and rollup’s) state before the arrival of the current input. 
 
+Finally, in this example, no errors are treated; thus, we end the cycle accepting the input (`status: accept`). However, suppose any input causes the application to enter a faulty state or violates business logic. In that case, the application can end the process by calling the endpoint `/finish` with `status: reject` to revert the machine’s (and rollup’s) state before the arrival of the current input.
 
