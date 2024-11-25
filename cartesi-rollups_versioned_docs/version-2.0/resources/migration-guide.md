@@ -1,6 +1,6 @@
 ---
-id: reference
-title: Reference
+id: migration-guide
+title: Migration Guide
 ---
 
 ## Migrating from Cartesi Rollups Node v1.4 to v1.5.x

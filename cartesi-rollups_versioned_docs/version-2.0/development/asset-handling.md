@@ -12,11 +12,11 @@ As with any execution layer solution, a Cartesi dApp that wants to manipulate as
 
 Currently, Cartesi Rollups support the following types of assets:
 
-- [Ether (ETH)](../rollups-apis/json-rpc/portals/)
-- [ERC-20](../rollups-apis/json-rpc/portals/ERC20Portal.md)
-- [ERC-721](../rollups-apis/json-rpc/portals/ERC721Portal.md)
-- [ERC-1155 Single](../rollups-apis/json-rpc/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch](../rollups-apis/json-rpc/portals/ERC1155BatchPortal.md)
+- [Ether (ETH)](../api-reference/json-rpc/portals/EtherPortal.md)
+- [ERC-20](../api-reference/json-rpc/portals/ERC20Portal.md)
+- [ERC-721](../api-reference/json-rpc/portals/ERC721Portal.md)
+- [ERC-1155 Single](../api-reference/json-rpc/portals/ERC1155SinglePortal.md)
+- [ERC-1155 Batch](../api-reference/json-rpc/portals/ERC1155BatchPortal.md)
 
 ![img](../../..//static/img/v2.0/onchain-contracts.jpg)
 

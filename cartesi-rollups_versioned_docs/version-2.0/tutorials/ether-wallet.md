@@ -16,7 +16,7 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 
 ## Setting up the project
 
-First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
+First, create a new TypeScript project using the [Cartesi CLI](../getting-started/installation.md/#cartesi-cli).
 
 ```bash
 cartesi create ether-wallet-dapp --template typescript
@@ -271,7 +271,7 @@ The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a crucia
 
 The voucher creation process occurs during Ether’s withdrawal. Here's how it works in this application:
 
-1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../rollups-apis/json-rpc/application.md/#withdrawether) on the `CartesiDApp` contract.
+1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../api-reference/json-rpc/application.md/#withdrawether) on the `CartesiDApp` contract.
 
 It returns a Voucher object with two properties:
 
@@ -288,9 +288,9 @@ It returns a Voucher object with two properties:
 
 Now, let's create a simple application at the entry point, `src/index.ts,` to test the wallet functionality.
 
-The [`EtherPortal`](../rollups-apis/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
+The [`EtherPortal`](../api-reference/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
 
-The [`DAppAddressRelay`](../rollups-apis/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its on-chain address, making it impossible to create valid vouchers for withdrawals.
+The [`DAppAddressRelay`](../api-reference/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its on-chain address, making it impossible to create valid vouchers for withdrawals.
 
 :::note
 Run `cartesi address-book` to get the addresses of the `EtherPortal` and `DAppAddressRelay` contracts. Save these as constants in the `index.ts` file.
@@ -536,4 +536,4 @@ For end-to-end functionality, developers will likely build their [custom user-fa
 
 When you run your application with `cartesi run`, there is a local instance of CartesiScan on `http://localhost:8080/explorer`.
 
-You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../rollups-apis/backend/vouchers.md/#epoch-configuration).
+You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
