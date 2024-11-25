@@ -18,7 +18,7 @@ Currently, Cartesi Rollups support the following types of assets:
 - [ERC-1155 Single](../rollups-apis/json-rpc/portals/ERC1155SinglePortal.md)
 - [ERC-1155 Batch](../rollups-apis/json-rpc/portals/ERC1155BatchPortal.md)
 
-![img](../../../static/img/v1.3/assets.jpg)
+![img](../../..//static/img/v2.0/onchain-contracts.jpg)
 
 ## Deposits
 
@@ -28,19 +28,17 @@ When an asset is deposited, it is on the base layer but gains a representation i
 
 Deposit input payloads are always specified as packed ABI-encoded parameters, as detailed below.
 
-![img](../../..//static/img/v1.3/abi.jpg)
+![img](../../..//static/img/v2.0/deposit-payload.jpg)
 
 ### ABI encoding for deposits
-
 
 | Asset             | Packed ABI-encoded payload fields                                                                                                                       | Standard ABI-encoded payload fields                                                                                              |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------- |
 | Ether             | <ul><li>`address sender`,</li><li>`uint256 value`,</li><li>`bytes execLayerData`</li></ul>                                                              | none                                                                                                                             |
-| ERC-20            | <ul><li>`bool success`,</li><li>`address token`,</li><li>`address sender`,</li><li>`uint256 amount`,</li><li>`bytes execLayerData`</li></ul>            | none                                                                                                                             |
+| ERC-20            | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 amount`,</li><li>`bytes execLayerData`</li></ul>                                    | none                                                                                                                             |
 | ERC-721           | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 tokenId`,</li><li>standard ABI-encoded fields...</li></ul>                          | <ul><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul>                                                           |
 | ERC-1155 (single) | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 tokenId`,</li><li>`uint256 value`,</li><li>standard ABI-encoded fields...</li></ul> | <ul><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul>                                                           |
 | ERC-1155 (batch)  | <ul><li>`address token`,</li><li>`address sender`,</li><li>standard ABI-encoded fields...</li></ul>                                                     | <ul><li>`uint256[] tokenIds`,</li><li>`uint256[] values`,</li><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul> |
-
 
 ## Withdrawing assets
 
@@ -50,7 +48,7 @@ Vouchers are crucial in allowing dApps in the execution layer to interact with c
 
 The dApp’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals, for example: `transferFrom(sender, recipient, amount)`. In this case, the sender is the dApp itself.
 
-By calling [`relayDAppAddress()`](../rollups-apis/json-rpc/relays/relays.md), function of the `DAppAddressRelay` contract, it adds the dApp’s address as a new input for the Cartesi dApp to process. Next, the off-chain machine uses this address to generate a voucher for execution at the [`executeVoucher()`](../rollups-apis/json-rpc/application.md/#executevoucher) function of the `CartesiDApp` contract.
+Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the [`executeVoucher()`](../rollups-apis/json-rpc/application.md/#executevoucher) function of the `CartesiDApp` contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
 :::note epoch length
 By default, Cartesi nodes close one epoch every 7200 blocks. You can [manually set the epoch length](./cli-commands.md/#run) to facilitate quicker asset-handling methods.
@@ -60,7 +58,7 @@ Here are the function signatures used by vouchers to withdraw the different type
 
 | Asset    | Destination    | Function signature                                                                                                                          |
 | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../rollups-apis/json-rpc/application.md/#withdrawether)                            |
+| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../rollups-apis/json-rpc/application.md/#withdrawether)                                 |
 | ERC-20   | Token contract | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
 | ERC-20   | Token contract | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
