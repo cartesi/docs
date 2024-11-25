@@ -146,7 +146,8 @@
             "items": [
                 "resources/community-tools",
                 "resources/mainnet-considerations",
-                "resources/migration-guide"
+                "resources/migration-guide",
+                "resources/integration-guides"
             ]
         },
         {
