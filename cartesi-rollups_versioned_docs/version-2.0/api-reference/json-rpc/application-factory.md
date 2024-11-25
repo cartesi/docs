@@ -1,5 +1,6 @@
 ---
 id: application-factory
+
 title: ApplicationFactory
 resources:
   - url: https://github.com/cartesi/rollups-contracts/blob/prerelease/2.0.0/contracts/dapp/ApplicationFactory.sol
@@ -8,9 +9,11 @@ resources:
 
 The **ApplicationFactory** contract is a tool for reliably deploying new instances of the [`CartesiDApp`](../json-rpc/application.md) contract with or without a specified salt value for address derivation.
 
+
 Additionally, it provides a function to calculate the address of a potential new `CartesiDApp` contract based on input parameters.
 
 This contract ensures efficient and secure deployment of `CartesiDApp` contracts within the Cartesi Rollups framework.
+
 
 ## `newApplication()`
 

@@ -19,7 +19,6 @@ the dApp's input box to signal such operation.
 All the value sent through this function is forwarded to the dApp.
 
 #### Parameters
-
 | Name          | Type    | Description                                              |
 | ------------- | ------- | -------------------------------------------------------- |
 | appContract   | address | The address of the dApp                                  |

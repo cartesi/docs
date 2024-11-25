@@ -10,7 +10,6 @@ The **ERC1155SinglePortal** allows anyone to perform single transfers of ERC-115
 
 ```solidity
 function depositSingleERC1155Token( IERC1155 token, address appContract, uint256 tokenId, uint256 value, bytes calldata baseLayerData, bytes calldata execLayerData) external;
-
 ```
 
 Transfer an ERC-1155 token to a dApp and add an input to
@@ -29,3 +28,4 @@ beforehand, by calling the `setApprovalForAll` function in the token contract.
 | value         | uint256  | Transfer amount                                          |
 | baseLayerData | bytes    | Additional data to be interpreted by the base layer      |
 | execLayerData | bytes    | Additional data to be interpreted by the execution layer |
+
