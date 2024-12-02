@@ -537,4 +537,41 @@ html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
   margin-left: 0.5rem;
 }
 
+.alert--goal {
+  padding: 0;
+  background: var(--ifm-color-warning-contrast-background);
+  overflow: hidden;
+}
+
+.alert--goal div:first-child {
+  padding: 0.75rem var(--ifm-alert-padding-horizontal);
+  background: var(--ifm-color-warning-dark);
+  line-height: 1;
+  color: var(--ifm-alert-foreground-color);
+}
+
+.alert--goal div:last-child {
+  padding: var(--ifm-alert-padding-vertical) var(--ifm-alert-padding-horizontal);
+}
+
+.alert--goal svg {
+  stroke: currentColor !important;
+}
+
+html[data-theme="dark"] .alert--goal div:first-child {
+  color: var(--ifm-background-color);
+}
+
+.alert--troubleshoot {
+  --ifm-alert-background-color: var(--ifm-color-info-contrast-background);
+  --ifm-alert-background-color-highlight: rgba(84, 199, 236, 0.15);
+  --ifm-alert-foreground-color: var(--ifm-color-info-contrast-foreground);
+  --ifm-alert-border-color: var(--ifm-color-info-dark);
+}
+
+.alert--troubleshoot svg {
+  fill: var(--ifm-alert-foreground-color);
+  stroke: none !important;
+}
+
 @tailwind utilities;
