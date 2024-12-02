@@ -1,13 +1,11 @@
 import React from "react";
-import clsx from "clsx";
-import {
-  PageMetadata,
-  useCurrentSidebarCategory,
-} from "@docusaurus/theme-common";
+import { PageMetadata } from "@docusaurus/theme-common";
+import { useCurrentSidebarCategory } from "@docusaurus/plugin-content-docs/client";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import DocCardList from "@theme/DocCardList";
 import DocPaginator from "@theme/DocPaginator";
 import DocVersionBanner from "@theme/DocVersionBanner";
+import DocVersionBadge from "@theme/DocVersionBadge";
 import DocBreadcrumbs from "@theme/DocBreadcrumbs";
 import Heading from "@theme/Heading";
 import styles from "./styles.module.css";
@@ -28,6 +26,7 @@ function DocCategoryGeneratedIndexPageContent({ categoryGeneratedIndex }) {
     <div className={styles.generatedIndexPage}>
       <DocVersionBanner />
       <DocBreadcrumbs />
+      {/* <DocVersionBadge /> */}
       <header>
         <Heading as="h1" className={styles.title}>
           {categoryGeneratedIndex.title}
@@ -36,7 +35,7 @@ function DocCategoryGeneratedIndexPageContent({ categoryGeneratedIndex }) {
           <p>{categoryGeneratedIndex.description}</p>
         )}
       </header>
-      <article className={clsx("padding-top--md")}>
+      <article className="margin-top--lg">
         <DocCardList items={category.items} className={styles.list} />
       </article>
       <footer className="margin-top--lg">
