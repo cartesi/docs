@@ -1,28 +1,16 @@
 ---
 id: application
-title: CartesiDApp
+title: Application
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/blob/v1.4.0/onchain/rollups/contracts/dapp/CartesiDApp.sol
-    title: CartesiDApp contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/prerelease/2.0.0/contracts/dapp/Application.sol
+    title: Application contract
   - url: https://docs.openzeppelin.com/contracts/5.x/
     title: OpenZeppelin Contracts
 ---
 
-The **CartesiDApp** contract acts as the base layer incarnation of a dApp running on the execution layer. The dApp can interact with other smart contracts through the execution of [vouchers](../backend/vouchers.md) and the validation of [notices](../backend/notices.md). The dApp frontend on the execution layer generates these outputs, which can be proven in the base layer thanks to claims submitted by a consensus contract.
+The **Application** contract acts as the base layer incarnation of a application running on the execution layer. The application can interact with other smart contracts through the execution an validation of outputs. The application frontend on the execution layer generates these outputs, which can be proven in the base layer thanks to claims submitted by a consensus contract.
 
-Every dApp is subscribed to a consensus contract and governed by a single address, the owner. The consensus has the power to submit claims, which, in turn, are used to validate vouchers and notices. The owner has complete power over the dApp, as it can replace the consensus anytime. Therefore, the users of a dApp must trust both the consensus and the dApp owner.
-
-The dApp developer can choose whichever ownership and consensus models it wants.
-
-Examples of dApp ownership models include:
-
-- no owner (address zero)
-- individual signer (externally-owned account)
-- multiple signers (multi-sig)
-- DAO (decentralized autonomous organization)
-- self-owned dApp (off-chain governance logic)
-
-See `IConsensus` for examples of consensus models.
+Every Application is subscribed to a consensus contract and governed by a single address, the owner. The consensus has the power to submit claims, which, in turn, are used to validate outputs. The owner has complete power over the Application, as it can replace the consensus anytime. Therefore, the users of a application must trust both the consensus and the application owner.
 
 This contract inherits the following OpenZeppelin contracts.
 
@@ -30,39 +18,34 @@ This contract inherits the following OpenZeppelin contracts.
 - `ERC721Holder`
 - `ERC1155Holder`
 - `ReentrancyGuard`
+- `IERC721Receiver`
+- `BitMaps`
 
-For more information, please consult [OpenZeppelin's official documentation](https://docs.openzeppelin.com/contracts/4.x/).
+For more information, please consult [OpenZeppelin's official documentation](https://docs.openzeppelin.com/contracts/5.x/).
 
-## `executeVoucher()`
+## `executeOutput()`
 
 ```solidity
-function executeVoucher(address _destination, bytes _payload, struct Proof _proof) external returns (bool)
+function executeOutput(bytes calldata output, OutputValidityProof calldata proof) external override nonReentrant (bool)
 ```
 
-Try to execute a voucher.
+Try to execute a output.
 
-Reverts if voucher was already successfully executed.
+Reverts if output was already successfully executed or if the If the caller is attempting to execute a non-executable output.
 
-_On a successful execution, emits a `VoucherExecuted` event._
+_On a successful execution, emits a `OutputExecuted` event._
 
 ### Parameters
 
 | Name          | Type         | Description                                                                                        |
 | ------------- | ------------ | -------------------------------------------------------------------------------------------------- |
-| \_destination | address      | The address that will receive the payload through a message call                                   |
-| \_payload     | bytes        | The payload, which—in the case of Solidity contracts—encodes a function call                       |
-| \_proof       | struct Proof | The proof used to validate the voucher against a claim submitted by the current consensus contract |
+| output     | bytes        | The output contains, encapsulated in the form of bytes to be decoded within the function logic, the destination contract (address), the output value (uint256), and the payload (bytes) which encodes a function call.                  |
+| proof       | struct OutputValidityProof | The proof used to validate the output against a claim submitted by the current consensus contract |
 
-### Return Values
-
-| Name | Type | Description                                 |
-| ---- | ---- | ------------------------------------------- |
-| [0]  | bool | Whether the execution was successful or not |
-
-## `wasVoucherExecuted()`
+## `wasOutputExecuted()`
 
 ```solidity
-function wasVoucherExecuted(uint256 _inboxInputIndex, uint256 _outputIndex) external view returns (bool)
+function wasOutputExecuted(uint256 outputIndex) external view override returns (bool)
 ```
 
 Check whether a voucher has been executed.
@@ -71,51 +54,61 @@ Check whether a voucher has been executed.
 
 | Name              | Type    | Description                              |
 | ----------------- | ------- | ---------------------------------------- |
-| \_inboxInputIndex | uint256 | The index of the input in the input box  |
-| \_outputIndex     | uint256 | The index of output emitted by the input |
+| outputIndex     | uint256 | The index of output emitted by the input |
 
 ### Return Values
 
 | Name | Type | Description                                  |
 | ---- | ---- | -------------------------------------------- |
-| [0]  | bool | Whether the voucher has been executed before |
-
-## `validateNotice()`
-
-```solidity
-function validateNotice(bytes _notice, struct Proof _proof) external view returns (bool)
-```
-
-Validate a notice.
-
-### Parameters
-
-| Name     | Type                   | Description                 |
-| -------- | ---------------------- | --------------------------- |
-| \_notice | bytes                  | The notice                  |
-| \_proof  | struct [Proof](#proof) | Data for validating outputs |
-
-### Return Values
-
-| Name | Type | Description                        |
-| ---- | ---- | ---------------------------------- |
-| [0]  | bool | Whether the notice is valid or not |
+| [0]  | bool | Whether the output has been executed before |
 
 ## `migrateToConsensus()`
 
 ```solidity
-function migrateToConsensus(contract IConsensus _newConsensus) external
+function migrateToConsensus(IConsensus newConsensus) external override onlyOwner;
 ```
 
-Migrate the dApp to a new consensus.
+Migrate the Application to a new consensus.
 
-_Can only be called by the dApp owner._
+_Can only be called by the Application owner._
 
 ### Parameters
 
 | Name           | Type                | Description       |
 | -------------- | ------------------- | ----------------- |
-| \_newConsensus | contract IConsensus | The new consensus |
+| \_newConsensus | contract IConsensus | The new consensus address |
+
+## `validateOutput()`
+
+```solidity
+function validateOutput(bytes calldata output, OutputValidityProof calldata proof) public view override;
+```
+
+Validate a output.
+
+### Parameters
+
+| Name     | Type                   | Description                 |
+| -------- | ---------------------- | --------------------------- |
+| output | bytes                  | The output                  |
+| proof  | struct OutputValidityProof | Data for validating outputs |
+
+Reverts if the output or its corresponding proof is invalid.
+
+## `validateOutputHash()`
+
+```solidity
+function validateOutputHash(bytes32 outputHash, OutputValidityProof calldata proof) public view override;
+```
+
+Verifies the hash of an output against its proof.
+
+| Name         | Type                       | Description                       |
+|--------------|-------------------------------|-----------------------------------|
+| outputHash   | bytes32                    | The hash of the output            |
+| proof        | struct OutputValidityProof | The proof used to validate the output against a claim submitted by the current consensus contract    |
+
+Reverts if the proof's integrity check fails or if the output Merkle root hash was ever accepted by the consensus for a particular application.
 
 ## `getTemplateHash()`
 
@@ -123,18 +116,18 @@ _Can only be called by the dApp owner._
 function getTemplateHash() external view returns (bytes32)
 ```
 
-Get the dApp's template hash.
+Get the application template hash.
 
 ### Return Values
 
 | Name | Type    | Description              |
 | ---- | ------- | ------------------------ |
-| [0]  | bytes32 | The dApp's template hash |
+| [0]  | bytes32 | The application template hash |
 
 ## `getConsensus()`
 
 ```solidity
-function getConsensus() external view returns (contract IConsensus)
+function getConsensus() external view override returns (IConsensus);
 ```
 
 Get the current consensus.
@@ -153,25 +146,7 @@ receive() external payable
 
 Accept Ether transfers.
 
-_If you wish to transfer Ether to a dApp while informing
-the dApp backend of it, then please do so through the Ether portal contract._
-
-## `withdrawEther()`
-
-```solidity
-function withdrawEther(address _receiver, uint256 _value) external
-```
-
-Transfer some amount of Ether to some recipient.
-
-_This function can only be called by the dApp itself through vouchers._
-
-### Parameters
-
-| Name       | Type    | Description                                        |
-| ---------- | ------- | -------------------------------------------------- |
-| \_receiver | address | The address which will receive the amount of Ether |
-| \_value    | uint256 | The amount of Ether to be transferred in Wei       |
+_If the caller wants to transfer Ether to an application while informing the backend of it, then please do so through the Ether portal contract._
 
 ### `NewConsensus()`
 
@@ -187,64 +162,17 @@ A new consensus is used, this event is emitted when a new consensus is set. This
 | ------------ | ---------- | -------------------------- |
 | newConsensus | IConsensus | The new consensus contract |
 
-## `VoucherExecuted()`
+## `OutputExecuted()`
 
 ```solidity
-event VoucherExecuted(uint256 voucherId);
+event OutputExecuted(uint64 outputIndex, bytes output);
 ```
 
-A voucher was executed from the dApp, this event is emitted when a voucher is executed so it must be triggered on a successful call to [executeVoucher](#executevoucher).
+A output was executed from the Application, this event is emitted when a output is executed so it must be triggered on a successful call to [executeOutput](#executeOutput).
 
 ### Parameters
 
-| Name      | Type    | Description                                                                             |
-| --------- | ------- | --------------------------------------------------------------------------------------- |
-| voucherId | uint256 | A number that uniquely identifies the voucher amongst all vouchers emitted by this dApp |
-
-## `Proof`
-
-Data for validating outputs
-
-```solidity
-struct Proof {
-    OutputValidityProof validity;
-    bytes context;
-}
-```
-
-### Members
-
-| Name     | Type                                        | Description                                      |
-| -------- | ------------------------------------------- | ------------------------------------------------ |
-| validity | [OutputValidityProof](#outputvalidityproof) | A validity proof for the output                  |
-| context  | bytes                                       | Data for querying the right claim from consensus |
-
-## `OutputValidityProof`
-
-Data used to prove the validity of an output (notices and vouchers)
-
-```solidity
-struct OutputValidityProof {
-  uint256 inputIndexWithinEpoch;
-  uint256 outputIndexWithinInput;
-  bytes32 outputHashesRootHash;
-  bytes32 vouchersEpochRootHash;
-  bytes32 noticesEpochRootHash;
-  bytes32 machineStateHash;
-  bytes32[] outputHashInOutputHashesSiblings;
-  bytes32[] outputHashesInEpochSiblings;
-}
-```
-
-### Members
-
-| Name                             | Type      | Description                                                       |
-| -------------------------------- | --------- | ----------------------------------------------------------------- |
-| inputIndexWithinEpoch            | uint256   | Which input, inside the epoch, the output belongs to              |
-| outputIndexWithinInput           | uint256   | Index of output emitted by the input                              |
-| outputHashesRootHash             | bytes32   | Merkle root of hashes of outputs emitted by the input             |
-| vouchersEpochRootHash            | bytes32   | Merkle root of all epoch's voucher metadata hashes                |
-| noticesEpochRootHash             | bytes32   | Merkle root of all epoch's notice metadata hashes                 |
-| machineStateHash                 | bytes32   | Hash of the machine state claimed this epoch                      |
-| outputHashInOutputHashesSiblings | bytes32[] | Proof that this output metadata is in metadata memory range       |
-| outputHashesInEpochSiblings      | bytes32[] | Proof that this output metadata is in epoch's output memory range |
+| Name         | Type    | Description           |
+|--------------|---------|-----------------------|
+| outputIndex  | uint64  | The index of the output |
+| output       | bytes   | The output             |
