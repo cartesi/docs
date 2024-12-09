@@ -6,8 +6,9 @@
             "collapsed": true,
             "items": [
                 "getting-started/overview",
-                "getting-started/quickstart",
-                "getting-started/installation"
+                "getting-started/concepts",
+                "getting-started/architecture",
+                "getting-started/quickstart"
             ]
         },
         {
@@ -16,7 +17,6 @@
             "collapsed": true,
             "items": [
                 "api-reference/http-api",
-                "api-reference/architecture",
                 {
                     "type": "category",
                     "label": "Base Layer Contracts",
@@ -110,6 +110,7 @@
             "label": "Development",
             "collapsed": true,
             "items": [
+                "development/installation",
                 "development/building-a-dapp",
                 "development/send-inputs",
                 "development/query-outputs",
