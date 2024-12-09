@@ -446,10 +446,6 @@ const config = {
             from: "/cartesi-rollups/2.0/quickstart/",
           },
           {
-            to: "/cartesi-rollups/2.0/getting-started/installation/",
-            from: "/cartesi-rollups/2.0/development/installation/",
-          },
-          {
             to: "/cartesi-rollups/2.0/api-reference/architecture/",
             from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
           },
@@ -460,10 +456,6 @@ const config = {
           {
             to: "/cartesi-rollups/2.0/resources/mainnet-considerations/",
             from: "/cartesi-rollups/2.0/core-concepts/mainnet-considerations/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/getting-started/installation/",
-            from: "/cartesi-rollups/2.0/development/installation/",
           },
           {
             to: "/cartesi-rollups/2.0/development/building-a-dapp/",
