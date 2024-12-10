@@ -574,4 +574,10 @@ html[data-theme="dark"] .alert--goal div:first-child {
   stroke: none !important;
 }
 
+@media (min-width: 1440px) {
+  .container-footer {
+    max-width: var(--ifm-container-width-xl);
+  }
+}
+
 @tailwind utilities;
