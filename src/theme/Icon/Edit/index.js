@@ -12,7 +12,7 @@ export default function IconEdit({ className, ...restProps }) {
       className={clsx(styles.iconEdit, className)}
       {...restProps}
     >
-      <g clip-path="url(#clip0_221_272)">
+      <g clipPath="url(#clip0_221_272)">
         <path
           fillRule="evenodd"
           clipRule="evenodd"
