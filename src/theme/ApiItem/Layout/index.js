@@ -70,7 +70,7 @@ function DocItemLayout({ children }) {
           "article",
           null,
           react_1.default.createElement(DocBreadcrumbs_1.default, null),
-          react_1.default.createElement(DocVersionBadge_1.default, null),
+          // react_1.default.createElement(DocVersionBadge_1.default, null),
           docTOC.mobile,
           react_1.default.createElement(Content_1.default, null, children),
           react_1.default.createElement(
