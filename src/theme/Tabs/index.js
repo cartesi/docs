@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import {
   useScrollPositionBlocker,
   useTabs,
+  sanitizeTabsChildren,
 } from '@docusaurus/theme-common/internal';
 import useIsBrowser from '@docusaurus/useIsBrowser';
 import styles from './styles.module.css';
@@ -84,7 +85,9 @@ function TabContent({lazy, children, selectedValue}) {
       // fail-safe or fail-fast? not sure what's best here
       return null;
     }
-    return cloneElement(selectedTabItem, {className: 'tab-item-container'});
+    return cloneElement(selectedTabItem, {
+      className: clsx('tab-item-container', selectedTabItem.props.className),
+    });
   }
   return (
     <div className="tab-item-container">
@@ -101,8 +104,8 @@ function TabsComponent(props) {
   const tabs = useTabs(props);
   return (
     <div className={clsx('tabs-container', styles.tabList)}>
-      <TabList {...props} {...tabs} />
-      <TabContent {...props} {...tabs} />
+      <TabList {...tabs} {...props} />
+      <TabContent {...tabs} {...props} />
     </div>
   );
 }
@@ -113,7 +116,8 @@ export default function Tabs(props) {
       // Remount tabs after hydration
       // Temporary fix for https://github.com/facebook/docusaurus/issues/5653
       key={String(isBrowser)}
-      {...props}
-    />
+      {...props}>
+      {sanitizeTabsChildren(props.children)}
+    </TabsComponent>
   );
 }
