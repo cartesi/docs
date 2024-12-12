@@ -11,8 +11,9 @@
  *   Some option.
  */
 
-const visit = require("unist-util-visit");
-const escapeStringRegexp = require("escape-string-regexp");
+import { visit } from "unist-util-visit";
+
+import escapeStringRegexp from "escape-string-regexp";
 
 //const plugin: Plugin<[Options], Root> = (options) => {
 /** @type {import('unified').Plugin<[Options?], Root>} */
@@ -45,4 +46,4 @@ const plugin = (options) => {
     });
 };
 
-module.exports = plugin;
+export default plugin;

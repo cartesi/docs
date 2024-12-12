@@ -1,9 +1,9 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
-const replacementPlugin = require("./src/remark/replacement");
+const replacementPlugin = require("./src/remark/replacement").default;
+
+import { themes as prismThemes } from "prism-react-renderer";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -18,6 +18,7 @@ const config = {
   organizationName: "cartesi", // Usually your GitHub org/user name.
   projectName: "cartesi", // Usually your repo name.
   scripts: ["/js/index.js"],
+  // markdown: { format: "md" }, // NOTE: Use this to disable MDX and use MD instead
   presets: [
     [
       "classic",
@@ -52,7 +53,7 @@ const config = {
           trackingID: "GTM-NGX36B79",
           anonymizeIP: true,
         },
-        
+
         googleTagManager: {
           containerId: "GTM-NGX36B79",
         },
@@ -328,8 +329,8 @@ const config = {
         },
       },
       prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
+        theme: prismThemes.github,
+        darkTheme: prismThemes.dracula,
         additionalLanguages: ["lua"],
       },
     }),
@@ -342,7 +343,8 @@ const config = {
         routeBasePath: "cartesi-rollups",
         // sidebarPath: require.resolve("./sidebarsRollups.js"),
         editUrl: "https://github.com/cartesi/docs/tree/main",
-        docLayoutComponent: "@theme/DocPage",
+        // docLayoutComponent: "@theme/DocRoot",
+        // docRootComponent: "@theme/DocPage",
         docItemComponent: "@theme/ApiItem",
         includeCurrentVersion: false,
         lastVersion: "1.5",
