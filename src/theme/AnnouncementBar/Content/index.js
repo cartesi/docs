@@ -93,8 +93,6 @@ export default function AnnouncementBarContent(props) {
     }
 
     updateContent();
-
-    console.log("Content Vars: ", contentVars);
   }, [contentVars, balanceLoaded]);
   return (
     <div
