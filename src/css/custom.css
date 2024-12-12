@@ -200,8 +200,10 @@ html[data-theme="dark"] {
 
 .navbar__item--version {
   display: inline-block !important;
-  border: 1px solid var(--docusaurus-tag-list-border);
   font-size: 0.875rem;
+  background: var(--ifm-color-secondary);
+  height: 2rem;
+  padding: 0.25rem 0.5rem;
 }
 
 /* Menu */
@@ -433,14 +435,20 @@ html[data-theme="dark"] {
 
 /* // Version Dropdown */
 .dropdown-version {
-  @apply flex items-center gap-2 px-2 sm:px-4 py-2 sm:pt-6 pb-6 sm:pb-2 relative;
+  @apply inline-flex sm:mx-4 my-2 sm:my-6 mb-6 sm:mb-2 relative p-0 w-fit;
 }
 
 .dropdown-version .navbar__item--version {
   border-radius: var(--ifm-global-radius);
   background: var(--ifm-color-secondary);
-  border: 0;
+  border: 0 !important;
   font-size: 0.75rem;
+  height: auto;
+  position: relative;
+  text-align: center;
+  color: #000 !important;
+  padding: var(--ifm-navbar-item-padding-vertical)
+    var(--ifm-navbar-item-padding-horizontal);
 }
 
 .dropdown-version .dropdown__menu {
@@ -455,11 +463,6 @@ html[data-theme="dark"] {
 html[data-theme="dark"] .dropdown-version .navbar__item--version > *,
 html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
   color: #000;
-}
-
-.dropdown-version .navbar__item--version::before {
-  content: "Version ";
-  color: var(--ifm-font-color-base);
 }
 
 /* Sidebar */
