@@ -1,22 +1,20 @@
-import React, {isValidElement} from 'react';
+import React from 'react';
 import CodeBlock from '@theme/CodeBlock';
-export default function MDXCode(props) {
-  const inlineElements = [
-    'a',
-    'b',
-    'big',
-    'i',
-    'span',
-    'em',
-    'strong',
-    'sup',
-    'sub',
-    'small',
-  ];
-  const shouldBeInline = React.Children.toArray(props.children).every(
-    (el) =>
-      (typeof el === 'string' && !el.includes('\n')) ||
-      (isValidElement(el) && inlineElements.includes(el.props?.mdxType)),
+import CodeInline from '@theme/CodeInline';
+function shouldBeInline(props) {
+  return (
+    // empty code blocks have no props.children,
+    // see https://github.com/facebook/docusaurus/pull/9704
+    typeof props.children !== 'undefined' &&
+    React.Children.toArray(props.children).every(
+      (el) => typeof el === 'string' && !el.includes('\n'),
+    )
   );
-  return shouldBeInline ? <code {...props} /> : <CodeBlock {...props} />;
+}
+export default function MDXCode(props) {
+  return shouldBeInline(props) ? (
+    <CodeInline {...props} />
+  ) : (
+    <CodeBlock {...props} />
+  );
 }
