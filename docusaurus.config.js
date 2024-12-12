@@ -5,53 +5,6 @@ const replacementPlugin = require("./src/remark/replacement").default;
 
 import { themes as prismThemes } from "prism-react-renderer";
 
-const fs = require("fs");
-const path = require("path");
-
-// Get all versions from the versioned_docs directory
-const apiFolder = (version) => {
-  const apiFolders = {
-    "version-0.8": "api",
-    "version-0.9": "api",
-    "version-1.0": "api",
-    "version-2.0": "api-reference",
-  };
-
-  return apiFolders[version] || "rollups-apis";
-};
-
-const versionsDir = path.join(__dirname, "cartesi-rollups_versioned_docs");
-const versions = fs
-  .readdirSync(versionsDir)
-  .filter((dir) => dir.startsWith("version-"));
-
-const openApiDocsConfig = versions.reduce((config, version) => {
-  config[`${version}-backEndApi`] = {
-    specPath: path.join(
-      versionsDir,
-      version,
-      apiFolder(version),
-      "rollup.yaml"
-    ),
-    outputDir: path.join(versionsDir, version, apiFolder(version), "rollup"),
-    sidebarOptions: {
-      groupPathsBy: "tag",
-    },
-  };
-
-  config[`${version}-frontEndApi`] = {
-    specPath: path.join(
-      versionsDir,
-      version,
-      apiFolder(version),
-      "inspect.yaml"
-    ),
-    outputDir: path.join(versionsDir, version, apiFolder(version), "inspect"),
-  };
-
-  return config;
-}, {});
-
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Cartesi Documentation",
