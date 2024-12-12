@@ -6,7 +6,7 @@ import {
 } from "@docusaurus/theme-common";
 import { useNavbarMobileSidebar } from "@docusaurus/theme-common/internal";
 import DocSidebarItems from "@theme/DocSidebarItems";
-import DropdownVersion from "../../../components/SelectVersion/DropdownVersion";
+import DropdownVersion from "@site/src/components/SelectVersion/DropdownVersion";
 // eslint-disable-next-line react/function-component-definition
 const DocSidebarMobileSecondaryMenu = ({ sidebar, path }) => {
   const mobileSidebar = useNavbarMobileSidebar();

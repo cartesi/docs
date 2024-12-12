@@ -1,104 +1,89 @@
-import React, { useState, useRef, useEffect } from "react";
-import clsx from "clsx";
+import React from "react";
 import {
-  isRegexpStringMatch,
-  useCollapsible,
-  Collapsible,
-} from "@docusaurus/theme-common";
-import {
-  isSamePath,
-  useLocalPathname,
-} from "@docusaurus/theme-common/internal";
-import NavbarNavLink from "@theme/NavbarItem/NavbarNavLink";
-import NavbarItem from "@theme/NavbarItem";
-
-function DropdownNavbarItemDesktop({
-  items,
-  position,
-  className,
-  onClick,
-  ...props
-}) {
-  const dropdownRef = useRef(null);
-  const [showDropdown, setShowDropdown] = useState(false);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!dropdownRef.current || dropdownRef.current.contains(event.target)) {
-        return;
-      }
-      setShowDropdown(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, [dropdownRef]);
+  useVersions,
+  useActiveDocContext,
+  useDocsVersionCandidates,
+  useDocsPreferredVersion,
+} from "@docusaurus/plugin-content-docs/client";
+import { translate } from "@docusaurus/Translate";
+import { useLocation } from "@docusaurus/router";
+import DefaultNavbarItem from "@theme/NavbarItem/DefaultNavbarItem";
+import DropdownNavbarItem from "@theme/NavbarItem/DropdownNavbarItem";
+function getVersionMainDoc(version) {
+  return version.docs.find((doc) => doc.id === version.mainDocId);
+}
+function getVersionTargetDoc(version, activeDocContext) {
+  // We try to link to the same doc, in another version
+  // When not possible, fallback to the "main doc" of the version
   return (
-    <div
-      ref={dropdownRef}
-      className={clsx(
-        "navbar__item",
-        "dropdown",
-        "dropdown--hoverable",
-        "navbar__item--version",
-        {
-          "dropdown--right": position === "right",
-          "dropdown--show": showDropdown,
-        }
-      )}
-    >
-      <NavbarNavLink
-        aria-haspopup="true"
-        aria-expanded={showDropdown}
-        role="button"
-        href={props.to ? undefined : "#"}
-        className={clsx("navbar__link", className)}
-        {...props}
-        onClick={props.to ? undefined : (e) => e.preventDefault()}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            setShowDropdown(!showDropdown);
-          }
-        }}
-      >
-        {props.children ?? props.label}
-      </NavbarNavLink>
-      <ul className="dropdown__menu">
-        {items.map((childItemProps, i) => (
-          <NavbarItem
-            isDropdownItem
-            onKeyDown={(e) => {
-              if (i === items.length - 1 && e.key === "Tab") {
-                e.preventDefault();
-                setShowDropdown(false);
-                const nextNavbarItem = dropdownRef.current.nextElementSibling;
-                if (nextNavbarItem) {
-                  const targetItem =
-                    nextNavbarItem instanceof HTMLAnchorElement
-                      ? nextNavbarItem
-                      : // Next item is another dropdown; focus on the inner
-                        // anchor element instead so there's outline
-                        nextNavbarItem.querySelector("a");
-                  targetItem.focus();
-                }
-              }
-            }}
-            activeClassName="dropdown__link--active"
-            {...childItemProps}
-            key={i}
-          />
-        ))}
-      </ul>
-    </div>
+    activeDocContext.alternateDocVersions[version.name] ??
+    getVersionMainDoc(version)
   );
 }
-
-export default function DropdownVersionNavbarItem({
-  mobile = false,
+export default function DocsVersionDropdownNavbarItem({
+  mobile,
+  docsPluginId,
+  dropdownActiveClassDisabled,
+  dropdownItemsBefore,
+  dropdownItemsAfter,
   ...props
 }) {
-  return <DropdownNavbarItemDesktop {...props} />;
+  const { search, hash } = useLocation();
+  const activeDocContext = useActiveDocContext(docsPluginId);
+  const versions = useVersions(docsPluginId);
+  const { savePreferredVersionName } = useDocsPreferredVersion(docsPluginId);
+  function versionToLink(version) {
+    const targetDoc = getVersionTargetDoc(version, activeDocContext);
+    return {
+      label: version.label,
+      // preserve ?search#hash suffix on version switches
+      to: `${targetDoc.path}${search}${hash}`,
+      isActive: () => version === activeDocContext.activeVersion,
+      onClick: () => savePreferredVersionName(version.name),
+    };
+  }
+  const items = [
+    ...dropdownItemsBefore,
+    ...versions.map(versionToLink),
+    ...dropdownItemsAfter,
+  ];
+  const dropdownVersion = useDocsVersionCandidates(docsPluginId)[0];
+  // Mobile dropdown is handled a bit differently
+  const dropdownLabel =
+    mobile && items.length > 1
+      ? translate({
+          id: "theme.navbar.mobileVersionsDropdown.label",
+          message: "Versions",
+          description:
+            "The label for the navbar versions dropdown on mobile view",
+        })
+      : dropdownVersion.label;
+  const dropdownTo =
+    mobile && items.length > 1
+      ? undefined
+      : getVersionTargetDoc(dropdownVersion, activeDocContext).path;
+  // We don't want to render a version dropdown with 0 or 1 item. If we build
+  // the site with a single docs version (onlyIncludeVersions: ['1.0.0']),
+  // We'd rather render a button instead of a dropdown
+  if (items.length <= 1) {
+    return (
+      <DefaultNavbarItem
+        {...props}
+        mobile={mobile}
+        label={dropdownLabel}
+        to={dropdownTo}
+        isActive={dropdownActiveClassDisabled ? () => false : undefined}
+      />
+    );
+  }
+  return (
+    <DropdownNavbarItem
+      {...props}
+      mobile={mobile}
+      label={dropdownLabel}
+      to={dropdownTo}
+      items={items}
+      isActive={dropdownActiveClassDisabled ? () => false : undefined}
+    />
+  );
 }
