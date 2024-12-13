@@ -57,12 +57,6 @@ export default function AnnouncementBarContent(props) {
     return formatNumber(balanceInEther);
   };
 
-  // Add all variables and fetchers here
-  const fetchMap = {
-    balance: getBalance(),
-    symbol: symbol,
-  };
-
   // Extract variables from the content
   const contentVars = useMemo(() => {
     return content.match(/{{(.*?)}}/g)?.map((v) => v.slice(2, -2));
@@ -73,6 +67,12 @@ export default function AnnouncementBarContent(props) {
     if (!contentVars) {
       return;
     }
+
+    // Add all variables and fetchers here
+    const fetchMap = {
+      balance: getBalance(),
+      symbol: symbol,
+    };
 
     function fetchVars() {
       return Promise.all(
