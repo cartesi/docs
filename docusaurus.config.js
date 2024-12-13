@@ -10,7 +10,6 @@ const path = require("path");
 
 // Get all versions from the versioned_docs directory
 const apiFolder = (version) => {
-  console.log("version", version);
   const oldApiFolderVersions = ["version-0.8", "version-0.9", "version-1.0"];
 
   return oldApiFolderVersions.includes(version) ? "api" : "rollups-apis";
