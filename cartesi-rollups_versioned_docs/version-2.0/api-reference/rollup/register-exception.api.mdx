@@ -5,25 +5,34 @@ description: "The dApp should call this method when it cannot proceed with the r
 sidebar_label: "Register an exception"
 hide_title: true
 hide_table_of_contents: true
-api: {"operationId":"registerException","description":"The dApp should call this method when it cannot proceed with the request processing after an exception happens.\nThis method should be the last method ever called by the dApp backend while processing a request.\n\nWhen running in production mode, the Cartesi Server Manager pauses the Cartesi Machine and reverts the entire state of the machine to what it was before receiving the request.\nNo HTTP status code will be sent or received.\n\nWhen running in host mode, the Rollup HTTP Server returns the status code 200.\nIn both cases, the input will be skipped with the reason EXCEPTION and the exception message will be forwarded.\n","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"payload":{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Exception"}}}},"responses":{"200":{"description":"Accepted the exception throw."},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}},"method":"post","path":"/exception","servers":[{"url":"https://<dapp_rollup_url>"},{"url":"http://localhost:5005/rollup"}],"jsonRequestBodyExample":{"payload":"0xdeadbeef"},"info":{"title":"Cartesi Rollup HTTP API","version":"0.5.1","license":{"name":"Apache-2.0","url":"https://www.apache.org/licenses/LICENSE-2.0.html"},"description":"API that the Cartesi Rollup HTTP Server implements.\n\nIn the box below, there is an example of a dApp backend that uses the Rollup HTTP API.\n\n```\nimport requests\nimport sys\n\nrollup = sys.argv[1]\n\ndef check_status_code(response):\n    if response.status_code not in range(200, 300):\n        print(f'Error: invalid status code {response.status_code}')\n        sys.exit(1)\n    return response\n\nfinish = {'status': 'accept'}\nwhile True:\n    print('Sending finish')\n    r = check_status_code(requests.post(rollup + '/finish', json=finish))\n    if r.status_code == 202:\n        print('No pending rollup request, trying again')\n        continue\n\n    rollup_request = r.json()\n    if rollup_request['request_type'] == 'advance_state':\n        print('Sending voucher')\n        voucher = {\n            'destination': rollup_request['data']['metadata']['msg_sender'],\n            'payload': rollup_request['data']['payload']\n        }\n        check_status_code(requests.post(rollup + '/voucher', json=voucher))\n\n        print('Sending notice')\n        notice = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/notice', json=notice))\n\n        print('Sending report')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n        finish['status'] = 'accept'\n\n    elif rollup_request['request_type'] == 'inspect_state':\n        print('Sending report per inspect request')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n    else:\n        print('Throwing rollup exception')\n        exception = {'payload': rollup_request['data']['payload']}\n        requests.post(rollup + '/exception', json=exception)\n        break\n```\n\nIn production mode, if the dApp exits the Rollups initialization script will register a Rollup Exception.\nSee [/exception](#api-Default-registerException).\n\nIn host mode, the Cartesi Rollups infrastructure is not able to detect that the dApp exited.\nIt is up to the dApp developer to re-launch the dApp.\n"},"postman":{"name":"Register an exception","description":{"content":"The dApp should call this method when it cannot proceed with the request processing after an exception happens.\nThis method should be the last method ever called by the dApp backend while processing a request.\n\nWhen running in production mode, the Cartesi Server Manager pauses the Cartesi Machine and reverts the entire state of the machine to what it was before receiving the request.\nNo HTTP status code will be sent or received.\n\nWhen running in host mode, the Rollup HTTP Server returns the status code 200.\nIn both cases, the input will be skipped with the reason EXCEPTION and the exception message will be forwarded.\n","type":"text/plain"},"url":{"path":["exception"],"host":["{{baseUrl}}"],"query":[],"variable":[]},"header":[{"key":"Content-Type","value":"application/json"},{"key":"Accept","value":"text/plain"}],"method":"POST","body":{"mode":"raw","raw":"\"\"","options":{"raw":{"language":"json"}}}}}
+api: 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
 sidebar_class_name: "post api-method"
-info_path: cartesi-rollups/_versioned_docs/version-1.5/rollups-apis/rollup/cartesi-rollup-http-api
+info_path: cartesi-rollups/_versioned_docs/version-2.0/rollups-apis/rollup/cartesi-rollup-http-api
 custom_edit_url: null
 ---
 
-import ApiTabs from "@theme/ApiTabs";
-import DiscriminatorTabs from "@theme/DiscriminatorTabs";
-import MethodEndpoint from "@theme/ApiDemoPanel/MethodEndpoint";
-import MimeTabs from "@theme/MimeTabs";
-import ParamsItem from "@theme/ParamsItem";
-import ResponseSamples from "@theme/ResponseSamples";
-import SchemaItem from "@theme/SchemaItem";
-import SchemaTabs from "@theme/SchemaTabs";
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
 import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
 
-<h1 className={"openapi__heading"}>Register an exception</h1>
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Register an exception"}
+>
+</Heading>
 
-<MethodEndpoint method={"post"} path={"/exception"}></MethodEndpoint>
+<MethodEndpoint
+  method={"post"}
+  path={"/exception"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
 
 
 
@@ -37,17 +46,34 @@ When running in host mode, the Rollup HTTP Server returns the status code 200.
 In both cases, the input will be skipped with the reason EXCEPTION and the exception message will be forwarded.
 
 
-<MimeTabs className={"openapi-tabs__mime"}><TabItem label={"application/json"} value={"application/json-schema"}><details style={{}} className={"openapi-markdown__details"} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Request Body</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"payload"} required={false} schemaName={"Payload"} qualifierMessage={undefined} schema={{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}}></SchemaItem></ul></details></TabItem></MimeTabs><div><div><ApiTabs><TabItem label={"200"} value={"200"}><div>
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
 
-Accepted the exception throw.
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
 
-</div><div></div></TabItem><TabItem label={"default"} value={"default"}><div>
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"payload":{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Exception"}}}}}
+>
+  
+</RequestSchema>
 
-Error response.
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Accepted the exception throw."},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}}}
+>
+  
+</StatusCodes>
 
-</div><div><MimeTabs className={"openapi-tabs__mime"} schemaType={"response"}><TabItem label={"text/plain"} value={"text/plain"}><SchemaTabs className={"openapi-tabs__schema"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} className={"openapi-markdown__details"} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><li><div><strong>string</strong><div style={{"marginTop":"var(--ifm-table-cell-padding)"}}>
 
-Detailed error message.
-
-</div></div></li></ul></details></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem></ApiTabs></div></div>
       
