@@ -1,7 +1,42 @@
 ---
 id: finish
 title: "Finish and get next request"
-description: "The dApp backend should call this method to start processing rollup requests.
+description: "The dApp backend should call this method to start processing rollup requests."
+sidebar_label: "Finish and get next request"
+hide_title: true
+hide_table_of_contents: true
+api: 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
+sidebar_class_name: "post api-method"
+info_path: cartesi-rollups/_versioned_docs/version-0.8/api/rollup/cartesi-rollup-http-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Finish and get next request"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/finish"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+The dApp backend should call this method to start processing rollup requests.
 The Rollup HTTP Server returns the next rollup request in the response body.
 
 The possible values for the request_type field are 'advance_state' and 'inspect_state'.
@@ -21,61 +56,36 @@ During a finish call, the next rollup request might not be immediately available
 When the dApp backend and the Rollup HTTP Server are running inside a Cartesi Machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.
 When running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.
 When the Rollup HTTP Server returns 202, the dApp backend should retry the call to finish passing the same arguments as before.
-"
-sidebar_label: Finish and get next request
-hide_title: true
-hide_table_of_contents: true
-api: {"operationId":"finish","description":"The dApp backend should call this method to start processing rollup requests.\nThe Rollup HTTP Server returns the next rollup request in the response body.\n\nThe possible values for the request_type field are 'advance_state' and 'inspect_state'.\nThe data field contains the rollup request input data.\nFor advance-state requests, the input data contains the advance-state metadata and the payload.\nFor inspect-state requests, the input data contains only the payload.\n\nAfter processing an rollup request, the dApp-backend should call again the finish method.\nFor advance-state requests, depending on the result of the request processing, it should fill the status field of the request body with 'accept' or 'reject'.\nThe Rollup HTTP Server ignores the content of the status field for the first finish request and after an inspect-state request.\n\nIf the advance-state request is rejected, the vouchers and notices are discarded.\nIn contrast, reports are not discarded in case of reject.\nWhen running inside a Cartesi Machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.\n\nDuring a finish call, the next rollup request might not be immediately available.\nWhen the dApp backend and the Rollup HTTP Server are running inside a Cartesi Machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.\nWhen running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.\nWhen the Rollup HTTP Server returns 202, the dApp backend should retry the call to finish passing the same arguments as before.\n","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"string","enum":["accept","reject"],"example":"accept"}}}}}},"responses":{"200":{"description":"Finish accepted and next rollup request returned.","content":{"application/json":{"schema":{"type":"object","properties":{"request_type":{"type":"string","enum":["advance_state","inspect_state"],"example":"advance_state"},"data":{"type":"object","oneOf":[{"type":"object","properties":{"metadata":{"type":"object","properties":{"msg_sender":{"type":"string","description":"Ethereum address.","example":"0x1111111111111111111111111111111111111111"},"epoch_index":{"type":"integer","format":"uint64","description":"Identifier encoded as integer.","example":123},"input_index":{"type":"integer","format":"uint64","description":"Identifier encoded as integer.","example":123},"block_number":{"type":"integer","format":"uint64","description":"Identifier encoded as integer.","example":123},"timestamp":{"type":"integer","format":"uint64","description":"Unix timestamp in milliseconds.","example":1609459200000}}},"payload":{"type":"string","description":"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef"}}},{"type":"object","properties":{"payload":{"type":"string","description":"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef"}}}]}}}}}},"202":{"description":"Finish accepted but try again to obtain the next request."},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax"}}}}},"method":"post","path":"/finish","servers":[{"url":"https://<dapp_rollup_url>"},{"url":"http://localhost:5005/rollup"}],"jsonRequestBodyExample":{"status":"accept"},"info":{"title":"Cartesi Rollup HTTP API","version":"0.4.0","license":{"name":"Apache-2.0","url":"https://www.apache.org/licenses/LICENSE-2.0.html"},"description":"API that the Cartesi Rollup HTTP Server implements.\n\nIn the box below, there is an example of a dApp backend that uses the Rollup HTTP API.\n\n```\nimport requests\nimport sys\n\nrollup = sys.argv[1]\n\ndef check_status_code(response):\n    if response.status_code not in range(200, 300):\n        print(f'Error: invalid status code {response.status_code}')\n        sys.exit(1)\n    return response\n\nfinish = {'status': 'accept'}\nwhile True:\n    print('Sending finish')\n    r = check_status_code(requests.post(rollup + '/finish', json=finish))\n    if r.status_code == 202:\n        print('No pending rollup request, trying again')\n        continue\n\n    rollup_request = r.json()\n    if rollup_request['request_type'] == 'advance_state':\n        print('Sending voucher')\n        voucher = {\n            'address': rollup_request['data']['metadata']['msg_sender'],\n            'payload': rollup_request['data']['payload']\n        }\n        check_status_code(requests.post(rollup + '/voucher', json=voucher))\n\n        print('Sending notice')\n        notice = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/notice', json=notice))\n\n        print('Sending report')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n        finish['status'] = 'accept'\n\n    elif rollup_request['request_type'] == 'inspect_state':\n        print('Sending report per inspect request')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n    else:\n        print('Throwing rollup exception')\n        exception = {'payload': rollup_request['data']['payload']}\n        requests.post(rollup + '/exception', json=exception)\n        break\n```\n"},"postman":{"name":"Finish and get next request","description":{"content":"The dApp backend should call this method to start processing rollup requests.\nThe Rollup HTTP Server returns the next rollup request in the response body.\n\nThe possible values for the request_type field are 'advance_state' and 'inspect_state'.\nThe data field contains the rollup request input data.\nFor advance-state requests, the input data contains the advance-state metadata and the payload.\nFor inspect-state requests, the input data contains only the payload.\n\nAfter processing an rollup request, the dApp-backend should call again the finish method.\nFor advance-state requests, depending on the result of the request processing, it should fill the status field of the request body with 'accept' or 'reject'.\nThe Rollup HTTP Server ignores the content of the status field for the first finish request and after an inspect-state request.\n\nIf the advance-state request is rejected, the vouchers and notices are discarded.\nIn contrast, reports are not discarded in case of reject.\nWhen running inside a Cartesi Machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.\n\nDuring a finish call, the next rollup request might not be immediately available.\nWhen the dApp backend and the Rollup HTTP Server are running inside a Cartesi Machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.\nWhen running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.\nWhen the Rollup HTTP Server returns 202, the dApp backend should retry the call to finish passing the same arguments as before.\n","type":"text/plain"},"url":{"path":["finish"],"host":["{{baseUrl}}"],"query":[],"variable":[]},"header":[{"key":"Content-Type","value":"application/json"},{"key":"Accept","value":"application/json"}],"method":"POST","body":{"mode":"raw","raw":"\"\"","options":{"raw":{"language":"json"}}}}}
-sidebar_class_name: "post api-method"
-info_path: cartesi-rollups/api/rollup/cartesi-rollup-http-api
----
 
-import ApiTabs from "@theme/ApiTabs";
-import MimeTabs from "@theme/MimeTabs";
-import ParamsItem from "@theme/ParamsItem";
-import ResponseSamples from "@theme/ResponseSamples";
-import SchemaItem from "@theme/SchemaItem";
-import SchemaTabs from "@theme/SchemaTabs";
-import DiscriminatorTabs from "@theme/DiscriminatorTabs";
-import TabItem from "@theme/TabItem";
 
-## Finish and get next request
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
 
-The dApp backend should call this method to start processing rollup requests.
-The Rollup HTTP Server returns the next rollup request in the response body.
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
 
-The possible values for the request_type field are &#39;advance_state&#39; and &#39;inspect_state&#39;.
-The data field contains the rollup request input data.
-For advance-state requests, the input data contains the advance-state metadata and the payload.
-For inspect-state requests, the input data contains only the payload.
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"string","enum":["accept","reject"],"example":"accept"}},"title":"Finish"}}}}}
+>
+  
+</RequestSchema>
 
-After processing an rollup request, the dApp-backend should call again the finish method.
-For advance-state requests, depending on the result of the request processing, it should fill the status field of the request body with &#39;accept&#39; or &#39;reject&#39;.
-The Rollup HTTP Server ignores the content of the status field for the first finish request and after an inspect-state request.
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Finish accepted and next rollup request returned.","content":{"application/json":{"schema":{"type":"object","properties":{"request_type":{"type":"string","enum":["advance_state","inspect_state"],"example":"advance_state"},"data":{"type":"object","oneOf":[{"type":"object","properties":{"metadata":{"type":"object","properties":{"msg_sender":{"type":"string","description":"Ethereum address.","example":"0x1111111111111111111111111111111111111111","title":"Address"},"epoch_index":{"type":"integer","format":"uint64","description":"Identifier encoded as integer.","example":123,"title":"Id"},"input_index":{"type":"integer","format":"uint64","description":"Identifier encoded as integer.","example":123,"title":"Id"},"block_number":{"type":"integer","format":"uint64","description":"Identifier encoded as integer.","example":123,"title":"Id"},"timestamp":{"type":"integer","format":"uint64","description":"Unix timestamp in milliseconds.","example":1609459200000,"title":"Timestamp"}},"title":"Metadata"},"payload":{"type":"string","description":"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Advance"},{"type":"object","properties":{"payload":{"type":"string","description":"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Inspect"}]}},"title":"RollupRequest"}}}},"202":{"description":"Finish accepted but try again to obtain the next request."},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}}}
+>
+  
+</StatusCodes>
 
-If the advance-state request is rejected, the vouchers and notices are discarded.
-In contrast, reports are not discarded in case of reject.
-When running inside a Cartesi Machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.
 
-During a finish call, the next rollup request might not be immediately available.
-When the dApp backend and the Rollup HTTP Server are running inside a Cartesi Machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.
-When running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.
-When the Rollup HTTP Server returns 202, the dApp backend should retry the call to finish passing the same arguments as before.
-
-<MimeTabs><TabItem label={"application/json"} value={"application/json-schema"}><details style={{}} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Request Body</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"status"} required={false} schemaDescription={undefined} schemaName={"string"} qualifierMessage={"**Possible values:** [`accept`, `reject`]"} defaultValue={undefined}></SchemaItem></ul></details></TabItem></MimeTabs><div><ApiTabs><TabItem label={"200"} value={"200"}><div>
-
-Finish accepted and next rollup request returned.
-
-</div><div><MimeTabs groupId={"mime-type"}><TabItem label={"application/json"} value={"application/json"}><SchemaTabs groupId={"schema-tabs"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"request_type"} required={false} schemaDescription={undefined} schemaName={"string"} qualifierMessage={"**Possible values:** [`advance_state`, `inspect_state`]"} defaultValue={undefined}></SchemaItem><SchemaItem collapsible={true} className={"schemaItem"}><details style={{}}><summary style={{}}><strong>data</strong><span style={{"opacity":"0.6"}}> object</span></summary><div style={{"marginLeft":"1rem"}}><div><div><span className={"badge badge--info"}>oneOf</span><SchemaTabs><TabItem label={"MOD1"} value={"0-item-properties"}><SchemaItem collapsible={true} className={"schemaItem"}><details style={{}}><summary style={{}}><strong>metadata</strong><span style={{"opacity":"0.6"}}> object</span></summary><div style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"msg_sender"} required={false} schemaDescription={"Ethereum address."} schemaName={"string"} qualifierMessage={undefined} defaultValue={undefined}></SchemaItem><SchemaItem collapsible={false} name={"epoch_index"} required={false} schemaDescription={"Identifier encoded as integer."} schemaName={"uint64"} qualifierMessage={undefined} defaultValue={undefined}></SchemaItem><SchemaItem collapsible={false} name={"input_index"} required={false} schemaDescription={"Identifier encoded as integer."} schemaName={"uint64"} qualifierMessage={undefined} defaultValue={undefined}></SchemaItem><SchemaItem collapsible={false} name={"block_number"} required={false} schemaDescription={"Identifier encoded as integer."} schemaName={"uint64"} qualifierMessage={undefined} defaultValue={undefined}></SchemaItem><SchemaItem collapsible={false} name={"timestamp"} required={false} schemaDescription={"Unix timestamp in milliseconds."} schemaName={"uint64"} qualifierMessage={undefined} defaultValue={undefined}></SchemaItem></div></details></SchemaItem><SchemaItem collapsible={false} name={"payload"} required={false} schemaDescription={"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n"} schemaName={"string"} qualifierMessage={undefined} defaultValue={undefined}></SchemaItem></TabItem><TabItem label={"MOD2"} value={"1-item-properties"}><SchemaItem collapsible={false} name={"payload"} required={false} schemaDescription={"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n"} schemaName={"string"} qualifierMessage={undefined} defaultValue={undefined}></SchemaItem></TabItem></SchemaTabs></div></div></div></details></SchemaItem></ul></details></TabItem><TabItem label={"Example (from schema)"} value={"Example (from schema)"}><ResponseSamples responseExample={"{\n  \"request_type\": \"advance_state\",\n  \"data\": {\n    \"metadata\": {\n      \"msg_sender\": \"string\",\n      \"epoch_index\": 0,\n      \"input_index\": 0,\n      \"block_number\": 0,\n      \"timestamp\": 0\n    },\n    \"payload\": \"string\"\n  }\n}"} language={"json"}></ResponseSamples></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem><TabItem label={"202"} value={"202"}><div>
-
-Finish accepted but try again to obtain the next request.
-
-</div><div></div></TabItem><TabItem label={"default"} value={"default"}><div>
-
-Error response.
-
-</div><div><MimeTabs groupId={"mime-type"}><TabItem label={"text/plain"} value={"text/plain"}><SchemaTabs groupId={"schema-tabs"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><li><div><strong>string</strong><div style={{"marginTop":"var(--ifm-table-cell-padding)"}}>
-
-Detailed error message.
-
-</div></div></li></ul></details></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem></ApiTabs></div>
+      
