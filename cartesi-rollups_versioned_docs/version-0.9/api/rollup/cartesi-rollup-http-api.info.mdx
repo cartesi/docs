@@ -1,81 +1,33 @@
 ---
 id: cartesi-rollup-http-api
 title: "Cartesi Rollup HTTP API"
-description: "API that the Cartesi Rollup HTTP Server implements.
-
-In the box below, there is an example of a dApp backend that uses the Rollup HTTP API.
-
-```
-import requests
-import sys
-
-rollup = sys.argv[1]
-
-def check_status_code(response):
-    if response.status_code not in range(200, 300):
-        print(f'Error: invalid status code {response.status_code}')
-        sys.exit(1)
-    return response
-
-finish = {'status': 'accept'}
-while True:
-    print('Sending finish')
-    r = check_status_code(requests.post(rollup + '/finish', json=finish))
-    if r.status_code == 202:
-        print('No pending rollup request, trying again')
-        continue
-
-    rollup_request = r.json()
-    if rollup_request['request_type'] == 'advance_state':
-        print('Sending voucher')
-        voucher = {
-            'destination': rollup_request['data']['metadata']['msg_sender'],
-            'payload': rollup_request['data']['payload']
-        }
-        check_status_code(requests.post(rollup + '/voucher', json=voucher))
-
-        print('Sending notice')
-        notice = {'payload': rollup_request['data']['payload']}
-        check_status_code(requests.post(rollup + '/notice', json=notice))
-
-        print('Sending report')
-        report = {'payload': rollup_request['data']['payload']}
-        check_status_code(requests.post(rollup + '/report', json=report))
-
-        finish['status'] = 'accept'
-
-    elif rollup_request['request_type'] == 'inspect_state':
-        print('Sending report per inspect request')
-        report = {'payload': rollup_request['data']['payload']}
-        check_status_code(requests.post(rollup + '/report', json=report))
-
-    else:
-        print('Throwing rollup exception')
-        exception = {'payload': rollup_request['data']['payload']}
-        requests.post(rollup + '/exception', json=exception)
-        break
-```
-
-In production mode, if the dApp exits the Rollups initialization script will register a Rollup Exception.
-See [/exception](#api-Default-registerException).
-
-In host mode, the Cartesi Rollups infrastructure is not able to detect that the dApp exited.
-It is up to the dApp developer to re-launch the dApp.
-"
+description: "API that the Cartesi Rollup HTTP Server implements."
 sidebar_label: Introduction
 sidebar_position: 0
 hide_title: true
+custom_edit_url: null
 ---
 
 import ApiLogo from "@theme/ApiLogo";
-import Tabs from "@theme/Tabs";
+import Heading from "@theme/Heading";
+import SchemaTabs from "@theme/SchemaTabs";
 import TabItem from "@theme/TabItem";
+import Export from "@theme/ApiExplorer/Export";
 
-<span className={"theme-doc-version-badge badge badge--secondary"}>
-  Version: 0.5.1
+<span
+  className={"theme-doc-version-badge badge badge--secondary"}
+  children={"Version: 0.5.1"}
+>
 </span>
 
-# Cartesi Rollup HTTP API
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Cartesi Rollup HTTP API"}
+>
+</Heading>
+
+
 
 API that the Cartesi Rollup HTTP Server implements.
 
@@ -138,7 +90,18 @@ See [/exception](#api-Default-registerException).
 In host mode, the Cartesi Rollups infrastructure is not able to detect that the dApp exited.
 It is up to the dApp developer to re-launch the dApp.
 
-<div style={{ marginBottom: "var(--ifm-paragraph-margin-bottom)" }}>
-  <h3 style={{ marginBottom: "0.25rem" }}>License</h3>
-  <a href={"https://www.apache.org/licenses/LICENSE-2.0.html"}>Apache-2.0</a>
+
+<div
+  style={{"marginBottom":"var(--ifm-paragraph-margin-bottom)"}}
+>
+  <h3
+    style={{"marginBottom":"0.25rem"}}
+  >
+    License
+  </h3><a
+    href={"https://www.apache.org/licenses/LICENSE-2.0.html"}
+  >
+    Apache-2.0
+  </a>
 </div>
+      
