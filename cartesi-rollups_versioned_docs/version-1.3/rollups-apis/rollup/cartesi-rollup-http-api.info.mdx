@@ -9,13 +9,23 @@ custom_edit_url: null
 ---
 
 import ApiLogo from "@theme/ApiLogo";
+import Heading from "@theme/Heading";
 import SchemaTabs from "@theme/SchemaTabs";
 import TabItem from "@theme/TabItem";
-import Export from "@theme/ApiDemoPanel/Export";
+import Export from "@theme/ApiExplorer/Export";
 
-<span className={"theme-doc-version-badge badge badge--secondary"}>Version: 0.5.1</span>
+<span
+  className={"theme-doc-version-badge badge badge--secondary"}
+  children={"Version: 0.5.1"}
+>
+</span>
 
-<h1 className={"openapi__heading"}>Cartesi Rollup HTTP API</h1>
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Cartesi Rollup HTTP API"}
+>
+</Heading>
 
 
 
@@ -81,5 +91,17 @@ In host mode, the Cartesi Rollups infrastructure is not able to detect that the 
 It is up to the dApp developer to re-launch the dApp.
 
 
-<div style={{"marginBottom":"var(--ifm-paragraph-margin-bottom)"}}><h3 style={{"marginBottom":"0.25rem"}}>License</h3><a href={"https://www.apache.org/licenses/LICENSE-2.0.html"}>Apache-2.0</a></div>
+<div
+  style={{"marginBottom":"var(--ifm-paragraph-margin-bottom)"}}
+>
+  <h3
+    style={{"marginBottom":"0.25rem"}}
+  >
+    License
+  </h3><a
+    href={"https://www.apache.org/licenses/LICENSE-2.0.html"}
+  >
+    Apache-2.0
+  </a>
+</div>
       
