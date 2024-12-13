@@ -5,25 +5,34 @@ description: "The dApp backend can call this method to add a new voucher when pr
 sidebar_label: "Add a new voucher"
 hide_title: true
 hide_table_of_contents: true
-api: {"operationId":"addVoucher","description":"The dApp backend can call this method to add a new voucher when processing an advance-state request.\nVouchers are collateral effects actionable in the blockchain.\nBetween calls to the finish method, the voucher method can be called up to 32k times.\n\nThe returned value is the index of the voucher for the current advance-state request.\nIn other words, the index counting restarts at every request.\n","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"destination":{"type":"string","description":"20-byte address of the destination contract for which the payload will be sent.","example":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"},"payload":{"type":"string","description":"String in Ethereum hex binary format describing a method call to be executed by the destination contract.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xcdcd77c0' corresponds to a payload with length 4 and bytes 205, 205, 119, 192.\nTo describe the method call, the payload should consist of a function selector (method identifier) followed\nby its ABI-encoded arguments.\nref: https://docs.soliditylang.org/en/v0.8.19/abi-spec.html\n","example":"0xcdcd77c000000000000000000000000000000000000000000000000000000000000000450000000000000000000000000000000000000000000000000000000000000001"}},"title":"Voucher"}}}},"responses":{"200":{"description":"Created the voucher.","content":{"application/json":{"schema":{"type":"object","properties":{"index":{"type":"integer","format":"uint64","description":"Position in the Merkle tree.","example":123}},"title":"IndexResponse"}}}},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}},"method":"post","path":"/voucher","servers":[{"url":"https://<dapp_rollup_url>"},{"url":"http://localhost:5005/rollup"}],"jsonRequestBodyExample":{"destination":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","payload":"0xcdcd77c000000000000000000000000000000000000000000000000000000000000000450000000000000000000000000000000000000000000000000000000000000001"},"info":{"title":"Cartesi Rollup HTTP API","version":"0.5.1","license":{"name":"Apache-2.0","url":"https://www.apache.org/licenses/LICENSE-2.0.html"},"description":"API that the Cartesi Rollup HTTP Server implements.\n\nIn the box below, there is an example of a dApp backend that uses the Rollup HTTP API.\n\n```\nimport requests\nimport sys\n\nrollup = sys.argv[1]\n\ndef check_status_code(response):\n    if response.status_code not in range(200, 300):\n        print(f'Error: invalid status code {response.status_code}')\n        sys.exit(1)\n    return response\n\nfinish = {'status': 'accept'}\nwhile True:\n    print('Sending finish')\n    r = check_status_code(requests.post(rollup + '/finish', json=finish))\n    if r.status_code == 202:\n        print('No pending rollup request, trying again')\n        continue\n\n    rollup_request = r.json()\n    if rollup_request['request_type'] == 'advance_state':\n        print('Sending voucher')\n        voucher = {\n            'destination': rollup_request['data']['metadata']['msg_sender'],\n            'payload': rollup_request['data']['payload']\n        }\n        check_status_code(requests.post(rollup + '/voucher', json=voucher))\n\n        print('Sending notice')\n        notice = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/notice', json=notice))\n\n        print('Sending report')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n        finish['status'] = 'accept'\n\n    elif rollup_request['request_type'] == 'inspect_state':\n        print('Sending report per inspect request')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n    else:\n        print('Throwing rollup exception')\n        exception = {'payload': rollup_request['data']['payload']}\n        requests.post(rollup + '/exception', json=exception)\n        break\n```\n\nIn production mode, if the dApp exits the Rollups initialization script will register a Rollup Exception.\nSee [/exception](#api-Default-registerException).\n\nIn host mode, the Cartesi Rollups infrastructure is not able to detect that the dApp exited.\nIt is up to the dApp developer to re-launch the dApp.\n"},"postman":{"name":"Add a new voucher","description":{"content":"The dApp backend can call this method to add a new voucher when processing an advance-state request.\nVouchers are collateral effects actionable in the blockchain.\nBetween calls to the finish method, the voucher method can be called up to 32k times.\n\nThe returned value is the index of the voucher for the current advance-state request.\nIn other words, the index counting restarts at every request.\n","type":"text/plain"},"url":{"path":["voucher"],"host":["{{baseUrl}}"],"query":[],"variable":[]},"header":[{"key":"Content-Type","value":"application/json"},{"key":"Accept","value":"application/json"}],"method":"POST","body":{"mode":"raw","raw":"\"\"","options":{"raw":{"language":"json"}}}}}
+api: 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
 sidebar_class_name: "post api-method"
-info_path: cartesi-rollups/_versioned_docs/version-1.5/rollups-apis/rollup/cartesi-rollup-http-api
+info_path: cartesi-rollups/_versioned_docs/version-2.0/rollups-apis/rollup/cartesi-rollup-http-api
 custom_edit_url: null
 ---
 
-import ApiTabs from "@theme/ApiTabs";
-import DiscriminatorTabs from "@theme/DiscriminatorTabs";
-import MethodEndpoint from "@theme/ApiDemoPanel/MethodEndpoint";
-import MimeTabs from "@theme/MimeTabs";
-import ParamsItem from "@theme/ParamsItem";
-import ResponseSamples from "@theme/ResponseSamples";
-import SchemaItem from "@theme/SchemaItem";
-import SchemaTabs from "@theme/SchemaTabs";
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
 import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
 
-<h1 className={"openapi__heading"}>Add a new voucher</h1>
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Add a new voucher"}
+>
+</Heading>
 
-<MethodEndpoint method={"post"} path={"/voucher"}></MethodEndpoint>
+<MethodEndpoint
+  method={"post"}
+  path={"/voucher"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
 
 
 
@@ -35,17 +44,34 @@ The returned value is the index of the voucher for the current advance-state req
 In other words, the index counting restarts at every request.
 
 
-<MimeTabs className={"openapi-tabs__mime"}><TabItem label={"application/json"} value={"application/json-schema"}><details style={{}} className={"openapi-markdown__details"} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Request Body</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"destination"} required={false} schemaName={"string"} qualifierMessage={undefined} schema={{"type":"string","description":"20-byte address of the destination contract for which the payload will be sent.","example":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"}}></SchemaItem><SchemaItem collapsible={false} name={"payload"} required={false} schemaName={"string"} qualifierMessage={undefined} schema={{"type":"string","description":"String in Ethereum hex binary format describing a method call to be executed by the destination contract.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xcdcd77c0' corresponds to a payload with length 4 and bytes 205, 205, 119, 192.\nTo describe the method call, the payload should consist of a function selector (method identifier) followed\nby its ABI-encoded arguments.\nref: https://docs.soliditylang.org/en/v0.8.19/abi-spec.html\n","example":"0xcdcd77c000000000000000000000000000000000000000000000000000000000000000450000000000000000000000000000000000000000000000000000000000000001"}}></SchemaItem></ul></details></TabItem></MimeTabs><div><div><ApiTabs><TabItem label={"200"} value={"200"}><div>
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
 
-Created the voucher.
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
 
-</div><div><MimeTabs className={"openapi-tabs__mime"} schemaType={"response"}><TabItem label={"application/json"} value={"application/json"}><SchemaTabs className={"openapi-tabs__schema"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} className={"openapi-markdown__details"} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"index"} required={false} schemaName={"uint64"} qualifierMessage={undefined} schema={{"type":"integer","format":"uint64","description":"Position in the Merkle tree.","example":123}}></SchemaItem></ul></details></TabItem><TabItem label={"Example (from schema)"} value={"Example (from schema)"}><ResponseSamples responseExample={"{\n  \"index\": 123\n}"} language={"json"}></ResponseSamples></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem><TabItem label={"default"} value={"default"}><div>
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"destination":{"type":"string","description":"20-byte address of the destination contract for which the payload will be sent.","example":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"},"payload":{"type":"string","description":"String in Ethereum hex binary format describing a method call to be executed by the destination contract.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xcdcd77c0' corresponds to a payload with length 4 and bytes 205, 205, 119, 192.\nTo describe the method call, the payload should consist of a function selector (method identifier) followed\nby its ABI-encoded arguments.\nref: https://docs.soliditylang.org/en/v0.8.19/abi-spec.html\n","example":"0xcdcd77c000000000000000000000000000000000000000000000000000000000000000450000000000000000000000000000000000000000000000000000000000000001"}},"title":"Voucher"}}}}}
+>
+  
+</RequestSchema>
 
-Error response.
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Created the voucher.","content":{"application/json":{"schema":{"type":"object","properties":{"index":{"type":"integer","format":"uint64","description":"Position in the Merkle tree.","example":123}},"title":"IndexResponse"}}}},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}}}
+>
+  
+</StatusCodes>
 
-</div><div><MimeTabs className={"openapi-tabs__mime"} schemaType={"response"}><TabItem label={"text/plain"} value={"text/plain"}><SchemaTabs className={"openapi-tabs__schema"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} className={"openapi-markdown__details"} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><li><div><strong>string</strong><div style={{"marginTop":"var(--ifm-table-cell-padding)"}}>
 
-Detailed error message.
-
-</div></div></li></ul></details></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem></ApiTabs></div></div>
       
