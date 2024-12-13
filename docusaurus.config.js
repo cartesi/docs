@@ -5,6 +5,49 @@ const replacementPlugin = require("./src/remark/replacement").default;
 
 import { themes as prismThemes } from "prism-react-renderer";
 
+const fs = require("fs");
+const path = require("path");
+
+// Get all versions from the versioned_docs directory
+const apiFolder = (version) => {
+  console.log("version", version);
+  const oldApiFolderVersions = ["version-0.8", "version-0.9", "version-1.0"];
+
+  return oldApiFolderVersions.includes(version) ? "api" : "rollups-apis";
+};
+
+const versionsDir = path.join(__dirname, "cartesi-rollups_versioned_docs");
+const versions = fs
+  .readdirSync(versionsDir)
+  .filter((dir) => dir.startsWith("version-"));
+
+const openApiDocsConfig = versions.reduce((config, version) => {
+  config[`${version}-backEndApi`] = {
+    specPath: path.join(
+      versionsDir,
+      version,
+      apiFolder(version),
+      "rollup.yaml"
+    ),
+    outputDir: path.join(versionsDir, version, apiFolder(version), "rollup"),
+    sidebarOptions: {
+      groupPathsBy: "tag",
+    },
+  };
+
+  config[`${version}-frontEndApi`] = {
+    specPath: path.join(
+      versionsDir,
+      version,
+      apiFolder(version),
+      "inspect.yaml"
+    ),
+    outputDir: path.join(versionsDir, version, apiFolder(version), "inspect"),
+  };
+
+  return config;
+}, {});
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Cartesi Documentation",
@@ -29,6 +72,7 @@ const config = {
           path: "docs",
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
+          docItemComponent: "@theme/ApiItem",
           // Please change this to your repo.
           editUrl: "https://github.com/cartesi/docs/tree/develop",
 
@@ -529,24 +573,7 @@ const config = {
       {
         id: "apiDocs",
         docsPluginId: "cartesi-rollups",
-        config: {
-          backEndApi: {
-            // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath:
-              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup.yaml", // Path to designated spec file
-            outputDir:
-              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup", // Output directory for generated .mdx docs
-            sidebarOptions: {
-              groupPathsBy: "tag",
-            },
-          },
-          frontEndApi: {
-            specPath:
-              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect.yaml",
-            outputDir:
-              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect",
-          },
-        },
+        config: openApiDocsConfig,
       },
     ],
 
