@@ -1,44 +1,74 @@
 ---
 id: register-exception
 title: "Register an exception"
-description: "The dApp should call this method when it cannot proceed with the request processing after an exception happens.
-This method should be the last method ever called by the dApp backend, and it should not expect the call to return.
-The Rollup HTTP Server will pass the exception info to the Cartesi Server Manager.
-"
-sidebar_label: Register an exception
+description: "The dApp should call this method when it cannot proceed with the request processing after an exception happens."
+sidebar_label: "Register an exception"
 hide_title: true
 hide_table_of_contents: true
-api: {"operationId":"registerException","description":"The dApp should call this method when it cannot proceed with the request processing after an exception happens.\nThis method should be the last method ever called by the dApp backend, and it should not expect the call to return.\nThe Rollup HTTP Server will pass the exception info to the Cartesi Server Manager.\n","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"payload":{"type":"string","description":"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef"}}}}}},"responses":{"200":{"description":"Accepted the exception throw."},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax"}}}}},"method":"post","path":"/exception","servers":[{"url":"https://<dapp_rollup_url>"},{"url":"http://localhost:5005/rollup"}],"jsonRequestBodyExample":{"payload":"0xdeadbeef"},"info":{"title":"Cartesi Rollup HTTP API","version":"0.4.0","license":{"name":"Apache-2.0","url":"https://www.apache.org/licenses/LICENSE-2.0.html"},"description":"API that the Cartesi Rollup HTTP Server implements.\n\nIn the box below, there is an example of a dApp backend that uses the Rollup HTTP API.\n\n```\nimport requests\nimport sys\n\nrollup = sys.argv[1]\n\ndef check_status_code(response):\n    if response.status_code not in range(200, 300):\n        print(f'Error: invalid status code {response.status_code}')\n        sys.exit(1)\n    return response\n\nfinish = {'status': 'accept'}\nwhile True:\n    print('Sending finish')\n    r = check_status_code(requests.post(rollup + '/finish', json=finish))\n    if r.status_code == 202:\n        print('No pending rollup request, trying again')\n        continue\n\n    rollup_request = r.json()\n    if rollup_request['request_type'] == 'advance_state':\n        print('Sending voucher')\n        voucher = {\n            'address': rollup_request['data']['metadata']['msg_sender'],\n            'payload': rollup_request['data']['payload']\n        }\n        check_status_code(requests.post(rollup + '/voucher', json=voucher))\n\n        print('Sending notice')\n        notice = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/notice', json=notice))\n\n        print('Sending report')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n        finish['status'] = 'accept'\n\n    elif rollup_request['request_type'] == 'inspect_state':\n        print('Sending report per inspect request')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n    else:\n        print('Throwing rollup exception')\n        exception = {'payload': rollup_request['data']['payload']}\n        requests.post(rollup + '/exception', json=exception)\n        break\n```\n"},"postman":{"name":"Register an exception","description":{"content":"The dApp should call this method when it cannot proceed with the request processing after an exception happens.\nThis method should be the last method ever called by the dApp backend, and it should not expect the call to return.\nThe Rollup HTTP Server will pass the exception info to the Cartesi Server Manager.\n","type":"text/plain"},"url":{"path":["exception"],"host":["{{baseUrl}}"],"query":[],"variable":[]},"header":[{"key":"Content-Type","value":"application/json"},{"key":"Accept","value":"text/plain"}],"method":"POST","body":{"mode":"raw","raw":"\"\"","options":{"raw":{"language":"json"}}}}}
+api: eJztV99v2zYQ/lcIvSjBXNtNVwwzlgFZl2EBti5ovCfHSGnpbKmRSY2kYhuG//d9R1K2nKRd1wHDHuaHRDoej99990PHbaJrMtKVWl3lySgxtCitI3O5zqhmadJLcrKZKcPbKBkXJPKLuha20E2Vi0xWlXBFacWSXKFzsSpIidJhQSntRG10RgRx6QrokTD0R0M2LlhbqoWQcxwppBLUHisKWdekbP9WjTu245kz8pYqCTNxhR5ggbHgqNnGL3uUM5ndk8p7sJ4zqmiBkdG6psx51eCEBjbXGOUPJfFOV1VTi5/H42txQ4YPWJXQq6W1ftcBbanmmvez9I00jmzZbvlVKrkgA5ugMvr+g843yWibZFo5Uo4f4W5VZj4Qgw+Wmd4mNitoKfnJbWoC93r2AYhhB9whbK4ky6u13FRa5h1F6wx4fRK766AIuB7pJf4YapaioLWYlUqajZhrs5QuMjAvDRh2Ky2yQhqZIUpWSEMiHa5TqFaVXgW+awlVoedsSuaUlUtZCdUsZ7zDFRLpoI0hW2uEAURpRdjmCAf9pA0AWSdVRj22nJPMZ0TztLPH8iYpoqchmSpSC/z72oeWjVlxdnbWEy+/eYU/3w756TUOuEBeLWu32e9GPhmqYRncH9IlcOZdC8GCJ8u6YjoPmCB2pfPCSGay2x1kh7LZ7Vge0NsQprPhkP8dh+Qi4x1AcZxQrjB61U92HMG5bCr3dOelMWCuPaEPZJ10crR2g7qS5fOJ9JH8+JGcLLmCyNteojyRu/0jLsadEs72tYSKbFSOYDutD4yGCsgb4ughIzi5YN1ulJPrDpXeFU8ZHA4FDWmtrc916Qq8DajTkoJlsDrZJo2psFw4V9vRYPBdjkq6M75077D0PTjs6kCl0ij3AsZHr4fD14Ogm+ymvYQL792hRC9bpzsl1s0FgOXC97xGT9ri7/aOi+srQGa8geVh/+v+EBLUOzqcN6/kkndf1BKRenHml4/9Wq1WfemX+9osBnGvHfxy9eby7c0l7+kXblmFlDnKsOurUIHd5vRMbyvZ1yXyh5vurboKPWKm0RoIdd4Tvltw8fhG7anhipdHjTYc1QCa3/6IB2/5/fv3twqnaePaTLJ7gd1Y1glBEef83pdm8TB5OWU5qgG9iLL7OzQM19i7TOd00hbB6ehWCfzK+aEuOno+U9H7jFQLOkE59sSr4bDdxL8aZeFO5qlPyBF0H2RVImG9DeFtbJ+zvEtPD0YYMq1Ld/IyCsNXZQ+J/ZiXqrQF/NumwUw6Eqn0vSDd3apVgTIUY9NQBBeApTdgmJtU2N4eamDnOVICtX2uo5NI6FciHcTNPcHpfh7eTk8PzB1Rdn4uzoZnTyhK32pRRzDRdDwPeWI2/qO+QPfp8sLtqVSN99/DDkXaNpNznMyITjpQjjQmaXy44y6WThlbKvMH/nB4zyl9irNl7EE3oMh08UQRB+Eg5B+M5ggWx+Qxglw6mU4nKZqU3D/bxR0+Jeh+6bT3yFLsG5+w1GpMDzt3Hc4+P6ythzGu8ZUD+1FSUA/oI11OgsTn5d+A/mWA4+kRb3j7JFx8tNEiunCD5N+BG0+PcMPbMdxQSpO2opGg+5pu1aj6vLTGQMTD6V+mdSSgJj9D+Xk2Wvtv0kSVpafejHna6bSS/ae+68RhOPpyPz6K+nBiBL4XdBDMDMn7+P3i7ywbWUrV+YC/i9eno7vM4zGrM/f/f5v6J7epOMx2Zt1dHJu2cWqcJIcoYL7joY+F2+1MWvrdVLsdi8GgwX1sgscHaUo541FuMoWxAqMeGT9m3tOG57sQuRdjPprVq4YhPLm98dAZdoQBv6PbhTvtjLvXv92MoTaLd8Mlqowv5HLF90b8HSV40N4Xf53wsm1SYZhpwAnWw8n8+xMfanKG
 sidebar_class_name: "post api-method"
-info_path: cartesi-rollups/api/rollup/cartesi-rollup-http-api
+info_path: cartesi-rollups/_versioned_docs/version-0.8/api/rollup/cartesi-rollup-http-api
+custom_edit_url: null
 ---
 
-import ApiTabs from "@theme/ApiTabs";
-import MimeTabs from "@theme/MimeTabs";
-import ParamsItem from "@theme/ParamsItem";
-import ResponseSamples from "@theme/ResponseSamples";
-import SchemaItem from "@theme/SchemaItem";
-import SchemaTabs from "@theme/SchemaTabs";
-import DiscriminatorTabs from "@theme/DiscriminatorTabs";
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
 import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
 
-## Register an exception
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Register an exception"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/exception"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
 
 The dApp should call this method when it cannot proceed with the request processing after an exception happens.
 This method should be the last method ever called by the dApp backend, and it should not expect the call to return.
 The Rollup HTTP Server will pass the exception info to the Cartesi Server Manager.
 
-<MimeTabs><TabItem label={"application/json"} value={"application/json-schema"}><details style={{}} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Request Body</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"payload"} required={false} schemaDescription={"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n"} schemaName={"string"} qualifierMessage={undefined} defaultValue={undefined}></SchemaItem></ul></details></TabItem></MimeTabs><div><ApiTabs><TabItem label={"200"} value={"200"}><div>
 
-Accepted the exception throw.
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
 
-</div><div></div></TabItem><TabItem label={"default"} value={"default"}><div>
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
 
-Error response.
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"payload":{"type":"string","description":"Payload in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Exception"}}}}}
+>
+  
+</RequestSchema>
 
-</div><div><MimeTabs groupId={"mime-type"}><TabItem label={"text/plain"} value={"text/plain"}><SchemaTabs groupId={"schema-tabs"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><li><div><strong>string</strong><div style={{"marginTop":"var(--ifm-table-cell-padding)"}}>
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Accepted the exception throw."},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}}}
+>
+  
+</StatusCodes>
 
-Detailed error message.
 
-</div></div></li></ul></details></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem></ApiTabs></div>
-
+      
