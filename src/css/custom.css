@@ -275,6 +275,11 @@ html[data-theme="dark"] {
   border-bottom: 1px solid var(--ifm-color-emphasis-300);
 }
 
+.openapi-tabs__schema-list-container,
+.openapi-tabs__schema {
+  border-bottom: 0;
+}
+
 .tabs-container:has(.tabs--tabs-only),
 .tabs-container:has(.tabs--content-only) {
   border: 0;
