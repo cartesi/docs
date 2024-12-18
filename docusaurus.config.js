@@ -10,9 +10,14 @@ const path = require("path");
 
 // Get all versions from the versioned_docs directory
 const apiFolder = (version) => {
-  const oldApiFolderVersions = ["version-0.8", "version-0.9", "version-1.0"];
+  const apiFolders = {
+    "version-0.8": "api",
+    "version-0.9": "api",
+    "version-1.0": "api",
+    "version-2.0": "api-reference",
+  };
 
-  return oldApiFolderVersions.includes(version) ? "api" : "rollups-apis";
+  return apiFolders[version] || "rollups-apis";
 };
 
 const versionsDir = path.join(__dirname, "cartesi-rollups_versioned_docs");
@@ -410,7 +415,7 @@ const config = {
           "2.0": {
             label: "2.0",
             path: "2.0",
-          }
+          },
         },
         showLastUpdateTime: true,
       },
@@ -531,7 +536,7 @@ const config = {
           {
             to: "/cartesi-rollups/2.0/resources/community-tools/",
             from: "/cartesi-rollups/2.0/development/community-tools/",
-          }
+          },
         ],
         createRedirects(existingPath) {
           if (existingPath.includes("/cartesi-rollups/1.0/")) {
