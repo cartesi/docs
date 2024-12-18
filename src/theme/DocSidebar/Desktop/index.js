@@ -5,8 +5,7 @@ import Logo from "@theme/Logo";
 import CollapseButton from "@theme/DocSidebar/Desktop/CollapseButton";
 import Content from "@theme/DocSidebar/Desktop/Content";
 import styles from "./styles.module.css";
-import DropdownVersion from "../../../components/SelectVersion/DropdownVersion";
-import SearchBar from "@theme-original/SearchBar";
+import DropdownVersion from "@site/src/components/SelectVersion/DropdownVersion";
 function DocSidebarDesktop({ path, sidebar, onCollapse, isHidden }) {
   const {
     navbar: { hideOnScroll },

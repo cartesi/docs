@@ -3,13 +3,13 @@ id: staking-faq
 title: FAQs
 ---
 
-* [Staking](#staking)
-* [Node operation](#node-operation-faqs)
-* [Fees and costs](#fees-and-costs-faqs)
-* [Block production and rewards](#block-production-and-rewards-faqs)
-* [Security](#security-faqs)
-* [Terminating your staking operation](#terminating-your-staking-operation)
-* [Submit other questions](#submit-a-new-question)
+- [Staking](#staking)
+- [Node operation](#node-operation-faqs)
+- [Fees and costs](#fees-and-costs-faqs)
+- [Block production and rewards](#block-production-and-rewards-faqs)
+- [Security](#security-faqs)
+- [Terminating your staking operation](#terminating-your-staking-operation)
+- [Submit other questions](#submit-a-new-question)
 
 ## Staking
 
@@ -27,15 +27,11 @@ Currently there are 3 different options available to stake CTSI:
 
 The system doesn't impose a limit (you could even stake only 1 CTSI) but as the setup process has costs that do not depend on the amount you are staking (take a look at the costs [here](../staking-faq/#how-much-eth-do-i-need)) and running a node does require maintenance, you should evaluate if the combination of (amount of CTSI/duration of staking) is worth the effort. Relatively low stakes do tend to take a lot of time to be able to produce blocks, so having a relatively low stake will probably make sense only if you are planning to stake for a very long time. For relatively small stakes it might be a better idea to join a decentralized pool, or even stake through a 3rd party centralized custodian service, check those options on this other [FAQ](../staking-faq/#how-do-i-stake).
 
-
-
 ### How much CTSI should I put in the allowance?
 
 The allowance is the maximum total amount of tokens the pool smart contract can transfer out of your wallet. You can set it to any value you want, your wallet amount, less or more.
 
 You need to input a large enough value to match the amount you want to stake, at least. In case you might want to stake more in the future, you may consider a margin in the amount you set on allowance, otherwise you’ll need to raise the value in the future (and that issues a transaction to the Ethereum blockchain, so it has costs). The value you set in allowance is not bounded by the amount of CTSI you own (if you want to stake and own 300 000 CTSI, you may set the allowance to 1 000 000, for example, so you still can add 700 000 CTSI to your stake without having to change your allowance). Currently the Cartesi Explorer automatically sets the allowance for you with the minimum needed value to allow you to stake the desired amount. There is a checkbox that you can tick to make it set the maximum possible value for that, so you won't need to update the allowance value when increasing your stake in the future.
-
-
 
 ### What browser can I use to access the Cartesi Explorer?
 
@@ -45,26 +41,19 @@ Currently we support Chrome and Firefox. Other browsers that support Metamask mi
 
 Current requirements are really low, just a computer or VPS running 24/7, a reliable internet connection and a stable Ethereum Gateway. Your "mining power" is proportional to your stake, not your hardware. Do check periodically for changes in the requirements as they tend to be updated with new releases of Noether.
 
-
-
 ### I want to stake more CTSI, do I need to do something on my node?
 
 No, just add your stake using the Cartesi Explorer as you did the first time. You might need to increase the allowance in case you set a limit lower than the final amount of CTSI you want to stake. After placing your new stake and the staking transaction goes through, your CTSI will mature for 6 hours. When the maturation period is over, the CTSI you staked will automatically count towards your block production chances. Keep in mind that if you stake more CTSI while you still have CTSI maturing, the maturation period will be reset for your previously maturing stake.
 
-
-
 ### Can I transfer funds to my node directly from an exchange?
 
 Yes you can, just make sure to double-check the address you are sending the funds to is the one of your node as there is no way to "get a refund" on funds transferred to the wrong address.
-
-
 
 ### How much ETH should I fund my node with?
 
 It is hard to predict how much you should fund your node with, since there are lots of moving parts like gas price fluctuation, stakes variation and the intrinsic variation in the block production rate. For small stakers, putting enough ETH for the node to accept the hire (~31k gas cost) and produce a couple of blocks (~120k gas per block) should be enough to run the node for some time. That would be roughly 271 x gas_price / 1 000 000 ETH.
 
 There is also a template Google sheet you can use to help you to estimate the ETH amount you need [here](https://docs.google.com/spreadsheets/d/1StJqGy5oumXf0tm-4gJotDkeh77SGltINLqBWNE80RY/template/preview). You may take a look at sites like [etherscan gas price history page](https://etherscan.io/chart/gasprice) to estimate an average gas price value. Regardless of the amount you fund your node with, it is always a good idea to check on the node to make sure it is still well funded and that it is running fine.
-
 
 ### How much ETH do I need?
 
@@ -77,8 +66,6 @@ There is also a template Google sheet you can use to help you to estimate the ET
 ### Cannot authorize CTSI with my ledger, getting a “Ledger device: Invalid data received” error, what’s wrong?
 
 You have to enable blind signing in the Ethereum application of your ledger. Procedure from [Ledger documentation](https://support.ledger.com/hc/en-us/articles/4405481324433-Enable-blind-signing-in-the-Ethereum-ETH-app?docs=true).
-
-
 
 ### I hired my node in the Cartesi Explorer, but I am stuck with the "Cancel Hire" button in the Explorer. What's going on?
 
@@ -98,71 +85,51 @@ Open a terminal and input this command to make a copy of the encrypted wallet fi
 Backing up the wallet mnemonic
 Open a terminal and input this command to export the wallet mnemonic: docker run -it -v cartesi_wallet:/root/.ethereum cartesi/noether export. It will print the 12-word mnemonic that can be used to generate the node's wallet. As this is not encrypted, take extra care on how to store it since anyone in possession of this can directly derive your node wallet and manipulate its funds.
 
-
 ### How do I change my Ethereum Network Gateway?
 
 Stop your node (one way to do it is using the docker kill cartesi_noether command on a terminal, if you are using the default name for the node container)
-Edit the command you used to start your node before (it should be something like this docker pull cartesi/noether; docker run -it --rm --name cartesi_noether -v cartesi_wallet:/root/.ethereum cartesi/noether --url <YOUR_OLD_ETHEREUM_GATEWAY_URL_HERE> --wallet /root/.ethereum/key --create --verbose), replacing the value in the --url parameter with the url of the new Ethereum Network Gateway you wish to use (example: old value --url https://myoldethgateway.com and new value --url https://mainnet.infura.io/v3/your_infura_project_id_here)
+Edit the command you used to start your node before (it should be something like this docker pull cartesi/noether; docker run -it --rm --name cartesi_noether -v cartesi_wallet:/root/.ethereum cartesi/noether --url `<YOUR_OLD_ETHEREUM_GATEWAY_URL_HERE>` --wallet /root/.ethereum/key --create --verbose), replacing the value in the --url parameter with the url of the new Ethereum Network Gateway you wish to use (example: old value --url https://myoldethgateway.com and new value --url https://mainnet.infura.io/v3/your_infura_project_id_here)
 Start your node using the command from the previous step, enter your password when prompted
 If you are on a terminal, once your node resumes operations, detach from it (default key sequence is ctrl+p followed by ctrl+q, you can learn more about attaching to/detaching from a container in the official [docker documentation](https://docs.docker.com/engine/reference/commandline/attach/)) so your node keeps running once you close the terminal
-
 
 ### I am getting some network errors in my node's log, should I worry?
 
 It depends on the type of error and frequency as having your node not working when eligible to produce will prevent it from producing a block and getting the associated reward. A common source of errors is using an unstable Ethereum Gateway, it causes errors similar to this one:
 
-ERROR: Error: processing response error (body="{"jsonrpc":"2.0","error":{"code":-32600,"message":"Invalid Request. Requested data is older than 128 blocks."},"id":25035}", error={"code":-32600}, requestBody="{"method":"eth_call","params":[{"from":"your_node_address","to":"0x9edeadfde65bcfd0907db3acdb3445229c764a69","data":"some_payload_data"},"latest"],"id":25035,"jsonrpc":"2.0"}", requestMethod="POST", url="https://eth.cartesi.io/", code=SERVER_ERROR, version=web/5.0.12)
+ERROR: Error: processing response error `(body="{"jsonrpc":"2.0","error":{"code":-32600,"message":"Invalid Request. Requested data is older than 128 blocks."},"id":25035}", error={"code":-32600}, requestBody="{"method":"eth_call","params":[{"from":"your_node_address","to":"0x9edeadfde65bcfd0907db3acdb3445229c764a69","data":"some_payload_data"},"latest"],"id":25035,"jsonrpc":"2.0"}", requestMethod="POST", url="https://eth.cartesi.io/", code=SERVER_ERROR, version=web/5.0.12)`
 In case you are getting those, it highly advised to [switch to a stable Ethereum Gateway](http://localhost:3000/earn-ctsi/staking-faq/#how-do-i-change-my-ethereum-network-gateway)(Infura is a good option and the free tier is enough to run a single node)
-
-
 
 ### If I turn off my computer/close the browser window/close the terminal, will my node keep running?
 
 It depends on how you are running your node. If you are running a docker node on a VPS, make sure to detach from the container before closing your session, so the container keeps running. You can detach from a docker container using the default escape sequence of ctrl+p followed by ctrl+q. You can learn more about attaching to/detaching from a container in the [official docker documentation](https://docs.docker.com/engine/reference/commandline/attach/). If you are running a docker container in your local computer, and you manually started the container in a terminal, you have to detach from the container before closing the terminal, so it keeps running in the background. If you used some graphical interface to start your container, you can probably close it safely and your container will continue running in the background but do check your specific tool documentation to make sure of it. When you are running a local node, your node can only run when your computer is on, so if you shutdown your computer, you will not produce blocks when eligible during that period.
 
-
-
 ### My node displays messages repeatedly containing canProduce=false/eligibleForNextBlock=false is this normal?
 
 Yes, that is normal and it is expected to be shown at approximately 30 second intervals. The node periodically pools the Blockchain to check the stake of the user it represents, prints the stake status in the log and then pools the blockchain to check if it is eligible to produce a block at the moment. If it isn't (and that is the case most of the times) it prints an entry containing canProduce=false or eligibleForNextBlock=false to display the result of that check. After that it will sleep for 30 seconds and try this procedure again. In case it returns true, the node will then issue a transaction to try to produce a block.
-
-
 
 ### My node experienced an error while trying to produce a block. The message it shows in the transaction is 'User couldnt produce a block successfully', what is going on?
 
 That means that you were not eligible to produce a block when your transaction was processed. That can happen for a few reasons. The most common reason is losing a race to produce the block to another eligible user: the competing user had his transaction processed before and when your transaction was processed the block was no longer available. Another cause can be there was a sudden surge on gas prices after or transaction was sent, so when gas prices got back to values compatible with the price set on your transaction, your window to claim a block has already passed. A more uncommon reason is if your Ethereum network provider answers from an out-of-synch node, so your node believes it is eligible for producing a block when in reality it is not.
 
-
-
 ### Why does my Infura/Alchemy/other Ethereum Gateway show so many requests if my node has not produced any blocks?
 
 The Ethereum Gateway requests are used for any sorts of operations not just for producing blocks. Your node pools the Ethereum blockchain at 30s intervals to check if it is eligible for producing a block. That check requires multiple “read-only” operations on the Ethereum blockchain and they all count as requests in your Ethereum Gateway. As those operations are “read-only” they don’t require issuing transactions nor spend any gas.
-
-
 
 ### My node is not displaying the periodic status message, what is wrong?
 
 You probably have mistyped/cut the last parameter of the command to start your node (--verbose), the node will not print the periodic messages if that parameter is not set.
 
-
-
 ### My node is displaying only “sleeping for 30 seconds” messages, is this normal?
 
 It means your node was not hired yet. If you haven’t done so, copy your node address and go to the Cartesi Explorer to hire your node. If you already have, you may want to check the status of the transaction for hiring your node, it might be still pending.
-
-
 
 ### My node displaying a low funds warning, what should I do?
 
 Producing a block demands spending gas. When your node funds are below a certain value, the node starts to display a low funds warning to remind you to refund your node as not having enough ETH in the node's wallet when you are eligible to produce a block will prevent you from doing so, thus not earning the block production reward.
 
-
-
 ### My node has a message saying waiting for confirmation for X minutes is something wrong?
 
 When you issue a transaction on the Ethereum Network, the time for it to be processed depends on multiple factors like how busy the network is, the amount of pending transactions, current gas prices, etc. The Nother node uses the average gas price of recently processed transactions and a gas price multiplier when setting the transaction gas price in order to avoid having the transaction pending for long. Still, it is possible that there is a sudden gas price surge and your transaction gets stuck on the transaction pool. If that happens when trying to produce a block, it might delay the transaction enough so that another user produces the block before you and, when the transaction is processed, it reverts because you are no longer eligible to produce a block. This should not happen frequently, so if you are experiencing this a lot, let us know to check if there is something wrong with your node.
-
-
 
 ## Fees and costs FAQs
 
@@ -192,12 +159,9 @@ Successful block production: 120k gas (from node wallet)
 Reverted block production transaction: ~65k gas (from node wallet)
 Transferring more funds to node: 21k gas + amount of eth you fund your node with (from user wallet)
 
-
 ### Why pay for blocks that failed to be produced?
 
 Unfortunately it is unavoidable. In some cases, more than one user can be eligible and try to produce the same block. When that happens the first user to have the transaction processed will probably succeed and the others will no longer be eligible when their transactions are processed, so they will revert. That is expected and is part of the protocol. Since reverted transactions still spend gas on Ethereum, that means that you spend ETH when that happens. Those should not be frequent though, so if you are experiencing a high rate of reverted transactions, please let us know so we can help you check if there is something wrong with your node.
-
-
 
 ## Block production and rewards FAQs
 
@@ -207,17 +171,14 @@ The mining is a probabilistic process with multiple variables involved. In pract
 
 One thing to keep in mind is that comparing your block production with others in the Cartesi Explorer is not an apples to apples comparison. The explorer only shows the current stake of the users (and users often increase/decrease their stake through time), most users have been staking for different durations and probably in times with different mining difficulties.
 
-
-
 ### What is the reward per block produced?
 
 Currently the reward is 2900 CTSI, this value is bound to last for approximately 6 months. You may read more about this on the [Medium post](https://medium.com/cartesi/ctsi-mining-how-it-works-37d3dc6d86e0).
 
-
-
 ### How can I have a grasp on what to expect for my block production?
 
 The PoS is probabilistic, so there is no way to tell exactly what is going to happen. However, making some simplifications on the PoS model, it's possible to calculate some averages that can give some insight on what to expect. Given this simplified model, you can tweak the parameters for a "best case" and a "worst case" scenario so you obtain a range of likely outcomes. The simplified model we'll describe considers constant stakes from all users, constant block rewards and nodes perfectly functional 24/7 among other differences from the real system. The logic to calculate this simplified model's output is summarized below:
+
 ```
 # user_stake is an input of the model
 # total_stakes is an input of the model
@@ -241,36 +202,27 @@ projected_period_rewards = blocks_by_user * block_reward
 projected_annual_earnings = (user_stake_percent * blocks_per_year * block_reward) / user_stake
 Some things to bare in mind when using this model:
 ```
+
 The PoS system is probabilistic and the output of the model is an expected average. You can understand what that means with an example: if you got a reward for flipping a coin and getting a head, and you flipped a coin twice, you could have 3 possible outcomes (disregarding the order): two heads, two tails or a head and a tail. The actual reward you could get would be nothing, one or two rewards, but the average reward if you had a large number of people doing that, would be very close to one. That average value for a very large number of users within the given situation is what the model outputs. It is very useful for having a grasp on what to expect but in practice what actually happens in your case will probably not match that exact output.
 The model considers constant difficulty, stakes, reward values, etc on its calculations. In practice, difficulty varies a lot due to multiple reasons (nodes are not online and working perfectly 24/7, users withdraw and stake CTSI all the time, etc) so when using the model it is wise to simulate a couple of extreme scenarios, one with a very high total staked value, to use as worst-case scenario, and another one with a very low total staked value, to use as a best-case scenario. Those are useful to have a better range of what to expect.
 Your node only produces blocks when functioning properly, so the more it is interrupted and has problems, the more your results will probably diverge from the value provided by the model.
-
 
 ### Is it better to run my own node, join a decentralized pool or to use a 3rd-party custodian service to stake?
 
 It is a personal choice and one option might be better suited to you depending on your requirements and expectations. The three options have different advantages and disadvantages. Running your own node requires some technical proficiency, has [higher setup costs](../staking-faq/#how-much-eth-do-the-transactions-involved-in-staking-ctsi-cost) and requires a certain amount of time and energy to maintain your node running correctly, but provides you with the full rewards of the blocks produced using your stake. Joining a decentralized pool through the [Cartesi Explorer](https://explorer.cartesi.io/pools) you'll get rewards whenever the pool produces block - proportional to the cut of your stake on the pool - so you'll get more frequent but diluted rewards comparing to staking by yourself. The pool also gets a cut of the rewards, which is the setup poll commission: it's intended to cover the costs of running a pool and also give some reward to the pool manager for doing so. When using a pool you don't have to worry about maintaining a node, that's the pool manager's job, but you should monitor the pool performance to make sure it's node is being well taken care of. Decentralized pools are safe: withdrawing your CTSI demands having control over the wallet associated to those funds. Using a 3rd party custodian service is generally simpler and faster to setup, demands lower technical proficiency and the custodian service takes care of having the node up and running, but that comes at a cost: each custodian service takes a cut of the rewards and has its own fees and reward distribution policy, so do educate yourself on those if deciding for this option. When using a custodian service, staking rewards have a similar behavior to decentralized pools in terms of rewards frequency: while directly staking relatively low values will probably take a very long time to produce a block and generate rewards, custodian services generally distribute rewards on a frequent basis (though very diluted amounts). One last important point is that, from the blockchain point of view, your CTSI is owned by the custodian service (since it's under its wallet's control) so you have to trust it to behave correctly.
 
-
-
 Does running more nodes/running on a more powerful hardware/etc increase block production chances?
 No, it doesn't. The only factor that increases your "mining power" is having a larger share of the total stakes. If the total stakes decrease and your stake is the same, your block production chances increase. If you increase your stake, your block production chances increase. On the other hand if the total stakes increase and your stake is the same, your chances decrease and the same applies in case you lower your stake.
 
-
-
 ## Security FAQs
-
 
 ### If my node is compromised, can the attacker steal all my CTSI?
 
 No, your node’s wallet holds only the ETH you fund it with (used by your node to accept being hired during setup, trying to produce blocks on regular operation, and to return funds to your wallet in case you retire the node) so an attacker that compromises your node can only possibly steal that. Your staked CTSI is locked in the PoS contract and can only be manipulated using your wallet, not the node wallet.
 
-
-
 ### If I lose/delete my node is my CTSI/eth safe?
 
 Yes, your node’s wallet holds only the ETH you fund it with (used by your node to accept being hired during setup, trying to produce blocks on regular operation, and to return funds to your wallet in case you retire the node) so if lose access to or delete your node you will only lose access to that ETH you funded your node with. Your staked CTSI is locked in the PoS contract and can only be manipulated using your wallet, not the node wallet.
-
-
 
 ## Terminating your staking operation
 
@@ -278,13 +230,9 @@ Yes, your node’s wallet holds only the ETH you fund it with (used by your node
 
 When you issue retiring your node, you issue a transaction in the Ethereum Blockchain that revokes the right of the node to produce blocks representing your stake. As any Ethereum Blockchain transaction it may take a while for it to be processed, especially when the network is under heavy load and gas prices surge. Once the retire transaction is processed, the node will detect it when pooling the blockchain and will issue a transaction to return the funds it holds to the user wallet. When this happens, the node prints a couple of messages in the log stating it was retired and that it is returning the funds it holds. Don't stop or destroy your node before you double-check this transaction went through and the funds were returned to your wallet. In case you stopped your node before it issued the transaction to return your funds, please start it and wait for the transaction to be issued and correctly processed.
 
-
-
 ### When can I delete my node?
 
 Your node holds a wallet that contains the funds you provided it with, so it is safe to delete your node once you made sure that there are no funds in the node wallet. Double-check or even triple-check before deleting your node as there is no way to move the funds from the node wallet once it is destroyed.
-
-
 
 ## Submit a new question
 

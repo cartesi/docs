@@ -76,5 +76,5 @@
 }
 
 :global(.theme-code-block:hover) .buttonGroup button {
-  opacity: 1;
+  opacity: 0.4;
 }

@@ -136,7 +136,7 @@ This command sets the FORTUNE_CMD variable to a string that, when executed, runs
         logger.info(f"Received notice status {response.status_code} body {response.content}")
 ```
 
-The `quote` runs the command stored in FORTUNE_CMD using a shell, captures the output (including errors), and then decodes it from bytes to a string, storing the result in the variable output. The `output` creates a formatted string with placeholders, replacing {input} and {quote} with the values of the variables input and quote, respectively, and assigns the resulting string to the variable output.
+The `quote` runs the command stored in FORTUNE_CMD using a shell, captures the output (including errors), and then decodes it from bytes to a string, storing the result in the variable output. The `output` creates a formatted string with placeholders, replacing `{input}` and `{quote}` with the values of the variables input and quote, respectively, and assigns the resulting string to the variable output.
 
 5. We then change the code of the `def handle_inspect(data):` function to:
 

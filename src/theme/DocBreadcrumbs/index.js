@@ -1,10 +1,8 @@
 import React from "react";
 import clsx from "clsx";
 import { ThemeClassNames } from "@docusaurus/theme-common";
-import {
-  useSidebarBreadcrumbs,
-  useHomePageRoute,
-} from "@docusaurus/theme-common/internal";
+import { useSidebarBreadcrumbs } from "@docusaurus/plugin-content-docs/client";
+import { useHomePageRoute } from "@docusaurus/theme-common/internal";
 import Link from "@docusaurus/Link";
 import { translate } from "@docusaurus/Translate";
 import HomeBreadcrumbItem from "@theme/DocBreadcrumbs/Items/Home";
@@ -52,8 +50,8 @@ function BreadcrumbsItem({ children, active, index, addMicrodata }) {
 }
 export default function DocBreadcrumbs() {
   const breadcrumbs = useSidebarBreadcrumbs();
-  // const homePageRoute = useHomePageRoute();
-  if (!breadcrumbs || breadcrumbs.length === 1) {
+  const homePageRoute = useHomePageRoute();
+  if (!breadcrumbs) {
     return null;
   }
   return (
@@ -76,14 +74,18 @@ export default function DocBreadcrumbs() {
         {/* {homePageRoute && <HomeBreadcrumbItem />} */}
         {breadcrumbs.map((item, idx) => {
           const isLast = idx === breadcrumbs.length - 1;
+          const href =
+            item.type === "category" && item.linkUnlisted
+              ? undefined
+              : item.href;
           return (
             <BreadcrumbsItem
               key={idx}
               active={isLast}
               index={idx}
-              addMicrodata={!!item.href}
+              addMicrodata={!!href}
             >
-              <BreadcrumbsItemLink href={item.href} isLast={isLast}>
+              <BreadcrumbsItemLink href={href} isLast={isLast}>
                 {item.label}
               </BreadcrumbsItemLink>
             </BreadcrumbsItem>
