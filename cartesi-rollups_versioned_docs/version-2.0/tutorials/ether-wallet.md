@@ -1,7 +1,7 @@
 ---
 id: ether-wallet
 title: Integrating Ether wallet functionality
-resources: 
+resources:
   - url: https://github.com/masiedu4/ether-wallet-tutorial
     title: Source code for Ether wallet tutorial
 ---
@@ -16,7 +16,7 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 
 ## Setting up the project
 
-First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
+First, create a new TypeScript project using the [Cartesi CLI](../getting-started/installation.md/#cartesi-cli).
 
 ```bash
 cartesi create ether-wallet-dapp --template typescript
@@ -35,8 +35,6 @@ Now, navigate to the project directory and install [`ethers`](https://docs.ether
 yarn add ethers viem
 yarn add -D @cartesi/rollups
 ```
-
-
 
 ## Define the ABIs
 
@@ -68,28 +66,28 @@ generate_abi() {
     local sol_file="$1"
     local contract_name="$2"
     local output_file="$TS_DIR/${contract_name}Abi.ts"
-    
+
     echo "Compiling $sol_file..."
-    
+
     # Compile the contract in the temporary directory
     npx solcjs --abi "$sol_file" --base-path . --include-path node_modules/ --output-dir "$TEMP_DIR"
-    
+
     # Find the generated ABI file
     abi_file=$(find "$TEMP_DIR" -name "*_${contract_name}.abi")
-    
+
     if [ ! -f "$abi_file" ]; then
         echo "Error: ABI file not found for $contract_name"
         return 1
     fi
-    
+
     # Read the ABI content
     abi=$(cat "$abi_file")
-    
+
     echo "Extracted ABI for $contract_name"
-    
+
     # Create a TypeScript file with exported ABI
     echo "export const ${contract_name}Abi = $abi as const;" > "$output_file"
-    
+
     echo "Generated ABI for $contract_name"
     echo "----------------------"
 }
@@ -110,12 +108,9 @@ Now, let's make the script executable:
 
     chmod +x generate_abis.sh
 
-
 And run it:
 
-    
     ./generate_abis.sh
-    
 
 ## Building the Ether wallet
 
@@ -264,13 +259,11 @@ export class Wallet {
     };
   }
 }
-
-
 ```
+
 The `Wallet` class manages multiple accounts and provides methods for everyday wallet operations. Key features include storing balances, centralizing the logic for retrieving or creating a balance, and depositing, withdrawing, and transferring Ether.
 
 `parseDepositPayload` and `encodeWithdrawCall` handle the low-level details of working with the base layer data.
-
 
 ### Voucher creation
 
@@ -278,28 +271,26 @@ The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a crucia
 
 The voucher creation process occurs during Ether’s withdrawal. Here's how it works in this application:
 
-1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../rollups-apis/json-rpc/application.md/#withdrawether) on the `CartesiDApp` contract.
+1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../api-reference/json-rpc/application.md/#withdrawether) on the `CartesiDApp` contract.
 
-  It returns a Voucher object with two properties:
+It returns a Voucher object with two properties:
 
     - `destination`: The address of the Cartesi dApp
     - `payload`: The encoded function calldata
 
-
 2. The `withdrawEther` method of the `Wallet` class is called with three parameters:
 
-    - `application`: The address of the Cartesi dApp 
-    - `address`: The user's address who wants to withdraw
-    - `amount`: The amount of Ether to withdraw
-
+   - `application`: The address of the Cartesi dApp
+   - `address`: The user's address who wants to withdraw
+   - `amount`: The amount of Ether to withdraw
 
 ## Using the Ether wallet
 
 Now, let's create a simple application at the entry point, `src/index.ts,` to test the wallet functionality.
 
-The [`EtherPortal`](../rollups-apis/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
+The [`EtherPortal`](../api-reference/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
 
-The [`DAppAddressRelay`](../rollups-apis/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its on-chain address, making it impossible to create valid vouchers for withdrawals.
+The [`DAppAddressRelay`](../api-reference/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its on-chain address, making it impossible to create valid vouchers for withdrawals.
 
 :::note
 Run `cartesi address-book` to get the addresses of the `EtherPortal` and `DAppAddressRelay` contracts. Save these as constants in the `index.ts` file.
@@ -343,7 +334,7 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
 
   if (sender.toLowerCase() === dAppAddressRelay.toLowerCase()) {
     dAppAddress = data.payload;
-    return 'accept'
+    return "accept";
   }
 
   if (sender.toLowerCase() === EtherPortal.toLowerCase()) {
@@ -457,8 +448,8 @@ main().catch((e) => {
   console.log(e);
   process.exit(1);
 });
-
 ```
+
 This code sets up a simple application that listens for requests from the Cartesi rollup server. It processes the requests and sends responses back to the server.
 
 Here is a breakdown of the wallet functionality:
@@ -473,22 +464,19 @@ Here is a breakdown of the wallet functionality:
 
 - For `transfers`, we call `wallet.transferEther` and create a notice with the parsed parameters.
 
-For `withdrawals,` we call `wallet.withdrawEther` and create a voucher using the dApp dress and the parsed parameters. 
+For `withdrawals,` we call `wallet.withdrawEther` and create a voucher using the dApp dress and the parsed parameters.
 
 - We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
 
-
 :::caution important
-The dApp address needs to be relayed strictly before withdrawal requests. 
+The dApp address needs to be relayed strictly before withdrawal requests.
 
 To relay the dApp address, run: `cartesi send dapp-address`
 :::
 
-
-
 ## Build and run the application
 
-With Docker running, [build your backend application](../development/building-the-application.md) by running:
+With Docker running, [build your backend application](../development/building-a-dapp.md) by running:
 
 ```shell
 cartesi build
@@ -505,9 +493,8 @@ cartesi run
 To deposit ether, run the command below and follow the prompts:
 
 ```
-cartesi send ether 
+cartesi send ether
 ```
-
 
 #### Balance checks(used in Inspect requests)
 
@@ -516,8 +503,6 @@ To inspect balance, make an HTTP call to:
 ```
 http://localhost:8080/inspect/{address}
 ```
-
-
 
 #### Transfer and Withdrawals
 
@@ -533,23 +518,22 @@ Here are the sample payloads as one-liners, ready to be used in your code:
 
 1. For transfers:
 
-  ```js
-  {"operation":"transfer","from":"0xAddress123","to":"0xAddress345","amount":"1000000000000000000"}
-  ```
-
+```js
+{"operation":"transfer","from":"0xAddress123","to":"0xAddress345","amount":"1000000000000000000"}
+```
 
 2. For withdrawals:
 
-  ```js
-  {"operation":"withdraw","from":"0xAddress345","amount":"500000000000000000"}
-  ```
+```js
+{"operation":"withdraw","from":"0xAddress345","amount":"500000000000000000"}
+```
 
 ### Using the explorer
 
-For end-to-end functionality, developers will likely build their [custom user-facing web application](../tutorials/react-frontend-application.md). 
+For end-to-end functionality, developers will likely build their [custom user-facing web application](../tutorials/react-frontend-application.md).
 
 [CartesiScan](https://cartesiscan.io/) is a web application that offers a comprehensive overview of your application. It provides expandable data regarding notices, vouchers, and reports.
 
 When you run your application with `cartesi run`, there is a local instance of CartesiScan on `http://localhost:8080/explorer`.
 
-You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../rollups-apis/backend/vouchers.md/#epoch-configuration). 
+You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).

@@ -1,6 +1,6 @@
 ---
-id: retrieve-outputs
-title: Retrieve outputs
+id: query-outputs
+title: Query outputs
 resources:
   - url: https://www.udemy.com/course/cartesi-masterclass/
     title: The Cartesi dApp Developer Free Course
@@ -20,7 +20,7 @@ Think of it as a digital authorization ticket that enables a dApp to perform spe
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The [`CartesiDApp`](../rollups-apis/json-rpc/application.md) contract executes the voucher using the [`executeVoucher()`](../rollups-apis/json-rpc/application.md/#executevoucher) function.
+- The [`CartesiDApp`](../api-reference/json-rpc/application.md) contract executes the voucher using the [`executeVoucher()`](../api-reference/json-rpc/application.md/#executevoucher) function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
@@ -40,8 +40,7 @@ They serve as a means for dApp to notify the blockchain about particular events.
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- Notices are validated on-chain using the [`validateNotice()`](../rollups-apis/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../rollups-apis/json-rpc/application.md) contract.
-
+- Notices are validated on-chain using the [`validateNotice()`](../api-reference/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api-reference/json-rpc/application.md) contract.
 
 ### Send a notice
 
@@ -168,7 +167,7 @@ The notice can be validated and queried by any interested party.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql` for local development.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development. Note that you'll have to replace '{dapp_address}' with the address of your application.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -204,11 +203,14 @@ async function fetchNotices() {
   const query = '{ "query": "{ notices { edges { node { payload } } } }" }';
 
   try {
-    const response = await fetch("http://localhost:8080/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: query,
-    });
+    const response = await fetch(
+      "http://localhost:8080/graphql/0x75135d8ADb7180640d29d822D9AD59E83E8695b2",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: query,
+      }
+    );
 
     const result = await response.json();
 
@@ -256,7 +258,6 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 
 Replace `123` with the value you want to pass for `$inputIndex`.
 
-
 <!-- <video width="100%" controls poster="/static/img/v1.3/graphqlPoster.png">
     <source src="/videos/Query_Singlenotice.mp4" type="video/mp4" />
     Your browser does not support video tags.
@@ -287,11 +288,14 @@ const variables = {
   inputIndex: 123, // Replace 123 with the desired value
 };
 
-const response = await fetch("http://localhost:8080/graphql", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ query, variables }),
-});
+const response = await fetch(
+  "http://localhost:8080/graphql/0x75135d8ADb7180640d29d822D9AD59E83E8695b2",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables }),
+  }
+);
 
 const result = await response.json();
 for (let edge of result.data.input.notices.edges) {
@@ -405,7 +409,7 @@ You can use the exposed GraphQL API to query all reports from your dApp.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql` for local development.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -428,7 +432,6 @@ query reports {
 ```
 
 Click the "Play" button (a triangular icon). The Playground will send the request to the server, and you'll see the response in the right pane.
-
 
 You can retrieve reports based on their `inputIndex`.
 
@@ -477,6 +480,5 @@ query report($reportIndex: Int!, $inputIndex: Int!) {
   }
 }
 ```
-
 
 Unlike Vouchers and Notices, reports are stateless and need attached proof.

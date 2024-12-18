@@ -18,7 +18,7 @@ The backend will be written using Python. For added flexibility, feel free to ex
 
 Install these to set up your environment for quick building:
 
-- Cartesi CLI: A simple tool for building applications on Cartesi. [Install Cartesi CLI for your OS of choice](../development/installation.md).
+- Cartesi CLI: A simple tool for building applications on Cartesi. [Install Cartesi CLI for your OS of choice](../getting-started/installation.md).
 
 - Docker Desktop 4.x: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker for your OS of choice](https://www.docker.com/products/docker-desktop/).
 
@@ -251,7 +251,6 @@ cartesi build
 
 “Building” in this context installs the libraries in the `requirements.txt`, compiles your application into RISC-V architecture, and consequently builds a Cartesi machine that contains your backend application.
 
-
 The anvil node can now run your application.
 
 To run your application, enter the command:
@@ -332,8 +331,6 @@ for (let edge of result.data.notices.edges) {
 }
 ```
 
-
-
-You can also [query a notice based on its input index](../development/retrieve-outputs.md/#query-a-single-notice).
+You can also [query a notice based on its input index](../development/query-outputs.md/#query-a-single-notice).
 
 Congratulations, you have successfully built a dApp on Cartesi Rollups!
