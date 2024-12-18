@@ -497,14 +497,14 @@ const config = {
             to: "/cartesi-rollups/2.0/getting-started/quickstart/",
             from: "/cartesi-rollups/2.0/quickstart/",
           },
-          {
-            to: "/cartesi-rollups/2.0/api-reference/architecture/",
-            from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/api-reference/architecture/",
-            from: "/cartesi-rollups/2.0/core-concepts/architecture/",
-          },
+          // {
+          //   to: "/cartesi-rollups/2.0/api-reference/architecture/",
+          //   from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
+          // },
+          // {
+          //   to: "/cartesi-rollups/2.0/api-reference/architecture/",
+          //   from: "/cartesi-rollups/2.0/core-concepts/architecture/",
+          // },
           {
             to: "/cartesi-rollups/2.0/resources/mainnet-considerations/",
             from: "/cartesi-rollups/2.0/core-concepts/mainnet-considerations/",
