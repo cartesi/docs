@@ -395,7 +395,7 @@ const config = {
         // docRootComponent: "@theme/DocPage",
         docItemComponent: "@theme/ApiItem",
         includeCurrentVersion: false,
-        lastVersion: "1.5",
+        lastVersion: "2.0",
         admonitions: {
           keywords: [
             "note",
