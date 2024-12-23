@@ -65,6 +65,7 @@ export default function AnnouncementBarContent(props) {
   // Update the content with the fetched values
   useEffect(() => {
     if (!contentVars) {
+      setLoaded(true);
       return;
     }
 
