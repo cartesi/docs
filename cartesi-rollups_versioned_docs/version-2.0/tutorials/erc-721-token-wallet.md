@@ -223,7 +223,7 @@ export class Wallet {
 Now, let's create a simple wallet app at the entry point `src/index.ts` to test the wallet’s functionality.
 
 :::note
-Run `cartesi address-book` to get the addresses of the `ERC721Portal` and `DAppAddressRelay` contracts. Save these as constants in the `index.ts` file.
+Run `cartesi address-book` to get the addresses of the `ERC721Portal` contract. Save these as constants in the `index.ts` file.
 :::
 
 ```typescript
@@ -249,9 +249,6 @@ type AdvanceRequestHandler = (
 const wallet = new Wallet();
 
 const ERC721Portal = `0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87`;
-const dAppAddresRelay = `0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE`;
-
-let dAppAddress: Address;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollupServer);
@@ -259,14 +256,9 @@ console.log("HTTP rollup_server url is " + rollupServer);
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
 
+  const dAppAddress = data["metadata"]["app_contract"];
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
-
-  if (sender.toLowerCase() === dAppAddresRelay.toLowerCase()) {
-    dAppAddress = data.payload;
-
-    return "accept";
-  }
 
   if (sender.toLowerCase() === ERC721Portal.toLowerCase()) {
     // Handle deposit
@@ -395,8 +387,6 @@ main().catch((e) => {
 Here is a breakdown of the wallet functionality:
 
 - We handle deposits when the sender is the `ERC721Portal`.
-
-- We relay the dApp address when the sender is `DAppAddressRelay`.
 
 - We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
