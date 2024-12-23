@@ -16,7 +16,7 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 
 ## Setting up the project
 
-First, create a new TypeScript project using the [Cartesi CLI](../getting-started/installation.md/#cartesi-cli).
+First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
 
 ```bash
 cartesi create ether-wallet-dapp --template typescript
@@ -293,8 +293,6 @@ Now, let's create a simple application at the entry point, `src/index.ts,` to te
 
 The [`EtherPortal`](../api-reference/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
 
-The [`DAppAddressRelay`](../api-reference/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its on-chain address, making it impossible to create valid vouchers for withdrawals.
-
 :::note
 Run `cartesi address-book` to get the addresses of the `EtherPortal` contract. Save these as constants in the `index.ts` file.
 :::
@@ -332,11 +330,6 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
   const dAppAddress = data["metadata"]["app_contract"];
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
-
-  if (sender.toLowerCase() === dAppAddressRelay.toLowerCase()) {
-    dAppAddress = data.payload;
-    return "accept";
-  }
 
   if (sender.toLowerCase() === EtherPortal.toLowerCase()) {
     // Handle deposit
