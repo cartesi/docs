@@ -137,18 +137,14 @@ export class Wallet {
   private parseErc20Deposit = (payload: string): [Address, Address, bigint] => {
     try {
       let inputData = [];
-      inputData[0] = ethers.dataSlice(payload, 0, 1);
-      inputData[1] = ethers.dataSlice(payload, 1, 21);
-      inputData[2] = ethers.dataSlice(payload, 21, 41);
-      inputData[3] = ethers.dataSlice(payload, 41, 73);
+      inputData[0] = ethers.dataSlice(payload, 0, 20);
+      inputData[1] = ethers.dataSlice(payload, 20, 40);
+      inputData[2] = ethers.dataSlice(payload, 40, 72);
 
-      if (!inputData[0]) {
-        throw new Error("ERC20 deposit unsuccessful");
-      }
       return [
+        getAddress(inputData[0]),
         getAddress(inputData[1]),
-        getAddress(inputData[2]),
-        BigInt(inputData[3]),
+        BigInt(inputData[2]),
       ];
     } catch (e) {
       throw new Error(`Error parsing ERC20 deposit: ${e}`);
