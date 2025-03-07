@@ -213,10 +213,10 @@ Inspect requests are best suited for non-production use, such as debugging and t
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
-To perform an Inspect call, use an HTTP GET request to `<address of the node>/inspect/<request path>`. For example:
+To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application_address>/<request path>`. For example:
 
 ```shell
-curl http://localhost:8080/inspect/mypath
+curl -X POST http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath
 ```
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
@@ -224,7 +224,16 @@ Once the call's response is received, the payload is extracted from the response
 From a frontend client, here is an example of extracting the payload from an inspect request:
 
 ```javascript
-const response = await fetch("http://localhost:8080/inspect/mypath");
+const response = await fetch(
+  "http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
+);
+
 const result = await response.json();
 for (let i in result.reports) {
   let payload = result.reports[i].payload;
