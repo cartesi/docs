@@ -645,7 +645,7 @@ npx wagmi generate
 
 ## Sending a generic input
 
-The [`InputBox`](../api-reference/json-rpc/input-box.md) contract is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone.
+The [`InputBox`](../api-reference/contracts/input-box.md) contract is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone.
 
 The `InputBox` contract is deployed on all supported chains. We will use a React hook to send an input to the backend via the `InputBox` contract. 
 
@@ -707,7 +707,7 @@ This hook provides us with state variables and a `writeContractAsync` function t
 
 The `submit` function is called when the form is submitted. 
 
-It uses the `writeContractAsync` function to send the input to the [`addInput(address _dapp, bytes _input)`](../api-reference/json-rpc/input-box.md/#addinput) function of the  `InputBox`. 
+It uses the `writeContractAsync` function to send the input to the [`addInput(address _dapp, bytes _input)`](../api-reference/contracts/input-box.md/#addinput) function of the  `InputBox`. 
 
 The `inputValue` will be received by the particular backend address is `dAppAddress`.
 
@@ -827,7 +827,7 @@ export default App;
 
 ## Depositing Ether
 
-The [`EtherPortal`](../api-reference/json-rpc/portals/EtherPortal.md) contract is a pre-deployed smart contract that allows users to deposit Ether to the Cartesi backend.
+The [`EtherPortal`](../api-reference/contracts/portals/EtherPortal.md) contract is a pre-deployed smart contract that allows users to deposit Ether to the Cartesi backend.
 
 
 This implementation will be similar to the generic input, but with a few changes to handle Ether transactions.
@@ -952,7 +952,7 @@ export default SendEther;
 
 ## Depositing ERC20 Tokens
 
-The [`ERC20Portal`](../api-reference/json-rpc/portals/ERC20Portal.md) contract is a pre-deployed smart contract that allows users to deposit ERC20 tokens to the Cartesi backend.
+The [`ERC20Portal`](../api-reference/contracts/portals/ERC20Portal.md) contract is a pre-deployed smart contract that allows users to deposit ERC20 tokens to the Cartesi backend.
 
 
 This implementation will be similar to the [depositing Ether](#depositing-ether), but with a few changes to handle ERC20 token transactions.
@@ -1022,7 +1022,7 @@ Here are the key differences in depositing ERC20 tokens compared to Ether:
 
 ## Depositing ERC721 Tokens (NFTs)
 
-The [`ERC721Portal`](../api-reference/json-rpc/portals/ERC721Portal.md) contract is a pre-deployed smart contract that allows users to deposit ERC721 tokens to the Cartesi backend.
+The [`ERC721Portal`](../api-reference/contracts/portals/ERC721Portal.md) contract is a pre-deployed smart contract that allows users to deposit ERC721 tokens to the Cartesi backend.
 
 This implementation will be similar to the [depositing ERC20 tokens](#depositing-erc20-tokens), but with a few changes to handle ERC721 token transactions.
 
@@ -1593,7 +1593,7 @@ export default Vouchers;
 
 Vouchers in Cartesi dApps authorize specific on-chain actions, such as token swaps or asset transfers, by encapsulating the details of these actions. 
 
-They are validated and executed on the blockchain using the [`executeVoucher(address _destination, bytes _payload, struct Proof _proof)`](../api-reference/json-rpc/application.md#executevoucher) function in the [`CartesiDApp`](../api-reference/json-rpc/application.md/) contract, ensuring legitimacy and transparency. 
+They are validated and executed on the blockchain using the [`executeVoucher(address _destination, bytes _payload, struct Proof _proof)`](../api-reference/contracts/application.md#executevoucher) function in the [`CartesiDApp`](../api-reference/json-rpc/application.md/) contract, ensuring legitimacy and transparency. 
 
 For example, users might generate vouchers to withdraw assets, which are executed on the base later.
 
