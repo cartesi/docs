@@ -274,7 +274,7 @@ The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a crucia
 
 The voucher creation process occurs during Ether’s withdrawal. Here's how it works in this application:
 
-1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../api-reference/json-rpc/application.md/#withdrawether) on the `CartesiDApp` contract.
+1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../api-reference/contracts/application.md/#withdrawether) on the `CartesiDApp` contract.
 
 It returns a Voucher object with two properties:
 
@@ -291,7 +291,7 @@ It returns a Voucher object with two properties:
 
 Now, let's create a simple application at the entry point, `src/index.ts,` to test the wallet functionality.
 
-The [`EtherPortal`](../api-reference/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
+The [`EtherPortal`](../api-reference/contracts/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
 
 :::note
 Run `cartesi address-book` to get the addresses of the `EtherPortal` contract. Save these as constants in the `index.ts` file.

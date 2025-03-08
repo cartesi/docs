@@ -22,20 +22,20 @@
                     "label": "Base Layer Contracts",
                     "collapsed": true,
                     "items": [
-                        "api-reference/json-rpc/overview",
-                        "api-reference/json-rpc/input-box",
-                        "api-reference/json-rpc/application",
-                        "api-reference/json-rpc/application-factory",
+                        "api-reference/contracts/overview",
+                        "api-reference/contracts/input-box",
+                        "api-reference/contracts/application",
+                        "api-reference/contracts/application-factory",
                         {
                             "type": "category",
                             "label": "Portals",
                             "collapsed": true,
                             "items": [
-                                "api-reference/json-rpc/portals/EtherPortal",
-                                "api-reference/json-rpc/portals/ERC20Portal",
-                                "api-reference/json-rpc/portals/ERC721Portal",
-                                "api-reference/json-rpc/portals/ERC1155SinglePortal",
-                                "api-reference/json-rpc/portals/ERC1155BatchPortal"
+                                "api-reference/contracts/portals/EtherPortal",
+                                "api-reference/contracts/portals/ERC20Portal",
+                                "api-reference/contracts/portals/ERC721Portal",
+                                "api-reference/contracts/portals/ERC1155SinglePortal",
+                                "api-reference/contracts/portals/ERC1155BatchPortal"
                             ]
                         }
                     ]
