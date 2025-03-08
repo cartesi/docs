@@ -6,7 +6,7 @@ resources:
       title: InputBox contract
 ---
 
-The **InputBox** is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone and adds a compound hash to an append-only list (called "input box"). Each application has its input box.
+The **InputBox** is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone and adds a compound hash to an append-only list (called "input box").
 
 The hash stored on-chain comprises the hash of the input blob, the block number and timestamp, the input sender address, and the input index.
 
@@ -21,7 +21,7 @@ From the perspective of this contract, inputs are encoding-agnostic byte arrays.
 event InputAdded(address indexed appContract, uint256 indexed index, bytes input)
 ```
 
-Emitted when an input is added to a application input box.
+Emitted when an input is added to an application's input box.
 
 #### Parameters
 
@@ -37,7 +37,7 @@ Emitted when an input is added to a application input box.
 function addInput(address appContract, bytes calldata payload) external override returns (bytes32)
 ```
 
-Add an input to a application input box.
+Add an input to an application's input box.
 
 _MUST fire an `InputAdded` event accordingly._
 
@@ -60,7 +60,7 @@ _MUST fire an `InputAdded` event accordingly._
 function getNumberOfInputs(address appContract) external view returns (uint256)
 ```
 
-Get the number of inputs in a application input box.
+Get the number of inputs in an application's input box.
 
 #### Parameters
 
@@ -81,9 +81,9 @@ Get the number of inputs in a application input box.
 function getInputHash(address appContract, uint256 index) external view returns (bytes32)
 ```
 
-Get the hash of an input in a application input box.
+Get the hash of an input in an application's input box.
 
-_`index` MUST be in the interval `[0,n)` where `n` is the number of
+`index` MUST be in the interval `[0,n)` where `n` is the number of
 inputs in the application input box. See the `getNumberOfInputs` function._
 
 #### Parameters

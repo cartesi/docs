@@ -8,9 +8,9 @@ resources:
     title: OpenZeppelin Contracts
 ---
 
-The **Application** contract acts as the base layer incarnation of a application running on the execution layer. The application can interact with other smart contracts through the execution an validation of outputs. The application frontend on the execution layer generates these outputs, which can be proven in the base layer thanks to claims submitted by a consensus contract.
+The **Application** contract acts as the base layer incarnation of the application running on the execution layer. The application can interact with other smart contracts through the execution and validation of outputs. The application backend on the execution layer generates these outputs, which can be proven in the base layer thanks to claims submitted by a consensus contract.
 
-Every Application is subscribed to a consensus contract and governed by a single address, the owner. The consensus has the power to submit claims, which, in turn, are used to validate outputs. The owner has complete power over the Application, as it can replace the consensus anytime. Therefore, the users of a application must trust both the consensus and the application owner.
+Every Application is subscribed to a consensus contract and governed by a single address, the owner. The consensus has the power to submit claims, which, in turn, are used to validate outputs. The owner has complete power over the Application, as it can replace the consensus at any time. Therefore, the users of an Application must trust both the consensus and the application owner. It is important to note that, depending on centralization or ownership concerns, it is possible to change the ownership model. This process is managed under the consensus contract. For more information about different ownership and consensus models, refer to the [IConsensus](https://github.com/cartesi/rollups-contracts/blob/prerelease/2.0.0/contracts/consensus/IConsensus.sol).
 
 This contract inherits the following OpenZeppelin contracts.
 
@@ -29,11 +29,11 @@ For more information, please consult [OpenZeppelin's official documentation](htt
 function executeOutput(bytes calldata output, OutputValidityProof calldata proof) external override nonReentrant (bool)
 ```
 
-Try to execute a output.
+Try to execute an output.
 
-Reverts if output was already successfully executed or if the If the caller is attempting to execute a non-executable output.
+Reverts if output was already successfully executed or if the caller is attempting to execute a non-executable output.
 
-_On a successful execution, emits a `OutputExecuted` event._
+_On a successful execution, emits an `OutputExecuted` event._
 
 ### Parameters
 
@@ -84,7 +84,7 @@ _Can only be called by the Application owner._
 function validateOutput(bytes calldata output, OutputValidityProof calldata proof) public view override;
 ```
 
-Validate a output.
+Validate an output.
 
 ### Parameters
 
@@ -168,7 +168,7 @@ A new consensus is used, this event is emitted when a new consensus is set. This
 event OutputExecuted(uint64 outputIndex, bytes output);
 ```
 
-A output was executed from the Application, this event is emitted when a output is executed so it must be triggered on a successful call to [executeOutput](#executeOutput).
+An output was executed from the Application, this event is emitted when a output is executed so it must be triggered on a successful call to [executeOutput](#executeOutput).
 
 ### Parameters
 
