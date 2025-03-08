@@ -26,6 +26,6 @@ There are two ways in which clients can interact with Ethereum-compatible nodes 
 
 - [`ApplicationFactory`](../contracts/application-factory.md): The `ApplicationFactory` contract allows anyone to deploy [`Application`](../contracts/application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they know the bytecode could not have been altered maliciously.
 
-- Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your application. Currently, there are Portal contracts for the following types of assets: [Ether (ETH)](../contracts/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../contracts//portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](../contracts//portals/ERC721Portal.md), [ERC-1155 single transfer](../contracts/portals/ERC1155SinglePortal.md) and [ERC-1155 batch token transfers](../contracts/portals/ERC1155BatchPortal.md).
+- Portals: These are a set of contracts used to safely teleport assets from the base layer to the execution environment of your application. Currently, there are Portal contracts for the following types of assets: [Ether (ETH)](../contracts/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../contracts/portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](../contracts/portals/ERC721Portal.md), [ERC-1155 single transfer](../contracts/portals/ERC1155SinglePortal.md) and [ERC-1155 batch token transfers](../contracts/portals/ERC1155BatchPortal.md).
 
 
