@@ -12,11 +12,11 @@ As with any execution layer solution, a Cartesi dApp that wants to manipulate as
 
 Currently, Cartesi Rollups support the following types of assets:
 
-- [Ether (ETH)](../api-reference/json-rpc/portals/EtherPortal.md)
-- [ERC-20](../api-reference/json-rpc/portals/ERC20Portal.md)
-- [ERC-721](../api-reference/json-rpc/portals/ERC721Portal.md)
-- [ERC-1155 Single](../api-reference/json-rpc/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch](../api-reference/json-rpc/portals/ERC1155BatchPortal.md)
+- [Ether (ETH)](../api-reference/contracts/portals/EtherPortal.md)
+- [ERC-20](../api-reference/contracts/portals/ERC20Portal.md)
+- [ERC-721](../api-reference/contracts/portals/ERC721Portal.md)
+- [ERC-1155 Single](../api-reference/contracts/portals/ERC1155SinglePortal.md)
+- [ERC-1155 Batch](../api-reference/contracts/portals/ERC1155BatchPortal.md)
 
 ![img](../../..//static/img/v2.0/onchain-contracts.jpg)
 
@@ -48,7 +48,7 @@ Vouchers are crucial in allowing dApps in the execution layer to interact with c
 
 The dApp’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals, for example: `transferFrom(sender, recipient, amount)`. In this case, the sender is the dApp itself.
 
-Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the [`executeVoucher()`](../api-reference/json-rpc/application.md/#executevoucher) function of the `CartesiDApp` contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
+Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the [`executeVoucher()`](../api-reference/contracts/application.md/#executevoucher) function of the `CartesiDApp` contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
 :::note epoch length
 By default, Cartesi nodes close one epoch every 7200 blocks. You can [manually set the epoch length](./cli-commands.md/#run) to facilitate quicker asset-handling methods.
@@ -58,7 +58,7 @@ Here are the function signatures used by vouchers to withdraw the different type
 
 | Asset    | Destination    | Function signature                                                                                                                          |
 | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../api-reference/json-rpc/application.md/#withdrawether)                                |
+| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../api-reference/contracts/application.md/#withdrawether)                                |
 | ERC-20   | Token contract | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
 | ERC-20   | Token contract | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
