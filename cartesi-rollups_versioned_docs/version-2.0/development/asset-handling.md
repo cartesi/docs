@@ -12,11 +12,11 @@ As with any execution layer solution, a Cartesi Application that wants to manipu
 
 Currently, Cartesi Rollups support the following types of assets:
 
-- [Ether (ETH)](../api-reference/json-rpc/portals/EtherPortal.md)
-- [ERC-20](../api-reference/json-rpc/portals/ERC20Portal.md)
-- [ERC-721](../api-reference/json-rpc/portals/ERC721Portal.md)
-- [ERC-1155 Single](../api-reference/json-rpc/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch](../api-reference/json-rpc/portals/ERC1155BatchPortal.md)
+- [Ether (ETH)](../api-reference/contracts/portals/EtherPortal.md)
+- [ERC-20](../api-reference/contracts/portals/ERC20Portal.md)
+- [ERC-721](../api-reference/contracts/portals/ERC721Portal.md)
+- [ERC-1155 Single](../api-reference/contracts/portals/ERC1155SinglePortal.md)
+- [ERC-1155 Batch](../api-reference/contracts/portals/ERC1155BatchPortal.md)
 
 ![img](../../..//static/img/v2.0/onchain-contracts.jpg)
 
