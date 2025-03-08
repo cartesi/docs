@@ -20,7 +20,7 @@ Think of it as a digital authorization ticket that enables a dApp to perform spe
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The [`CartesiDApp`](../api-reference/json-rpc/application.md) contract executes the voucher using the [`executeVoucher()`](../api-reference/json-rpc/application.md/#executevoucher) function.
+- The [`CartesiDApp`](../api-reference/contracts/application.md) contract executes the voucher using the [`executeVoucher()`](../api-reference/contracts/application.md/#executevoucher) function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
@@ -40,7 +40,7 @@ They serve as a means for application to notify the blockchain about particular 
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- Notices are validated on-chain using the [`validateNotice()`](../api-reference/json-rpc/application.md/#validatenotice) function of the [`CartesiDApp`](../api-reference/json-rpc/application.md) contract.
+- Notices are validated on-chain using the [`validateNotice()`](../api-reference/contracts/application.md/#validatenotice) function of the [`CartesiDApp`](../api-reference/contracts/application.md) contract.
 
 ### Send a notice
 
