@@ -6,7 +6,7 @@ resources:
     title: Application Factory contract
 ---
 
-The **ApplicationFactory** contract is a tool for reliably deploying new instances of the [`Application`](../json-rpc/application.md) contract with or without a specified salt value for address derivation.
+The **ApplicationFactory** contract is a tool for reliably deploying new instances of the [`Application`](../contracts/application.md) contract with or without a specified salt value for address derivation.
 
 
 Additionally, it provides a function to calculate the address of a potential new `Application` contract based on input parameters.
