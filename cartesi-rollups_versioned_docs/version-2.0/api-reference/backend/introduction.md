@@ -128,7 +128,7 @@ An **Advance** request involves sending input data to the base layer via JSON-RP
 
 In the dApp architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the [`addInput(address, bytes)`](../json-rpc/input-box.md) function of the InputBox smart contract.
+- Step 1: Send an input to the [`addInput(address, bytes)`](../contracts/input-box.md) function of the InputBox smart contract.
 
 - Step 2: The HTTP Rollups Server reads the data and gives it to the Cartesi machine for processing.
 
