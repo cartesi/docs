@@ -19,10 +19,10 @@ cartesi create <application-name> --template <language>
 For example, create a Python project.
 
 ```shell
-cartesi create new-dapp --template python
+cartesi create new-application --template python
 ```
 
-This command creates a `new-dapp` directory with essential files for your application development.
+This command creates a `new-application` directory with essential files for your application development.
 
 - `Dockerfile`: Contains configurations to build a complete Cartesi machine with your app's dependencies. Your backend code will run in this environment.
 
