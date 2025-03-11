@@ -5,25 +5,34 @@ description: "The dApp backend can call this method to add a new notice when pro
 sidebar_label: "Add a new notice"
 hide_title: true
 hide_table_of_contents: true
-api: {"operationId":"addNotice","description":"The dApp backend can call this method to add a new notice when processing the advance-state request.\nA notice describes any changes to the internal state of the dApp that may be relevant to the blockchain.\nBetween calls to the finish method, the notice method can be called up to 32k times.\n\nThe returned value is the index of the notice for the current advance request.\nIn other words, the index counting restarts at every request.\n","requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"payload":{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Notice"}}}},"responses":{"200":{"description":"Created the notice.","content":{"application/json":{"schema":{"type":"object","properties":{"index":{"type":"integer","format":"uint64","description":"Position in the Merkle tree.","example":123}},"title":"IndexResponse"}}}},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}},"method":"post","path":"/notice","servers":[{"url":"https://<dapp_rollup_url>"},{"url":"http://localhost:5005/rollup"}],"jsonRequestBodyExample":{"payload":"0xdeadbeef"},"info":{"title":"Cartesi Rollup HTTP API","version":"0.5.1","license":{"name":"Apache-2.0","url":"https://www.apache.org/licenses/LICENSE-2.0.html"},"description":"API that the Cartesi Rollup HTTP Server implements.\n\nIn the box below, there is an example of a dApp backend that uses the Rollup HTTP API.\n\n```\nimport requests\nimport sys\n\nrollup = sys.argv[1]\n\ndef check_status_code(response):\n    if response.status_code not in range(200, 300):\n        print(f'Error: invalid status code {response.status_code}')\n        sys.exit(1)\n    return response\n\nfinish = {'status': 'accept'}\nwhile True:\n    print('Sending finish')\n    r = check_status_code(requests.post(rollup + '/finish', json=finish))\n    if r.status_code == 202:\n        print('No pending rollup request, trying again')\n        continue\n\n    rollup_request = r.json()\n    if rollup_request['request_type'] == 'advance_state':\n        print('Sending voucher')\n        voucher = {\n            'destination': rollup_request['data']['metadata']['msg_sender'],\n            'payload': rollup_request['data']['payload']\n        }\n        check_status_code(requests.post(rollup + '/voucher', json=voucher))\n\n        print('Sending notice')\n        notice = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/notice', json=notice))\n\n        print('Sending report')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n        finish['status'] = 'accept'\n\n    elif rollup_request['request_type'] == 'inspect_state':\n        print('Sending report per inspect request')\n        report = {'payload': rollup_request['data']['payload']}\n        check_status_code(requests.post(rollup + '/report', json=report))\n\n    else:\n        print('Throwing rollup exception')\n        exception = {'payload': rollup_request['data']['payload']}\n        requests.post(rollup + '/exception', json=exception)\n        break\n```\n\nIn production mode, if the dApp exits the Rollups initialization script will register a Rollup Exception.\nSee [/exception](#api-Default-registerException).\n\nIn host mode, the Cartesi Rollups infrastructure is not able to detect that the dApp exited.\nIt is up to the dApp developer to re-launch the dApp.\n"},"postman":{"name":"Add a new notice","description":{"content":"The dApp backend can call this method to add a new notice when processing the advance-state request.\nA notice describes any changes to the internal state of the dApp that may be relevant to the blockchain.\nBetween calls to the finish method, the notice method can be called up to 32k times.\n\nThe returned value is the index of the notice for the current advance request.\nIn other words, the index counting restarts at every request.\n","type":"text/plain"},"url":{"path":["notice"],"host":["{{baseUrl}}"],"query":[],"variable":[]},"header":[{"key":"Content-Type","value":"application/json"},{"key":"Accept","value":"application/json"}],"method":"POST","body":{"mode":"raw","raw":"\"\"","options":{"raw":{"language":"json"}}}}}
+api: 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
 sidebar_class_name: "post api-method"
 info_path: cartesi-rollups/_versioned_docs/version-1.5/rollups-apis/rollup/cartesi-rollup-http-api
 custom_edit_url: null
 ---
 
-import ApiTabs from "@theme/ApiTabs";
-import DiscriminatorTabs from "@theme/DiscriminatorTabs";
-import MethodEndpoint from "@theme/ApiDemoPanel/MethodEndpoint";
-import MimeTabs from "@theme/MimeTabs";
-import ParamsItem from "@theme/ParamsItem";
-import ResponseSamples from "@theme/ResponseSamples";
-import SchemaItem from "@theme/SchemaItem";
-import SchemaTabs from "@theme/SchemaTabs";
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
 import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
 
-<h1 className={"openapi__heading"}>Add a new notice</h1>
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Add a new notice"}
+>
+</Heading>
 
-<MethodEndpoint method={"post"} path={"/notice"}></MethodEndpoint>
+<MethodEndpoint
+  method={"post"}
+  path={"/notice"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
 
 
 
@@ -35,17 +44,34 @@ The returned value is the index of the notice for the current advance request.
 In other words, the index counting restarts at every request.
 
 
-<MimeTabs className={"openapi-tabs__mime"}><TabItem label={"application/json"} value={"application/json-schema"}><details style={{}} className={"openapi-markdown__details"} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Request Body</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"payload"} required={false} schemaName={"Payload"} qualifierMessage={undefined} schema={{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}}></SchemaItem></ul></details></TabItem></MimeTabs><div><div><ApiTabs><TabItem label={"200"} value={"200"}><div>
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
 
-Created the notice.
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
 
-</div><div><MimeTabs className={"openapi-tabs__mime"} schemaType={"response"}><TabItem label={"application/json"} value={"application/json"}><SchemaTabs className={"openapi-tabs__schema"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} className={"openapi-markdown__details"} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><SchemaItem collapsible={false} name={"index"} required={false} schemaName={"uint64"} qualifierMessage={undefined} schema={{"type":"integer","format":"uint64","description":"Position in the Merkle tree.","example":123}}></SchemaItem></ul></details></TabItem><TabItem label={"Example (from schema)"} value={"Example (from schema)"}><ResponseSamples responseExample={"{\n  \"index\": 123\n}"} language={"json"}></ResponseSamples></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem><TabItem label={"default"} value={"default"}><div>
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"payload":{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Notice"}}}}}
+>
+  
+</RequestSchema>
 
-Error response.
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Created the notice.","content":{"application/json":{"schema":{"type":"object","properties":{"index":{"type":"integer","format":"uint64","description":"Position in the Merkle tree.","example":123}},"title":"IndexResponse"}}}},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}}}
+>
+  
+</StatusCodes>
 
-</div><div><MimeTabs className={"openapi-tabs__mime"} schemaType={"response"}><TabItem label={"text/plain"} value={"text/plain"}><SchemaTabs className={"openapi-tabs__schema"}><TabItem label={"Schema"} value={"Schema"}><details style={{}} className={"openapi-markdown__details"} data-collapsed={false} open={true}><summary style={{"textAlign":"left"}}><strong>Schema</strong></summary><div style={{"textAlign":"left","marginLeft":"1rem"}}></div><ul style={{"marginLeft":"1rem"}}><li><div><strong>string</strong><div style={{"marginTop":"var(--ifm-table-cell-padding)"}}>
 
-Detailed error message.
-
-</div></div></li></ul></details></TabItem></SchemaTabs></TabItem></MimeTabs></div></TabItem></ApiTabs></div></div>
       
