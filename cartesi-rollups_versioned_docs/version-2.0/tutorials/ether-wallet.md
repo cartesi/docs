@@ -16,7 +16,7 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 
 ## Setting up the project
 
-First, create a new TypeScript project using the [Cartesi CLI](../getting-started/installation.md/#cartesi-cli).
+First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
 
 ```bash
 cartesi create ether-wallet-dapp --template typescript
@@ -271,7 +271,7 @@ The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a crucia
 
 The voucher creation process occurs during Ether’s withdrawal. Here's how it works in this application:
 
-1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../api-reference/json-rpc/application.md/#withdrawether) on the `CartesiDApp` contract.
+1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../api-reference/contracts/application.md/#withdrawether) on the `CartesiDApp` contract.
 
 It returns a Voucher object with two properties:
 
@@ -288,12 +288,10 @@ It returns a Voucher object with two properties:
 
 Now, let's create a simple application at the entry point, `src/index.ts,` to test the wallet functionality.
 
-The [`EtherPortal`](../api-reference/json-rpc/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
-
-The [`DAppAddressRelay`](../api-reference/json-rpc/relays/relays.md) contract provides the critical information (the dApp's address) that the voucher creation process needs to function correctly. Without this relay mechanism, the off-chain part of the dApp wouldn't know its on-chain address, making it impossible to create valid vouchers for withdrawals.
+The [`EtherPortal`](../api-reference/contracts/portals/EtherPortal.md) contract allows anyone to perform transfers of Ether to a dApp. All deposits to a dApp are made via the `EtherPortal` contract.
 
 :::note
-Run `cartesi address-book` to get the addresses of the `EtherPortal` and `DAppAddressRelay` contracts. Save these as constants in the `index.ts` file.
+Run `cartesi address-book` to get the addresses of the `EtherPortal` contract. Save these as constants in the `index.ts` file.
 :::
 
 ```typescript
@@ -319,9 +317,6 @@ type AdvanceRequestHandler = (
 const wallet = new Wallet();
 
 const EtherPortal = `0xFfdbe43d4c855BF7e0f105c400A50857f53AB044`;
-const dAppAddressRelay = `0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE`;
-
-let dAppAddress: Address;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollupServer);
@@ -329,13 +324,9 @@ console.log("HTTP rollup_server url is " + rollupServer);
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
 
+  const dAppAddress = data["metadata"]["app_contract"];
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
-
-  if (sender.toLowerCase() === dAppAddressRelay.toLowerCase()) {
-    dAppAddress = data.payload;
-    return "accept";
-  }
 
   if (sender.toLowerCase() === EtherPortal.toLowerCase()) {
     // Handle deposit
@@ -455,8 +446,6 @@ This code sets up a simple application that listens for requests from the Cartes
 Here is a breakdown of the wallet functionality:
 
 - The `handle_advance` handles three main scenarios: dApp address relay, Ether deposits, and user operations (transfers/withdrawals).
-
-- We relay the address when the sender is `DAppAddressRelay`.
 
 - We handle deposits and create a notice when the sender is the `EtherPortal`.
 

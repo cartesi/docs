@@ -1,14 +1,23 @@
 import React from "react";
 import Translate from "@docusaurus/Translate";
 import { ThemeClassNames } from "@docusaurus/theme-common";
-function LastUpdatedAtDate({ lastUpdatedAt, formattedLastUpdatedAt }) {
+import { useDateTimeFormat } from "@docusaurus/theme-common/internal";
+function LastUpdatedAtDate({ lastUpdatedAt }) {
+  const atDate = new Date(lastUpdatedAt);
+  const dateTimeFormat = useDateTimeFormat({
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  const formattedLastUpdatedAt = dateTimeFormat.format(atDate);
   return (
     <Translate
       id="theme.lastUpdated.atDate"
       description="The words used to describe on which date a page has been last updated"
       values={{
         date: (
-          <time dateTime={new Date(lastUpdatedAt * 1000).toISOString()}>
+          <time dateTime={atDate.toISOString()} itemProp="dateModified">
             {formattedLastUpdatedAt}
           </time>
         ),
@@ -31,11 +40,7 @@ function LastUpdatedByUser({ lastUpdatedBy }) {
     </Translate>
   );
 }
-export default function LastUpdated({
-  lastUpdatedAt,
-  formattedLastUpdatedAt,
-  lastUpdatedBy,
-}) {
+export default function LastUpdated({ lastUpdatedAt, lastUpdatedBy }) {
   return (
     <div className="flex items-center space-x-2 mb-4">
       <svg
@@ -57,20 +62,16 @@ export default function LastUpdated({
           fill="currentColor"
         />
       </svg>
-      <span className={ThemeClassNames.common.lastUpdated}>
+      <span className="font-normal not-italic">
         <Translate
           id="theme.lastUpdated.lastUpdatedAtBy"
           description="The sentence used to display when a page has been last updated, and by who"
           values={{
-            atDate:
-              lastUpdatedAt && formattedLastUpdatedAt ? (
-                <LastUpdatedAtDate
-                  lastUpdatedAt={lastUpdatedAt}
-                  formattedLastUpdatedAt={formattedLastUpdatedAt}
-                />
-              ) : (
-                ""
-              ),
+            atDate: lastUpdatedAt ? (
+              <LastUpdatedAtDate lastUpdatedAt={lastUpdatedAt} />
+            ) : (
+              ""
+            ),
             byUser: lastUpdatedBy ? (
               <LastUpdatedByUser lastUpdatedBy={lastUpdatedBy} />
             ) : (
@@ -80,12 +81,6 @@ export default function LastUpdated({
         >
           {"Last updated{atDate}{byUser}"}
         </Translate>
-        {process.env.NODE_ENV === "development" && (
-          <div>
-            {/* eslint-disable-next-line @docusaurus/no-untranslated-text */}
-            <small> (Simulated during dev for better perf)</small>
-          </div>
-        )}
       </span>
     </div>
   );

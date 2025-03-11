@@ -1,9 +1,56 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
-const replacementPlugin = require("./src/remark/replacement");
+const replacementPlugin = require("./src/remark/replacement").default;
+
+import { themes as prismThemes } from "prism-react-renderer";
+
+const fs = require("fs");
+const path = require("path");
+
+// Get all versions from the versioned_docs directory
+const apiFolder = (version) => {
+  const apiFolders = {
+    "version-0.8": "api",
+    "version-0.9": "api",
+    "version-1.0": "api",
+    "version-2.0": "api-reference",
+  };
+
+  return apiFolders[version] || "rollups-apis";
+};
+
+const versionsDir = path.join(__dirname, "cartesi-rollups_versioned_docs");
+const versions = fs
+  .readdirSync(versionsDir)
+  .filter((dir) => dir.startsWith("version-"));
+
+const openApiDocsConfig = versions.reduce((config, version) => {
+  config[`${version}-backEndApi`] = {
+    specPath: path.join(
+      versionsDir,
+      version,
+      apiFolder(version),
+      "rollup.yaml"
+    ),
+    outputDir: path.join(versionsDir, version, apiFolder(version), "rollup"),
+    sidebarOptions: {
+      groupPathsBy: "tag",
+    },
+  };
+
+  config[`${version}-frontEndApi`] = {
+    specPath: path.join(
+      versionsDir,
+      version,
+      apiFolder(version),
+      "inspect.yaml"
+    ),
+    outputDir: path.join(versionsDir, version, apiFolder(version), "inspect"),
+  };
+
+  return config;
+}, {});
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -18,6 +65,7 @@ const config = {
   organizationName: "cartesi", // Usually your GitHub org/user name.
   projectName: "cartesi", // Usually your repo name.
   scripts: ["/js/index.js"],
+  // markdown: { format: "md" }, // NOTE: Use this to disable MDX and use MD instead
   presets: [
     [
       "classic",
@@ -28,6 +76,7 @@ const config = {
           path: "docs",
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
+          docItemComponent: "@theme/ApiItem",
           // Please change this to your repo.
           editUrl: "https://github.com/cartesi/docs/tree/develop",
 
@@ -52,7 +101,7 @@ const config = {
           trackingID: "GTM-NGX36B79",
           anonymizeIP: true,
         },
-        
+
         googleTagManager: {
           containerId: "GTM-NGX36B79",
         },
@@ -215,9 +264,10 @@ const config = {
       },
       announcementBar: {
         id: "mainnet",
+        // content:
+        //   'Cartesi Rollups is Mainnet Ready! {{balance}} in {{symbol}} is up for grabs... if you can <a href="https://honeypot.cartesi.io/" target="_blank" rel="noopener noreferrer">hack Cartesi Rollups</a>.',
         content:
-          'Cartesi Rollups is Mainnet Ready! {{balance}} in {{symbol}} is up for grabs... if you can <a href="https://honeypot.cartesi.io/" target="_blank" rel="noopener noreferrer">hack Cartesi Rollups</a>.',
-
+          'Build your most ambitious dApp yet with Cartesi - grant applications open! <a href="https://bit.ly/49EE31V" target="_blank" rel="noopener noreferrer">APPLY NOW</a>',
         backgroundColor: "rgba(0, 0, 0, 0.7)",
         textColor: "#FFFFFF",
         isCloseable: true,
@@ -328,8 +378,8 @@ const config = {
         },
       },
       prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
+        theme: prismThemes.github,
+        darkTheme: prismThemes.dracula,
         additionalLanguages: ["lua"],
       },
     }),
@@ -342,7 +392,8 @@ const config = {
         routeBasePath: "cartesi-rollups",
         // sidebarPath: require.resolve("./sidebarsRollups.js"),
         editUrl: "https://github.com/cartesi/docs/tree/main",
-        docLayoutComponent: "@theme/DocPage",
+        // docLayoutComponent: "@theme/DocRoot",
+        // docRootComponent: "@theme/DocPage",
         docItemComponent: "@theme/ApiItem",
         includeCurrentVersion: false,
         lastVersion: "1.5",
@@ -365,7 +416,7 @@ const config = {
           "2.0": {
             label: "2.0",
             path: "2.0",
-          }
+          },
         },
         showLastUpdateTime: true,
       },
@@ -447,25 +498,17 @@ const config = {
             to: "/cartesi-rollups/2.0/getting-started/quickstart/",
             from: "/cartesi-rollups/2.0/quickstart/",
           },
-          {
-            to: "/cartesi-rollups/2.0/getting-started/installation/",
-            from: "/cartesi-rollups/2.0/development/installation/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/api-reference/architecture/",
-            from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/api-reference/architecture/",
-            from: "/cartesi-rollups/2.0/core-concepts/architecture/",
-          },
+          // {
+          //   to: "/cartesi-rollups/2.0/api-reference/architecture/",
+          //   from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
+          // },
+          // {
+          //   to: "/cartesi-rollups/2.0/api-reference/architecture/",
+          //   from: "/cartesi-rollups/2.0/core-concepts/architecture/",
+          // },
           {
             to: "/cartesi-rollups/2.0/resources/mainnet-considerations/",
             from: "/cartesi-rollups/2.0/core-concepts/mainnet-considerations/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/getting-started/installation/",
-            from: "/cartesi-rollups/2.0/development/installation/",
           },
           {
             to: "/cartesi-rollups/2.0/development/building-a-dapp/",
@@ -494,7 +537,7 @@ const config = {
           {
             to: "/cartesi-rollups/2.0/resources/community-tools/",
             from: "/cartesi-rollups/2.0/development/community-tools/",
-          }
+          },
         ],
         createRedirects(existingPath) {
           if (existingPath.includes("/cartesi-rollups/1.0/")) {
@@ -583,24 +626,7 @@ const config = {
       {
         id: "apiDocs",
         docsPluginId: "cartesi-rollups",
-        config: {
-          backEndApi: {
-            // Note: petstore key is treated as the <id> and can be used to specify an API doc instance when using CLI commands
-            specPath:
-              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup.yaml", // Path to designated spec file
-            outputDir:
-              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/rollup", // Output directory for generated .mdx docs
-            sidebarOptions: {
-              groupPathsBy: "tag",
-            },
-          },
-          frontEndApi: {
-            specPath:
-              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect.yaml",
-            outputDir:
-              "cartesi-rollups_versioned_docs/version-1.5/rollups-apis/inspect",
-          },
-        },
+        config: openApiDocsConfig,
       },
     ],
 
