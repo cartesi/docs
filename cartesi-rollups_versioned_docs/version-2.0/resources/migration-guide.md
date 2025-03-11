@@ -3,44 +3,30 @@ id: migration-guide
 title: Migration Guide
 ---
 
-## Migrating from Cartesi Rollups Node v1.4 to v1.5.x
+## Migrating from Cartesi Rollups v1.5.x to v2.0
 
-Release `v1.5.0` introduces a critical change in how epochs are closed in the Cartesi Rollups Node, transitioning from a **timestamp-based system to a block number-based system**.
+Rollups node v2.0 introduces some major changes in how the node works internally and how the application code interacts with it. Not all the breaking changes affect all applications. To identify which changes might affect your application, check if any of the following cases apply:
 
-Epoch closure is now determined by the `CARTESI_EPOCH_LENGTH` environment variable (in blocks) instead of `CARTESI_EPOCH_DURATION` (in seconds).
+### My back-end...
+- handles ERC-20 token deposit inputs. See the [ERC-20 token deposit inputs](#erc-20-token-deposit-inputs) section.
+- handles application address relay inputs. See the [Application address](#application-address) section.
+- generates Ether withdrawal vouchers. See the [Ether withdrawal vouchers](#ether-withdrawal-vouchers) section.
 
-```plaintext
-CARTESI_EPOCH_LENGTH = CARTESI_EPOCH_DURATION / BLOCK_TIME
-```
-
-Where `BLOCK_TIME` is the time to generate a block in the target network.
-
-**Example**: If a block is generated every 12 seconds and `CARTESI_EPOCH_DURATION` is set to 86400 seconds (24 hours), `CARTESI_EPOCH_LENGTH = 86400 / 12 = 7200`
-
-### Option 1: Redeploy all contracts
-
-Redeploy all contracts and your application with the new configuration.
-
-Refer to the [self-hosted deployment guide](../deployment/self-hosted.md) for detailed deployment instructions.
-
-:::caution
-Redeploying creates a new application instance. All previous inputs, outputs, claims, and funds locked in the application contract will remain associated with the old application address.
-:::
-
-### Option 2: Replace Application's History
-
-This process allows inputs, outputs, and locked funds to remain unchanged but is more involved.
+### My front-end...
+- validates notices. See the [Outputs](#outputs) section.
+- executes vouchers. See the [Outputs](#outputs) section.
+- listens to voucher execution events. See the [Outputs](#outputs) section.
+- checks if a voucher was executed. See the [Outputs](#outputs) section.
+- uses inspect calls. See the [Inspect calls](#inspect-calls) section.
+- uses GraphQL queries. See the [GraphQL queries](#graphql-queries) section.
 
 :::note
-A new _History_ will have no claims. Upon restarting the node with a new _History_, previous claims will be resubmitted, incurring additional costs for the _Authority_ owner.
+If your application uses a high-level framework(ex. Deroll, Rollmelette etc.) for either backend or frontend, check if the framework has already implemented the changes described in this guide.
 :::
 
-:::caution
-Instances of the [_History_](https://github.com/cartesi/rollups-contracts/blob/v1.2.0/onchain/rollups/contracts/history/History.sol) contract from [rollups-contracts v1.2.0](https://github.com/cartesi/rollups-contracts/releases/tag/v1.2.0) may be used simultaneously by several applications through their associated _Authority_ instance.
-Application owners must consider that and exercise care when performing the steps listed below.
-:::
+### ERC-20 token deposit inputs
 
-It's recommended to use the deterministic deployment functions available in the Rollups contracts.
+In SDK v1, ERC-20 token deposit inputs start with a 1-byte Boolean field which indicates whether the transfer was successful or not:
 
 #### 1. Define the environment variables
 
@@ -105,6 +91,6 @@ cast send \
     --rpc-url "$RPC_URL"
 ```
 
-After replacing the _History_, update the `CARTESI_CONTRACTS_HISTORY_ADDRESS` in the application configuration with the new _History_ address. Then, upgrade the Cartesi Rollups Node as usual.
+In SDK v2, we modified the ERC-20 portal to only accept successful transactions. With this change, the success field would always be true, so it has been removed:
 
 When the Cartesi Rollups Node restarts, it processes all existing inputs, recalculates the epochs, and sends the claims to the new _History_ based on the updated configuration.
