@@ -75,7 +75,6 @@ Manual yield rx-accepted (0x100000000 data)
 Cycles: 2767791744
 2767791744: b740d27cf75b6cb10b1ab18ebd96be445ca8011143d94d8573221342108822f5
 Storing machine: please wait
-Successfully copied 288MB to /Users/michaelasiedu/Code/calculator/python/.cartesi/image
 ```
 
 ### Memory

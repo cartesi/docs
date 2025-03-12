@@ -20,13 +20,13 @@ Think of it as a digital authorization ticket that enables an application to per
 
 - The voucher specifies the action, such as a token swap, and is sent to the blockchain.
 
-- The [`Application`](../api-reference/json-rpc/application.md) contract executes the voucher using the [`executeOutput()`](../api-reference/json-rpc/application.md/#executeoutput) function.
+- The [`Application`](../api-reference/contracts/application.md) contract executes the voucher using the [`executeOutput()`](../api-reference/contracts/application.md#executeoutput) function.
 
 - The result is recorded on the base layer through claims submitted by a consensus contract.
 
-:::note create a voucher
-[Refer to the documentation here](./asset-handling.md) for asset handling and creating vouchers in your application.
-:::
+  :::note create a voucher
+  [Refer to the documentation here](./asset-handling.md) for asset handling and creating vouchers in your application.
+  :::
 
 ## Notices: Off-chain events
 
@@ -40,7 +40,7 @@ They serve as a means for application to notify the blockchain about particular 
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- Notices are validated on-chain using the [`validateOutput()`](../api-reference/json-rpc/application.md/#validateoutput) function of the [`Application`](../api-reference/json-rpc/application.md) contract.
+- Notices are validated on-chain using the [`validateOutput()`](../api-reference/contracts/application.md#validateoutput) function of the [`Application`](../api-reference/contracts/application.md) contract.
 
 ### Send a notice
 
