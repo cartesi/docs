@@ -636,7 +636,7 @@ query voucher($outputIndex: Int!) {
 }
 ```
 
-As always remember to add the variable `$outputIndex` to the variables tab on the bottom-left corner of the playground, like this:
+As always remember to add the variable `$outputIndex` to the variables tab in the bottom-left corner of the playground, like this:
 
 ```graphql
 {
