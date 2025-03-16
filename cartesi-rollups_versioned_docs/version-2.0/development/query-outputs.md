@@ -6,27 +6,7 @@ resources:
     title: The Cartesi dApp Developer Free Course
 ---
 
-In Cartesi Rollups, outputs are essential in interacting with the blockchain. The direct output types are vouchers, notices, and reports.
-
-## Vouchers: On-chain actions
-
-A voucher in Cartesi Rollups is a mechanism for executing on-chain actions from a dApp.
-
-Think of it as a digital authorization ticket that enables a dApp to perform specific actions on the blockchain, such as transferring assets or approving transactions.
-
-### How Vouchers Work:
-
-- The dApp backend creates a voucher while executing in the Cartesi Machine.
-
-- The voucher specifies the action, such as a token swap, and is sent to the blockchain.
-
-- The [`CartesiDApp`](../api-reference/contracts/application.md) contract executes the voucher using the [`executeVoucher()`](../api-reference/contracts/application.md/#executevoucher) function.
-
-- The result is recorded on the base layer through claims submitted by a consensus contract.
-
-:::note create a voucher
-[Refer to the documentation here](./asset-handling.md) for asset handling and creating vouchers in your dApp.
-:::
+In Cartesi Rollups, outputs are essential in interacting with the blockchain. The direct output types are notices, reports and vouchers.
 
 ## Notices: Off-chain events
 
@@ -40,7 +20,7 @@ They serve as a means for application to notify the blockchain about particular 
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- Notices are validated on-chain using the [`validateNotice()`](../api-reference/contracts/application.md/#validatenotice) function of the [`CartesiDApp`](../api-reference/contracts/application.md) contract.
+- Notices are validated on-chain using the [`validateOutput()`](../api-reference/contracts/application.md#validateoutput) function of the [`Application`](../api-reference/contracts/application.md) contract.
 
 ### Send a notice
 
@@ -167,7 +147,7 @@ The notice can be validated and queried by any interested party.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development. Note that you'll have to replace `{dapp_address}` with the address of your application.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{application_address}` for local development. Note that you'll have to replace '{application_address}' with the address of your application.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -271,7 +251,7 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 }
 ```
 
-Replace `123` with the value you want to pass for `$inputIndex`.
+Replace `0` with the value you want to pass for `$inputIndex`.
 
 <!-- <video width="100%" controls poster="/static/img/v1.3/graphqlPoster.png">
     <source src="/videos/Query_Singlenotice.mp4" type="video/mp4" />
@@ -429,7 +409,7 @@ You can use the exposed GraphQL API to query all reports from your application.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{application_address}` for local development.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
