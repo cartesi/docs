@@ -8,25 +8,25 @@ resources:
     title: CartesiScan
 ---
 
-
 ## Creating the application
-Cartesi CLI simplifies creating dApps on Cartesi. To create a new application, run:
+
+Cartesi CLI simplifies creating applications on Cartesi. To create a new application, run:
 
 ```shell
-cartesi create <dapp-name> --template <language>
+cartesi create <application-name> --template <language>
 ```
 
 For example, create a Python project.
 
 ```shell
-cartesi create new-dapp --template python
+cartesi create new-application --template python
 ```
 
-This command creates a `new-dapp` directory with essential files for your dApp development.
+This command creates a `new-application` directory with essential files for your application development.
 
 - `Dockerfile`: Contains configurations to build a complete Cartesi machine with your app's dependencies. Your backend code will run in this environment.
 
-- `README.md`: A markdown file with basic information and instructions about your dApp.
+- `README.md`: A markdown file with basic information and instructions about your application.
 
 - `dapp.py`: A Python file with template backend code that serves as your application's entry point.
 
@@ -34,13 +34,11 @@ This command creates a `new-dapp` directory with essential files for your dApp d
 
 Cartesi CLI has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
 
-After creating your application, you can start building your dApp by adding your logic to the `dapp.py` file.
-
+After creating your application, you can start codding your application by adding your logic to the `dapp.py` file.
 
 :::note Building with Go?
 For Go applications on Cartesi, we recommend using [Rollmelette](https://github.com/rollmelette/rollmelette). It’s a high-level Go framework and an alternative template that simplifies development and enhances input management, providing a smoother and more efficient experience.
 :::
-
 
 ## Building the application
 
@@ -77,8 +75,8 @@ Manual yield rx-accepted (0x100000000 data)
 Cycles: 2767791744
 2767791744: b740d27cf75b6cb10b1ab18ebd96be445ca8011143d94d8573221342108822f5
 Storing machine: please wait
-Successfully copied 288MB to /Users/michaelasiedu/Code/calculator/python/.cartesi/image
 ```
+
 ### Memory
 
 To change the default memory size for the Cartesi Machine, you can personalize it by adding a specific label in your Dockerfile.
@@ -92,7 +90,6 @@ LABEL io.cartesi.rollups.ram_size=128Mi
 :::note environment variables
 You can create a `.cartesi.env` in the project's root and override any variable controlling the rollups-node.
 :::
-
 
 ## Running the Application
 
@@ -148,7 +145,6 @@ The `cartesi run` command activates several services essential for node operatio
 - **Blockchain Explorer**: Monitors node activity and manages transactions via `http://localhost:8080/explorer/`.
 
 - **Inspect**: A diagnostic tool accessible at `http://localhost:8080/inspect/` to inspect the node’s state.
-
 
 ### CartesiScan
 
