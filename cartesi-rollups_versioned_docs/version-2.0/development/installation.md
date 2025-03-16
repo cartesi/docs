@@ -1,7 +1,7 @@
 ---
 id: installation
 title: Installation
-resources: 
+resources:
   - url: https://www.docker.com/products/docker-desktop/
     title: Install Docker Desktop
   - url: https://nodejs.org/en/download/
@@ -82,11 +82,9 @@ import TabItem from '@theme/TabItem';
   </TabItem>
 </Tabs>
 
-
 Cartesi CLI doctor is a diagnostic tool that declares whether your system is ready and set up for development.
 
 ```shell
 $ cartesi doctor
 ✔ Your system is ready for cartesi.
 ```
-
