@@ -44,11 +44,11 @@ Deposit input payloads are always specified as packed ABI-encoded parameters, as
 
 Users can deposit assets to a Cartesi Application, but only the Application can initiate withdrawals. When a withdrawal request is made, it’s processed and interpreted off-chain by the Cartesi Machine running the application’s code. Subsequently, the Cartesi Machine creates a voucher containing the necessary instructions for withdrawal, which is executable when an epoch has settled.
 
-### Withdrawing Tokens
-
 Vouchers are crucial in allowing applications in the execution layer to interact with contracts in the base layer through message calls. They are emitted by the off-chain machine and executed by any participant in the base layer. Each voucher includes a destination address and a payload, typically encoding a function call for Solidity contracts.
 
-Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the [`executeVoucher()`](../api-reference/contracts/application.md/#executevoucher) function of the `CartesiDApp` contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
+The application’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals, for example: `transferFrom(sender, recipient, amount)`. In this case, the sender is the application itself.
+
+Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the [`executeOutput()`](../api-reference/json-rpc/application.md/#executeoutput) function of the `Application` contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
 :::note epoch length
 By default, Cartesi nodes close one epoch every 7200 blocks. You can [manually set the epoch length](./cli-commands.md/#run) to facilitate quicker asset-handling methods.
@@ -56,12 +56,12 @@ By default, Cartesi nodes close one epoch every 7200 blocks. You can [manually s
 
 Here are the function signatures used by vouchers to withdraw the different types of assets:
 
-| Asset    | Destination    | Function signature                                                                                                                          |
-| :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../api-reference/contracts/application.md/#withdrawether)                                |
-| ERC-20   | Token contract | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
-| ERC-20   | Token contract | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
-| ERC-721  | Token contract | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
-| ERC-721  | Token contract | `safeTransferFrom(address,address,uint256,bytes)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                  |
-| ERC-1155 | Token contract | `safeTransferFrom(address,address,uint256,uint256,data)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification)          |
-| ERC-1155 | Token contract | `safeBatchTransferFrom(address,address,uint256[],uint256[],data)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification) |
+| Asset    | Destination          | Function signature                                                                                                                          |
+| :------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| Ether    | Application contract | `withdrawEther(address,uint256)` [:page_facing_up:](../api-reference/json-rpc/application.md/#withdrawether)                                |
+| ERC-20   | Token contract       | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
+| ERC-20   | Token contract       | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
+| ERC-721  | Token contract       | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
+| ERC-721  | Token contract       | `safeTransferFrom(address,address,uint256,bytes)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                  |
+| ERC-1155 | Token contract       | `safeTransferFrom(address,address,uint256,uint256,data)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification)          |
+| ERC-1155 | Token contract       | `safeBatchTransferFrom(address,address,uint256[],uint256[],data)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification) |
