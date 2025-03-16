@@ -137,7 +137,7 @@ Advance requests involve sending input data to the L1 through a JSON-RPC call, a
 
 In the application architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the [`addInput(address, bytes)`](../api-reference/json-rpc/input-box.md/#addinput) function of the InputBox smart contract.
+- Step 1: Send an input to the [`addInput(address, bytes)`](../api-reference/contracts/input-box.md#addinput) function of the InputBox smart contract.
 
 - Step 2: The Cartesi Node reads the data and gives it to the Cartesi machine for processing.
 
@@ -159,7 +159,7 @@ You can obtain the relevant addresses by running `cartesi address-book`.
 
 #### 2. Send inputs with Cartesi CLI
 
-Cartesi CLI provides a convenient way of sending inputs to an application. Inputs to be sent to application could in either `Hex`, `String encoding` or `ABI encoding` format.
+Cartesi CLI provides a convenient way of sending inputs to an application.
 
 To send an input, you could use the interactive or the direct option, for the interactive option run:
 
@@ -171,16 +171,30 @@ Response:
 
 ```shell
 $ cartesi send
-? Input (Use arrow keys)
-❯ String encoding
-  Hex string encoding
-  ABI encoding
+? Select send sub-command (Use arrow keys)
+❯ Send ERC-20 deposit to the application.
+  Send ERC-721 deposit to the application.
+  Send ether deposit to the application.
+  Send generic input to the application.
 ```
 
-From the response menu you proceed to select the input format then enter the input. While for the more direct option run:
+There are five types of inputs using a sub-command: `erc20`, `erc721`, `ether`, `generic`.
+
+Unlike the asset-type sub-commands (Ether, ERC20, and ERC721), the generic input command allows you to send inputs with any payload format (hex, string, and ABI).
 
 ```shell
-cartesi send --encoding <encoding> <Input> 
+$ cartesi send generic
+? Chain (Use arrow keys)
+❯ Foundry
+? Chain Foundry
+? RPC URL http://127.0.0.1:8545
+? Wallet Mnemonic
+? Mnemonic test test test test test test test test test test test junk
+? Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9999.969240390387558666 ETH
+? Application address 0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C
+? Input String encoding
+? Input (as string) Hello World
+✔ Input sent: 0x27a140b65feb714342a1dda31b6bfa2f8a83518231bb3b2da4bac506e0559007
 ```
 
 For the above command, you replace `<encoding>` with your input format choice (either `hex`, `string` or `abi`), then replace `<Input>` with your actual input text.
@@ -207,12 +221,17 @@ Inspect requests are best suited for non-production use, such as debugging and t
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
-To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application name or address>` with a body containing the request payload. For example:
+To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application_address>/<request path>`. For example:
 
 ```shell
-curl -X POST http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9 \
-  -H "Content-Type: application/json" \
-  -d '"test"'
+curl -X POST http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath
+```
+
+The inspect endpoint also recognizes individual applications by their names and not just their address, this therefore makes it possible to replace the application address passed in the inspect request template above with the name of your application.
+For example:
+
+```shell
+curl -X POST http://localhost:8080/inspect/new-application/mypath
 ```
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
@@ -220,13 +239,15 @@ Once the call's response is received, the payload is extracted from the response
 From a frontend client, here is an example of extracting the payload from an inspect request:
 
 ```javascript
-const response = await fetch("http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify("test")
-});
+const response = await fetch(
+  "http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
+);
 
 const result = await response.json();
 
