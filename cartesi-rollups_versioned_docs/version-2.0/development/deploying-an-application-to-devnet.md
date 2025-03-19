@@ -91,24 +91,42 @@ LABEL io.cartesi.rollups.ram_size=128Mi
 You can create a `.cartesi.env` in the project's root and override any variable controlling the rollups-node.
 :::
 
-## Running the Application
+## Deploying the Application
 
-Running your application starts your backend on port `8080` and local Anvil node on port `8545`.
+Running the deployment command compiles and publishes your application to the node running in the devnet environment. It also deploys the required authority and application contracts to the local anvil network.
 
-In essence, the node also logs all outputs received by your backend.
-
-Here are the prerequisites to run the node:
+Before deploying your application, ensure the following:
 
 - Docker Engine must be active.
-- Cartesi machine snapshot successfully built with `cartesi build`.
+- The Devnet environment must be running.
+- A Cartesi machine snapshot must be successfully built using `cartesi build`.
 
-To start the node, run:
+Once the above listed are all ready, the application can then be deployed by running:
 
 ```shell
-cartesi run
+cartesi rollups deploy
 ```
 
-This command runs your backend compiled to RISC-V and packages it as a Cartesi machine.
+This command compiles your backend to RISC-V, packages it as a Cartesi machine, then publishes it to the node running on the devnet.
 
+During deployment, you'll have to specify:
 
+- Private key or Mnemonic to fund the deployment.
+- The authority owner address.
+- The application owner address.
+- An application name (making it easier to identify your application instead of relying on the contract address).
 
+Once the deployment is complete, you should have logs similar to the following:
+
+```shell
+✔ Cartesi machine template hash 0x9e0420c0fda1a5dc9256b3f9783b09f207e5222a88429e91629cc2e495282b35
+✔ Wallet Mnemonic
+✔ Mnemonic test test test test test test test test test test test junk
+✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9994.000195973381758124 ETH
+✔ Authority Owner 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+✔ Application Owner 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+✔ Application 0x1Db6DdECF18095847f7099cfAc43A2671326d21c
+✔ Machine snapshot /var/lib/cartesi-rollups-node/snapshots/0x9e0420c0fda1a5dc9256b3f9783b09f207e5222a88429e91629cc2e495282b35/
+✔ Application Name counter
+✔ Registration counter
+```

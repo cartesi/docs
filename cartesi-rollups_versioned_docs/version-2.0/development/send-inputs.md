@@ -10,9 +10,9 @@ resources:
 
 You can send two requests to an application depending on whether you want to change or read the state.
 
-- **Advance**: In this request, any input data changes the state of the application.
+- **Advance**: In this request, any input data changes the state of the dApp.
 
-- **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the application state without changing it.
+- **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the dApp state without changing it.
 
 ## Advance and Inspect Requests
 
@@ -131,13 +131,13 @@ Every starter project you create has this base code as a template, ready to rece
 
 You can initiate an advance request by sending input from the CLI using Cast, Cartesi CLI, or a custom frontend client.
 
-Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the applciation backend and trigger a change in the application's state.
+Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp backend and trigger a change in the application's state.
 
 ![img](../../../static/img/v1.3/advance.jpg)
 
-In the application architecture, here is how an advance request plays out.
+In the dApp architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the [`addInput(address, bytes)`](../api-reference/contracts/input-box.md#addinput) function of the InputBox smart contract.
+- Step 1: Send an input to the [`addInput(address, bytes)`](../api-reference/json-rpc/input-box.md/#addinput) function of the InputBox smart contract.
 
 - Step 2: The Cartesi Node reads the data and gives it to the Cartesi machine for processing.
 
@@ -148,18 +148,18 @@ You can send inputs to your application with [Cast](https://book.getfoundry.sh/c
 #### 1. Send inputs with Cast
 
 ```shell
-cast send <InputBoxAddress> "addInput(address,bytes)" <ApplicationAddress> <EncodedPayload> --mnemonic <MNEMONIC>
+cast send <InputBoxAddress> "addInput(address,bytes)" <DAppAddress> <EncodedPayload> --mnemonic <MNEMONIC>
 ```
 
 This command sends the payload to the InputBox smart contract, initiating the advance request.
 
-Replace placeholders like `<InputBoxAddress>`, `<ApplicationAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
+Replace placeholders like `<InputBoxAddress>`, `<DAppAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 You can obtain the relevant addresses by running `cartesi address-book`.
 
 #### 2. Send inputs with Cartesi CLI
 
-Cartesi CLI provides a convenient way of sending inputs to an application.
+Cartesi CLI provides a convenient way of sending inputs to a dApp.
 
 To send an input, you could use the interactive or the direct option, for the interactive option run:
 
@@ -172,13 +172,14 @@ Response:
 ```shell
 $ cartesi send
 ? Select send sub-command (Use arrow keys)
-❯ Send ERC-20 deposit to the application.
+❯ Send DApp address input to the application.
+  Send ERC-20 deposit to the application.
   Send ERC-721 deposit to the application.
   Send ether deposit to the application.
   Send generic input to the application.
 ```
 
-There are five types of inputs using a sub-command: `erc20`, `erc721`, `ether`, `generic`.
+There are five types of inputs using a sub-command: `dapp-address`, `erc20`, `erc721`, `ether`, `generic`.
 
 Unlike the asset-type sub-commands (Ether, ERC20, and ERC721), the generic input command allows you to send inputs with any payload format (hex, string, and ABI).
 
@@ -191,7 +192,7 @@ $ cartesi send generic
 ? Wallet Mnemonic
 ? Mnemonic test test test test test test test test test test test junk
 ? Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9999.969240390387558666 ETH
-? Application address 0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C
+? DApp address 0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C
 ? Input String encoding
 ? Input (as string) Hello World
 ✔ Input sent: 0x27a140b65feb714342a1dda31b6bfa2f8a83518231bb3b2da4bac506e0559007
@@ -221,17 +222,10 @@ Inspect requests are best suited for non-production use, such as debugging and t
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
-To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application_address>/<request path>`. For example:
+To perform an Inspect call, use an HTTP GET request to `<address of the node>/inspect/<request path>`. For example:
 
 ```shell
-curl -X POST http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath
-```
-
-The inspect endpoint also recognizes individual applications by their names and not just their address, this therefore makes it possible to replace the application address passed in the inspect request template above with the name of your application.
-For example:
-
-```shell
-curl -X POST http://localhost:8080/inspect/new-application/mypath
+curl http://localhost:8080/inspect/mypath
 ```
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
@@ -239,16 +233,7 @@ Once the call's response is received, the payload is extracted from the response
 From a frontend client, here is an example of extracting the payload from an inspect request:
 
 ```javascript
-const response = await fetch(
-  "http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }
-);
-
+const response = await fetch("http://localhost:8080/inspect/mypath");
 const result = await response.json();
 
 for (let i in result.reports) {
