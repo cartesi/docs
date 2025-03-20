@@ -1,6 +1,6 @@
 ---
-id: deploying-an-application-to-devnet
-title: Deploying an application to devnet
+id: building-and-deploying-an-application
+title: Building and Deploying an Application
 resources:
   - url: https://github.com/Calindra/nonodo
     title: NoNodo
@@ -91,17 +91,20 @@ LABEL io.cartesi.rollups.ram_size=128Mi
 You can create a `.cartesi.env` in the project's root and override any variable controlling the rollups-node.
 :::
 
-## Deploying the Application
+## Deploying the application to devnet
 
-Running the deployment command compiles and publishes your application to the node running in the devnet environment. It also deploys the required authority and application contracts to the local anvil network.
+Running the deployment command compiles your application and publishes it to the node running in the devnet environment. It also deploys the required authority and application contracts to the local Anvil network.
 
+You can deploy multiple applications to this environment. For each application, you can either create a new authority contract or link it to an existing one.
+
+Prerequisites for Deployment
 Before deploying your application, ensure the following:
 
-- Docker Engine must be active.
-- The Devnet environment must be running.
-- A Cartesi machine snapshot must be successfully built using `cartesi build`.
-
-Once the above listed are all ready, the application can then be deployed by running:
+Docker Engine is active.
+The Devnet environment is running.
+A Cartesi machine snapshot has been successfully built using `cartesi build`.
+Deployment Command
+Once these prerequisites are met, deploy your application by running:
 
 ```shell
 cartesi rollups deploy

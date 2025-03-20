@@ -190,6 +190,7 @@
             "collapsed": true,
             "items": [
                 "development/installation",
+                "development/managing-a-devnet-environment",
                 "development/building-a-dapp",
                 "development/send-inputs",
                 "development/query-outputs",
