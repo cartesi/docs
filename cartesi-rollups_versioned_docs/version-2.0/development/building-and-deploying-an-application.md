@@ -1,6 +1,6 @@
 ---
 id: building-and-deploying-an-application
-title: Building and Deploying an Application
+title: Building and deploying an application
 resources:
   - url: https://github.com/Calindra/nonodo
     title: NoNodo
@@ -100,11 +100,11 @@ You can deploy multiple applications to this environment. For each application, 
 Prerequisites for Deployment
 Before deploying your application, ensure the following:
 
-Docker Engine is active.
-The Devnet environment is running.
-A Cartesi machine snapshot has been successfully built using `cartesi build`.
-Deployment Command
-Once these prerequisites are met, deploy your application by running:
+- Docker Engine is active.
+- The Devnet environment is running.
+- A Cartesi machine snapshot has been successfully built using `cartesi build`.
+
+Once these prerequisites are met, proceed to deploy your application by running:
 
 ```shell
 cartesi rollups deploy
