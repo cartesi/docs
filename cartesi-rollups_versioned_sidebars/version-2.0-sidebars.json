@@ -191,7 +191,7 @@
             "items": [
                 "development/installation",
                 "development/managing-a-devnet-environment",
-                "development/building-a-dapp",
+                "development/building-and-deploying-an-application",
                 "development/send-inputs",
                 "development/query-outputs",
                 "development/asset-handling",
