@@ -122,7 +122,10 @@ Create a file named `balance.ts` in the `src/wallet` directory and add the follo
 import { Address } from "viem";
 
 export class Balance {
-  constructor(private readonly address: Address, private ether: bigint = 0n) {}
+  constructor(
+    private readonly address: Address,
+    private ether: bigint = 0n
+  ) {}
 
   getEther(): bigint {
     return this.ether;
@@ -465,7 +468,7 @@ To relay the dApp address, run: `cartesi send dapp-address`
 
 ## Build and run the application
 
-With Docker running, [build your backend application](../development/building-a-dapp.md) by running:
+With Docker running, [build your backend application](../development/building-and-deploying-an-application.md) by running:
 
 ```shell
 cartesi build
