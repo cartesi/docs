@@ -1,43 +1,55 @@
-name: Deploy Staging
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - Staging  # Trigger deployment when pushing to the staging branch
-  workflow_dispatch:  # Allow manual deployment
+      - Staging
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  pages: write
   id-token: write
-  
+  contents: write
+
 jobs:
   build:
+    name: Build and upload artifact
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./docs
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Clone submodules
+        run: |
+          git submodule init
+          git submodule update --init --recursive
+      - name: Install dependencies
+        run: yarn
+      - name: Build website
+        run: yarn build
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "22"
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Build Docusaurus
-        run: yarn build
-        
-  deploy:
-      name: Deploy to GitHub Pages
-      needs: build
-      environment:
-        name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
-      runs-on: ubuntu-latest
-      steps:
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
