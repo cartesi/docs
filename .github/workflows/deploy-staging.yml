@@ -6,6 +6,10 @@ on:
       - Staging  # Trigger deployment when pushing to the staging branch
   workflow_dispatch:  # Allow manual deployment
 
+permissions:
+  contents: write
+  id-token: write
+  
 jobs:
   build:
     runs-on: ubuntu-latest
