@@ -3,11 +3,10 @@ name: Deploy Staging
 on:
   push:
     branches:
-      - staging  # Trigger deployment when pushing to the staging branch
-  workflow_dispatch:  # Allow manual deployment
+      - Staging  # Trigger deployment when pushing to the staging branch
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,11 +25,14 @@ jobs:
       - name: Build Docusaurus
         run: yarn build
         
-      - name: Deploy to GitHub Pages (Staging)
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          GIT_USER="${{ secrets.GITHUB_TOKEN }}" npm run deploy
-        env:
-          GIT_USER: ${{ secrets.GITHUB_TOKEN }}
-          DEPLOYMENT_BRANCH: staging
+  deploy:
+      name: Deploy to GitHub Pages
+      needs: build
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
