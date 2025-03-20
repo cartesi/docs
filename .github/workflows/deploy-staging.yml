@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - staging  # Trigger deployment when pushing to the staging branch
+  workflow_dispatch:  # Allow manual deployment
 
 jobs:
   deploy:
