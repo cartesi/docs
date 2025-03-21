@@ -1,3 +1,4 @@
 {"rule":"BASE_BASIS","sentence":"^\\QThis guide covers the Cartesi+Espresso integration and how to upgrade Cartesi application such that inputs can be submitted via Espresso instead of the regular base layer.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QIntegrating Cartesi and Chronicle offers Cartesi applications access to onchain and offcahin data like, price feed without developers having to set up additional systems or intermediaries.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QPrevado Id:\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThe Devnet environment functions similarly to a mainnet.\\E$"}

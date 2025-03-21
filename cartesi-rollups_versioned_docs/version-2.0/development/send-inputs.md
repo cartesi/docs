@@ -224,13 +224,6 @@ To perform an Inspect call, use an HTTP POST request to `<address of the node>/i
 curl -X POST http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath
 ```
 
-The inspect endpoint also recognizes individual applications by their names and not just their address, this therefore makes it possible to replace the application address passed in the inspect request template above with the name of your application.
-For example:
-
-```shell
-curl -X POST http://localhost:8080/inspect/new-application/mypath
-```
-
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
 From a frontend client, here is an example of extracting the payload from an inspect request:
