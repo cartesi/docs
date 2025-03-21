@@ -37,11 +37,11 @@ With the devnet environment running, you can deploy multiple applications to thi
 
 ### Overview of Devnet Services
 
-The `cartesi rollups start` command activates several services essential for node operation:
+The `cartesi rollups start` command starts several services essential for node operation:
 
 - **Anvil Chain**: Runs a local blockchain available at `http://localhost:8545`.
 
-- **GraphQL Playground**: An interactive IDE at `http://localhost:8080/graphql` for exploring the GraphQL server.
+- **GraphQL Playground**: An interactive UI at `http://localhost:8080/graphql` for exploring the GraphQL server.
 
 - **Blockchain Explorer**: Monitors node activity and manages transactions via `http://localhost:8080/explorer/`.
 
@@ -51,7 +51,7 @@ The `cartesi rollups start` command activates several services essential for nod
 
 ## Checking the status of a Devnet Environment
 
-The Devnet environment functions similarly to the blockchain mainnet. It runs as a single node along with all its services connected to a local Anvil network. This setup allows you to not only check the network's status but also see how many applications have been deployed to it.
+The Devnet environment functions similarly to a mainnet. It runs as a single node along with all its services connected to a local Anvil network. This setup allows you to not only check the network's status but also see how many applications have been deployed to it.
 
 To query the network's status, run the following command:
 
