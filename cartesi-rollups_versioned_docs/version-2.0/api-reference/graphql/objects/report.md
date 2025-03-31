@@ -4,28 +4,44 @@ title: Report
 hide_table_of_contents: false
 ---
 
-
-Represents application log or diagnostic information.
+Application log or diagnostic information.
 
 ```graphql
 type Report {
+  "Report index within the context of the input that produced it"
   index: Int!
+  "Input whose processing produced the report"
   input: Input!
+  "Report data as a payload in Ethereum hex binary format, starting with '0x'"
   payload: String!
+  "The application that produced the report"
+  application: Application!
 }
 ```
-
 
 ## Fields
 
 | Name | Type | Description |
 | ---- |------| ----------- |
-| `index`| [`Int!`](../../scalars/int) | Unique identifier for the report. |
-| `input`| [`Input!`](../../objects/input) | The input associated with this report. |
-| `payload`| [`String!`](../../scalars/string) | The actual data/content of the report. |
+| `index` | [`Int!`](../../scalars/int) | Report index within the context of the input that produced it. |
+| `input` | [`Input!`](../../objects/input) | Input whose processing produced the report. |
+| `payload` | [`String!`](../../scalars/string) | Report data as a payload in Ethereum hex binary format, starting with '0x'. |
+| `application` | [`Application!`](../../objects/application) | The application that produced the report. |
 
+## Example Query
 
-
-
-
-
+```graphql
+query {
+  report(reportIndex: 1) {
+    index
+    input {
+      index
+    }
+    payload
+    application {
+      address
+      name
+    }
+  }
+}
+```

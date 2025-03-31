@@ -4,12 +4,13 @@ title: NoticeEdge
 hide_table_of_contents: false
 ---
 
-
-Pagination entry
+Represents a single notice in a paginated list.
 
 ```graphql
 type NoticeEdge {
+  "The notice at this edge"
   node: Notice!
+  "A cursor for use in pagination"
   cursor: String!
 }
 ```
@@ -17,11 +18,26 @@ type NoticeEdge {
 ## Fields
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| `node` | [`Notice!`](../../objects/notice) | The Notice object. |
-| `cursor` | [`String!`](../../scalars/string) | A string that serves as a pagination cursor for this particular edge. |
+| ---- |------| ----------- |
+| `node` | [`Notice!`](../../objects/notice) | The notice at this edge. |
+| `cursor` | [`String!`](../../scalars/string) | A cursor for use in pagination. |
 
+## Example Query
 
-
-
-
+```graphql
+query {
+  notices(first: 10) {
+    edges {
+      node {
+        index
+        payload
+        proof {
+          outputIndex
+          outputHashesSiblings
+        }
+      }
+      cursor
+    }
+  }
+}
+```

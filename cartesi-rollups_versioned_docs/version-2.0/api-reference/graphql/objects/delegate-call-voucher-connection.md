@@ -4,7 +4,7 @@ title: DelegateCallVoucherConnection
 hide_table_of_contents: false
 ---
 
-Represents a paginated list of DELEGATECALL vouchers.
+Represents a paginated list of delegate call vouchers.
 
 ```graphql
 type DelegateCallVoucherConnection {

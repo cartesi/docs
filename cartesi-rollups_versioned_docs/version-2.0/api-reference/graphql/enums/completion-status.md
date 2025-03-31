@@ -44,7 +44,7 @@ enum CompletionStatus {
 
 ```graphql
 query {
-  input(id: "1") {
+  input(id: "0x123...") {
     status
   }
 }
