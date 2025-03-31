@@ -1,17 +1,17 @@
 ---
-id: voucher-connection
-title: VoucherConnection
+id: app-connection
+title: AppConnection
 hide_table_of_contents: false
 ---
 
-Represents a paginated list of vouchers.
+Represents a paginated list of applications.
 
 ```graphql
-type VoucherConnection {
+type AppConnection {
   "Total number of entries that match the query"
   totalCount: Int!
   "List of edges in the connection"
-  edges: [VoucherEdge!]!
+  edges: [AppEdge!]!
   "Information about the current page"
   pageInfo: PageInfo!
 }
@@ -22,23 +22,19 @@ type VoucherConnection {
 | Name | Type | Description |
 | ---- |------| ----------- |
 | `totalCount` | [`Int!`](../../scalars/int) | Total number of entries that match the query. |
-| `edges` | [`[VoucherEdge!]!`](../../objects/voucher-edge) | List of edges in the connection. |
+| `edges` | [`[AppEdge!]!`](../../objects/app-edge) | List of edges in the connection. |
 | `pageInfo` | [`PageInfo!`](../../objects/page-info) | Information about the current page. |
 
 ## Example Query
 
 ```graphql
 query {
-  vouchers(first: 10) {
+  applications(first: 10) {
     totalCount
     edges {
       node {
-        index
-        destination
-        payload
-        value
-        executed
-        transactionHash
+        address
+        name
       }
       cursor
     }
@@ -50,4 +46,4 @@ query {
     }
   }
 }
-```
+``` 
