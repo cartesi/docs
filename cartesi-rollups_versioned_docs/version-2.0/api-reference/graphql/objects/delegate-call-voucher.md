@@ -1,13 +1,13 @@
 ---
-id: voucher
-title: Voucher
+id: delegate-call-voucher
+title: DelegateCallVoucher
 hide_table_of_contents: false
 ---
 
-Representation of a transaction that can be carried out on the base layer blockchain, such as a transfer of assets.
+Represents a delegate call voucher in a Cartesi Rollups application.
 
 ```graphql
-type Voucher {
+type DelegateCallVoucher {
   "Voucher index within the context of the input that produced it"
   index: Int!
   "Input whose processing produced the voucher"
@@ -18,13 +18,11 @@ type Voucher {
   payload: String!
   "Proof object that allows this voucher to be validated and executed on the base layer blockchain"
   proof: Proof
-  "Value to be sent with the transaction"
-  value: BigInt
   "Indicates whether the voucher has been executed on the base layer blockchain"
   executed: Boolean
   "The hash of executed transaction"
   transactionHash: String
-  "The application that produced the voucher"
+  "The application that produced the delegateed voucher"
   application: Application!
 }
 ```
@@ -38,16 +36,15 @@ type Voucher {
 | `destination` | [`String!`](../../scalars/string) | Transaction destination address in Ethereum hex binary format (20 bytes), starting with '0x'. |
 | `payload` | [`String!`](../../scalars/string) | Transaction payload in Ethereum hex binary format, starting with '0x'. |
 | `proof` | [`Proof`](../../objects/proof) | Proof object that allows this voucher to be validated and executed on the base layer blockchain. |
-| `value` | [`BigInt`](../../scalars/bigint) | Value to be sent with the transaction. |
 | `executed` | [`Boolean`](../../scalars/boolean) | Indicates whether the voucher has been executed on the base layer blockchain. |
 | `transactionHash` | [`String`](../../scalars/string) | The hash of executed transaction. |
-| `application` | [`Application!`](../../objects/application) | The application that produced the voucher. |
+| `application` | [`Application!`](../../objects/application) | The application that produced the delegateed voucher. |
 
 ## Example Query
 
 ```graphql
 query {
-  voucher(address: "0x123...") {
+  delegateCallVoucher(outputIndex: 1) {
     index
     input {
       index
@@ -58,7 +55,6 @@ query {
       outputIndex
       outputHashesSiblings
     }
-    value
     executed
     transactionHash
     application {
