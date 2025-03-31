@@ -212,3 +212,37 @@ query reportsByInput($inputIndex: Int!) {
   }
   ```
 
+6. Listing reports with application information:
+
+  ```graphql
+  query {
+    reports(first: 10) {
+      edges {
+        node {
+          index
+          payload
+          application {
+            address
+            name
+          }
+        }
+      }
+    }
+  }
+  ```
+
+7. Fetching a specific report with application information:
+
+  ```graphql
+  query {
+    report(reportIndex: 1) {
+      index
+      payload
+      application {
+        address
+        name
+      }
+    }
+  }
+  ```
+
