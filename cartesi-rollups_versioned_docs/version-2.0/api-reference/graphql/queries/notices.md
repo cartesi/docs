@@ -183,3 +183,45 @@ query {
   }
 }
 ```
+
+4. Listing notices with proof data and application information:
+
+```graphql
+query {
+  notices(first: 10) {
+    edges {
+      node {
+        index
+        payload
+        proof {
+          outputIndex
+          outputHashesSiblings
+        }
+        application {
+          address
+          name
+        }
+      }
+    }
+  }
+}
+```
+
+5. Fetching a specific notice by output index:
+
+```graphql
+query {
+  notice(outputIndex: 1) {
+    index
+    payload
+    proof {
+      outputIndex
+      outputHashesSiblings
+    }
+    application {
+      address
+      name
+    }
+  }
+}
+```

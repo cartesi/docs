@@ -306,32 +306,12 @@ query reportsByInput($inputIndex: Int!) {
       edges {
         node {
           index
-          input {
-            id
-            index
-            status
-            msgSender
-            blockTimestamp
-            blockNumber
-            payload
-            inputBoxIndex
-            prevRandao
-            application {
-              address
-              name
-            }
-          }
           payload
           application {
             address
             name
           }
         }
-        cursor
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
       }
     }
   }
@@ -343,21 +323,6 @@ query reportsByInput($inputIndex: Int!) {
   query {
     report(reportIndex: 1) {
       index
-      input {
-        id
-        index
-        status
-        msgSender
-        blockTimestamp
-        blockNumber
-        payload
-        inputBoxIndex
-        prevRandao
-        application {
-          address
-          name
-        }
-      }
       payload
       application {
         address
