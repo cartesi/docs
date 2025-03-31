@@ -204,3 +204,53 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
     }
   }
   ```
+
+4. Listing all vouchers with proof data:
+
+  ```graphql
+  query {
+    vouchers(first: 10) {
+      edges {
+        node {
+          index
+          destination
+          payload
+          proof {
+            outputIndex
+            outputHashesSiblings
+          }
+          value
+          executed
+          transactionHash
+          application {
+            address
+            name
+          }
+        }
+      }
+    }
+  }
+  ```
+
+5. Fetching a specific voucher by output index:
+
+  ```graphql
+  query {
+    voucher(outputIndex: 1) {
+      index
+      destination
+      payload
+      proof {
+        outputIndex
+        outputHashesSiblings
+      }
+      value
+      executed
+      transactionHash
+      application {
+        address
+        name
+      }
+    }
+  }
+  ```
