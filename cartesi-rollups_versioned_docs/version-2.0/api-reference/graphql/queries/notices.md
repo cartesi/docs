@@ -11,28 +11,32 @@ Notices are informational statements that can be validated in the base layer blo
 Retrieve a specific notice based on its index and associated input index.
 
 ```graphql
-query notice($noticeIndex: Int!, $inputIndex: Int!) {
-  notice(noticeIndex: $noticeIndex, inputIndex: $inputIndex) {
+query notice($outputIndex: Int!) {
+  notice(outputIndex: $outputIndex) {
     index
     input {
+      id
       index
-      timestamp
+      status
       msgSender
+      blockTimestamp
       blockNumber
+      payload
+      inputBoxIndex
+      prevRandao
+      application {
+        address
+        name
+      }
     }
     payload
     proof {
-      validity {
-        inputIndexWithinEpoch
-        outputIndexWithinInput
-        outputHashesRootHash
-        vouchersEpochRootHash
-        noticesEpochRootHash
-        machineStateHash
-        outputHashInOutputHashesSiblings
-        outputHashesInEpochSiblings
-      }
-      context
+      outputIndex
+      outputHashesSiblings
+    }
+    application {
+      address
+      name
     }
   }
 }
@@ -42,10 +46,9 @@ For notices, the API provides access to proof data that can be used for validati
 
 ### Arguments
 
-| Name          | Type                        | Description                                    |
-| ------------- | --------------------------- | ---------------------------------------------- |
-| `noticeIndex` | [`Int!`](../../scalars/int) | Index of the notice to retrieve.               |
-| `inputIndex`  | [`Int!`](../../scalars/int) | Index of the input associated with the notice. |
+| Name         | Type                        | Description                                    |
+| ------------ | --------------------------- | ---------------------------------------------- |
+| `outputIndex` | [`Int!`](../../scalars/int) | Index of the notice to retrieve.               |
 
 ### Response Type
 
@@ -62,13 +65,35 @@ query notices {
       node {
         index
         input {
+          id
           index
-          timestamp
+          status
           msgSender
+          blockTimestamp
           blockNumber
+          payload
+          inputBoxIndex
+          prevRandao
+          application {
+            address
+            name
+          }
         }
         payload
+        proof {
+          outputIndex
+          outputHashesSiblings
+        }
+        application {
+          address
+          name
+        }
       }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
 }
@@ -93,14 +118,21 @@ query noticesByInput($inputIndex: Int!) {
       edges {
         node {
           index
-          input {
-            index
-            timestamp
-            msgSender
-            blockNumber
-          }
           payload
+          proof {
+            outputIndex
+            outputHashesSiblings
+          }
+          application {
+            address
+            name
+          }
         }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
@@ -124,15 +156,31 @@ query noticesByInput($inputIndex: Int!) {
 
 ```graphql
 query {
-  notice(noticeIndex: 3, inputIndex: 2) {
+  notice(outputIndex: 1) {
     index
+    input {
+      id
+      index
+      status
+      msgSender
+      blockTimestamp
+      blockNumber
+      payload
+      inputBoxIndex
+      prevRandao
+      application {
+        address
+        name
+      }
+    }
     payload
     proof {
-      validity {
-        inputIndexWithinEpoch
-        outputIndexWithinInput
-      }
-      context
+      outputIndex
+      outputHashesSiblings
+    }
+    application {
+      address
+      name
     }
   }
 }
@@ -147,10 +195,29 @@ query {
       node {
         index
         input {
+          id
           index
-          timestamp
+          status
+          msgSender
+          blockTimestamp
+          blockNumber
+          payload
+          inputBoxIndex
+          prevRandao
+          application {
+            address
+            name
+          }
         }
         payload
+        proof {
+          outputIndex
+          outputHashesSiblings
+        }
+        application {
+          address
+          name
+        }
       }
       cursor
     }
@@ -172,6 +239,14 @@ query {
         node {
           index
           payload
+          proof {
+            outputIndex
+            outputHashesSiblings
+          }
+          application {
+            address
+            name
+          }
         }
         cursor
       }
@@ -192,6 +267,21 @@ query {
     edges {
       node {
         index
+        input {
+          id
+          index
+          status
+          msgSender
+          blockTimestamp
+          blockNumber
+          payload
+          inputBoxIndex
+          prevRandao
+          application {
+            address
+            name
+          }
+        }
         payload
         proof {
           outputIndex
@@ -202,6 +292,11 @@ query {
           name
         }
       }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
 }
@@ -213,6 +308,21 @@ query {
 query {
   notice(outputIndex: 1) {
     index
+    input {
+      id
+      index
+      status
+      msgSender
+      blockTimestamp
+      blockNumber
+      payload
+      inputBoxIndex
+      prevRandao
+      application {
+        address
+        name
+      }
+    }
     payload
     proof {
       outputIndex
