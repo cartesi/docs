@@ -13,12 +13,19 @@ Retrieve a specific input based on its identifier.
 ```graphql
 query getInput($inputIndex: Int!) {
   input(index: $inputIndex) {
+    id
     index
     status
-    timestamp
     msgSender
+    blockTimestamp
     blockNumber
     payload
+    inputBoxIndex
+    prevRandao
+    application {
+      address
+      name
+    }
   }
 }
 ```
@@ -55,13 +62,21 @@ query inputs(
   ) {
     edges {
       node {
+        id
         index
         status
-        timestamp
         msgSender
+        blockTimestamp
         blockNumber
         payload
+        inputBoxIndex
+        prevRandao
+        application {
+          address
+          name
+        }
       }
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -107,42 +122,80 @@ Retrieve the result of a specific input, including its associated notices, vouch
 ```graphql
 query getInputResult($inputIndex: Int!) {
   input(index: $inputIndex) {
+    id
+    index
     status
-    timestamp
     msgSender
+    blockTimestamp
     blockNumber
+    payload
+    inputBoxIndex
+    prevRandao
+    application {
+      address
+      name
+    }
     reports {
       edges {
         node {
           index
-          input {
-            index
-          }
           payload
+          application {
+            address
+            name
+          }
         }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
     notices {
       edges {
         node {
           index
-          input {
-            index
-          }
           payload
+          proof {
+            outputIndex
+            outputHashesSiblings
+          }
+          application {
+            address
+            name
+          }
         }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
     vouchers {
       edges {
         node {
           index
-          input {
-            index
-          }
           destination
           payload
+          proof {
+            outputIndex
+            outputHashesSiblings
+          }
+          value
+          executed
+          transactionHash
+          application {
+            address
+            name
+          }
         }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
@@ -168,12 +221,19 @@ query getInputResult($inputIndex: Int!) {
   ```graphql
   query {
     input(index: 5) {
+      id
       index
       status
-      timestamp
       msgSender
+      blockTimestamp
       blockNumber
       payload
+      inputBoxIndex
+      prevRandao
+      application {
+        address
+        name
+      }
     }
   }
   ```
@@ -185,12 +245,21 @@ query getInputResult($inputIndex: Int!) {
     inputs(first: 5) {
       edges {
         node {
+          id
           index
           status
-          timestamp
           msgSender
+          blockTimestamp
+          blockNumber
           payload
+          inputBoxIndex
+          prevRandao
+          application {
+            address
+            name
+          }
         }
+        cursor
       }
       pageInfo {
         hasNextPage
@@ -205,14 +274,38 @@ query getInputResult($inputIndex: Int!) {
   ```graphql
   query {
     input(index: 10) {
+      id
+      index
       status
-      timestamp
+      msgSender
+      blockTimestamp
+      blockNumber
+      payload
+      inputBoxIndex
+      prevRandao
+      application {
+        address
+        name
+      }
       notices {
         edges {
           node {
             index
             payload
+            proof {
+              outputIndex
+              outputHashesSiblings
+            }
+            application {
+              address
+              name
+            }
           }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
       vouchers {
@@ -221,7 +314,23 @@ query getInputResult($inputIndex: Int!) {
             index
             destination
             payload
+            proof {
+              outputIndex
+              outputHashesSiblings
+            }
+            value
+            executed
+            transactionHash
+            application {
+              address
+              name
+            }
           }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }
@@ -235,12 +344,21 @@ query getInputResult($inputIndex: Int!) {
     inputs(first: 5, where: { indexLowerThan: 1 }) {
       edges {
         node {
+          id
           index
           status
-          timestamp
           msgSender
+          blockTimestamp
+          blockNumber
           payload
+          inputBoxIndex
+          prevRandao
+          application {
+            address
+            name
+          }
         }
+        cursor
       }
       pageInfo {
         hasNextPage
@@ -257,12 +375,15 @@ query getInputResult($inputIndex: Int!) {
     inputs(first: 10) {
       edges {
         node {
+          id
           index
           status
           msgSender
-          timestamp
+          blockTimestamp
           blockNumber
           payload
+          inputBoxIndex
+          prevRandao
           application {
             address
             name
@@ -278,15 +399,48 @@ query getInputResult($inputIndex: Int!) {
   ```graphql
   query {
     input(outputIndex: 1) {
+      id
       index
       status
       msgSender
-      timestamp
+      blockTimestamp
       blockNumber
       payload
+      inputBoxIndex
+      prevRandao
       application {
         address
         name
+      }
+    }
+  }
+  ```
+
+7. Listing inputs with application information and cursor:
+
+  ```graphql
+  query {
+    inputs(first: 10) {
+      edges {
+        node {
+          id
+          index
+          status
+          msgSender
+          blockTimestamp
+          blockNumber
+          payload
+          inputBoxIndex
+          prevRandao
+          application {
+            address
+            name
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
