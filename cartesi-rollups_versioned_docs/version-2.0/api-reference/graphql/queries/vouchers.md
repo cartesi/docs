@@ -12,29 +12,36 @@ Vouchers represent transactions that can be carried out on the base layer blockc
 Retrieve a specific voucher based on its index and associated input index.
 
 ```graphql
-query voucher($voucherIndex: Int!, $inputIndex: Int!) {
-  voucher(voucherIndex: $voucherIndex, inputIndex: $inputIndex) {
+query voucher($outputIndex: Int!) {
+  voucher(outputIndex: $outputIndex) {
     index
     input {
+      id
       index
-      timestamp
+      status
       msgSender
+      blockTimestamp
       blockNumber
+      payload
+      inputBoxIndex
+      prevRandao
+      application {
+        address
+        name
+      }
     }
     destination
     payload
     proof {
-      validity {
-        inputIndexWithinEpoch
-        outputIndexWithinInput
-        outputHashesRootHash
-        vouchersEpochRootHash
-        noticesEpochRootHash
-        machineStateHash
-        outputHashInOutputHashesSiblings
-        outputHashesInEpochSiblings
-      }
-      context
+      outputIndex
+      outputHashesSiblings
+    }
+    value
+    executed
+    transactionHash
+    application {
+      address
+      name
     }
   }
 }
@@ -45,8 +52,7 @@ For vouchers, the API provides access to proof data that can be used for validat
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| `voucherIndex` | [`Int!`](../../scalars/int) | The index of the voucher to retrieve. |
-| `inputIndex` | [`Int!`](../../scalars/int) | The index of the associated input. |
+| `outputIndex` | [`Int!`](../../scalars/int) | The index of the voucher to retrieve. |
 
 
 
@@ -66,13 +72,33 @@ query vouchers($first: Int, $after: String) {
       node {
         index
         input {
+          id
           index
-          timestamp
+          status
           msgSender
+          blockTimestamp
           blockNumber
+          payload
+          inputBoxIndex
+          prevRandao
+          application {
+            address
+            name
+          }
         }
         destination
         payload
+        proof {
+          outputIndex
+          outputHashesSiblings
+        }
+        value
+        executed
+        transactionHash
+        application {
+          address
+          name
+        }
       }
       cursor
     }
@@ -110,6 +136,17 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
           index
           destination
           payload
+          proof {
+            outputIndex
+            outputHashesSiblings
+          }
+          value
+          executed
+          transactionHash
+          application {
+            address
+            name
+          }
         }
         cursor
       }
@@ -141,20 +178,39 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
 1. Fetching a specific voucher:
 
   ```graphql
-    query {
-      voucher(voucherIndex: 3, inputIndex: 2) {
+  query {
+    voucher(outputIndex: 1) {
+      index
+      input {
+        id
         index
-        destination
+        status
+        msgSender
+        blockTimestamp
+        blockNumber
         payload
-        proof {
-          validity {
-            inputIndexWithinEpoch
-            outputIndexWithinInput
-          }
-          context
+        inputBoxIndex
+        prevRandao
+        application {
+          address
+          name
         }
       }
+      destination
+      payload
+      proof {
+        outputIndex
+        outputHashesSiblings
+      }
+      value
+      executed
+      transactionHash
+      application {
+        address
+        name
+      }
     }
+  }
   ```
 
 2. Listing earlier(first 5) vouchers:
@@ -166,11 +222,33 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
         node {
           index
           input {
+            id
             index
-            timestamp
+            status
+            msgSender
+            blockTimestamp
+            blockNumber
+            payload
+            inputBoxIndex
+            prevRandao
+            application {
+              address
+              name
+            }
           }
           destination
           payload
+          proof {
+            outputIndex
+            outputHashesSiblings
+          }
+          value
+          executed
+          transactionHash
+          application {
+            address
+            name
+          }
         }
         cursor
       }
@@ -193,6 +271,17 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
             index
             destination
             payload
+            proof {
+              outputIndex
+              outputHashesSiblings
+            }
+            value
+            executed
+            transactionHash
+            application {
+              address
+              name
+            }
           }
           cursor
         }
@@ -213,6 +302,21 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
       edges {
         node {
           index
+          input {
+            id
+            index
+            status
+            msgSender
+            blockTimestamp
+            blockNumber
+            payload
+            inputBoxIndex
+            prevRandao
+            application {
+              address
+              name
+            }
+          }
           destination
           payload
           proof {
@@ -228,6 +332,10 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
           }
         }
       }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
     }
   }
   ```
@@ -238,6 +346,21 @@ query vouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
   query {
     voucher(outputIndex: 1) {
       index
+      input {
+        id
+        index
+        status
+        msgSender
+        blockTimestamp
+        blockNumber
+        payload
+        inputBoxIndex
+        prevRandao
+        application {
+          address
+          name
+        }
+      }
       destination
       payload
       proof {
