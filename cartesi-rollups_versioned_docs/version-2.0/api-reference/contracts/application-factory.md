@@ -15,10 +15,10 @@ This contract ensures efficient and secure deployment of `Application` contracts
 ## `newApplication()`
 
 ```solidity
-function newApplication( IConsensus consensus, address appOwner, bytes32 templateHash) external override returns (IApplication)
+function newApplication(IConsensus consensus, address appOwner, bytes32 templateHash) external override returns (IApplication)
 ```
 
-Deploys a new Application contract without specifying a salt value for address derivation.
+Deploys a new Application contract without a salt value for address derivation.
 
 Emits an `ApplicationCreated` event upon successful deployment.
 
