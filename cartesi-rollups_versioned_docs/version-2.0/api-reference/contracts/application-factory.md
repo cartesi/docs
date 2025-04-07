@@ -6,20 +6,17 @@ resources:
     title: Application Factory contract
 ---
 
-The **ApplicationFactory** contract is a tool for reliably deploying new instances of the [`Application`](../contracts/application.md) contract with or without a specified salt value for address derivation.
+The **ApplicationFactory** contract is a tool for deploying new instances of the [`Application`](../contracts/application.md) contract reliably, with or without a specified salt value for address derivation.
 
-
-Additionally, it provides a function to calculate the address of a potential new `Application` contract based on input parameters.
-
-This contract ensures efficient and secure deployment of `Application` contracts within the Cartesi Rollups framework.
+The contract provides functionality to calculate the address of a potential new `Application` contract based on input parameters, ensuring efficient and secure deployment of `Application` contracts within the Cartesi Rollups framework.
 
 ## `newApplication()`
 
 ```solidity
-function newApplication( IConsensus consensus, address appOwner, bytes32 templateHash) external override returns (IApplication)
+function newApplication(IConsensus consensus, address appOwner, bytes32 templateHash) external override returns (IApplication)
 ```
 
-Deploys a new Application contract without specifying a salt value for address derivation.
+Deploys a new Application contract without a salt value for address derivation.
 
 Emits an `ApplicationCreated` event upon successful deployment.
 
