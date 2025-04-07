@@ -5,14 +5,14 @@ title: Introduction
 
 The backend of a Cartesi application as mentioned in the [overview section](../index.md#backend-apis) contains the applications logic and state, it interacts with the Cartesi rollups framework by retrieving request and submitting structured outputs. The application backend retrieves a new request as follows:
 
-- Finish — Communicates that any previous processing has been completed and that the backend is ready to handle the subsequent request. This following request is returned as the call's response and can be of the following types:
+- Finish — Indicates that any previous processing has been completed and the backend is ready to handle the next request. The subsequent request is returned as the call's response and can be of the following types:
 
-  - **Advance** — Provides input to be processed by the backend to advance the Cartesi Machine state. When processing an `Advance` request, the backend can call the methods `/voucher`, `/notice`, and `/report`. For such requests, the input data contains the payload and metadata, such as the account address that submitted the input.
+  - **Advance** — Provides input to be processed by the backend to advance the Cartesi Machine state. When processing an `Advance` request, the backend can call the `/voucher`, `/notice`, and `/report` endpoints. For such requests, the input data contains both the payload and metadata, including the account address that submitted the input.
 
-  - **Inspect** — This function submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged since the machine is reverted to its exact previous condition after processing. For Inspect requests, the input data has only a payload.
+  - **Inspect** — Submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged, as the machine reverts to its exact previous condition after processing. For Inspect requests, the input data contains only a payload.
 
   :::caution Inspect requests
-  Inspect requests are best suited for non-production use, such as debugging and testing. They may not function reliably in production environments, potentially leading to errors or disruptions.
+  Inspect requests are best suited for non-production use, such as debugging and testing. They may not function reliably in production environments and could lead to errors or disruptions.
   :::
 
 ## Advance and Inspect
@@ -197,19 +197,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </TabItem>
 </Tabs>
 
-An **Advance** request involves sending input data to the base layer via JSON-RPC so they can reach the dApp backend to change the application's state.
+An **Advance** request involves sending input data to the base layer via JSON-RPC, allowing it to reach the dApp backend to change the application's state.
 
 ![img](../../../../static/img/v1.3/advance.jpg)
 
-In the dApp architecture, here is how an advance request plays out.
+Here is how an advance request works in the dApp architecture:
 
 - Step 1: Send an input to the [`addInput(address, bytes)`](../contracts/input-box.md#addinput) function of the InputBox smart contract.
 
-- Step 2: The HTTP Rollups Server reads the data and gives it to the Cartesi machine for processing.
+- Step 2: The HTTP Rollups Server reads the data and sends it to the Cartesi Machine for processing.
 
-- Step 3: After the computation, the machine state is updated, and the results are returned to the rollup server.
+- Step 3: After computation, the machine state is updated, and the results are returned to the rollup server.
 
-An **Inspect** request involves making an external HTTP API call to the rollups server to read the dApp state without changing it.
+An **Inspect** request involves making an external HTTP API call to the rollups server to read the dApp state without modifying it.
 
 ![img](../../../../static/img/v1.3/inspect.jpg)
 
@@ -223,7 +223,6 @@ curl -X POST http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f26
   -d '"test"'
 ```
 
-Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
-
+After receiving the call's response, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
 The direct output types for **Advance** requests are [vouchers](./vouchers.md), [notices](./notices.md), and [reports](./reports.md), while **Inspect** requests generate only [reports](./reports.md).
