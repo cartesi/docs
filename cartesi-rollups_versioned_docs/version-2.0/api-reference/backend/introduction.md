@@ -10,11 +10,7 @@ The backend of a Cartesi application as mentioned in the [overview section](../i
   - **Advance** — Provides input to be processed by the backend to advance the Cartesi Machine state. When processing an `Advance` request, the backend can call the `/voucher`, `/notice`, and `/report` endpoints. For such requests, the input data contains both the payload and metadata, including the account address that submitted the input.
 
   - **Inspect** — Submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged, as the machine reverts to its exact previous condition after processing. For Inspect requests, the input data contains only a payload.
-
-  :::caution Inspect requests
-  Inspect requests are best suited for non-production use, such as debugging and testing. They may not function reliably in production environments and could lead to errors or disruptions.
-  :::
-
+  
 ## Advance and Inspect
 
 Here is a simple boilerplate application that handles Advance and Inspect requests:
@@ -222,6 +218,8 @@ curl -X POST http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f26
   -H "Content-Type: application/json" \
   -d '"test"'
 ```
+
+The payload should be a hex-encoded string starting with '0x' followed by pairs of hexadecimal numbers.
 
 After receiving the call's response, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
