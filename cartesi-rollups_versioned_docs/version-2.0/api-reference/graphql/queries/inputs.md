@@ -96,7 +96,7 @@ query inputs(
 | `last` | [`Int`](../../scalars/int) | Get at most the last `n` entries (backward pagination). |
 | `after` | [`String`](../../scalars/string) | Get entries after the provided cursor (forward pagination). |
 | `before` | [`String`](../../scalars/string) | Get entries before the provided cursor (backward pagination). |
-| `where` | [`InputFilter`](../../inputs/input-filter) | Filter criteria for inputs. |
+| `where` | [`InputFilter`](../../filters/input-filter) | Filter criteria for inputs. |
 
 
 ### Response Type
@@ -108,7 +108,7 @@ query inputs(
 
 - You cannot mix forward pagination (`first`, `after`) with backward pagination (`last`, `before`) in the same query.
 
-- The `where` argument allows you to filter inputs based the [`InputFilter`](../../inputs/input-filter).
+- The `where` argument allows you to filter inputs based the [`InputFilter`](../../filters/input-filter).
 
 - When using `where` with `after` or `before`, the filter is applied first, and then the pagination is applied to the filtered results.
 :::
