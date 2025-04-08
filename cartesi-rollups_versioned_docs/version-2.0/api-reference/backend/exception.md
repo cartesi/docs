@@ -11,7 +11,7 @@ When an exception occurs during request processing, the dApp backend should:
 3. Exit the processing loop
 
 The Rollup HTTP Server will:
-- Skip the input with the reason [`EXCEPTION`](../jsonrpc/types.md#inputcompletionstatus)
+- Skip the input with the reason [`EXCEPTION`](../graphql/enums/completion-status.md)
 - Forward the exception message
 - Return status code 200
 
