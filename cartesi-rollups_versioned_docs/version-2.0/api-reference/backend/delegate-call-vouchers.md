@@ -60,3 +60,17 @@ In a delegate call voucher execution:
 - msg.sender and msg.value from the original transaction are preserved
 
 This architecture, where the Application contract maintains all state while being able to execute logic from other contracts, makes delegate call vouchers particularly useful for customizable logics while keeping all application state centralized in the Application contract.
+
+## Epoch Configuration
+
+An epoch refers to a specific period during which a batch of updates is processed off-chain, and upon agreement by validators, the finalized state is recorded on-chain.
+
+Epoch Length is the number of blocks that make up an epoch. It determines how long each epoch lasts in terms of block counts. For instance, if an epoch length is set to 7200 blocks, the epoch will end once 7200 blocks have been processed. This length directly influences how frequently updates are finalized and recorded on the blockchain.
+
+Delegate call vouchers, like regular vouchers, are executed on the blockchain upon the closure of the corresponding epoch. This ensures that all state changes and logic executions are properly validated and recorded in the blockchain.
+
+You can manually set the epoch length to facilitate quicker execution of delegate call vouchers during development.
+
+:::note epoch duration
+[Refer to the documentation here](../../development/cli-commands.md/#run) to manually configure epoch length during development.
+:::
