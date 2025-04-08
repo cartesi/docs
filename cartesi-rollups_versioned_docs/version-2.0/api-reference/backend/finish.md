@@ -25,7 +25,7 @@ If an advance-state request is rejected:
 - The state is reverted to its previous condition
 
 During a finish call, the next rollup request might not be immediately available. In this case:
-- The Rollup HTTP Server returns status code 202
+- The Rollup HTTP Server returns status code 202 after 10 seconds
 - When receiving status 202, the dApp backend should retry the finish call with the same arguments
 
 Let's see how a Cartesi dApp's backend processes requests using the finish endpoint:
@@ -141,5 +141,5 @@ while True:
   - Reports are not discarded
   - The state is reverted to its previous condition
 - During a finish call, the next rollup request might not be immediately available:
-  - The Rollup HTTP Server returns status code 202
+  - The Rollup HTTP Server returns status code 202 after 10 seconds
   - When receiving status 202, the dApp backend should retry the finish call with the same arguments
