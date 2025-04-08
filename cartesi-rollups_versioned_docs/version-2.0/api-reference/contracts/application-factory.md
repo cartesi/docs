@@ -2,7 +2,7 @@
 id: application-factory
 title: ApplicationFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/blob/prerelease/2.0.0/contracts/dapp/ApplicationFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/main/src/dapp/ApplicationFactory.sol
     title: Application Factory contract
 ---
 

@@ -45,8 +45,9 @@
                     "items": [
                         "api-reference/backend/introduction",
                         "api-reference/backend/notices",
+                        "api-reference/backend/reports",
                         "api-reference/backend/vouchers",
-                        "api-reference/backend/reports"
+                        "api-reference/backend/delegate-call-vouchers"
                     ]
                 },
                 {
@@ -62,8 +63,9 @@
                             "items": [
                                 "api-reference/graphql/queries/inputs",
                                 "api-reference/graphql/queries/notices",
+                                "api-reference/graphql/queries/reports",
                                 "api-reference/graphql/queries/vouchers",
-                                "api-reference/graphql/queries/reports"
+                                "api-reference/graphql/queries/delegate-call-vouchers"
                             ]
                         },
                         {
