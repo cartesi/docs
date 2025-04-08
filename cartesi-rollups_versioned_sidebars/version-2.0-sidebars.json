@@ -46,8 +46,10 @@
                         "api-reference/backend/introduction",
                         "api-reference/backend/notices",
                         "api-reference/backend/reports",
-                        "api-reference/backend/vouchers",
-                        "api-reference/backend/delegate-call-vouchers"
+                        "api-reference/backend/vouchers",   
+                        "api-reference/backend/delegate-call-vouchers",
+                        "api-reference/backend/exception",
+                        "api-reference/backend/finish"
                     ]
                 },
                 {
@@ -87,6 +89,16 @@
                                 "api-reference/graphql/filters/input-filter",
                                 "api-reference/graphql/filters/application-filter",
                                 "api-reference/graphql/filters/convenient-filter"
+                            ]
+                        },
+                        {
+                            "type": "category",
+                            "label": "Enums",
+                            "collapsed": true,
+                            "items": [
+                                [
+                                    "api-reference/graphql/enums/completion-status"
+                                ]
                             ]
                         },
                         {
