@@ -111,7 +111,7 @@ query delegateCallVouchers($first: Int, $after: String, $filter: [ConvenientFilt
 | ---- | ---- | ----------- |
 | `first` | [`Int`](../../scalars/int) | Number of delegate call vouchers to retrieve (for pagination). |
 | `after` | [`String`](../../scalars/string) | Cursor to start retrieving delegate call vouchers from (for pagination). |
-| `filter` | [`[ConvenientFilter]`](../../inputs/convenient-filter) | Optional filters to apply to the query. |
+| `filter` | [`[ConvenientFilter]`](../../filters/convenient-filter) | Optional filters to apply to the query. |
 
 ### Response Type
 
