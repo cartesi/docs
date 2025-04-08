@@ -20,7 +20,11 @@ The result of the voucher execution is recorded on the base layer. This recordin
 [Refer to the documentation here](../../development/asset-handling.md) for asset handling and creating vouchers in your dApp.
 :::
 
-## Epoch configuration
+## Delegate Call Vouchers
+
+Delegate call vouchers enable advanced smart contract interactions through the [DELEGATECALL](https://www.evm.codes/?fork=cancun#f4) opcode, allowing dApps to separate their execution logic from their storage context. For more details, see [Delegate Call Vouchers](./delegate-call-vouchers.md).
+
+## Epoch Configuration
 
 An epoch refers to a specific period during which a batch of updates is processed off-chain, and upon agreement by validators, the finalized state is recorded on-chain.
 
