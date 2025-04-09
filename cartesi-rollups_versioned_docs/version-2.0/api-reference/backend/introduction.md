@@ -5,11 +5,13 @@ title: Introduction
 
 The backend of a Cartesi dApp processes requests in the following manner:
 
-- Finish — Indicates that any previous processing has been completed and the backend is ready to handle the next request. The subsequent request is returned as the call's response and can be of the following types:
+  - **Finish** — Called via [`/finish`](./finish.md), indicates that any previous processing has been completed and the backend is ready to handle the next request. The subsequent request is returned as the call's response and can be of the following types:
 
-  - **Advance** — Provides input to be processed by the backend to advance the Cartesi Machine state. When processing an `Advance` request, the backend can call the `/voucher`, `/notice`, and `/report` endpoints. For such requests, the input data contains both the payload and metadata, including the account address that submitted the input.
+    - **Advance** — Provides input to be processed by the backend to advance the Cartesi Machine state. When processing an Advance request, the backend can call the [`/voucher`](./vouchers.md), [`/delegate-call-voucher`](./delegate-call-vouchers.md), [`/notice`](./notices.md), and [`/report`](./reports.md) endpoints. For such requests, the input data contains both the payload and metadata, including the account address that submitted the input.
 
-  - **Inspect** — Submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged, as the machine reverts to its exact previous condition after processing. For Inspect requests, the input data contains only a payload.
+    - **Inspect** — Submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged, as the machine reverts to its exact previous condition after processing. For Inspect requests, the input data contains only a payload, and the backend can only call the [`/report`](./reports.md) endpoint.
+
+  - **Exception** — Called by the backend when it encounters an unrecoverable error during request processing. This signals to the Rollup HTTP Server that the current request processing failed and should be terminated. See [`/exception`](./exception.md) for more details.
   
 ## Advance and Inspect
 
@@ -148,4 +150,4 @@ The payload should be a hex-encoded string starting with '0x' followed by pairs 
 
 After receiving the call's response, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
-The direct output types for **Advance** requests are [vouchers](./vouchers.md), [notices](./notices.md), and [reports](./reports.md), while **Inspect** requests generate only [reports](./reports.md).
+The direct output types for **Advance** requests are [vouchers](./vouchers.md), [delegate call vouchers](./delegate-call-vouchers.md), [notices](./notices.md), and [reports](./reports.md), while **Inspect** requests generate only [reports](./reports.md).
