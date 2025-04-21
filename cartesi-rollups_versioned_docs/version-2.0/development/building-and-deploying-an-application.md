@@ -107,7 +107,7 @@ Before deploying your application, ensure the following:
 Once these prerequisites are met, proceed to deploy your application by running:
 
 ```shell
-cartesi rollups deploy
+cartesi deploy
 ```
 
 This command compiles your backend to RISC-V, packages it as a Cartesi machine, then publishes it to the node running on the devnet.
