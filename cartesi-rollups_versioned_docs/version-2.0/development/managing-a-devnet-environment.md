@@ -13,25 +13,23 @@ resources:
 The Cartesi CLI makes it much easier to create an application. This process happens in two stages. The first stage involves setting up a devnet environment. During this step, the required docker containers are downloaded and started to create a local development environment. This environment includes Cartesi node, Anvil network, Cartesi RPC services, both the Inspect and GraphQL servers. To start this process simply ensure that you have docker active then run the command:
 
 ```shell
-cartesi rollups start
+cartesi start
 ```
 
 The successful execution of this step will log this in your terminal:
 
 ```shell
 WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
-[+] Pulling 5/5
- ✔ rollups-node Skipped - Image is already being pulled by rollups-node-migration                                                                                                                                                        0.0s
- ✔ anvil Skipped - Image is already being pulled by rollups-node-migration                                                                                                                                                               0.0s
- ✔ rollups-node-migration Pulled                                                                                                                                                                                                         2.7s
- ✔ proxy Pulled                                                                                                                                                                                                                          2.5s
- ✔ database Pulled                                                                                                                                                                                                                       2.5s
-✔ anvil service ready at http://127.0.0.1:8545
+[+] Pulling 4/4
+ ✔ database Skipped - Image is already present locally                                                      0.0s 
+ ✔ rollups-node Skipped - Image is already present locally                                                  0.0s 
+ ✔ anvil Skipped - Image is already present locally                                                         0.0s 
+✔ anvil service ready at http://127.0.0.1:8080/anvil
 ✔ rpc service ready at http://127.0.0.1:8080/rpc
 ✔ inspect service ready at http://127.0.0.1:8080/inspect/<application_address>
 ```
 
-Getting a log similar to this means the CLI successfully pulled all the required services and activated the cartesi-rollups devnet container. You can confirm this by checking the Containers' section in your Docker Desktop.
+Getting a log similar to this means the CLI successfully pulled all the required services and activated the cartesi devnet container. You can confirm this by checking the Containers' section in your Docker Desktop.
 
 With the devnet environment running, you can deploy multiple applications to this local network. Keep in mind that the state of these applications is only maintained while the devnet is active. If you stop or restart the devnet, you'll need to redeploy the applications and reinitialize their state.
 
@@ -56,13 +54,13 @@ The Devnet environment functions similarly to a mainnet. It runs as a single nod
 To query the network's status, run the following command:
 
 ```shell
-cartesi rollups status
+cartesi status
 ```
 
 This returns the following log:
 
 ```shell
-> cartesi rollups status
+> cartesi status
 cartesi-rollups is running
 no applications deployed
 ```
@@ -86,7 +84,7 @@ cartesi-rollups is running
 Once development and testing is complete, you can shut down the devnet environment by running the following command:
 
 ```shell
-cartesi rollups stop
+cartesi stop
 ```
 
 Keep in mind that stopping the devnet environment will erase any previously deployed applications and their state. If you restart the devnet and still need those applications, you'll have to redeploy them.
