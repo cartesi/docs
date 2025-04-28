@@ -7,11 +7,6 @@ module.exports = {
       label: 'Overview',
     },
     {
-      type: 'doc',
-      id: 'quickstart',
-      label: 'Quickstart',
-    },
-    {
       type: 'category',
       label: 'Concepts',
       collapsed: false,
@@ -19,7 +14,7 @@ module.exports = {
         {
           type: 'doc',
           id: 'cartesi-machine',
-          label: 'Cartesi Machine',
+          label: 'Execution Environment',
         },
         {
           type: 'doc',
@@ -33,32 +28,11 @@ module.exports = {
         },
         {
           type: 'doc',
-          id: 'app-chains',
-          label: 'App-Chains',
+          id: 'rollups-coprocessor',
+          label: 'Rollups vs Coprocessor',
         },
+        
       ],
     },
-    {
-      type: 'category',
-      label: 'References',
-      collapsed: false,
-      items: [
-        {
-          type: 'doc',
-          id: 'cli-commands',
-          label: 'Cartesi CLI',
-        },
-        {
-          type: 'link',
-          label: 'Honeypot Application',
-          href: 'https://github.com/cartesi/honeypot',
-        },
-        {
-          type: 'link',
-          label: 'Rollup Lab',
-          href: 'https://rolluplab.io',
-        },
-      ],
-    }
   ],
 };
