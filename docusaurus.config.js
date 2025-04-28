@@ -178,76 +178,29 @@ const config = {
           //   ],
           // },
           {
-            label: "Video Tutorial",
-            href: "https://www.udemy.com/course/cartesi-masterclass/",
+            label: "Get Started",
+            to: "/get-started",
+            activeBaseRegex: "^/get-started",
             position: "left",
           },
           {
-            type: "dropdown",
-            label: "Community",
+            label: "Rollups",
+            to: "/cartesi-rollups/2.0/getting-started/",
+            activeBaseRegex: "^/cartesi-rollups",
             position: "left",
-            items: [
-              {
-                label: "Twitter",
-                href: "https://www.twitter.com/cartesiproject",
-              },
-              { label: "Discord", href: "https://discord.gg/cWGbyFkQ2W" },
-              { label: "Reddit", href: "https://www.reddit.com/r/cartesi/" },
-              {
-                label: "YouTube",
-                href: "https://www.youtube.com/c/Cartesiproject/videos",
-              },
-              { label: "Telegram", href: "https://t.me/cartesiannouncements" },
-              {
-                label: "LinkedIn",
-                href: "https://www.linkedin.com/company/cartesi/",
-              },
-              {
-                label: "Instagram",
-                href: "https://www.instagram.com/cartesiproject/",
-              },
-              {
-                label: "Blog",
-                href: "https://cartesi.io/blog/",
-              },
-              {
-                label: "Built with Cartesi",
-                href: "https://rolluplab.io/",
-              },
-              {
-                label: "Technical Vision Forum",
-                href: "https://governance.cartesi.io/c/technical-vision-forum/13",
-              },
-            ],
           },
-          // {
-          //   type: "dropdown",
-          //   label: "Developers",
-          //   position: "left",
-          //   items: [
-          //     { label: "Code snippets", href: "#" },
-          //     { label: "Quick start tutorials", href: "#" },
-          //   ],
-          // },
+
           {
-            label: "Cartesi Home",
-            to: "//cartesi.io",
+            label: "Coprocessor",
+            to: "/cartesi-coprocessor/1.0/introduction",
+            activeBaseRegex: "^/cartesi-coprocessor",
             position: "left",
           },
-
-          // {
-          //   type: "docsVersionDropdown",
-          //   position: "right",
-          //   docsPluginId: "cartesi-rollups",
-          //   label: "Version",
-          // },
-
           {
             type: "search",
             className: "navbar-search-custom",
             position: "right",
           },
-
           {
             to: "https://discord.gg/cWGbyFkQ2W",
             position: "right",
@@ -421,196 +374,6 @@ const config = {
         showLastUpdateTime: true,
       },
     ],
-    [
-      "@docusaurus/plugin-client-redirects",
-      {
-        redirects: [
-          {
-            to: "/cartesi-rollups/1.5/", // Redirects /cartesi-rollups/ to the latest version
-            from: "/cartesi-rollups/",
-          },
-          {
-            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/inputs/",
-            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_inputs/",
-          },
-          {
-            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/notices/",
-            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_notices/",
-          },
-          {
-            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/vouchers/",
-            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list-vouchers/",
-          },
-          {
-            to: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/reports/",
-            from: "/cartesi-rollups/1.5/rollups-apis/graphql/queries/list_reports/",
-          },
-          {
-            to: "/cartesi-rollups/1.5/development/cli-commands/",
-            from: "/cartesi-rollups/1.5/development/node-configuration/",
-          },
-          {
-            to: "/cartesi-rollups/1.3/",
-            from: "/cartesi-rollups/overview",
-          },
-          {
-            to: "/cartesi-machine/",
-            from: ["/machine/", "/machine/intro/"],
-          },
-
-          {
-            to: "/cartesi-machine/host/",
-            from: ["/machine/host/"],
-          },
-          {
-            to: "/cartesi-machine/host/cmdline/",
-            from: ["/machine/host/cmdline/"],
-          },
-          {
-            to: "/cartesi-machine/host/lua/",
-            from: ["/machine/host/lua/"],
-          },
-          {
-            to: "/cartesi-machine/target/",
-            from: ["/machine/target/"],
-          },
-          {
-            to: "/cartesi-machine/target/linux/",
-            from: ["/machine/target/linux/"],
-          },
-          {
-            to: "/cartesi-machine/target/architecture/",
-            from: ["/machine/target/architecture/"],
-          },
-          {
-            to: "/cartesi-machine/blockchain/",
-            from: ["/machine/blockchain/"],
-          },
-          {
-            to: "/cartesi-machine/blockchain/hash/",
-            from: ["/machine/blockchain/hash"],
-          },
-          {
-            to: "/cartesi-machine/blockchain/vg/",
-            from: ["/machine/blockchain/vg/"],
-          },
-          {
-            to: "/cartesi-rollups/2.0/getting-started/quickstart/",
-            from: "/cartesi-rollups/2.0/quickstart/",
-          },
-          // {
-          //   to: "/cartesi-rollups/2.0/api-reference/architecture/",
-          //   from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
-          // },
-          // {
-          //   to: "/cartesi-rollups/2.0/api-reference/architecture/",
-          //   from: "/cartesi-rollups/2.0/core-concepts/architecture/",
-          // },
-          {
-            to: "/cartesi-rollups/2.0/resources/mainnet-considerations/",
-            from: "/cartesi-rollups/2.0/core-concepts/mainnet-considerations/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
-            from: "/cartesi-rollups/2.0/development/creating-application/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
-            from: "/cartesi-rollups/2.0/development/building-the-application/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
-            from: "/cartesi-rollups/2.0/development/running-the-application/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/send-inputs/",
-            from: "/cartesi-rollups/2.0/development/send-requests/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/query-outputs/",
-            from: "/cartesi-rollups/2.0/development/retrieve-outputs/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/resources/migration-guide/",
-            from: "/cartesi-rollups/2.0/development/migration/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/resources/community-tools/",
-            from: "/cartesi-rollups/2.0/development/community-tools/",
-          },
-        ],
-        createRedirects(existingPath) {
-          if (existingPath.includes("/cartesi-rollups/1.0/")) {
-            // only top level URLs needed. All sub levels will be matched automatically. i.e. if /cartesi-rollups/api/ added, the plugin will automatically capture /cartesi-rollups/api/json-rpc/relays/DAppAddressRelay/ etc.
-            return [
-              existingPath.replace(
-                "/cartesi-rollups/1.5/",
-                "/cartesi-rollups/1.5/",
-                "/cartesi-rollups/overview"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.5/development/node-configuration/",
-                "/cartesi-rollups/1.5/development/cli-commands/"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/main-concepts",
-                "/cartesi-rollups/main-concepts"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/mainnet-risks",
-                "/cartesi-rollups/mainnet-risks"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/sending-requests",
-                "/cartesi-rollups/sending-requests"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/reading-outputs",
-                "/cartesi-rollups/reading-outputs"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/assets-handling",
-                "/cartesi-rollups/assets-handling"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/dapp-architecture",
-                "/cartesi-rollups/dapp-architecture"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/api",
-                "/cartesi-rollups/api"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/http-api",
-                "/cartesi-rollups/http-api"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/dapp-life-cycle",
-                "/cartesi-rollups/dapp-life-cycle"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/build-dapps",
-                "/cartesi-rollups/build-dapps"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/references",
-                "/cartesi-rollups/references"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/migration-guides",
-                "/cartesi-rollups/migration-guides"
-              ),
-              existingPath.replace(
-                "/cartesi-rollups/1.0/challenges",
-                "/cartesi-rollups/challenges"
-              ),
-            ];
-          }
-          return undefined; // Return a falsy value: no redirect created
-        },
-      },
-    ],
-    "docusaurus-plugin-hotjar",
     async function AddTailwindCss(context, options) {
       return {
         name: "docusaurus-tailwindcss",
@@ -637,6 +400,36 @@ const config = {
         schema: "cartesi-rollups/rollups-apis/typeDefs.graphql",
         rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
         baseURL: "api/graphql",
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'cartesi-coprocessor',
+        path: 'cartesi-coprocessor',
+        routeBasePath: 'cartesi-coprocessor',
+        // sidebarPath: require.resolve('./sidebarsCoprocessor.js'),
+        versions: {
+          "1.0" : {
+            label: 'Alpha',
+            path: '1.0',
+          },
+        },
+        lastVersion: '1.0',
+        includeCurrentVersion: false,
+        showLastUpdateTime: true,
+        editUrl: 'https://github.com/cartesi/docs/tree/develop',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'get-started',
+        path: 'get-started',
+        routeBasePath: 'get-started', 
+        sidebarPath: require.resolve('./sidebarsGetStarted.js'),
+        editUrl: 'https://github.com/cartesi/docs/tree/develop',
+        showLastUpdateTime: true,
       },
     ],
   ],
