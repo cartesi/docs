@@ -1,6 +1,6 @@
 # Cartesi Documentation
 
-Welcome to the official Cartesi documentation repository. This documentation is built using [Docusaurus 2.4.3](https://docusaurus.io/).
+Welcome to the official Cartesi documentation repository. This documentation is built using [Docusaurus 3.6.3](https://docusaurus.io/).
 
 ## Requirements
 

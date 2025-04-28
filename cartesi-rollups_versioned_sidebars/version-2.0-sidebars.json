@@ -6,7 +6,6 @@
             "collapsed": true,
             "items": [
                 "getting-started/overview",
-                "getting-started/concepts",
                 "getting-started/architecture",
                 "getting-started/quickstart"
             ]
@@ -116,6 +115,19 @@
                 "development/query-outputs",
                 "development/asset-handling",
                 "development/cli-commands"
+            ]
+        },
+        {
+            "type": "category",
+            "label": "Espresso Integration",
+            "collapsed": true,
+            "items": [
+                "espresso-integration/architecture",
+                "espresso-integration/building",
+                "espresso-integration/testnet",
+                "espresso-integration/interacting",
+                "espresso-integration/outputs",
+                "espresso-integration/deployment"
             ]
         },
         {
