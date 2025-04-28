@@ -185,14 +185,15 @@ const config = {
           },
           {
             label: "Rollups",
-            to: "/cartesi-rollups/1.5",
+            to: "/cartesi-rollups/2.0/getting-started/",
             activeBaseRegex: "^/cartesi-rollups",
             position: "left",
           },
+
           {
-            label: "Fraud Proofs",
-            to: "/fraud-proofs",
-            activeBaseRegex: "^/fraud-proofs",
+            label: "Coprocessor",
+            to: "/cartesi-coprocessor/1.0/introduction",
+            activeBaseRegex: "^/cartesi-coprocessor",
             position: "left",
           },
           {
@@ -373,61 +374,6 @@ const config = {
         showLastUpdateTime: true,
       },
     ],
-    [
-      '@docusaurus/plugin-client-redirects',
-      {
-        redirects: [
-          {
-            from: '/cartesi-rollups',      // the old/base route
-            to:   '/cartesi-rollups/1.5/', // the new route to redirect to
-          },
-          {
-            to: "/cartesi-rollups/2.0/getting-started/quickstart/",
-            from: "/cartesi-rollups/2.0/quickstart/",
-          },
-          // {
-          //   to: "/cartesi-rollups/2.0/api-reference/architecture/",
-          //   from: "/cartesi-rollups/2.0/core-concepts/optimistic-rollups/",
-          // },
-          // {
-          //   to: "/cartesi-rollups/2.0/api-reference/architecture/",
-          //   from: "/cartesi-rollups/2.0/core-concepts/architecture/",
-          // },
-          {
-            to: "/cartesi-rollups/2.0/resources/mainnet-considerations/",
-            from: "/cartesi-rollups/2.0/core-concepts/mainnet-considerations/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
-            from: "/cartesi-rollups/2.0/development/creating-application/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
-            from: "/cartesi-rollups/2.0/development/building-the-application/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/building-a-dapp/",
-            from: "/cartesi-rollups/2.0/development/running-the-application/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/send-inputs/",
-            from: "/cartesi-rollups/2.0/development/send-requests/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/development/query-outputs/",
-            from: "/cartesi-rollups/2.0/development/retrieve-outputs/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/resources/migration-guide/",
-            from: "/cartesi-rollups/2.0/development/migration/",
-          },
-          {
-            to: "/cartesi-rollups/2.0/resources/community-tools/",
-            from: "/cartesi-rollups/2.0/development/community-tools/",
-          },
-        ],
-      },
-    ],
     async function AddTailwindCss(context, options) {
       return {
         name: "docusaurus-tailwindcss",
@@ -459,25 +405,31 @@ const config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'cartesi-coprocessor',
+        path: 'cartesi-coprocessor',
+        routeBasePath: 'cartesi-coprocessor',
+        // sidebarPath: require.resolve('./sidebarsCoprocessor.js'),
+        versions: {
+          "1.0" : {
+            label: 'Alpha',
+            path: '1.0',
+          },
+        },
+        lastVersion: '1.0',
+        includeCurrentVersion: false,
+        showLastUpdateTime: true,
+        editUrl: 'https://github.com/cartesi/docs/tree/develop',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'get-started',
         path: 'get-started',
         routeBasePath: 'get-started', 
         sidebarPath: require.resolve('./sidebarsGetStarted.js'),
         editUrl: 'https://github.com/cartesi/docs/tree/develop',
         showLastUpdateTime: true,
-        docItemComponent: "@theme/ApiItem",
-      },
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'fraud-proofs',
-        path: 'fraud-proofs',
-        routeBasePath: 'fraud-proofs', 
-        sidebarPath: require.resolve('./sidebarsFraudProofs.js'),
-        editUrl: 'https://github.com/cartesi/docs/tree/develop',
-        showLastUpdateTime: true,
-        docItemComponent: "@theme/ApiItem",
       },
     ],
   ],
