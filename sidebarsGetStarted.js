@@ -29,7 +29,7 @@ module.exports = {
         {
           type: 'doc',
           id: 'rollups-coprocessor',
-          label: 'Rollups vs Coprocessor',
+          label: 'Coprocessor',
         },
         
       ],

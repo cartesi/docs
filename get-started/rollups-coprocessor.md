@@ -1,6 +1,6 @@
-# Picking the right stack
+# Coprocessor
 
-### How is the Coprocessor different from Cartesi Rollups?
+## How is the Coprocessor different from Cartesi Rollups?
 
 Both **Cartesi Rollups** and **Cartesi Coprocessor** are development frameworks that leverage the Cartesi Machine for execution. They differ in how they manage state, handle assets, secure computations and deployment.
 

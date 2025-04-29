@@ -8,7 +8,7 @@ This page covers errors that might arise while following the Cartesi Coprocessor
 This section of the docs is actively being updated and new errors and fixes will be added as they are discovered. If you run into any error during the installation or interaction steps, do inform us on [Cartesi Discord Server](https://discord.gg/cartesi).
 :::
 
-### **1. Cartesi Machine blocked by Mac security feature:**
+## **1. Cartesi Machine blocked by Mac security feature**
 
 For Mac users, you might run into issues running the Cartesi machine after downloading and installing because of the Mac built-in security feature. You might get a popup similar to this:
 

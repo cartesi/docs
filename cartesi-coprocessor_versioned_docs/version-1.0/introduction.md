@@ -1,15 +1,20 @@
+---
+sidebar_position: 1
+title: Introduction
+resources:
+  - url: https://github.com/Mugen-Builders/cartesi-coprocessor-template
+    title: Cartesi Coprocessor Template
+---
+
 :::warning
     🚧 You’re reading docs for the Cartesi Coprocessor (alpha version), expect rapid changes and improvements! Join Cartesi [Discord](https://discord.gg/cWGbyFkQ2W) to ask questions and get support.
 :::
 
 # Introduction
 
-### Introduction to the Cartesi Coprocessor
-
 A Coprocessor is a system that enables a smart contract to offload complex computations to an external platform and bring the processed results back onto the blockchain. The Cartesi Coprocessor is a cryptoeconomic mechanism that uses EigenLayer and restaked value to secure computations. Operators who misbehave or provide incorrect results are subject to slashing. Cartesi executes computations in a Linux-compatible RISC-V virtual machine.
 
 At its core, the Cartesi Coprocessor:
-
 - **Executes computations in a Cartesi Machine**: A virtual machine with a Linux runtime, allowing for more extensive and familiar programming environments compared to EVM-based smart contracts.
 - **Provides security guarantees**: Results from the Coprocessor can be verified on-chain using proofs, ensuring trust and integrity.
 - **Enables modular and scalable dApp designs**: Developers can move complex logic off-chain while interacting seamlessly with the blockchain through notices.
@@ -18,7 +23,7 @@ This design is ideal for applications requiring heavy data processing with fast 
 
 ---
 
-### How the Cartesi Coprocessor Works
+## How does the Cartesi Coprocessor work?
 
 1. **Deployment and Registration**:
 
@@ -33,13 +38,11 @@ This design is ideal for applications requiring heavy data processing with fast 
 
 ---
 
-### Interacting with the Cartesi Coprocessor
+## Interacting with the Cartesi Coprocessor
 
 You can interact with the Coprocessor the same way you would with any regular Solidity smart contract. Take a look at [`CounterCaller`](https://github.com/Mugen-Builders/cartesi-coprocessor-template/blob/main/contracts/src/CounterCaller.sol) Contract and its [Coprocessor contract](https://github.com/Mugen-Builders/cartesi-coprocessor-template/blob/main/backend-cartesi-counter-js/src/index.js) running JS Logic for example.
 
----
-
-### Interaction Example: What Happens?
+### A Counter Example: What Happens?
 
 #### 1. **User Interaction**
 
@@ -64,7 +67,7 @@ You can interact with the Coprocessor the same way you would with any regular So
 - Logs of the `ResultReceived` event provide additional feedback, including the raw output from the Coprocessor.
 
 ---
-### How is the Coprocessor different from Cartesi Rollups?
+## How is the Coprocessor different from the Cartesi Rollups?
 
 Both **Cartesi Rollups** and **Cartesi Coprocessor** are development frameworks that leverage the Cartesi Machine for execution. They differ in how they manage state, handle assets, secure computations and deployment.
 

@@ -1,9 +1,3 @@
----
-sidebar_position: 7
-slug: '/nonodox'
-label: "NoNodox: An iterative development environment for Cartesi Coprocessor applications"
----
-
 # NoNodox (development tool)
 
 ## Overview

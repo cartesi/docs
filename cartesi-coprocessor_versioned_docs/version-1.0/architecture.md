@@ -4,7 +4,7 @@ The Cartesi Coprocessor Architecture is designed to enable processing complex co
 
 ![cartesi - coprocessor architecture](./img/CoprocessorArch.jpg)
 
-### On-chain components
+## On-chain components
 
 The on-chain components are a set of smart contracts deployed to the base layer, they are the point of contact with regular users interacting with applications deployed to the Cartesi Coprocessor. It is composed of key contracts like:
 
@@ -12,7 +12,7 @@ The on-chain components are a set of smart contracts deployed to the base layer,
 
 - **Coprocessor Contract:** This is a single contract deployed to the base layer. It contains functions that can be called by any application smart contract to request for executions. It's designed to receive requests from application contract, relay these request to the off-chain components of the Coprocessor then receive the results of these requests and forward them back to the application which requested them.
 
-### Off-Chain components
+## Off-Chain components
 
 The off-chain components are a collection of external components consisting of servers and also specialized machines called operators which execute operations on request.
 

@@ -21,13 +21,13 @@ The answer depends on the rollup implementation, which falls within one of two c
 
 2. **Optimistic Rollups (ORs)**, which use fraud proofs.
 
-### Zero-knowledge Rollups (ZK Rollups)
+## Zero-knowledge Rollups (ZK Rollups)
 
 In ZK rollups, which use validity proof schemes, every state update is accompanied by a cryptographic proof created off-chain, attesting to its validity. The update is only taken if the proof successfully passes verification on-chain. Validity proofs(ZK Rollups) bring the enormous benefit of instant finality—as soon as a state update appears on-chain, it can be fully trusted and acted upon.
 
 The choice, however, also brings less than ideal properties: generating ZK proofs for general-purpose computations is, when possible, immensely expensive, and each on-chain state update must pay the extra gas fee for including and verifying a validity proof.
 
-### Optimistic Rollups (ORs)
+## Optimistic Rollups (ORs)
 
 Optimistic Rollups, which use fraud-proof schemes, work by a different paradigm. State updates come unaccompanied by proofs; they’re proposed and, if not challenged, confirmed on-chain. Challenging a state update proposal using fraud proofs has two categories: **non-interactive** and **interactive**.
 
