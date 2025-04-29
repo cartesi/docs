@@ -53,5 +53,3 @@ cartesi-coprocessor stop-devnet
 ```
 
 :::
-
----
