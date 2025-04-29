@@ -157,9 +157,7 @@ With this setup complete, your environment is ready for development and interact
 
 ---
 
----
-
-## Optional tools that can help on your journey
+## Optional tools that can help in your journey
 
 ### Web3 Storage CLI
 
@@ -236,4 +234,4 @@ cartesi-machine --help
 ```
 
 :::note
-For Mac Users\*\*: You may encounter a security prompt. Refer to the [troubleshooting section](./troubleshooting#cartesi-machine-blocked-by-mac-security) for resolution. :::
+For Mac Users\*\*: You may encounter a security prompt. Refer to the [troubleshooting section](./troubleshooting/#1-cartesi-machine-blocked-by-mac-security-feature) for resolution.
