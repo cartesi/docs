@@ -6,7 +6,7 @@ resources:
     title: Angular template
 ---
 
-Welcome to Quickstart. Here is a step-by-step guide to building a decentralized application quickly.
+Welcome to Quickstart. The goal of this guide is to build a decentralized application quickly with the Cartesi CLI.
 
 ## Set up your environment
 
@@ -40,13 +40,13 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
 To create the backend application from scratch, run:
 
 ```bash
-cartesi create <dapp-name> --template <language>
+cartesi rollups create <dapp-name> --template <language>
 ```
 
 This creates a new directory with template code in the language you specify.
 
 ```bash
-$ cartesi create js-dapp --template javascript
+$ cartesi rollups create js-dapp --template javascript
 ✔ Application created at /js-dapp
 ```
 
@@ -64,15 +64,23 @@ cartesi build
 
 The `cartesi build` command builds a Cartesi machine and compiles your application so that it is ready to receive requests and inputs.
 
-## Run the application
+## Run the environment
 
-Running your application starts a local Anvil node on port `8545`.
+To run the environment, you can use the following command:
 
-To run your application:
+```bash
+cartesi rollups start
+```
+This will spin up docker containers for the Cartesi Rollups environment including Rollups Node and the Anvil devnet.
+
+## Deploy the application
+
+Deploying your application in this context means to register your application on the Cartesi Rollups environment.
 
 ```shell
-cartesi run
+cartesi rollups deploy
 ```
+An address will be assigned to your application along with a corresponding Consensus Contract.
 
 ## Send inputs to the application
 
@@ -120,13 +128,13 @@ You can obtain the relevant addresses by running `cartesi address-book`.
 
 You can create a custom frontend that interacts with your application.
 
-Follow [the React.js tutorial to build a frontend for your application](../tutorials/react-frontend-application.md).
+Follow [the React.js tutorial to build a frontend for your application](/cartesi-rollups/2.0/tutorials/react-frontend-application/).
 
 ## Deploy the application
 
 There are two methods to deploy an application:
 
-1. [Self-hosted deployment](../deployment/self-hosted.md): Deploy the application node using your infrastructure.
+1. [Self-hosted deployment](/cartesi-rollups/2.0/deployment/self-hosted/): Deploy the application node using your infrastructure.
 
 2. Third-party service provider: Outsource running the application node to a service provider.
 
