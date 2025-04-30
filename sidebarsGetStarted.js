@@ -7,6 +7,11 @@ module.exports = {
       label: 'Overview',
     },
     {
+      type: 'doc',
+      id: 'quickstart',
+      label: 'Quickstart',
+    },
+    {
       type: 'category',
       label: 'Concepts',
       collapsed: false,
@@ -29,7 +34,7 @@ module.exports = {
         {
           type: 'doc',
           id: 'rollups-coprocessor',
-          label: 'Coprocessor',
+          label: 'Rollups vs Coprocessor',
         },
         
       ],
