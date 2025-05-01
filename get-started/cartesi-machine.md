@@ -1,8 +1,20 @@
+---
+id: cartesi-machine
+title: Cartesi Machine
+resources:
+  - url: https://github.com/cartesi/machine-emulator
+    title: Cartesi Machine Github
+  - url: https://www.youtube.com/watch?v=uUzn_vdWyDM
+    title: Cartesi Machine Deep Dive Video
+---
+
 # Cartesi Machine
 
-The [Cartesi Machine](/cartesi-machine) is a virtual machine that runs an entire Linux OS, in which a dApp's backend is executed. The Cartesi Machine is based on the [RISC-V ISA](https://riscv.org/), a set of instructions for processors. It runs in isolation, meaning it operates independently and is reproducible. 
+The Cartesi Machine is the execution environment for the Cartesi Rollups and the Cartesi Coprocessor. It is a virtual machine designed to perform off-chain computations for blockchain applications. The Cartesi Machine is based on the [RISC-V ISA](https://riscv.org/), a set of instructions for processors. It runs an entire Linux OS, in which a dApp's backend is executed. It runs in isolation, meaning it operates independently and is reproducible. 
 
-Central to Cartesi Rollups is the Cartesi Machine, a virtual machine designed to perform off-chain computations for blockchain applications. When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:
+## Overview
+
+When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:
 
 - Code execution: Code is executed based on specific inputs to perform computations, process data, or run custom logic, depending on the requirements of the task at hand.
 
@@ -10,6 +22,7 @@ Central to Cartesi Rollups is the Cartesi Machine, a virtual machine designed to
 
 - Flexibility in programming languages and libraries: You have flexibility in the choice of programming languages and all open-source libraries available on Linux.
 
+## State Management and Execution
 
 The Cartesi Machine is a state machine that remains idle until a new request arises. The concept of state, in this case, is tied to both the input requests that the Cartesi Machine receives and the execution of the RISC-V instructions that the machine follows in processing those requests. The Cartesi Machine handles:
 
