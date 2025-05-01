@@ -19,19 +19,13 @@
         "building",
         "running",
         "interacting",
-        "deploy",
-        "nonodox"
+        "deploy"
       ]
     },
     {
       "type": "doc",
       "id": "limitations",
       "label": "Known Issues and Limitations"
-    },
-    {
-      "type": "doc",
-      "id": "troubleshooting",
-      "label": "Troubleshooting"
     }
   ]
 } 

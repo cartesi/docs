@@ -21,6 +21,9 @@ At its core, the Cartesi Coprocessor:
 
 This design is ideal for applications requiring heavy data processing with fast finality.
 
+:::info
+To understand the differences between Cartesi Rollups and Cartesi Coprocessor, read [this](/get-started/rollups-coprocessor/) page.
+:::
 ---
 
 ## How does the Cartesi Coprocessor work?
@@ -67,16 +70,5 @@ You can interact with the Coprocessor the same way you would with any regular So
 - Logs of the `ResultReceived` event provide additional feedback, including the raw output from the Coprocessor.
 
 ---
-## How is the Coprocessor different from the Cartesi Rollups?
-
-Both **Cartesi Rollups** and **Cartesi Coprocessor** are development frameworks that leverage the Cartesi Machine for execution. They differ in how they manage state, handle assets, secure computations and deployment.
-
-| Feature                  | Cartesi Rollups | Cartesi Coprocessor |
-|--------------------------|----------------|---------------------|
-| **State Management**     | State preserved within the rollup machine | State maintained on the application smart contract |
-| **Asset Handling**       | Mature framework with pre-deployed portal contracts for bridging assets | Lacks built-in asset handling; developers are encouraged to contribute |
-| **Security Model**       | Optimistic fraud proofs secure computations |  Leverages EigenLayer’s crypto-economic security |
-| **Developer Maturity**   | More mature ecosystem with existing infrastructure | Emerging framework with potential for new tooling and contributions |
-| **Use Case Suitability** | Ideal for dApps requiring continuous state management and deployment of app-chains | Best for off-loading computation-heavy tasks with **fast finality**, where state is only needed temporarily |
 
 
