@@ -5,32 +5,32 @@ title: List Reports
 
 # List Reports
 
-## Example Request
+The `cartesi_listReports` method returns a paginated list of reports for a specific application, with optional filtering by input index.
+
+## Method
 
 ```json
 {
   "jsonrpc": "2.0",
   "method": "cartesi_listReports",
   "params": {
-    "application": "<name-or-address>",
-    "limit": 10,
+    "application": "calculator",
+    "input_index": 1,
+    "limit": 50,
     "offset": 0
   },
   "id": 1
 }
 ```
 
-The `cartesi_listReports` method returns a paginated list of reports for a specific application.
-
 ## Parameters
 
 | Name        | Type   | Required | Description                                      |
 |-------------|--------|----------|--------------------------------------------------|
-| application | string | Yes      | The application's name or hex encoded address    |
-| epoch_index | string | No       | Optional filter by epoch index (hex encoded)     |
-| input_index | string | No       | Optional filter by input index (hex encoded)     |
-| limit       | number | No       | Maximum number of reports to return (default: 50, minimum: 1) |
-| offset      | number | No       | Starting point for the list (default: 0, minimum: 0)         |
+| application | string | Yes      | The name or address of the application           |
+| input_index | number | No       | Filter reports by input index                    |
+| limit       | number | No       | Maximum number of reports to return (default: 50) |
+| offset      | number | No       | Starting point for the list (default: 0)         |
 
 ## Response
 
@@ -40,12 +40,9 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
   "result": {
     "data": [
       {
-        "epoch_index": "0x1",
-        "input_index": "0x1",
-        "index": "0x1",
-        "raw_data": "0x48656c6c6f",
-        "created_at": "2024-01-01T00:00:00Z",
-        "updated_at": "2024-01-01T00:00:00Z"
+        "index": 1,
+        "input_index": 1,
+        "payload": "0x1234..."
       }
     ],
     "pagination": {
@@ -64,12 +61,9 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
 
 | Name        | Type   | Description                                      |
 |-------------|--------|--------------------------------------------------|
-| epoch_index | string | The epoch index this report belongs to (hex encoded) |
-| input_index | string | The input index this report belongs to (hex encoded) |
-| index       | string | The report index (hex encoded)                   |
-| raw_data    | string | The report payload in hexadecimal format         |
-| created_at  | string | Timestamp when the report was created            |
-| updated_at  | string | Timestamp when the report was last updated       |
+| index       | number | The report index                                 |
+| input_index | number | The input index this report belongs to           |
+| payload     | string | The report payload in hexadecimal format         |
 
 #### Pagination
 
@@ -84,5 +78,52 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
 | Code    | Message                | Description                                      |
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
-| -32603  | Internal error         | An internal error occurred                       |
 | -32000  | Application not found  | The specified application does not exist         |
+| -32002  | Input not found        | The specified input does not exist               |
+| -32603  | Internal error         | An internal error occurred                       |
+
+## Example
+
+### Request
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "cartesi_listReports",
+  "params": {
+    "application": "calculator",
+    "input_index": 1,
+    "limit": 10,
+    "offset": 0
+  },
+  "id": 1
+}
+```
+
+### Response
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      {
+        "index": 1,
+        "input_index": 1,
+        "payload": "0x1234..."
+      },
+      {
+        "index": 2,
+        "input_index": 1,
+        "payload": "0x5678..."
+      }
+    ],
+    "pagination": {
+      "total_count": 2,
+      "limit": 10,
+      "offset": 0
+    }
+  },
+  "id": 1
+}
+``` 
