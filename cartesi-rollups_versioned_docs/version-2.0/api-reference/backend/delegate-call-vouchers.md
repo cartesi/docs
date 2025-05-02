@@ -7,7 +7,7 @@ title: Delegate Call Vouchers
 Delegate Call Vouchers are a powerful feature that should be used with extreme caution. Incorrect implementation can lead to serious security vulnerabilities as the target contract's code has full access to the Application contract's storage and funds.
 :::
 
-Delegate Call Vouchers are an extension of vouchers that enables advanced smart contract interactions through the [`DELEGATECALL](https://www.evm.codes/?fork=cancun#f4) opcode.
+Delegate Call Vouchers are an extension of vouchers that enables advanced smart contract interactions through the [`DELEGATECALL`](https://www.evm.codes/?fork=cancun#f4) opcode.
 
 Unlike regular vouchers, delegate call vouchers allow dApps to separate their execution logic from their storage context. When using delegate calls, the Application contract always maintains the storage, context, and funds (both ETH and tokens), while the target contract provides only the execution logic. This separation enables more flexible and reusable smart contract patterns while keeping all state changes and assets within the Application contract.
 
