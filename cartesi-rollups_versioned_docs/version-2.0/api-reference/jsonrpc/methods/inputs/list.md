@@ -5,32 +5,34 @@ title: List Inputs
 
 # List Inputs
 
-## Example Request
+The `cartesi_listInputs` method returns a paginated list of inputs for a specific application, with optional filtering by epoch index and sender address.
+
+## Method
 
 ```json
 {
   "jsonrpc": "2.0",
   "method": "cartesi_listInputs",
   "params": {
-    "application": "<name-or-address>",
-    "limit": 10,
+    "application": "calculator",
+    "epoch_index": 1,
+    "sender": "0x1234...5678",
+    "limit": 50,
     "offset": 0
   },
   "id": 1
 }
 ```
 
-The `cartesi_listInputs` method returns a paginated list of inputs for a specific application.
-
 ## Parameters
 
 | Name        | Type   | Required | Description                                      |
 |-------------|--------|----------|--------------------------------------------------|
-| application | string | Yes      | The application's name or hex encoded address    |
-| epoch_index | string | No       | Filter inputs by a specific epoch index (hex encoded) |
-| sender      | string | No       | Filter inputs by the sender's address (hex encoded) |
-| limit       | number | No       | Maximum number of inputs to return (default: 50, minimum: 1) |
-| offset      | number | No       | Starting point for the list (default: 0, minimum: 0)         |
+| application | string | Yes      | The name or address of the application           |
+| epoch_index | number | No       | Filter inputs by epoch index                     |
+| sender      | string | No       | Filter inputs by sender address                  |
+| limit       | number | No       | Maximum number of inputs to return (default: 50) |
+| offset      | number | No       | Starting point for the list (default: 0)         |
 
 ## Response
 
@@ -40,26 +42,12 @@ The `cartesi_listInputs` method returns a paginated list of inputs for a specifi
   "result": {
     "data": [
       {
-        "epoch_index": "0x1",
-        "index": "0x1",
-        "block_number": "0x1",
-        "raw_data": "0x48656c6c6f",
-        "decoded_data": {
-          "chain_id": "0x1",
-          "application_contract": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-          "sender": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-          "block_number": "0x1",
-          "block_timestamp": "0x1234567890",
-          "prev_randao": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-          "index": "0x1",
-          "payload": "0x48656c6c6f"
-        },
+        "index": 1,
+        "epoch_index": 1,
         "status": "ACCEPTED",
-        "machine_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        "outputs_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        "transaction_reference": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        "created_at": "2024-01-01T00:00:00Z",
-        "updated_at": "2024-01-01T00:00:00Z"
+        "msg_sender": "0x1234...5678",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "payload": "0x1234..."
       }
     ],
     "pagination": {
@@ -76,19 +64,14 @@ The `cartesi_listInputs` method returns a paginated list of inputs for a specifi
 
 #### Data
 
-| Name                    | Type   | Description                                      |
-|-------------------------|--------|--------------------------------------------------|
-| epoch_index             | string | The epoch index this input belongs to (hex encoded) |
-| index                   | string | The input index (hex encoded)                    |
-| block_number            | string | The block number when the input was created (hex encoded) |
-| raw_data                | string | The raw input data in hexadecimal format         |
-| decoded_data            | object | The decoded input data (null if not decodable)   |
-| status                  | string | Current status of the input                      |
-| machine_hash            | string | The machine hash after processing this input     |
-| outputs_hash            | string | The outputs hash after processing this input     |
-| transaction_reference   | string | The transaction reference                         |
-| created_at              | string | Timestamp when the input was created             |
-| updated_at              | string | Timestamp when the input was last updated        |
+| Name        | Type   | Description                                      |
+|-------------|--------|--------------------------------------------------|
+| index       | number | The input index                                  |
+| epoch_index | number | The epoch index this input belongs to            |
+| status      | string | Current status of the input (ACCEPTED/REJECTED)  |
+| msg_sender  | string | Address of the message sender                    |
+| timestamp   | string | Timestamp when the input was created             |
+| payload     | string | The input payload in hexadecimal format          |
 
 #### Pagination
 
@@ -103,5 +86,58 @@ The `cartesi_listInputs` method returns a paginated list of inputs for a specifi
 | Code    | Message                | Description                                      |
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
-| -32603  | Internal error         | An internal error occurred                       |
 | -32000  | Application not found  | The specified application does not exist         |
+| -32001  | Epoch not found        | The specified epoch does not exist               |
+| -32603  | Internal error         | An internal error occurred                       |
+
+## Example
+
+### Request
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "cartesi_listInputs",
+  "params": {
+    "application": "calculator",
+    "epoch_index": 1,
+    "limit": 10,
+    "offset": 0
+  },
+  "id": 1
+}
+```
+
+### Response
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "data": [
+      {
+        "index": 1,
+        "epoch_index": 1,
+        "status": "ACCEPTED",
+        "msg_sender": "0x1234...5678",
+        "timestamp": "2024-01-01T00:00:00Z",
+        "payload": "0x1234..."
+      },
+      {
+        "index": 2,
+        "epoch_index": 1,
+        "status": "ACCEPTED",
+        "msg_sender": "0x8765...4321",
+        "timestamp": "2024-01-01T00:01:00Z",
+        "payload": "0x5678..."
+      }
+    ],
+    "pagination": {
+      "total_count": 2,
+      "limit": 10,
+      "offset": 0
+    }
+  },
+  "id": 1
+}
+``` 

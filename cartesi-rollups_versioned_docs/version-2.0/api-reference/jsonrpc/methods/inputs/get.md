@@ -5,28 +5,28 @@ title: Get Input
 
 # Get Input
 
-## Example Request
+The `cartesi_getInput` method retrieves detailed information about a specific input by its application and index.
+
+## Method
 
 ```json
 {
   "jsonrpc": "2.0",
   "method": "cartesi_getInput",
   "params": {
-    "application": "<name-or-address>",
-    "input_index": "<hex-encoded-index>"
+    "application": "calculator",
+    "index": 1
   },
   "id": 1
 }
 ```
 
-The `cartesi_getInput` method retrieves detailed information about a specific input by its application and index.
-
 ## Parameters
 
 | Name        | Type   | Required | Description                                      |
 |-------------|--------|----------|--------------------------------------------------|
-| application | string | Yes      | The application's name or hex encoded address    |
-| input_index | string | Yes      | The index of the input to be retrieved (hex encoded) |
+| application | string | Yes      | The name or address of the application           |
+| index       | number | Yes      | The input index                                  |
 
 ## Response
 
@@ -34,28 +34,31 @@ The `cartesi_getInput` method retrieves detailed information about a specific in
 {
   "jsonrpc": "2.0",
   "result": {
-    "data": {
-      "epoch_index": "0x1",
-      "index": "0x1",
-      "block_number": "0x1",
-      "raw_data": "0x48656c6c6f",
-      "decoded_data": {
-        "chain_id": "0x1",
-        "application_contract": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-        "sender": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-        "block_number": "0x1",
-        "block_timestamp": "0x1234567890",
-        "prev_randao": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        "index": "0x1",
-        "payload": "0x48656c6c6f"
-      },
+    "index": 1,
+    "epoch_index": 1,
     "status": "ACCEPTED",
-      "machine_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-      "outputs_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-      "transaction_reference": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-      "created_at": "2024-01-01T00:00:00Z",
-      "updated_at": "2024-01-01T00:00:00Z"
+    "msg_sender": "0x1234...5678",
+    "timestamp": "2024-01-01T00:00:00Z",
+    "payload": "0x1234...",
+    "notices": [
+      {
+        "index": 0,
+        "payload": "0x5678..."
       }
+    ],
+    "vouchers": [
+      {
+        "index": 0,
+        "destination": "0x8765...4321",
+        "payload": "0x9abc..."
+      }
+    ],
+    "reports": [
+      {
+        "index": 0,
+        "payload": "0xdef0..."
+      }
+    ]
   },
   "id": 1
 }
@@ -63,32 +66,39 @@ The `cartesi_getInput` method retrieves detailed information about a specific in
 
 ### Response Fields
 
-| Name                    | Type   | Description                                      |
-|-------------------------|--------|--------------------------------------------------|
-| epoch_index             | string | The epoch index this input belongs to (hex encoded) |
-| index                   | string | The input index (hex encoded)                    |
-| block_number            | string | The block number when the input was created (hex encoded) |
-| raw_data                | string | The raw input data in hexadecimal format         |
-| decoded_data            | object | The decoded input data (null if not decodable)   |
-| status                  | string | Current status of the input                      |
-| machine_hash            | string | The machine hash after processing this input     |
-| outputs_hash            | string | The outputs hash after processing this input     |
-| transaction_reference   | string | The transaction reference                         |
-| created_at              | string | Timestamp when the input was created             |
-| updated_at              | string | Timestamp when the input was last updated        |
+| Name        | Type   | Description                                      |
+|-------------|--------|--------------------------------------------------|
+| index       | number | The input index                                  |
+| epoch_index | number | The epoch index this input belongs to            |
+| status      | string | Current status of the input (ACCEPTED/REJECTED)  |
+| msg_sender  | string | Address of the message sender                    |
+| timestamp   | string | Timestamp when the input was created             |
+| payload     | string | The input payload in hexadecimal format          |
+| notices     | array  | List of notices produced by this input           |
+| vouchers    | array  | List of vouchers produced by this input          |
+| reports     | array  | List of reports produced by this input           |
 
-#### Decoded Data Fields
+#### Notice Fields
 
-| Name                    | Type   | Description                                      |
-|-------------------------|--------|--------------------------------------------------|
-| chain_id                | string | The chain ID (hex encoded)                       |
-| application_contract    | string | The application contract address                 |
-| sender                  | string | The sender address                               |
-| block_number            | string | The block number (hex encoded)                   |
-| block_timestamp         | string | The block timestamp (hex encoded)                |
-| prev_randao             | string | The previous RANDAO value                        |
-| index                   | string | The input index (hex encoded)                    |
-| payload                 | string | The input payload in hexadecimal format          |
+| Name    | Type   | Description                                      |
+|---------|--------|--------------------------------------------------|
+| index   | number | The notice index                                 |
+| payload | string | The notice payload in hexadecimal format         |
+
+#### Voucher Fields
+
+| Name        | Type   | Description                                      |
+|-------------|--------|--------------------------------------------------|
+| index       | number | The voucher index                                |
+| destination | string | The destination address for the voucher          |
+| payload     | string | The voucher payload in hexadecimal format        |
+
+#### Report Fields
+
+| Name    | Type   | Description                                      |
+|---------|--------|--------------------------------------------------|
+| index   | number | The report index                                 |
+| payload | string | The report payload in hexadecimal format         |
 
 ## Error Codes
 
@@ -98,3 +108,55 @@ The `cartesi_getInput` method retrieves detailed information about a specific in
 | -32000  | Application not found  | The specified application does not exist         |
 | -32002  | Input not found        | The specified input does not exist               |
 | -32603  | Internal error         | An internal error occurred                       |
+
+## Example
+
+### Request
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "cartesi_getInput",
+  "params": {
+    "application": "calculator",
+    "index": 1
+  },
+  "id": 1
+}
+```
+
+### Response
+
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "index": 1,
+    "epoch_index": 1,
+    "status": "ACCEPTED",
+    "msg_sender": "0x1234...5678",
+    "timestamp": "2024-01-01T00:00:00Z",
+    "payload": "0x1234...",
+    "notices": [
+      {
+        "index": 0,
+        "payload": "0x5678..."
+      }
+    ],
+    "vouchers": [
+      {
+        "index": 0,
+        "destination": "0x8765...4321",
+        "payload": "0x9abc..."
+      }
+    ],
+    "reports": [
+      {
+        "index": 0,
+        "payload": "0xdef0..."
+      }
+    ]
+  },
+  "id": 1
+}
+``` 

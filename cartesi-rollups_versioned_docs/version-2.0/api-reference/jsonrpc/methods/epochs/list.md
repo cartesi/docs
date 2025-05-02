@@ -5,31 +5,30 @@ title: List Epochs
 
 # List Epochs
 
-## Example Request
+The `cartesi_listEpochs` method returns a paginated list of epochs for a specific application.
+
+## Method
 
 ```json
 {
   "jsonrpc": "2.0",
   "method": "cartesi_listEpochs",
   "params": {
-    "application": "<name-or-address>",
-    "limit": 10,
+    "application": "calculator",
+    "limit": 50,
     "offset": 0
   },
   "id": 1
 }
 ```
 
-The `cartesi_listEpochs` method returns a paginated list of epochs for a specific application.
-
 ## Parameters
 
 | Name        | Type   | Required | Description                                      |
 |-------------|--------|----------|--------------------------------------------------|
-| application | string | Yes      | The application's name or hex encoded address    |
-| status      | string | No       | Filter epochs by status                          |
-| limit       | number | No       | Maximum number of epochs to return (default: 50, minimum: 1) |
-| offset      | number | No       | Starting point for the list (default: 0, minimum: 0)         |
+| application | string | Yes      | The name or address of the application           |
+| limit       | number | No       | Maximum number of epochs to return (default: 50) |
+| offset      | number | No       | Starting point for the list (default: 0)         |
 
 ## Response
 
@@ -39,13 +38,9 @@ The `cartesi_listEpochs` method returns a paginated list of epochs for a specifi
   "result": {
     "data": [
       {
-        "index": "0x1",
-        "first_block": "0x1",
-        "last_block": "0x100",
-        "claim_hash": null,
-        "claim_transaction_hash": null,
-        "status": "OPEN",
-        "virtual_index": "0x1",
+        "index": 1,
+        "status": "ACCEPTED",
+        "inputs_count": 10,
         "created_at": "2024-01-01T00:00:00Z",
         "updated_at": "2024-01-01T00:00:00Z"
       }
@@ -64,17 +59,13 @@ The `cartesi_listEpochs` method returns a paginated list of epochs for a specifi
 
 #### Data
 
-| Name                    | Type   | Description                                      |
-|-------------------------|--------|--------------------------------------------------|
-| index                   | string | The epoch index (hex encoded)                    |
-| first_block             | string | The first block number of the epoch (hex encoded) |
-| last_block              | string | The last block number of the epoch (hex encoded)  |
-| claim_hash              | string | The claim hash (null if not claimed)             |
-| claim_transaction_hash  | string | The claim transaction hash (null if not claimed) |
-| status                  | string | Current status of the epoch                      |
-| virtual_index           | string | The virtual index of the epoch (hex encoded)     |
-| created_at              | string | Timestamp when the epoch was created             |
-| updated_at              | string | Timestamp when the epoch was last updated        |
+| Name         | Type   | Description                                      |
+|--------------|--------|--------------------------------------------------|
+| index        | number | The epoch index                                  |
+| status       | string | Current status of the epoch (ACCEPTED/REJECTED)  |
+| inputs_count | number | Number of inputs in this epoch                   |
+| created_at   | string | Timestamp when the epoch was created             |
+| updated_at   | string | Timestamp when the epoch was last updated        |
 
 #### Pagination
 
@@ -89,8 +80,8 @@ The `cartesi_listEpochs` method returns a paginated list of epochs for a specifi
 | Code    | Message                | Description                                      |
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
-| -32603  | Internal error         | An internal error occurred                       |
 | -32000  | Application not found  | The specified application does not exist         |
+| -32603  | Internal error         | An internal error occurred                       |
 
 ## Example
 
@@ -117,15 +108,22 @@ The `cartesi_listEpochs` method returns a paginated list of epochs for a specifi
   "result": {
     "data": [
       {
-        "index": "0x1",
+        "index": 1,
         "status": "ACCEPTED",
-        "inputs_count": "0x1",
+        "inputs_count": 10,
         "created_at": "2024-01-01T00:00:00Z",
         "updated_at": "2024-01-01T00:00:00Z"
+      },
+      {
+        "index": 2,
+        "status": "ACCEPTED",
+        "inputs_count": 15,
+        "created_at": "2024-01-02T00:00:00Z",
+        "updated_at": "2024-01-02T00:00:00Z"
       }
     ],
     "pagination": {
-      "total_count": 1,
+      "total_count": 2,
       "limit": 10,
       "offset": 0
     }
