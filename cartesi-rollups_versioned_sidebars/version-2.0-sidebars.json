@@ -76,7 +76,6 @@
                         {
                             "type": "category",
                             "label": "Applications",
-                            "collapsed": true,
                             "items": [
                                 "api-reference/jsonrpc/methods/applications/applications-list",
                                 "api-reference/jsonrpc/methods/applications/applications-get"
@@ -85,25 +84,24 @@
                         {
                             "type": "category",
                             "label": "Epochs",
-                            "collapsed": true,
                             "items": [
                                 "api-reference/jsonrpc/methods/epochs/epochs-list",
-                                "api-reference/jsonrpc/methods/epochs/epochs-get"
+                                "api-reference/jsonrpc/methods/epochs/epochs-get",
+                                "api-reference/jsonrpc/methods/epochs/jsonrpc-epochs-last-accepted"
                             ]
                         },
                         {
                             "type": "category",
                             "label": "Inputs",
-                            "collapsed": true,
                             "items": [
                                 "api-reference/jsonrpc/methods/inputs/inputs-list",
-                                "api-reference/jsonrpc/methods/inputs/inputs-get"
+                                "api-reference/jsonrpc/methods/inputs/inputs-get",
+                                "api-reference/jsonrpc/methods/inputs/jsonrpc-inputs-processed-count"
                             ]
                         },
                         {
                             "type": "category",
                             "label": "Outputs",
-                            "collapsed": true,
                             "items": [
                                 "api-reference/jsonrpc/methods/outputs/outputs-list",
                                 "api-reference/jsonrpc/methods/outputs/outputs-get"
@@ -112,7 +110,6 @@
                         {
                             "type": "category",
                             "label": "Reports",
-                            "collapsed": true,
                             "items": [
                                 "api-reference/jsonrpc/methods/reports/reports-list",
                                 "api-reference/jsonrpc/methods/reports/reports-get"
