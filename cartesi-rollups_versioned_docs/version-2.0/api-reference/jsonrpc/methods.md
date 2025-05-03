@@ -30,7 +30,7 @@ Returns a paginated list of epochs for a given application. You can filter by st
 Fetches detailed information about a specific epoch, including its status, block range, and creation/update timestamps. For more details, see the [detailed reference](epochs/epochs-get).
 
 ### cartesi_getLastAcceptedEpochIndex
-Fetches the latest accepted epoch index for a given application, which is useful for tracking rollup progress. For more details, see the [detailed reference](epochs/last-accepted).
+Fetches the latest accepted epoch index for a given application, which is useful for tracking rollup progress. For more details, see the [detailed reference](epochs/jsonrpc-epochs-last-accepted).
 
 ## Inputs
 
@@ -41,7 +41,7 @@ Returns a paginated list of inputs sent to an application. You can filter by epo
 Retrieves detailed information about a specific input, including its payload, sender, and any outputs it produced. For more details, see the [detailed reference](inputs/inputs-get).
 
 ### cartesi_getProcessedInputCount
-Returns the number of inputs already processed by the application. Useful for monitoring input queue progress. For more details, see the [detailed reference](inputs/processed-count).
+Returns the number of inputs already processed by the application. Useful for monitoring input queue progress. For more details, see the [detailed reference](inputs/jsonrpc-inputs-processed-count).
 
 ## Outputs
 
