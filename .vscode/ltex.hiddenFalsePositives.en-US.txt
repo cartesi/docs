@@ -1,3 +1,6 @@
 {"rule":"BASE_BASIS","sentence":"^\\QThis guide covers the Cartesi+Espresso integration and how to upgrade Cartesi application such that inputs can be submitted via Espresso instead of the regular base layer.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QIntegrating Cartesi and Chronicle offers Cartesi applications access to onchain and offcahin data like, price feed without developers having to set up additional systems or intermediaries.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QPrevado Id:\\E$"}
+{"rule":"PREPOSITION_VERB","sentence":"^\\QThe deploy step handles publishing your coprocessor program to the solver as well as deploying your solidity contract to the local Anvil network.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q:::info On your local environment At the end of the development and testing process, you can choose to stop the coprocessor devnet environment.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThis guide uses foundry and viem to build and deploy your dApp to the local Anvil network.\\E$"}

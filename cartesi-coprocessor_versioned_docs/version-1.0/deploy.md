@@ -1,6 +1,6 @@
-# Deploying to testnet/mainnet
+# Deploying to Devnet
 
-This guide uses Foundry to deploy your dApp to testnet or mainnet.
+This guide uses foundry and viem to build and deploy your dApp to the local Anvil network.
 
 :::info Ensure Foundry is installed and accessible:
 
@@ -11,47 +11,33 @@ forge --version
 If you don't have Foundry installed, please refer to the [installation guide](installation.md) and set it up before proceeding.
 :::
 
-## Step 1: Publish the Program
-
-Publish your program to the Coprocessor:
+## Step 1: Get the important addresses
 
 ```bash
-cartesi-coprocessor publish --network <testnet, mainnet>
+cartesi address-book
 ```
 
-:::note  
-This should be run in the directory for your Cartesi program.
-Not the base directory or the solidity contract directory.
-:::
-
-## Step 2: Get the important addresses
-
-```bash
-cartesi-coprocessor address-book
-```
-
-This command prints a list of useful contacts and their addresses.
-
-:::note Retrieving important addresses
-Running this command in the directory containing your Cartesi program and not the base directory or solidity contract directory also displays the **machine hash** of your program if your program has been built previously. It also contains the **task issuer** which is the Coprocessor address your smart contract needs.
-
-You can use those during the contract deployment step.
-:::
+This command prints a list of useful contacts and their addresses. Take note of the `task issuer` address as this would be used during the deployment stage.
 
 ---
 
-## Step 3: Deploy the Smart Contract
+## Step 2: Deploy the Project
 
-Deploys the solidity contract of your project to any specified network of your choice
+The deploy step handles publishing your coprocessor program to the solver as well as deploying your solidity contract to the local Anvil network. This command can be run from the root folder or any of the two subfolders (apps or contracts).
 
 ```bash
-cartesi-coprocessor deploy --contract-name <contract name> --network <testnet, mainnet> --constructor-args <arguments separated by single space>
+cartesi coprocessor deploy <contract_name> --constructorArgs <constructor_arguments>
 ```
 
-:::note Run in the correct directory
-This should be run in the directory for your solidity contract not the base directory.
-:::
+If your contract requires multiple constructor arguments, you should pass them in order in which the program receives them, each separated by a comma.
 
-:::note Multiple Deploys
-Each successful deployment is logged and stored in a separate directory called deployment_history.
+:::info On your local environment
+At the end of the development and testing process, you can choose to stop the coprocessor devnet environment using the below process.
+
+**To stop and clean up the environment later, use:**
+
+```bash
+cartesi coprocessor stop
+```
+
 :::

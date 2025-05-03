@@ -2,7 +2,7 @@
 
 The Cartesi Coprocessor Architecture is designed to enable processing complex computations in specialized computers off-chain. By introducing a new layer called Coprocessors, complex application logic can be executed externally on these specialized computers, all while preserving the application's state on-chain. This integration is composed of two major components: the on-chain layer and the off-chain layer.
 
-![cartesi - coprocessor architecture](./img/CoprocessorArch.jpg)
+![Cartesi - coprocessor architecture](./img/CoprocessorArch.jpg)
 
 ## On-chain components
 

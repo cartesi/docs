@@ -2,38 +2,11 @@
 
 Interaction with the Coprocessor is handled through regular smart contract methods. You can use tools like Foundry’s `cast`, wallets, or frontend applications to send transactions.
 
-Below is an example contract, [`CoprocessorAdapterSample`](https://github.com/Mugen-Builders/coprocessor-base-contract/blob/main/test/utils/CoprocessorAdapterSample.sol), which demonstrates interaction with the Coprocessor:
+These transactions complete a full cycle from the Solidity contract to the coprocessor program, and finally back to the Solidity contract with the output of the computation. Therefore, the handleNotice function in the Solidity contract which serves as the entry point for all outputs from the coprocessor must include the necessary logic to receive, decode, and, where necessary, store the outputs it receives.
 
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+The diagram below illustrates a sample flow of an input as it moves through various functions, from the contract to the coprocessor and back.
 
-import "../../src/CoprocessorAdapter.sol";
-
-contract CoprocessorAdapterSample is CoprocessorAdapter {
-    constructor(address _coprocessorAddress, bytes32 _machineHash)
-        CoprocessorAdapter(_coprocessorAddress, _machineHash)
-    {}
-
-    function handleNotice(bytes memory notice) internal override {
-        address destination;
-        bytes memory decodedPayload;
-
-        (destination, decodedPayload) = abi.decode(notice, (address, bytes));
-
-        bool success;
-        bytes memory returndata;
-
-        (success, returndata) = destination.call(decodedPayload);
-    }
-
-    function runExecution(bytes calldata input) external {
-        callCoprocessor(input);
-    }
-}
-```
-
----
+## ![Cartesi - coprocessor interaction cycle](./img/CoprocessorInteractionCycle.png)
 
 ## Methods of Interaction
 
