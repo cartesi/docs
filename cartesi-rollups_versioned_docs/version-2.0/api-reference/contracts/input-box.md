@@ -6,13 +6,13 @@ resources:
       title: InputBox contract
 ---
 
-The **InputBox** is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone and adds a compound hash to an append-only list (called "input box").
+The **InputBox** is a trustless and permissionless contract that receives arbitrary data blobs (called "inputs") from any sender and adds a compound hash to an append-only list (the "input box").
 
-The hash stored on-chain comprises the hash of the input blob, the block number and timestamp, the input sender address, and the input index.
+The hash stored on-chain comprises the hash of the input blob, block number, timestamp, input sender address, and input index.
 
-Data availability is guaranteed by the emission of `InputAdded` events on every successful call to addInput. This ensures that inputs can be retrieved by anyone at any time without relying on centralized data providers.
+Data availability is guaranteed through the emission of `InputAdded` events on every successful call to `addInput`. This ensures that inputs can be retrieved by anyone at any time without relying on centralized data providers.
 
-From the perspective of this contract, inputs are encoding-agnostic byte arrays. It is up to the application to interpret, validate, and act upon inputs.
+From this contract's perspective, inputs are encoding-agnostic byte arrays. It is the application's responsibility to interpret, validate, and act upon these inputs.
 
 
 ## `InputAdded()`
