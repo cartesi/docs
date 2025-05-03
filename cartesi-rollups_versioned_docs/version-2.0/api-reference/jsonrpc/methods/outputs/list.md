@@ -17,7 +17,7 @@ The `cartesi_listOutputs` method returns a paginated list of outputs for a speci
     "application": "calculator",
     "epoch_index": "0x1",
     "input_index": "0x1",
-    "output_type": "0x00000000",
+    "output_type": "0xc258d6e5",
     "voucher_address": "0x1234...5678",
     "limit": 50,
     "offset": 0
@@ -33,7 +33,7 @@ The `cartesi_listOutputs` method returns a paginated list of outputs for a speci
 | application     | string | Yes      | The application's name or hex encoded address    |
 | epoch_index     | string | No       | Filter outputs by a specific epoch index (hex encoded) |
 | input_index     | string | No       | Filter outputs by a specific input index (hex encoded) |
-| output_type     | string | No       | Filter outputs by output type (first 4 bytes of raw data hex encoded) |
+| output_type     | string | No       | Filter outputs by output type. Must be one of: `0xc258d6e5` (Notice), `0x237a816f` (Voucher), `0x10321e8b` (DelegateCallVoucher). |
 | voucher_address | string | No       | Filter outputs by the voucher address (hex encoded) |
 | limit           | number | No       | Maximum number of outputs to return (default: 50) |
 | offset          | number | No       | Starting point for the list (default: 0)         |
@@ -46,26 +46,25 @@ The `cartesi_listOutputs` method returns a paginated list of outputs for a speci
   "result": {
     "data": [
       {
-        "epoch_index": "0x1",
-        "input_index": "0x1",
-        "index": "0x1",
+        "epoch_index": 1,
+        "input_index": 0,
+        "index": 0,
+        "type": "0xc258d6e5",
         "raw_data": "0x1234...",
         "decoded_data": {
-          "type": "0x00000000",
-          "destination": "0x1234...5678",
-          "value": "0x0",
+          "type": "0xc258d6e5",
           "payload": "0x5678..."
         },
-        "hash": "0x9abc...",
-        "output_hashes_siblings": ["0xdef0...", "0x1234..."],
-        "execution_transaction_hash": "0x5678...",
+        "hash": "0xabc...",
+        "output_hashes_siblings": [],
+        "execution_transaction_hash": null,
         "created_at": "2024-01-01T00:00:00Z",
         "updated_at": "2024-01-01T00:00:00Z"
       }
     ],
     "pagination": {
       "total_count": 1,
-      "limit": 50,
+      "limit": 1,
       "offset": 0
     }
   },
@@ -84,7 +83,7 @@ The `cartesi_listOutputs` method returns a paginated list of outputs for a speci
 | index                   | string | The output index (hex encoded)                   |
 | raw_data                | string | The raw output data in hexadecimal format        |
 | decoded_data            | object | The decoded output data                          |
-| decoded_data.type       | string | The function selector (hex encoded)              |
+| decoded_data.type       | string | The output_type (must be one of: `0xc258d6e5` for Notice, `0x237a816f` for Voucher, `0x10321e8b` for DelegateCallVoucher) |
 | decoded_data.destination | string | The destination address (hex encoded) - for vouchers only |
 | decoded_data.value      | string | The value to be transferred - for vouchers only  |
 | decoded_data.payload    | string | The output payload in hexadecimal format         |
@@ -104,11 +103,11 @@ The `cartesi_listOutputs` method returns a paginated list of outputs for a speci
 
 ## Output Types
 
-The API supports three types of outputs:
+The API supports three types of outputs, which can be filtered using the `output_type` parameter:
 
-1. **Notices**: Used to provide information about the application state. They don't have a destination address or value.
-2. **Vouchers**: Used to request a transfer of value to a specific address. They include a destination address and value.
-3. **Delegate Call Vouchers**: Similar to vouchers but used for delegate calls. They include a destination address but no value.
+- `0xc258d6e5`: **Notice** – Informational messages emitted by the application.
+- `0x237a816f`: **Voucher** – Single-use permission to execute a call.
+- `0x10321e8b`: **DelegateCallVoucher** – Single-use permission to execute a delegate call.
 
 ## Error Codes
 
@@ -128,8 +127,8 @@ The API supports three types of outputs:
   "method": "cartesi_listOutputs",
   "params": {
     "application": "calculator",
-    "output_type": "0x00000000",
-    "limit": 10,
+    "output_type": "0xc258d6e5",
+    "limit": 1,
     "offset": 0
   },
   "id": 1
@@ -144,26 +143,25 @@ The API supports three types of outputs:
   "result": {
     "data": [
       {
-        "epoch_index": "0x1",
-        "input_index": "0x1",
-        "index": "0x1",
+        "epoch_index": 1,
+        "input_index": 0,
+        "index": 0,
+        "type": "0xc258d6e5",
         "raw_data": "0x1234...",
         "decoded_data": {
-          "type": "0x00000000",
-          "destination": "0x1234...5678",
-          "value": "0x0",
+          "type": "0xc258d6e5",
           "payload": "0x5678..."
         },
-        "hash": "0x9abc...",
-        "output_hashes_siblings": ["0xdef0...", "0x1234..."],
-        "execution_transaction_hash": "0x5678...",
+        "hash": "0xabc...",
+        "output_hashes_siblings": [],
+        "execution_transaction_hash": null,
         "created_at": "2024-01-01T00:00:00Z",
         "updated_at": "2024-01-01T00:00:00Z"
       }
     ],
     "pagination": {
       "total_count": 1,
-      "limit": 10,
+      "limit": 1,
       "offset": 0
     }
   },

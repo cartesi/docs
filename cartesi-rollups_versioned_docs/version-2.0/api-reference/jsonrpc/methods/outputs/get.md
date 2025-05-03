@@ -5,7 +5,7 @@ title: Get Output
 
 # Get Output
 
-The `cartesi_getOutput` method retrieves detailed information about a specific output by its application and index.
+The `cartesi_getOutput` method retrieves detailed information about a specific output by its application and output index.
 
 ## Method
 
@@ -15,7 +15,7 @@ The `cartesi_getOutput` method retrieves detailed information about a specific o
   "method": "cartesi_getOutput",
   "params": {
     "application": "calculator",
-    "output_index": "0x1"
+    "output_index": "0x0"
   },
   "id": 1
 }
@@ -26,7 +26,7 @@ The `cartesi_getOutput` method retrieves detailed information about a specific o
 | Name         | Type   | Required | Description                                      |
 |--------------|--------|----------|--------------------------------------------------|
 | application  | string | Yes      | The application's name or hex encoded address    |
-| output_index | string | Yes      | The index of the output to be retrieved (hex encoded) |
+| output_index | string | Yes      | The output index to be retrieved (hex encoded)   |
 
 ## Response
 
@@ -34,23 +34,22 @@ The `cartesi_getOutput` method retrieves detailed information about a specific o
 {
   "jsonrpc": "2.0",
   "result": {
-    "data": {
-      "epoch_index": "0x1",
-      "input_index": "0x1",
-      "index": "0x1",
-      "raw_data": "0x1234...",
-      "decoded_data": {
-        "type": "0x00000000",
-        "destination": "0x1234...5678",
-        "value": "0x0",
-        "payload": "0x5678..."
-      },
-      "hash": "0x9abc...",
-      "output_hashes_siblings": ["0xdef0...", "0x1234..."],
-      "execution_transaction_hash": "0x5678...",
-      "created_at": "2024-01-01T00:00:00Z",
-      "updated_at": "2024-01-01T00:00:00Z"
-    }
+    "epoch_index": 1,
+    "input_index": 0,
+    "index": 0,
+    "type": "0x237a816f",
+    "raw_data": "0x1234...",
+    "decoded_data": {
+      "type": "0x237a816f",
+      "destination": "0x1234...5678",
+      "value": "0x0",
+      "payload": "0x5678..."
+    },
+    "hash": "0xabc...",
+    "output_hashes_siblings": [],
+    "execution_transaction_hash": null,
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z"
   },
   "id": 1
 }
@@ -60,28 +59,25 @@ The `cartesi_getOutput` method retrieves detailed information about a specific o
 
 | Name                     | Type   | Description                                      |
 |--------------------------|--------|--------------------------------------------------|
-| epoch_index             | string | The epoch index (hex encoded)                    |
-| input_index             | string | The input index (hex encoded)                    |
-| index                   | string | The output index (hex encoded)                   |
+| epoch_index             | number | The epoch index this output belongs to           |
+| input_index             | number | The input index this output belongs to           |
+| index                   | number | The output index                                 |
+| type                    | string | Output type. Must be one of: `0xc258d6e5` (Notice), `0x237a816f` (Voucher), `0x10321e8b` (DelegateCallVoucher) |
 | raw_data                | string | The raw output data in hexadecimal format        |
 | decoded_data            | object | The decoded output data                          |
-| decoded_data.type       | string | The function selector (hex encoded)              |
-| decoded_data.destination | string | The destination address (hex encoded) - for vouchers only |
-| decoded_data.value      | string | The value to be transferred - for vouchers only  |
-| decoded_data.payload    | string | The output payload in hexadecimal format         |
-| hash                    | string | The output hash (hex encoded)                    |
+| hash                    | string | The output hash                                  |
 | output_hashes_siblings  | array  | Sibling hashes for the output hash               |
-| execution_transaction_hash | string | The transaction hash (hex encoded)               |
+| execution_transaction_hash | string | The transaction hash if executed                |
 | created_at              | string | Timestamp when the output was created            |
 | updated_at              | string | Timestamp when the output was last updated       |
 
 ## Output Types
 
-The API supports three types of outputs:
+The API supports three types of outputs, which can be identified by the `type` field in the response or filtered using the `output_type` parameter in list queries:
 
-1. **Notices**: Used to provide information about the application state. They don't have a destination address or value.
-2. **Vouchers**: Used to request a transfer of value to a specific address. They include a destination address and value.
-3. **Delegate Call Vouchers**: Similar to vouchers but used for delegate calls. They include a destination address but no value.
+- `0xc258d6e5`: **Notice** – Informational messages emitted by the application.
+- `0x237a816f`: **Voucher** – Single-use permission to execute a call.
+- `0x10321e8b`: **DelegateCallVoucher** – Single-use permission to execute a delegate call.
 
 ## Error Codes
 
@@ -102,7 +98,7 @@ The API supports three types of outputs:
   "method": "cartesi_getOutput",
   "params": {
     "application": "calculator",
-    "output_index": "0x1"
+    "output_index": "0x0"
   },
   "id": 1
 }
@@ -114,23 +110,22 @@ The API supports three types of outputs:
 {
   "jsonrpc": "2.0",
   "result": {
-    "data": {
-      "epoch_index": "0x1",
-      "input_index": "0x1",
-      "index": "0x1",
-      "raw_data": "0x1234...",
-      "decoded_data": {
-        "type": "0x00000000",
-        "destination": "0x1234...5678",
-        "value": "0x0",
-        "payload": "0x5678..."
-      },
-      "hash": "0x9abc...",
-      "output_hashes_siblings": ["0xdef0...", "0x1234..."],
-      "execution_transaction_hash": "0x5678...",
-      "created_at": "2024-01-01T00:00:00Z",
-      "updated_at": "2024-01-01T00:00:00Z"
-    }
+    "epoch_index": 1,
+    "input_index": 0,
+    "index": 0,
+    "type": "0x237a816f",
+    "raw_data": "0x1234...",
+    "decoded_data": {
+      "type": "0x237a816f",
+      "destination": "0x1234...5678",
+      "value": "0x0",
+      "payload": "0x5678..."
+    },
+    "hash": "0xabc...",
+    "output_hashes_siblings": [],
+    "execution_transaction_hash": null,
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z"
   },
   "id": 1
 }

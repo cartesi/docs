@@ -9,43 +9,34 @@ title: Types
 
 A string that matches the pattern `^[a-z0-9_-]+$`.
 
-Example: `"my-application"`
-
 ### EthereumAddress
 
 A hex-encoded Ethereum address that matches the pattern `^0x[a-fA-F0-9]{40}$`.
-
-Example: `"0x1234567890123456789012345678901234567890"`
 
 ### Hash
 
 A hex-encoded hash that matches the pattern `^0x[a-fA-F0-9]{64}$`.
 
-Example: `"0x1234567890123456789012345678901234567890123456789012345678901234"`
-
 ### ByteArray
 
 A hex-encoded byte array that matches the pattern `^0x[a-fA-F0-9]*$`.
-
-Example: `"0x1234567890"`
 
 ### UnsignedInteger
 
 A hex-encoded unsigned 64-bit integer that matches the pattern `^0x[a-fA-F0-9]{1,16}$`.
 
-Example: `"0x123"`
-
 ### FunctionSelector
 
-A hex-encoded function selector that matches the pattern `^0x[a-fA-F0-9]{8}$`.
+A hex-encoded function selector (bytes4) that matches the pattern `^0x[a-fA-F0-9]{8}$`.
 
-Example: `"0x12345678"`
+Examples:
+- Notice: `0xc258d6e5`
+- Voucher: `0x237a816f`
+- DelegateCallVoucher: `0x10321e8b`
 
 ### NameOrAddress
 
 A union type that can be either an `ApplicationName` or an `EthereumAddress`.
-
-Example: `"my-application"` or `"0x1234567890123456789012345678901234567890"`
 
 ## Enums
 
@@ -255,6 +246,13 @@ interface DelegateCallVoucher {
 ### DecodedOutput
 
 A union type that can be either a `Notice`, a `Voucher`, or a `DelegateCallVoucher`.
+
+#### Output Types
+
+The possible output types are:
+- **Notice**: Informational messages emitted by the application (`0xc258d6e5`)
+- **Voucher**: Single-use permission to execute a call (`0x237a816f`)
+- **DelegateCallVoucher**: Single-use permission to execute a delegate call (`0x10321e8b`)
 
 ### Report
 

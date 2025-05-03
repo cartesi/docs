@@ -14,10 +14,6 @@ The JSON-RPC API is particularly useful for applications that need to:
   - **Vouchers**: Transactions that can be executed on the base layer
   - **Delegate Call Vouchers**: Advanced smart contract interactions
 
-## API Version
-
-The current version of the JSON-RPC API is 2.0.0.
-
 ## Base URL
 
 The JSON-RPC API is available at the following endpoint:
