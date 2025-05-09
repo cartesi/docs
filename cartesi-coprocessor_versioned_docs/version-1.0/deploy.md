@@ -29,7 +29,23 @@ The deploy step handles publishing your coprocessor program to the solver as wel
 cartesi coprocessor deploy <contract_name> --constructorArgs <constructor_arguments>
 ```
 
-If your contract requires multiple constructor arguments, you should pass them in order in which the program receives them, each separated by a comma.
+If your contract has constructor arguments, you must pass them in the exact order defined by the constructor, separated by a single space. If the constructor expects only one argument, pass just that argument. If no arguments are expected, nothing should be passed.
+
+For example, consider a constructor that accepts two parameters:
+
+```solidity
+constructor(bytes32 machineHash, address taskIssuer) { ... }
+```
+
+In this case, the arguments should be passed like this:
+
+```bash
+cartesi coprocessor deploy MyContract --constructorArgs 0x1234abcd...dca0 0xABCD5678...ef0f
+```
+
+Where 0x1234abcd...dca0 is the 32-byte machine hash, and 0xABCD5678...ef0f is the task issuer’s address.
+
+Ensure that each argument matches the expected type and order otherwise the deployment may fail.
 
 :::info On your local environment
 At the end of the development and testing process, you can choose to stop the coprocessor devnet environment using the below process.

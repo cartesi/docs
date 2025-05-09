@@ -4,7 +4,21 @@ This guide outlines the installation of the tools needed to set up your environm
 
 ## Prerequisites
 
-### 1. **Cartesi CLI**
+### 1. **Docker Desktop**
+
+Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building Cartesi dApps:
+
+- Docker Buildx
+- Docker Compose
+
+[Install the latest version of Docker Desktop](https://www.docker.com/products/docker-desktop/) for your operating system then install RISC-V support by running:
+
+```bash
+docker run --privileged --rm tonistiigi/binfmt --install all
+```
+
+
+### 2. **Cartesi CLI**
 
 The Cartesi CLI is an easy-to-use tool for developing and deploying Cartesi dApps. In this tutorial, we use the Cartesi CLI to bootstrap, build and also deploy our projects.
 
@@ -45,19 +59,6 @@ To test that you have Cartesi CLI installed, you can run the following command:
 cartesi doctor
 ```
 
-### 2. **Docker Desktop**
-
-Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building Cartesi dApps:
-
-- Docker Buildx
-- Docker Compose
-  [Install the latest version of Docker Desktop](https://www.docker.com/products/docker-desktop/) for your operating system.
-
-Install RISC-V support by running:
-
-```bash
-docker run --privileged --rm tonistiigi/binfmt --install all
-```
 
 ### 3. **Install Foundry**
 
