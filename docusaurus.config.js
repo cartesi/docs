@@ -189,13 +189,6 @@ const config = {
             activeBaseRegex: "^/cartesi-rollups",
             position: "left",
           },
-
-          {
-            label: "Coprocessor",
-            to: "/cartesi-coprocessor/1.0/introduction",
-            activeBaseRegex: "^/cartesi-coprocessor",
-            position: "left",
-          },
           {
             type: "search",
             className: "navbar-search-custom",
@@ -400,26 +393,6 @@ const config = {
         schema: "cartesi-rollups/rollups-apis/typeDefs.graphql",
         rootPath: "cartesi-rollups", // docs will be generated under './docs/swapi' (rootPath/baseURL)
         baseURL: "api/graphql",
-      },
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'cartesi-coprocessor',
-        path: 'cartesi-coprocessor',
-        routeBasePath: 'cartesi-coprocessor',
-        // sidebarPath: require.resolve('./sidebarsCoprocessor.js'),
-        versions: {
-          "1.0" : {
-            label: 'Alpha',
-            path: '1.0',
-          },
-        },
-        lastVersion: '1.0',
-        includeCurrentVersion: false,
-        docItemComponent: "@theme/ApiItem",
-        showLastUpdateTime: true,
-        editUrl: 'https://github.com/cartesi/docs/tree/develop',
       },
     ],
     [
