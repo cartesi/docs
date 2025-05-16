@@ -31,12 +31,6 @@ module.exports = {
           id: 'fraud-proofs',
           label: 'Fraud Proofs',
         },
-        {
-          type: 'doc',
-          id: 'rollups-coprocessor',
-          label: 'Rollups vs Coprocessor',
-        },
-        
       ],
     },
   ],
