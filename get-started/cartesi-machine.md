@@ -1,6 +1,6 @@
 ---
 id: cartesi-machine
-title: Cartesi Machine
+title: Execution Environment
 resources:
   - url: https://github.com/cartesi/machine-emulator
     title: Cartesi Machine Github
@@ -8,28 +8,35 @@ resources:
     title: Cartesi Machine Deep Dive Video
 ---
 
-# Cartesi Machine
+Execution environments in blockchain systems are where smart contracts and decentralized applications (dApps) run and process transactions. They provide the necessary infrastructure and rules to execute code and manage the state of the blockchain. *Ethereum Virtual Machine(EVM)* is a popular example running at the core of Ethereum.
 
-The Cartesi Machine is the execution environment for the Cartesi Rollups and the Cartesi Coprocessor. It is a virtual machine designed to perform off-chain computations for blockchain applications. The Cartesi Machine is based on the [RISC-V ISA](https://riscv.org/), a set of instructions for processors. It runs an entire Linux OS, in which a dApp's backend is executed. It runs in isolation, meaning it operates independently and is reproducible. 
+## Introduction to the Cartesi Machine
+The Cartesi Machine serves as the execution environment for Cartesi Rollups protocol. This virtual machine enables off-chain computations for blockchain applications. Built upon *RISC-V* - an instruction set for processors - the Cartesi Machine can run a full Linux OS, within which a decentralized application's backend is executed.
 
-## Overview
+Cartesi Machines are executed inside a special emulator that has three unique properties:
+- **Self-contained** - They run in isolation from any external influence on the computation;
+- **Reproducible** - Two parties performing the same computation always obtain exactly the same results;
+- **Transparent** - They expose their entire state for external inspection.
 
-When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:
+### Significance of RISC-V
+The Cartesi Machine is built on [RISC-V](https://riscv.org/) instruction set - a real-world, open standard instruction set architecture (ISA) that offers access to a vast and growing ecosystem of hardware and software. This strategic choice brings substantial benefits to developers building decentralized applications.
 
-- Code execution: Code is executed based on specific inputs to perform computations, process data, or run custom logic, depending on the requirements of the task at hand.
+RISC-V enables full access to standard libraries, offering powerful abstractions, data structures, algorithms, and crucial interfaces for interacting with file systems, memory, and processes. RISC-V makes it possible to boot full operating systems like Linux, transforming the Cartesi Machine into a hosted environment. This is critical because standard libraries rely on operating system support, and without an OS, the development experience is severely limited.
 
-- Abstraction of infrastructure: The underlying infrastructure is abstracted away, allowing you to focus on writing code without worrying about managing servers, hardware, or networking resources.
+By enabling Linux and other OS support, the RISC-V architecture unlocks access to decades of open-source tooling. Developers can leverage compilers like GCC and Clang, debuggers such as GDB, as well as standard file systems, shell environments, and package managers. They also gain access to rich standard libraries across languages like C, C++, Rust, and Python.
 
-- Flexibility in programming languages and libraries: You have flexibility in the choice of programming languages and all open-source libraries available on Linux.
 
-## State Management and Execution
+### Architecture
+The Cartesi Machine comprises a processor and a board. The processor handles computations via a fetch-execute loop and manages registers. The board provides the environment, including ROM, RAM, flash memory, and other devices. For verifiability, Cartesi Machines map their complete state - processor internals, board components, and attached devices - to physical memory in a structured manner.
 
-The Cartesi Machine is a state machine that remains idle until a new request arises. The concept of state, in this case, is tied to both the input requests that the Cartesi Machine receives and the execution of the RISC-V instructions that the machine follows in processing those requests. The Cartesi Machine handles:
+Cartesi Machines support a 64-bit address space with memory protection. The design balances blockchain requirements with off-chain flexibility. Most instructions are basic and easy to simulate, with a small processor state for verifiability. Cartesi's implementation includes specific registers for privilege levels and operational status.
 
-- Discrete states: RISC-V instructions are executed step-by-step, transitioning from one state to another.
+The communication between the board and the processor happens through designated memory areas. When the machine starts, it reads instructions from a special read-only memory (ROM) which also describes the hardware. A startup program in the ROM sets things up and then jumps to the main memory (RAM) to begin the actual work. There's also space for flash memory, like storage drives.
 
-- State transitions: State transitions happen deterministically as the emulator processes these RISC-V instructions, changing the system's state to a new discrete state.
+The machine's memory is organized using Physical Memory Attribute records (PMAs), which define different areas like RAM and flash, and what can be done with them (read, write, execute). These settings are mostly fixed after the machine starts, defining the limits of its storage and capabilities.
 
-- Determinism: Given the same initial state and input, the Cartesi Machine will always produce the same output and final state to ensure that off-chain computations can be verified and agreed upon.
+### State Transition function
+A Cartesi computation progresses through a sequence of machine states, starting from an initial state and ending in a halting state, guided by a deterministic transition function, where each state, though encompassing the entire 64-bit address space, often focuses on specific memory regions, with state transitions occurring at the granularity of each executed instruction, marking a clear and auditable progression of the computation.
 
-- The Cartesi machine is self-contained and can't make an external request. To achieve reproducibility,it runs in isolation from any external influence on the computation. 
+### Linux Runtime
+The Cartesi Machine can run a full Linux operating system. This allows developers to use familiar tools and libraries for complex computations off-chain. Setting up Linux involves building the necessary components using a cross-compiling toolchain and creating a root file system. Cartesi's development frameworks(Rollups and Coprocessor) provide a convenient Docker container with a preconfigured Linux environment to abstract the infrastructure. The Linux system runs with a bootloader and interacts with the Cartesi Machine emulator. The root file system and additional data can be stored on virtual flash devices. This enables running complex applications with flexible inputs and outputs on the Cartesi Machine.
