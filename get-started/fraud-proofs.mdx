@@ -63,6 +63,7 @@ Research on Dave has quickly become one of the leading fraud proof systems in th
 
 Credits: [Fraud Proof Wars by L2Beat](https://medium.com/l2beat/fraud-proof-wars-b0cb4d0f452a)
 
+<div style={{ fontSize: "10pt" }}>
 | Project                         | Concurrency                                | Enforces Correct Bisections | Happy Case Bonds                        | Settlement Delay | Delay Attack                                                                                   | Resource Exhaustion Attack                                                   |
 |---------------------------------|--------------------------------------------|------------------------------|-----------------------------------------|------------------|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
 | **Arbitrum Classic**           | Partial                                     | No                           | 1 ETH                                   | ~7d              | **Possible for indefinite time**, requires little funds. May need one-off ordering control.    | Not possible                                                                  |
@@ -70,4 +71,4 @@ Credits: [Fraud Proof Wars by L2Beat](https://medium.com/l2beat/fraud-proof-wars
 | **Cartesi protocol (2 levels)**| Partial (tournament)                        | **Yes**                      | 1 ETH                                   | 7d               | **Possible for a limited time** (few months)                                                   | In practice not possible (very costly)                                       |
 | **Cartesi + ZK single step**   | Partial (tournament)                        | **Yes**                      | 1 ETH                                   | 7d               | **Possible for a limited time** (few months)                                                   | Not possible                                                                  |
 | **OPFP**                       | Full. Graph is shared between challenges    | No                           | 0.08 ETH → increases up to ~700 ETH     | **3.5d**         | Might be **too short to coordinate defense** under strong censorship attack                    | **Possible**, requires same or slightly fewer funds than defender            |
-
+</div>
