@@ -162,7 +162,7 @@ def handle_advance(data):
     return status
 ```
 
-Here is the final code of our application:
+Here is the final code of the application:
 
 ```python
 from os import environ
@@ -261,27 +261,21 @@ cartesi run
 
 ### Sending inputs with the CLI
 
-We can send inputs to our application with a custom JavaScript frontend, Cast, or Cartesi CLI.
+We can send inputs to your application with a custom JavaScript frontend, Cast, or Cartesi CLI.
 
-To send generic inputs to our application quickly, run the following:
+To send a string encoded input to your application, run the below command:
 
 ```shell
-cartesi send generic
+cartesi send "1+2"
 ```
 
 Example: Send `1+2` as an input to the application.
 
 ```shell
-> cartesi send generic
-? Chain Foundry
-? RPC URL http://127.0.0.1:8545
-? Wallet Mnemonic
-? Mnemonic test test test test test test test test test test test junk
-? Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9999.970671818064986684 ETH
-? Application address 0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e
-? Input String encoding
-? Input (as string) 1+2
-✔ Input sent: 0xe2a2ba347659e53c53f3089ff3268255842c03bafbbf185375f94c7a78f3f98a
+(base) user@user-MacBook-Pro calculator % cartesi send "1 + 2"
+(node:64729) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Input sent: 0x1866ab903f8fa5bd712fc2d322b8c0ba119bb31d30885a06e0fe6005ff079ff2
 ```
 
 <!-- <video width="100%" controls poster="/static/img/v1.3/calculatorPoster.png">
@@ -291,15 +285,15 @@ Example: Send `1+2` as an input to the application.
 
 ## Retrieving outputs from the application
 
-The `cartesi send generic` sends a notice containing a payload to the Rollup Server's `/notice` endpoint.
+The `cartesi send generic` sends a request to the calculator application to process the computation `(1 + 2)`, this is computed and a payload (notice) containing the result is sent to the Rollup Server's `/notice` endpoint.
 
-:::note querying noticees
+:::note querying notices
 Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.
 :::
 
 We can query these notices using the JSON-RPC server running on `http://127.0.0.1:6751/rpc` or with a custom frontend client.
 
-You can retrieve all notices sent to the rollup server by making running this request on a terminal:
+You can retrieve all notices sent to the rollup server by executing this request on a terminal:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/rpc \
@@ -316,7 +310,7 @@ curl -X POST http://127.0.0.1:6751/rpc \
   }'
 ```
 
-Alternatively, you can query this on a frontend client:
+Alternatively you can make a post request to the JsonRPC server like below:
 
 ```javascript
 const response = await fetch("http://127.0.0.1:6751/rpc", {
@@ -344,6 +338,10 @@ for (const output of outputs) {
 }
 ```
 
-You can also [query a notice based on its input index](../development/query-outputs.md/#query-a-single-notice).
+You can also [query a notice based on its input index](../development/query-outputs.md#query-a-single-notice).
 
 Congratulations, you have successfully built a dApp on Cartesi Rollups!
+
+:::info Repo Link
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/calculator)!
+:::
