@@ -14,11 +14,108 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 
 ## Setting up the project
 
-First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md/#setting-up-the-project). Make sure you have the necessary dependencies installed.
+First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
+
+```bash
+cartesi create erc-20-token-wallet --template typescript
+```
+
+Run the following to generate the types for your project:
+
+```bash
+yarn && yarn run codegen
+```
+
+Now, navigate to the project directory and install [`ethers`](https://docs.ethers.org/v5/), [`viem`](https://viem.sh/) and [`@cartesi/rollups`](https://www.npmjs.com/package/@cartesi/rollups) package:
+
+```bash
+yarn add ethers viem
+yarn add -D @cartesi/rollups
+```
+
+## Define the ABIs
+
+Let's write a configuration to generate the ABIs of the Cartesi Rollups Contracts.
+
+We will need the Solidity compiler and the contract code from the `@cartesi/rollups` package to generate the ABIs as constants.
+
+1. [Install the Solidity compiler](https://docs.soliditylang.org/en/latest/installing-solidity.html).
+
+2. Create a new file named `generate_abis.sh` in the root of your project and add the following code:
+
+```bash
+#!/bin/bash
+
+set -e  # Exit immediately if a command exits with a non-zero status.
+
+# Output directory for TypeScript files
+TS_DIR="src/wallet/abi"
+
+# Temporary directory for compilation output
+TEMP_DIR="temp_solc_output"
+
+# Create output and temporary directories
+mkdir -p "$TS_DIR"
+mkdir -p "$TEMP_DIR"
+
+# Function to generate ABI and export as a TypeScript variable
+generate_abi() {
+    local sol_file="$1"
+    local contract_name="$2"
+    local output_file="$TS_DIR/${contract_name}Abi.ts"
+
+    echo "Compiling $sol_file..."
+
+    # Compile the contract in the temporary directory
+    npx solcjs --abi "$sol_file" --base-path . --include-path node_modules/ --output-dir "$TEMP_DIR"
+
+    # Find the generated ABI file
+    abi_file=$(find "$TEMP_DIR" -name "*_${contract_name}.abi")
+
+    if [ ! -f "$abi_file" ]; then
+        echo "Error: ABI file not found for $contract_name"
+        return 1
+    fi
+
+    # Read the ABI content
+    abi=$(cat "$abi_file")
+
+    echo "Extracted ABI for $contract_name"
+
+    # Create a TypeScript file with exported ABI
+    echo "export const ${contract_name}Abi = $abi as const;" > "$output_file"
+
+    echo "Generated ABI for $contract_name"
+    echo "----------------------"
+}
+
+# Generate ABIs
+generate_abi "node_modules/@cartesi/rollups/contracts/dapp/CartesiDApp.sol" "CartesiDApp"
+generate_abi "node_modules/@cartesi/rollups/contracts/portals/EtherPortal.sol" "EtherPortal"
+
+# Clean up the temporary directory
+rm -rf "$TEMP_DIR"
+
+echo "ABI generation complete"
+```
+
+This script will look for all specified `.sol` files and create a TypeScript file with the ABIs in the `src/wallet/abi` directory.
+
+Now, let's make the script executable:
+
+```bash
+chmod +x generate_abis.sh
+```
+
+And run it:
+
+```bash
+./generate_abis.sh
+```
 
 ## Building the ERC20 wallet
 
-Create a file named `balance.ts` in the `src/wallet` directory and add the following code:
+Create a file named `balance.ts` in `src/wallet` directory and add the following code:
 
 ```typescript
 import { Address } from "viem";
@@ -191,6 +288,7 @@ export class Wallet {
       return {
         destination: erc20,
         payload: call,
+        value: "0x0",
       };
     } catch (e) {
       throw Error(`Error withdrawing ERC20 tokens: ${e}`);
@@ -238,30 +336,31 @@ Run `cartesi address-book` to get the contract address of the `ERC20Portal` cont
 
 ```typescript
 import createClient from "openapi-fetch";
-import { components, paths } from "./schema";
+import type { components, paths } from "./schema";
 import { Wallet } from "./wallet/wallet";
 import { stringToHex, getAddress, Address, hexToString, toHex } from "viem";
 
 type AdvanceRequestData = components["schemas"]["Advance"];
 type InspectRequestData = components["schemas"]["Inspect"];
 type RequestHandlerResult = components["schemas"]["Finish"]["status"];
-type RollupsRequest = components["schemas"]["RollupRequest"];
-export type Notice = components["schemas"]["Notice"];
-export type Payload = components["schemas"]["Payload"];
-export type Report = components["schemas"]["Report"];
-export type Voucher = components["schemas"]["Voucher"];
-
+type RollupRequest = components["schemas"]["RollupRequest"];
 type InspectRequestHandler = (data: InspectRequestData) => Promise<void>;
 type AdvanceRequestHandler = (
   data: AdvanceRequestData
 ) => Promise<RequestHandlerResult>;
 
+export type Notice = components["schemas"]["Notice"];
+export type Payload = components["schemas"]["Payload"];
+export type Report = components["schemas"]["Report"];
+export type Voucher = components["schemas"]["Voucher"];
+
 const wallet = new Wallet();
 
-const ERC20Portal = `0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB`;
+const ERC20Portal = `0x05355c2F9bA566c06199DEb17212c3B78C1A3C31`;
+
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollupServer);
+console.log(`HTTP rollup_server url is ${rollupServer}`);
 
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
@@ -371,22 +470,23 @@ const main = async () => {
   const { POST } = createClient<paths>({ baseUrl: rollupServer });
   let status: RequestHandlerResult = "accept";
   while (true) {
-    const { response } = await POST("/finish", {
+    const { data, response } = await POST("/finish", {
       body: { status },
       parseAs: "text",
     });
 
-    if (response.status === 200) {
-      const data = (await response.json()) as RollupsRequest;
-      switch (data.request_type) {
+    if (response.status === 200 && data) {
+      const request = JSON.parse(data) as RollupRequest;
+      switch (request.request_type) {
         case "advance_state":
-          status = await handleAdvance(data.data as AdvanceRequestData);
+          status = await handleAdvance(request.data as AdvanceRequestData);
           break;
         case "inspect_state":
-          await handleInspect(data.data as InspectRequestData);
+          await handleInspect(request.data as InspectRequestData);
           break;
       }
     } else if (response.status === 202) {
+      // no rollup request available
       console.log(await response.text());
     }
   }
@@ -396,6 +496,7 @@ main().catch((e) => {
   console.log(e);
   process.exit(1);
 });
+
 ```
 
 Here is a breakdown of the wallet functionality:
@@ -410,21 +511,27 @@ Here is a breakdown of the wallet functionality:
 
 - We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
 
-## Build and run the application
+## Build and deploy the application
 
-With Docker running, [build your backend application](../development/building-a-dapp.md) by running:
+With Docker running, Start a local devnet by running:
+
+```shell
+cartesi start
+```
+
+Next [build your backend application](../development/building-a-dapp.md) by running:
 
 ```shell
 cartesi build
 ```
 
-To run your application, enter the command:
+To deploy your application, enter the command:
 
 ```shell
-cartesi run
+cartesi deploy
 ```
 
-#### Deposits
+### Deposits
 
 :::caution token approvals
 An approval step is needed for the [**ERC20 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC20Portal` to transfer tokens on your behalf.
@@ -438,26 +545,30 @@ You will encounter this error if you don't approve the `ERC20Portal` address bef
 
 To deposit ERC20 tokens, use the `cartesi send erc20` command and follow the prompts.
 
-#### Balance checks(used in Inspect requests)
+### Balance checks(used in Inspect requests)
 
 To inspect the balance, make an HTTP call to:
 
-```
+```bash
 http://localhost:8080/inspect/{address}/{tokenAddress}
 ```
 
-#### Transfers and Withdrawals
+### Transfers and Withdrawals
 
 Use the `cartesi send generic` command and follow the prompts. Here are sample payloads:
 
 1. For transfers:
 
-```js
-{"operation":"transfer","erc20":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","amount":"1000000000000000000"}
-```
+   ```js
+   {"operation":"transfer","erc20":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","amount":"1000000000000000000"}
+   ```
 
 2. For withdrawals:
 
-```js
-{"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}
-```
+   ```js
+   {"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}
+   ```
+
+:::info Repo Link
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/erc-20-token-wallet)!
+:::

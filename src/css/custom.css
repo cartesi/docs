@@ -198,6 +198,37 @@ html[data-theme="dark"] {
   height: 2.5rem;
 }
 
+/* Active navbar item */
+.navbar__item.navbar__link--active {
+  color: var(--ifm-color-primary);
+  position: relative;
+}
+
+.navbar__item.navbar__link--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: calc(100% - 1rem);
+  height: 2px;
+  background-color: var(--ifm-color-primary);
+  transform: translateX(-50%);
+  transition: transform 0.2s ease-in-out;
+}
+
+.navbar__item:hover {
+  color: var(--ifm-color-primary);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .navbar__item.navbar__link--active {
+  color: var(--ifm-color-primary);
+}
+
+[data-theme="dark"] .navbar__item:hover {
+  color: var(--ifm-color-primary);
+}
+
 .navbar__item--version {
   display: inline-block !important;
   font-size: 0.875rem;

@@ -25,8 +25,7 @@ cartesi create ether-wallet-dapp --template typescript
 Run the following to generate the types for your project:
 
 ```bash
-yarn
-yarn run codegen
+yarn && yarn run codegen
 ```
 
 Now, navigate to the project directory and install [`ethers`](https://docs.ethers.org/v5/), [`viem`](https://viem.sh/) and [`@cartesi/rollups`](https://www.npmjs.com/package/@cartesi/rollups) package:
@@ -40,7 +39,7 @@ yarn add -D @cartesi/rollups
 
 Let's write a configuration to generate the ABIs of the Cartesi Rollups Contracts.
 
-We will the Solidity compiler and the contract code from the `@cartesi/rollups` package to generate the ABIs as constants.
+We will need the Solidity compiler and the contract code from the `@cartesi/rollups` package to generate the ABIs as constants.
 
 1. [Install the Solidity compiler](https://docs.soliditylang.org/en/latest/installing-solidity.html).
 
@@ -106,11 +105,16 @@ This script will look for all specified `.sol` files and create a TypeScript fil
 
 Now, let's make the script executable:
 
-    chmod +x generate_abis.sh
+```bash
+chmod +x generate_abis.sh
+```
 
 And run it:
 
-    ./generate_abis.sh
+```bash
+./generate_abis.sh
+```
+
 
 ## Building the Ether wallet
 
@@ -155,6 +159,8 @@ import {
   hexToBytes,
   stringToHex,
   encodeFunctionData,
+  numberToHex,
+  parseEther
 } from "viem";
 import { ethers } from "ethers";
 import { Balance } from "./balance";
@@ -247,15 +253,12 @@ export class Wallet {
     receiver: Address,
     amount: bigint
   ): Voucher {
-    const call = encodeFunctionData({
-      abi: CartesiDAppAbi,
-      functionName: "withdrawEther",
-      args: [receiver, amount],
-    });
+    const call = "0x"
 
     return {
-      destination: application,
+      destination: receiver,
       payload: call,
+        value: `${amount.toString(16).padStart(64, '0')}` as `0x${string}`,
     };
   }
 }
@@ -269,20 +272,14 @@ The `Wallet` class manages multiple accounts and provides methods for everyday w
 
 The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a crucial concept in Cartesi rollups for executing withdrawal operations on the base layer chain.
 
-The voucher creation process occurs during Ether’s withdrawal. Here's how it works in this application:
-
-1. The `encodeFunctionData` function creates the calldata for the [`function withdrawEther(address _receiver, uint256 _value) external`](../api-reference/contracts/application.md/#withdrawether) on the `CartesiDApp` contract.
+The Ether’s withdrawal voucher contains an empty payload (`0x`), this is because the [`function _executeVoucher(bytes calldata arguments)`](../api-reference/contracts/application.md/#_executevoucher) of the CartesiDapp makes a safecall to the destination (receiver) address passing the ether value (amount) and an empty payload, this call triggers the destination address `receive function` which collects the specified amount of Eth.
 
 It returns a Voucher object with two properties:
 
-    - `destination`: The address of the Cartesi dApp
-    - `payload`: The encoded function calldata
+- `destination`: The address to receive the withdrawn Ether.
+- `payload`: An empty function calldata
+- `value`: A bytes encoding of the amount of Ether to withdraw.
 
-2. The `withdrawEther` method of the `Wallet` class is called with three parameters:
-
-   - `application`: The address of the Cartesi dApp
-   - `address`: The user's address who wants to withdraw
-   - `amount`: The amount of Ether to withdraw
 
 ## Using the Ether wallet
 
@@ -296,35 +293,34 @@ Run `cartesi address-book` to get the addresses of the `EtherPortal` contract. S
 
 ```typescript
 import createClient from "openapi-fetch";
-import { components, paths } from "./schema";
+import type { components, paths } from "./schema";
 import { Wallet } from "./wallet/wallet";
 import { stringToHex, getAddress, Address, hexToString } from "viem";
 
 type AdvanceRequestData = components["schemas"]["Advance"];
 type InspectRequestData = components["schemas"]["Inspect"];
 type RequestHandlerResult = components["schemas"]["Finish"]["status"];
-type RollupsRequest = components["schemas"]["RollupRequest"];
-export type Notice = components["schemas"]["Notice"];
-export type Payload = components["schemas"]["Payload"];
-export type Report = components["schemas"]["Report"];
-export type Voucher = components["schemas"]["Voucher"];
-
+type RollupRequest = components["schemas"]["RollupRequest"];
 type InspectRequestHandler = (data: InspectRequestData) => Promise<void>;
 type AdvanceRequestHandler = (
   data: AdvanceRequestData
 ) => Promise<RequestHandlerResult>;
 
-const wallet = new Wallet();
+export type Notice = components["schemas"]["Notice"];
+export type Payload = components["schemas"]["Payload"];
+export type Report = components["schemas"]["Report"];
+export type Voucher = components["schemas"]["Voucher"];
 
-const EtherPortal = `0xFfdbe43d4c855BF7e0f105c400A50857f53AB044`;
+const wallet = new Wallet();
+const EtherPortal = `0xd31aD6613bDaA139E7D12B2428C0Dd00fdBF8aDa`;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollupServer);
+console.log(`HTTP rollup_server url is ${rollupServer}`);
 
 const handleAdvance: AdvanceRequestHandler = async (data) => {
-  console.log("Received advance request data " + JSON.stringify(data));
+  console.log(`Received advance request data ${JSON.stringify(data)}`);
 
-  const dAppAddress = data["metadata"]["app_contract"];
+    const dAppAddress = data["metadata"]["app_contract"];
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
 
@@ -364,9 +360,9 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
 };
 
 const handleInspect: InspectRequestHandler = async (data) => {
-  console.log("Received inspect request data " + JSON.stringify(data));
+  console.log(`Received inspect request data ${JSON.stringify(data)}`);
 
-  try {
+    try {
     const address = hexToString(data.payload);
     console.log(address);
     const balance = wallet.getBalance(address as Address);
@@ -414,22 +410,23 @@ const main = async () => {
   const { POST } = createClient<paths>({ baseUrl: rollupServer });
   let status: RequestHandlerResult = "accept";
   while (true) {
-    const { response } = await POST("/finish", {
+    const { data, response } = await POST("/finish", {
       body: { status },
       parseAs: "text",
     });
 
-    if (response.status === 200) {
-      const data = (await response.json()) as RollupsRequest;
-      switch (data.request_type) {
+    if (response.status === 200 && data) {
+      const request = JSON.parse(data) as RollupRequest;
+      switch (request.request_type) {
         case "advance_state":
-          status = await handleAdvance(data.data as AdvanceRequestData);
+          status = await handleAdvance(request.data as AdvanceRequestData);
           break;
         case "inspect_state":
-          await handleInspect(data.data as InspectRequestData);
+          await handleInspect(request.data as InspectRequestData);
           break;
       }
     } else if (response.status === 202) {
+      // no rollup request available
       console.log(await response.text());
     }
   }
@@ -463,37 +460,43 @@ The dApp address needs to be relayed strictly before withdrawal requests.
 To relay the dApp address, run: `cartesi send dapp-address`
 :::
 
-## Build and run the application
+## Build and deploy the application
 
-With Docker running, [build your backend application](../development/building-a-dapp.md) by running:
+With Docker running, Start a local devnet by running:
+
+```shell
+cartesi start
+```
+
+Next [build your backend application](../development/building-a-dapp.md) by running:
 
 ```shell
 cartesi build
 ```
 
-To run your application, enter the command:
+To deploy your application, enter the command:
 
 ```shell
-cartesi run
+cartesi deploy
 ```
 
-#### Deposits
+### Deposits
 
 To deposit ether, run the command below and follow the prompts:
 
-```
+```bash
 cartesi send ether
 ```
 
-#### Balance checks(used in Inspect requests)
+### Balance checks(used in Inspect requests)
 
-To inspect balance, make an HTTP call to:
+To inspect balance, make an HTTP (post) call to:
 
+```bash
+http://localhost:8080/inspect/{application_address}/{address}
 ```
-http://localhost:8080/inspect/{address}
-```
 
-#### Transfer and Withdrawals
+### Transfer and Withdrawals
 
 Transfers and withdrawal requests will be sent as generic json strings that will be parsed and processed.
 
@@ -507,15 +510,15 @@ Here are the sample payloads as one-liners, ready to be used in your code:
 
 1. For transfers:
 
-```js
-{"operation":"transfer","from":"0xAddress123","to":"0xAddress345","amount":"1000000000000000000"}
-```
+   ```js
+   {"operation":"transfer","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}
+   ```
 
 2. For withdrawals:
 
-```js
-{"operation":"withdraw","from":"0xAddress345","amount":"500000000000000000"}
-```
+   ```js
+   {"operation":"withdraw","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","amount":"1000000000000000000"}
+   ```
 
 ### Using the explorer
 
@@ -526,3 +529,7 @@ For end-to-end functionality, developers will likely build their [custom user-fa
 When you run your application with `cartesi run`, there is a local instance of CartesiScan on `http://localhost:8080/explorer`.
 
 You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
+
+:::info Repo Link
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/ether-wallet)!
+:::

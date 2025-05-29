@@ -13,6 +13,7 @@ function DocSidebarDesktop({ path, sidebar, onCollapse, isHidden }) {
       sidebar: { hideable },
     },
   } = useThemeConfig();
+  const isVersionedDocs = path.includes('/cartesi-rollups/') || path.includes('/cartesi-coprocessor/');
   return (
     <div
       className={clsx(
@@ -22,7 +23,7 @@ function DocSidebarDesktop({ path, sidebar, onCollapse, isHidden }) {
       )}
     >
       {hideOnScroll && <Logo tabIndex={-1} className={styles.sidebarLogo} />}
-      <DropdownVersion position="left" />
+      {isVersionedDocs && <DropdownVersion position="left" />}
       <Content path={path} sidebar={sidebar} />
       {hideable && <CollapseButton onClick={onCollapse} />}
     </div>
