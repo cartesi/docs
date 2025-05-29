@@ -243,7 +243,11 @@ while True:
         finish["status"] = handler(rollup_request["data"])
 ```
 
-With Docker running, “build your backend” application by running:
+With Docker running, start the local devnet network then build your backend application by running the below commands:
+
+```shell
+cartesi start
+```
 
 ```shell
 cartesi build
@@ -253,17 +257,35 @@ cartesi build
 
 The anvil node can now run your application.
 
-To run your application, enter the command:
+To deploy your application, enter the command:
 
 ```shell
-cartesi run
+cartesi deploy
 ```
+
+At the end of the deployment process you should get a log similar to this below:
+
+```shell
+✔ Cartesi machine template hash 0x1d676042fd77236aac625b1ad3356417210fd5a355b8dfdd322dfcc2da1bbb9c
+✔ Wallet Mnemonic
+✔ Mnemonic test test test test test test test test test test test junk
+✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 10000 ETH
+✔ Authority Owner 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+✔ Authority 0x92cc14432c1F82622493aBd64D99Ea8A3000a7c7
+✔ Application Owner 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+✔ Application 0xDB385696922ddc0A45C92eC36931b1Db080fd0A8
+✔ Machine snapshot /var/lib/cartesi-rollups-node/snapshots/0x1d676042fd77236aac625b1ad3356417210fd5a355b8dfdd322dfcc2da1bbb9c/
+✔ Application Name calculator
+✔ Registration calculator
+```
+
+The application address can be seen in the `Application` line as `0xDB38569692.....80fd0A8`, It's important to note that this might be different on your end, but would always appear in the application line.
 
 ### Sending inputs with the CLI
 
 We can send inputs to our application with a custom JavaScript frontend, Cast, or Cartesi CLI.
 
-To send generic inputs to our application quickly, run the following:
+To send generic inputs to our application quickly, run the below command passing our computation request `1 + 2` along with the application address we obtained in the previous step:
 
 ```shell
 cartesi send generic
@@ -273,15 +295,13 @@ Example: Send `1+2` as an input to the application.
 
 ```shell
 > cartesi send generic
-? Chain Foundry
-? RPC URL http://127.0.0.1:8545
-? Wallet Mnemonic
-? Mnemonic test test test test test test test test test test test junk
-? Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9999.970671818064986684 ETH
-? Application address 0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e
-? Input String encoding
-? Input (as string) 1+2
-✔ Input sent: 0xe2a2ba347659e53c53f3089ff3268255842c03bafbbf185375f94c7a78f3f98a
+✔ Wallet Mnemonic
+✔ Mnemonic test test test test test test test test test test test junk
+✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9999.98788422306934271 ETH
+✔ Application address 0xDB385696922ddc0A45C92eC36931b1Db080fd0A8
+✔ Input String encoding
+✔ Input (as string) 1+2
+✔ Input sent: 0xc393ca65c3eb3b479e83414a5be3be1d78ad60529931cf2001283f7750049f08
 ```
 
 <!-- <video width="100%" controls poster="/static/img/v1.3/calculatorPoster.png">
@@ -291,13 +311,13 @@ Example: Send `1+2` as an input to the application.
 
 ## Retrieving outputs from the application
 
-The `cartesi send generic` sends a notice containing a payload to the Rollup Server's `/notice` endpoint.
+The `cartesi send generic` sends a request to the calculator application to process the computation `(1 + 2)`, this is computed and a payload (notice) containing the result is sent to the Rollup Server's `/notice` endpoint.
 
-:::note querying noticees
+:::note querying notices
 Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.
 :::
 
-We can query these notices using the GraphQL playground hosted on `http://localhost:8080/graphql` or with a custom frontend client.
+We can query these notices using either the GraphQL playground hosted on `http://localhost:8080/graphql` or through a post request to the JsonRPC server.
 
 You can retrieve all notices sent to the rollup server with the query:
 
@@ -317,7 +337,7 @@ query notices {
 }
 ```
 
-Alternatively, you can query this on a frontend client:
+You can also query the GraphQL server on a frontend client:
 
 ```js
 const response = await fetch("http://localhost:8080/graphql", {
@@ -331,6 +351,31 @@ for (let edge of result.data.notices.edges) {
 }
 ```
 
+Alternatively you can make a post request to the JsonRPC server like below:
+
+```js
+    const response = await fetch("http://localhost:8080/rpc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "cartesi_listOutputs",
+            params: {
+                application: "0xDB385696922ddc0A45C92eC36931b1Db080fd0A8"
+            },
+            id: 0
+        }),
+    });
+
+    const result = await response.json();
+    console.log("RPC Result:", result);
+
+```
+
 You can also [query a notice based on its input index](../development/query-outputs.md/#query-a-single-notice).
 
 Congratulations, you have successfully built a dApp on Cartesi Rollups!
+
+:::info Repo Link
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/calculator)!
+:::
