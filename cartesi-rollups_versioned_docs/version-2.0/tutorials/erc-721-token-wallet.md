@@ -14,7 +14,11 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 
 ## Setting up the project
 
-First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md/#setting-up-the-project). Make sure you have the necessary dependencies installed.
+First, set up your Cartesi project as described in the [Erc20 token wallet tutorial](./erc-20-token-wallet.md#setting-up-the-project). Make sure you have the necessary dependencies installed.
+
+## Define the ABIs
+
+Next, Define the necessary Abi's as described in the [Erc20 token wallet tutorial](./erc-20-token-wallet.md#define-the-abis).
 
 ## Building the ERC721 wallet
 
@@ -181,6 +185,7 @@ export class Wallet {
       return {
         destination: erc721,
         payload: call,
+        value: "0x0"
       };
     } catch (e) {
       throw Error(`Error withdrawing ERC721 token: ${e}`);
@@ -228,30 +233,30 @@ Run `cartesi address-book` to get the addresses of the `ERC721Portal` contract. 
 
 ```typescript
 import createClient from "openapi-fetch";
-import { components, paths } from "./schema";
+import type { components, paths } from "./schema";
 import { Wallet } from "./wallet/wallet";
 import { stringToHex, getAddress, Address, hexToString, toHex } from "viem";
 
 type AdvanceRequestData = components["schemas"]["Advance"];
 type InspectRequestData = components["schemas"]["Inspect"];
 type RequestHandlerResult = components["schemas"]["Finish"]["status"];
-type RollupsRequest = components["schemas"]["RollupRequest"];
-export type Notice = components["schemas"]["Notice"];
-export type Payload = components["schemas"]["Payload"];
-export type Report = components["schemas"]["Report"];
-export type Voucher = components["schemas"]["Voucher"];
-
+type RollupRequest = components["schemas"]["RollupRequest"];
 type InspectRequestHandler = (data: InspectRequestData) => Promise<void>;
 type AdvanceRequestHandler = (
   data: AdvanceRequestData
 ) => Promise<RequestHandlerResult>;
+
+export type Notice = components["schemas"]["Notice"];
+export type Payload = components["schemas"]["Payload"];
+export type Report = components["schemas"]["Report"];
+export type Voucher = components["schemas"]["Voucher"];
 
 const wallet = new Wallet();
 
 const ERC721Portal = `0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87`;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollupServer);
+console.log(`HTTP rollup_server url is ${rollupServer}`);
 
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
@@ -357,22 +362,23 @@ const main = async () => {
   const { POST } = createClient<paths>({ baseUrl: rollupServer });
   let status: RequestHandlerResult = "accept";
   while (true) {
-    const { response } = await POST("/finish", {
+    const { data, response } = await POST("/finish", {
       body: { status },
       parseAs: "text",
     });
 
-    if (response.status === 200) {
-      const data = (await response.json()) as RollupsRequest;
-      switch (data.request_type) {
+    if (response.status === 200 && data) {
+      const request = JSON.parse(data) as RollupRequest;
+      switch (request.request_type) {
         case "advance_state":
-          status = await handleAdvance(data.data as AdvanceRequestData);
+          status = await handleAdvance(request.data as AdvanceRequestData);
           break;
         case "inspect_state":
-          await handleInspect(data.data as InspectRequestData);
+          await handleInspect(request.data as InspectRequestData);
           break;
       }
     } else if (response.status === 202) {
+      // no rollup request available
       console.log(await response.text());
     }
   }
@@ -410,7 +416,7 @@ To run your application, enter the command:
 cartesi run
 ```
 
-#### Deposits
+### Deposits
 
 :::caution token approvals
 An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf.
@@ -422,28 +428,34 @@ You will encounter this error if you don't approve the `ERC20Portal` address bef
 `ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
 :::
 
-To deposit ERC721 tokens, use the `cartesi send erc721` command and follow the prompts.
+To deposit ERC721 tokens, use the `cartesi deposit erc721` command and follow the prompts.
 
-#### Balance checks(used in Inspect requests)
+### Balance checks(used in Inspect requests)
 
 To inspect the balance, make an HTTP call to:
 
-```
-http://localhost:8080/inspect/{address}/{tokenAddress}
+```bash
+curl -X POST http://127.0.0.1:6751/inspect/erc-721-token-wallet \
+  -H "Content-Type: application/json" \
+  -d '{0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266}'
 ```
 
-#### Transfers and Withdrawals
+### Transfers and Withdrawals
 
-Use the `cartesi send generic` command and follow the prompts. Here are sample payloads:
+Use the `cartesi send` command then follow the prompts to select `String encoding`, finally enter any of the sample payloads:
 
 1. For transfers:
 
-```js
-{"operation":"transfer","erc721":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","tokenId":"1"}
-```
+   ```js
+   {"operation":"transfer","erc721":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","tokenId":"1"}
+   ```
 
 2. For withdrawals:
 
-```js
-{"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}
-```
+   ```js
+   {"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}
+   ```
+
+:::info Repo Link
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/erc-721-token-wallet)!
+:::
