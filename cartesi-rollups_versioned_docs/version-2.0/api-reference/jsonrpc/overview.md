@@ -3,115 +3,146 @@ id: overview
 title: Overview
 ---
 
-The Cartesi Rollups Node provides a JSON-RPC API for reading rollups data. This API is designed to be simple and efficient, providing information about applications, epochs, inputs, and various types of outputs including notices, reports, vouchers, and delegate call vouchers.
+# JSON-RPC API Overview
 
-The JSON-RPC API is particularly useful for applications that need to:
-- Query the state of applications and epochs
-- Retrieve inputs and their processing status
-- Read different types of outputs:
-  - **Notices**: Informational messages emitted by the application
-  - **Reports**: Debugging and logging information
-  - **Vouchers**: Transactions that can be executed on the base layer
-  - **Delegate Call Vouchers**: Advanced smart contract interactions
+The Cartesi Rollups Node API provides a JSON-RPC interface for interacting with Cartesi Rollups applications. This API allows you to:
 
-## Base URL
+- Query application information and status
+- Monitor epochs and their states
+- Track inputs and their processing status
+- Retrieve outputs (notices, vouchers, delegate call vouchers)
+- Access reports for debugging and auditing
 
-The JSON-RPC API is available at the following endpoint:
+## API Structure
 
-```
-http://localhost:8080/rpc
-```
+The API is organized into the following categories:
 
-## Request Format
+### Applications
+- `cartesi_listApplications`: List all registered applications
+- `cartesi_getApplication`: Get details about a specific application
 
-All requests must be made using HTTP POST with a JSON-RPC 2.0 payload. The request body should be a JSON object with the following structure:
+### Epochs
+- `cartesi_listEpochs`: List epochs for an application
+- `cartesi_getEpoch`: Get details about a specific epoch
+- `cartesi_getLastAcceptedEpochIndex`: Get the latest accepted epoch index
 
+### Inputs
+- `cartesi_listInputs`: List inputs for an application
+- `cartesi_getInput`: Get details about a specific input
+- `cartesi_getProcessedInputCount`: Get the number of processed inputs
+
+### Outputs
+- `cartesi_listOutputs`: List outputs (notices, vouchers, delegate call vouchers)
+- `cartesi_getOutput`: Get details about a specific output
+
+### Reports
+- `cartesi_listReports`: List reports for an application
+- `cartesi_getReport`: Get details about a specific report
+
+## Common Features
+
+### Pagination
+List endpoints support pagination with the following parameters:
+- `limit`: Maximum number of items per page (default: 50, minimum: 1)
+- `offset`: Starting point for the list (default: 0, minimum: 0)
+
+### Filtering
+Many list endpoints support filtering by:
+- `epoch_index`: Filter by epoch
+- `input_index`: Filter by input
+- `status`: Filter by status
+- `output_type`: Filter by output type
+- `voucher_address`: Filter by voucher address
+
+### Response Format
+All responses follow the JSON-RPC 2.0 specification:
 ```json
 {
   "jsonrpc": "2.0",
-  "method": "cartesi_listApplications",
-  "params": {
-    "limit": 50,
-    "offset": 0
-  },
-  "id": 1
-}
-```
-
-### Request Fields
-
-- `jsonrpc`: Must be "2.0" (string)
-- `method`: The name of the method to call (string)
-- `params`: The parameters for the method (object, optional)
-- `id`: A unique identifier for the request (number or string)
-
-## Response Format
-
-All responses follow the JSON-RPC 2.0 specification. A successful response will have the following structure:
-
-```json
-{
-  "jsonrpc": "2.0",
+  "id": 1,
   "result": {
     "data": [...],
     "pagination": {
-      "total_count": 100,
-      "limit": 50,
+      "total_count": 1,
+      "limit": 10,
       "offset": 0
     }
-  },
-  "id": 1
+  }
 }
 ```
 
-### Response Fields
-
-- `jsonrpc`: Always "2.0" (string)
-- `result`: The result of the method call (object)
-- `id`: The same id as in the request (number or string)
-
-## Error Handling
-
-If an error occurs, the response will have the following structure:
-
+### Error Handling
+Errors follow the JSON-RPC 2.0 error format:
 ```json
 {
   "jsonrpc": "2.0",
+  "id": 1,
   "error": {
-    "code": -32602,
-    "message": "Invalid params",
-    "data": "Parameter 'limit' must be greater than 0"
-  },
-  "id": 1
+    "code": -32000,
+    "message": "Server error"
+  }
 }
 ```
 
-### Error Fields
+## Data Types
 
-- `code`: The error code (number)
-- `message`: A short description of the error (string)
-- `data`: Additional information about the error (any, optional)
+The API uses several data types:
+- `HexString`: Hexadecimal values prefixed with "0x"
+- `Timestamp`: ISO 8601 formatted timestamps
+- Various enums for states and statuses
+- Complex objects for applications, epochs, inputs, outputs, and reports
 
-## Common Error Codes
+For detailed information about data types, see the [Types](types) page.
 
-- `-32600`: Invalid Request
-- `-32601`: Method not found
-- `-32602`: Invalid params
-- `-32603`: Internal error
-- `-32000`: Application not found
-- `-32001`: Epoch not found
-- `-32002`: Input not found
-- `-32003`: Output not found
-- `-32004`: Report not found
+## Best Practices
 
-## Pagination
+1. **Error Handling**: Always check for errors in responses
+2. **Pagination**: Use pagination to handle large result sets
+3. **Filtering**: Use filters to narrow down results
+4. **Rate Limiting**: Be mindful of API rate limits
+5. **Caching**: Cache frequently accessed data when appropriate
 
-Many methods support pagination through the `limit` and `offset` parameters:
+## Examples
 
-- `limit`: The maximum number of items to return (default: 50)
-- `offset`: The starting point for the list of items to return (default: 0)
+### Listing Applications
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "cartesi_listApplications",
+  "params": {
+    "limit": 10,
+    "offset": 0
+  }
+}
+```
 
-The response will include a `pagination` object with:
-- `total_count`: The total number of items available
-- `limit`: The number of items returned in this response
-- `offset`: The starting point of the returned items 
+### Getting Application Details
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "cartesi_getApplication",
+  "params": {
+    "application": "my-dapp"
+  }
+}
+```
+
+### Listing Inputs with Filters
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "cartesi_listInputs",
+  "params": {
+    "application": "my-dapp",
+    "epoch_index": "0x1",
+    "sender": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+    "limit": 10,
+    "offset": 0
+  }
+}
+```
+
+For more examples and detailed information about each method, see the [Methods](methods) page. 
