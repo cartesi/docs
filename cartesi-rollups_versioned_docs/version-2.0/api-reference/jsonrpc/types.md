@@ -3,96 +3,227 @@ id: types
 title: Types
 ---
 
+# JSON-RPC API Types
+
+This page documents the data types used in the Cartesi Rollups Node API. These types are used in both request parameters and response data.
+
 ## Basic Types
 
-### ApplicationName
+### HexString
+A string representing a hexadecimal value, prefixed with "0x". Used for addresses, hashes, and other binary data.
 
-A string that matches the pattern `^[a-z0-9_-]+$`.
+Example:
+```json
+"0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+```
 
-### EthereumAddress
+### Timestamp
+A string representing a timestamp in ISO 8601 format.
 
-A hex-encoded Ethereum address that matches the pattern `^0x[a-fA-F0-9]{40}$`.
-
-### Hash
-
-A hex-encoded hash that matches the pattern `^0x[a-fA-F0-9]{64}$`.
-
-### ByteArray
-
-A hex-encoded byte array that matches the pattern `^0x[a-fA-F0-9]*$`.
-
-### UnsignedInteger
-
-A hex-encoded unsigned 64-bit integer that matches the pattern `^0x[a-fA-F0-9]{1,16}$`.
-
-### FunctionSelector
-
-A hex-encoded function selector (bytes4) that matches the pattern `^0x[a-fA-F0-9]{8}$`.
-
-Examples:
-- Notice: `0xc258d6e5`
-- Voucher: `0x237a816f`
-- DelegateCallVoucher: `0x10321e8b`
-
-### NameOrAddress
-
-A union type that can be either an `ApplicationName` or an `EthereumAddress`.
+Example:
+```json
+"2024-01-01T00:00:00Z"
+```
 
 ## Enums
 
 ### ApplicationState
+The current state of an application.
 
-```typescript
-enum ApplicationState {
-  ENABLED = "ENABLED",
-  DISABLED = "DISABLED",
-  INOPERABLE = "INOPERABLE"
-}
+Values:
+- `ENABLED`: The application is enabled and processing inputs
+- `DISABLED`: The application is disabled and not processing inputs
+- `ERROR`: The application encountered an error and is not processing inputs
+
+Example:
+```json
+"ENABLED"
 ```
 
 ### EpochStatus
+The current status of an epoch.
 
-```typescript
-enum EpochStatus {
-  OPEN = "OPEN",
-  CLOSED = "CLOSED",
-  INPUTS_PROCESSED = "INPUTS_PROCESSED",
-  CLAIM_COMPUTED = "CLAIM_COMPUTED",
-  CLAIM_SUBMITTED = "CLAIM_SUBMITTED",
-  CLAIM_ACCEPTED = "CLAIM_ACCEPTED",
-  CLAIM_REJECTED = "CLAIM_REJECTED"
-}
+Values:
+- `OPEN`: The epoch is open and accepting inputs
+- `CLOSED`: The epoch is closed and not accepting inputs
+- `PROCESSED`: The epoch has been processed
+
+Example:
+```json
+"OPEN"
 ```
 
-### InputCompletionStatus
+### InputStatus
+The current status of an input.
 
-```typescript
-enum InputCompletionStatus {
-  NONE = "NONE",
-  ACCEPTED = "ACCEPTED",
-  REJECTED = "REJECTED",
-  EXCEPTION = "EXCEPTION",
-  MACHINE_HALTED = "MACHINE_HALTED",
-  OUTPUTS_LIMIT_EXCEEDED = "OUTPUTS_LIMIT_EXCEEDED",
-  CYCLE_LIMIT_EXCEEDED = "CYCLE_LIMIT_EXCEEDED",
-  TIME_LIMIT_EXCEEDED = "TIME_LIMIT_EXCEEDED",
-  PAYLOAD_LENGTH_LIMIT_EXCEEDED = "PAYLOAD_LENGTH_LIMIT_EXCEEDED"
-}
+Values:
+- `ACCEPTED`: The input has been accepted and processed
+- `REJECTED`: The input has been rejected
+- `PENDING`: The input is pending processing
+
+Example:
+```json
+"ACCEPTED"
 ```
 
 ### SnapshotPolicy
+The snapshot policy for an application.
+
+Values:
+- `NONE`: No snapshots are taken
+- `EVERY_EPOCH`: A snapshot is taken at the end of each epoch
+- `EVERY_INPUT`: A snapshot is taken after each input
+
+Example:
+```json
+"NONE"
+```
+
+## Interfaces
+
+### Application
+Represents a Cartesi Rollups application.
 
 ```typescript
-enum SnapshotPolicy {
-  NONE = "NONE",
-  EACH_INPUT = "EACH_INPUT",
-  EACH_EPOCH = "EACH_EPOCH"
+interface Application {
+  name: string;
+  iapplication_address: HexString;
+  iconsensus_address: HexString;
+  iinputbox_address: HexString;
+  template_hash: HexString;
+  epoch_length: HexString;
+  data_availability: HexString;
+  state: ApplicationState;
+  reason: string;
+  iinputbox_block: HexString;
+  last_input_check_block: HexString;
+  last_output_check_block: HexString;
+  processed_inputs: HexString;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+  execution_parameters: ExecutionParameters;
 }
 ```
 
-## Objects
+### ExecutionParameters
+Configuration parameters for application execution.
+
+```typescript
+interface ExecutionParameters {
+  snapshot_policy: SnapshotPolicy;
+  advance_inc_cycles: HexString;
+  advance_max_cycles: HexString;
+  inspect_inc_cycles: HexString;
+  inspect_max_cycles: HexString;
+  advance_inc_deadline: HexString;
+  advance_max_deadline: HexString;
+  inspect_inc_deadline: HexString;
+  inspect_max_deadline: HexString;
+  load_deadline: HexString;
+  store_deadline: HexString;
+  fast_deadline: HexString;
+  max_concurrent_inspects: number;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+```
+
+### Epoch
+Represents a Cartesi Rollups epoch.
+
+```typescript
+interface Epoch {
+  index: HexString;
+  first_block: HexString;
+  last_block: HexString;
+  claim_hash: HexString | null;
+  claim_transaction_hash: HexString | null;
+  status: EpochStatus;
+  virtual_index: HexString;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+```
+
+### Input
+Represents a Cartesi Rollups input.
+
+```typescript
+interface Input {
+  epoch_index: HexString;
+  index: HexString;
+  block_number: HexString;
+  raw_data: HexString;
+  decoded_data: DecodedInput;
+  status: InputStatus;
+  machine_hash: HexString;
+  outputs_hash: HexString;
+  transaction_reference: HexString;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+```
+
+### DecodedInput
+The decoded data of an input.
+
+```typescript
+interface DecodedInput {
+  chain_id: HexString;
+  application_contract: HexString;
+  sender: HexString;
+  block_number: HexString;
+  block_timestamp: HexString;
+  prev_randao: HexString;
+  index: HexString;
+  payload: HexString;
+}
+```
+
+### Output
+Represents a Cartesi Rollups output (notice, voucher, or delegate call voucher).
+
+```typescript
+interface Output {
+  epoch_index: HexString;
+  input_index: HexString;
+  index: HexString;
+  raw_data: HexString;
+  decoded_data: DecodedOutput;
+  hash: HexString;
+  output_hashes_siblings: HexString[];
+  execution_transaction_hash: HexString;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+```
+
+### DecodedOutput
+The decoded data of an output.
+
+```typescript
+interface DecodedOutput {
+  type: HexString;
+  payload: HexString;
+}
+```
+
+### Report
+Represents a Cartesi Rollups report.
+
+```typescript
+interface Report {
+  epoch_index: HexString;
+  input_index: HexString;
+  index: HexString;
+  raw_data: HexString;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+```
 
 ### Pagination
+Represents pagination information for list responses.
 
 ```typescript
 interface Pagination {
@@ -102,167 +233,12 @@ interface Pagination {
 }
 ```
 
-### Application
+### PaginatedResponse
+A generic interface for paginated responses.
 
 ```typescript
-interface Application {
-  name: ApplicationName;
-  iapplication_address: EthereumAddress;
-  iconsensus_address: EthereumAddress;
-  iinputbox_address: EthereumAddress;
-  template_hash: Hash;
-  epoch_length: UnsignedInteger;
-  data_availability: ByteArray;
-  state: ApplicationState;
-  reason: string;
-  iinputbox_block: UnsignedInteger;
-  last_input_check_block: UnsignedInteger;
-  last_output_check_block: UnsignedInteger;
-  processed_inputs: UnsignedInteger;
-  created_at: string;
-  updated_at: string;
-  execution_parameters: ExecutionParameters;
-}
-```
-
-### ExecutionParameters
-
-```typescript
-interface ExecutionParameters {
-  snapshot_policy: SnapshotPolicy;
-  advance_inc_cycles: UnsignedInteger;
-  advance_max_cycles: UnsignedInteger;
-  inspect_inc_cycles: UnsignedInteger;
-  inspect_max_cycles: UnsignedInteger;
-  advance_inc_deadline: UnsignedInteger;
-  advance_max_deadline: UnsignedInteger;
-  inspect_inc_deadline: UnsignedInteger;
-  inspect_max_deadline: UnsignedInteger;
-  load_deadline: UnsignedInteger;
-  store_deadline: UnsignedInteger;
-  fast_deadline: UnsignedInteger;
-  max_concurrent_inspects: number;
-  created_at: string;
-  updated_at: string;
-}
-```
-
-### Epoch
-
-```typescript
-interface Epoch {
-  index: UnsignedInteger;
-  first_block: UnsignedInteger;
-  last_block: UnsignedInteger;
-  claim_hash: Hash | null;
-  claim_transaction_hash: Hash | null;
-  status: EpochStatus;
-  virtual_index: UnsignedInteger;
-  created_at: string;
-  updated_at: string;
-}
-```
-
-### Input
-
-```typescript
-interface Input {
-  epoch_index: UnsignedInteger;
-  index: UnsignedInteger;
-  block_number: UnsignedInteger;
-  raw_data: ByteArray;
-  decoded_data: EvmAdvance | null;
-  status: InputCompletionStatus;
-  machine_hash: Hash | null;
-  outputs_hash: Hash | null;
-  transaction_reference: ByteArray;
-  created_at: string;
-  updated_at: string;
-}
-```
-
-### EvmAdvance
-
-```typescript
-interface EvmAdvance {
-  chain_id: UnsignedInteger;
-  application_contract: EthereumAddress;
-  sender: EthereumAddress;
-  block_number: UnsignedInteger;
-  block_timestamp: UnsignedInteger;
-  prev_randao: ByteArray;
-  index: UnsignedInteger;
-  payload: ByteArray;
-}
-```
-
-### Output
-
-```typescript
-interface Output {
-  epoch_index: UnsignedInteger;
-  input_index: UnsignedInteger;
-  index: UnsignedInteger;
-  raw_data: ByteArray;
-  decoded_data: DecodedOutput | null;
-  hash: Hash | null;
-  output_hashes_siblings: Hash[];
-  execution_transaction_hash: Hash | null;
-  created_at: string;
-  updated_at: string;
-}
-```
-
-### Notice
-
-```typescript
-interface Notice {
-  type: FunctionSelector;
-  payload: ByteArray;
-}
-```
-
-### Voucher
-
-```typescript
-interface Voucher {
-  type: FunctionSelector;
-  destination: EthereumAddress;
-  value: string;
-  payload: ByteArray;
-}
-```
-
-### DelegateCallVoucher
-
-```typescript
-interface DelegateCallVoucher {
-  type: FunctionSelector;
-  destination: EthereumAddress;
-  payload: ByteArray;
-}
-```
-
-### DecodedOutput
-
-A union type that can be either a `Notice`, a `Voucher`, or a `DelegateCallVoucher`.
-
-#### Output Types
-
-The possible output types are:
-- **Notice**: Informational messages emitted by the application (`0xc258d6e5`)
-- **Voucher**: Single-use permission to execute a call (`0x237a816f`)
-- **DelegateCallVoucher**: Single-use permission to execute a delegate call (`0x10321e8b`)
-
-### Report
-
-```typescript
-interface Report {
-  epoch_index: UnsignedInteger;
-  input_index: UnsignedInteger;
-  index: UnsignedInteger;
-  raw_data: ByteArray;
-  created_at: string;
-  updated_at: string;
+interface PaginatedResponse {
+  data: T[];
+  pagination: Pagination;
 }
 ``` 

@@ -5,7 +5,7 @@ title: List Reports
 
 # List Reports
 
-The `cartesi_listReports` method returns a paginated list of reports for a specific application, with optional filtering by input index.
+The `cartesi_listReports` method returns a paginated list of reports for a specific application.
 
 ## Method
 
@@ -15,9 +15,10 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
   "method": "cartesi_listReports",
   "params": {
     "application": "calculator",
-    "input_index": 1,
     "limit": 50,
-    "offset": 0
+    "offset": 0,
+    "epoch_index": "0x1",
+    "input_index": "0x1"
   },
   "id": 1
 }
@@ -28,9 +29,10 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
 | Name        | Type   | Required | Description                                      |
 |-------------|--------|----------|--------------------------------------------------|
 | application | string | Yes      | The name or address of the application           |
-| input_index | number | No       | Filter reports by input index                    |
-| limit       | number | No       | Maximum number of reports to return (default: 50) |
-| offset      | number | No       | Starting point for the list (default: 0)         |
+| limit       | number | No       | Maximum number of reports to return (default: 50, minimum: 1) |
+| offset      | number | No       | Starting point for the list (default: 0, minimum: 0)         |
+| epoch_index | string | No       | Filter reports by epoch index                    |
+| input_index | string | No       | Filter reports by input index                    |
 
 ## Response
 
@@ -40,9 +42,12 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
   "result": {
     "data": [
       {
-        "index": 1,
-        "input_index": 1,
-        "payload": "0x1234..."
+        "index": "0x1",
+        "epoch_index": "0x1",
+        "input_index": "0x1",
+        "payload": "0x1234...5678",
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-01T00:00:00Z"
       }
     ],
     "pagination": {
@@ -61,9 +66,12 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
 
 | Name        | Type   | Description                                      |
 |-------------|--------|--------------------------------------------------|
-| index       | number | The report index                                 |
-| input_index | number | The input index this report belongs to           |
-| payload     | string | The report payload in hexadecimal format         |
+| index       | string | The report index                                 |
+| epoch_index | string | The epoch index this report belongs to           |
+| input_index | string | The input index this report belongs to           |
+| payload     | string | The report payload                               |
+| created_at  | string | Timestamp when the report was created            |
+| updated_at  | string | Timestamp when the report was last updated       |
 
 #### Pagination
 
@@ -78,9 +86,8 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
 | Code    | Message                | Description                                      |
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
-| -32000  | Application not found  | The specified application does not exist         |
-| -32002  | Input not found        | The specified input does not exist               |
 | -32603  | Internal error         | An internal error occurred                       |
+| -32000  | Application not found  | The specified application does not exist         |
 
 ## Example
 
@@ -92,9 +99,10 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
   "method": "cartesi_listReports",
   "params": {
     "application": "calculator",
-    "input_index": 1,
     "limit": 10,
-    "offset": 0
+    "offset": 0,
+    "epoch_index": "0x1",
+    "input_index": "0x1"
   },
   "id": 1
 }
@@ -108,18 +116,16 @@ The `cartesi_listReports` method returns a paginated list of reports for a speci
   "result": {
     "data": [
       {
-        "index": 1,
-        "input_index": 1,
-        "payload": "0x1234..."
-      },
-      {
-        "index": 2,
-        "input_index": 1,
-        "payload": "0x5678..."
+        "index": "0x1",
+        "epoch_index": "0x1",
+        "input_index": "0x1",
+        "payload": "0x1234...5678",
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-01T00:00:00Z"
       }
     ],
     "pagination": {
-      "total_count": 2,
+      "total_count": 1,
       "limit": 10,
       "offset": 0
     }
