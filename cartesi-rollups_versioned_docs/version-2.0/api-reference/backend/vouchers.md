@@ -16,6 +16,89 @@ The [`Application`](../contracts/application.md) contract is crucial in validati
 
 The result of the voucher execution is recorded on the base layer. This recording typically involves submitting claims by a consensus contract, ensuring the integrity and transparency of the executed on-chain action.
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="Python" label="Python" default>
+<pre><code>
+
+```python
+# Voucher creation process
+import requests
+import json
+from os import environ
+from eth_utils import function_signature_to_4byte_selector
+from eth_abi import decode, encode
+
+rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
+
+def emit_voucher(function_signature, destination, types, values):
+    selector = function_signature_to_4byte_selector(function_signature)    
+    encoded_params = encode(types, values)
+    payload = "0x" + (selector + encoded_params).hex()
+    response = requests.post(rollup_server + "/voucher", json={"payload": payload, "destination": destination, "value": '0x' + encode(["uint256"], [0]).hex()})
+    if response.status_code == 200 or response.status_code == 201:
+        logger.info(f"Voucher emitted successfully with data: {payload}")
+    else:
+        logger.error(f"Failed to emit Voucher with data: {payload}. Status code: {response.status_code}")
+
+
+emit_voucher("mint(address)", "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", ["address"], [data["metadata"]["msg_sender"]])
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Javascript" label="Javascript" default>
+<pre><code>
+
+```javascript
+import { stringToHex, encodeFunctionData, erc20Abi } from "viem";
+
+async function handle_advance(data) {
+  console.log("Received advance request data " + JSON.stringify(data));
+  const sender = data["metadata"]["msg_sender"];
+  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", // Sample ERC20 token address
+
+    const call = encodeFunctionData({
+    abi: erc20Abi,
+    functionName: "transfer",
+    args: [sender, BigInt(10)],
+  });
+
+  let voucher = {
+    destination: erc20Token,
+    payload: call,
+    value: '0x',
+  };
+
+  await emitVoucher(voucher);
+  return "accept";
+}
+
+
+const emitVoucher = async (voucher) => {
+  try {
+    await fetch(rollup_server + "/voucher", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(voucher),
+    });
+  } catch (error) {
+    //Do something when there is an error
+  }
+};
+
+```
+
+</code></pre>
+</TabItem>
+
+</Tabs>
+
 :::note create a voucher
 [Refer to the documentation here](../../development/asset-handling.md) for asset handling and creating vouchers in your dApp.
 :::

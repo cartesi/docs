@@ -56,22 +56,16 @@ async function handle_advance(data) {
 <pre><code>
 
 ```python
-def handle_advance(data):
-   logger.info(f"Received advance request data {data}")
+# Notice creation Process from a message string
+def emit_notice(message):
+    notice_payload = {"payload": "0x" + message.encode("utf-8").hex()}
+    response = requests.post(rollup_server + "/notice", json=notice_payload)
+    if response.status_code == 200 or response.status_code == 201:
+        logger.info(f"Notice emitted successfully with data: {notice_payload}")
+    else:
+        logger.error(f"Failed to emit Notice with data: {notice_payload}. Status code: {response.status_code}")
 
-   status = "accept"
-   try:
-       inputPayload = data["payload"]
-       # Send the input payload as a notice
-       response = requests.post(
-           rollup_server + "/notice", json={"payload": inputPayload}
-       )
-       logger.info(
-           f"Received notice status {response.status_code} body {response.content}"
-       )
-   except Exception as e:
-       # Emit report with error message here
-   return status
+emit_notice("hello world")
 ```
 
 </code></pre>
