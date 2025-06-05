@@ -13,7 +13,7 @@ Crucially, the base layer conducts on-chain validation of these notices through 
 
 This validation process ensures the integrity and authenticity of the submitted notices, enabling the blockchain to verify and authenticate the declared off-chain events or conditions.
 
-Let's see how a Cartesi dApp's **Advance** request sends an output to the rollup server as a notice:
+Here are sample functions you can add to your application, then call to send a notice to the rollup server:
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -23,25 +23,30 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+import { stringToHex, hexToString } from "viem";
 
-  const inputPayload = data["payload"];
-
+const emitNotice = async (inputPayload) => {
+  let hexPayload = stringToHex(inputPayload); // convert payload from string to hex 
   try {
     await fetch(rollup_server + "/notice", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ payload: inputPayload }),
+      body: JSON.stringify({ payload: hexPayload }),
     });
   } catch (error) {
     // Handle error here
   }
+}
 
+async function handle_advance(data) {
+  console.log("Received advance request data " + JSON.stringify(data));
+  const payload = hexToString(data.payload); // convert input from hex to string for processing
+  await emitNotice(payload);
   return "accept";
 }
+
 ```
 
 </code></pre>
@@ -51,22 +56,16 @@ async function handle_advance(data) {
 <pre><code>
 
 ```python
-def handle_advance(data):
-   logger.info(f"Received advance request data {data}")
+# Notice creation Process from a message string
+def emit_notice(message):
+    notice_payload = {"payload": "0x" + message.encode("utf-8").hex()}
+    response = requests.post(rollup_server + "/notice", json=notice_payload)
+    if response.status_code == 200 or response.status_code == 201:
+        logger.info(f"Notice emitted successfully with data: {notice_payload}")
+    else:
+        logger.error(f"Failed to emit Notice with data: {notice_payload}. Status code: {response.status_code}")
 
-   status = "accept"
-   try:
-       inputPayload = data["payload"]
-       # Send the input payload as a notice
-       response = requests.post(
-           rollup_server + "/notice", json={"payload": inputPayload}
-       )
-       logger.info(
-           f"Received notice status {response.status_code} body {response.content}"
-       )
-   except Exception as e:
-       # Emit report with error message here
-   return status
+emit_notice("hello world")
 ```
 
 </code></pre>
