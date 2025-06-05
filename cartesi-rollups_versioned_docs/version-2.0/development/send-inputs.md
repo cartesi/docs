@@ -188,16 +188,14 @@ $ cartesi send generic
 ✔ Wallet Mnemonic
 ✔ Mnemonic test test test test test test test test test test test junk
 ✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9993.999194554374748191 ETH
-✔ Application address 0xde752d14b5bb9f81d434d0fb6e05b17c5afaa057
+✔ Application address 0xb483897a2790a5D1a1C5413690bC5933f269b3A9
 ✔ Input String encoding
 ✔ Input (as string) 32.9
 ✔ Input sent: 0x048a25e6341234b8102f7676b3a8defb947559125197dbd45cfa3afa451a93fd
 ```
 
-For the above command, you replace `<encoding>` with your input format choice (either `hex`, `string` or `abi`), then replace `<Input>` with your actual input text.
-
-:::note Sending Input from the Cartesi CLI?
-Ensure you're calling the send command from the rood directory of your project else, you would need to provide the project RPC_URL and application address to interact with the application from any random terminal.
+:::note Interacting with Sample application?
+Replacing the above dapp address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), would emit a notice, voucher and report which can all be quarried using the JSON RPC or GraphQl server.
 :::
 
 #### 3. Send inputs via a custom web app
@@ -218,10 +216,12 @@ Inspect requests are best suited for non-production use, such as debugging and t
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
-To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application_address>/<request path>`. For example:
+To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application name or address>` with a body containing the request payload. For example:
 
 ```shell
-curl -X POST http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath
+curl -X POST http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9 \
+  -H "Content-Type: application/json" \
+  -d '"test"'
 ```
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
@@ -229,15 +229,13 @@ Once the call's response is received, the payload is extracted from the response
 From a frontend client, here is an example of extracting the payload from an inspect request:
 
 ```javascript
-const response = await fetch(
-  "http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }
-);
+const response = await fetch("http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify("test")
+});
 
 const result = await response.json();
 
@@ -251,25 +249,3 @@ for (let i in result.reports) {
 :::note Interacting with Sample application?
 Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and can also be quarried using the JSON RPC or GraphQl server.
 :::
-
-## Depositing Assets
-
-The Cartesi CLI also enables sending/depositing assets to your application. There are currently 3 types of supported assets: `Ether`, `erc20` and `erc721`.
-
-To deposit assets, run:
-
-```shell
-cartesi deposit
-```
-
-Response:
-
-```shell
-? Input (Use arrow keys)
-❯ String encoding
-  Hex string encoding
-  ABI encoding
-Convert UTF-8 string to bytes
-```
-
-The `cartesi deposit` command by default uses the default anvil account, and also the default test erc20 and erc721 contract to interact with your application, but this can all be modified to fit your purpose better.
