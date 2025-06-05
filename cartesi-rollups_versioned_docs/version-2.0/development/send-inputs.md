@@ -16,7 +16,7 @@ You can send two requests to an application depending on whether you want to cha
 
 ## Advance and Inspect Requests
 
-Here is a simple boilerplate application that handles Advance and Inspect requests:
+Here is a simple boilerplate application that shows the default implementation of the handle_advance and handle_inspect functions:
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -121,9 +121,9 @@ while True:
 
 </Tabs>
 
-In a typical Cartesi backend application, two functions, `handle_advance` and `handle_inspect,` are defined to handle the two different types of requests.
+As stated in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), a typical Cartesi backend application has two primary functions, `handle_advance` and `handle_inspect,` these are defined to handle the two different types of requests.
 
-This script listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status to the rollup server.
+Your application listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status to the rollup server.
 
 Every starter project you create has this base code as a template, ready to receive inputs!
 
@@ -186,11 +186,15 @@ $ cartesi send generic
 ✔ Wallet Mnemonic
 ✔ Mnemonic test test test test test test test test test test test junk
 ✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9993.999194554374748191 ETH
-✔ Application address 0xde752d14b5bb9f81d434d0fb6e05b17c5afaa057
+✔ Application address 0xb483897a2790a5D1a1C5413690bC5933f269b3A9
 ✔ Input String encoding
 ✔ Input (as string) 32.9
 ✔ Input sent: 0x048a25e6341234b8102f7676b3a8defb947559125197dbd45cfa3afa451a93fd
 ```
+
+:::note Interacting with Sample application?
+Replacing the above dapp address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), would emit a notice, voucher and report which can all be quarried using the JSON RPC or GraphQl server.
+:::
 
 #### 3. Send inputs via a custom web app
 
@@ -210,10 +214,12 @@ Inspect requests are best suited for non-production use, such as debugging and t
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
-To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application_address>/<request path>`. For example:
+To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application name or address>` with a body containing the request payload. For example:
 
 ```shell
-curl -X POST http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath
+curl -X POST http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9 \
+  -H "Content-Type: application/json" \
+  -d '"test"'
 ```
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
@@ -221,18 +227,23 @@ Once the call's response is received, the payload is extracted from the response
 From a frontend client, here is an example of extracting the payload from an inspect request:
 
 ```javascript
-const response = await fetch(
-  "http://localhost:8080/inspect/0xeF34611773387750985673f94067EA22dB406F72/mypath",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }
-);
+const response = await fetch("http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify("test")
+});
 
 const result = await response.json();
+
 for (let i in result.reports) {
   let payload = result.reports[i].payload;
+  console.log("Report Payload:", payload);
 }
+
 ```
+
+:::note Interacting with Sample application?
+Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and can also be quarried using the JSON RPC or GraphQl server.
+:::
