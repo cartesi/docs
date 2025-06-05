@@ -59,7 +59,7 @@ import { stringToHex, encodeFunctionData, erc20Abi } from "viem";
 async function handle_advance(data) {
   console.log("Received advance request data " + JSON.stringify(data));
   const sender = data["metadata"]["msg_sender"];
-  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", // Sample ERC20 token address
+  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
 
     const call = encodeFunctionData({
     abi: erc20Abi,

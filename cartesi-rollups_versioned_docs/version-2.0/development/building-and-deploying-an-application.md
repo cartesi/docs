@@ -8,38 +8,6 @@ resources:
     title: CartesiScan
 ---
 
-## Creating the application
-
-Cartesi CLI simplifies creating applications on Cartesi. To create a new application, run:
-
-```shell
-cartesi create <application-name> --template <language>
-```
-
-For example, create a Python project.
-
-```shell
-cartesi create new-application --template python
-```
-
-This command creates a `new-application` directory with essential files for your application development.
-
-- `Dockerfile`: Contains configurations to build a complete Cartesi machine with your app's dependencies. Your backend code will run in this environment.
-
-- `README.md`: A markdown file with basic information and instructions about your application.
-
-- `dapp.py`: A Python file with template backend code that serves as your application's entry point.
-
-- `requirements.txt`: Lists the Python dependencies required for your application.
-
-Cartesi CLI has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
-
-After creating your application, you can start codding your application by adding your logic to the `dapp.py` file.
-
-:::note Building with Go?
-For Go applications on Cartesi, we recommend using [Rollmelette](https://github.com/rollmelette/rollmelette). It’s a high-level Go framework and an alternative template that simplifies development and enhances input management, providing a smoother and more efficient experience.
-:::
-
 ## Building the application
 
 “Building” in this context compiles your application into RISC-V architecture and consequently builds a Cartesi machine containing your application. This architecture enables computation done by your application to be reproducible and verifiable.

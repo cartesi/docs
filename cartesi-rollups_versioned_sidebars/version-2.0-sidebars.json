@@ -190,12 +190,12 @@
             "collapsed": true,
             "items": [
                 "development/installation",
+                "development/creating-an-application",
                 "development/managing-a-devnet-environment",
                 "development/building-and-deploying-an-application",
                 "development/send-inputs",
                 "development/query-outputs",
-                "development/asset-handling",
-                "development/cli-commands"
+                "development/asset-handling"
             ]
         },
         {
