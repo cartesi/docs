@@ -2,8 +2,6 @@
 id: creating-an-application
 title: Creating an Application
 resources:
-  - url: https://github.com/Calindra/nonodo
-    title: NoNodo
   - url: https://cartesiscan.io/
     title: CartesiScan
 ---
@@ -34,8 +32,9 @@ This command creates a `new-app` directory with essential files for your applica
 
 Cartesi CLI has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
 
-:::note Building with Go?
-For Go applications on Cartesi, we recommend using [Rollmelette](https://github.com/rollmelette/rollmelette). It’s a high-level Go framework and an alternative template that simplifies development and enhances input management, providing a smoother and more efficient experience.
+:::note Libraries for simplifying development
+We have high-level framework and alternative templates that simplify development and enhances input management, providing a smoother and more efficient experience.
+For Go use Rollmelette, for Rust use Crabrolls, for Python use python-Cartesi and for Typescript/Javascrips use Deroll.
 :::
 
 ## Implementing your application Logic
@@ -44,11 +43,19 @@ After creating your application, you can begin building your application by addi
 
 It’s important not to modify or remove existing code in index.js unless you fully understand its purpose, as doing so may prevent your application from functioning correctly. Instead, you are encouraged to extend the file by adding your own logic and implementations alongside the default code.
 
-If your application needs to emit notices, vouchers, or reports, make sure to implement the corresponding logic within your codebase to properly handle these outputs. You can check out the respective pages for [Notice](../api-reference/backend/notices.md), [Vouchers](../api-reference/backend/vouchers.md) or [Report](../api-reference/backend/reports.md) for better understanding of what they are and how to implement them.
+The default application template includes two primary functions; `handle_advance` and `handle_inspect`. These act as entry points for different types of operations within your application.
 
-The default application template includes two primary functions; handle_advance and handle_inspect. These act as entry points for different types of operations within your application. The `handle_advance` function is the entry point for state modifying logic, you can think of this like handling "write" requests in traditional web context. It is intended to carry out computations, updates, and other logic that changes the state of the application. Where appropriate, it can emit outputs such as `notices`, `vouchers`, or `reports`.
+### handle_advance function
+
+The `handle_advance` function is the entry point for state modifying logic, you can think of this like handling "write" requests in traditional web context. It is intended to carry out computations, updates, and other logic that changes the state of the application. Where appropriate, it can emit outputs such as `notices`, `vouchers`, or `reports`.
+
+### handle_inspect function
 
 On the other hand, the `handle_inspect` function serves as the entry point for read only operations, similar to "read" requests in a typical web context. This function should be implemented to accept user input, perform any necessary lookups or calculations based on the current state, and return the results by emitting a `report`. It's important to understand that handle_inspect is designed strictly for reading the application's state, it should not perform any modifications.
+
+## Implementing Outputs
+
+If your application needs to emit Outputs like; notices, vouchers, or reports, make sure to implement the corresponding logic within your codebase to properly handle these outputs. You can check out the respective pages for [Notice](../api-reference/backend/notices.md), [Vouchers](../api-reference/backend/vouchers.md) or [Report](../api-reference/backend/reports.md) for better understanding of what they are and how to implement them.
 
 Below is a sample application that has been modified to include the logic to simply receive an input from a user in both inspect and advance route then, emits a notice, voucher and a report. For your application you'll need to include your personal logic and also emit outputs when necessary:
 
