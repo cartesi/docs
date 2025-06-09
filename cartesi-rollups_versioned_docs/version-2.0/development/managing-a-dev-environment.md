@@ -1,6 +1,6 @@
 ---
-id: managing-a-devnet-environment
-title: Managing a devnet environment
+id: managing-a-dev-environment
+title: Managing a dev environment
 resources:
   - url: https://github.com/Calindra/nonodo
     title: NoNodo
