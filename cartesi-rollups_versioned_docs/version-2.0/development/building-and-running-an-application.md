@@ -2,15 +2,13 @@
 id: building-and-running-an-application
 title: Building and running an application
 resources:
-  - url: https://github.com/Calindra/nonodo
-    title: NoNodo
   - url: https://cartesiscan.io/
     title: CartesiScan
 ---
 
 ## Building the application
 
-“Building” in this context compiles your application into RISC-V architecture, this architecture enables computation done by your application to be reproducible and verifiable. While "Running" encompasses the process of publishing your application to your local node running on docker and also deploying the necessary contracts for your application on a local Anvil devnet.
+“Building” in this context compiles your application into RISC-V architecture, this architecture enables computation done by your application to be reproducible and verifiable. While "Running" encompasses the process of publishing your application to your local node running on docker and also deploying the necessary contracts for your application to a local Anvil devnet.
 
 With the Docker engine running, CD into your application and build by running:
 
