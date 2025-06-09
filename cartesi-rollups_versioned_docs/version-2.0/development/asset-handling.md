@@ -52,9 +52,95 @@ The application’s off-chain layer often requires knowledge of its address to f
 
 Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the [`executeOutput()`](../api-reference/json-rpc/application.md/#executeoutput) function of the `Application` contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
+Below is a sample JavaScript code with the implementations to transfer tokens to whoever calls the application, notice that the `const call` variable is an encoded function data containing the token contract ABI, function name and also arguments like recipient and amount, while the actual `voucher` structure itself contains a destination (erc20 token contract where the transfer execution should occur), the payload (encoded function data in `call`) and finally a value field which is initialized to `0` meaning no Ether is intended to be sent alongside this transfer request.
+
+```javascript
+import { stringToHex, encodeFunctionData, erc20Abi, hexToString, zeroHash } from "viem";
+
+const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
+console.log("HTTP rollup_server url is " + rollup_server);
+
+async function handle_advance(data) {
+  console.log("Received advance request data " + JSON.stringify(data));
+
+  const sender = data["metadata"]["msg_sender"];
+  const payload = hexToString(data.payload);
+  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+
+    const call = encodeFunctionData({
+    abi: erc20Abi,
+    functionName: "transfer",
+    args: [sender, BigInt(10)],
+  });
+
+  let voucher = {
+    destination: erc20Token,
+    payload: call,
+    value: zeroHash,
+  };
+
+  await emitVoucher(voucher);
+  return "accept";
+}
+
+const emitVoucher = async (voucher) => {
+  try {
+    await fetch(rollup_server + "/voucher", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(voucher),
+    });
+  } catch (error) {
+    //Do something when there is an error
+  }
+};
+```
+
 ### Withdrawing Ether
 
 To execute Ether withdrawal it is important to emit a voucher with the necessary details as regarding whom you intend to send the Ether to and also the amount to send, nevertheless since the Application contract Executes vouchers by making a [safeCall](https://github.com/cartesi/rollups-contracts/blob/cb52d00ededd2da9f8bf7757710301dccb7d536d/src/library/LibAddress.sol#L18C14-L18C22) to the destination, passing a value (Ether amount to send along with the call) and a payload (function signature to call), it's acceptable to leave the payload section empty if you do not intend to call any functions in the destination address while sending just the specified value of Ether to the destination address. If you intend to call a payable function and also send Ether along, you can add a function signature matching the payable function you intend to call to the payload field.
+
+Below is another sample JavaScript code, this time the voucher structure has been modified to send ether to an address instead of calling a function in a smart contract, notice there is no `encodedFunctionData`, so the payload section is initialized to zeroHash.
+
+```javascript
+import { stringToHex, encodeFunctionData, erc20Abi, hexToString, zeroHash, parseEther } from "viem";
+
+const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
+console.log("HTTP rollup_server url is " + rollup_server);
+
+async function handle_advance(data) {
+  console.log("Received advance request data " + JSON.stringify(data));
+
+  const sender = data["metadata"]["msg_sender"];
+  const payload = hexToString(data.payload);
+
+
+  let voucher = {
+    destination: sender,
+    payload: zeroHash,
+    value: numberToHex(BigInt(parseEther("1"))).slice(2),
+  };
+
+  await emitVoucher(voucher);
+  return "accept";
+}
+
+const emitVoucher = async (voucher) => {
+  try {
+    await fetch(rollup_server + "/voucher", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(voucher),
+    });
+  } catch (error) {
+    //Do something when there is an error
+  }
+};
+```
 
 :::note epoch length
 By default, Cartesi nodes close one epoch every 7200 blocks. You can [manually set the epoch length](./cli-commands.md/#run) to facilitate quicker asset-handling methods.
@@ -64,7 +150,7 @@ Here are the function signatures used by vouchers to withdraw the different type
 
 | Asset    | Destination          | Function signature                                                                                                                          |
 | :------- | :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ether    | Receiver's Address   | Optional                                                                                                                                |
+| Ether    | Recipient Address   | Optional                                                                                                                                |
 | ERC-20   | Token contract       | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
 | ERC-20   | Token contract       | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
 | ERC-721  | Token contract       | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
