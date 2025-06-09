@@ -1,6 +1,6 @@
 ---
-id: building-and-deploying-an-application
-title: Building and deploying an application
+id: building-and-running-an-application
+title: Building and running an application
 resources:
   - url: https://github.com/Calindra/nonodo
     title: NoNodo
@@ -10,9 +10,9 @@ resources:
 
 ## Building the application
 
-“Building” in this context compiles your application into RISC-V architecture and consequently builds a Cartesi machine containing your application. This architecture enables computation done by your application to be reproducible and verifiable.
+“Building” in this context compiles your application into RISC-V architecture, this architecture enables computation done by your application to be reproducible and verifiable. While "Running" encompasses the process of publishing your application to your local node running on docker and also deploying the necessary contracts for your application on a local Anvil devnet.
 
-With the Docker engine running, change the directory to your application and build by running:
+With the Docker engine running, CD into your application and build by running:
 
 ```shell
 cartesi build
