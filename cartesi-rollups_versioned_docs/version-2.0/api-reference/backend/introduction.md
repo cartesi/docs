@@ -3,7 +3,7 @@ id: introduction
 title: Introduction
 ---
 
-The backend of a Cartesi dApp as mentioned in the [overview section](../index.md#backend-apis) contains the applications logic and state, it interacts with the Cartesi rollups framework by retrieving request and submitting structured outputs. The application backend retrieves a new request as follows:
+The backend of a Cartesi application as mentioned in the [overview section](../index.md#backend-apis) contains the applications logic and state, it interacts with the Cartesi rollups framework by retrieving request and submitting structured outputs. The application backend retrieves a new request as follows:
 
   - **Finish** — Called via [`/finish`](./finish.md), indicates that any previous processing has been completed and the backend is ready to handle the next request. The subsequent request is returned as the call's response and can be of the following types:
 
