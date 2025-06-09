@@ -2,8 +2,6 @@
 id: managing-a-dev-environment
 title: Managing a dev environment
 resources:
-  - url: https://github.com/Calindra/nonodo
-    title: NoNodo
   - url: https://cartesiscan.io/
     title: CartesiScan
 ---

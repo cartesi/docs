@@ -35,6 +35,7 @@ Cartesi CLI has templates for the following languages – `cpp`, `cpp-low-level`
 :::note Libraries for simplifying development
 We have high-level framework and alternative templates that simplify development and enhances input management, providing a smoother and more efficient experience.
 For Go use Rollmelette, for Rust use Crabrolls, for Python use python-Cartesi and for Typescript/Javascrips use Deroll.
+Visit this [page](../resources/community-tools.md) to learn more about these and other available tools.
 :::
 
 ## Implementing your application Logic
@@ -61,7 +62,7 @@ Below is a sample application that has been modified to include the logic to sim
 
 ```javascript
 
-import { stringToHex, encodeFunctionData, erc20Abi, hexToString } from "viem";
+import { stringToHex, encodeFunctionData, erc20Abi, hexToString, zeroHash } from "viem";
 
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollup_server);
@@ -85,7 +86,7 @@ async function handle_advance(data) {
   let voucher = {
     destination: erc20Token,
     payload: call,
-    value: '0x',
+    value: zeroHash,
   };
 
   await emitVoucher(voucher);
