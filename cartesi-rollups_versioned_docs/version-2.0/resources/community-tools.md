@@ -92,6 +92,27 @@ Rollmelette is a high-level framework that simplifies building Cartesi applicati
 
 ---
 
+## Crabrolls
+
+Introducing Crabroll, a powerful Rust framework designed to simplify the development of rust applications on Cartesi.
+
+- **Features**:
+	- Simplifies dApp development with intuitive methods.
+	- Handles advance and inspect requests easily.
+	- Comprehensive wallet functionality for ERC20, ERC721 and ERC-1155 token standards.
+
+- **Getting Started**:
+	- Create a new crabrolls project by running:
+		```bash
+		git clone git@github.com:crabrolls-cartesi/template.git
+		```
+
+- **Resources**:
+	- [Crabrolls Documentation](https://crabrolls-cartesi.github.io/crabrolls/)
+	- [Crabrolls GitHub Repository](https://github.com/crabrolls-cartesi/crabrolls)
+
+---
+
 ## Python-Cartesi 
 
 Python-Cartesi is a high-level framework that simplifies the development of Cartesi applications using Python.
