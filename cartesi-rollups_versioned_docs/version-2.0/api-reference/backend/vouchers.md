@@ -54,7 +54,7 @@ emit_voucher("mint(address)", "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", ["ad
 <pre><code>
 
 ```javascript
-import { stringToHex, encodeFunctionData, erc20Abi } from "viem";
+import { stringToHex, encodeFunctionData, erc20Abi, zeroHash } from "viem";
 
 async function handle_advance(data) {
   console.log("Received advance request data " + JSON.stringify(data));
@@ -70,7 +70,7 @@ async function handle_advance(data) {
   let voucher = {
     destination: erc20Token,
     payload: call,
-    value: '0x',
+    value: zeroHash,
   };
 
   await emitVoucher(voucher);
