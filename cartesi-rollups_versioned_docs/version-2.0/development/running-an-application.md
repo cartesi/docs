@@ -1,10 +1,12 @@
 ---
-id: building-and-running-an-application
-title: Building and running an application
+id: running-an-application
+title: Running an application
 resources:
   - url: https://cartesiscan.io/
     title: CartesiScan
 ---
+
+Running an application locally mimics the process of deploying an application to production on a testnet or mainnet environment. When working locally, your application’s smart contracts are deployed to an Anvil network, which acts as a local Ethereum environment. The main difference is that your application node runs on your own machine using Docker, rather than on a remote server. Running an application involves two main phases: first, you build your application, and then you deploy it to your local development network (devnet). This process allows you to test and debug your application in an environment that closely resembles the real blockchain, making it easier to catch issues early and ensure a smooth deployment to production later.
 
 ## Building the application
 
