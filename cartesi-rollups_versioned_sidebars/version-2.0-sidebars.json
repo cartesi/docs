@@ -200,19 +200,6 @@
         },
         {
             "type": "category",
-            "label": "Espresso Integration",
-            "collapsed": true,
-            "items": [
-                "espresso-integration/architecture",
-                "espresso-integration/building",
-                "espresso-integration/testnet",
-                "espresso-integration/interacting",
-                "espresso-integration/outputs",
-                "espresso-integration/deployment"
-            ]
-        },
-        {
-            "type": "category",
             "label": "Deployment",
             "collapsed": true,
             "items": [
