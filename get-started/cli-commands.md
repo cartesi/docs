@@ -24,9 +24,7 @@ cartesi help [COMMAND]
 | Command        | Description                                                                       |
 | -------------- | --------------------------------------------------------------------------------- |
 | `build`        | Build the application                                                             |
-| `run`          | Run a local Cartesi node for the application.                                     |
 | `send`         | Send input to the application                                                     |
-| `deposit`      | Deposits Ether, ERC20 or ERC721 tokens to the application.                                             |
 | `address-book` | Prints addresses of deployed smart contracts                                      |
 | `clean`        | Deletes all cached build artifacts of application.                                |
 | `doctor`       | Verify the minimal system requirements                                            |
@@ -34,7 +32,10 @@ cartesi help [COMMAND]
 | `shell`        | Start a shell in the Cartesi machine of the application                           |
 | `create`       | Creates a new application template.                                               |
 | `logs`         | Show logs of a local node environment.                                            |
+| `start`        | Start a local node environment.                                                   |
 | `status`       | Shows the status of a local node environment.                                     |
+| `stop`         | Stop a local node environment.                                                    |
+| `deploy`       | Deploy an application to a node.                                                  |
 
 ---
 
@@ -45,45 +46,19 @@ Compiles your application to RISC-V and builds a Cartesi machine snapshot.
 #### Usage:
 
 ```bash
-cartesi build
+cartesi build [--from-image <value>] [--target <value>]
 ```
 
 #### Flags:
 
-- `--config <config>`: Path to the configuration file (default: ["cartesi.toml"]).
-- `--drives-only` Only build drives, do not boot machine.
-- `--verbose`: Verbose output (default: false).
-
----
-
-### `run`
-
-Runs a local cartesi node for the application.
-
-#### Usage:
-
-```bash
-cartesi run
-```
-
-#### Flags:
-
-  - `--block-time <number>`: Interval between blocks (in seconds) (default: 5).
-  - `--default-block <string>`: Default block to be used when fetching new blocks. (choices: "latest", "safe", "pending", "finalized", default: "latest").
-  - `--cpus <number>`: Number of cpu limits for the node.
-  - `--memory <number>`: Memory limit for the node in MB.
-  - `--services <string>`: Optional services to start, comma separated list from [bundler, espresso, explorer, graphql, paymaster] (default: []).
-  - `-p, --port <number>`: Port to listen on (default: 8080).
-  - `--dry-run`: Show the docker compose configuration (default: false).
-  - `--epoch-length`: Length of an epoch (in blocks) (default: 720).
-  - `--project-name <string>`: Name of project (used by docker compose and cartesi-rollups-node).
-  - `-v, --verbose`: Verbose output (default: false).
+- `--from-image=<value>`: Skip Docker build and start from this image.
+- `--target=<value>`: Target of Docker multi-stage build.
 
 ---
 
 ### `send`
 
-Send inputs to the application.
+Send generic, Ether, ERC20, ERC721 and application address inputs to the application in interactive mode.
 
 #### Usage:
 
@@ -91,33 +66,12 @@ Send inputs to the application.
 cartesi send
 ```
 
-#### Flags:
+#### Sub-commands:
 
-- `--from <address>`: Input sender address.
-- `--application <address>`: Application address.
-- `--encoding <encoding>`: Input encoding (choices: "hex", "string", "abi").
-- `--abi-params <abi-params>`: Input abi params.
-- `--project-name <string>`: Name of project (used by docker compose and cartesi-rollups-node).
-- `--rpc-url <url>`: RPC URL of the Cartesi Devnet.
-
----
-
-### `deposit`
-
-Deposits an asset to the application.
-
-#### Usage:
-
-```bash
-cartesi deposit
-```
-
-#### Flags:
-
-- `--from <address>`: Input sender address.
-- `--application <address>`: Application address.
-- `--project-name <string>`: Name of project (used by docker compose and cartesi-rollups-node).
-- `--rpc-url <url>`: RPC URL of the Cartesi Devnet.
+- `send erc20`: Send ERC-20 deposit.
+- `send erc721`: Send ERC-721 deposit.
+- `send ether`: Send ether deposit.
+- `send generic`: Send generic input.
 
 ---
 
@@ -149,11 +103,12 @@ cartesi shell [IMAGE] [--run-as-root]
 
 #### Flags:
 
-- `--command <command>`: shell command to run (default: "/bin/sh").
-- `-c, --config <config>`: path to the configuration file (default: ["cartesi.toml"]).
-- `--run-as-root`: run as root user (default: false).
+```bash
+--run-as-root: Run as root user
+```
 
 ---
+
 
 ### `create`
 
@@ -193,6 +148,29 @@ cartesi logs
 
 ---
 
+### `start`
+
+Starts a local node environment.
+
+#### Usage:
+
+```bash
+cartesi start
+```
+
+#### Flags:
+
+  - `--block-time <number>`: Interval between blocks (in seconds) (default: 5).
+  - `--default-block <string>`: Default block to be used when fetching new blocks. (choices: "latest", "safe", "pending", "finalized", default: "latest").
+  - `--cpus <number>`: Number of cpu limits for the node.
+  - `--memory <number>`: Memory limit for the node in MB.
+  - `--services <string>`: Optional services to start, comma separated list from [bundler, espresso, explorer, graphql, paymaster] (default: []).
+  - `-p, --port <number>`: Port to listen on (default: 8080).
+  - `--dry-run`: Show the docker compose configuration (default: false).
+  - `-v, --verbose`: Verbose output (default: false).
+
+---
+
 ### `status`
 
 Shows the status of a local node environment.
@@ -206,5 +184,42 @@ cartesi status
 #### Flags:
 
 - `--json`: Format output as JSON
+
+---
+
+### `stop`
+
+Stop a local node environment.
+
+#### Usage:
+
+```bash
+cartesi stop
+```
+
+---
+
+### `deploy`
+
+Deploy an application to the local node.
+
+#### Usage:
+
+```bash
+cartesi deploy
+```
+
+#### Flags:
+
+  - `--chain-id <id>`: Chain ID (default: 13370).
+  - `--rpc-url <url>`: RPC URL.
+  - `--mnemonic <phrase>`: Mnemonic passphrase.
+  - `--mnemonic-index <index>`: Mnemonic account index (default: 0).
+  - `--name <string>`: Application name.
+  - `--authority-owner <address>`: Authority owner.
+  - `--application-owner <address>`: Application owner.
+  - `--epoch-length <number>`: Length of an epoch (in blocks) (default: 720).
+  - `--salt <hash>`: Salt for deployment (default: "0x0000000000000000000000000000000000000000000000000000000000000000").
+  - `--json`: Output in JSON format.
 
 ---
