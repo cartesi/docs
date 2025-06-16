@@ -31,7 +31,29 @@ module.exports = {
           id: 'fraud-proofs',
           label: 'Fraud Proofs',
         },
+        {
+          type: 'doc',
+          id: 'app-chains',
+          label: 'App-Chains',
+        },
       ],
     },
+    {
+      type: 'category',
+      label: 'References',
+      collapsed: false,
+      items: [
+        {
+          type: 'doc',
+          id: 'cli-commands',
+          label: 'CLI Commands',
+        },
+        {
+          type: 'link',
+          label: 'Honeypot Application',
+          href: 'https://github.com/cartesi/honeypot',
+        },
+      ],
+    }
   ],
 };
