@@ -5,21 +5,21 @@ title: List Applications
 
 # List Applications
 
-The `cartesi_listApplications` method returns a paginated list of applications registered in the Cartesi Rollups instance.
-
-## Method
+## Example Request
 
 ```json
 {
   "jsonrpc": "2.0",
   "method": "cartesi_listApplications",
   "params": {
-    "limit": 50,
+    "limit": 10,
     "offset": 0
   },
   "id": 1
 }
 ```
+
+The `cartesi_listApplications` method returns a paginated list of applications registered in the Cartesi Rollups instance.
 
 ## Parameters
 
@@ -107,7 +107,7 @@ The `cartesi_listApplications` method returns a paginated list of applications r
 
 | Name                    | Type   | Description                                      |
 |-------------------------|--------|--------------------------------------------------|
-| snapshot_policy         | string | The snapshot policy (NONE/EACH_INPUT/EACH_EPOCH) |
+| snapshot_policy         | string | The snapshot policy (NONE/EVERY_INPUT/EVERY_EPOCH) |
 | advance_inc_cycles      | string | Incremental cycles for advance state             |
 | advance_max_cycles      | string | Maximum cycles for advance state                 |
 | inspect_inc_cycles      | string | Incremental cycles for inspect state             |
@@ -136,72 +136,4 @@ The `cartesi_listApplications` method returns a paginated list of applications r
 | Code    | Message                | Description                                      |
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
-| -32603  | Internal error         | An internal error occurred                       |
-
-## Example
-
-### Request
-
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "cartesi_listApplications",
-  "params": {
-    "limit": 10,
-    "offset": 0
-  },
-  "id": 1
-}
-```
-
-### Response
-
-```json
-{
-  "jsonrpc": "2.0",
-  "result": {
-    "data": [
-      {
-        "name": "calculator",
-        "iapplication_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-        "iconsensus_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-        "iinputbox_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-        "template_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        "epoch_length": "0x100",
-        "data_availability": "0x",
-        "state": "ENABLED",
-        "reason": "",
-        "iinputbox_block": "0x1",
-        "last_input_check_block": "0x1",
-        "last_output_check_block": "0x1",
-        "processed_inputs": "0x1",
-        "created_at": "2024-01-01T00:00:00Z",
-        "updated_at": "2024-01-01T00:00:00Z",
-        "execution_parameters": {
-          "snapshot_policy": "NONE",
-          "advance_inc_cycles": "0x1000",
-          "advance_max_cycles": "0x10000",
-          "inspect_inc_cycles": "0x1000",
-          "inspect_max_cycles": "0x10000",
-          "advance_inc_deadline": "0x1000000",
-          "advance_max_deadline": "0x10000000",
-          "inspect_inc_deadline": "0x1000000",
-          "inspect_max_deadline": "0x10000000",
-          "load_deadline": "0x1000000",
-          "store_deadline": "0x1000000",
-          "fast_deadline": "0x1000000",
-          "max_concurrent_inspects": 1,
-          "created_at": "2024-01-01T00:00:00Z",
-          "updated_at": "2024-01-01T00:00:00Z"
-        }
-      }
-    ],
-    "pagination": {
-      "total_count": 1,
-      "limit": 10,
-      "offset": 0
-    }
-  },
-  "id": 1
-}
-``` 
+| -32603  | Internal error         | An internal error occurred                       | 

@@ -4,7 +4,7 @@ title: Convenient Filter
 hide_table_of_contents: false
 ---
 
-The ConvenientFilter provides a flexible way to filter vouchers and delegate call vouchers based on various criteria. It supports filtering by destination address, execution status, and complex logical operations.
+The ConvenientFilter provides a flexible way to filter vouchers and DELEGATECALL vouchers based on various criteria. It supports filtering by destination address, execution status, and complex logical operations.
 
 ## Filter Structure
 
@@ -157,7 +157,7 @@ query {
 
 ## Available Filters by Type
 
-### Vouchers and Delegate Call Vouchers
+### Vouchers and DELEGATECALL Vouchers
 - `destination`: Filter by the destination address
 - `executed`: Filter by execution status
 

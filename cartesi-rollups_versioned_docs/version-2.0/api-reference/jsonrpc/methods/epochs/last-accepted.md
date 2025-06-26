@@ -1,30 +1,30 @@
 ---
 id: jsonrpc-epochs-last-accepted
-title: Get Last Accepted Epoch
+title: Get Last Accepted Epoch Index
 ---
 
-# Get Last Accepted Epoch
+# Get Last Accepted Epoch Index
 
-The `cartesi_getLastAcceptedEpoch` method retrieves information about the most recently accepted epoch for a specific application.
-
-## Method
+## Example Request
 
 ```json
 {
   "jsonrpc": "2.0",
-  "method": "cartesi_getLastAcceptedEpoch",
+  "method": "cartesi_getLastAcceptedEpochIndex",
   "params": {
-    "application": "calculator"
+    "application": "<name-or-address>"
   },
   "id": 1
 }
 ```
 
+The `cartesi_getLastAcceptedEpochIndex` method retrieves the latest accepted epoch index for a specific application.
+
 ## Parameters
 
 | Name        | Type   | Required | Description                                      |
 |-------------|--------|----------|--------------------------------------------------|
-| application | string | Yes      | The name or address of the application           |
+| application | string | Yes      | The application's name or hex encoded address    |
 
 ## Response
 
@@ -32,11 +32,7 @@ The `cartesi_getLastAcceptedEpoch` method retrieves information about the most r
 {
   "jsonrpc": "2.0",
   "result": {
-    "index": 1,
-    "status": "ACCEPTED",
-    "inputs_count": 10,
-    "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-01-01T00:00:00Z"
+    "data": "0x1"
   },
   "id": 1
 }
@@ -44,13 +40,9 @@ The `cartesi_getLastAcceptedEpoch` method retrieves information about the most r
 
 ### Response Fields
 
-| Name         | Type   | Description                                      |
-|--------------|--------|--------------------------------------------------|
-| index        | number | The epoch index                                  |
-| status       | string | Current status of the epoch (ACCEPTED/REJECTED)  |
-| inputs_count | number | Number of inputs in this epoch                   |
-| created_at   | string | Timestamp when the epoch was created             |
-| updated_at   | string | Timestamp when the epoch was last updated        |
+| Name | Type   | Description                                      |
+|------|--------|--------------------------------------------------|
+| data | string | The latest accepted epoch index (hex encoded)    |
 
 ## Error Codes
 
@@ -58,35 +50,4 @@ The `cartesi_getLastAcceptedEpoch` method retrieves information about the most r
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
 | -32000  | Application not found  | The specified application does not exist         |
-| -32603  | Internal error         | An internal error occurred                       |
-
-## Example
-
-### Request
-
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "cartesi_getLastAcceptedEpoch",
-  "params": {
-    "application": "calculator"
-  },
-  "id": 1
-}
-```
-
-### Response
-
-```json
-{
-  "jsonrpc": "2.0",
-  "result": {
-    "index": 1,
-    "status": "ACCEPTED",
-    "inputs_count": 10,
-    "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-01-01T00:00:00Z"
-  },
-  "id": 1
-}
-``` 
+| -32603  | Internal error         | An internal error occurred                       | 

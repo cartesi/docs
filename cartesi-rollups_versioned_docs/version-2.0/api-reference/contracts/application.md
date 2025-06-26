@@ -2,7 +2,7 @@
 id: application
 title: Application
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/prerelease/2.0.0/contracts/dapp/Application.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/dapp/Application.sol
     title: Application contract
   - url: https://docs.openzeppelin.com/contracts/5.x/
     title: OpenZeppelin Contracts
@@ -12,14 +12,13 @@ The **Application** contract serves as the base layer representation of the appl
 
 Every Application is subscribed to a consensus contract and governed by a single address—the owner. The consensus has the authority to submit claims, which are then used to validate outputs. The owner has complete control over the Application and can replace the consensus at any time. Consequently, users of an Application must trust both the consensus and the application owner. Depending on centralization or ownership concerns, the ownership model can be modified. This process is managed by the consensus contract. For more information about different ownership and consensus models, refer to the [IConsensus](https://github.com/cartesi/rollups-contracts/blob/prerelease/2.0.0/contracts/consensus/IConsensus.sol).
 
-This contract inherits from the following OpenZeppelin contracts:
+This contract inherits from the following contracts:
 
+- `IApplication`
 - `Ownable`
 - `ERC721Holder`
 - `ERC1155Holder`
 - `ReentrancyGuard`
-- `IERC721Receiver`
-- `BitMaps`
 
 For more information, please consult [OpenZeppelin's official documentation](https://docs.openzeppelin.com/contracts/5.x/).
 
@@ -94,123 +93,6 @@ constructor(
 | `templateHash` | `bytes32` | The initial machine state hash |
 | `dataAvailability` | `bytes` | The data availability solution |
 
-### `executeOutput()`
-
-```solidity
-function executeOutput(bytes calldata output, OutputValidityProof calldata proof) external override nonReentrant (bool)
-```
-
-Try to execute an output.
-
-Reverts if output was already successfully executed or if the caller is attempting to execute a non-executable output.
-
-_On a successful execution, emits an `OutputExecuted` event._
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `output` | `bytes` | The output contains, encapsulated in the form of bytes to be decoded within the function logic, the destination contract (address), the output value (uint256), and the payload (bytes) which encodes a function call. |
-| `proof` | `struct OutputValidityProof` | The proof used to validate the output against a claim submitted by the current consensus contract |
-
-### `wasOutputExecuted()`
-
-```solidity
-function wasOutputExecuted(uint256 outputIndex) external view override returns (bool)
-```
-
-Check whether a voucher has been executed.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `outputIndex` | `uint256` | The index of output emitted by the input |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bool` | Whether the output has been executed before |
-
-### `migrateToConsensus()`
-
-```solidity
-function migrateToConsensus(IConsensus newConsensus) external override onlyOwner;
-```
-
-Migrate the Application to a new consensus.
-
-_Can only be called by the Application owner._
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `_newConsensus` | `contract IConsensus` | The new consensus address |
-
-### `validateOutput()`
-
-```solidity
-function validateOutput(bytes calldata output, OutputValidityProof calldata proof) public view override;
-```
-
-Validate an output.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `output` | `bytes` | The output |
-| `proof` | `struct OutputValidityProof` | Data for validating outputs |
-
-Reverts if the output or its corresponding proof is invalid.
-
-### `validateOutputHash()`
-
-```solidity
-function validateOutputHash(bytes32 outputHash, OutputValidityProof calldata proof) public view override;
-```
-
-Verifies the hash of an output against its proof.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `outputHash` | `bytes32` | The hash of the output |
-| `proof` | `struct OutputValidityProof` | The proof used to validate the output against a claim submitted by the current consensus contract |
-
-Reverts if the proof's integrity check fails or if the output Merkle root hash was ever accepted by the consensus for a particular application.
-
-### `getTemplateHash()`
-
-```solidity
-function getTemplateHash() external view returns (bytes32)
-```
-
-Get the application template hash.
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bytes32` | The application template hash |
-
-### `getConsensus()`
-
-```solidity
-function getConsensus() external view override returns (IConsensus);
-```
-
-Get the current consensus.
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `contract IConsensus` | The current consensus |
-
 ### `receive()`
 
 ```solidity
@@ -219,21 +101,236 @@ receive() external payable
 
 Accept Ether transfers.
 
-_If the caller wants to transfer Ether to an application while informing the backend of it, then please do so through the Ether portal contract._
+*If you wish to transfer Ether to an application while informing the backend of it, then please do so through the Ether portal contract.*
 
-### `NewConsensus()`
+### `executeOutput()`
 
 ```solidity
-event NewConsensus(IConsensus newConsensus);
+function executeOutput(bytes calldata output, OutputValidityProof calldata proof) external override nonReentrant
 ```
 
-A new consensus is used, this event is emitted when a new consensus is set. This event must be triggered on a successful call to [migrateToConsensus](#migratetoconsensus).
+Execute an output.
+
+*On a successful execution, emits a OutputExecuted event.*
 
 **Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `newConsensus` | `IConsensus` | The new consensus contract |
+| `output` | `bytes` | The output |
+| `proof` | `OutputValidityProof` | The proof used to validate the output against a claim accepted to the current outputs Merkle root validator contract |
+
+### `migrateToOutputsMerkleRootValidator()`
+
+```solidity
+function migrateToOutputsMerkleRootValidator(IOutputsMerkleRootValidator newOutputsMerkleRootValidator) external override onlyOwner
+```
+
+Migrate the application to a new outputs Merkle root validator.
+
+*Can only be called by the application owner.*
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newOutputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The new outputs Merkle root validator |
+
+### `wasOutputExecuted()`
+
+```solidity
+function wasOutputExecuted(uint256 outputIndex) external view override returns (bool)
+```
+
+Check whether an output has been executed.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `outputIndex` | `uint256` | The index of output |
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `bool` | Whether the output has been executed before |
+
+### `validateOutput()`
+
+```solidity
+function validateOutput(bytes calldata output, OutputValidityProof calldata proof) public view override
+```
+
+Validate an output.
+
+*May raise any of the errors raised by validateOutputHash.*
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `output` | `bytes` | The output |
+| `proof` | `OutputValidityProof` | The proof used to validate the output against a claim accepted to the current outputs Merkle root validator contract |
+
+### `validateOutputHash()`
+
+```solidity
+function validateOutputHash(bytes32 outputHash, OutputValidityProof calldata proof) public view override
+```
+
+Validate an output hash.
+
+*May raise InvalidOutputHashesSiblingsArrayLength or InvalidOutputsMerkleRoot.*
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `outputHash` | `bytes32` | The output hash |
+| `proof` | `OutputValidityProof` | The proof used to validate the output against a claim accepted to the current outputs Merkle root validator contract |
+
+### `getTemplateHash()`
+
+```solidity
+function getTemplateHash() external view override returns (bytes32)
+```
+
+Get the application's template hash.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `bytes32` | The application's template hash |
+
+### `getOutputsMerkleRootValidator()`
+
+```solidity
+function getOutputsMerkleRootValidator() external view override returns (IOutputsMerkleRootValidator)
+```
+
+Get the current outputs Merkle root validator.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `IOutputsMerkleRootValidator` | The current outputs Merkle root validator |
+
+### `getDataAvailability()`
+
+```solidity
+function getDataAvailability() external view override returns (bytes memory)
+```
+
+Get the data availability solution used by application.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `bytes` | Solidity ABI-encoded function call that describes the source of inputs that should be fed to the application. |
+
+### `getDeploymentBlockNumber()`
+
+```solidity
+function getDeploymentBlockNumber() external view override returns (uint256)
+```
+
+Get number of block in which contract was deployed.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `uint256` | The deployment block number |
+
+### `owner()`
+
+```solidity
+function owner() public view override(IOwnable, Ownable) returns (address)
+```
+
+Returns the address of the current owner.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `address` | The address of the current owner |
+
+### `renounceOwnership()`
+
+```solidity
+function renounceOwnership() public override(IOwnable, Ownable)
+```
+
+Leaves the contract without owner. It will not be possible to call onlyOwner functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.
+
+### `transferOwnership()`
+
+```solidity
+function transferOwnership(address newOwner) public override(IOwnable, Ownable)
+```
+
+Transfers ownership of the contract to a new account (newOwner). Can only be called by the current owner.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `newOwner` | `address` | The new owner address |
+
+### `_isOutputsMerkleRootValid()`
+
+```solidity
+function _isOutputsMerkleRootValid(bytes32 outputsMerkleRoot) internal view returns (bool)
+```
+
+Check if an outputs Merkle root is valid, according to the current outputs Merkle root validator.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `outputsMerkleRoot` | `bytes32` | The output Merkle root |
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `bool` | Whether the outputs Merkle root is valid |
+
+### `_executeVoucher()`
+
+```solidity
+function _executeVoucher(bytes calldata arguments) internal
+```
+
+Executes a voucher.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `arguments` | `bytes` | ABI-encoded arguments |
+
+### `_executeDelegateCallVoucher()`
+
+```solidity
+function _executeDelegateCallVoucher(bytes calldata arguments) internal
+```
+
+Executes a delegatecall voucher.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `arguments` | `bytes` | ABI-encoded arguments |
+
+## Events
 
 ### `OutputExecuted()`
 

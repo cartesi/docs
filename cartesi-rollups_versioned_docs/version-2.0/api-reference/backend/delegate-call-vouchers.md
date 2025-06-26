@@ -1,17 +1,17 @@
 ---
 id: delegate-call-vouchers
-title: Delegate Call Vouchers
+title: DELEGATECALL Vouchers
 ---
 
 :::danger Security Considerations
-Delegate Call Vouchers are a powerful feature that should be used with extreme caution. Incorrect implementation can lead to serious security vulnerabilities as the target contract's code has full access to the Application contract's storage and funds.
+DELEGATECALL Vouchers are a powerful feature that should be used with extreme caution. Incorrect implementation can lead to serious security vulnerabilities as the target contract's code has full access to the Application contract's storage and funds.
 :::
 
-Delegate Call Vouchers are an extension of vouchers that enables advanced smart contract interactions through the [`DELEGATECALL`](https://www.evm.codes/?fork=cancun#f4) opcode.
+DELEGATECALL Vouchers are an extension of vouchers that enables advanced smart contract interactions through the [`DELEGATECALL`](https://www.evm.codes/?fork=cancun#f4) opcode.
 
-Unlike regular vouchers, delegate call vouchers allow dApps to separate their execution logic from their storage context. When using delegate calls, the Application contract always maintains the storage, context, and funds (both ETH and tokens), while the target contract provides only the execution logic. This separation enables more flexible and reusable smart contract patterns while keeping all state changes and assets within the Application contract.
+Unlike regular vouchers, DELEGATECALL vouchers allow dApps to separate their execution logic from their storage context. When using DELEGATECALL voucher, the Application contract always maintains the storage, context, and funds (both ETH and tokens), while the target contract provides only the execution logic. This separation enables more flexible and reusable smart contract patterns while keeping all state changes and assets within the Application contract.
 
-When a delegate call voucher is executed through the Application contract, the code at the target address is executed with the following characteristics:
+When a DELEGATECALL voucher is executed through the Application contract, the code at the target address is executed with the following characteristics:
 
 - All storage operations occur in the Application contract's storage space
 - All funds (ETH and tokens) remain in and are managed by the Application contract
@@ -34,32 +34,32 @@ This mechanism, where the Application contract maintains the state and funds whi
 
 - **Ordered Vouchers**: Vouchers that must be executed in a specific sequence. For example, voucher A can only be executed after voucher B has been executed.
 
-The [`Application`](../contracts/application.md) contract handles the execution of delegate call vouchers through its [`executeOutput()`](../../contracts/application/#executeoutput) function, which validates and processes the delegate call operation on the blockchain.
+The [`Application`](../contracts/application.md) contract handles the execution of DELEGATECALL vouchers through its [`executeOutput()`](../../contracts/application/#executeoutput) function, which validates and processes the DELEGATECALL operation on the blockchain.
 
 ## Implementation Considerations
 
-When implementing delegate call vouchers, consider the following:
+When implementing DELEGATECALL vouchers, consider the following:
 
 1. **Storage Layout**: Since all storage operations happen in the Application contract, the storage layout of the target contract must be compatible with the Application contract's layout to prevent unintended storage collisions.
 
-2. **Security**: Since delegate calls execute code in the context of the Application contract, careful validation of the target contract and its code is essential to prevent malicious modifications to the Application's state.
+2. **Security**: Since DELEGATECALL operations execute code in the context of the Application contract, careful validation of the target contract and its code is essential to prevent malicious modifications to the Application's state.
 
 3. **State Management**: All state changes occur in the Application contract's storage, making it the single source of truth for the application's state.
 
-:::note create a delegate call voucher
-[Refer to the documentation here](../../development/asset-handling.md) for implementing delegate call vouchers in your dApp.
+:::note create a DELEGATECALL voucher
+[Refer to the documentation here](../../development/asset-handling.md) for implementing DELEGATECALL vouchers in your dApp.
 :::
 
 ## Execution Context
 
-In a delegate call voucher execution:
+In a DELEGATECALL voucher execution:
 
 - The Application contract provides the execution context and storage
 - The target contract provides only the logic to be executed
 - All storage operations affect the Application contract's state
 - msg.sender and msg.value from the original transaction are preserved
 
-This architecture, where the Application contract maintains all state while being able to execute logic from other contracts, makes delegate call vouchers particularly useful for customizable logics while keeping all application state centralized in the Application contract.
+This architecture, where the Application contract maintains all state while being able to execute logic from other contracts, makes DELEGATECALL vouchers particularly useful for customizable logics while keeping all application state centralized in the Application contract.
 
 ## Epoch Configuration
 
@@ -69,7 +69,7 @@ Epoch Length is the number of blocks that make up an epoch. It determines how lo
 
 Delegate call vouchers, like regular vouchers, are executed on the blockchain upon the closure of the corresponding epoch. This ensures that all state changes and logic executions are properly validated and recorded in the blockchain.
 
-You can manually set the epoch length to facilitate quicker execution of delegate call vouchers during development.
+You can manually set the epoch length to facilitate quicker execution of DELEGATECALL vouchers during development.
 
 :::note epoch duration
 [Refer to the documentation here](../../development/cli-commands.md/#run) to manually configure epoch length during development.

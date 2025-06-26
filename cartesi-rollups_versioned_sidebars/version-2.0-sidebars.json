@@ -35,6 +35,14 @@
                                 "api-reference/contracts/portals/ERC1155SinglePortal",
                                 "api-reference/contracts/portals/ERC1155BatchPortal"
                             ]
+                        },
+                        {
+                            "type": "category",
+                            "label": "Consensus",
+                            "collapsed": true,
+                            "items": [
+                                "api-reference/contracts/consensus/overview"
+                            ]
                         }
                     ]
                 },
@@ -161,6 +169,14 @@
                             "items": [
                                 "api-reference/jsonrpc/methods/reports/reports-list",
                                 "api-reference/jsonrpc/methods/reports/reports-get"
+                            ]
+                        },
+                        {
+                            "type": "category",
+                            "label": "Node",
+                            "items": [
+                                "api-reference/jsonrpc/methods/node/node-chain-id",
+                                "api-reference/jsonrpc/methods/node/node-version"
                             ]
                         },
                         "api-reference/jsonrpc/types"
