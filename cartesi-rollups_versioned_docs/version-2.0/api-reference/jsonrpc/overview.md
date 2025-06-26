@@ -10,7 +10,7 @@ The Cartesi Rollups Node API provides a JSON-RPC interface for interacting with 
 - Query application information and status
 - Monitor epochs and their states
 - Track inputs and their processing status
-- Retrieve outputs (notices, vouchers, delegate call vouchers)
+- Retrieve outputs (notices, vouchers, DELEGATECALL vouchers)
 - Access reports for debugging and auditing
 
 ## API Structure
@@ -32,7 +32,7 @@ The API is organized into the following categories:
 - `cartesi_getProcessedInputCount`: Get the number of processed inputs
 
 ### Outputs
-- `cartesi_listOutputs`: List outputs (notices, vouchers, delegate call vouchers)
+- `cartesi_listOutputs`: List outputs (notices, vouchers, DELEGATECALL vouchers)
 - `cartesi_getOutput`: Get details about a specific output
 
 ### Reports
@@ -145,4 +145,4 @@ For detailed information about data types, see the [Types](types) page.
 }
 ```
 
-For more examples and detailed information about each method, see the [Methods](methods) page. 
+For more examples and detailed information about each method, see the [Methods](../methods) page. 

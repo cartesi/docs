@@ -181,7 +181,7 @@ interface DecodedInput {
 ```
 
 ### Output
-Represents a Cartesi Rollups output (notice, voucher, or delegate call voucher).
+Represents a Cartesi Rollups output (notice, voucher, or DELEGATECALL voucher).
 
 ```typescript
 interface Output {
