@@ -12,7 +12,7 @@ A voucher explicitly specifies the action that the dApp intends to execute on th
 
 For instance, in a DeFi application built on Cartesi, users may want to swap one token for another. The dApp generates a voucher that authorizes the on-chain smart contract to execute the swap on the user's behalf.
 
-The [`Application`](../contracts/application.md) contract is crucial in validating and executing the received voucher on the blockchain. This execution process occurs through the [`executeOutput()`](../../contracts/application/#executeoutput) function, which handles different types of outputs including vouchers and delegate calls.
+The [`Application`](../contracts/application.md) contract is crucial in validating and executing the received voucher on the blockchain. This execution process occurs through the [`executeOutput()`](../../contracts/application/#executeoutput) function, which handles different types of outputs including vouchers and DELEGATECALL vouchers.
 
 The result of the voucher execution is recorded on the base layer. This recording typically involves submitting claims by a consensus contract, ensuring the integrity and transparency of the executed on-chain action.
 
@@ -20,9 +20,9 @@ The result of the voucher execution is recorded on the base layer. This recordin
 [Refer to the documentation here](../../development/asset-handling.md) for asset handling and creating vouchers in your dApp.
 :::
 
-## Delegate Call Vouchers
+## DELEGATECALL Vouchers
 
-Delegate call vouchers enable advanced smart contract interactions through the [DELEGATECALL](https://www.evm.codes/?fork=cancun#f4) opcode, allowing dApps to separate their execution logic from their storage context. For more details, see [Delegate Call Vouchers](./delegate-call-vouchers.md).
+Delegate call vouchers enable advanced smart contract interactions through the [DELEGATECALL](https://www.evm.codes/?fork=cancun#f4) opcode, allowing dApps to separate their execution logic from their storage context. For more details, see [DELEGATECALL Vouchers](./delegate-call-vouchers.md).
 
 ## Epoch Configuration
 
