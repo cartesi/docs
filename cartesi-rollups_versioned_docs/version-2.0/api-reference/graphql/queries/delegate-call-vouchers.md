@@ -1,14 +1,14 @@
 ---
 id: delegate-call-vouchers
-title: Delegate Call Vouchers
+title: DELEGATECALL Vouchers
 hide_table_of_contents: false
 ---
 
-Delegate Call Vouchers are an extension of vouchers that enables delegate calls to be executed on the base layer blockchain. While they share similarities with regular vouchers, they are specifically designed for delegate call operations, allowing for more flexible contract interactions.
+DELEGATECALL Vouchers are an extension of vouchers that enables DELEGATECALL operations to be executed on the base layer blockchain. While they share similarities with regular vouchers, they are specifically designed for DELEGATECALL operations, allowing for more flexible contract interactions.
 
-## 1. Get Delegate Call Voucher by Index
+## 1. Get DELEGATECALL Voucher by Index
 
-Retrieve a specific delegate call voucher based on its output index.
+Retrieve a specific DELEGATECALL voucher based on its output index.
 
 ```graphql
 query delegateCallVoucher($outputIndex: Int!) {
@@ -45,21 +45,21 @@ query delegateCallVoucher($outputIndex: Int!) {
 }
 ```
 
-For delegate call vouchers, the API provides access to proof data that can be used for validation on the base layer blockchain. This proof data is accessible through the [`Proof`](../objects/proof.md) field on delegate call voucher objects.
+For DELEGATECALL vouchers, the API provides access to proof data that can be used for validation on the base layer blockchain. This proof data is accessible through the [`Proof`](../objects/proof.md) field on DELEGATECALL voucher objects.
 
 ### Arguments
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| `outputIndex` | [`Int!`](../../scalars/int) | The index of the delegate call voucher to retrieve. |
+| `outputIndex` | [`Int!`](../../scalars/int) | The index of the DELEGATECALL voucher to retrieve. |
 
 ### Response Type
 
 [`DelegateCallVoucher`](../../objects/delegate-call-voucher)
 
-## 2. Get Delegate Call Vouchers
+## 2. Get DELEGATECALL Vouchers
 
-Retrieve a list of delegate call vouchers with support for pagination.
+Retrieve a list of DELEGATECALL vouchers with support for pagination.
 
 ```graphql
 query delegateCallVouchers($first: Int, $after: String, $filter: [ConvenientFilter]) {
@@ -109,17 +109,17 @@ query delegateCallVouchers($first: Int, $after: String, $filter: [ConvenientFilt
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| `first` | [`Int`](../../scalars/int) | Number of delegate call vouchers to retrieve (for pagination). |
-| `after` | [`String`](../../scalars/string) | Cursor to start retrieving delegate call vouchers from (for pagination). |
+| `first` | [`Int`](../../scalars/int) | Number of DELEGATECALL vouchers to retrieve (for pagination). |
+| `after` | [`String`](../../scalars/string) | Cursor to start retrieving DELEGATECALL vouchers from (for pagination). |
 | `filter` | [`[ConvenientFilter]`](../../filters/convenient-filter) | Optional filters to apply to the query. |
 
 ### Response Type
 
 [`DelegateCallVoucherConnection`](../../objects/delegate-call-voucher-connection)
 
-## 3. Get Delegate Call Vouchers by Input
+## 3. Get DELEGATECALL Vouchers by Input
 
-Retrieve delegate call vouchers associated with a specific input.
+Retrieve DELEGATECALL vouchers associated with a specific input.
 
 ```graphql
 query delegateCallVouchersByInput($inputIndex: Int!, $first: Int, $after: String) {
@@ -156,9 +156,9 @@ query delegateCallVouchersByInput($inputIndex: Int!, $first: Int, $after: String
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| `inputIndex` | [`Int!`](../../scalars/int) | Index of the input to retrieve delegate call vouchers for. |
-| `first` | [`Int`](../../scalars/int) | Number of delegate call vouchers to retrieve (for pagination). |
-| `after` | [`String`](../../scalars/string) | Cursor to start retrieving delegate call vouchers from (for pagination). |
+| `inputIndex` | [`Int!`](../../scalars/int) | Index of the input to retrieve DELEGATECALL vouchers for. |
+| `first` | [`Int`](../../scalars/int) | Number of DELEGATECALL vouchers to retrieve (for pagination). |
+| `after` | [`String`](../../scalars/string) | Cursor to start retrieving DELEGATECALL vouchers from (for pagination). |
 
 ### Response Type
 
@@ -166,7 +166,7 @@ query delegateCallVouchersByInput($inputIndex: Int!, $first: Int, $after: String
 
 ## Examples
 
-1. Fetching a specific delegate call voucher:
+1. Fetching a specific DELEGATECALL voucher:
 
 ```graphql
 query {
@@ -203,7 +203,7 @@ query {
 }
 ```
 
-2. Listing earlier(first 5) delegate call vouchers with filter:
+2. Listing earlier(first 5) DELEGATECALL vouchers with filter:
 
 ```graphql
 query {
@@ -257,7 +257,7 @@ query {
 }
 ```
 
-3. Retrieving delegate call vouchers for a specific input:
+3. Retrieving DELEGATECALL vouchers for a specific input:
 
 ```graphql
 query {
