@@ -24,7 +24,7 @@ type Input {
   payload: String!
   "Get vouchers from this particular input with support for pagination"
   vouchers(first: Int, last: Int, after: String, before: String): VoucherConnection!
-  "Get delegate call vouchers from this particular input with support for pagination"
+  "Get DELEGATECALL vouchers from this particular input with support for pagination"
   delegateCallVouchers(first: Int, last: Int, after: String, before: String): DelegateCallVoucherConnection!
   "Get notices from this particular input with support for pagination"
   notices(first: Int, last: Int, after: String, before: String): NoticeConnection!
@@ -57,7 +57,7 @@ type Input {
 | `blockNumber` | [`BigInt!`](../../scalars/bigint) | Number of the base layer block in which the input was recorded. |
 | `payload` | [`String!`](../../scalars/string) | Input payload in Ethereum hex binary format, starting with '0x'. |
 | `vouchers` | [`VoucherConnection!`](../../objects/voucher-connection) | Get vouchers from this particular input with support for pagination. |
-| `delegateCallVouchers` | [`DelegateCallVoucherConnection!`](../../objects/delegate-call-voucher-connection) | Get delegate call vouchers from this particular input with support for pagination. |
+| `delegateCallVouchers` | [`DelegateCallVoucherConnection!`](../../objects/delegate-call-voucher-connection) | Get DELEGATECALL vouchers from this particular input with support for pagination. |
 | `notices` | [`NoticeConnection!`](../../objects/notice-connection) | Get notices from this particular input with support for pagination. |
 | `reports` | [`ReportConnection!`](../../objects/report-connection) | Get reports from this particular input with support for pagination. |
 | `espressoTimestamp` | [`String`](../../scalars/string) | Timestamp associated with the Espresso input submission. |
