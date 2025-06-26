@@ -150,4 +150,4 @@ The payload should be a hex-encoded string starting with '0x' followed by pairs 
 
 After receiving the call's response, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
-The direct output types for **Advance** requests are [vouchers](./vouchers.md), [delegate call vouchers](./delegate-call-vouchers.md), [notices](./notices.md), and [reports](./reports.md), while **Inspect** requests generate only [reports](./reports.md).
+The direct output types for **Advance** requests are [vouchers](./vouchers.md), [DELEGATECALL vouchers](./delegate-call-vouchers.md), [notices](./notices.md), and [reports](./reports.md), while **Inspect** requests generate only [reports](./reports.md).
