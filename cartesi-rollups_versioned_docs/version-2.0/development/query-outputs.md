@@ -6,45 +6,25 @@ resources:
     title: The Cartesi dApp Developer Free Course
 ---
 
-In Cartesi Rollups, outputs are essential in interacting with the blockchain. The direct output types are vouchers, notices, and reports.
-
-## Vouchers: On-chain actions
-
-A voucher in Cartesi Rollups is a mechanism for executing on-chain actions from a dApp.
-
-Think of it as a digital authorization ticket that enables a dApp to perform specific actions on the blockchain, such as transferring assets or approving transactions.
-
-### How Vouchers Work:
-
-- The dApp backend creates a voucher while executing in the Cartesi Machine.
-
-- The voucher specifies the action, such as a token swap, and is sent to the blockchain.
-
-- The [`CartesiDApp`](../api-reference/contracts/application.md) contract executes the voucher using the [`executeVoucher()`](../api-reference/contracts/application.md/#executevoucher) function.
-
-- The result is recorded on the base layer through claims submitted by a consensus contract.
-
-:::note create a voucher
-[Refer to the documentation here](./asset-handling.md) for asset handling and creating vouchers in your dApp.
-:::
+In Cartesi Rollups, outputs are essential in interacting with the blockchain. The direct output types are notices, reports and vouchers.
 
 ## Notices: Off-chain events
 
 A notice is a verifiable data declaration that attests to off-chain events or conditions and is accompanied by proof. Unlike vouchers, notices do not trigger direct interactions with other smart contracts.
 
-They serve as a means for dApp to notify the blockchain about particular events.
+They serve as a means for application to notify the blockchain about particular events.
 
 ### How Notices Work
 
-- The dApp backend creates a notice containing relevant off-chain data.
+- The application backend creates a notice containing relevant off-chain data.
 
 - The notice is submitted to the Rollup Server as evidence of the off-chain event.
 
-- Notices are validated on-chain using the [`validateNotice()`](../api-reference/contracts/application.md/#validatenotice) function of the [`CartesiDApp`](../api-reference/contracts/application.md) contract.
+- Notices are validated on-chain using the [`validateOutput()`](../api-reference/contracts/application.md#validateoutput) function of the [`Application`](../api-reference/contracts/application.md) contract.
 
 ### Send a notice
 
-Let's examine how a Cartesi dApp has its Advance request **calculating and returning the first five multiples of a given number**.
+Let's examine how an Application has its Advance request **calculating and returning the first five multiples of a given number**.
 
 We will send the output to the rollup server as a notice.
 
@@ -157,7 +137,7 @@ For example, sending an input payload of `“2”` to the application using Cast
 
 ```bash
 Received finish status 200
-Received advance request data {"metadata":{"msg_sender":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","epoch_index":0,"input_index":0,"block_number":11,"timestamp":1708331280},"payload":"0x32"}
+Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0xef34611773387750985673f94067ea22db406f72","msg_sender":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","block_number":188,"block_timestamp":1741291197,"prev_randao":"0xa8b0097138c68949870aabe7aa4dc62a91b6dd0bc2b4582eac2be9eaee280032","input_index":0},"payload":"0x32"}
 Adding notice with values 2, 4, 6, 8, 10
 ```
 
@@ -167,7 +147,7 @@ The notice can be validated and queried by any interested party.
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development. Note that you'll have to replace `{dapp_address}` with the address of your application.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{application_address}` for local development. Note that you'll have to replace `{application_address}` with the address of your application.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -176,11 +156,17 @@ Input your query in the left pane:
 ```graphql
 query notices {
   notices {
+    totalCount
     edges {
       node {
         index
         input {
           index
+        }
+        application {
+          id
+          name
+          address
         }
         payload
       }
@@ -196,7 +182,7 @@ Click the "Play" button (a triangular icon). The Playground will send the reques
     Your browser does not support video tags.
 </video> -->
 
-Alternatively, you can use a frontend client to query all the notices of a dApp running in a local environment:
+Alternatively, you can use a frontend client to query all the notices of an application running in a local environment:
 
 ```javascript
 async function fetchNotices() {
@@ -231,14 +217,23 @@ You can get notices based on their `inputIndex`:
 Input your query in the left pane.
 
 ```graphql
-query noticesByInput($inputIndex: Int!) {
-  input(index: $inputIndex) {
+query noticesByInput($inputIndex: String!) {
+  input(id: $inputIndex) {
+    id
+    index
+    payload
+    msgSender
     notices {
       edges {
         node {
           index
           input {
             index
+          }
+          application {
+            id
+            name
+            address
           }
           payload
         }
@@ -252,11 +247,11 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 
 ```
 {
-  "inputIndex": 123
+  "inputIndex": "0"
 }
 ```
 
-Replace `123` with the value you want to pass for `$inputIndex`.
+Replace `0` with the value you want to pass for `$inputIndex`.
 
 <!-- <video width="100%" controls poster="/static/img/v1.3/graphqlPoster.png">
     <source src="/videos/Query_Singlenotice.mp4" type="video/mp4" />
@@ -267,25 +262,34 @@ With a JavaScript client, you can construct the GraphQL query and variables sepa
 
 ```javascript
 const query = `
-  query noticesByInput($inputIndex: Int!) {
-    input(index: $inputIndex) {
-      notices {
-        edges {
-          node {
+query noticesByInput($inputIndex: String!) {
+  input(id: $inputIndex) {
+    id
+    index
+    payload
+    msgSender
+    notices {
+      edges {
+        node {
+          index
+          input {
             index
-            input {
-              index
-            }
-            payload
           }
+          application {
+            id
+            name
+            address
+          }
+          payload
         }
       }
     }
   }
+}
 `;
 
 const variables = {
-  inputIndex: 123, // Replace 123 with the desired value
+  inputIndex: "0", // Replace 0 with the desired value
 };
 
 const response = await fetch(
@@ -307,28 +311,24 @@ for (let edge of result.data.input.notices.edges) {
 
 You can retrieve detailed information about a notice, including its proof information:
 
-Here is the query which takes two variables: `noticeIndex` and `inputIndex`.
+Here is the query which takes the variable: `outputIndex` and returns the details of a notice.
 
 ```graphql
-query notice($noticeIndex: Int!, $inputIndex: Int!) {
-  notice(noticeIndex: $noticeIndex, inputIndex: $inputIndex) {
+query notice($outputIndex: Int!) {
+  notice(outputIndex: $outputIndex) {
     index
     input {
       index
     }
     payload
     proof {
-      validity {
-        inputIndexWithinEpoch
-        outputIndexWithinInput
-        outputHashesRootHash
-        vouchersEpochRootHash
-        noticesEpochRootHash
-        machineStateHash
-        outputHashInOutputHashesSiblings
-        outputHashesInEpochSiblings
-      }
-      context
+      outputIndex
+      outputHashesSiblings
+    }
+    application {
+      id
+      name
+      address
     }
   }
 }
@@ -336,7 +336,7 @@ query notice($noticeIndex: Int!, $inputIndex: Int!) {
 
 ## Reports: Stateless logs
 
-Reports serve as stateless logs, providing read-only information without affecting the state. They are commonly used for logging and diagnostics within the dApp.
+Reports serve as stateless logs, providing read-only information without affecting the state. They are commonly used for logging and diagnostics within the application.
 
 Here is how you can write your application to send reports to the rollup server:
 
@@ -389,7 +389,7 @@ def handle_advance(data):
        msg = f"Error processing data {data}\n{traceback.format_exc()}"
        logger.error(msg)
        response = requests.post(
-           rollup_server + "/report", json={"payload": msg)}
+           rollup_server + "/report", json={"payload": msg}
        )
        logger.info(
            f"Received report status {response.status_code} body {response.content}"
@@ -403,13 +403,13 @@ def handle_advance(data):
 
 </Tabs>
 
-You can use the exposed GraphQL API to query all reports from your dApp.
+You can use the exposed GraphQL API to query all reports from your application.
 
 ### Query all reports
 
 Frontend clients can use a GraphQL API exposed by the Cartesi Nodes to query the state of a Cartesi Rollups instance.
 
-You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{dapp_address}` for local development.
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{application_address}` for local development.
 
 In a GraphQL Playground, you typically have a section where you can input your query and variables separately. Here's how you would do it:
 
@@ -418,6 +418,7 @@ Input your query in the left pane:
 ```graphql
 query reports {
   reports {
+    totalCount
     edges {
       node {
         index
@@ -438,14 +439,24 @@ You can retrieve reports based on their `inputIndex`.
 Input your query in the left pane:
 
 ```graphql
-query reportsByInput($inputIndex: Int!) {
-  input(index: $inputIndex) {
+query reportsByInput($inputIndex: String!) {
+  input(id: $inputIndex) {
+    id
+    index
+    payload
+    msgSender
     reports {
+      totalCount
       edges {
         node {
           index
           input {
             index
+          }
+          application {
+            id
+            name
+            address
           }
           payload
         }
@@ -459,26 +470,176 @@ Then, in the bottom-left corner of the Playground, you'll find a section that pr
 
 ```graphql
 {
-  "inputIndex": 123
+  "inputIndex": "0"
 }
 ```
 
-Replace `123` with the value you want to pass for `$inputIndex`.
+Replace `0` with the value you want to pass for `$inputIndex`.
 
 ### Query a single report
 
-You can retrieve a report with its `reportIndex` and `inputIndex`.
+You can retrieve a report with its `reportIndex`.
 
 ```graphql
-query report($reportIndex: Int!, $inputIndex: Int!) {
-  report(reportIndex: $reportIndex, inputIndex: $inputIndex) {
+query report($reportIndex: Int!) {
+  report(reportIndex: $reportIndex) {
     index
     input {
       index
     }
     payload
+    application {
+      id
+      name
+      address
+    }
   }
 }
 ```
 
 Unlike Vouchers and Notices, reports are stateless and need attached proof.
+
+## Vouchers: On-chain actions
+
+A voucher in Cartesi Rollups is a mechanism for executing on-chain actions from an application.
+
+Think of it as a digital authorization ticket that enables an application to perform specific actions on the blockchain, such as transferring assets or approving transactions.
+
+### How Vouchers Work:
+
+- The application backend creates a voucher while executing in the Cartesi Machine.
+
+- The voucher specifies the action, such as a token swap, and is sent to the blockchain.
+
+- The [`Application`](../api-reference/contracts/application.md) contract executes the voucher using the [`executeOutput()`](../api-reference/contracts/application.md#executeoutput) function.
+
+- The result is recorded on the base layer through claims submitted by a consensus contract.
+
+  :::note create a voucher
+  [Refer to the documentation here](./asset-handling.md) for asset handling and creating vouchers in your application.
+  :::
+
+### Query all Vouchers
+
+Similar to Notices and Reports the Frontend client can use a GraphQL API exposed by the Cartesi Nodes to query for voucher details from a Cartesi Rollups instance
+
+You can use the interactive in-browser GraphQL playground hosted on `http://localhost:8080/graphql/{application_address}` for local development.
+
+Input your query in the left pane:
+
+```graphql
+query vouchers {
+  vouchers {
+    totalCount
+    edges {
+      node {
+        index
+        input {
+          index
+        }
+        destination
+        payload
+        value
+        proof {
+          outputIndex
+          outputHashesSiblings
+        }
+        executed
+        application {
+          id
+          name
+          address
+        }
+      }
+    }
+  }
+}
+```
+
+Click the "Play" button (a triangular icon). The Playground will send the request to the server, and you'll see the response in the right pane.
+
+### Query a Voucher via it's input index
+
+You can retrieve vouchers based on their `inputIndex`, to do that you need to, Input the below query in the left pane of the GraphQL playground:
+
+```graphql
+query voucherByInput($inputIndex: String!) {
+  input(id: $inputIndex) {
+    id
+    index
+    payload
+    msgSender
+    vouchers {
+      totalCount
+      edges {
+        node {
+          index
+          input {
+            index
+          }
+          destination
+          payload
+          value
+          proof {
+            outputIndex
+            outputHashesSiblings
+          }
+          executed
+          application {
+            id
+            name
+            address
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Then, in the bottom-left corner of the Playground, you'll find a section that provides variables. Click on it to expand it, and then you can input your variables like this:
+
+```graphql
+{
+  "inputIndex": "0"
+}
+```
+
+Replace `0` with the value you want to pass for `$inputIndex`.
+
+### Query a single Voucher
+
+You can retrieve a report with its `reportIndex`.
+
+```graphql
+query voucher($outputIndex: Int!) {
+  voucher(outputIndex: $outputIndex) {
+    index
+    input {
+      index
+    }
+    destination
+    payload
+    proof {
+      outputIndex
+      outputHashesSiblings
+    }
+    value
+    executed
+    transactionHash
+    application {
+      id
+      name
+      address
+    }
+  }
+}
+```
+
+As always remember to add the variable `$outputIndex` to the variables tab in the bottom-left corner of the playground, like this:
+
+```graphql
+{
+  "outputIndex": 0
+}
+```

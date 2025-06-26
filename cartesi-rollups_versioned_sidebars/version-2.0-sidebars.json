@@ -190,11 +190,12 @@
             "collapsed": true,
             "items": [
                 "development/installation",
-                "development/building-a-dapp",
+                "development/creating-an-application",
+                "development/managing-a-dev-environment",
+                "development/running-an-application",
                 "development/send-inputs",
                 "development/query-outputs",
-                "development/asset-handling",
-                "development/cli-commands"
+                "development/asset-handling"
             ]
         },
         {

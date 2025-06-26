@@ -10,13 +10,13 @@ resources:
 
 You can send two requests to an application depending on whether you want to change or read the state.
 
-- **Advance**: In this request, any input data changes the state of the dApp.
+- **Advance**: In this request, any input data changes the state of the application.
 
-- **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the dApp state without changing it.
+- **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the application state without changing it.
 
 ## Advance and Inspect Requests
 
-Here is a simple boilerplate application that handles Advance and Inspect requests:
+Here is a simple boilerplate application that shows the default implementation of the handle_advance and handle_inspect functions:
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -121,9 +121,9 @@ while True:
 
 </Tabs>
 
-In a typical Cartesi backend application, two functions, `handle_advance` and `handle_inspect,` are defined to handle the two different types of requests.
+As stated in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), a typical Cartesi backend application has two primary functions, `handle_advance` and `handle_inspect,` these are defined to handle the two different types of requests.
 
-This script listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status to the rollup server.
+Your application listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status to the rollup server.
 
 Every starter project you create has this base code as a template, ready to receive inputs!
 
@@ -131,13 +131,13 @@ Every starter project you create has this base code as a template, ready to rece
 
 You can initiate an advance request by sending input from the CLI using Cast, Cartesi CLI, or a custom frontend client.
 
-Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the dApp backend and trigger a change in the application's state.
+Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the applciation backend and trigger a change in the application's state.
 
 ![img](../../../static/img/v1.3/advance.jpg)
 
-In the dApp architecture, here is how an advance request plays out.
+In the application architecture, here is how an advance request plays out.
 
-- Step 1: Send an input to the [`addInput(address, bytes)`](../api-reference/json-rpc/input-box.md/#addinput) function of the InputBox smart contract.
+- Step 1: Send an input to the [`addInput(address, bytes)`](../api-reference/contracts/input-box.md#addinput) function of the InputBox smart contract.
 
 - Step 2: The Cartesi Node reads the data and gives it to the Cartesi machine for processing.
 
@@ -148,18 +148,18 @@ You can send inputs to your application with [Cast](https://book.getfoundry.sh/c
 #### 1. Send inputs with Cast
 
 ```shell
-cast send <InputBoxAddress> "addInput(address,bytes)" <DAppAddress> <EncodedPayload> --mnemonic <MNEMONIC>
+cast send <InputBoxAddress> "addInput(address,bytes)" <ApplicationAddress> <EncodedPayload> --mnemonic <MNEMONIC>
 ```
 
 This command sends the payload to the InputBox smart contract, initiating the advance request.
 
-Replace placeholders like `<InputBoxAddress>`, `<DAppAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
+Replace placeholders like `<InputBoxAddress>`, `<ApplicationAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
 
 You can obtain the relevant addresses by running `cartesi address-book`.
 
 #### 2. Send inputs with Cartesi CLI
 
-Cartesi CLI provides a convenient way of sending inputs to a dApp.
+Cartesi CLI provides a convenient way of sending inputs to an application.
 
 To send an input, run:
 
@@ -169,32 +169,32 @@ cartesi send
 
 ```shell
 $ cartesi send
-? Select send sub-command (Use arrow keys)
-❯ Send DApp address input to the application.
-  Send ERC-20 deposit to the application.
-  Send ERC-721 deposit to the application.
-  Send ether deposit to the application.
-  Send generic input to the application.
+? Select the type of input to send (Use arrow keys)
+❯ generic
+  erc20
+  erc721
+  ether
 ```
 
-There are five types of inputs using a sub-command: `dapp-address`, `erc20`, `erc721`, `ether`, `generic`.
+There are five types of inputs using a sub-command: `erc20`, `erc721`, `ether`, `generic`.
 
 Unlike the asset-type sub-commands (Ether, ERC20, and ERC721), the generic input command allows you to send inputs with any payload format (hex, string, and ABI).
 
 ```shell
 $ cartesi send generic
-? Chain (Use arrow keys)
-❯ Foundry
-? Chain Foundry
-? RPC URL http://127.0.0.1:8545
-? Wallet Mnemonic
-? Mnemonic test test test test test test test test test test test junk
-? Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9999.969240390387558666 ETH
-? DApp address 0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C
-? Input String encoding
-? Input (as string) Hello World
-✔ Input sent: 0x27a140b65feb714342a1dda31b6bfa2f8a83518231bb3b2da4bac506e0559007
+✔ Select the type of input to send generic
+✔ Wallet Mnemonic
+✔ Mnemonic test test test test test test test test test test test junk
+✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9993.999194554374748191 ETH
+✔ Application address 0xb483897a2790a5D1a1C5413690bC5933f269b3A9
+✔ Input String encoding
+✔ Input (as string) 32.9
+✔ Input sent: 0x048a25e6341234b8102f7676b3a8defb947559125197dbd45cfa3afa451a93fd
 ```
+
+:::note Interacting with Sample application?
+Replacing the above dapp address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), would emit a notice, voucher and report which can all be quarried using the JSON RPC or GraphQl server.
+:::
 
 #### 3. Send inputs via a custom web app
 
@@ -214,10 +214,12 @@ Inspect requests are best suited for non-production use, such as debugging and t
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
-To perform an Inspect call, use an HTTP GET request to `<address of the node>/inspect/<request path>`. For example:
+To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application name or address>` with a body containing the request payload. For example:
 
 ```shell
-curl http://localhost:8080/inspect/mypath
+curl -X POST http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9 \
+  -H "Content-Type: application/json" \
+  -d '"test"'
 ```
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
@@ -225,9 +227,23 @@ Once the call's response is received, the payload is extracted from the response
 From a frontend client, here is an example of extracting the payload from an inspect request:
 
 ```javascript
-const response = await fetch("http://localhost:8080/inspect/mypath");
+const response = await fetch("http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify("test")
+});
+
 const result = await response.json();
+
 for (let i in result.reports) {
   let payload = result.reports[i].payload;
+  console.log("Report Payload:", payload);
 }
+
 ```
+
+:::note Interacting with Sample application?
+Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and can also be quarried using the JSON RPC or GraphQl server.
+:::
