@@ -3,70 +3,104 @@ id: application-factory
 
 title: ApplicationFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/blob/main/src/dapp/ApplicationFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/dapp/ApplicationFactory.sol
     title: Application Factory contract
 ---
 
-The **ApplicationFactory** contract is a tool for deploying new instances of the [`Application`](../contracts/application.md) contract reliably, with or without a specified salt value for address derivation.
+The **ApplicationFactory** contract allows anyone to reliably deploy a new `IApplication` contract.
 
-The contract provides functionality to calculate the address of a potential new `Application` contract based on input parameters, ensuring efficient and secure deployment of `Application` contracts within the Cartesi Rollups framework.
+This contract inherits from `IApplicationFactory`.
 
-## `newApplication()`
+## Functions
+
+### `newApplication()`
 
 ```solidity
-function newApplication(IConsensus consensus, address appOwner, bytes32 templateHash) external override returns (IApplication)
+function newApplication(
+    IOutputsMerkleRootValidator outputsMerkleRootValidator,
+    address appOwner,
+    bytes32 templateHash,
+    bytes calldata dataAvailability
+) external override returns (IApplication)
 ```
 
 Deploys a new Application contract without a salt value for address derivation.
 
 Emits an `ApplicationCreated` event upon successful deployment.
 
-#### Parameters
+**Parameters**
 
-| Name         | Type       | Description                              |
-| ------------ | ---------- | ---------------------------------------- |
-| consensus    | IConsensus | Instance of the consensus interface      |
-| appOwner     | address    | Address of the owner of the application  |
-| templateHash | bytes32    | Hash of the template for the application |
+| Name | Type | Description |
+|------|------|-------------|
+| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
+| `appOwner` | `address` | Address of the owner of the application |
+| `templateHash` | `bytes32` | Hash of the template for the application |
+| `dataAvailability` | `bytes` | The data availability solution |
 
-## `newApplication()`(with salt)
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `IApplication` | The deployed Application contract |
+
+### `newApplication()` (with salt)
 
 ```solidity
-function newApplication( IConsensus consensus, address appOwner, bytes32 templateHash, bytes32 salt ) external override returns (IApplication)
+function newApplication(
+    IOutputsMerkleRootValidator outputsMerkleRootValidator,
+    address appOwner,
+    bytes32 templateHash,
+    bytes calldata dataAvailability,
+    bytes32 salt
+) external override returns (IApplication)
 ```
 
 Deploys a new `Application` contract with a specified salt value for address derivation.
 
 Emits an `ApplicationCreated` event upon successful deployment.
 
-#### Parameters
+**Parameters**
 
-| Name         | Type       | Description                              |
-| ------------ | ---------- | ---------------------------------------- |
-| consensus    | IConsensus | Instance of the consensus interface      |
-| appOwner     | address    | Address of the owner of the application  |
-| templateHash | bytes32    | Hash of the template for the application |
-| salt         | bytes32    | Salt value for address derivation        |
+| Name | Type | Description |
+|------|------|-------------|
+| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
+| `appOwner` | `address` | Address of the owner of the application |
+| `templateHash` | `bytes32` | Hash of the template for the application |
+| `dataAvailability` | `bytes` | The data availability solution |
+| `salt` | `bytes32` | Salt value for address derivation |
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `IApplication` | The deployed Application contract |
 
 ### `calculateApplicationAddress()`
 
 ```solidity
-function calculateApplicationAddress( IConsensus consensus, address appOwner, bytes32 templateHash, bytes32 salt ) external view override returns (address)
+function calculateApplicationAddress(
+    IOutputsMerkleRootValidator outputsMerkleRootValidator,
+    address appOwner,
+    bytes32 templateHash,
+    bytes calldata dataAvailability,
+    bytes32 salt
+) external view override returns (address)
 ```
 
 Calculates the address of a potential new Application contract based on input parameters.
 
-#### Parameters
+**Parameters**
 
-| Name         | Type       | Description                              |
-| ------------ | ---------- | ---------------------------------------- |
-| consensus    | IConsensus | Instance of the consensus interface      |
-| appOwner     | address    | Address of the owner of the application  |
-| templateHash | bytes32    | Hash of the template for the application |
-| salt         | bytes32    | Salt value for address derivation        |
+| Name | Type | Description |
+|------|------|-------------|
+| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
+| `appOwner` | `address` | Address of the owner of the application |
+| `templateHash` | `bytes32` | Hash of the template for the application |
+| `dataAvailability` | `bytes` | The data availability solution |
+| `salt` | `bytes32` | Salt value for address derivation |
 
-#### Returns
+**Return Values**
 
-| Type    | Description                                       |
-| ------- | ------------------------------------------------- |
-| address | Address of the potential new Application contract |
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `address` | Address of the potential new Application contract |
