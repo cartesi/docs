@@ -4,7 +4,7 @@ title: DelegateCallVoucher
 hide_table_of_contents: false
 ---
 
-Represents a delegate call voucher in a Cartesi Rollups application.
+Represents a DELEGATECALL voucher in a Cartesi Rollups application.
 
 ```graphql
 type DelegateCallVoucher {
