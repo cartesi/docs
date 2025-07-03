@@ -19,7 +19,7 @@ module.exports = {
         {
           type: 'doc',
           id: 'cartesi-machine',
-          label: 'Execution Environment',
+          label: 'Cartesi Machine',
         },
         {
           type: 'doc',
@@ -46,12 +46,17 @@ module.exports = {
         {
           type: 'doc',
           id: 'cli-commands',
-          label: 'CLI Commands',
+          label: 'Cartesi CLI',
         },
         {
           type: 'link',
           label: 'Honeypot Application',
           href: 'https://github.com/cartesi/honeypot',
+        },
+        {
+          type: 'link',
+          label: 'Rollup Lab',
+          href: 'https://rolluplab.io',
         },
       ],
     }
