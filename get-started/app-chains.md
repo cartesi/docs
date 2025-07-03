@@ -1,6 +1,9 @@
 ---
 id: app-chains
 title: App-Chains
+resources:
+  - url: https://medium.com/cartesi/application-specific-rollups-e12ed5d9de01
+    title: App-Specific Rollups - Thesis
 ---
 # App-Chains
 
@@ -11,7 +14,9 @@ By isolating application logic from the base layer, Cartesi App-Chains provide a
 
 #### Scalability and Performance
 
-General-purpose blockchains(such as Ethereum) are shared by thousands of applications, which compete for limited blockspace and computational resources. This often leads to network congestion, high gas fees and delayed transaction finality. By contrast, App-Chains are dedicated rollups tailored to a single application, eliminating resource contention and enabling optimized throughput and cost control.
+General-purpose blockchains(such as Ethereum) and rollup solutions(like Optimism and Arbitrum) are shared by thousands of applications, which compete for limited blockspace and computational resources. This often leads to network congestion, high gas fees and delayed transaction finality. By contrast, App-Chains are dedicated rollups tailored to a single application, eliminating resource contention and enabling optimized throughput and cost control.
+
+![img](./images/app-chains-vs-general.png)
 
 #### Application-Level Customization
 
@@ -33,9 +38,11 @@ For instance, to **deposit assets**, the client makes a request to a dedicated p
 
 Cartesi App-Chains are designed to be EVM-compatible, meaning they can seamlessly integrate with the Ethereum ecosystem and smart contract infrastructure. This allows Cartesi’s on-chain components - the rollups contracts - to be deployed across any EVM-compatible chain.
 
+![img](./images/app-chains-deployment.png)
+
 Cartesi App-Chains can be deployed on:
 - Layer 1 (Ethereum): For maximum security and decentralization, especially for apps handling high-value assets.
 
 - Layer 2 Rollups (e.g., Optimism, Arbitrum, Base): For reduced gas costs and faster transaction finality while retaining strong security guarantees.
 
-This gives developers flexibility to optimize for cost, performance, and user reach depending on the application's needs. You can start building your app-chain in minutes with the quickstart guide here.
+This gives developers flexibility to optimize for cost, performance, and user reach depending on the application's needs. You can start building your app-chain in minutes with the quickstart guide [here](/get-started/quickstart/).
