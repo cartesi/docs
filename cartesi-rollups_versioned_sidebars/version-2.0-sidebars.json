@@ -5,7 +5,7 @@
             "label": "Getting Started",
             "collapsed": true,
             "items": [
-                "getting-started/overview",
+                "overview",
                 "getting-started/architecture"
             ]
         },
