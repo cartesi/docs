@@ -619,4 +619,40 @@ html[data-theme="dark"] .alert--goal div:first-child {
   }
 }
 
+/* Responsive image styles */
+.responsive-image {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  text-align: center;
+}
+
+.responsive-image img,
+div.responsive-image img,
+.markdown .responsive-image img {
+  display: block !important;
+  margin: 0 auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* On desktop screens, limit the image width to 60% and center it */
+@media (min-width: 768px) {
+  .responsive-image img,
+  div.responsive-image img,
+  .markdown .responsive-image img {
+    max-width: 60% !important;
+  }
+}
+
+/* On large desktop screens, limit further to 50% */
+@media (min-width: 1200px) {
+  .responsive-image img,
+  div.responsive-image img,
+  .markdown .responsive-image img {
+    max-width: 50% !important;
+  }
+}
+
 @tailwind utilities;
