@@ -13,9 +13,9 @@ This tutorial will guide you through utilizing the account abstraction feature o
 
 ## Introduction
 
-Better user experience has been one of the major priorities for blockchain protocols, infrastructures and also applications, over the last couple of years we've had a lot of EIP's targeted at offering better user experience through various methods, of which the most popular of these EIP's is EIP 4337 (Account Abstraction), This EIP proposes application layer additions and updates to offer better user experience through gasless transaction, transaction bundling, partially funding or even funding gas fees using stable coins. We currently have various architectures and SDKs supporting account abstraction across multiple chains, but there’s currently very few dedicated solution for testing this integration in a local environment during application development. The latest update to the Cartesi CLI V0.16.0 fixes this by integrating an account abstraction architecture for testing the AA functionality of your Cartesi application on your local machine.
+Better user experience is a major focus for blockchain protocols, infrastructures and also applications, over the last couple of years we've had a lot of EIP's targeted at offering better user experience through various methods, of which the most popular of these EIP's is EIP 4337 (Account Abstraction), This EIP proposes application layer additions and updates to offer better user experience through gasless transaction, transaction bundling, partially funding or even funding gas fees using stable coins. We currently have various architectures and SDKs supporting account abstraction across multiple chains, but there’s currently very few dedicated solution for testing this integration in a local environment during application development. The Cartesi CLI fixes this by integrating an account abstraction infrastructure for testing the AA functionality of your Cartesi application on your local machine.
 
-This architecture relies on external SDKs from some popular account abstraction providers (Alchemy, Biconomy and ZeroDev), so it’s expected that the obtained behavior on local should mirror mainnet completely as long as you’re using the same provider. For this tutorial, we’ll be using the Zerodev SDK. However, you could easily modify this to apply to other providers like Alchemy or Biconomy.
+This infrastructure relies on external SDKs from some popular account abstraction providers (Alchemy, Biconomy and ZeroDev), so it’s expected that the obtained behavior on local should mirror mainnet completely as long as you’re using the same provider. For this tutorial, we’ll be using the Zerodev SDK. However, you could easily modify this to apply to other providers like Alchemy or Biconomy.
 
 ## Architecture
 
@@ -370,10 +370,29 @@ We now have a functional frontend and account abstraction infrastructure availab
 
 This section of the tutorial is focused on setting up a Cartesi application on a local host; this will be the target of all user executions on the frontend. To do this, we simply run the following commands:.
 
-- Create a new project using the command `cartesi create AA-on-CLI --template javascript`.
-- Cd into `AA-on-CLI` Build the application by running the command `cartesi build`
-- Next, run the command `cartesi run --services bundler,explorer,graphql,paymaster,passkey` to start a local anvil node and deploy all necessary servers and contracts.
-- Finally, in a new terminal, navigate to our frontend repository and start the frontend by running the command `npm run dev`.
+- Create a new project using the command:
+  
+```bash
+    cartesi create AA-on-CLI --template javascript
+```
+
+- Cd into `AA-on-CLI`, then build the application by running the command
+  
+```bash
+  cartesi build
+```
+
+- Next, run the below command to start a local anvil node and deploy all necessary servers and contracts.
+  
+```bash
+  cartesi run --services bundler,explorer,graphql,paymaster,passkey
+```
+
+- Finally, in a new terminal, navigate to our frontend repository and start the frontend by running the command.
+
+```bash
+  npm run dev
+```
 
 ## Testing the application
 
