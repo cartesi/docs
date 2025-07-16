@@ -8,6 +8,9 @@ import { CookiesProvider, useCookies } from "react-cookie";
 import styles from "./styles.module.css";
 export default function AnnouncementBar() {
   const { announcementBar } = useThemeConfig();
+
+  if (!announcementBar) return null;
+
   const { isActive, close } = useAnnouncementBar();
 
   const COOKIE_EXPIRY = 1000 * 60 * 60 * 24 * 2;
