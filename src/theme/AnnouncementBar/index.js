@@ -7,6 +7,9 @@ import styles from "./styles.module.css";
 
 export default function AnnouncementBar() {
   const { announcementBar } = useThemeConfig();
+
+  if (!announcementBar) return null;
+
   const { isActive, close } = useAnnouncementBar();
   if (!isActive) {
     return null;
