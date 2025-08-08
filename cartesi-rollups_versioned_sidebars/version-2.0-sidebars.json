@@ -5,7 +5,7 @@
             "label": "Getting Started",
             "collapsed": true,
             "items": [
-                "getting-started/overview",
+                "overview",
                 "getting-started/architecture"
             ]
         },
@@ -196,19 +196,6 @@
                 "development/send-inputs",
                 "development/query-outputs",
                 "development/asset-handling"
-            ]
-        },
-        {
-            "type": "category",
-            "label": "Espresso Integration",
-            "collapsed": true,
-            "items": [
-                "espresso-integration/architecture",
-                "espresso-integration/building",
-                "espresso-integration/testnet",
-                "espresso-integration/interacting",
-                "espresso-integration/outputs",
-                "espresso-integration/deployment"
             ]
         },
         {

@@ -19,7 +19,7 @@ module.exports = {
         {
           type: 'doc',
           id: 'cartesi-machine',
-          label: 'Execution Environment',
+          label: 'Cartesi Machine',
         },
         {
           type: 'doc',
@@ -31,7 +31,34 @@ module.exports = {
           id: 'fraud-proofs',
           label: 'Fraud Proofs',
         },
+        {
+          type: 'doc',
+          id: 'app-chains',
+          label: 'App-Chains',
+        },
       ],
     },
+    {
+      type: 'category',
+      label: 'References',
+      collapsed: false,
+      items: [
+        {
+          type: 'doc',
+          id: 'cli-commands',
+          label: 'Cartesi CLI',
+        },
+        {
+          type: 'link',
+          label: 'Honeypot Application',
+          href: 'https://github.com/cartesi/honeypot',
+        },
+        {
+          type: 'link',
+          label: 'Rollup Lab',
+          href: 'https://rolluplab.io',
+        },
+      ],
+    }
   ],
 };
