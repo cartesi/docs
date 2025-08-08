@@ -41,7 +41,32 @@
                             "label": "Consensus",
                             "collapsed": true,
                             "items": [
-                                "api-reference/contracts/consensus/overview"
+                                "api-reference/contracts/consensus/overview",
+                                "api-reference/contracts/consensus/iconsensus",
+                                "api-reference/contracts/consensus/ioutputsmerklerootvalidator",
+                                "api-reference/contracts/consensus/abstractconsensus",
+                                {
+                                    "type": "category",
+                                    "label": "Authority",
+                                    "collapsed": true,
+                                    "items": [
+                                        "api-reference/contracts/consensus/authority/authority",
+                                        "api-reference/contracts/consensus/authority/authority-factory",
+                                        "api-reference/contracts/consensus/authority/iauthority",
+                                        "api-reference/contracts/consensus/authority/iauthority-factory"
+                                    ]
+                                },
+                                {
+                                    "type": "category",
+                                    "label": "Quorum",
+                                    "collapsed": true,
+                                    "items": [
+                                        "api-reference/contracts/consensus/quorum/quorum",
+                                        "api-reference/contracts/consensus/quorum/quorum-factory",
+                                        "api-reference/contracts/consensus/quorum/iquorum",
+                                        "api-reference/contracts/consensus/quorum/iquorum-factory"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -54,8 +79,7 @@
                         "api-reference/backend/introduction",
                         "api-reference/backend/notices",
                         "api-reference/backend/reports",
-                        "api-reference/backend/vouchers",   
-                        "api-reference/backend/delegate-call-vouchers",
+                        "api-reference/backend/vouchers",
                         "api-reference/backend/exception",
                         "api-reference/backend/finish"
                     ]

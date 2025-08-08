@@ -27,8 +27,6 @@ function newApplication(
 
 Deploys a new Application contract without a salt value for address derivation.
 
-Emits an `ApplicationCreated` event upon successful deployment.
-
 **Parameters**
 
 | Name | Type | Description |
@@ -57,8 +55,6 @@ function newApplication(
 ```
 
 Deploys a new `Application` contract with a specified salt value for address derivation.
-
-Emits an `ApplicationCreated` event upon successful deployment.
 
 **Parameters**
 
@@ -105,3 +101,29 @@ Calculates the address of a potential new Application contract based on input pa
 | Name | Type | Description |
 |------|------|-------------|
 | `[0]` | `address` | Address of the potential new Application contract |
+
+## Events
+
+### `ApplicationCreated()`
+
+```solidity
+event ApplicationCreated(
+    IOutputsMerkleRootValidator outputsMerkleRootValidator,
+    address appOwner,
+    bytes32 templateHash,
+    bytes dataAvailability,
+    IApplication appContract
+)
+```
+
+A new Application contract was deployed.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The outputs Merkle root validator contract |
+| `appOwner` | `address` | The owner of the application |
+| `templateHash` | `bytes32` | The template hash |
+| `dataAvailability` | `bytes` | The data availability solution |
+| `appContract` | `IApplication` | The deployed Application contract |
