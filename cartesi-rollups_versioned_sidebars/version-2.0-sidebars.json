@@ -55,9 +55,9 @@
                         "api-reference/backend/notices",
                         "api-reference/backend/reports",
                         "api-reference/backend/vouchers",   
+                        "api-reference/backend/delegate-call-vouchers",
                         "api-reference/backend/exception",
-                        "api-reference/backend/finish",
-                        "api-reference/backend/delegate-call-vouchers"
+                        "api-reference/backend/finish"
                     ]
                 },
                 {

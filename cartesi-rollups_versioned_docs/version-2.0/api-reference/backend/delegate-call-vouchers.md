@@ -1,6 +1,9 @@
 ---
 id: delegate-call-vouchers
 title: DELEGATECALL Vouchers
+resources:
+  - url: https://www.evm.codes/?fork=cancun#f4
+    title: DELEGATECALL Opcode
 ---
 
 :::danger Security Considerations
@@ -36,6 +39,68 @@ This mechanism, where the Application contract maintains the state and funds whi
 
 The [`Application`](../contracts/application.md) contract handles the execution of DELEGATECALL vouchers through its [`executeOutput()`](../../contracts/application/#executeoutput) function, which validates and processes the DELEGATECALL operation on the blockchain.
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+  <TabItem value="JavaScript" label="JavaScript" default>
+<pre><code>
+
+```javascript
+import { encodeFunctionData } from "viem";
+
+const abi = [
+  "function safeTransfer(address,address,uint256)"
+];
+
+async function emitSafeERC20Transfer(token, to, amount) {
+  const call = encodeFunctionData({
+    abi,
+    functionName: "safeTransfer",
+    args: [token, to, amount],
+  });
+
+  const voucher = {
+    destination: "0xfafafafafafafafafafafafafafafafafafafafa", // address of the contract containing the implementation
+    payload: call,
+  };
+
+  await fetch(rollup_server + "/delegate-call-voucher", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(voucher),
+  });
+}
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Python" label="Python" default>
+<pre><code>
+
+```python
+from eth_utils import function_signature_to_4byte_selector, to_checksum_address
+from eth_abi import encode
+import requests
+
+def emit_safe_erc20_transfer(token, to, amount):
+    selector = function_signature_to_4byte_selector("safeTransfer(address,address,uint256)")
+    encoded_params = encode(["address", "address", "uint256"], [to_checksum_address(token), to_checksum_address(to), amount])
+    payload = "0x" + (selector + encoded_params).hex()
+    voucher = {
+        "destination": "0xfafafafafafafafafafafafafafafafafafafafa",  # endereço do contrato
+        "payload": payload,
+    }
+    response = requests.post(rollup_server + "/delegate-call-voucher", json=voucher)
+    return response
+```
+
+</code></pre>
+</TabItem>
+
+</Tabs>
+
 ## Implementation Considerations
 
 When implementing DELEGATECALL vouchers, consider the following:
@@ -45,10 +110,6 @@ When implementing DELEGATECALL vouchers, consider the following:
 2. **Security**: Since DELEGATECALL operations execute code in the context of the Application contract, careful validation of the target contract and its code is essential to prevent malicious modifications to the Application's state.
 
 3. **State Management**: All state changes occur in the Application contract's storage, making it the single source of truth for the application's state.
-
-:::note create a DELEGATECALL voucher
-[Refer to the documentation here](../../development/asset-handling.md) for implementing DELEGATECALL vouchers in your dApp.
-:::
 
 ## Execution Context
 
