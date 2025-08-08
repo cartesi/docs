@@ -100,4 +100,4 @@ The `cartesi_listOutputs` method returns a paginated list of outputs for a speci
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
 | -32603  | Internal error         | An internal error occurred                       |
-| -32000  | Application not found  | The specified application does not exist         | 
+| -32000  | Application not found  | The specified application does not exist         |

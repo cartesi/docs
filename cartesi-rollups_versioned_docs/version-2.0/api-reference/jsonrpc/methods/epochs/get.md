@@ -42,9 +42,9 @@ The `cartesi_getEpoch` method retrieves detailed information about a specific ep
       "claim_transaction_hash": null,
       "status": "OPEN",
       "virtual_index": "0x1",
-      "created_at": "2024-01-01T00:00:00Z",
+    "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
-    }
+      }
   },
   "id": 1
 }
@@ -71,4 +71,4 @@ The `cartesi_getEpoch` method retrieves detailed information about a specific ep
 | -32602  | Invalid params         | Invalid parameter values                         |
 | -32000  | Application not found  | The specified application does not exist         |
 | -32001  | Epoch not found        | The specified epoch does not exist               |
-| -32603  | Internal error         | An internal error occurred                       | 
+| -32603  | Internal error         | An internal error occurred                       |

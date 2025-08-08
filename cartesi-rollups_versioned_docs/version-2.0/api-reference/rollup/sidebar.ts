@@ -4,7 +4,7 @@ const sidebar: SidebarsConfig = {
   apisidebar: [
     {
       type: "doc",
-      id: "_versioned_docs/version-2.0/rollups-apis/rollup/cartesi-rollup-http-api",
+      id: "_versioned_docs/version-2.0/api-reference/rollup/cartesi-rollup-http-api",
     },
     {
       type: "category",
@@ -12,31 +12,31 @@ const sidebar: SidebarsConfig = {
       items: [
         {
           type: "doc",
-          id: "_versioned_docs/version-2.0/rollups-apis/rollup/finish",
+          id: "_versioned_docs/version-2.0/api-reference/rollup/finish",
           label: "Finish and get next request",
           className: "api-method post",
         },
         {
           type: "doc",
-          id: "_versioned_docs/version-2.0/rollups-apis/rollup/add-voucher",
+          id: "_versioned_docs/version-2.0/api-reference/rollup/add-voucher",
           label: "Add a new voucher",
           className: "api-method post",
         },
         {
           type: "doc",
-          id: "_versioned_docs/version-2.0/rollups-apis/rollup/add-notice",
+          id: "_versioned_docs/version-2.0/api-reference/rollup/add-notice",
           label: "Add a new notice",
           className: "api-method post",
         },
         {
           type: "doc",
-          id: "_versioned_docs/version-2.0/rollups-apis/rollup/add-report",
+          id: "_versioned_docs/version-2.0/api-reference/rollup/add-report",
           label: "Add a new report",
           className: "api-method post",
         },
         {
           type: "doc",
-          id: "_versioned_docs/version-2.0/rollups-apis/rollup/register-exception",
+          id: "_versioned_docs/version-2.0/api-reference/rollup/register-exception",
           label: "Register an exception",
           className: "api-method post",
         },

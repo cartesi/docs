@@ -49,13 +49,13 @@ The `cartesi_getInput` method retrieves detailed information about a specific in
         "index": "0x1",
         "payload": "0x48656c6c6f"
       },
-      "status": "ACCEPTED",
+    "status": "ACCEPTED",
       "machine_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
       "outputs_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
       "transaction_reference": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
       "created_at": "2024-01-01T00:00:00Z",
       "updated_at": "2024-01-01T00:00:00Z"
-    }
+      }
   },
   "id": 1
 }
@@ -97,4 +97,4 @@ The `cartesi_getInput` method retrieves detailed information about a specific in
 | -32602  | Invalid params         | Invalid parameter values                         |
 | -32000  | Application not found  | The specified application does not exist         |
 | -32002  | Input not found        | The specified input does not exist               |
-| -32603  | Internal error         | An internal error occurred                       | 
+| -32603  | Internal error         | An internal error occurred                       |

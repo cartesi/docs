@@ -65,4 +65,4 @@ The `cartesi_getReport` method retrieves detailed information about a specific r
 | -32602  | Invalid params         | Invalid parameter values                         |
 | -32000  | Application not found  | The specified application does not exist         |
 | -32004  | Report not found       | The specified report does not exist              |
-| -32603  | Internal error         | An internal error occurred                       | 
+| -32603  | Internal error         | An internal error occurred                       |
