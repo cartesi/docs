@@ -50,4 +50,4 @@ The `cartesi_getLastAcceptedEpochIndex` method retrieves the latest accepted epo
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
 | -32000  | Application not found  | The specified application does not exist         |
-| -32603  | Internal error         | An internal error occurred                       | 
+| -32603  | Internal error         | An internal error occurred                       |
