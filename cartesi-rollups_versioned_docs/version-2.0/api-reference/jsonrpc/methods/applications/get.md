@@ -33,7 +33,7 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
   "jsonrpc": "2.0",
   "result": {
     "data": {
-      "name": "calculator",
+    "name": "calculator",
       "iapplication_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
       "iconsensus_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
       "iinputbox_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
@@ -46,9 +46,9 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
       "last_input_check_block": "0x1",
       "last_output_check_block": "0x1",
       "processed_inputs": "0x1",
-      "created_at": "2024-01-01T00:00:00Z",
-      "updated_at": "2024-01-01T00:00:00Z",
-      "execution_parameters": {
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "execution_parameters": {
         "snapshot_policy": "NONE",
         "advance_inc_cycles": "0x1000",
         "advance_max_cycles": "0x10000",
@@ -118,4 +118,4 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
 |---------|------------------------|--------------------------------------------------|
 | -32602  | Invalid params         | Invalid parameter values                         |
 | -32000  | Application not found  | The specified application does not exist         |
-| -32603  | Internal error         | An internal error occurred                       | 
+| -32603  | Internal error         | An internal error occurred                       |
