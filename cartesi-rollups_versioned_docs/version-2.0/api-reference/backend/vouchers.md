@@ -20,36 +20,6 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 <Tabs>
-<TabItem value="Python" label="Python" default>
-<pre><code>
-
-```python
-# Voucher creation process
-import requests
-import json
-from os import environ
-from eth_utils import function_signature_to_4byte_selector
-from eth_abi import decode, encode
-
-rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
-
-def emit_voucher(function_signature, destination, types, values):
-    selector = function_signature_to_4byte_selector(function_signature)    
-    encoded_params = encode(types, values)
-    payload = "0x" + (selector + encoded_params).hex()
-    response = requests.post(rollup_server + "/voucher", json={"payload": payload, "destination": destination, "value": '0x' + encode(["uint256"], [0]).hex()})
-    if response.status_code == 200 or response.status_code == 201:
-        logger.info(f"Voucher emitted successfully with data: {payload}")
-    else:
-        logger.error(f"Failed to emit Voucher with data: {payload}. Status code: {response.status_code}")
-
-
-emit_voucher("mint(address)", "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", ["address"], [data["metadata"]["msg_sender"]])
-```
-
-</code></pre>
-</TabItem>
-
 <TabItem value="Javascript" label="Javascript" default>
 <pre><code>
 
@@ -97,6 +67,35 @@ const emitVoucher = async (voucher) => {
 </code></pre>
 </TabItem>
 
+<TabItem value="Python" label="Python">
+<pre><code>
+
+```python
+# Voucher creation process
+import requests
+import json
+from os import environ
+from eth_utils import function_signature_to_4byte_selector
+from eth_abi import decode, encode
+
+rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
+
+def emit_voucher(function_signature, destination, types, values):
+    selector = function_signature_to_4byte_selector(function_signature)    
+    encoded_params = encode(types, values)
+    payload = "0x" + (selector + encoded_params).hex()
+    response = requests.post(rollup_server + "/voucher", json={"payload": payload, "destination": destination, "value": '0x' + encode(["uint256"], [0]).hex()})
+    if response.status_code == 200 or response.status_code == 201:
+        logger.info(f"Voucher emitted successfully with data: {payload}")
+    else:
+        logger.error(f"Failed to emit Voucher with data: {payload}. Status code: {response.status_code}")
+
+
+emit_voucher("mint(address)", "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", ["address"], [data["metadata"]["msg_sender"]])
+```
+
+</code></pre>
+</TabItem>
 </Tabs>
 
 :::note create a voucher
