@@ -2,30 +2,38 @@
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1
-    title: Smart Contracts for Cartesi Rollups
+  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/consensus
+    title: Consensus Smart Contracts
 ---
 
-The Cartesi Rollups framework consists of components on two layers: the base layer (the foundational blockchain where an application contract is deployed, such as Ethereum) and the execution layer (the Cartesi off-chain layer where the application runs its backend logic).
+The consensus mechanism in Cartesi Rollups is responsible for validating and accepting claims submitted by validators. These contracts ensure the integrity of the rollup by validating outputs Merkle roots.
 
-The frontend interacts with base layer smart contracts to send inputs to the backend, deposit assets, and process outputs.
+## Consensus Contracts
 
-To interact with an Ethereum-compatible blockchain, the application frontend must connect to a blockchain node using Ethereum's JSON-RPC API. 
+The framework supports different consensus mechanisms:
 
-Clients can interact with Ethereum-compatible nodes using the JSON-RPC API in two ways:
+- **[Authority](./authority/authority.md)**: Single-owner consensus controlled by one address
+- **[Quorum](./quorum/quorum.md)**: Multi-validator consensus requiring majority approval
 
-- **Querying state (read operations)** — The state can be queried by calling functions that neither alter the blockchain state nor incur gas fees.
+## Core Interfaces
 
-- **Changing state (write operations)** — The state is changed by submitting a transaction that incurs gas fees. The transaction must be cryptographically signed by an Ethereum account with sufficient funds in its wallet.
+- **[IConsensus](./iconsensus.md)**: Main interface defining the consensus contract behavior
+- **[IOutputsMerkleRootValidator](./ioutputsmerklerootvalidator.md)**: Interface for validating outputs Merkle roots
+- **[AbstractConsensus](./abstractconsensus.md)**: Abstract implementation providing common consensus functionality
 
-## Cartesi Rollups Smart Contracts
+## Consensus Mechanism
 
-- [`InputBox`](../input-box.md): This contract receives inputs from users who want to interact with the off-chain layer. All inputs to your application are processed through this contract. 
+A claim consists of:
 
-- [`Application`](../application.md): An `Application` contract is instantiated for each dApp (i.e., each dApp has its own application address). With this address, an application can hold ownership of digital assets on the base layer, such as Ether, ERC-20 tokens, and NFTs.
+- **Application Contract Address**: The address of the dApp being validated
+- **Last Processed Block Number**: The block number up to which inputs have been processed
+- **Outputs Merkle Root**: The root hash of the Merkle tree containing all outputs produced by the application
 
-- [`ApplicationFactory`](../application-factory.md): The `ApplicationFactory` contract enables anyone to deploy [`Application`](../application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they can verify that the bytecode has not been maliciously altered.
+The consensus contract validates that:
+- The block number is at the end of an epoch (modulo epoch length equals epoch length - 1)
+- The block number is in the past (not future)
+- No duplicate claim has been submitted for the same application and epoch
 
-- Portals: These contracts are used to safely transfer assets from the base layer to the execution environment of your application. Currently, Portal contracts are available for the following types of assets: [Ether (ETH)](../portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](../portals/ERC721Portal.md), [ERC-1155 single transfer](../portals/ERC1155SinglePortal.md), and [ERC-1155 batch token transfers](../portals/ERC1155BatchPortal.md).
+Once a claim is accepted, the outputs Merkle root becomes valid and can be used to validate individual outputs in the application contract.
 
 
