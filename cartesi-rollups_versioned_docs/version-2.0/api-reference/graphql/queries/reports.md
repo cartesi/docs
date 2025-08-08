@@ -11,17 +11,29 @@ Reports contain application logs or diagnostic information and cannot be validat
 Retrieve a specific report based on its index and associated input index.
 
 ```graphql
-query report($reportIndex: Int!, $inputIndex: Int!) {
-  report(reportIndex: $reportIndex, inputIndex: $inputIndex) {
+query report($reportIndex: Int!) {
+  report(reportIndex: $reportIndex) {
     index
     input {
+      id
       index
       status
-      timestamp
       msgSender
+      blockTimestamp
       blockNumber
+      payload
+      inputBoxIndex
+      prevRandao
+      application {
+        address
+        name
+      }
     }
     payload
+    application {
+      address
+      name
+    }
   }
 }
 ```
@@ -31,7 +43,6 @@ query report($reportIndex: Int!, $inputIndex: Int!) {
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | `reportIndex` | [`Int!`](../../scalars/int) | Index of the report to retrieve. |
-| `inputIndex` | [`Int!`](../../scalars/int) | Index of the input associated with the report. |
 
 
 ### Response Type
@@ -49,14 +60,31 @@ query reports {
       node {
         index
         input {
+          id
           index
           status
-          timestamp
           msgSender
+          blockTimestamp
           blockNumber
+          payload
+          inputBoxIndex
+          prevRandao
+          application {
+            address
+            name
+          }
         }
         payload
+        application {
+          address
+          name
+        }
       }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
 }
@@ -81,15 +109,17 @@ query reportsByInput($inputIndex: Int!) {
       edges {
         node {
           index
-          input {
-            index
-            status
-            timestamp
-            msgSender
-            blockNumber
-          }
           payload
+          application {
+            address
+            name
+          }
         }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
@@ -108,18 +138,32 @@ query reportsByInput($inputIndex: Int!) {
 
 ## Examples
 
- 1. Fetching a specific report:
+1. Fetching a specific report:
 
   ```graphql
   query {
-    report(reportIndex: 1, inputIndex: 5) {
+    report(reportIndex: 1) {
       index
       input {
+        id
         index
         status
-        timestamp
+        msgSender
+        blockTimestamp
+        blockNumber
+        payload
+        inputBoxIndex
+        prevRandao
+        application {
+          address
+          name
+        }
       }
       payload
+      application {
+        address
+        name
+      }
     }
   }
   ```
@@ -133,11 +177,25 @@ query reportsByInput($inputIndex: Int!) {
         node {
           index
           input {
+            id
             index
             status
-            timestamp
+            msgSender
+            blockTimestamp
+            blockNumber
+            payload
+            inputBoxIndex
+            prevRandao
+            application {
+              address
+              name
+            }
           }
           payload
+          application {
+            address
+            name
+          }
         }
         cursor
       }
@@ -158,10 +216,25 @@ query reportsByInput($inputIndex: Int!) {
         node {
           index
           input {
+            id
             index
             status
+            msgSender
+            blockTimestamp
+            blockNumber
+            payload
+            inputBoxIndex
+            prevRandao
+            application {
+              address
+              name
+            }
           }
           payload
+          application {
+            address
+            name
+          }
         }
         cursor
       }
@@ -183,7 +256,16 @@ query reportsByInput($inputIndex: Int!) {
           node {
             index
             payload
+            application {
+              address
+              name
+            }
           }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }
@@ -200,6 +282,10 @@ query reportsByInput($inputIndex: Int!) {
           node {
             index
             payload
+            application {
+              address
+              name
+            }
           }
           cursor
         }
@@ -207,6 +293,75 @@ query reportsByInput($inputIndex: Int!) {
           hasNextPage
           endCursor
         }
+      }
+    }
+  }
+  ```
+
+6. Listing reports with application information:
+
+  ```graphql
+  query {
+    reports(first: 10) {
+      edges {
+        node {
+          index
+          input {
+            id
+            index
+            status
+            msgSender
+            blockTimestamp
+            blockNumber
+            payload
+            inputBoxIndex
+            prevRandao
+            application {
+              address
+              name
+            }
+          }
+          payload
+          application {
+            address
+            name
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+  ```
+
+7. Fetching a specific report with application information:
+
+  ```graphql
+  query {
+    report(reportIndex: 1) {
+      index
+      input {
+        id
+        index
+        status
+        msgSender
+        blockTimestamp
+        blockNumber
+        payload
+        inputBoxIndex
+        prevRandao
+        application {
+          address
+          name
+        }
+      }
+      payload
+      application {
+        address
+        name
       }
     }
   }
