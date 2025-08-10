@@ -201,8 +201,10 @@ def emit_safe_erc20_transfer(token, to, amount):
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -210,7 +212,6 @@ import (
 )
 
 func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
-	// Define the ABI for the safeTransfer function
 	abiJSON := `[{
 		"type":"function",
 		"name":"safeTransfer",
@@ -221,27 +222,30 @@ func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
 		]
 	}]`
 	
-	// Parse the ABI
 	abiInterface, err := abi.JSON(strings.NewReader(abiJSON))
 	if err != nil {
 		return fmt.Errorf("failed to parse ABI: %w", err)
 	}
 	
-	// Pack the function call
 	payload, err := abiInterface.Pack("safeTransfer", token, to, amount)
 	if err != nil {
 		return fmt.Errorf("failed to pack ABI: %w", err)
 	}
 	
-	// Create the DELEGATECALL voucher
 	voucher := map[string]interface{}{
-		"destination": "0xfafafafafafafafafafafafafafafafafafafafa", // contract address containing the logic
+		"destination": "0xfafafafafafafafafafafafafafafafafafafafa",
 		"payload":     common.Bytes2Hex(payload),
 	}
 	
-	// Send the voucher to the rollup server
-	// Note: In a real implementation, you would use the rollmelette.Env interface
-	// env.DelegateCallVoucher(common.HexToAddress("0xfafafafafafafafafafafafafafafafafafafafa"), payload)
+	voucherJSON, err := json.Marshal(voucher)
+	if err != nil {
+		return fmt.Errorf("failed to marshal voucher: %w", err)
+	}
+	
+	_, err = http.Post(rollupServer+"/delegate-call-voucher", "application/json", bytes.NewBuffer(voucherJSON))
+	if err != nil {
+		return fmt.Errorf("failed to send voucher: %w", err)
+	}
 	
 	return nil
 }
