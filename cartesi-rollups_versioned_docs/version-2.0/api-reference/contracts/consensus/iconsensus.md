@@ -24,9 +24,52 @@ The acceptance criteria for claims may depend on the type of consensus, and is n
 - Submitted and not proven wrong after some period of time or
 - Submitted and proven correct through an on-chain tournament
 
+## Functions
+
+### `submitClaim()`
+
+```solidity
+function submitClaim(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 outputsMerkleRoot
+) external
+```
+
+Submit a claim to the consensus.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `appContract` | `address` | The application contract address |
+| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
+| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+
+**Events:**
+- `ClaimSubmitted`: Must be fired
+- `ClaimAccepted`: MAY be fired, if the acceptance criteria is met
+
+### `getEpochLength()`
+
+```solidity
+function getEpochLength() external view returns (uint256)
+```
+
+Get the epoch length, in number of base layer blocks.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `uint256` | The epoch length |
+
+**Note:** The epoch number of a block is defined as the integer division of the block number by the epoch length.
+
 ## Events
 
-### `ClaimSubmitted`
+### `ClaimSubmitted()`
+
 ```solidity
 event ClaimSubmitted(
     address indexed submitter,
@@ -38,13 +81,17 @@ event ClaimSubmitted(
 
 Must trigger when a claim is submitted.
 
-**Parameters:**
-- `submitter` (address): The submitter address
-- `appContract` (address): The application contract address
-- `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `outputsMerkleRoot` (bytes32): The outputs Merkle root
+**Parameters**
 
-### `ClaimAccepted`
+| Name | Type | Description |
+|------|------|-------------|
+| `submitter` | `address` | The submitter address |
+| `appContract` | `address` | The application contract address |
+| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
+| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+
+### `ClaimAccepted()`
+
 ```solidity
 event ClaimAccepted(
     address indexed appContract,
@@ -55,81 +102,62 @@ event ClaimAccepted(
 
 Must trigger when a claim is accepted.
 
-**Parameters:**
-- `appContract` (address): The application contract address
-- `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `outputsMerkleRoot` (bytes32): The outputs Merkle root
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `appContract` | `address` | The application contract address |
+| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
+| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
 
 **Note:** For each application and lastProcessedBlockNumber, there can be at most one accepted claim.
 
 ## Errors
 
-### `NotEpochFinalBlock`
+### `NotEpochFinalBlock()`
+
 ```solidity
 error NotEpochFinalBlock(uint256 lastProcessedBlockNumber, uint256 epochLength)
 ```
 
 The claim contains the number of a block that is not at the end of an epoch (its modulo epoch length is not epoch length - 1).
 
-**Parameters:**
-- `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `epochLength` (uint256): The epoch length
+**Parameters**
 
-### `NotPastBlock`
+| Name | Type | Description |
+|------|------|-------------|
+| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
+| `epochLength` | `uint256` | The epoch length |
+
+### `NotPastBlock()`
+
 ```solidity
 error NotPastBlock(uint256 lastProcessedBlockNumber, uint256 currentBlockNumber)
 ```
 
 The claim contains the number of a block in the future (it is greater or equal to the current block number).
 
-**Parameters:**
-- `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `currentBlockNumber` (uint256): The number of the current block
+**Parameters**
 
-### `NotFirstClaim`
+| Name | Type | Description |
+|------|------|-------------|
+| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
+| `currentBlockNumber` | `uint256` | The number of the current block |
+
+### `NotFirstClaim()`
+
 ```solidity
 error NotFirstClaim(address appContract, uint256 lastProcessedBlockNumber)
 ```
 
 A claim for that application and epoch was already submitted by the validator.
 
-**Parameters:**
-- `appContract` (address): The application contract address
-- `lastProcessedBlockNumber` (uint256): The number of the last processed block
+**Parameters**
 
-## Functions
-
-### `submitClaim`
-```solidity
-function submitClaim(
-    address appContract,
-    uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
-) external
-```
-
-Submit a claim to the consensus.
-
-**Parameters:**
-- `appContract` (address): The application contract address
-- `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `outputsMerkleRoot` (bytes32): The outputs Merkle root
-
-**Events:**
-- `ClaimSubmitted`: Must be fired
-- `ClaimAccepted`: MAY be fired, if the acceptance criteria is met
-
-### `getEpochLength`
-```solidity
-function getEpochLength() external view returns (uint256)
-```
-
-Get the epoch length, in number of base layer blocks.
-
-**Returns:**
-- (uint256): The epoch length
-
-**Note:** The epoch number of a block is defined as the integer division of the block number by the epoch length.
+| Name | Type | Description |
+|------|------|-------------|
+| `appContract` | `address` | The application contract address |
+| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
 
 ## Related Contracts
 

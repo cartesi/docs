@@ -43,8 +43,8 @@
                             "items": [
                                 "api-reference/contracts/consensus/overview",
                                 "api-reference/contracts/consensus/iconsensus",
-                                "api-reference/contracts/consensus/ioutputsmerklerootvalidator",
-                                "api-reference/contracts/consensus/abstractconsensus",
+                                "api-reference/contracts/consensus/ioutputs-merkle-root-validator",
+                                "api-reference/contracts/consensus/abstract-consensus",
                                 {
                                     "type": "category",
                                     "label": "Authority",
