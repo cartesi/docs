@@ -18,16 +18,16 @@ The framework supports different consensus mechanisms:
 ## Core Interfaces
 
 - **[IConsensus](./iconsensus.md)**: Main interface defining the consensus contract behavior
-- **[IOutputsMerkleRootValidator](./ioutputsmerklerootvalidator.md)**: Interface for validating outputs Merkle roots
-- **[AbstractConsensus](./abstractconsensus.md)**: Abstract implementation providing common consensus functionality
+- **[IOutputsMerkleRootValidator](./ioutputs-merkle-root-validator.md)**: Interface for validating outputs Merkle roots
+- **[AbstractConsensus](./abstract-consensus.md)**: Abstract implementation providing common consensus functionality
 
 ## Consensus Mechanism
 
 A claim consists of:
 
-- **Application Contract Address**: The address of the dApp being validated
-- **Last Processed Block Number**: The block number up to which inputs have been processed
-- **Outputs Merkle Root**: The root hash of the Merkle tree containing all outputs produced by the application
+- Application Contract Address: The address of the dApp being validated
+- Last Processed Block Number: The block number up to which inputs have been processed
+- Outputs Merkle Root: The root hash of the Merkle tree containing all outputs produced by the application
 
 The consensus contract validates that:
 - The block number is at the end of an epoch (modulo epoch length equals epoch length - 1)
