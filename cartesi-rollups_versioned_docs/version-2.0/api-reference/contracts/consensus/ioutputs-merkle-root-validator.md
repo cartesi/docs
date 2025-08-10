@@ -31,4 +31,4 @@ Check whether an outputs Merkle root is valid.
 ## Related Contracts
 
 - [`IConsensus`](./iconsensus.md): Interface that inherits from this interface
-- [`AbstractConsensus`](./abstractconsensus.md): Abstract implementation that implements this interface 
+- [`AbstractConsensus`](./abstract-consensus.md): Abstract implementation that implements this interface 
