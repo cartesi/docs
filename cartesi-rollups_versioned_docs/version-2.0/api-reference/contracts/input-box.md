@@ -42,7 +42,7 @@ function addInput(address appContract, bytes calldata payload) external override
 
 Send an input to an application.
 
-*MUST fire an InputAdded event.*
+*Must fire an InputAdded event.*
 
 **Parameters**
 

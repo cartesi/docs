@@ -1,5 +1,5 @@
 ---
-id: abstract-consensus
+id: abstractconsensus
 title: AbstractConsensus
 resources:
   - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/consensus/AbstractConsensus.sol
