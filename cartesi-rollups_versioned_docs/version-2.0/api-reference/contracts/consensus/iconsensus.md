@@ -161,5 +161,5 @@ A claim for that application and epoch was already submitted by the validator.
 
 ## Related Contracts
 
-- [`AbstractConsensus`](./abstractconsensus.md): Abstract implementation of this interface
-- [`IOutputsMerkleRootValidator`](./ioutputsmerklerootvalidator.md): Interface for validating outputs Merkle roots 
+- [`AbstractConsensus`](./abstract-consensus.md): Abstract implementation of this interface
+- [`IOutputsMerkleRootValidator`](./ioutputs-merkle-root-validator.md): Interface for validating outputs Merkle roots 
