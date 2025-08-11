@@ -45,7 +45,7 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
 1. **Download the Cartesi Rollups Node docker compose file in your project root:**
 
    ```shell
-   curl -L https://raw.githubusercontent.com/henriquemarlon/cartesi-node-starter/refs/heads/main/compose.node-local.yaml -o node-local.yaml
+   curl -L https://raw.githubusercontent.com/cartesi/docs/refs/heads/docs/deployment/cartesi-rollups_versioned_docs/version-2.0/deployment/src/compose.local.yaml -o node-local.yaml
    ```
 
 2. **Create a secret for private key storage:**
