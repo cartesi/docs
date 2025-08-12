@@ -213,7 +213,7 @@ An **Inspect** request involves making an external HTTP API call to the rollups 
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
-To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application name or address>` with a body containing the request payload. For example:
+To perform an Inspect call, make an HTTP POST request to `<address of the node>/inspect/<application name or address>` with a body containing the request payload. For example:
 
 ```shell
 curl -X POST http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9 \
