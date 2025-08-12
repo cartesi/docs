@@ -30,7 +30,7 @@ This command creates a `new-app` directory with essential files for your applica
 
 - `package.json`: A list of dependencies required for your application along with the name, version and description of your application.
 
-Cartesi CLI has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
+Cartesi CLI has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `java`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
 
 :::note Libraries for simplifying development
 We have high-level framework and alternative templates that simplify development and enhances input management, providing a smoother and more efficient experience.
