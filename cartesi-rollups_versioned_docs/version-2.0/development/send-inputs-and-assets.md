@@ -1,6 +1,6 @@
 ---
-id: send-inputs
-title: Send inputs
+id: send-inputs-and-assets
+title: Sending inputs and assets
 resources:
   - url: https://github.com/prototyp3-dev/frontend-web-cartesi
     title: React.js + Typescript template
@@ -159,7 +159,7 @@ You can obtain the relevant addresses by running `cartesi address-book`.
 
 #### 2. Send inputs with Cartesi CLI
 
-Cartesi CLI provides a convenient way of sending inputs to an application.
+Cartesi CLI provides a convenient way of sending inputs to an application. Inputs to be sent to application could in either `Hex`, `String encoding` or `ABI encoding` format.
 
 To send an input, you could use the interactive or the direct option, for the interactive option run:
 
@@ -171,31 +171,22 @@ Response:
 
 ```shell
 $ cartesi send
-? Select the type of input to send (Use arrow keys)
-❯ generic
-  erc20
-  erc721
-  ether
+? Input (Use arrow keys)
+❯ String encoding
+  Hex string encoding
+  ABI encoding
 ```
 
-There are five types of inputs using a sub-command: `erc20`, `erc721`, `ether`, `generic`.
-
-Unlike the asset-type sub-commands (Ether, ERC20, and ERC721), the generic input command allows you to send inputs with any payload format (hex, string, and ABI).
+From the response menu you proceed to select the input format then enter the input. While for the more direct option run:
 
 ```shell
-$ cartesi send generic
-✔ Select the type of input to send generic
-✔ Wallet Mnemonic
-✔ Mnemonic test test test test test test test test test test test junk
-✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9993.999194554374748191 ETH
-✔ Application address 0xb483897a2790a5D1a1C5413690bC5933f269b3A9
-✔ Input String encoding
-✔ Input (as string) 32.9
-✔ Input sent: 0x048a25e6341234b8102f7676b3a8defb947559125197dbd45cfa3afa451a93fd
+cartesi send --encoding <encoding> <Input> 
 ```
 
-:::note Interacting with Sample application?
-Replacing the above dapp address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), would emit a notice, voucher and report which can all be quarried using the JSON RPC or GraphQl server.
+For the above command, you replace `<encoding>` with your input format choice (either `hex`, `string` or `abi`), then replace `<Input>` with your actual input text.
+
+:::note Sending Input from the Cartesi CLI?
+Ensure you're calling the send command from the rood directory of your project else, you would need to provide the project RPC_URL and application address to interact with the application from any random terminal.
 :::
 
 #### 3. Send inputs via a custom web app
@@ -249,3 +240,25 @@ for (let i in result.reports) {
 :::note Interacting with Sample application?
 Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and can also be quarried using the JSON RPC or GraphQl server.
 :::
+
+## Depositing Assets
+
+The Cartesi CLI also enables sending/depositing assets to your application. There are currently 3 types of supported assets: `Ether`, `erc20` and `erc721`.
+
+To deposit assets, run:
+
+```shell
+cartesi deposit
+```
+
+Response:
+
+```shell
+? Input (Use arrow keys)
+❯ String encoding
+  Hex string encoding
+  ABI encoding
+Convert UTF-8 string to bytes
+```
+
+The `cartesi deposit` command by default uses the default anvil account, and also the default test erc20 and erc721 contract to interact with your application, but this can all be modified to fit your purpose better.
