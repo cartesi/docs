@@ -6,98 +6,86 @@ resources:
     title: CartesiScan
 ---
 
-Running an application locally mimics the process of deploying an application to production on a testnet or mainnet environment. When working locally, your application’s smart contracts are deployed to an Anvil network, which acts as a local Ethereum environment. The main difference is that your application node runs on your own machine using Docker, rather than on a remote server. Running an application involves two main phases: first, you build your application, and then you deploy it to your local development network (devnet). This process allows you to test and debug your application in an environment that closely resembles the real blockchain, making it easier to catch issues early and ensure a smooth deployment to production later.
+Running your application creates a docker container containing all required services, and exposes your application node on port `6751`, then an anvil network specific to your application on port `6751/anvil`. The node also logs all outputs received by your backend.
 
-## Building the application
+Here are the prerequisites to run the node:
 
-“Building” in this context compiles your application into RISC-V architecture, this architecture enables computation done by your application to be reproducible and verifiable. While "Running" encompasses the process of publishing your application to your local node running on docker and also deploying the necessary contracts for your application to a local Anvil devnet.
+- Docker Engine must be active.
+- Cartesi machine snapshot successfully built with `cartesi build`.
 
-With the Docker engine running, CD into your application and build by running:
-
-```shell
-cartesi build
-```
-
-The successful execution of this step will log this in your terminal:
+To start the node, run:
 
 ```shell
-
-         .
-        / \
-      /    \
-\---/---\  /----\
- \       X       \
-  \----/  \---/---\
-       \    / CARTESI
-        \ /   MACHINE
-         '
-
-[INFO  rollup_http_server] starting http dispatcher service...
-[INFO  rollup_http_server::http_service] starting http dispatcher http service!
-[INFO  actix_server::builder] starting 1 workers
-[INFO  actix_server::server] Actix runtime found; starting in Actix runtime
-[INFO  rollup_http_server::dapp_process] starting dapp: dapp
-Sending finish
-
-Manual yield rx-accepted (1) (0x000020 data)
-Cycles: 69709199
-69709199: 9e0420c0fda1a5dc9256b3f9783b09f207e5222a88429e91629cc2e495282b35
-Storing machine: please wait
+cartesi run
 ```
 
-### Memory
+Response:
 
-To change the default memory size for the Cartesi Machine, you can personalize it by adding a specific label in your Dockerfile.
-
-The line below lets you define the memory size in megabytes (MB):
-
-```dockerfile
-LABEL io.cartesi.rollups.ram_size=128Mi
+```shell
+[+] Pulling 4/0
+ ✔ proxy Skipped - Image is already present locally                                       0.0s 
+ ✔ database Skipped - Image is already present locally                                    0.0s 
+ ✔ rollups-node Skipped - Image is already present locally                                0.0s 
+ ✔ anvil Skipped - Image is already present locally                                       0.0s 
+✔ demo-application starting at http://127.0.0.1:6751
+✔ anvil service ready at http://127.0.0.1:6751/anvil
+✔ rpc service ready at http://127.0.0.1:6751/rpc
+✔ inspect service ready at http://127.0.0.1:6751/inspect/demo-application
+✔ demo-application machine hash is 0xa3ca2e40420f3c2424ca95549b6c16fd9b11c27d76b8ef9ae9bf78cde36829fc
+✔ demo-application contract deployed at 0xa083af219355288722234c47d4c8469ca9af6605
+(l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
-:::note environment variables
-You can create a `.cartesi.env` in the project's root and override any variable controlling the rollups-node.
+This command runs your backend compiled to RISC-V and packages it as a Cartesi machine. It is therefore important that after every code update, the application needs to be rebuilt then the run command executed again, the Cartesi CLI makes this process very easy and all you need do is hit the `<b>` button on your keyboard to trigger a rebuild and run command.
+
+:::troubleshoot troubleshooting common errors
+
+#### Error: Depth Too High
+
+```shell
+Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
+2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
+2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
+```
+
+This indicates that the node is reading blocks too far behind the current blockchain state.
+
+#### Solution
+
+Create or modify a `.cartesi.env` file in your project directory and set:
+
+```shell
+TX_DEFAULT_CONFIRMATIONS=1
+```
+
+This adjustment should align the node's block reading with the blockchain's current state.
+
 :::
 
-## Deploying the application to devnet
+### Overview of Node Services
 
-Running the deployment command compiles your application and publishes it to the node running in the devnet environment. It also deploys the required authority and application contracts to the local Anvil network.
-
-You can deploy multiple applications to this environment. For each application, you can either create a new authority contract or link it to an existing one.
-
-Prerequisites for Deployment
-Before deploying your application, ensure the following:
-
-- Docker Engine is active.
-- The Devnet environment is running.
-- A Cartesi machine snapshot has been successfully built using `cartesi build`.
-
-Once these prerequisites are met, proceed to deploy your application by running:
+The `cartesi run` command activates several services essential for node operation: some of these services are not activated by default and can be activated by adding them to the `--service` flag when starting your application. The below command starts your application with all available services:
 
 ```shell
-cartesi deploy
+cartesi run --services explorer,graphql,bundler,paymaster,passkey
 ```
 
-This command compiles your backend to RISC-V, packages it as a Cartesi machine, then publishes it to the node running on the devnet.
+Each of these services runs independently and can be activated or deactivated at will by simply including or removing them from the list of services while running your application. Below is a breakdown of these services and their default URL's.
 
-During deployment, you'll have to specify:
+- **Anvil Chain**: Runs a local blockchain available at `http://localhost:6751/anvil`.
 
-- Private key or Mnemonic to fund the deployment.
-- The authority owner address.
-- The application owner address.
-- An application name (making it easier to identify your application instead of relying on the contract address).
+- **GraphQL Playground**: An interactive IDE at `http://localhost:6751/graphql` for exploring the GraphQL server.
 
-Once the deployment is complete, you should have logs similar to the following:
+- **Explorer**: Monitors Rollups application activity and manages transactions via `http://localhost:6751/explorer`.
 
-```shell
-✔ Cartesi machine template hash 0x9e0420c0fda1a5dc9256b3f9783b09f207e5222a88429e91629cc2e495282b35
-✔ Wallet Mnemonic
-✔ Mnemonic test test test test test test test test test test test junk
-✔ Account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 9994.000195973381758124 ETH
-✔ Authority Owner 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-✔ Application Owner 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-✔ Application 0x1Db6DdECF18095847f7099cfAc43A2671326d21c
-✔ Machine snapshot /var/lib/cartesi-rollups-node/snapshots/0x9e0420c0fda1a5dc9256b3f9783b09f207e5222a88429e91629cc2e495282b35/
-✔ Application Name counter
-✔ Registration counter
-```
+- **Inspect**: A diagnostic tool accessible at `http://localhost:6751/inspect/<app_name>` to inspect the node’s state.
+
+- **Bundler**: A server accessible at `http://localhost:6751/bundler/rpc` to enable account abstraction by providing an alternative mempool for receiving and bundling user operations.
+
+- **Paymaster**: An account abstraction implementation that works hand in hand with the bundler to sponsor gas fees for transactions handled by the bundler, available at `http://localhost:6751/paymaster`.
+
+- **Passkey**: Runs a local passkey server, that enables account generation and interaction with application without a traditional wallet, available at `http://localhost:6751/passkey`
+
+:::note Testing tools
+[NoNodo](https://github.com/Calindra/nonodo) is a Cartesi Rollups testing tool that works with host machine applications, eliminating the need for Docker or RISC-V compilation.
+:::

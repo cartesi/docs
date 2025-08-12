@@ -56,7 +56,7 @@ let finish = { status: "accept" };
 
 Cartesi dApps are implemented as infinite loops that manage their transaction cycles through HTTP POST requests to the `/finish` endpoint to ensure flexibility across different programming languages and stacks. You can learn more about this abstraction [here](./api-reference/backend/introduction.md).
 
-In the Cartesi Rollup framework, all inputs sent to the base layer trigger an "advance_state" [request](/development/send-inputs.md#initiate-an-advance-request), which alters the state of the Cartesi Machine and consequently the Rollup. Since inputs originate on-chain, they are hex-encoded following the EVM message standard.
+In the Cartesi Rollup framework, all inputs sent to the base layer trigger an "advance_state" [request](/development/send-inputs-and-assets.md#initiate-an-advance-request), which alters the state of the Cartesi Machine and consequently the Rollup. Since inputs originate on-chain, they are hex-encoded following the EVM message standard.
 
 Notices can be understood as "provable" events; as such, they can be sent to an EVM chain to be verified, so they are also hex-encoded.
 
