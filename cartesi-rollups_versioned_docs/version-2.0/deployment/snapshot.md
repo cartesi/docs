@@ -32,13 +32,12 @@ This process ensures that the application behaves exactly as intended and hasn't
 
 Before building snapshots, ensure you have:
 
-- Cartesi CLI: An easy-to-use tool for developing and deploying your dApps.
+- A GitHub repository with your Cartesi application
+- [Cartesi CLI](https://github.com/cartesi/cli) installed
+- [Docker](https://docker.com/) for container builds
+- [Node.js](https://nodejs.org/) for dependencies
 
-- Docker Desktop 4.x: The required tool to distribute the Cartesi Rollups framework and its dependencies.
 
-- Node and NPM: A JavaScript runtime needed to install Cartesi CLI and run various scripts. We recommend installing the LTS version to ensure best compatibility.
-
-For more details about the installation process for each of these tools, please refer to the [this section](../development/installation.md).
 
 ## GitHub Actions Workflow
 
@@ -152,25 +151,45 @@ jobs:
 ### Triggers
 
 The workflow is triggered by:
-
 - **Tag pushes**: Any tag push triggers a build
 - **Pull requests**: Builds on PRs to main branch
 - **Manual dispatch**: Manual workflow execution
 
 ### Build Job
 
-The build job sets up the environment with Docker Buildx, QEMU, and Node.js, installs the Cartesi CLI globally, and uses `cartesi build` to create the Cartesi machine snapshot. It then compresses the snapshot as `snapshot.tar.gz`, generates a SHA256 checksum for verification, and uploads the artifacts for the release job.
+1. **Environment Setup**:
+   - Docker Buildx for multi-platform builds
+   - QEMU for cross-architecture emulation
+   - Node.js for application dependencies
+
+2. **Dependencies Installation**:
+   - Sets up Cartesi CLI globally
+
+3. **Snapshot Building**:
+   - Uses `cartesi build` to create the Cartesi machine
+   - Generates the snapshot in `.cartesi/`
+
+4. **Artifact Creation**:
+   - Compresses the snapshot as `snapshot.tar.gz`
+   - Generates SHA256 checksum for verification
+   - Uploads artifacts for the release job
 
 ### Release Job
 
-The release job downloads the build artifacts, prepares the release assets, and creates a GitHub release with the tag. It attaches the snapshot files and checksums, marking the release as prerelease if the tag contains `-rc`.
+1. **Artifact Processing**:
+   - Downloads build artifacts
+   - Prepares release assets
+
+2. **GitHub Release**:
+   - Creates a GitHub release with the tag
+   - Attaches snapshot files and checksums
+   - Marks as prerelease if tag contains `-rc`
 
 ## Release Management
 
 ### Creating Releases
 
 1. **Tag your release**:
-
    ```shell
    git tag v1.0.0
    git push origin v1.0.0
@@ -179,6 +198,5 @@ The release job downloads the build artifacts, prepares the release assets, and 
 2. **Prereleases**: Use tags like `v1.0.0-rc` for release candidates
 
 3. **Release artifacts** will include:
-
    - `snapshot.tar.gz` - Compressed snapshot
    - `snapshot.tar.gz.sha256` - Checksum file

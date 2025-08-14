@@ -19,8 +19,7 @@ While this setup works with mainnet and testnet environments, it's designed excl
 
 Before starting, ensure you have the following installed:
 - Docker and Docker Compose
-- Cartesi CLI
-- A private key for the node
+- [Cartesi CLI](https://www.google.com/search?q=cartesi+cli&sourceid=chrome&ie=UTF-8)
 
 ## Configuration
 
@@ -35,17 +34,21 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
 ```
 
 **Important notes:**
-- `BLOCKCHAIN_ID`: Replace `<blockchain-id>` with your blockchain network ID (e.g., `84532` for Base Sepolia)
-- `BLOCKCHAIN_WS_ENDPOINT` and `BLOCKCHAIN_HTTP_ENDPOINT`: Replace `<ws-endpoint>` and `<http-endpoint>` with your blockchain node endpoints (e.g., Alchemy, Infura, and etc)
-- `PRIVATE_KEY_FILE`: Points to the private key file created in [**step 2**](#setting-up-the-local-node)
-- `AUTH_KIND`: Set to `"private_key_file"` for local development
+
+| Variable | Description |
+|----------|-------------|
+| `BLOCKCHAIN_ID` | Replace `<blockchain-id>` with your blockchain network ID |
+| `BLOCKCHAIN_WS_ENDPOINT` | Replace `<ws-endpoint>` with your WebSocket endpoint |
+| `BLOCKCHAIN_HTTP_ENDPOINT` | Replace `<http-endpoint>` with your HTTP endpoint |
+| `PRIVATE_KEY_FILE` | Points to the private key file created in [**step 2**](#setting-up-the-local-node) |
+| `AUTH_KIND` | Set to `"private_key_file"` for local development |
 
 ## Setting up the local node
 
 1. **Download the Cartesi Rollups Node docker compose file in your project root:**
 
    ```shell
-   curl -L https://raw.githubusercontent.com/cartesi/docs/refs/heads/docs/deployment/cartesi-rollups_versioned_docs/version-2.0/deployment/src/compose.local.yaml -o node-local.yaml
+   curl -L https://raw.githubusercontent.com/cartesi/docs/refs/heads/docs/deployment/cartesi-rollups_versioned_docs/version-2.0/deployment/src/compose.local.yaml -o compose.local.yaml
    ```
 
 2. **Create a secret for private key storage:**
@@ -73,7 +76,7 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
 
    This starts the local node using the configuration from your `.env` file.
 
-5. **Deploy the application through the node:**
+5. **Deploy and register the application to the node:**
 
    ```shell
    docker compose --project-name cartesi-rollups-node \
