@@ -3,12 +3,12 @@ id: self-hosted
 title: Self-hosted deployment
 ---
 
-This guide explains how to run a Cartesi Rollups node locally on your machine for development and testing purposes on **testnet** or **mainnet**.
+This guide explains how to run a Cartesi Rollups node locally on your machine for development and testing purposes on **testnet**.
 
 :::warning Production Warning
 **This self-hosted approach should NOT be used in *production*.** 
 
-While this setup works with mainnet and testnet environments, it's designed exclusively for development purposes. It lacks critical production requirements such as:
+While this setup works with testnet environments, it's designed exclusively for development purposes. It lacks critical production requirements such as:
 
 - Public snapshot verification
 - Proper security hardening
@@ -18,8 +18,12 @@ While this setup works with mainnet and testnet environments, it's designed excl
 ## Prerequisites
 
 Before starting, ensure you have the following installed:
-- Docker and Docker Compose
-- [Cartesi CLI](https://www.google.com/search?q=cartesi+cli&sourceid=chrome&ie=UTF-8)
+
+- Cartesi CLI: An easy-to-use tool for developing and deploying your dApps.
+
+- Docker Desktop 4.x: The required tool to distribute the Cartesi Rollups framework and its dependencies.
+
+For more details about the installation process for each of these tools, please refer to the [this section](../development/installation.md).
 
 ## Configuration
 
@@ -58,7 +62,9 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
    echo "YOUR_PRIVATE_KEY" > secrets/pk
    ```
 
-   Replace `YOUR_PRIVATE_KEY` with your actual private key.
+   :::danger Security
+   Ensure the `secrets/` directory is in a secure location and has restricted permissions, different from the project root to avoid leaking your private key.
+   :::
 
 3. **Build the application with the Cartesi CLI:**
 
@@ -66,12 +72,12 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
    cartesi build
    ```
 
-   This command compiles your application into RISC-V architecture and creates a Cartesi machine snapshot.
+   This command compiles your application into RISC-V architecture and creates a Cartesi machine snapshot locally.
 
 4. **Run the Cartesi Rollups Node with the application's initial snapshot attached:**
 
    ```shell
-   docker compose --env-file .env up -d
+   docker compose -f compose.local.yaml --env-file .env up -d
    ```
 
    This starts the local node using the configuration from your `.env` file.
@@ -87,13 +93,17 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
         --json
    ```
 
-   Replace `<app-name>` with your application name and `<salt>` with a unique identifier. You can generate a salt using:
+   Replace `<app-name>` with your application name and `<salt>` with a unique identifier. The salt must be unique for each deployment and cannot be repeated. You can generate a unique salt using:
+
    ```shell
    cast keccak256 "your-unique-string"
    ```
 
+   After this process, you'll have your application deployed and registered to the node.
+
 ## Accessing the node
 
-Once running, your local Cartesi Rollups node will be accessible through the standard APIs:
-- Inspect endpoint
-- JSON-RPC endpoint
+Once running, your local Cartesi Rollups Node will be accessible through the standard APIs:
+
+- Inspect endpoint: `http://localhost:10012`
+- JSON-RPC endpoint: `http://localhost:10011`
