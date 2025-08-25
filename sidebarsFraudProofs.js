@@ -7,8 +7,8 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Fundamental Concepts',
-      collapsed: true,
+      label: 'Fraud Proof Basics',
+      collapsed: false,
       items: [
         {
           type: 'doc',
@@ -35,7 +35,7 @@ module.exports = {
     {
       type: 'category',
       label: 'Permissionless Refereed Tournament (PRT)',
-      collapsed: true,
+      collapsed: false,
       items: [
         {
           type: 'doc',
@@ -57,7 +57,7 @@ module.exports = {
     {
       type: 'category',
       label: 'Honeypot Application',
-      collapsed: true,
+      collapsed: false,
       items: [
         {
           type: 'doc',
@@ -79,22 +79,22 @@ module.exports = {
     {
       type: 'category',
       label: 'References',
-      collapsed: true,
+      collapsed: false,
       items: [
         {
           type: 'doc',
           id: 'references/daveconsensus',
-          label: 'PRT-Rollups Consensus Contracts',
+          label: 'DaveConsensus',
         },
         {
           type: 'doc',
           id: 'references/tournament',
-          label: 'Tournament Core Contracts',
+          label: 'Tournament',
         },
         {
           type: 'doc',
           id: 'references/deployments',
-          label: 'Mainnet Deployments',
+          label: 'Deployments',
         },
         {
           type: 'link',

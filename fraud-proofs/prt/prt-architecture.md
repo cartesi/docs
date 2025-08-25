@@ -22,7 +22,7 @@ The `Application` contract defines the application on-chain, stores application 
 ### Portal Contracts
 A group of contracts that are used to deposit assets(Ether, ERC20, ERC721, ERC1155) into the rollups application. All portal contracts submit their inputs to the `InputBox` contract. Read more about the portal contracts [here](../../../cartesi-rollups/2.0/api-reference/contracts/portals/EtherPortal/).
 
-### PRT Rollups Consensus (DaveConsensus) Contract
+### DaveConsensus Contract
 This is the PRT Rollups Consensus contract that acts as an interface to the PRT core contracts in the dispute resolution system. It is the central smart contract that validates outputs from the Cartesi Machine. It manages epoch boundaries, handles epoch settlement, and initiates tournaments for dispute resolution.
 
 ![PRT-Rollups-Consensus-Contract](../images/prt-rollups-consensus.png)
@@ -57,7 +57,7 @@ In rollups mode, input processing follows this logic:
 5. If input exists, send CMIO response with advance state reason
 6. Execute RISC-V step
 
-This smart contract layer transition is performed by the Cartesi's [Solidity step emulator](https://github.com/cartesi/machine-solidity-step), an on-chain implementation of a RISC-V processor that maintains bit-by-bit consistency with the off-chain Cartesi Machine Emulator.
+The final RISC-V step transiton is performed by the Cartesi's [Solidity step emulator](https://github.com/cartesi/machine-solidity-step) , an on-chain implementation of a RISC-V processor that maintains bit-by-bit consistency with the off-chain Cartesi Machine Emulator.
 
 ## Off-chain Components
 The off-chain components(also referred to as layer 2 or 3) are primarily part of the Cartesi Rollups Node. For a logical separation, we will discuss the node and the Cartesi Machine separately.

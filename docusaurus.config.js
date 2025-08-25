@@ -190,6 +190,12 @@ const config = {
             position: "left",
           },
           {
+            label: "Fraud Proofs",
+            to: "/fraud-proofs",
+            activeBaseRegex: "^/fraud-proofs",
+            position: "left",
+          },
+          {
             type: "search",
             className: "navbar-search-custom",
             position: "right",
@@ -409,6 +415,18 @@ const config = {
         path: 'get-started',
         routeBasePath: 'get-started', 
         sidebarPath: require.resolve('./sidebarsGetStarted.js'),
+        editUrl: 'https://github.com/cartesi/docs/tree/develop',
+        showLastUpdateTime: true,
+        docItemComponent: "@theme/ApiItem",
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'fraud-proofs',
+        path: 'fraud-proofs',
+        routeBasePath: 'fraud-proofs', 
+        sidebarPath: require.resolve('./sidebarsFraudProofs.js'),
         editUrl: 'https://github.com/cartesi/docs/tree/develop',
         showLastUpdateTime: true,
         docItemComponent: "@theme/ApiItem",
