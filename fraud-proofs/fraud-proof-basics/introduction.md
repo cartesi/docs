@@ -4,17 +4,17 @@ This page provides a beginner-friendly introduction to fraud proof systems and t
 
 ## What is a Fraud Proof System?
 
-In [Cartesi rollups](../../../get-started/optimistic-rollups), users submit their input transactions to the base layer, the off-chain validator nodes process the inputs and submit _claims_ of the resulting state back to the blockchain. These claims are treated as correct by default - _optimistically_ - but they aren't considered final immediately rather, they remain open to be challenged for a certain period. In case of conflicting claims, a fraud-proof system kicks in.
+In [Cartesi rollups](../../../get-started/optimistic-rollups), users submit their input transactions to the base layer, the off-chain validator nodes process the inputs and submit claims back to the blockchain. These claims are treated as correct by default - _optimistically_ - but they don’t finalize immediately rather, they remain open to challenge for a certain period. In case of conflicting claims, a fraud-proof system kicks in.
 
-A **fraud-proof system** enables the blockchain to adjudicate disputes between conflicting claims of the rollup's state, and identify the valid claim, while requiring only minimal on-chain computation.
+A fraud-proof system is a mechanism that allows anyone observing the blockchain to challenge a claim submitted by an off-chain participant if they believe it was incorrectly computed. If the resulting state is invalid, the on-chain verifier contract can detect the inconsistency and eliminate the fraudulent claim, preserving the integrity of the rollup.
 
 Note that the base layer (_here Ethereum_) acts as the data provider of inputs and also the on-chain verifier to resolve the disputes. Because of this, Cartesi rollups inherit Ethereum’s security: as long as at least one honest participant monitors the rollup and submits a valid claim when needed, the system can’t be corrupted.
 
 
 
-![Fraud Proof](../images/fraud-proofs-general.png)
+![Fraud Proof](../images/fraud-proofs-general-3.png)
 
-Fraud proofs implemented by Cartesi are **interactive** in nature where the _proposer_ and the _challenger_ go through a series of rounds to find a single step where they both disagree. This step is then executed on the base layer which acts as source of truth. This scheme allows the entire rollup inherit the base layer security, with minimal computation done on-chain.
+Fraud proofs implemented by Cartesi are *interactive* in nature where the _proposer_ and the _challenger_ go through a series of rounds to find a single step where they both disagree. This step is then executed on the base layer which acts as source of truth. This scheme allows the entire rollup inherit the base layer security, with minimal computation done on-chain.
 
 The scope of this documentation deals with interactive fraud proofs only. Next, we dive into the commonly observed properties across fraud proof designs in optimistic rollups.
 
