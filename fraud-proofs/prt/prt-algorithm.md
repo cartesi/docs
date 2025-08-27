@@ -64,12 +64,6 @@ To maintain liveness, PRT includes timeout mechanisms:
 
 If a participant fails to respond in time during any match round, the match is automatically resolved in favor of the other participant (or eliminated if both time out). This ensures disputes do not stall indefinitely and keeps the protocol moving forward.    
 
-<video width="600" controls>
-  <source src="/videos/prt-video-explainer" type="video/mp4" />
-  Your browser does not support the video tag.
-</video>
-
-
 ## Flowchart
 The following flowchart illustrates the PRT algorithm in a simplified manner:
 
