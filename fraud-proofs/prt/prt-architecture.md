@@ -57,7 +57,7 @@ In rollups mode, input processing follows this logic:
 5. If input exists, send CMIO response with advance state reason
 6. Execute RISC-V step
 
-The final RISC-V step transiton is performed by the Cartesi's [Solidity step emulator](https://github.com/cartesi/machine-solidity-step) , an on-chain implementation of a RISC-V processor that maintains bit-by-bit consistency with the off-chain Cartesi Machine Emulator.
+This smart contract layer transition is performed by the Cartesi's [Solidity step emulator](https://github.com/cartesi/machine-solidity-step), an on-chain implementation of a RISC-V processor that maintains bit-by-bit consistency with the off-chain Cartesi Machine Emulator.
 
 ## Off-chain Components
 The off-chain components(also referred to as layer 2 or 3) are primarily part of the Cartesi Rollups Node. For a logical separation, we will discuss the node and the Cartesi Machine separately.

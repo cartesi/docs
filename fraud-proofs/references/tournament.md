@@ -2,7 +2,7 @@
 
 ## Tournament Base Contract
 ---
-### joinTournament() 
+### `joinTournament()`
 
 ```solidity
 function joinTournament(Tree.Node finalState, bytes32[] calldata proof, Tree.Node leftChild, Tree.Node rightChild) external tournamentOpen tournamentNotFinished
@@ -21,7 +21,7 @@ Join a tournament by submitting a final state commitment with Merkle proof. Crea
 | `leftChild` | `Tree.Node` | Left child of the commitment node |
 | `rightChild` | `Tree.Node` | Right child of the commitment node |
 
-### advanceMatch()
+### `advanceMatch()`
 
 ```solidity
 function advanceMatch(Match.Id calldata matchId, Tree.Node leftNode, Tree.Node rightNode, Tree.Node newLeftNode, Tree.Node newRightNode) external tournamentNotFinished
@@ -39,7 +39,7 @@ Advance a match by providing new intermediate nodes in the binary search process
 | `newLeftNode` | `Tree.Node` | New left node for next iteration |
 | `newRightNode` | `Tree.Node` | New right node for next iteration |
 
-### winMatchByTimeout()
+### `winMatchByTimeout()`
 
 ```solidity
 function winMatchByTimeout(Match.Id calldata matchId) external tournamentNotFinished
@@ -53,7 +53,7 @@ Win a match when the opponent has run out of time allowance.
 |------|------|-------------|
 | `matchId` | `Match.Id` | Identifier of the match to win by timeout |
 
-### eliminateMatchByTimeout()
+### `eliminateMatchByTimeout()`
 
 ```solidity
 function eliminateMatchByTimeout(Match.Id calldata matchId) external tournamentNotFinished
@@ -67,7 +67,7 @@ Eliminate a match when both participants have run out of time.
 |------|------|-------------|
 | `matchId` | `Match.Id` | Identifier of the match to eliminate |
 
-### isFinished()
+### `isFinished()`
 
 ```solidity
 function isFinished() public view returns (bool)
@@ -81,7 +81,7 @@ Check if the tournament has finished (has a winner or is eliminated).
 |------|------|-------------|
 | `finished` | `bool` | Whether the tournament is finished |
 
-### isClosed()
+### `isClosed()`
 
 ```solidity
 function isClosed() public view returns (bool)
@@ -96,8 +96,9 @@ Check if the tournament is closed to new participants.
 | `closed` | `bool` | Whether the tournament is closed |
 
 ## NonLeafTournament Contract Functions
+---
 
-### sealInnerMatchAndCreateInnerTournament()
+### `sealInnerMatchAndCreateInnerTournament()`
 
 ```solidity
 function sealInnerMatchAndCreateInnerTournament(Match.Id calldata matchId, Tree.Node leftLeaf, Tree.Node rightLeaf, Machine.Hash agreeHash, bytes32[] calldata agreeHashProof) external tournamentNotFinished
@@ -117,7 +118,7 @@ Seal an inner match and create a new inner tournament to resolve the dispute at 
 | `agreeHash` | `Machine.Hash` | Agreed upon machine state hash |
 | `agreeHashProof` | `bytes32[]` | Merkle proof for the agreed hash |
 
-### winInnerTournament()
+### `winInnerTournament()`
 
 ```solidity
 function winInnerTournament(NonRootTournament innerTournament) external tournamentNotFinished
@@ -131,7 +132,7 @@ Process the result of a finished inner tournament and advance the parent match.
 |------|------|-------------|
 | `innerTournament` | `NonRootTournament` | Address of the finished inner tournament |
 
-### eliminateInnerTournament()
+### `eliminateInnerTournament()`
 
 ```solidity
 function eliminateInnerTournament(NonRootTournament innerTournament) external tournamentNotFinished
@@ -146,8 +147,9 @@ Eliminate an inner tournament that has no winner and advance the parent match.
 | `innerTournament` | `NonRootTournament` | Address of the inner tournament to eliminate |
 
 ## NonRootTournament Contract Functions
+---
 
-### innerTournamentWinner()
+### `innerTournamentWinner()`
 
 ```solidity
 function innerTournamentWinner() external view returns (bool, Tree.Node, Tree.Node, Clock.State memory)
@@ -164,7 +166,7 @@ Get the winner information from a finished inner tournament for parent tournamen
 | `winnerCommitment` | `Tree.Node` | The winning inner commitment |
 | `clock` | `Clock.State` | Paused clock state of the winner |
 
-### canBeEliminated()
+### `canBeEliminated()`
 
 ```solidity
 function canBeEliminated() public view returns (bool)
@@ -178,9 +180,10 @@ Check if the tournament can be safely eliminated by its parent.
 |------|------|-------------|
 | `eliminatable` | `bool` | Whether the tournament can be eliminated |
 
-### RootTournament Contract Functions
+## RootTournament Contract Functions
+---
 
-#### arbitrationResult()
+### `arbitrationResult()`
 
 ```solidity
 function arbitrationResult() external view returns (bool isFinished, Tree.Node winnerCommitment, Machine.Hash finalMachineStateHash)
@@ -196,9 +199,10 @@ Get the final arbitration result from the root tournament.
 | `winnerCommitment` | `Tree.Node` | The winning commitment |
 | `finalMachineStateHash` | `Machine.Hash` | Final machine state hash of winner |
 
-### Tournament Factory Functions
+## Tournament Factory Functions
+---
 
-#### instantiate() (SingleLevelTournamentFactory)
+### `instantiate()` (SingleLevelTournamentFactory)
 
 ```solidity
 function instantiate(Machine.Hash initialHash, IDataProvider provider) external returns (ITournament)
@@ -221,7 +225,7 @@ Create a new single-level tournament instance.
 |------|------|-------------|
 | `tournament` | `ITournament` | Created tournament instance |
 
-#### instantiate() (MultiLevelTournamentFactory)
+### `instantiate()` (MultiLevelTournamentFactory)
 
 ```solidity
 function instantiate(Machine.Hash initialHash, IDataProvider provider) external returns (ITournament)
@@ -244,7 +248,7 @@ Create a new multi-level tournament hierarchy starting with a top tournament.
 |------|------|-------------|
 | `tournament` | `ITournament` | Created top tournament instance |
 
-#### instantiateTop()
+### `instantiateTop()`
 
 ```solidity
 function instantiateTop(Machine.Hash initialHash, IDataProvider provider) external returns (Tournament)
@@ -265,7 +269,7 @@ Create a new top-level tournament in the multi-level hierarchy.
 |------|------|-------------|
 | `tournament` | `Tournament` | Created top tournament instance |
 
-#### instantiateMiddle()
+### `instantiateMiddle()`
 
 ```solidity
 function instantiateMiddle(Machine.Hash initialHash, Tree.Node contestedCommitmentOne, Machine.Hash contestedFinalStateOne, Tree.Node contestedCommitmentTwo, Machine.Hash contestedFinalStateTwo, Time.Duration allowance, uint256 startCycle, uint64 level, IDataProvider provider) external returns (Tournament)
@@ -293,7 +297,7 @@ Create a new middle-level tournament for dispute resolution.
 |------|------|-------------|
 | `tournament` | `Tournament` | Created middle tournament instance |
 
-#### instantiateBottom()
+### `instantiateBottom()`
 
 ```solidity
 function instantiateBottom(Machine.Hash initialHash, Tree.Node contestedCommitmentOne, Machine.Hash contestedFinalStateOne, Tree.Node contestedCommitmentTwo, Machine.Hash contestedFinalStateTwo, Time.Duration allowance, uint256 startCycle, uint64 level, IDataProvider provider) external returns (Tournament)
