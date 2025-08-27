@@ -7,7 +7,7 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Fraud Proof Basics',
+      label: 'Fundamental Concepts',
       collapsed: false,
       items: [
         {
@@ -84,17 +84,17 @@ module.exports = {
         {
           type: 'doc',
           id: 'references/daveconsensus',
-          label: 'DaveConsensus',
+          label: 'PRT-Rollups Consensus Contracts',
         },
         {
           type: 'doc',
           id: 'references/tournament',
-          label: 'Tournament',
+          label: 'Tournament Core Contracts',
         },
         {
           type: 'doc',
           id: 'references/deployments',
-          label: 'Deployments',
+          label: 'Mainnet Deployments',
         },
         {
           type: 'link',
