@@ -6,7 +6,7 @@ resources:
     title: IOutputsMerkleRootValidator Interface
 ---
 
-The `IOutputsMerkleRootValidator` interface provides valid outputs Merkle roots for validation.
+The **IOutputsMerkleRootValidator** interface provides valid outputs Merkle roots for validation.
 
 ## Description
 

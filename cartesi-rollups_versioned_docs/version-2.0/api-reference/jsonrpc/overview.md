@@ -92,15 +92,7 @@ The API uses several data types:
 - Various enums for states and statuses
 - Complex objects for applications, epochs, inputs, outputs, and reports
 
-For detailed information about data types, see the [Types](types) page.
-
-## Best Practices
-
-1. **Error Handling**: Always check for errors in responses
-2. **Pagination**: Use pagination to handle large result sets
-3. **Filtering**: Use filters to narrow down results
-4. **Rate Limiting**: Be mindful of API rate limits
-5. **Caching**: Cache frequently accessed data when appropriate
+For detailed information about data types, see the [types](./types.md) page.
 
 ## Examples
 
@@ -129,20 +121,4 @@ For detailed information about data types, see the [Types](types) page.
 }
 ```
 
-### Listing Inputs with Filters
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "cartesi_listInputs",
-  "params": {
-    "application": "my-dapp",
-    "epoch_index": "0x1",
-    "sender": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-    "limit": 10,
-    "offset": 0
-  }
-}
-```
-
-For more examples and detailed information about each method, see the [Methods](../methods) page. 
+For more examples and detailed information about each method, see the dedicated documentation pages in the sidebar. 

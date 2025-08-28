@@ -6,7 +6,7 @@ resources:
     title: IQuorum Interface
 ---
 
-The `IQuorum` interface defines a consensus model controlled by a small, immutable set of validators.
+The **IQuorum** interface defines a consensus model controlled by a small, immutable set of validators.
 
 ## Description
 
