@@ -8,7 +8,7 @@ module.exports = {
     {
       type: 'category',
       label: 'Fundamental Concepts',
-      collapsed: false,
+      collapsed: true,
       items: [
         {
           type: 'doc',
@@ -35,7 +35,7 @@ module.exports = {
     {
       type: 'category',
       label: 'Permissionless Refereed Tournament (PRT)',
-      collapsed: false,
+      collapsed: true,
       items: [
         {
           type: 'doc',
@@ -57,7 +57,7 @@ module.exports = {
     {
       type: 'category',
       label: 'Honeypot Application',
-      collapsed: false,
+      collapsed: true,
       items: [
         {
           type: 'doc',
@@ -79,7 +79,7 @@ module.exports = {
     {
       type: 'category',
       label: 'References',
-      collapsed: false,
+      collapsed: true,
       items: [
         {
           type: 'doc',

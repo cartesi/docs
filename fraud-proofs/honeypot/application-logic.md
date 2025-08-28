@@ -1,6 +1,6 @@
 # Application Logic
 
-The Honeypot DApp is implemented as a single C++ program that interfaces with the Cartesi rollup framework through the `libcmt` library. The application follows an event-driven architecture where it continuously processes rollup requests in an infinite loop.
+The Honeypot application is implemented as a single C++ program that interfaces with the Cartesi rollup framework through the `libcmt` library. The application follows an event-driven architecture where it continuously processes rollup requests in an infinite loop.
 
 ## User Requests
 

@@ -12,7 +12,7 @@ Note that the base layer (_here Ethereum_) acts as the data provider of inputs a
 
 
 
-![Fraud Proof](../images/fraud-proofs-general-3.png)
+![Fraud Proof](../images/fraud-proofs-general.png)
 
 Fraud proofs implemented by Cartesi are **interactive** in nature where the _proposer_ and the _challenger_ go through a series of rounds to find a single step where they both disagree. This step is then executed on the base layer which acts as source of truth. This scheme allows the entire rollup inherit the base layer security, with minimal computation done on-chain.
 
