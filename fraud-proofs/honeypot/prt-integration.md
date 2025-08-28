@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-The Honeypot v2 is secured by Permissionless Refereed Tournament(PRT) as the fraud proof system. Its core on‐chain components include the Application contract (the Honeypot dApp itself) and a separate `DaveConsensus` contract that implements the PRT consensus logic.  In the v2 deployment (Mainnet), Cartesi explicitly uses a 3‑layer PRT consensus (“PRT‑3L”). 
+The Honeypot v2 is secured by Permissionless Refereed Tournament(PRT) as the fraud proof system. Its core on‐chain components include the Application contract (the Honeypot app itself) and a separate `DaveConsensus` contract that implements the PRT consensus logic.  In the v2 deployment (Mainnet), Cartesi explicitly uses a 3‑layer PRT consensus (“PRT‑3L”). 
 
 The Application contract holds all user deposits and executes outputs, but it delegates output validity checks to the `DaveConsensus` contract via the `IOutputsMerkleRootValidator` interface.  In practice, the Application simply calls `validateOutput(...)` on any proposed output; that call invokes the DaveConsensus logic to decide if the output’s Merkle root is valid.  This cleanly separates the application’s business logic (escrowing tokens, enforcing withdraw rules) from the fraud‐proof logic (verifying computation correctness).
 
@@ -10,7 +10,7 @@ The Application contract holds all user deposits and executes outputs, but it de
 
 ## On-Chain Components
 
-**Application (Honeypot dApp) Contract:**  The main dApp contract (implementing `IApplication`) contains the Honeypot logic.  It inherits standard modules (Ownable, token holder guards, reentrancy guard) and **never embeds any tournament logic**.  Instead, it stores an `IOutputsMerkleRootValidator` instance (initialized in its constructor) to validate outputs. When an off‐chain computation produces an output (e.g. a Voucher or DelegateCallVoucher allowing a withdraw), the app contract’s `executeOutput(bytes output, OutputValidityProof proof)` function is invoked. This function **first calls** `validateOutput(output, proof)`, which in turn checks the Merkle proof against the current validator:
+**Application (Honeypot App) Contract:**  The main application contract (implementing `IApplication`) contains the Honeypot logic.  It inherits standard modules (Ownable, token holder guards, reentrancy guard) and **never embeds any tournament logic**.  Instead, it stores an `IOutputsMerkleRootValidator` instance (initialized in its constructor) to validate outputs. When an off‐chain computation produces an output (e.g. a Voucher or DelegateCallVoucher allowing a withdraw), the app contract’s `executeOutput(bytes output, OutputValidityProof proof)` function is invoked. This function **first calls** `validateOutput(output, proof)`, which in turn checks the Merkle proof against the current validator:
 
 ```javascript
 function validateOutput(bytes calldata output, OutputValidityProof calldata proof)
@@ -52,7 +52,7 @@ The integration decouples the fraud-proof system from app logic: the Honeypot Ap
 * **Validator Interface:** The use of `IOutputsMerkleRootValidator` is a key abstraction. The Application only depends on this interface, not on DaveConsensus specifically. This means the app logic doesn’t need to know how consensus works, only that outputs will be checked. The owner of the app contract can even replace the validator (with `migrateToOutputsMerkleRootValidator`) if needed.
 * **Modular Fraud-Proof Contracts:** All tournament and proof logic lives in separate contracts (DaveConsensus, ITournamentFactory, Top/Bottom Tournaments, CartesiStateTransition, etc.). The application simply observes their results. Likewise, Merkle and proof utilities are factored into libraries (`LibOutputValidityProof`, `LibMerkle32`, etc.) for reuse.
 * **Epoch-Based Coordination:** DaveConsensus defines clear epoch boundaries and emits an `EpochSealed` event. This event-driven design lets off-chain services (and even users) know exactly when to start a new challenge or accept the results. It cleanly separates “accumulate inputs for epoch” from “finalize epoch” stages.
-* **Standardized Output Formats:** The Honeypot dApp uses Cartesi’s standard Vouchers (`Outputs.Voucher` and `DelegateCallVoucher`) to drive actions. Because these are part of the Cartesi SDK, the PRT system already understands how to verify them via Merkle proofs.
+* **Standardized Output Formats:** The Honeypot app uses Cartesi’s standard Vouchers (`Outputs.Voucher` and `DelegateCallVoucher`) to drive actions. Because these are part of the Cartesi SDK, the PRT system already understands how to verify them via Merkle proofs.
 
 Together, these patterns ensure the Honeypot’s core logic remains fully isolated from the PRT framework.  The app simply promises to honor any output that DaveConsensus agrees is valid, while DaveConsensus handles all disputes by spawning tournaments and consulting the ultimate on-chain verifier.
 
