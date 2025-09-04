@@ -42,9 +42,6 @@ Behind the scenes, the off-chain node uses a service (the PRT tournament logic) 
 
 **Dispute Resolution Workflow:** If any validator disagrees with the proposed output for an epoch, they participate in the PRT tournament. That process is largely *off-chain and decentralized*: anyone running a PRT-aware Cartesi node can join the tournament by fetching the current TopTournament contract from DaveConsensus. They then exchange “claims” by making specific function calls on the TopTournament contract (bisecting the execution trace). Each round eliminates half of the false claims. Eventually, the dispute narrows to a single instruction, and a BottomTournament is spawned to resolve that instruction on-chain. We see this in DaveConsensus’s use of `ITournament` and the events emitted at epoch seal. After resolution, any honest validator (or even anyone) can call `settle` on DaveConsensus to finalize the epoch.
 
-Notably, **claim submission is external to the Application UI**: users don’t call a special contract method to start a dispute. Instead, the act of “claiming” happens via off-chain tools talking to the PRT contracts. The Application’s only on-chain role is to hold funds and execute outputs. If a malicious output is attempted, validators will spot it and challenge it through the PRT tournament before the `outputsMerkleRoot` is accepted.
-
-
 ## Key Abstractions & Patterns
 
 The integration decouples the fraud-proof system from app logic: the Honeypot Application contract doesn’t import or call any PRT-specific code directly. Instead:
