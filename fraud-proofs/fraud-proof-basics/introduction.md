@@ -4,9 +4,9 @@ This page provides a beginner-friendly introduction to fraud proof systems and t
 
 ## What is a Fraud Proof System?
 
-In [Cartesi rollups](../../../get-started/optimistic-rollups), users submit their input transactions to the base layer, the off-chain validator nodes process the inputs and submit _claims_ back to the blockchain. These claims are treated as correct by default - _optimistically_ - but they don’t finalize immediately rather, they remain open to challenge for a certain period. In case of conflicting claims, a fraud-proof system kicks in.
+In [Cartesi rollups](../../../get-started/optimistic-rollups), users submit their input transactions to the base layer, the off-chain validator nodes process the inputs and submit _claims_ of the resulting state back to the blockchain. These claims are treated as correct by default - _optimistically_ - but they aren't considered final immediately rather, they remain open to be challenged for a certain period. In case of conflicting claims, a fraud-proof system kicks in.
 
-A **fraud-proof system** is a mechanism that enables the blockchain to adjudicate disputes between participants and identify the valid claim, while requiring only minimal on-chain computation.
+A **fraud-proof system** enables the blockchain to adjudicate disputes between conflicting claims of the rollup's state, and identify the valid claim, while requiring only minimal on-chain computation.
 
 Note that the base layer (_here Ethereum_) acts as the data provider of inputs and also the on-chain verifier to resolve the disputes. Because of this, Cartesi rollups inherit Ethereum’s security: as long as at least one honest participant monitors the rollup and submits a valid claim when needed, the system can’t be corrupted.
 
