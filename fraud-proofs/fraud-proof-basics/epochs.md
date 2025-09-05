@@ -18,8 +18,8 @@ Epochs serve several critical roles in Cartesi's fraud proof system:
 
 The system maintains the following epoch states at all times:
 
-1. **Settled Epochs**: Fully finalized state. Their outputs (e.g., vouchers) are executable.
-2. **Sealed Epoch**: The inputs for this epoch are fixed (sealed). This epoch is currently under dispute, if needed. It can take at least one week for a sealed epoch to be verified by the fraud-proof system.
+1. **Settled Epochs**: Fully finalized state. The outputs generated during these epochs can be validated on-chain.
+2. **Sealed Epoch**: The inputs for this epoch are fixed (sealed). This epoch is opened for state claims to be submitted, and if needed, trigger disputes. It takes at least one week for a sealed epoch to be settled by the fraud-proof system to allow anyone to also validate and submit claims.
 3. **Accumulating Epoch**: Actively collecting new inputs.
 
 ![Epoch States](../images/epochs-lifecycle.png)
