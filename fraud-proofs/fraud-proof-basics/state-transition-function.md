@@ -17,17 +17,15 @@ Understanding the Cartesi STF would require us to know a few concepts of the Car
 ### State of the Cartesi Machine
 In the context of Cartesi, the state typically refers to the state of the Cartesi Machine. A Cartesi Machine state is a complete snapshot of the machine’s execution environment at a given point in time. This includes the full address space - contents of physical memory (RAM), all register values, internal cycle counter and input/output flash drive states. 
 
-The **state hash** is a Merkle root representing this snapshot. The machine exposes its entire 64-bit physical address space as a flat array over which a Merkle tree is constructed. Each leaf of the tree corresponds to a 32-bytes memory word, and the root hash serves as a unique and verifiable fingerprint of the machine state. 
+The **state hash** is a Merkle root representing this snapshot. The machine exposes its entire 64-bit physical address space as a flat array over which a Merkle tree is constructed. Each leaf of the tree corresponds to a 32-bytes memory word, and the root hash serves as a unique and verifiable fingerprint of the machine state. This snapshot representation of the machine ensures that flipping even a single bit in the state produces a different hash, making it straightforward to verify whether two states are equivalent.
 
 A computation on the Cartesi Machine is therefore defined by a transition between two such state hashes. The **initial state hash** encodes all the information necessary to begin execution, while the **final state hash** summarizes the result after the computation has been performed. This structure enables efficient and trustless verification of state transitions on-chain, where only Merkle proofs need to be submitted rather than the full state. 
-
-The machine also supports generation and validation of **access logs** - cryptographic proofs of transition between two state commitments - which are central to enabling interactive dispute resolution protocols.
 
 ## Computation Hash
 The computation hash is a cryptographic commitment to the entire history of a computation, not just its final state. It is constructed as a Merkle tree, where each leaf node represents a state hash corresponding to a 
 _step_ in the computation - from the initial state (implicitly agreed upon) to the final state.
 
-Unlike traditional models that only commit to the end result, this structure allows one to verify any intermediate step. To optimize storage and efficiency - especially for use in PRT (Permissionless Refereed Tournament) - the computation hash is designed to support multi-level hierarchies. This brings us to the next concept, _sparsity_.
+Unlike traditional models that only commit to the end result, this structure makes it possible to verify the entire sequence of steps leading to the final hash, thereby also validating all intermediate steps. To optimize storage and efficiency - especially for use in PRT (Permissionless Refereed Tournament) - the computation hash is designed to support multi-level hierarchies. This brings us to the next concept, _sparsity_.
 
 ![Computation Hash](../images/computation-hash-tree.jpg)
 

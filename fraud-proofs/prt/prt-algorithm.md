@@ -17,7 +17,7 @@ To understand the PRT algorithm, we need to familiarize ourselves with the key c
 - **State Transition Function**: Executes the actual state transition verification in the final stage to determine dispute winners.
 
 ## Stages in Tournaments
-PRT research paper introduces two types of tournament stages depending on the computational complexity at hand - a _single-level_ and a _multi-level_ tournament.
+PRT introduces two types of tournament stages depending on the computational complexity at hand - a _single-level_ and a _multi-level_ tournament.
 
 ### Single-Level Tournament
 Single Level Tournaments are suitable for simpler dispute scenarios where the computational complexity allows for direct resolution without requiring multiple levels of binary search.
@@ -36,7 +36,7 @@ To understand the operations of a multi-level tournament setup, we can break it 
 
 ### 1. Joining Tournament
 A participant joins a tournament by submitting:
-- their claimed _final machine state hash_,
+- their claimed _final computational hash_,
 - a _Merkle proof_ that this hash appears in a commitment tree of the expected height,
 - and the immediate _left_ and _right_ child nodes whose hash concatenation reconstructs the commitment root for this entry.
 
@@ -47,10 +47,10 @@ When two participants submit conflicting claims, they’re paired in a unique ma
 
 This process continues recursively until the exact point of disagreement is found.
 
-### 3. Match Sealing and Inner Tournament Creation
-When the diverging point is found in the last step, it is sealed, and an inner tournament is created at a deeper level to find a more granular conflicting point.
+### 3. Inner Tournament Creation
+When the diverging point is found in the last step, the match is locked, and an inner tournament is created at a deeper level to find a more granular conflicting point.
 
-The sealed match becomes the root of a new sub-tournament. The process of bisection continues at a finer resolution.
+The locked match becomes the root of a new sub-tournament. The process of bisection continues at a finer resolution.
 
 ### 4. Leaf Match Resolution
 

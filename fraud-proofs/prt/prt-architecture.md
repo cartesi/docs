@@ -22,7 +22,7 @@ The `Application` contract defines the application on-chain, stores application 
 ### Portal Contracts
 A group of contracts that are used to deposit assets(Ether, ERC20, ERC721, ERC1155) into the rollups application. All portal contracts submit their inputs to the `InputBox` contract. Read more about the portal contracts [here](../../../cartesi-rollups/2.0/api-reference/contracts/portals/EtherPortal/).
 
-### DaveConsensus Contract
+### PRT Rollups Consensus (DaveConsensus) Contract
 This is the PRT Rollups Consensus contract that acts as an interface to the PRT core contracts in the dispute resolution system. It is the central smart contract that validates outputs from the Cartesi Machine. It manages epoch boundaries, handles epoch settlement, and initiates tournaments for dispute resolution.
 
 ![PRT-Rollups-Consensus-Contract](../images/prt-rollups-consensus.png)
