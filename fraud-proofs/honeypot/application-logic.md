@@ -10,7 +10,7 @@ As a standard Cartesi application, the Honeypot exposes two functions to process
 
 ![ERC-20 Token Operations](../images/honeypot-operations.png)
 
-## Operations Handlers
+## Operations
 
 The application implements three primary operations with specific validation and processing logic:
 
