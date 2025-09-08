@@ -4,31 +4,17 @@
 
 The Honeypot v2 is secured by Permissionless Refereed Tournament(PRT) as the fraud proof system. Its core on‐chain components include the _Application contract_ (the Honeypot app itself) and a separate _Rollups-PRT Consensus contract_ that orchestrates the PRT consensus logic.  In the v2 deployment on Ethereum Mainnet, a 3‑layer PRT consensus (also known as _PRT‑3L_) is used. 
 
-The Application contract holds all user deposits and executes outputs, but it delegates output validity checks to the `DaveConsensus` contract via the `IOutputsMerkleRootValidator` interface.  All applications' outputs can be effectively validated by a `validateOutput(...)` call on the application contract. This call invokes the DaveConsensus logic to decide if the output’s Merkle root is valid.  This cleanly separates the application’s business logic (escrowing tokens, enforcing withdraw rules) from the fraud‐proof logic (verifying computation correctness).
-
 ![Honeypot with PRT](../images/honeypot-prt-architecture.png)
 
 ## On-Chain Components
 
 #### **Honeypot Application Contract** 
-The main application contract (implementing `IApplication`) is the representation of the Honeypot application on-chain.  It inherits standard modules (Ownable, token holder guards, reentrancy guard) and never embeds any tournament logic.  Instead, it stores an `IOutputsMerkleRootValidator` instance (initialized in its constructor) to validate outputs. When an off‐chain computation produces an output (e.g. a Voucher or DelegateCallVoucher allowing a withdraw), the app contract’s `executeOutput(bytes output, OutputValidityProof proof)` function is invoked. This function **first calls** `validateOutput(output, proof)`, which in turn checks the Merkle proof against the current validator:
+The Application contract is the on-chain representation of the Honeypot app. It stores the genesis hash of the Honeypot's Cartesi machine. As any other Cartesi rollups application, the Application contract is responsible for holding user deposits and executing outputs. However, it does not verify output validity itself. Instead, it delegates this responsibility to the DaveConsensus contract. When a Honeypot node produces a _voucher_ as output, the app contract’s `executeOutput(bytes output, OutputValidityProof proof)` function is invoked. This function first calls `validateOutput(output, proof)`, which in turn checks the Merkle proof against the current output.
 
-```javascript
-function validateOutput(bytes calldata output, OutputValidityProof calldata proof)
-    public view override {
-    // compute outputsMerkleRoot from proof and output hash (omitted)…
-    require(_outputsMerkleRootValidator.isOutputsMerkleRootValid(address(this), outputsMerkleRoot), 
-        “Invalid outputs root”);
-}
-```
-
-Thus, outputs are only accepted if DaveConsensus has marked the corresponding root as valid. Only after validation does the contract perform the application logic (calling voucher/delegate calls, which in practice transfer the ERC‑20 tokens). All application‐level “withdraw” rules (e.g. only a pre‐configured account can receive tokens) are enforced in the off‐chain logic and then honored on‐chain via these voucher calls.
+Thus, withdrawing ERC-20 tokens to the pre-configured address of the Honeypot is only possible if DaveConsensus has marked the corresponding output root as valid. Only after validation does the contract can successfully execute a withdrawal voucher of the Honeypot.
 
 #### **PRT-Rollups Consensus (DaveConsensus)** 
-The DaveConsensus contract implements Cartesi’s PRT protocol for a single application. It keeps track of “epochs” (intervals of inputs) and manages the tournament for each epoch. Importantly, it implements both `IDataProvider` and `IOutputsMerkleRootValidator`. Application outputs are considered valid if and only if DaveConsensus has stored that output-root as acceptable. In DaveConsensus, the function `isOutputsMerkleRootValid(address app, bytes32 root)` simply checks a mapping set during settlement. This value is set to true only when a **tournament has been settled successfully** for that epoch and the outputsMerkleRoot has been verified via on-chain computations.
-
-#### **PRT Tournament Contracts**  
-Under the hood, DaveConsensus uses a `ITournamentFactory` (typically the Cartesi *MultiLevelTournamentFactory*) to spawn a new **TopTournament** at the start of each epoch. Each dispute is handled by a multi‐stage “tournament” on-chain: the TopTournament coordinates bisection of a disputed computation trace, while BottomTournament contracts handle the final step-by-step verification by calling the on-chain Cartesi machine verifier (CartesiStateTransition) for a single contested instruction. All these PRT contracts (TopTournament, BottomTournament, factory) are part of Cartesi’s `prt-contracts` library and are invoked indirectly via DaveConsensus. The Application itself never needs to know about these; it only interacts with the DaveConsensus contract.
+The DaveConsensus contract orchestrates the PRT system for the Honeypot application. It keeps track of [epochs](../../../fraud-proofs/fraud-proof-basics/epochs) and manages the tournament for each epoch. Importantly, it implements both `IDataProvider` and `IOutputsMerkleRootValidator`. Application outputs are considered valid if and only if DaveConsensus has stored that output-root as acceptable. In DaveConsensus, the function `isOutputsMerkleRootValid(address app, bytes32 root)` simply checks a mapping set during settlement. This value is set to true only when a tournament has been settled successfully for that epoch and the outputsMerkleRoot has been verified via on-chain computations.
 
 ## Off-Chain Components
 

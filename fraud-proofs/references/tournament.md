@@ -8,7 +8,7 @@
 function joinTournament(Tree.Node finalState, bytes32[] calldata proof, Tree.Node leftChild, Tree.Node rightChild) external tournamentOpen tournamentNotFinished
 ```
 
-Join a tournament by submitting a final state commitment with Merkle proof. Creates a match if another participant is waiting.
+Join a tournament by submitting a final computation hash with Merkle proof. Creates a match if another participant is waiting.
 
 **Event Emitted:** `commitmentJoined(Tree.Node root)` when commitment is successfully added 
 
@@ -16,7 +16,7 @@ Join a tournament by submitting a final state commitment with Merkle proof. Crea
 
 | Name | Type | Description |
 |------|------|-------------|
-| `finalState` | `Tree.Node` | Final state hash commitment |
+| `finalState` | `Tree.Node` | Final computational hash |
 | `proof` | `bytes32[]` | Merkle proof for the final state |
 | `leftChild` | `Tree.Node` | Left child of the commitment node |
 | `rightChild` | `Tree.Node` | Right child of the commitment node |
