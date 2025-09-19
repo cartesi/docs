@@ -40,13 +40,13 @@ If you use Windows, you must have [WSL2 installed and configured](https://learn.
 To create the backend application from scratch, run:
 
 ```bash
-cartesi rollups create <dapp-name> --template <language>
+cartesi create <dapp-name> --template <language>
 ```
 
 This creates a new directory with template code in the language you specify.
 
 ```bash
-$ cartesi rollups create js-dapp --template javascript
+$ cartesi create js-dapp --template javascript
 ✔ Application created at /js-dapp
 ```
 
@@ -69,18 +69,9 @@ The `cartesi build` command builds a Cartesi machine and compiles your applicati
 To run the environment, you can use the following command:
 
 ```bash
-cartesi rollups start
+cartesi run
 ```
-This will spin up docker containers for the Cartesi Rollups environment including Rollups Node and the Anvil devnet.
-
-## Deploy the application
-
-Deploying your application in this context means to register your application on the Cartesi Rollups environment.
-
-```shell
-cartesi rollups deploy
-```
-An address will be assigned to your application along with a corresponding Consensus Contract.
+This will run your backend with the docker containers for the Cartesi Rollups environment including Rollups validator node and the Anvil devnet.
 
 ## Send inputs to the application
 
@@ -128,13 +119,13 @@ You can obtain the relevant addresses by running `cartesi address-book`.
 
 You can create a custom frontend that interacts with your application.
 
-Follow [the React.js tutorial to build a frontend for your application](/cartesi-rollups/2.0/tutorials/react-frontend-application/).
+Follow [the React.js tutorial to build a frontend for your application](/cartesi-rollups/1.5/tutorials/react-frontend-application/).
 
 ## Deploy the application
 
 There are two methods to deploy an application:
 
-1. [Self-hosted deployment](/cartesi-rollups/2.0/deployment/self-hosted/): Deploy the application node using your infrastructure.
+1. [Self-hosted deployment](/cartesi-rollups/1.5/deployment/self-hosted/): Deploy the application node using your infrastructure.
 
 2. Third-party service provider: Outsource running the application node to a service provider.
 
