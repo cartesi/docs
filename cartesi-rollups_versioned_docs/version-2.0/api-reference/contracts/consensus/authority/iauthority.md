@@ -6,7 +6,7 @@ resources:
     title: IAuthority Interface
 ---
 
-The `IAuthority` interface defines a consensus contract controlled by a single address, the owner.
+The **IAuthority** interface defines a consensus contract controlled by a single address, the owner.
 
 ## Description
 

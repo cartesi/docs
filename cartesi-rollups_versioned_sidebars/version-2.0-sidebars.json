@@ -152,7 +152,6 @@
                     "collapsed": true,
                     "items": [
                         "api-reference/jsonrpc/overview",
-                        "api-reference/jsonrpc/methods",
                         {
                             "type": "category",
                             "label": "Applications",

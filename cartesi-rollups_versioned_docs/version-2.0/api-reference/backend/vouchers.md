@@ -184,7 +184,7 @@ def emit_safe_erc20_transfer(token, to, amount):
     encoded_params = encode(["address", "address", "uint256"], [to_checksum_address(token), to_checksum_address(to), amount])
     payload = "0x" + (selector + encoded_params).hex()
     voucher = {
-        "destination": "0xfafafafafafafafafafafafafafafafafafafafa",  # endereço do contrato
+        "destination": "0xfafafafafafafafafafafafafafafafafafafafa",  # address of the contract containing the logic
         "payload": payload,
     }
     response = requests.post(rollup_server + "/delegate-call-voucher", json=voucher)
@@ -233,7 +233,7 @@ func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
 	}
 	
 	voucher := map[string]interface{}{
-		"destination": "0xfafafafafafafafafafafafafafafafafafafafa",
+		"destination": "0xfafafafafafafafafafafafafafafafafafafafa", // address of the contract containing the logic
 		"payload":     common.Bytes2Hex(payload),
 	}
 	

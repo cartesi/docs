@@ -6,7 +6,7 @@ resources:
     title: IConsensus Interface
 ---
 
-The `IConsensus` interface defines the main consensus contract behavior for validating and accepting claims submitted by validators.
+The **IConsensus** interface defines the main consensus contract behavior for validating and accepting claims submitted by validators.
 
 ## Description
 
