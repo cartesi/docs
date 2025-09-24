@@ -31,4 +31,3 @@ _Please make sure `tokenIds` and `values` have the same length._
 | values        | uint256[] | Transfer amounts per token type                          |
 | baseLayerData | bytes     | Additional data to be interpreted by the base layer      |
 | execLayerData | bytes     | Additional data to be interpreted by the execution layer |
-

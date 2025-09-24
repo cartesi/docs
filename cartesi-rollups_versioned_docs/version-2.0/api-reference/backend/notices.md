@@ -36,7 +36,7 @@ const emitNotice = async (inputPayload) => {
       body: JSON.stringify({ payload: hexPayload }),
     });
   } catch (error) {
-    //Do something when there is an error
+    // Handle error here
   }
 }
 

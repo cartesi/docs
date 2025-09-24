@@ -60,4 +60,3 @@ XMTP is an open protocol, network, and standards for secure, private web3 messag
   - Integration Guide: [Github](https://github.com/Mugen-Builders/xmtp-cartesi)
   - Demo Video: [x](https://x.com/shanemac/status/1828174660133101661?s=46)
   - Article Guide: [Medium](https://medium.com/@idogwuchi/integrating-cartesi-dapps-with-xmtp-bridging-decentralised-computation-and-secured-communication-360fa7bdb1d1)
-

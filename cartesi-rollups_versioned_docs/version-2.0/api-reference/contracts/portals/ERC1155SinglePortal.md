@@ -28,4 +28,3 @@ beforehand, by calling the `setApprovalForAll` function in the token contract.
 | value         | uint256  | Transfer amount                                          |
 | baseLayerData | bytes    | Additional data to be interpreted by the base layer      |
 | execLayerData | bytes    | Additional data to be interpreted by the execution layer |
-

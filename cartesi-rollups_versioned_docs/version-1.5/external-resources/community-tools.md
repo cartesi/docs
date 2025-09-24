@@ -29,30 +29,6 @@ Introducing Deroll, a powerful TypeScript framework designed to simplify the dev
 
 ---
 
-## NoNodo
-
-NoNodo is a cutting-edge development tool for Cartesi Rollups that allows applications to run directly on the host machine, bypassing Docker or RISC-V compilation.
-
-
-:::caution Disclaimer:
-This tool runs in a non-reproducible execution mode, which is not provable on-chain. As such cannot be used by deployed applications, instead is used for providing a faster iterative development emperience.
-:::
-
-- **Features**:
-
-  - Run applications directly on the host machine for faster performance.
-  - No Docker or RISC-V Required.
-
-- **Getting Started**:
-  - Install NoNodo by running:
-    ```bash
-    npm i -g nonodo
-    ```
-- **Resources**:
-  - [NoNodo GitHub Repository](https://github.com/Calindra/nonodo)
-
----
-
 ## Cartesify
 
 Cartesify is a robust Web3 client designed for seamless interaction with the Cartesi Machine.

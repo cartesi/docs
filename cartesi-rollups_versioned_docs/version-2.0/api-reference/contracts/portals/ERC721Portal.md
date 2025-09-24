@@ -29,4 +29,3 @@ token contract.
 | tokenId       | uint256 | The identifier of the token being transferred            |
 | baseLayerData | bytes   | Additional data to be interpreted by the base layer      |
 | execLayerData | bytes   | Additional data to be interpreted by the execution layer |
-
