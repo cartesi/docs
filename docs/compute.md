@@ -26,7 +26,7 @@ title: Cartesi Compute
 - [General requirements](./tutorials/requirements.md)
 - [Cartesi Compute SDK Environment](./tutorials/compute-env.md)
 
-### Hello World dApp
+### Hello World dApp 
 
 - [Creating basic dApp](./tutorials/helloworld/create-project.md)
 - [Hello World machine](./tutorials/helloworld/cartesi-machine.md)
