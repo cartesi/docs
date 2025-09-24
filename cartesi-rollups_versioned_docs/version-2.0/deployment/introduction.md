@@ -9,11 +9,15 @@ resources:
 
 Applications built on Cartesi Rollups are intended to be deployed to public blockchains so users can access them. This can be done by taking advantage of a cloud-based infrastructure.
 
-Deploying a Cartesi dApp involves two steps: deploying a smart contract that defines your dApp on-chain and then instantiating a node that runs the application’s intended backend logic.
+Deploying a Cartesi dApp involves two steps: deploying a smart contract that defines your dApp on-chain and then instantiating a node that runs the application's intended backend logic.
 
 To facilitate the instantiation of such nodes, Cartesi provides an infrastructure for quickly getting them running in the cloud so the node can be run 24/7. This server will expose a single port to the internet so client applications can communicate with the node.
 
-The Cartesi rollups node is distributed as a Docker image. Any popular cloud provider, like AWS, GCP, Azure, Digital Ocean, or Linode, can run docker containers and hence can be used to host the rollups node. 
+## Public snapshots
+
+For production deployments, applications must use **public snapshots** that are built through public workflows and published as public releases. This ensures transparency, reproducibility, trust, and auditability - essential for the trustless nature of blockchain applications.
+
+[Learn more about public snapshots](./snapshot.md)
 
 ## Deployment process
 
@@ -23,23 +27,20 @@ The `cartesi build` command produces the Cartesi genesis machine, which contains
 
 After deployment, any changes to the application code will generate a different hash and, hence, require another deployment.
 
-The smart contract that represents the application on the base layer can be deployed using the [`CartesiDAppFactory`](../rollups-apis/json-rpc/application-factory.md) smart contract.
-
 There are two methods to deploy an application:
 
-1. [Self-hosted deployment](../deployment/self-hosted.md): Deploy the application node using your infrastructure. 
-
-2. Third-party service provider: Outsource running the application node to a service provider. 
+1. [Self-hosted deployment](./self-hosted.md): Deploy the application node using your infrastructure
+2. Third-party service provider: Outsource running the application node to a service provider
 
 :::caution important
-Deployment with a third-party service provider is under development and will be available in a future release.
+Deployment with a third-party service provider is under development and will be available soon.
 :::
 
 ## Supported networks
 
 As stated above, the first step in deploying a new Cartesi dApp to a blockchain requires creating a smart contract on that network that uses the Cartesi Rollups smart contracts. Cartesi has already deployed the Rollups smart contracts to several networks for convenience.
 
-The table below shows the list of all [networks that are currently supported](https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/deployments) in the latest release:
+The table below shows the list of all [networks that are currently supported](https://usecannon.com/packages/cartesi-rollups) in the latest release:
 
 | Network Name     | Chain ID |
 | ---------------- | -------- |

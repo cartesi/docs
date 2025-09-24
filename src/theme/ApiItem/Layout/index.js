@@ -1,63 +1,119 @@
-import React from "react";
-import { useWindowSize } from "@docusaurus/theme-common";
-import { useDoc } from "@docusaurus/theme-common/internal";
-import DocBreadcrumbs from "@theme/DocBreadcrumbs";
-import DocItemContent from "@theme/DocItem/Content";
-import DocItemFooter from "@theme/DocItem/Footer";
-import DocItemPaginator from "@theme/DocItem/Paginator";
-import DocItemTOCDesktop from "@theme/DocItem/TOC/Desktop";
-import DocItemTOCMobile from "@theme/DocItem/TOC/Mobile";
-import DocVersionBanner from "@theme/DocVersionBanner";
-import clsx from "clsx";
-import styles from "./styles.module.css";
-
+"use strict";
+var __importDefault =
+  (this && this.__importDefault) ||
+  function (mod) {
+    return mod && mod.__esModule ? mod : { default: mod };
+  };
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(require("react"));
+const client_1 = require("@docusaurus/plugin-content-docs/client");
+const theme_common_1 = require("@docusaurus/theme-common");
+const ContentVisibility_1 = __importDefault(
+  require("@theme/ContentVisibility")
+);
+const DocBreadcrumbs_1 = __importDefault(require("@theme/DocBreadcrumbs"));
+const Content_1 = __importDefault(require("@theme/DocItem/Content"));
+const Footer_1 = __importDefault(require("@theme/DocItem/Footer"));
+const Paginator_1 = __importDefault(require("@theme/DocItem/Paginator"));
+const Desktop_1 = __importDefault(require("@theme/DocItem/TOC/Desktop"));
+const Mobile_1 = __importDefault(require("@theme/DocItem/TOC/Mobile"));
+const DocVersionBadge_1 = __importDefault(require("@theme/DocVersionBadge"));
+const DocVersionBanner_1 = __importDefault(require("@theme/DocVersionBanner"));
+const clsx_1 = __importDefault(require("clsx"));
+const styles_module_css_1 = __importDefault(require("./styles.module.css"));
 /**
  * Decide if the toc should be rendered, on mobile or desktop viewports
  */
 function useDocTOC() {
-  const { frontMatter, toc } = useDoc();
-  const windowSize = useWindowSize();
+  const { frontMatter, toc } = (0, client_1.useDoc)();
+  const windowSize = (0, theme_common_1.useWindowSize)();
   const hidden = frontMatter.hide_table_of_contents;
   const canRender = !hidden && toc.length > 0;
-  const mobile = canRender ? <DocItemTOCMobile /> : undefined;
+  const mobile = canRender
+    ? react_1.default.createElement(Mobile_1.default, null)
+    : undefined;
   const desktop =
-    canRender && (windowSize === "desktop" || windowSize === "ssr") ? (
-      <DocItemTOCDesktop />
-    ) : undefined;
+    canRender && (windowSize === "desktop" || windowSize === "ssr")
+      ? react_1.default.createElement(Desktop_1.default, null)
+      : undefined;
   return {
     hidden,
     mobile,
     desktop,
   };
 }
-export default function DocItemLayout({ children }) {
+function DocItemLayout({ children }) {
   const docTOC = useDocTOC();
-  const {
-    frontMatter: { api },
-  } = useDoc();
-  return (
-    <div className="row">
-      <div className={clsx("col", !docTOC.hidden && styles.docItemCol)}>
-        <DocVersionBanner />
-        <div className={styles.docItemContainer}>
-          <article className={clsx("padding-top--md")}>
-            <DocBreadcrumbs />
-            {docTOC.mobile}
-            <DocItemContent>{children}</DocItemContent>
-            <div className={clsx("col", api ? "col--7" : "col--12")}>
-              <DocItemFooter />
-            </div>
-          </article>
-          <div className={clsx("col", api ? "col--7" : "col--12")}>
-            <DocItemPaginator />
-          </div>
-        </div>
-      </div>
-      {docTOC.desktop && (
-        <div className="col col--3">
-          <div className="toc-column">{docTOC.desktop}</div>
-        </div>
-      )}
-    </div>
+  const { metadata } = (0, client_1.useDoc)();
+  const { frontMatter } = (0, client_1.useDoc)();
+  const api = frontMatter.api;
+  const schema = frontMatter.schema;
+  return react_1.default.createElement(
+    "div",
+    { className: "row" },
+    react_1.default.createElement(
+      "div",
+      {
+        className: (0, clsx_1.default)(
+          "col",
+          !docTOC.hidden && styles_module_css_1.default.docItemCol
+        ),
+      },
+      react_1.default.createElement(ContentVisibility_1.default, {
+        metadata: metadata,
+      }),
+      react_1.default.createElement(DocVersionBanner_1.default, null),
+      react_1.default.createElement(
+        "div",
+        { className: styles_module_css_1.default.docItemContainer },
+        react_1.default.createElement(
+          "article",
+          null,
+          react_1.default.createElement(DocBreadcrumbs_1.default, null),
+          // react_1.default.createElement(DocVersionBadge_1.default, null),
+          docTOC.mobile,
+          react_1.default.createElement(Content_1.default, null, children),
+          react_1.default.createElement(
+            "div",
+            { className: "row" },
+            react_1.default.createElement(
+              "div",
+              {
+                className: (0, clsx_1.default)(
+                  "col",
+                  api || schema ? "col--7" : "col--12"
+                ),
+              },
+              react_1.default.createElement(Footer_1.default, null)
+            )
+          )
+        ),
+        react_1.default.createElement(
+          "div",
+          { className: "row" },
+          react_1.default.createElement(
+            "div",
+            {
+              className: (0, clsx_1.default)(
+                "col",
+                api || schema ? "col--7" : "col--12"
+              ),
+            },
+            react_1.default.createElement(Paginator_1.default, null)
+          )
+        )
+      )
+    ),
+    docTOC.desktop &&
+      react_1.default.createElement(
+        "div",
+        { className: "col col--3" },
+        react_1.default.createElement(
+          "div",
+          { className: "toc-column" },
+          docTOC.desktop
+        )
+      )
   );
 }
+exports.default = DocItemLayout;

@@ -13,8 +13,8 @@ This tutorial is for educational purposes. For production dApps, we recommend us
 :::
 
 ## Setting up the project
-First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md/#setting-up-the-project). Make sure you have the necessary dependencies installed.
 
+First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md/#setting-up-the-project). Make sure you have the necessary dependencies installed.
 
 ## Building the ERC721 wallet
 
@@ -48,17 +48,23 @@ export class Balance {
     if (tokens) {
       tokens.add(tokenId);
     } else {
-      throw new Error(`Failed to add token ${erc721}, id:${tokenId} for ${this.account}`);
+      throw new Error(
+        `Failed to add token ${erc721}, id:${tokenId} for ${this.account}`
+      );
     }
   }
 
   removeErc721Token(erc721: Address, tokenId: number): void {
     if (!this.erc721Tokens.has(erc721)) {
-      throw new Error(`Failed to remove token ${erc721}, id:${tokenId} from ${this.account}: Collection not found`);
+      throw new Error(
+        `Failed to remove token ${erc721}, id:${tokenId} from ${this.account}: Collection not found`
+      );
     }
     const tokens = this.erc721Tokens.get(erc721);
     if (!tokens?.delete(tokenId)) {
-      throw new Error(`Failed to remove token ${erc721}, id:${tokenId} from ${this.account}: Token not found`);
+      throw new Error(
+        `Failed to remove token ${erc721}, id:${tokenId} from ${this.account}: Token not found`
+      );
     }
   }
 }
@@ -80,32 +86,41 @@ export class Wallet {
   private accounts: Map<Address, Balance> = new Map();
 
   private getOrCreateBalance(address: Address): Balance {
-  let balance = this.accounts.get(address);
-  if (!balance) {
-    balance = new Balance(address, new Map());
-    this.accounts.set(address, balance);
+    let balance = this.accounts.get(address);
+    if (!balance) {
+      balance = new Balance(address, new Map());
+      this.accounts.set(address, balance);
+    }
+    return balance;
   }
-  return balance;
-      }
-    
-      getBalance(address: Address): Balance {
-  return this.getOrCreateBalance(address);
-      }
 
-      getErc721Balance(address: Address, erc721: Address): { address: string; erc721: string; tokenIds: number[] } {
-  const balance = this.getOrCreateBalance(address);
-  const tokens = balance.getErc721Tokens(erc721) || new Set<number>();;
-  const tokenIdsArray = Array.from(tokens);
-  
-  const result = {
-    address: address,
-    erc721: erc721,
-    tokenIds: tokenIdsArray
-  };
-    
-  console.info(`ERC721 balance for ${address} and contract ${erc721}: ${JSON.stringify(result, null, 2)}`);
-  return result;
-      }
+  getBalance(address: Address): Balance {
+    return this.getOrCreateBalance(address);
+  }
+
+  getErc721Balance(
+    address: Address,
+    erc721: Address
+  ): { address: string; erc721: string; tokenIds: number[] } {
+    const balance = this.getOrCreateBalance(address);
+    const tokens = balance.getErc721Tokens(erc721) || new Set<number>();
+    const tokenIdsArray = Array.from(tokens);
+
+    const result = {
+      address: address,
+      erc721: erc721,
+      tokenIds: tokenIdsArray,
+    };
+
+    console.info(
+      `ERC721 balance for ${address} and contract ${erc721}: ${JSON.stringify(
+        result,
+        null,
+        2
+      )}`
+    );
+    return result;
+  }
 
   processErc721Deposit(payload: string): string {
     try {
@@ -201,14 +216,14 @@ export class Wallet {
     }
   }
 }
-
 ```
+
 ## Using the wallet
 
 Now, let's create a simple wallet app at the entry point `src/index.ts` to test the wallet’s functionality.
 
 :::note
-Run `cartesi address-book` to get the addresses of the `ERC721Portal` and `DAppAddressRelay` contracts. Save these as constants in the `index.ts` file.
+Run `cartesi address-book` to get the addresses of the `ERC721Portal` contract. Save these as constants in the `index.ts` file.
 :::
 
 ```typescript
@@ -234,9 +249,6 @@ type AdvanceRequestHandler = (
 const wallet = new Wallet();
 
 const ERC721Portal = `0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87`;
-const dAppAddresRelay = `0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE`;
-
-let dAppAddress: Address;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollupServer);
@@ -244,14 +256,9 @@ console.log("HTTP rollup_server url is " + rollupServer);
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
 
+  const dAppAddress = data["metadata"]["app_contract"];
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
-
-  if (sender.toLowerCase() === dAppAddresRelay.toLowerCase()) {
-    dAppAddress = data.payload;
-
-    return "accept";
-  }
 
   if (sender.toLowerCase() === ERC721Portal.toLowerCase()) {
     // Handle deposit
@@ -375,27 +382,23 @@ main().catch((e) => {
   console.log(e);
   process.exit(1);
 });
-
 ```
 
 Here is a breakdown of the wallet functionality:
 
 - We handle deposits when the sender is the `ERC721Portal`.
 
-- We relay the dApp address when the sender is `DAppAddressRelay`.
-
 - We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
 - For `transfers`, we call `wallet.transferErc721` and create a notice with the parsed parameters.
 
-- For `withdrawals`, we call `wallet.withdrawErc721` and create voucher using the dApp dress and the parsed parameters. 
+- For `withdrawals`, we call `wallet.withdrawErc721` and create voucher using the dApp dress and the parsed parameters.
 
 - We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
 
-
 ## Build and run the application
 
-With Docker running, [build your backend application](../development/building-the-application.md) by running:
+With Docker running, [build your backend application](../development/running-an-application.md) by running:
 
 ```shell
 cartesi build
@@ -407,17 +410,16 @@ To run your application, enter the command:
 cartesi run
 ```
 
-
 #### Deposits
 
 :::caution token approvals
- An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf. 
-  
-  Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cartesi backend.
+An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf.
 
-  You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
+Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cartesi backend.
 
-  `ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
+You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
+
+`ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
 :::
 
 To deposit ERC721 tokens, use the `cartesi send erc721` command and follow the prompts.
@@ -430,24 +432,18 @@ To inspect the balance, make an HTTP call to:
 http://localhost:8080/inspect/{address}/{tokenAddress}
 ```
 
-
 #### Transfers and Withdrawals
 
 Use the `cartesi send generic` command and follow the prompts. Here are sample payloads:
 
 1. For transfers:
 
-  ```js
-  {"operation":"transfer","erc721":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","tokenId":"1"}
-  ```
+```js
+{"operation":"transfer","erc721":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","tokenId":"1"}
+```
 
 2. For withdrawals:
 
-  ```js
-  {"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}
-  ```
-
-
-
-
-
+```js
+{"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}
+```

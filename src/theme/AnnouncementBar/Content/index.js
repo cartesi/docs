@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import clsx from "clsx";
 import { useThemeConfig } from "@docusaurus/theme-common";
 import styles from "./styles.module.css";
@@ -18,6 +18,22 @@ const client = createPublicClient({
   transport,
 });
 
+function formatNumber(num) {
+  const absNum = Math.abs(num);
+
+  if (absNum >= 1000000000000) {
+    return (num / 1000000000000).toFixed(1) + "T";
+  } else if (absNum >= 1000000000) {
+    return (num / 1000000000).toFixed(1) + "B";
+  } else if (absNum >= 1000000) {
+    return (num / 1000000).toFixed(1) + "M";
+  } else if (absNum >= 1000) {
+    return (num / 1000).toFixed(1) + "K";
+  } else {
+    return num.toString();
+  }
+}
+
 export default function AnnouncementBarContent(props) {
   const { announcementBar } = useThemeConfig();
   const { content } = announcementBar;
@@ -25,22 +41,6 @@ export default function AnnouncementBarContent(props) {
   const [loaded, setLoaded] = useState(false);
   const [dynamicContent, setDynamicContent] = useState(content);
   const [balanceLoaded, setBalanceLoaded] = useState(false);
-
-  function formatNumber(num) {
-    const absNum = Math.abs(num);
-
-    if (absNum >= 1000000000000) {
-      return (num / 1000000000000).toFixed(1) + "T";
-    } else if (absNum >= 1000000000) {
-      return (num / 1000000000).toFixed(1) + "B";
-    } else if (absNum >= 1000000) {
-      return (num / 1000000).toFixed(1) + "M";
-    } else if (absNum >= 1000) {
-      return (num / 1000).toFixed(1) + "K";
-    } else {
-      return num.toString();
-    }
-  }
 
   // Fetch data for variables in the content
   const getBalance = async () => {
@@ -57,12 +57,6 @@ export default function AnnouncementBarContent(props) {
     return formatNumber(balanceInEther);
   };
 
-  // Add all variables and fetchers here
-  const fetchMap = {
-    balance: getBalance(),
-    symbol: symbol,
-  };
-
   // Extract variables from the content
   const contentVars = useMemo(() => {
     return content.match(/{{(.*?)}}/g)?.map((v) => v.slice(2, -2));
@@ -74,6 +68,12 @@ export default function AnnouncementBarContent(props) {
       setLoaded(true);
       return;
     }
+
+    // Add all variables and fetchers here
+    const fetchMap = {
+      balance: getBalance(),
+      symbol: symbol,
+    };
 
     function fetchVars() {
       return Promise.all(
@@ -95,16 +95,13 @@ export default function AnnouncementBarContent(props) {
 
     updateContent();
   }, [contentVars, balanceLoaded]);
-
   return (
     <div
       {...props}
       className={clsx(styles.content, props.className)}
       // Developer provided the HTML, so assume it's safe.
       // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{
-        __html: loaded ? dynamicContent : null,
-      }}
+      dangerouslySetInnerHTML={{ __html: loaded ? dynamicContent : null }}
     />
   );
 }

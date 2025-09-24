@@ -198,10 +198,43 @@ html[data-theme="dark"] {
   height: 2.5rem;
 }
 
+/* Active navbar item */
+.navbar__item.navbar__link--active {
+  color: var(--ifm-color-primary);
+  position: relative;
+}
+
+.navbar__item.navbar__link--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: calc(100% - 1rem);
+  height: 2px;
+  background-color: var(--ifm-color-primary);
+  transform: translateX(-50%);
+  transition: transform 0.2s ease-in-out;
+}
+
+.navbar__item:hover {
+  color: var(--ifm-color-primary);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .navbar__item.navbar__link--active {
+  color: var(--ifm-color-primary);
+}
+
+[data-theme="dark"] .navbar__item:hover {
+  color: var(--ifm-color-primary);
+}
+
 .navbar__item--version {
   display: inline-block !important;
-  border: 1px solid var(--docusaurus-tag-list-border);
   font-size: 0.875rem;
+  background: var(--ifm-color-secondary);
+  height: 2rem;
+  padding: 0.25rem 0.5rem;
 }
 
 /* Menu */
@@ -271,6 +304,11 @@ html[data-theme="dark"] {
 
 .tabs {
   border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.openapi-tabs__schema-list-container,
+.openapi-tabs__schema {
+  border-bottom: 0;
 }
 
 .tabs-container:has(.tabs--tabs-only),
@@ -433,14 +471,20 @@ html[data-theme="dark"] {
 
 /* // Version Dropdown */
 .dropdown-version {
-  @apply flex items-center gap-2 px-2 sm:px-4 py-2 sm:pt-6 pb-6 sm:pb-2 relative;
+  @apply inline-flex sm:mx-4 my-2 sm:my-6 mb-6 sm:mb-2 relative p-0 w-fit;
 }
 
 .dropdown-version .navbar__item--version {
   border-radius: var(--ifm-global-radius);
   background: var(--ifm-color-secondary);
-  border: 0;
+  border: 0 !important;
   font-size: 0.75rem;
+  height: auto;
+  position: relative;
+  text-align: center;
+  color: #000 !important;
+  padding: var(--ifm-navbar-item-padding-vertical)
+    var(--ifm-navbar-item-padding-horizontal);
 }
 
 .dropdown-version .dropdown__menu {
@@ -455,11 +499,6 @@ html[data-theme="dark"] {
 html[data-theme="dark"] .dropdown-version .navbar__item--version > *,
 html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
   color: #000;
-}
-
-.dropdown-version .navbar__item--version::before {
-  content: "Version ";
-  color: var(--ifm-font-color-base);
 }
 
 /* Sidebar */
@@ -535,6 +574,85 @@ html[data-theme="dark"] .dropdown-version .navbar__item--version:before {
 /* nav item search fix padding */
 .navbar__items--right > :last-child {
   margin-left: 0.5rem;
+}
+
+.alert--goal {
+  padding: 0;
+  background: var(--ifm-color-warning-contrast-background);
+  overflow: hidden;
+}
+
+.alert--goal div:first-child {
+  padding: 0.75rem var(--ifm-alert-padding-horizontal);
+  background: var(--ifm-color-warning-dark);
+  line-height: 1;
+  color: var(--ifm-alert-foreground-color);
+}
+
+.alert--goal div:last-child {
+  padding: var(--ifm-alert-padding-vertical) var(--ifm-alert-padding-horizontal);
+}
+
+.alert--goal svg {
+  stroke: currentColor !important;
+}
+
+html[data-theme="dark"] .alert--goal div:first-child {
+  color: var(--ifm-background-color);
+}
+
+.alert--troubleshoot {
+  --ifm-alert-background-color: var(--ifm-color-info-contrast-background);
+  --ifm-alert-background-color-highlight: rgba(84, 199, 236, 0.15);
+  --ifm-alert-foreground-color: var(--ifm-color-info-contrast-foreground);
+  --ifm-alert-border-color: var(--ifm-color-info-dark);
+}
+
+.alert--troubleshoot svg {
+  fill: var(--ifm-alert-foreground-color);
+  stroke: none !important;
+}
+
+@media (min-width: 1440px) {
+  .container-footer {
+    max-width: var(--ifm-container-width-xl);
+  }
+}
+
+/* Responsive image styles */
+.responsive-image {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  text-align: center;
+}
+
+.responsive-image img,
+div.responsive-image img,
+.markdown .responsive-image img {
+  display: block !important;
+  margin: 0 auto !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* On desktop screens, limit the image width to 60% and center it */
+@media (min-width: 768px) {
+  .responsive-image img,
+  div.responsive-image img,
+  .markdown .responsive-image img {
+    max-width: 60% !important;
+  }
+}
+
+/* On large desktop screens, limit further to 50% */
+@media (min-width: 1200px) {
+  .responsive-image img,
+  div.responsive-image img,
+  .markdown .responsive-image img {
+    max-width: 50% !important;
+  }
 }
 
 @tailwind utilities;

@@ -1,0 +1,118 @@
+name: cartesi-rollups-node
+x-env: &env
+  CARTESI_LOG_LEVEL: info
+  CARTESI_AUTH_KIND: ${AUTH_KIND}
+  CARTESI_BLOCKCHAIN_ID: ${BLOCKCHAIN_ID}
+  CARTESI_AUTH_PRIVATE_KEY_FILE: ${PRIVATE_KEY_FILE}
+  CARTESI_BLOCKCHAIN_WS_ENDPOINT: ${BLOCKCHAIN_WS_ENDPOINT}
+  CARTESI_BLOCKCHAIN_HTTP_ENDPOINT: ${BLOCKCHAIN_HTTP_ENDPOINT}
+  CARTESI_SNAPSHOTS_DIR: "/var/lib/cartesi-rollups-node/snapshot"
+  CARTESI_CONTRACTS_INPUT_BOX_ADDRESS: 0xc70074BDD26d8cF983Ca6A5b89b8db52D5850051
+  CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS: 0xC7003566dD09Aa0fC0Ce201aC2769aFAe3BF0051
+  CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS: 0xc7006f70875BaDe89032001262A846D3Ee160051
+  CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS: 0xc700285Ab555eeB5201BC00CFD4b2CC8DED90051
+  CARTESI_DATABASE_CONNECTION: postgres://postgres:password@database:5432/rollupsdb?sslmode=disable
+
+secrets:
+  pk:
+    file: ./secrets/pk # TODO: change to the path of the your private key file
+
+services:
+  database:
+    container_name: database
+    image: cartesi/rollups-database:0.12.0-alpha.20
+    environment:
+      POSTGRES_PASSWORD: password
+    networks:
+      - default
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U postgres || exit 1
+      timeout: 1s
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      start_interval: 200ms
+
+  evm-reader:
+    container_name: evm-reader
+    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    command: cartesi-rollups-evm-reader
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - default
+    ports:
+      - "10001:10001"
+    environment:
+      <<: *env
+
+  advancer:
+    container_name: advancer
+    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    command: cartesi-rollups-advancer
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - data:/var/lib/cartesi-rollups-node/data
+      - .cartesi/image:/var/lib/cartesi-rollups-node/snapshot/
+    networks:
+      - default
+    ports:
+      - "10002:10002"
+      - "10012:10012"
+    environment:
+      <<: *env
+    secrets:
+      - pk
+
+  validator:
+    container_name: validator
+    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    command: cartesi-rollups-validator
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - default
+    ports:
+      - "10003:10003"
+    environment:
+      <<: *env
+
+  claimer:
+    container_name: claimer
+    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    command: cartesi-rollups-claimer
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - default
+    ports:
+      - "10004:10004"
+    environment:
+      <<: *env
+    secrets:
+      - pk
+
+  jsonrpc-api:
+    container_name: jsonrpc-api
+    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    command: cartesi-rollups-jsonrpc-api
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - default
+    ports:
+      - "10005:10005"
+      - "10011:10011"
+    environment:
+      <<: *env
+
+volumes:
+  data:
