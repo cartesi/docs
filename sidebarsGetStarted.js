@@ -34,7 +34,7 @@ module.exports = {
         {
           type: 'doc',
           id: 'app-chains',
-          label: 'App-Chains',
+          label: 'Appchains',
         },
       ],
     },
