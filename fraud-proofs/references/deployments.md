@@ -14,6 +14,9 @@ This page covers the PRT and Honeypot v2 deployed contracts and their addresses.
 | **CanonicalTournamentParametersProvider** | [`0xcC0a49320891Bf35bca834aF1045ab89Ecd44c0c`](https://etherscan.io/address/0xcC0a49320891Bf35bca834aF1045ab89Ecd44c0c) |
 
 ## Honeypot v2 Deployments
+:::caution
+ Honeypot app is being updated. We recently found a bug in the application that has led to a fail-stop state. This means the current deployment is permanently frozen, and the bounty funds within it are no longer recoverable. Get in touch with us on [Discord](https://discord.gg/cWGbyFkQ2W) for more details.
+:::
 
 | Component | Mainnet Address |
 |-----------|-----------------|
