@@ -33,10 +33,8 @@ Now, navigate to the project directory and install [`ethers`](https://docs.ether
 
 ```bash
 yarn add ethers viem
-yarn add -D @cartesi/rollups
+yarn add -D @cartesi/rollups@1.4.3
 ```
-
-
 
 ## Define the ABIs
 
@@ -108,14 +106,15 @@ This script will look for all specified `.sol` files and create a TypeScript fil
 
 Now, let's make the script executable:
 
-    chmod +x generate_abis.sh
-
+```bash
+ chmod +x generate_abis.sh
+```
 
 And run it:
 
-    
-    ./generate_abis.sh
-    
+```bash
+ ./generate_abis.sh
+```
 
 ## Building the Ether wallet
 
