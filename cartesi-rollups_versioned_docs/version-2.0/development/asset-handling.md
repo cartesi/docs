@@ -50,7 +50,7 @@ Vouchers are crucial in allowing applications in the execution layer to interact
 
 The application’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals, for example: `transferFrom(sender, recipient, amount)`. In this case, the sender is the application itself.
 
-By calling `relayDAppAddress()`, function of the `DAppAddressRelay` contract, it adds the dApp’s address as a new input for the Cartesi dApp to process. Next, the off-chain machine uses this address to generate a voucher for execution at the [`executeVoucher()`](../api-reference/json-rpc/application.md/#executevoucher) function of the `CartesiDApp` contract.
+Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the executeOutput() function of the Application contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
 Below is a sample JavaScript code with the implementations to transfer tokens to whoever calls the application, notice that the `const call` variable is an encoded function data containing the token contract ABI, function name and also arguments like recipient and amount, while the actual `voucher` structure itself contains a destination (erc20 token contract where the transfer execution should occur), the payload (encoded function data in `call`) and finally a value field which is initialized to `0` meaning no Ether is intended to be sent alongside this transfer request.
 
