@@ -237,12 +237,27 @@
             "label": "Tutorials",
             "collapsed": true,
             "items": [
-                "tutorials/calculator",
-                "tutorials/ether-wallet",
-                "tutorials/erc-20-token-wallet",
-                "tutorials/erc-721-token-wallet",
-                "tutorials/react-frontend-application",
-                "tutorials/cli-account-abstraction-feauture"
+                "tutorials/tutorials_section_overview",
+                {
+                    "type": "category",
+                    "label": "Building Applications",
+                    "collapsed": true,
+                    "items": [
+                        "tutorials/calculator",
+                        "tutorials/ether-wallet",
+                        "tutorials/erc-20-token-wallet",
+                        "tutorials/erc-721-token-wallet",
+                        "tutorials/react-frontend-application"
+                    ]
+                },
+                {
+                    "type": "category",
+                    "label": "CLI and it's services",
+                    "collapsed": true,
+                    "items": [
+                        "tutorials/cli-account-abstraction-feauture"
+                    ]
+                }
             ]
         },
         {
