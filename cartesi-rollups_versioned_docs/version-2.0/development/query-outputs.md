@@ -131,6 +131,87 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
+
+<TabItem value="Rust" label="Rust" default>
+<pre><code>
+
+```rust
+fn calculate_multiples(num: i64) -> String {
+    let mut multiples = String::new();
+
+    for i in 1..=5 {
+        multiples.push_str(&(num * i).to_string());
+        if i < 5 {
+            multiples.push_str(", ");
+        }
+    }
+
+    multiples
+}
+fn hex_to_string(hex: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let hexstr = hex.strip_prefix("0x").unwrap_or(hex);
+    let bytes = hex::decode(hexstr).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
+    let s = String::from_utf8(bytes).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
+    Ok(s)
+}
+
+async fn emit_notice( payload: String) -> Option<bool> {
+    let hex_string = {
+        let s = payload.strip_prefix("0x").unwrap_or(payload.as_str());
+        hex::encode(s.as_bytes())
+    };
+
+    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
+    let client = hyper::Client::new();
+
+    let response = object! {
+        "payload" => format!("0x{}", hex_string),
+    };
+    let request = hyper::Request::builder()
+    .method(hyper::Method::POST)
+    .header(hyper::header::CONTENT_TYPE, "application/json")
+    .uri(format!("{}/notice", server_addr))
+    .body(hyper::Body::from(response.dump()))
+    .ok()?;
+
+    let response = client.request(request).await;
+
+    match response {
+        Ok(_) => {
+            println!("Notice generation successful");
+            return Some(true);
+        }
+        Err(e) => {
+            println!("Notice request failed {}", e);
+            None
+        }
+    }
+}
+
+pub async fn handle_advance(
+    _client: &hyper::Client<hyper::client::HttpConnector>,
+    _server_addr: &str,
+    request: JsonValue,
+) -> Result<&'static str, Box<dyn std::error::Error>> {
+    println!("Received advance request data {}", &request);
+    let payload = request["data"]["payload"]
+        .as_str()
+        .ok_or("Missing payload")?;
+
+    let number: i64 = hex_to_string(payload)?.parse()?;
+
+    let multiples = calculate_multiples(number);
+
+    println!("ADDING NOTICE WITH VALUE {}", multiples);
+
+    emit_notice(multiples).await;
+    Ok("accept")
+}
+```
+
+</code></pre>
+</TabItem>
+
 </Tabs>
 
 For example, sending an input payload of `“2”` to the application using Cast or `cartesi send generic` will log:
@@ -396,6 +477,69 @@ def handle_advance(data):
        )
    return status
 
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Rust" label="Rust" default>
+<pre><code>
+
+```rust
+pub async fn handle_advance(
+    _client: &hyper::Client<hyper::client::HttpConnector>,
+    _server_addr: &str,
+    request: JsonValue,
+) -> Result<&'static str, Box<dyn std::error::Error>> {
+    println!("Received advance request data {}", &request);
+    let payload = request["data"]["payload"]
+        .as_str()
+        .ok_or("Missing payload")?;
+
+    let payload_string = hex_to_string(payload)?;
+
+    emit_report(payload_string).await;
+    Ok("accept")
+}
+
+fn hex_to_string(hex: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let hexstr = hex.strip_prefix("0x").unwrap_or(hex);
+    let bytes = hex::decode(hexstr).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
+    let s = String::from_utf8(bytes).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
+    Ok(s)
+}
+
+async fn emit_report( payload: String) -> Option<bool> {
+    let hex_string = {
+        let s = payload.strip_prefix("0x").unwrap_or(payload.as_str());
+        hex::encode(s.as_bytes())
+    };
+
+    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
+    let client = hyper::Client::new();
+
+    let response = object! {
+        "payload" => format!("0x{}", hex_string),
+    };
+    let request = hyper::Request::builder()
+    .method(hyper::Method::POST)
+    .header(hyper::header::CONTENT_TYPE, "application/json")
+    .uri(format!("{}/report", server_addr))
+    .body(hyper::Body::from(response.dump()))
+    .ok()?;
+
+    let response = client.request(request).await;
+    match response {
+        Ok(_) => {
+            println!("Report generation successful");
+            return Some(true);
+        }
+        Err(e) => {
+            println!("Report request failed {}", e);
+            None
+        }
+    }
+}
 ```
 
 </code></pre>

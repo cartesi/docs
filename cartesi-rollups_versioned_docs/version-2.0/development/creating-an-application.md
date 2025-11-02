@@ -60,118 +60,37 @@ If your application needs to emit Outputs like; notices, vouchers, or reports, m
 
 Below is a sample application that has been modified to include the logic to simply receive an input from a user in both inspect and advance route then, emits a notice, voucher and a report. For your application you'll need to include your personal logic and also emit outputs when necessary:
 
-```javascript
 
-import { stringToHex, encodeFunctionData, erc20Abi, hexToString, zeroHash } from "viem";
-
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
-
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-
-  const sender = data["metadata"]["msg_sender"];
-  const payload = hexToString(data.payload);
-  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
-
-  await emitNotice(payload);
-  await emitReport(payload);
-
-    const call = encodeFunctionData({
-    abi: erc20Abi,
-    functionName: "transfer",
-    args: [sender, BigInt(10)],
-  });
-
-  let voucher = {
-    destination: erc20Token,
-    payload: call,
-    value: zeroHash,
-  };
-
-  await emitVoucher(voucher);
-  return "accept";
-}
-
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  const payload = data.payload;
-  await emitReport(payload);
-  return "accept";
-}
-
-const emitNotice = async (inputPayload) => {
-  let hexPayload = stringToHex(inputPayload);
-  try {
-    await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexPayload }),
-    });
-  } catch (error) {
-    //Do something when there is an error
-  }
-}
-
-const emitVoucher = async (voucher) => {
-  try {
-    await fetch(rollup_server + "/voucher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(voucher),
-    });
-  } catch (error) {
-    //Do something when there is an error
-  }
-};
-
-const emitReport = async (payload) => {
-  let hexPayload = stringToHex(payload);
-  try {
-    await fetch(rollup_server + "/report", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexPayload }),
-    });
-  } catch (error) {
-    //Do something when there is an error
-  }
-};
-
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
-
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "accept" }),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
-    } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
-    }
-  }
-})();
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ImplementingOutputsJS from './snippets/implementing_outputs_js.md';
+import ImplementingOutputsPY from './snippets/implementing_outputs_py.md';
+import ImplementingOutputsRS from './snippets/implementing_outputs_rs.md';
 
 
-```
+<Tabs>
+  <TabItem value="JavaScript" label="JavaScript" default>
+<pre><code>
+
+<ImplementingOutputsJS />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Python" label="Python" default>
+<pre><code>
+
+<ImplementingOutputsPY />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Rust" label="Rust" default>
+<pre><code>
+
+<ImplementingOutputsRS />
+
+</code></pre>
+</TabItem>
+
+</Tabs>
