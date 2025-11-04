@@ -46,7 +46,7 @@ pub async fn handle_advance(
         .ok_or("Missing msg_sender in metadata")?
         .to_string();
 
-    const erc20Token: &str = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+    const erc_20_token: &str = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
 
     emit_notice(payload.to_string()).await;
     emit_report(payload.to_string()).await;
@@ -59,7 +59,7 @@ pub async fn handle_advance(
     ];
     let function_sig = "transfer(address,uint256)";
 
-    let voucher = structure_voucher(function_sig, &sender, args, 0);
+    let voucher = structure_voucher(function_sig, &erc_20_token, args, 0);
     emit_voucher(voucher).await;
 
     Ok("accept")
