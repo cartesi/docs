@@ -1,6 +1,5 @@
 ```javascript
-import { encodeFunctionData, getAddress, toHex, zeroHash } from "viem";
-import { ethers } from "ethers";
+import { encodeFunctionData, toHex, zeroHash } from "viem";
 
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollup_server);
@@ -23,14 +22,13 @@ const erc721Abi = [
 ];
 
 class Storage {
-  constructor(erc721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price, dappAddressRelay) {
+  constructor(erc721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price) {
     this.erc721_portal_address = erc721_portal_address;
     this.erc20_portal_address = erc20_portal_address;
     this.erc721_token = erc721_token;
     this.erc20_token = erc20_token;
     this.application_address = normAddr(ZERO_ADDRESS);
-    this.list_price = list_price;
-    this.dappAddressRelay = dappAddressRelay;
+    this.list_price = list_price
 
     this.listed_tokens = [];
     this.users_erc20_token_balance = new Map();
@@ -122,13 +120,13 @@ class Storage {
     if (!storage.listed_tokens.includes(tokenId)) {
       await emitReport(`Token ${erc721TokenAddress} with id ${tid} is not for sale`);
       console.log("Token is not for sale");
-      return false;
+      return;
     }
     const owner = this.getERC721TokenOwner(tid);
     if (!owner) {
       await emitReport(`Token owner for token ${erc721TokenAddress} with id ${tid} not found`);
       console.log("Token owner not found");
-      return false;
+      return;
     }
 
     await this.reduceUserBalance(buyerAddress, storage.list_price);
@@ -170,42 +168,35 @@ async function handleERC721Deposit(depositorAddress, tokenId, tokenAddress) {
   }
 }
 
-function erc721TokenDepositParse(payload) {
-    try {
-      const erc721 = getAddress(ethers.dataSlice(payload, 0, 20));
-      const account = getAddress(ethers.dataSlice(payload, 20, 40));
-      const tokenId = parseInt(ethers.dataSlice(payload, 40, 72));
+function tokenDepositParse(payload) {
+  const hexstr = payload.startsWith("0x") ? payload.slice(2) : payload;
+  const bytes = Buffer.from(hexstr, "hex");
 
-      return {
-        token:  erc721,
-        receiver: account,
-        amount: tokenId,
-      };
-  } catch (e) {
-    emitReport(`Error parsing ERC721 deposit: ${e}`);
+  if (bytes.length < 20 + 20 + 32) {
+    console.log(`payload too short: ${bytes.length} bytes`);
   }
-}
 
-function erc20TokenDepositParse(payload) {
-    try {
-      let inputData = [];
-      inputData[0] = ethers.dataSlice(payload, 0, 1);
-      inputData[1] = ethers.dataSlice(payload, 1, 21);
-      inputData[2] = ethers.dataSlice(payload, 21, 41);
-      inputData[3] = ethers.dataSlice(payload, 41, 73);
+  const token = bytes.slice(0, 20);
+  const receiver = bytes.slice(20, 40);
+  const amount_be = bytes.slice(40, 72);
 
-      if (!inputData[0]) {
-        emitReport("ERC20 deposit unsuccessful: invalid payload");
-        throw new Error("ERC20 deposit unsuccessful");
-      }
-        return {
-          token:  getAddress(inputData[1]),
-          receiver: getAddress(inputData[2]),
-          amount:  BigInt(inputData[3]),
-        };
-    } catch (e) {
-      emitReport(`Error parsing ERC20 deposit: ${e}`);
+  for (let i = 0; i < 16; i++) {
+    if (amount_be[i] !== 0) {
+      console.log("amount too large for u128");
     }
+  }
+
+  const lo = amount_be.slice(16);
+  let amount = 0n;
+  for (const b of lo) {
+    amount = (amount << 8n) + BigInt(b);
+  }
+
+  return {
+    token: "0x" + token.toString("hex"),
+    receiver: "0x" + receiver.toString("hex"),
+    amount: amount.toString(),
+  };
 }
 
 async function extractField(json, field) {
@@ -225,9 +216,7 @@ async function handlePurchaseToken(callerAddress, userInput) {
     const tokenId = BigInt(await extractField(userInput, "token_id"));
 
     try {
-      if (await storage.purchaseERC721Token(callerAddress, erc721TokenAddress, tokenId) === false) {
-        return;
-      }
+      await storage.purchaseERC721Token(callerAddress, erc721TokenAddress, tokenId);
       console.log("Token purchased successfully");
       let voucher = structureVoucher({
         abi: erc721Abi,
@@ -256,18 +245,19 @@ async function handle_advance(data) {
   console.log("Received advance request data " + JSON.stringify(data));
 
   const sender = data["metadata"]["msg_sender"];
+  app_contract = normAddr(data["metadata"]["app_contract"])
+
+  if (normAddr(storage.application_address) == normAddr(ZERO_ADDRESS)) {
+    storage.setAppAddress(app_contract);
+  }
 
   const payload = hexToString(data.payload);
 
-  if (normAddr(sender) == normAddr(storage.dappAddressRelay)) {
-    if (normAddr(storage.application_address) == normAddr(ZERO_ADDRESS)) {
-      storage.setAppAddress(data.payload);
-    }
-  } else if (normAddr(sender) == normAddr(storage.erc20_portal_address)) {
-    let { token, receiver, amount } = erc20TokenDepositParse(data.payload);
+  if (normAddr(sender) == normAddr(storage.erc20_portal_address)) {
+    let { token, receiver, amount } = tokenDepositParse(data.payload);
     await handleERC20Deposit(receiver, amount, token);
   } else if (normAddr(sender) == normAddr(storage.erc721_portal_address)) {
-    let { token, receiver, amount } = erc721TokenDepositParse(data.payload)
+    let { token, receiver, amount } = tokenDepositParse(data.payload)
     await handleERC721Deposit(receiver, asBigInt(amount), token);
   } else {
     const payload_obj = JSON.parse(payload);
@@ -286,19 +276,25 @@ async function handle_advance(data) {
 async function handle_inspect(data) {
   console.log("Received inspect request data " + JSON.stringify(data));
 
-  const payload = hexToString(data.payload).trim();
+  const payload = hexToString(data.payload);
+  let payload_obj;
 
-  let payload_arry = payload.split("/");
+  try {
+    payload_obj = JSON.parse(payload);
+  } catch (e) {
+    await emitReport("Invalid payload JSON");
+    return "accept";
+  }
 
-  switch (payload_arry[0]) {
+  switch (payload_obj.method) {
     case "get_user_erc20_balance": {
-      const user_address = payload_arry[1]; 
+      const user_address = payload_obj["user_address"];
       const bal = storage.getUserERC20TokenBalance(normAddr(user_address));
       await emitReport(`User: ${user_address} Balance: ${bal.toString()}`);
       break;
     }
     case "get_token_owner": {
-      const token_id = BigInt(payload_arry[1]);
+      const token_id = BigInt(payload_obj["token_id"]);
       const token_owner = storage.getERC721TokenOwner(token_id);
       await emitReport(`Token_id: ${token_id.toString()} owner: ${token_owner ?? "None"}`); 
       break;
@@ -331,9 +327,12 @@ function structureVoucher({ abi, functionName, args, destination, value = 0n }) 
     args,
   });
 
+  const valueHex = value === 0n ? zeroHash : toHex(BigInt(value));
+
   return {
     destination,
-    payload
+    payload,
+    value: valueHex,
   }
 }
 
@@ -388,14 +387,13 @@ var handlers = {
   inspect_state: handle_inspect,
 };
 
-let erc721_portal_address = "0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87";
-let erc20_portal_address = "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB";
-let erc20_token = "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2";
-let erc721_token = "0xc6582A9b48F211Fa8c2B5b16CB615eC39bcA653B";
-let dappAddressRelay = "0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE";
+let erc721_portal_address = "0xc700d52F5290e978e9CAe7D1E092935263b60051";
+let erc20_portal_address = "0xc700D6aDd016eECd59d989C028214Eaa0fCC0051";
+let erc20_token = "0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C";
+let erc721_token = "0xBa46623aD94AB45850c4ecbA9555D26328917c3B";
 let list_price = BigInt("100000000000000000000");
 
-var storage = new Storage(erc721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price, dappAddressRelay);
+var storage = new Storage(erc721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price);
 
 var finish = { status: "accept" };
 

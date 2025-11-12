@@ -12,7 +12,6 @@ pub struct Storage {
     pub erc721_token: String,
     pub erc20_token: String,
     pub app_address: String,
-    pub dapp_address_relay: String,
     pub list_price: u128,
     pub listed_tokens: Vec<u128>,
 
@@ -27,15 +26,13 @@ impl Storage {
         erc20_portal_address: String,
         erc721_token: String,
         erc20_token: String,
-        list_price: u128,
-        dapp_address_relay: String
+        list_price: u128
     ) -> Self {
         Storage{
             erc20_portal_address,
             erc721_portal_address,
             erc20_token,
             erc721_token,
-            dapp_address_relay,
             list_price,
             app_address: "0x0000000000000000000000000000000000000000".to_string(),
             listed_tokens: Vec::new(),
@@ -161,6 +158,7 @@ async fn handle_purchase_token(sender: String, user_input: JsonValue, storage: &
                 Token::Uint(token_id.into()),
             ];
             let function_sig = "transferFrom(address,address,uint256)";
+            let value: u128 = 0;
             let selector = &id(function_sig)[..4];
             let encoded_args = encode(&args);
             
@@ -172,7 +170,8 @@ async fn handle_purchase_token(sender: String, user_input: JsonValue, storage: &
 
             let voucher = object! {
                 "destination" => format!("{}", storage.erc721_token),
-                "payload" => format!("{}", payload)
+                "payload" => format!("{}", payload),
+                "value" => format!("0x{}", hex::encode(value.to_be_bytes())),
             };
 
             emit_voucher(voucher).await;
@@ -194,25 +193,26 @@ pub async fn handle_advance(
     .as_str()
     .ok_or("Missing payload")?;
     let zero_address = "0x0000000000000000000000000000000000000000".to_string();
+    let app_addr = request["data"]["metadata"]["app_contract"]
+    .as_str()
+    .ok_or("Missing payload")?;
 
+    if storage.app_address == zero_address {
+        storage.app_address = app_addr.to_string();
+    }
     let sender = request["data"]["metadata"]["msg_sender"]
         .as_str()
         .ok_or("Missing msg_sender in metadata")?
         .to_string();
 
     match sender.as_str() {
-        s if s.to_lowercase() == storage.dapp_address_relay.as_str().to_lowercase() => {
-            if storage.app_address == zero_address {
-                storage.app_address = _payload.to_string();
-            }
-        },
        s if s.to_lowercase() == storage.erc20_portal_address.as_str().to_lowercase() => {
-            let (deposited_token, receiver_address, amount) = erc20_token_deposit_parse(&_payload)?;
+            let (deposited_token, receiver_address, amount) = token_deposit_parse(&_payload)?;
             println!("Deposited token: {}, Receiver: {}, Amount: {}", deposited_token, receiver_address, amount);
             handle_erc20_deposit(receiver_address.to_lowercase(), amount, deposited_token.to_lowercase(), storage).await;
         },
         s if s.to_lowercase() == storage.erc721_portal_address.as_str().to_lowercase() => {
-            let (deposited_token, receiver_address, token_id) = erc721_token_deposit_parse(&_payload)?;
+            let (deposited_token, receiver_address, token_id) = token_deposit_parse(&_payload)?;
             println!("Deposited and listed token: {}, Receiver: {}, Token ID: {}", deposited_token, receiver_address, token_id);
             handle_erc721_deposit(receiver_address.to_lowercase(), token_id, deposited_token.to_lowercase(), storage).await;
         },
@@ -261,53 +261,45 @@ pub async fn handle_inspect(
     let payload_str = hex_to_string(_payload)?;
     println!("Decoded payload: {}", payload_str);
 
-    let payload_arry = payload_str.split("/").collect::<Vec<&str>>();
+    let payload_json ;
 
-    match payload_arry[0] {
-        "get_user_erc20_balance" => {  
-            let user_address = payload_arry.get(1).map_or(zero_address, |addr| addr.to_lowercase());
-            let user_balance = storage.get_user_erc20_token_balance(user_address.as_str()).unwrap_or(&0);
-            emit_report(format!("User: {}, balance: {}", user_address, user_balance)).await;
-        },
-        "get_token_owner" => {  
-            let token_id: u128  = payload_arry[1].parse().unwrap_or(0);
-            let token_owner = storage.get_erc721_token_owner(token_id).unwrap_or(&zero_address);
-            emit_report(format!("Token id: {}, owner: {}", token_id, token_owner)).await;
-        },
-        "get_all_listed_tokens" => {  
-            let listed_tokens = storage.get_listed_tokens();
-            emit_report(format!("All listed tokens are: {:?}", listed_tokens)).await;
-        },
-        _ => {emit_report("Unknown method in payload".into()).await; println!("Unknown method in payload")},
+    match json::parse(&payload_str) {
+        Err(_) => {
+            let fixed_payload = try_fix_json_like(&payload_str);
+            match json::parse(&fixed_payload) {
+                Err(_) =>  panic!("Failed to parse decoded payload as JSON even after attempting to fix it"),
+                Ok(val) => payload_json = val,
+            };
+        }
+        Ok(val) => payload_json = val
+    };
+
+    if let Some(method_str) = payload_json["method"].as_str() {
+        match method_str {
+            "get_user_erc20_balance" => {  
+                let user_address = payload_json["user_address"].as_str().unwrap_or(&zero_address).to_lowercase(); 
+                let user_balance = storage.get_user_erc20_token_balance(user_address.as_str()).unwrap_or(&0);
+                emit_report(format!("User: {}, balance: {}", user_address, user_balance)).await;
+            },
+            "get_token_owner" => {  
+                let token_id: u128  = payload_json["token_id"].as_u64().unwrap_or(0).into();
+                let token_owner = storage.get_erc721_token_owner(token_id).unwrap_or(&zero_address);
+                emit_report(format!("Token id: {}, owner: {}", token_id, token_owner)).await;
+            },
+            "get_all_listed_tokens" => {  
+                let listed_tokens = storage.get_listed_tokens();
+                emit_report(format!("All listed tokens are: {:?}", listed_tokens)).await;
+            },
+            _ => {emit_report("Unknown method in payload".into()).await; println!("Unknown method in payload")},
+        }
+    } else {
+        emit_report("Missing or invalid method field in payload".into()).await;
+        println!("Missing or invalid method field in payload");
     }
     Ok("accept")
 }
 
-pub fn erc20_token_deposit_parse(payload: &str) -> Result<(String, String, u128), String> {
-    let hexstr = payload.strip_prefix("0x").unwrap_or(payload);
-    let bytes = hex::decode(hexstr).map_err(|e| format!("hex decode error: {}", e))?;
-    if bytes.len() < 20 + 20 + 32 {
-        return Err(format!("payload too short: {} bytes", bytes.len()));
-    }
-    let token = &bytes[1..21];
-    let receiver = &bytes[21..41];
-    let amount_be = &bytes[41..73];
-
-    if amount_be[..16].iter().any(|&b| b != 0) {
-        return Err("amount too large for u128".into());
-    }
-    let mut lo = [0u8; 16];
-    lo.copy_from_slice(&amount_be[16..]);
-    let amount = u128::from_be_bytes(lo);
-
-    Ok((
-        format!("0x{}", hex::encode(token)),
-        format!("0x{}", hex::encode(receiver)),
-        amount,
-    ))
-}
-
-pub fn erc721_token_deposit_parse(payload: &str) -> Result<(String, String, u128), String> {
+pub fn token_deposit_parse(payload: &str) -> Result<(String, String, u128), String> {
     let hexstr = payload.strip_prefix("0x").unwrap_or(payload);
     let bytes = hex::decode(hexstr).map_err(|e| format!("hex decode error: {}", e))?;
     if bytes.len() < 20 + 20 + 32 {
@@ -336,13 +328,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = hyper::Client::new();
     let server_addr = env::var("ROLLUP_HTTP_SERVER_URL")?;
 
-    let erc721_portal_address = String::from("0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87");
-    let erc20_portal_address = String::from("0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB");
-    let erc20_token = String::from("0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2");
-    let erc721_token = String::from("0xc6582A9b48F211Fa8c2B5b16CB615eC39bcA653B");
-    let dappAddressRelay = String::from("0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE");
+    let erc721_portal_address = String::from("0xc700d52F5290e978e9CAe7D1E092935263b60051");
+    let erc20_portal_address = String::from("0xc700D6aDd016eECd59d989C028214Eaa0fCC0051");
+    let erc20_token = String::from("0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C");
+    let erc721_token = String::from("0xBa46623aD94AB45850c4ecbA9555D26328917c3B");
     let list_price: u128 = 100_000_000_000_000_000_000;
-    let mut storage = Storage::new(erc721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price, dappAddressRelay);
+    let mut storage = Storage::new(erc721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price);
 
     let mut status = "accept";
     loop {
