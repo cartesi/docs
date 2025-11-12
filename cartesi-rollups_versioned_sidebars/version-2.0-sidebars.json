@@ -175,7 +175,9 @@
             "label": "Tutorials",
             "collapsed": true,
             "items": [
+                "tutorials/counter",
                 "tutorials/calculator",
+                "tutorials/marketplace",
                 "tutorials/ether-wallet",
                 "tutorials/erc-20-token-wallet",
                 "tutorials/erc-721-token-wallet",
