@@ -6,3 +6,4 @@ XMTP
 Farcaster
 onchain
 Mugen
+object‑oriented
