@@ -209,7 +209,7 @@ export class Wallet {
       balance.decreaseEther(amount);
       const voucher = this.encodeWithdrawCall(application, address, amount);
 
-      console.log("Voucher created succesfully", voucher);
+      console.log("Voucher created successfully", voucher);
 
       return voucher;
     } else {

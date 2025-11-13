@@ -43,7 +43,7 @@ This economic game has a few core outcomes depending on the design:
 - Dishonest actors lose their bonds.
 - Participants are incentivized to submit valid claims.
 
-By aligning incentives with correctness, bonds and slashing mechanisms create a trustless system where where misbehavior is penalized while good behavior incentivized.
+By aligning incentives with correctness, bonds and slashing mechanisms create a trustless system where misbehavior is penalized while good behavior incentivized.
 
 ### Challenge Window
 Optimistic rollups define a challenge window - a time period (usually several days) during which any submitted claim can be disputed. If no fraud-proof is submitted during this window, the claim is finalized and assumed valid. While this delays finality, it ensures a safety-first approach, allowing any observer (even lightweight clients) to intervene.

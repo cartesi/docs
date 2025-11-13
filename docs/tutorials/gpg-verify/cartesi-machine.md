@@ -143,7 +143,7 @@ fi
 mv $MACHINE_TEMP_DIR $MACHINE_TARGET_DIR
 ```
 
-Comparing this to the [test Cartesi Machine](../gpg-verify/ext2-gpg.md#cartesi-machine-with-gpg) of the previous section, we can see that we now have individual input flash drives for the document and signature data, as well as an output flash drive. Futhermore, we have increased one of the input drive sizes to 4MiB (`1 << 22`) in order to be able to deal with larger documents [later on](../gpg-verify/larger-files.md). Finally, we should note that the whole command line executed is now a lot simpler, since we moved most of the complexity into the `gpg-verify.sh` script.
+Comparing this to the [test Cartesi Machine](../gpg-verify/ext2-gpg.md#cartesi-machine-with-gpg) of the previous section, we can see that we now have individual input flash drives for the document and signature data, as well as an output flash drive. Furthermore, we have increased one of the input drive sizes to 4MiB (`1 << 22`) in order to be able to deal with larger documents [later on](../gpg-verify/larger-files.md). Finally, we should note that the whole command line executed is now a lot simpler, since we moved most of the complexity into the `gpg-verify.sh` script.
 
 At this point, the machine template can be built and appropriately stored in the [Cartesi Compute SDK environment](../compute-env.md) by typing:
 
