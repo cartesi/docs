@@ -45,7 +45,7 @@ Next, we install other dependencies we would be using by running this code in th
     npm i permissionless@0.1.43 encoding @alchemy/aa-core @alchemy/aa-accounts @cartesi/rollups 
 ```
 
-This command instals five different dependencies this project will be utilizing. Permissionless, and the two alchemy dependencies can be replaced with the packages for any other AA SDK you decide to use. For this tutorial we’ll be using Alchemy, and as such, we’ve installed the Alchemy aa-core and the aa-accounts dependencies. 
+This command installs five different dependencies this project will be utilizing. Permissionless, and the two alchemy dependencies can be replaced with the packages for any other AA SDK you decide to use. For this tutorial we’ll be using Alchemy, and as such, we’ve installed the Alchemy aa-core and the aa-accounts dependencies. 
 
 ### Configuring wagmi.ts file
 
