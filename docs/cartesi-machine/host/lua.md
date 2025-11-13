@@ -1623,7 +1623,7 @@ local function hexhash8(hash)
     return string.sub(hexstring(hash), 1, 8)
 end
 
--- Convert binary data to number or to start and end as hexdecimal
+-- Convert binary data to number or to start and end as hexadecimal
 local function accessdatastring(data, log2_size)
     if log2_size == 3 then
         data = string.unpack("<I8", data)
