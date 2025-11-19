@@ -10,7 +10,7 @@ resources:
     title: Smart Contracts for Cartesi Rollups
 ---
 
-In a Cartesi dApp, the frontend and backend components communicate through the Rollups framework using HTTP and GraphQL APIs.
+In a Cartesi dApp, the frontend and backend components communicate through the Rollups framework using HTTP and JSON-RPC APIs.
 
 When designing the APIs for this communication framework, we aimed to ensure that developers could create their applications without excessive concern about the low-level components of Cartesi Rollups. 
 
@@ -42,8 +42,6 @@ The figure below illustrates the main use cases for these interactions:
 
 - [`executeOutput()`](./contracts/application/#executeoutput) — Submits a JSON-RPC blockchain transaction to request the execution of a given voucher or notice by the [`Application`](./contracts/application.md) smart contract on the base layer. Vouchers can only be executed when an epoch is closed.
 
-- Query outputs — You can submit a query to a Cartesi node to retrieve vouchers, notices, and reports as specified by the Cartesi Rollups GraphQL schema.
+- Query outputs — You can submit a query to a Cartesi node to retrieve vouchers, notices, and reports as specified by the Cartesi Rollups JSON-RPC schema.
 
 - Inspect state — You can make an HTTP call to the Cartesi node to retrieve arbitrary dApp-specific application state.
-
-
