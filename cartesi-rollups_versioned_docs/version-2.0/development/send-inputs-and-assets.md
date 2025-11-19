@@ -315,7 +315,7 @@ for (let i in result.reports) {
 ```
 
 :::note Interacting with Sample application?
-Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and can also be quarried using the JSON RPC or GraphQl server.
+Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and can also be quarried using the JSON RPC server.
 :::
 
 ## Depositing Assets
