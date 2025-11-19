@@ -94,7 +94,7 @@ The off-chain execution layer is centered around the Cartesi Rollups Node, the c
 
 4. Inspection: The node handles requests to inspect the dApp state, facilitating queries without altering the state.
 
-5. Output management: It operates a GraphQL server that allows clients to query the outputs produced by the dApp.
+5. Output management: It operates a JSONRPC server that allows clients to query the outputs produced by the dApp.
 
 The Cartesi Rollups Node can operate in two primary modes:
 
@@ -105,7 +105,6 @@ The Cartesi Rollups Node can operate in two primary modes:
 :::caution important
 All Cartesi Nodes function as Validator Nodes, with Reader Node functionality under active development.
 :::
-
 
 ## Data Flow and Processes
 
@@ -125,7 +124,7 @@ The `advance-state` process changes the application state, and it involves the f
 
 - The Cartesi Machine processes the input and generates verifiable outputs ([vouchers](../api-reference/backend/vouchers.md), [notices](../api-reference/backend/notices.md), and [reports](../api-reference/backend/reports.md)).
 
-- The application frontend can query these outputs using the node's [GraphQL API](../api-reference/graphql/basics.md).
+- The application frontend can query these outputs using the node's [JSON API](../api-reference/jsonrpc/overview.md).
 
 ### Inspect state
 
