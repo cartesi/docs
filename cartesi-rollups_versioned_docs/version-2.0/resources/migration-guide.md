@@ -18,7 +18,7 @@ Rollups node v2.0 introduces some major changes in how the node works internally
 - listens to voucher execution events. See the [Outputs](#outputs) section.
 - checks if a voucher was executed. See the [Outputs](#outputs) section.
 - uses inspect calls. See the [Inspect calls](#inspect-calls) section.
-- uses GraphQL queries. See the [GraphQL queries](#graphql-queries) section.
+- uses JSON-RPC queries. See the [JSON queries](#jsonrpc-queries) section.
 
 :::note
 If your application uses a high-level framework(ex. Deroll, Rollmelette etc.) for either backend or frontend, check if the framework has already implemented the changes described in this guide.

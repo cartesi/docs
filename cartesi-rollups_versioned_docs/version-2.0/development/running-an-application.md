@@ -67,14 +67,12 @@ This adjustment should align the node's block reading with the blockchain's curr
 The `cartesi run` command activates several services essential for node operation: some of these services are not activated by default and can be activated by adding them to the `--service` flag when starting your application. The below command starts your application with all available services:
 
 ```shell
-cartesi run --services explorer,graphql,bundler,paymaster,passkey
+cartesi run --services explorer,bundler,paymaster,passkey
 ```
 
 Each of these services runs independently and can be activated or deactivated at will by simply including or removing them from the list of services while running your application. Below is a breakdown of these services and their default URL's.
 
 - **Anvil Chain**: Runs a local blockchain available at `http://localhost:6751/anvil`.
-
-- **GraphQL Playground**: An interactive IDE at `http://localhost:6751/graphql` for exploring the GraphQL server.
 
 - **Explorer**: Monitors Rollups application activity and manages transactions via `http://localhost:6751/explorer`.
 

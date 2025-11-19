@@ -122,5 +122,5 @@ pub async fn handle_advance(
 </Tabs>
 
 :::note querying reports
-Frontend clients can query reports using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation to query reports](../../development/query-outputs.md/#query-all-reports) from your dApp.
+Frontend clients can query reports using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation to query reports](../../development/query-outputs.md#query-all-reports) from your dApp.
 :::
