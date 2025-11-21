@@ -297,37 +297,50 @@ The `cartesi send generic` sends a notice containing a payload to the Rollup Ser
 Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.
 :::
 
-We can query these notices using the GraphQL playground hosted on `http://localhost:8080/graphql` or with a custom frontend client.
+We can query these notices using the JSON-RPC server running on `http://127.0.0.1:6751/rpc` or with a custom frontend client.
 
-You can retrieve all notices sent to the rollup server with the query:
+You can retrieve all notices sent to the rollup server by making running this request on a terminal:
 
-```graphql
-query notices {
-  notices {
-    edges {
-      node {
-        index
-        input {
-          index
-        }
-        payload
-      }
-    }
-  }
-}
+```bash
+curl -X POST http://127.0.0.1:6751/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "cartesi_listOutputs",
+    "params": {
+      "application": "calculator",
+      "limit": 10,
+      "offset": 0
+    },
+    "id": 1
+  }'
 ```
 
 Alternatively, you can query this on a frontend client:
 
-```js
-const response = await fetch("http://localhost:8080/graphql", {
+```javascript
+const response = await fetch("http://127.0.0.1:6751/rpc", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: '{ "query": "{ notices { edges { node { payload } } } }" }',
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    method: "cartesi_listOutputs",
+    params: {
+      application: "calculator",
+      limit: 10,
+      offset: 0
+    },
+    id: 1
+  })
 });
+
 const result = await response.json();
-for (let edge of result.data.notices.edges) {
-  let payload = edge.node.payload;
+
+const outputs = result?.result?.data ?? [];
+
+for (const output of outputs) {
+  const decoded = output.decoded_data;
+  console.log("Output payload:", decoded);
 }
 ```
 
