@@ -75,6 +75,50 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
+<TabItem value="Rust" label="Rust" default>
+<pre><code>
+
+```rust
+pub async fn handle_advance(
+    _client: &hyper::Client<hyper::client::HttpConnector>,
+    _server_addr: &str,
+    request: JsonValue,
+) -> Result<&'static str, Box<dyn std::error::Error>> {
+    println!("Received advance request data {}", &request);
+    let payload = request["data"]["payload"]
+        .as_str()
+        .ok_or("Missing payload")?;
+
+    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
+    let client = hyper::Client::new();
+
+    let response = object! {
+        "payload" => payload,
+    };
+    let request = hyper::Request::builder()
+    .method(hyper::Method::POST)
+    .header(hyper::header::CONTENT_TYPE, "application/json")
+    .uri(format!("{}/report", server_addr))
+    .body(hyper::Body::from(response.dump()))
+    .ok()?;
+
+    let response = client.request(request).await;
+    match response {
+        Ok(_) => {
+            println!("Report generation successful");
+            Ok("accept")
+        }
+        Err(e) => {
+            println!("Report request failed {}", e);
+            Err("Report request failed {}")
+        }
+    }
+}
+```
+
+</code></pre>
+</TabItem>
+
 </Tabs>
 
 :::note querying reports

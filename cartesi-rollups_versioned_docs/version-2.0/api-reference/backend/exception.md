@@ -81,6 +81,76 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
+<TabItem value="Rust" label="Rust" default>
+<pre><code>
+
+```rust
+fn hex_to_string(hex: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let hexstr = hex.strip_prefix("0x").unwrap_or(hex);
+    let bytes = hex::decode(hexstr).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
+    let s = String::from_utf8(bytes).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
+    Ok(s)
+}
+
+pub async fn handle_advance(
+    _client: &hyper::Client<hyper::client::HttpConnector>,
+    _server_addr: &str,
+    request: JsonValue,
+) -> Result<&'static str, Box<dyn std::error::Error>> {
+    println!("Received advance request data {}", &request);
+    let payload = request["data"]["payload"]
+        .as_str()
+        .ok_or("Missing payload")?;
+   
+    let payload_string = hex_to_string(payload);
+
+    match payload_string {
+      Ok(payload_extract) => {
+        // DO SOMETHING HERE!!
+      }
+      Err(e) => {
+        throw_execption(e.to_string()).await;
+      }
+    }
+    Ok("accept")
+}
+
+async fn throw_execption( payload: String) -> Option<bool> {
+    let hex_string = {
+        let s = payload.strip_prefix("0x").unwrap_or(payload.as_str());
+        hex::encode(s.as_bytes())
+    };
+
+    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
+    let client = hyper::Client::new();
+
+    let response = object! {
+        "payload" => format!("0x{}", hex_string),
+    };
+    let request = hyper::Request::builder()
+    .method(hyper::Method::POST)
+    .header(hyper::header::CONTENT_TYPE, "application/json")
+    .uri(format!("{}/exception", server_addr))
+    .body(hyper::Body::from(response.dump()))
+    .ok()?;
+
+    let response = client.request(request).await;
+    match response {
+        Ok(_) => {
+            println!("Exception generation successful");
+            return Some(true);
+        }
+        Err(e) => {
+            println!("Exception request failed {}", e);
+            None
+        }
+    }
+}
+```
+
+</code></pre>
+</TabItem>
+
 </Tabs>
 
 ## Notes
