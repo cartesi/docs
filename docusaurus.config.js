@@ -301,12 +301,12 @@ const config = {
                 to: "https://discord.gg/cWGbyFkQ2W",
               },
               {
-                label: "Medium",
-                to: "https://www.medium.com/cartesi",
+                label: "Blog",
+                to: "https://cartesi.io/blog/",
               },
               {
-                label: "Twitter",
-                to: "https://www.twitter.com/cartesiproject",
+                label: "X",
+                to: "https://www.x.com/cartesiproject",
               },
               {
                 label: "Telegram",
@@ -315,6 +315,10 @@ const config = {
               {
                 label: "Reddit",
                 to: "https://www.reddit.com/r/cartesi/",
+              },
+              {
+                label: "More",
+                to: "https://linktr.ee/cartesi",
               },
             ],
           },
