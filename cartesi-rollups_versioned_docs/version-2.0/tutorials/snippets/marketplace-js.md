@@ -121,13 +121,13 @@ class Storage {
     if (!storage.listed_tokens.includes(tokenId)) {
       await emitReport(`Token ${erc721TokenAddress} with id ${tid} is not for sale`);
       console.log("Token is not for sale");
-      return;
+      return false;
     }
     const owner = this.getERC721TokenOwner(tid);
     if (!owner) {
       await emitReport(`Token owner for token ${erc721TokenAddress} with id ${tid} not found`);
       console.log("Token owner not found");
-      return;
+      return false;
     }
 
     await this.reduceUserBalance(buyerAddress, storage.list_price);
@@ -219,7 +219,9 @@ async function handlePurchaseToken(callerAddress, userInput) {
     const tokenId = BigInt(await extractField(userInput, "token_id"));
 
     try {
-      await storage.purchaseERC721Token(callerAddress, erc721TokenAddress, tokenId);
+      if (await storage.purchaseERC721Token(callerAddress, erc721TokenAddress, tokenId) === false) {
+        return;
+      }
       console.log("Token purchased successfully");
       let voucher = structureVoucher({
         abi: erc721Abi,
