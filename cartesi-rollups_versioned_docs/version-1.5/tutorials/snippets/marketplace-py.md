@@ -35,7 +35,32 @@ def hex_to_string(hexstr: str) -> str:
     except UnicodeDecodeError:
         return "0x" + hexstr
 
-def token_deposit_parse(payload_hex: str):
+def erc20_token_deposit_parse(payload_hex: str):
+    hexstr = payload_hex[2:] if payload_hex.startswith("0x") else payload_hex
+    b = binascii.unhexlify(hexstr)
+
+    if len(b) < 20 + 20 + 32:
+        logger.error(f"payload too short: {len(b)} bytes")
+        return
+
+    token = b[1:21]
+    receiver = b[21:41]
+    amount_be = b[41:73]
+
+    val = int.from_bytes(amount_be, byteorder="big", signed=False)
+
+    token_hex = "0x" + token.hex()
+    receiver_hex = "0x" + receiver.hex()
+    
+    print("ERC20 Deposit Parsed:", token_hex, receiver_hex, str(val));
+    
+    return {
+        "token": token_hex,
+        "receiver": receiver_hex,
+        "amount": str(val), 
+    }
+    
+def erc721_token_deposit_parse(payload_hex: str):
     hexstr = payload_hex[2:] if payload_hex.startswith("0x") else payload_hex
     b = binascii.unhexlify(hexstr)
 
@@ -100,8 +125,7 @@ def structure_voucher(function_signature, destination, types, values, value=0) -
 
     return {
         "destination": destination,
-        "payload": payload,
-        "value": f"0x{value:064x}"
+        "payload": payload
     }
 
 def emitVoucher(voucher: dict):
@@ -118,7 +142,7 @@ def emitVoucher(voucher: dict):
 
 class Storage:
     def __init__(self, erc721_portal_address: str, erc20_portal_address: str,
-                 erc721_token: str, erc20_token: str, list_price: int):
+                 erc721_token: str, erc20_token: str, list_price: int, dappAddressRelay: str):
         
         self.erc721_portal_address = norm_addr(erc721_portal_address)
         self.erc20_portal_address = norm_addr(erc20_portal_address)
@@ -126,6 +150,7 @@ class Storage:
         self.erc20_token = norm_addr(erc20_token)
         self.application_address = norm_addr("0x" + "0" * 40)
         self.list_price = list_price
+        self.dappAddressRelay = norm_addr(dappAddressRelay)
 
         self.listed_tokens: list[int] = []
         self.users_erc20_token_balance: dict[str, int] = {}
@@ -162,14 +187,15 @@ class Storage:
         if current is None:
             emitReport(f"User {addr} record not found")
             logger.error("User balance record not found")
-            return
+            return False
 
         if current < amt:
             emitReport(f"User {addr} has insufficient balance")
-            logger.error("User has insufficient balance")
-            return
+            logger.error(f"User {addr} has insufficient balance")
+            return False
 
         self.users_erc20_token_balance[addr] = current - amt
+        return True
 
     def depositERC721Token(self, userAddress: str, tokenId):
         addr = norm_addr(userAddress)
@@ -215,7 +241,10 @@ class Storage:
             logger.error("Token is not for sale")
             return False
 
-        self.reduceUserBalance(buyerAddress, self.list_price)
+        if not self.reduceUserBalance(buyerAddress, self.list_price):
+            emitReport(f"Buyer {buyerAddress} has insufficient balance to purchase token {erc721TokenAddress} with id {tid}")
+            logger.error("Buyer has insufficient balance")
+            return False
 
         owner = self.getERC721TokenOwner(tid)
         if not owner:
@@ -230,13 +259,14 @@ class Storage:
         return True
 
 
-erc_721_portal_address = "0xc700d52F5290e978e9CAe7D1E092935263b60051"
-erc20_portal_address   = "0xc700D6aDd016eECd59d989C028214Eaa0fCC0051"
-erc20_token            = "0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C"
-erc721_token           = "0xBa46623aD94AB45850c4ecbA9555D26328917c3B"
+erc_721_portal_address = "0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87"
+erc20_portal_address   = "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB"
+erc20_token            = "0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2"
+erc721_token           = "0xc6582A9b48F211Fa8c2B5b16CB615eC39bcA653B"
+dappAddressRelay       = "0xF5DE34d6BbC0446E2a45719E718efEbaaE179daE"
 list_price             = 100_000_000_000_000_000_000
 
-storage = Storage(erc_721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price)
+storage = Storage(erc_721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price, dappAddressRelay)
 
 
 def handle_erc20_deposit(depositor_address: str, amount_deposited, token_address: str):
@@ -294,22 +324,20 @@ def handle_advance(data):
     logger.info(f"Received advance request data {data}")
 
     sender = norm_addr(data["metadata"]["msg_sender"])
-    app_contract = norm_addr(data["metadata"]["app_contract"])
     zero_addr = norm_addr("0x" + "0" * 40)
-    
-    if norm_addr(storage.application_address) == zero_addr:
-        storage.setAppAddress(app_contract)
     
     payload_hex = data.get("payload", "")
     payload_str = hex_to_string(payload_hex)
-
-    if sender == storage.erc20_portal_address:
-        parsed = token_deposit_parse(payload_hex)
+    if sender == storage.dappAddressRelay:
+        if norm_addr(storage.application_address) == zero_addr:
+            storage.setAppAddress(payload_hex)
+    elif sender == storage.erc20_portal_address:
+        parsed = erc20_token_deposit_parse(payload_hex)
         token, receiver, amount = parsed["token"], parsed["receiver"], parsed["amount"]
         handle_erc20_deposit(receiver, int(amount), token)
 
     elif sender == storage.erc721_portal_address:
-        parsed = token_deposit_parse(payload_hex)
+        parsed = erc721_token_deposit_parse(payload_hex)
         token, receiver, amount = parsed["token"], parsed["receiver"], parsed["amount"]
         handle_erc721_deposit(receiver, int(amount), token)
 
@@ -334,18 +362,18 @@ def handle_inspect(data: dict):
 
     payload_str = hex_to_string(data.get("payload", "0x"))
     try:
-        payload_obj = json.loads(payload_str)
+        payload_arr = payload_str.split("/")
     except Exception:
         emitReport("Invalid payload string")
         return "accept"
 
-    method = payload_obj.get("method", "")
+    method = payload_arr[0]
     if method == "get_user_erc20_balance":
-        user_address = norm_addr(payload_obj.get("user_address", ""))
+        user_address = norm_addr(payload_arr[1])
         bal = storage.getUserERC20TokenBalance(user_address)
         emitReport(f"User: {user_address} Balance: {bal}")
     elif method == "get_token_owner":
-        token_id = as_int(payload_obj.get("token_id", 0))
+        token_id = as_int(payload_arr[1])
         owner = storage.getERC721TokenOwner(token_id)
         emitReport(f"Token_id: {token_id} owner: {owner if owner else 'None'}")
     elif method == "get_all_listed_tokens":
