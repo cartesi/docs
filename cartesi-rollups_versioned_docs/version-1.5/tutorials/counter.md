@@ -112,11 +112,11 @@ cartesi build
 - Expected Logs:
   
 ```shell
-user@user-MacBook-Pro counter % cartesi build
-(node:4460) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
-✔ Build drives
-  ✔ Build drive root
+View build details: docker-desktop://dashboard/build/multiarch/multiarch0/vzzzuxvcznba66icpyk3wyde9
+
+What's next:
+    View a summary of image vulnerabilities and recommendations → docker scout quickview 
+copying from tar archive /tmp/input
 
          .
         / \
@@ -132,14 +132,13 @@ user@user-MacBook-Pro counter % cartesi build
 [INFO  rollup_http_server::http_service] starting http dispatcher http service!
 [INFO  actix_server::builder] starting 1 workers
 [INFO  actix_server::server] Actix runtime found; starting in Actix runtime
-[INFO  actix_server::server] starting service: "actix-web-service-127.0.0.1:5004", workers: 1, listening on: 127.0.0.1:5004
 [INFO  rollup_http_server::dapp_process] starting dapp: python3 dapp.py
 INFO:__main__:HTTP rollup_server url is http://127.0.0.1:5004
 INFO:__main__:Sending finish
 
-Manual yield rx-accepted (1) (0x000020 data)
-Cycles: 8108719633
-8108719633: 107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
+Manual yield rx-accepted (0x100000000 data)
+Cycles: 3272156820
+3272156820: 3903552ee499ef4a10b2c8ffba6b8d49088a0a8b9137b8d10be359910080432a
 Storing machine: please wait
 ```
 
@@ -154,22 +153,15 @@ cartesi run
 If the `run` command is successful, you should see logs similar to this:
 
 ```bash
-user@user-MacBook-Pro counter % cartesi run
-(node:5404) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
-WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
-[+] Pulling 4/0
- ✔ database Skipped - Image is already present locally  
- ✔ rollups-node Skipped - Image is already present locally 
- ✔ anvil Skipped - Image is already present locally  
- ✔ proxy Skipped - Image is already present locally                                                                                                                                                                                                                   
-✔ counter starting at http://127.0.0.1:6751
-✔ anvil service ready at http://127.0.0.1:6751/anvil
-✔ rpc service ready at http://127.0.0.1:6751/rpc
-✔ inspect service ready at http://127.0.0.1:6751/inspect/counter
-✔ counter machine hash is 0x107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
-✔ counter contract deployed at 0x94b32605a405d690934eb4ecc91856febfa747cc
-(l) View logs   (b) Build and redeploy  (q) Quit
+Attaching to prompt-1, validator-1
+validator-1  | 2025-11-24 17-06-12 info remote-cartesi-machine pid:108 ppid:67 Initializing server on localhost:0
+prompt-1     | Anvil running at http://localhost:8545
+prompt-1     | GraphQL running at http://localhost:8080/graphql
+prompt-1     | Inspect running at http://localhost:8080/inspect/
+prompt-1     | Explorer running at http://localhost:8080/explorer/
+prompt-1     | Bundler running at http://localhost:8080/bundler/rpc
+prompt-1     | Paymaster running at http://localhost:8080/paymaster/
+prompt-1     | Press Ctrl+C to stop the node
 ```
 
 ## Interacting with your Counter Application
@@ -181,44 +173,43 @@ Interacting with your Counter application could be achieved either through initi
 We start by querying the current count value, this is done by making an inspect request to the counter application running locally, to achieve this we run the below command in a new terminal:
 
 ```bash
-curl -X POST http://127.0.0.1:6751/inspect/counter \
-  -H "Content-Type: application/json" \
-  -d '{""}' 
+curl http://localhost:8080/inspect/counter
 ```
 
-:::note Inspect endpoint
-Please note that if your application is running on a different port or your application is not named `counter` as in the guide, then you'll need to replace the inspect endpoint `http://127.0.0.1:6751/inspect/counter` with the endpoint provided after running the `cartesi run` command.
-:::
-
-On success, we receive a confirmation response from the HTTP server, something similar to `{"status":"Accepted","reports":null,"processed_input_count":0}`, then on the terminal running our application when we press the `l` key to access our application logs we should get a log confirming that our application received the inspect call and should also contain a log of the current count value.
+On success, we receive a confirmation response from the HTTP server, something similar to `{"status":"Accepted","exception_payload":null,"reports":[],"processed_input_count":0}`, then on the terminal running our application we should get a log confirming that our application received the inspect call and should also contain a log of the current count value.
 
 ```bash
-[INFO  rollup_http_server::http_service] received new request of type INSPECT
-inspect_request.payload_length: 4
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 64 "-" "python-requests/2.31.0" 0.020096
-INFO:__main__:Received finish status 200
-INFO:__main__:Received inspect request data {'payload': '0x7b22227d'}
-INFO:__main__:Current counter value: 0
-INFO:__main__:Sending finish
-2025-11-09T17:47:44.661 INF Request executed service=inspect status=Accepted application=counter
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type INSPECT
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 70 "-" "python-requests/2.31.0" 0.001536
+validator-1  | INFO:__main__:Received finish status 200
+validator-1  | INFO:__main__:Received inspect request data {'payload': '0x636f756e746572'}
+validator-1  | INFO:__main__:Current counter value: 0
+validator-1  | INFO:__main__:Sending finish
 ```
 
-As seen in the third to last line of our received log, we can see the `count value` returned to be `0`
+As seen in the second to last line of our received log, we can see the `counter value` returned to be `0`
 
 ### 2. Increase count value
 
 Now that we've confirmed our count value to be zero (0), we would be sending an advance request using the CLI to increase the value of our counter by running the below command:
 
 ```bash
-cartesi send random_text
+cartesi send generic
 ```
 
-The above command sends an advance request with the payload "random_text" to our application, which ignores this payload then proceeds to increase out count value by `one (1)`, if this command is successful and our application process this request graciously, we should get a log similar to what's presented below on the terminal running our application:
+We then proceed by selecting Foundry and pressing Enter twice to accept the default RPC URL. Next, we choose Mnemonic as the authentication method and again press Enter twice to use the default mnemonic and wallet address. After that, we press Enter once more to confirm the application address.
+
+Once the basics are set, we navigate to and select String encoding as the input format. Finally, we type any random string (e.g., increase), press Enter, and the CLI sends the request to the application.
+
+The above process sends an advance request with the payload "increase" to our application, which ignores this payload then proceeds to increase out count value by `one (1)`, if this command is successful and our application process this request graciously, we should get a log similar to what's presented below on the terminal running our application:
 
 ```bash
-INFO:__main__:Received advance request data {'metadata': {'chain_id': 13370, 'app_contract': '0x9d40cfc42bb386b531c5d4eb3ade360f4105c4a3', 'msg_sender': '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', 'block_number': 630, 'block_timestamp': 1762711409, 'prev_randao': '0x63a2bb3993d9f9c371624f995a10a6f493e33c2535e62b32fee565f812b4c4ab', 'input_index': 0}, 'payload': '0x72616e646f6d5f74657874'}
-INFO:__main__:Counter increment requested, new count value: 1
-INFO:__main__:Sending finish
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type ADVANCE
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 210 "-" "python-requests/2.31.0" 0.001664
+validator-1  | INFO:__main__:Received finish status 200
+validator-1  | INFO:__main__:Received advance request data {'metadata': {'msg_sender': '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', 'epoch_index': 0, 'input_index': 0, 'block_number': 2408, 'timestamp': 1764015746}, 'payload': '0x6f6b6179'}
+validator-1  | INFO:__main__:Counter increment requested, new count value: 1
+validator-1  | INFO:__main__:Sending finish
 ```
 
 The above logs prove that out application received the advance request, increased our count value, logs the updated count value then finishes that request successfully.
@@ -226,14 +217,12 @@ The above logs prove that out application received the advance request, increase
 As seen in the second to last line of the log, our count value has been increased from 0 to 1. To confirm this increase, we can run an inspect request once more to verify the current count value, and on running the same inspect command as last time, we obtain the updated logs below.
 
 ```shell
-[INFO  rollup_http_server::http_service] received new request of type INSPECT
-inspect_request.payload_length: 4
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 64 "-" "python-requests/2.31.0" 0.002048
-INFO:__main__:Received finish status 200
-INFO:__main__:Received inspect request data {'payload': '0x7b22227d'}
-INFO:__main__:Current counter value: 1
-INFO:__main__:Sending finish
-2025-11-09T18:22:45.142 INF Request executed service=inspect status=Accepted application=counter
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type INSPECT
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 70 "-" "python-requests/2.31.0" 0.001280
+validator-1  | INFO:__main__:Received finish status 200
+validator-1  | INFO:__main__:Received inspect request data {'payload': '0x636f756e746572'}
+validator-1  | INFO:__main__:Current counter value: 1
+validator-1  | INFO:__main__:Sending finish
 ```
 
 From the latest application logs, it's now clear that the application's count value has been increased from 0 to one, and subsequent advance calls would further increase the count value.
