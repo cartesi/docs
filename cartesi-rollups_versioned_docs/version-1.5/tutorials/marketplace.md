@@ -118,7 +118,7 @@ Since this project would be covering hex payload encoding and decoding, as well 
 <pre><code>
 
 ```shell
- npm add viem
+ npm add viem ethers
 ```
 
 </code></pre>
@@ -129,13 +129,11 @@ Since this project would be covering hex payload encoding and decoding, as well 
 
 ```shell
 cat > requirements.txt << 'EOF'
---find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
-requests==2.32.5
-eth-abi==5.2.0
-eth-utils==5.3.1
-regex==2025.11.3
-pycryptodome==3.23.0
-eth-hash==0.7.1
+requests==2.32.3
+eth-abi==2.2.0
+eth-utils==1.10.0
+eth-hash==0.3.3
+pycryptodome==3.20.0
 EOF
 ```
 
@@ -146,12 +144,30 @@ EOF
 <pre><code>
 
 ```shell
-cargo add hex serde ethers-core 
+cargo add json@0.12
+cargo add hyper@0.14 --features http1,runtime,client
+cargo add tokio@1.32 --features macros,rt-multi-thread
+cargo add ethers-core@0.5.3
+cargo add serde@1.0.228
+cargo add hex@0.4.3
 ```
 
 </code></pre>
 </TabItem>
 </Tabs>
+
+**NOTE::** For python developers, add the below snippet to `line 26` of your Dockerfile. It should come immediately after the line `COPY ./requirements.txt .`.
+
+This command would help install essential compilers to help compile some dependencies we'll be using.
+
+```Dockerfile
+# Install build dependencies for compiling native extensions
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        python3-dev && \
+    rm -rf /var/lib/apt/lists/*
+```
 
 ## Implement the Application Logic
 
@@ -199,10 +215,11 @@ cartesi build
   
 ```shell
 user@user-MacBook-Pro marketplace % cartesi build
-(node:4460) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
-✔ Build drives
-  ✔ Build drive root
+View build details: docker-desktop://dashboard/build/multiarch/multiarch0/vzzzuxvcznba66icpyk3wyde9
+
+What's next:
+    View a summary of image vulnerabilities and recommendations → docker scout quickview 
+copying from tar archive /tmp/input
 
          .
         / \
@@ -218,14 +235,13 @@ user@user-MacBook-Pro marketplace % cartesi build
 [INFO  rollup_http_server::http_service] starting http dispatcher http service!
 [INFO  actix_server::builder] starting 1 workers
 [INFO  actix_server::server] Actix runtime found; starting in Actix runtime
-[INFO  actix_server::server] starting service: "actix-web-service-127.0.0.1:5004", workers: 1, listening on: 127.0.0.1:5004
 [INFO  rollup_http_server::dapp_process] starting dapp: python3 dapp.py
 INFO:__main__:HTTP rollup_server url is http://127.0.0.1:5004
 INFO:__main__:Sending finish
 
-Manual yield rx-accepted (1) (0x000020 data)
-Cycles: 8108719633
-8108719633: 107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
+Manual yield rx-accepted (0x100000000 data)
+Cycles: 3272156820
+3272156820: 3903552ee499ef4a10b2c8ffba6b8d49088a0a8b9137b8d10be359910080432a
 Storing machine: please wait
 ```
 
@@ -241,21 +257,15 @@ If the `run` command is successful, you should see logs similar to this:
 
 ```bash
 user@user-MacBook-Pro marketplace % cartesi run
-(node:5404) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
-WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
-[+] Pulling 4/0
- ✔ database Skipped - Image is already present locally  
- ✔ rollups-node Skipped - Image is already present locally 
- ✔ anvil Skipped - Image is already present locally  
- ✔ proxy Skipped - Image is already present locally                                                                                                                                                                                                                   
-✔ marketplace starting at http://127.0.0.1:6751
-✔ anvil service ready at http://127.0.0.1:6751/anvil
-✔ rpc service ready at http://127.0.0.1:6751/rpc
-✔ inspect service ready at http://127.0.0.1:6751/inspect/marketplace
-✔ marketplace machine hash is 0x107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
-✔ marketplace contract deployed at 0x94b32605a405d690934eb4ecc91856febfa747cc
-(l) View logs   (b) Build and redeploy  (q) Quit
+Attaching to prompt-1, validator-1
+validator-1  | 2025-11-24 21-27-29 info remote-cartesi-machine pid:109 ppid:68 Initializing server on localhost:0
+prompt-1     | Anvil running at http://localhost:8545
+prompt-1     | GraphQL running at http://localhost:8080/graphql
+prompt-1     | Inspect running at http://localhost:8080/inspect/
+prompt-1     | Explorer running at http://localhost:8080/explorer/
+prompt-1     | Bundler running at http://localhost:8080/bundler/rpc
+prompt-1     | Paymaster running at http://localhost:8080/paymaster/
+prompt-1     | Press Ctrl+C to stop the node
 ```
 
 ## Interacting with your Marketplace Application
@@ -263,11 +273,6 @@ WARNING: default block is set to 'latest', production configuration will likely 
 Once your Marketplace application is up and running (via cartesi run), you can interact with it in two main ways — either by sending on-chain transactions through the local Anvil network (Advance requests) or by making HTTP requests directly to the Rollups HTTP server’s Inspect endpoint (Inspect requests).
 
 In this section, we’ll focus on using the Cartesi CLI to send Advance requests, since it provides a much simpler and faster way to test your application locally.
-
-:::note Inspect endpoint
-If your application is running on a different port or has a different name from marketplace, remember to replace the inspect endpoint http://127.0.0.1:6751/inspect/marketplace with the one displayed after running the cartesi run command.
-Also, ensure that all CLI commands are executed from the root directory of your application.
-:::
 
 ### 1. Mint an ERC-721 Token and Grant Approval
 
@@ -277,10 +282,10 @@ Since our app uses the test ERC-721 and ERC-20 contracts automatically deployed 
 - Mint token ID 1:
   
 ```bash
-cast send 0xBa46623aD94AB45850c4ecbA9555D26328917c3B \
+cast send 0xc6582A9b48F211Fa8c2B5b16CB615eC39bcA653B \
   "safeMint(address, uint256, string)" \
   0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 1 "" \
-  --rpc-url http://127.0.0.1:6751/anvil \
+  --rpc-url http://localhost:8545 \
   --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
@@ -291,133 +296,159 @@ This command calls the `safeMint` function in the `testNFT` contract deployed by
 Before an NFT can be deposited into the application, the portal contract must have permission to transfer it on behalf of the owner. Use the following command to grant that approval:
 
 ```bash
-cast send 0xBa46623aD94AB45850c4ecbA9555D26328917c3B \
+cast send 0xc6582A9b48F211Fa8c2B5b16CB615eC39bcA653B \
   "setApprovalForAll(address,bool)" \
-  0xc700d52F5290e978e9CAe7D1E092935263b60051 true \
-  --rpc-url http://127.0.0.1:6751/anvil \
+  0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e true \
+  --rpc-url http://localhost:8545 \
   --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
-### 2. Deposit NFT with ID 1 to the Marketplace [advance request]
+### 2. Relay Application address
+
+Before any interaction with the application, it's important that the application logic is aware of Its contract address, as this is important during voucher generation. To register the application address, we use the Cartesi CLI to trigger a call from the `DappAddressRelayer` contract to our application, this can be achieved through the below process:
+
+```bash
+cartesi send
+```
+
+Run the command above, then choose `Send DApp address input to the application.` as the action. Press Enter twice to accept Foundry as the interaction chain. Next, press Enter to use the default RPC URL, then press Enter three more times to select Mnemonic as the authentication method and confirm both the default mnemonic and the default wallet address. Finally, press Enter one last time to confirm the displayed application address.
+
+At this point, the CLI will initiate the request and forward the application’s address to your Cartesi application. The application codebase already includes logic to verify the caller and ensure that the received application address is correctly recognized as the `dappAddressRelayer`.
+
+### 3. Deposit NFT with ID 1 to the Marketplace [advance request]
 
 Now that the NFT is minted and approved, it’s time to list it on the marketplace.
 We’ll do this by depositing it using the Cartesi CLI:
 
 ```bash
-cartesi deposit erc721
+cartesi send erc721
 ```
 
-The CLI will prompt you for the token ID (enter 1) and the token address (press Enter to use the default test token).
+The CLI will prompt you for the chain, RPC URL, Wallet, Mnemonic, Account and Application address, for those sections you can simply keep hitting enter to use the default values, when the CLI Prompts for token address, you enter the address `0xc6582A9b48F211Fa8c2B5b16CB615eC39bcA653B`, token ID (enter 1).
 Under the hood, the CLI transfers the NFT from your address to the ERC-721 portal, which then sends the deposit payload to your application.
 
 Once the deposit succeeds, the terminal running your application should show logs similar to:
 
 ```bash
-INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 751 "-" "-" 0.018688
-Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":13370,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0xc700d52f5290e978e9cae7d1e092935263b60051","block_number":675,"block_timestamp":1762948794,"prev_randao":"0x3d144a3d5bb3125c92a230e7597e04e82eb5d5acbea185db2b1eadda3530d5c7","input_index":0},"payload":"0xba46623ad94ab45850c4ecba9555d26328917c3bf39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
-Token deposit and listing processed successfully
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /notice HTTP/1.1" 201 11 "-" "-" 0.001088
-Sending finish
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type ADVANCE
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 601 "-" "node" 0.001152
+validator-1  | Received finish status 200
+validator-1  | Received advance request data {"metadata":{"msg_sender":"0x237f8dd094c0e47f4236f12b4fa01d6dae89fb87","epoch_index":0,"input_index":2,"block_number":298,"timestamp":1764095710},"payload":"0xc6582a9b48f211fa8c2b5b16cb615ec39bca653bf39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+validator-1  | Token deposit and Listing processed successfully
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /notice HTTP/1.1" 201 11 "-" "node" 0.000704
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type INSPECT
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 98 "-" "node" 0.000960
+validator-1  | Received finish status 200
 ```
 
-### 3. View All NFTs Listed on the Marketplace [inspect request]
+### 4. View All NFTs Listed on the Marketplace [inspect request]
 
 After depositing, your NFT is automatically listed.
 To verify this, you can query the marketplace for all listed tokens using an Inspect request:
 
 ```bash
-curl -X POST http://127.0.0.1:6751/inspect/marketplace \
-  -H "Content-Type: application/json" \
-  -d '{"method":"get_all_listed_tokens"}'
+curl http://localhost:8080/inspect/get_all_listed_tokens
 ```
 
 This call returns a hex payload containing a list of all listed tokens on the marketplace.
 
 ```bash
-{"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a205b315d"}],"processed_input_count":6}
+{"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a2031"}],"processed_input_count":6}
 ```
 
-The payload hex `0x416c6...205b315d` when decoded, returns `All listed tokens are: [1]`. Thereby confirming that the token with `Id 1` has successfully been listed.
+The payload hex `0x416c6...2653a2031` when decoded, returns `All listed tokens are: [1]`. Thereby confirming that the token with `Id 1` has successfully been listed.
 
-### 4. Deposit ERC20 token for making purchases [advance request]
+### 5. Deposit ERC20 token for making purchases [advance request]
 
 With the NFT successfully listed for sale, it's time to attempt to purchase this token, but before we do that, we'll need first deposit the required amount of tokens to purchase the listed NFT. Since our marketplace lists all NFT's at the price of `100 testTokens` we'll be transferring 100 tokens to the new address we'll be using to purchase, before proceeding with the purchase.
 
 - Transfer required tokens to purchase address.
   
 ```bash
-cast send 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C \
+cast send 0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2 \
 "transfer(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 100000000000000000000 \
 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
---rpc-url http://127.0.0.1:6751/anvil
+--rpc-url http://localhost:8545
 ```
 
 - Deposit 100 tokens to the marketplace application.
 
 ```bash
-cartesi deposit --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+  cartesi send erc20
 ```
 
-The CLI will prompt you for the token address (press Enter to use the default test token), and then the amount of tokens we intend to deposit `(100)`. The CLI would finally proceed to grant the necessary approvals after which it would deposit the tokens to our application.
+The CLI will prompt you for the interaction chain, select Foundry, then press Enter twice to accept the default RPC URL. Next, choose Mnemonic as the authentication method. When asked to select an account, choose the second address in the list: `0x70997970C51812dc3A010C7d01b50e0d17dc79C8`.
+
+After that, select the default application address. When prompted for the ERC-20 token address, enter: `0x92C6bcA388E99d6B304f1Af3c3Cd749Ff0b591e2`.
+
+Finally, enter the amount of tokens you want to deposit (100). The CLI will then automatically handle the necessary approvals and complete the deposit into your application.
 
 On a successful deposit our application should return logs that look like this:
 
 ```bash
-[INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 496 "-" "-" 0.018176
-Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":13370,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0xc700d6add016eecd59d989c028214eaa0fcc0051","block_number":2272,"block_timestamp":1762951994,"prev_randao":"0x0992ab8380b23c1c98928a76ae9a79c501ae27625943a53b0fd57455f10e5164","input_index":1},"payload":"0xfbdb734ef6a23ad76863cba6f10d0c5cbbd8342c70997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000"}}
-Deposited token: 0xfbdb734ef6a23ad76863cba6f10d0c5cbbd8342c, Receiver: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8, Amount: 100000000000000000000
-Token deposit processed successfully
-Sending finish
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type ADVANCE
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 347 "-" "node" 0.001024
+validator-1  | Received finish status 200
+validator-1  | Received advance request data {"metadata":{"msg_sender":"0x9c21aeb2093c32ddbc53eef24b873bdcd1ada1db","epoch_index":0,"input_index":4,"block_number":305,"timestamp":1764095745},"payload":"0x0192c6bca388e99d6b304f1af3c3cd749ff0b591e270997970c51812dc3a010c7d01b50e0d17dc79c800000000000000000000000000000000000000000000000821ab0d4414980000"}
+validator-1  | Token deposit processed successfully
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type ADVANCE
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 285 "-" "node" 0.001024
+validator-1  | Received finish status 200
 ```
 
-### 5. Purchase Token with ID 1 [advance request]
+### 6. Purchase Token with ID 1 [advance request]
 
 Now that the buyer has deposited funds, we can proceed to purchase the NFT. To do this we make an advance request to the application using the Cartesi CLI by running the command:
 
 ```bash
- cartesi send  "{"method": "purchase_token", "token_id": 1}" --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+  cartesi send generic
+```
+
+The CLI will prompt you for the interaction chain, select Foundry, then press Enter twice to accept the default RPC URL. Next, choose Mnemonic as the authentication method. When asked to select an account, choose the second address in the list: `0x70997970C51812dc3A010C7d01b50e0d17dc79C8`.
+
+After that, select the default application address. When prompted for Input method, select `String encoding`.
+
+Finally, pass the below Json object to the terminal as the input:
+
+```bash
+{"method": "purchase_token", "token_id": "1"}
 ```
 
 This command notifies the marketplace that the address `0x7099797....0d17dc79C8` which initially deposited 100 tokens, would want to purchase token ID 1, The marketplace proceeds to run necessary checks like verifying that the token is for sale, and that the buyer has sufficient tokens to make the purchase, after which it executes the purchase and finally emits a voucher that transfers the tokens to the buyer's address. On a successful purchase, you should get logs similar to the below.
 
 ```bash
-[INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 426 "-" "-" 0.001792
-Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":13370,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":3576,"block_timestamp":1762954606,"prev_randao":"0xd29cd42cfd3c9ff4f31b39f497fc2f4d0a7add5a67da98be0d7841c37c7ad25f","input_index":2},"payload":"0x7b6d6574686f643a2070757263686173655f746f6b656e2c20746f6b656e5f69643a20317d"}}
-PURCHASE SUCCESSFUL, STRUCTURING VOUCHERS!!
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /voucher HTTP/1.1" 201 11 "-" "-" 0.015424
-Voucher generation successful
-Token purchased and Withdrawn successfully
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type ADVANCE
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 285 "-" "node" 0.001024
+validator-1  | Received finish status 200
+validator-1  | Received advance request data {"metadata":{"msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","epoch_index":0,"input_index":5,"block_number":306,"timestamp":1764095750},"payload":"0x7b226d6574686f64223a2270757263686173655f746f6b656e222c22746f6b656e5f6964223a2234227d"}
+validator-1  | Token purchased successfully
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /voucher HTTP/1.1" 201 11 "-" "node" 0.000896
+validator-1  | [INFO  rollup_http_server::http_service] Received new request of type ADVANCE
+validator-1  | [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 285 "-" "node" 0.001024
+validator-1  | Received finish status 200
 ```
 
-### 6. Recheck NFTs Listed on the Marketplace [inspect request]
+### 7. Recheck NFTs Listed on the Marketplace [inspect request]
 
 Finally, we can confirm that the purchased NFT has been removed from the listings by running the inspect query again:
 
 ```bash
-curl -X POST http://127.0.0.1:6751/inspect/marketplace \
-  -H "Content-Type: application/json" \
-  -d '{"method":"get_all_listed_tokens"}'
+curl http://localhost:8080/inspect/get_all_listed_tokens
 ```
 
 This call returns a hex payload like below:
 
 ```bash
-{"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a205b5d"}],"processed_input_count":7}
+  {"status":"Accepted","exception_payload":null,"reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a20"}],"processed_input_count":7}
 ```
 
-The payload hex `0x416c6...653a205b5d` when decoded, returns `All listed tokens are: []`. Thereby verifying that the token with `Id 1` has successfully been sold and no longer listed for sale in the marketplace.
+The payload hex `0x416c6...6172653a20` when decoded, returns `All listed tokens are: `. Thereby verifying that the token with `Id 1` has successfully been sold and no longer listed for sale in the marketplace.
 
 ## Conclusion
 
 Congratulations!!!
 
-You’ve successfully built and interacted with your own Marketplace application on Cartesi. 
+You’ve successfully built and interacted with your own Marketplace application on Cartesi.
 
 This example covered essential Cartesi concepts such as routing, asset management, voucher generation, and the use of both Inspect and Advance routes.
 

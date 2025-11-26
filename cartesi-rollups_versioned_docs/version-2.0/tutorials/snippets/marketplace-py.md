@@ -162,14 +162,15 @@ class Storage:
         if current is None:
             emitReport(f"User {addr} record not found")
             logger.error("User balance record not found")
-            return
+            return False
 
         if current < amt:
             emitReport(f"User {addr} has insufficient balance")
             logger.error("User has insufficient balance")
-            return
+            return False
 
         self.users_erc20_token_balance[addr] = current - amt
+        return True
 
     def depositERC721Token(self, userAddress: str, tokenId):
         addr = norm_addr(userAddress)
@@ -215,7 +216,10 @@ class Storage:
             logger.error("Token is not for sale")
             return False
 
-        self.reduceUserBalance(buyerAddress, self.list_price)
+        if not self.reduceUserBalance(buyerAddress, self.list_price):
+            emitReport(f"Buyer {buyerAddress} has insufficient balance to purchase token {erc721TokenAddress} with id {tid}")
+            logger.error("Buyer has insufficient balance")
+            return False
 
         owner = self.getERC721TokenOwner(tid)
         if not owner:
