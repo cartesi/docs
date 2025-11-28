@@ -89,7 +89,7 @@ module.exports = {
         {
           type: 'doc',
           id: 'references/tournament',
-          label: 'Tournament Core Contracts',
+          label: 'Tournament Contracts',
         },
         {
           type: 'doc',
