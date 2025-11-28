@@ -6,25 +6,28 @@ This page covers the PRT and Honeypot v2 deployed contracts and their addresses.
 
 | Component | Mainnet Address |
 |-----------|-----------------|
-| **Top Tournament** | [`0x09114973AE4bf3Af3896E4e541082C73f224F8Aa`](https://etherscan.io/address/0x09114973AE4bf3Af3896E4e541082C73f224F8Aa) |
-| **Middle Tournament** | [`0xe49E4CB0Ab5c0E5792E762807329B420Cc4FF1AE`](https://etherscan.io/address/0xe49E4CB0Ab5c0E5792E762807329B420Cc4FF1AE) |
-| **Bottom Tournament** | [`0x18256941eC7B661F9F46C228b74e775b581e63f8`](https://etherscan.io/address/0x18256941eC7B661F9F46C228b74e775b581e63f8) |
-| **Cartesi State Transition** | [`0x772732EFbDE6559B2960327276ed33d707fF057f`](https://etherscan.io/address/0x772732EFbDE6559B2960327276ed33d707fF057f) |
-| **MultiLevel Tournament Factory** | [`0xA31C2aCfF3464658866960c0fBD3d798310272D7`](https://etherscan.io/address/0xA31C2aCfF3464658866960c0fBD3d798310272D7) |
-| **CanonicalTournamentParametersProvider** | [`0xcC0a49320891Bf35bca834aF1045ab89Ecd44c0c`](https://etherscan.io/address/0xcC0a49320891Bf35bca834aF1045ab89Ecd44c0c) |
+| **Top Tournament** | [`0x367Ff3c21E189645aaf17bDD41D4C186686CfE53`](https://etherscan.io/address/0x367Ff3c21E189645aaf17bDD41D4C186686CfE53) |
+| **Top Tournament Factory** | [`0xfdF16a7D9143f5E3B7B056b761a7eF8Ce18dc6eF`](https://etherscan.io/address/0xfdF16a7D9143f5E3B7B056b761a7eF8Ce18dc6eF) |
+| **Middle Tournament** | [`0x0a88360f41D0f643ea63ade00c0A1a795395d2D9`](https://etherscan.io/address/0x0a88360f41D0f643ea63ade00c0A1a795395d2D9) |
+| **Middle Tournament Factory** | [`0x47c7f40841F842f7691cB9Fd6Cd63673B79dCe79`](https://etherscan.io/address/0x47c7f40841F842f7691cB9Fd6Cd63673B79dCe79) |
+| **Bottom Tournament** | [`0xe6B4444d324E0B403c9C43C5d7c8B2C3d5d02962`](https://etherscan.io/address/0xe6B4444d324E0B403c9C43C5d7c8B2C3d5d02962) |
+| **Bottom Tournament Factory** | [`0x6ccb8955afFA2aE4A88a4fC30916b41074d1F2B6`](https://etherscan.io/address/0x6ccb8955afFA2aE4A88a4fC30916b41074d1F2B6) |
+| **Cartesi State Transition** | [`0x31EEaeC2A8d855B13B376b72C172F0c20A2910F6`](https://etherscan.io/address/0x31EEaeC2A8d855B13B376b72C172F0c20A2910F6) |
+| **CmioStateTransition** | [`0x6288F737D7B18594b3092aEF13aB47071281A8b0`](https://etherscan.io/address/0x6288F737D7B18594b3092aEF13aB47071281A8b0) |
+| **RiscVStateTransition** | [`0x31a7AE6095516f78a30a8991aee2881D429AfECF`](https://etherscan.io/address/0x31a7AE6095516f78a30a8991aee2881D429AfECF) |
+| **MultiLevel Tournament Factory** | [`0x74A82BAeD499a19e007243b86830e0A86154E816`](https://etherscan.io/address/0x74A82BAeD499a19e007243b86830e0A86154E816) |
+| **CanonicalTournamentParametersProvider** | [`0xEf77920dA48Ed9b16Bee85291A9B29C74d0e32eb`](https://etherscan.io/address/0xEf77920dA48Ed9b16Bee85291A9B29C74d0e32eb) |
 
-## Honeypot v2 Deployments
-:::caution
- Honeypot app is being updated. We recently found a bug in the application that has led to a fail-stop state. This means the current deployment is permanently frozen, and the bounty funds within it are no longer recoverable. Get in touch with us on [Discord](https://discord.gg/cWGbyFkQ2W) for more details.
-:::
+
+## Honeypot v3 Deployments
 
 | Component | Mainnet Address |
 |-----------|-----------------|
-| **Machine Hash** | `0x615acc9fb8ae058d0e45c0d12fa10e1a6c9e645222c6fd94dfeda194ee427c14` |
-| **Application Contract** | [`0x4c1e74ef88a75c24e49eddd9f70d82a94d19251c`](https://etherscan.io/address/0x4c1e74ef88a75c24e49eddd9f70d82a94d19251c) |
-| **Dave PRT Consensus Contract** | [`0x6CE590b9F0697327f18c601DF6f0baE4a0801B68`](https://etherscan.io/address/0x6CE590b9F0697327f18c601DF6f0baE4a0801B68) |
-| **Input Box Contract** | [`0xc70074BDD26d8cF983Ca6A5b89b8db52D5850051`](https://etherscan.io/address/0xc70074BDD26d8cF983Ca6A5b89b8db52D5850051) |
-| **ERC-20 Portal** | [`0xc700D6aDd016eECd59d989C028214Eaa0fCC0051`](https://etherscan.io/address/0xc700D6aDd016eECd59d989C028214Eaa0fCC0051) |
+| **Machine Hash** | `0x144d45af1181b35f2b11c4b1150d6cb16934c28093707fb97c911ff16b3fe609` |
+| **Application Contract** | [`0xfddf68726a28e418fa0c2a52c3134904a8c3e998`](https://etherscan.io/address/0xfddf68726a28e418fa0c2a52c3134904a8c3e998) |
+| **Dave PRT Consensus Contract** | [`0xF0D8374F8446E87e013Ec1435C7245E05f439259`](https://etherscan.io/address/0xF0D8374F8446E87e013Ec1435C7245E05f439259) |
+| **Input Box Contract** | [`0x1b51e2992A2755Ba4D6F7094032DF91991a0Cfac`](https://etherscan.io/address/0x1b51e2992A2755Ba4D6F7094032DF91991a0Cfac) |
+| **ERC-20 Portal** | [`0xACA6586A0Cf05bD831f2501E7B4aea550dA6562D`](https://etherscan.io/address/0xACA6586A0Cf05bD831f2501E7B4aea550dA6562D) |
 | **ERC-20 Token** | CTSI @ [`0x491604c0FDF08347Dd1fa4Ee062a822A5DD06B5D`](https://etherscan.io/address/0x491604c0FDF08347Dd1fa4Ee062a822A5DD06B5D) |
 | **ERC-20 Wallet** | Cartesi Multisig @ [`0x60247492F1538Ed4520e61aE41ca2A8447592Ff5`](https://etherscan.io/address/0x60247492F1538Ed4520e61aE41ca2A8447592Ff5) |
 
