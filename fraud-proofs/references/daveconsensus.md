@@ -3,8 +3,8 @@
 ## DaveConsensus Contract
 ---
 
-DaveConsensus(also referred to as PRT-Rollups Consensus) is the consensus contract for applications that use Dave tournaments for verification.
-This contract is responsible for validating exactly one application contract, and all inputs must originate from the configured InputBox.
+DaveConsensus (also referred to as PRT-Rollups Consensus) is the consensus contract for applications that use Dave-style tournaments (such as PRT) for verification.
+This contract is responsible for validating a single application, whose inputs must originate from a pre-configured InputBox contract.
 
 DaveConsensus manages epochs, which are defined as half-open block-number intervals of the form [a, b).
 Epochs are numbered sequentially starting from 0.
