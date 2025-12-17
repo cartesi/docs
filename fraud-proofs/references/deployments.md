@@ -6,17 +6,14 @@ This page covers the PRT and Honeypot v2 deployed contracts and their addresses.
 
 | Component | Mainnet Address |
 |-----------|-----------------|
-| **Top Tournament** | [`0x367Ff3c21E189645aaf17bDD41D4C186686CfE53`](https://etherscan.io/address/0x367Ff3c21E189645aaf17bDD41D4C186686CfE53) |
-| **Top Tournament Factory** | [`0xfdF16a7D9143f5E3B7B056b761a7eF8Ce18dc6eF`](https://etherscan.io/address/0xfdF16a7D9143f5E3B7B056b761a7eF8Ce18dc6eF) |
-| **Middle Tournament** | [`0x0a88360f41D0f643ea63ade00c0A1a795395d2D9`](https://etherscan.io/address/0x0a88360f41D0f643ea63ade00c0A1a795395d2D9) |
-| **Middle Tournament Factory** | [`0x47c7f40841F842f7691cB9Fd6Cd63673B79dCe79`](https://etherscan.io/address/0x47c7f40841F842f7691cB9Fd6Cd63673B79dCe79) |
-| **Bottom Tournament** | [`0xe6B4444d324E0B403c9C43C5d7c8B2C3d5d02962`](https://etherscan.io/address/0xe6B4444d324E0B403c9C43C5d7c8B2C3d5d02962) |
-| **Bottom Tournament Factory** | [`0x6ccb8955afFA2aE4A88a4fC30916b41074d1F2B6`](https://etherscan.io/address/0x6ccb8955afFA2aE4A88a4fC30916b41074d1F2B6) |
+| **Top-Tournament Factory** | [`0xfdF16a7D9143f5E3B7B056b761a7eF8Ce18dc6eF`](https://etherscan.io/address/0xfdF16a7D9143f5E3B7B056b761a7eF8Ce18dc6eF) |
+| **Middle-Tournament Factory** | [`0x47c7f40841F842f7691cB9Fd6Cd63673B79dCe79`](https://etherscan.io/address/0x47c7f40841F842f7691cB9Fd6Cd63673B79dCe79) |
+| **Bottom-Tournament Factory** | [`0x6ccb8955afFA2aE4A88a4fC30916b41074d1F2B6`](https://etherscan.io/address/0x6ccb8955afFA2aE4A88a4fC30916b41074d1F2B6) |
 | **Cartesi State Transition** | [`0x31EEaeC2A8d855B13B376b72C172F0c20A2910F6`](https://etherscan.io/address/0x31EEaeC2A8d855B13B376b72C172F0c20A2910F6) |
-| **CmioStateTransition** | [`0x6288F737D7B18594b3092aEF13aB47071281A8b0`](https://etherscan.io/address/0x6288F737D7B18594b3092aEF13aB47071281A8b0) |
-| **RiscVStateTransition** | [`0x31a7AE6095516f78a30a8991aee2881D429AfECF`](https://etherscan.io/address/0x31a7AE6095516f78a30a8991aee2881D429AfECF) |
-| **MultiLevel Tournament Factory** | [`0x74A82BAeD499a19e007243b86830e0A86154E816`](https://etherscan.io/address/0x74A82BAeD499a19e007243b86830e0A86154E816) |
-| **CanonicalTournamentParametersProvider** | [`0xEf77920dA48Ed9b16Bee85291A9B29C74d0e32eb`](https://etherscan.io/address/0xEf77920dA48Ed9b16Bee85291A9B29C74d0e32eb) |
+| **Cartesi Machine I/O State Transition** | [`0x6288F737D7B18594b3092aEF13aB47071281A8b0`](https://etherscan.io/address/0x6288F737D7B18594b3092aEF13aB47071281A8b0) |
+| **RISC-V State Transition** | [`0x31a7AE6095516f78a30a8991aee2881D429AfECF`](https://etherscan.io/address/0x31a7AE6095516f78a30a8991aee2881D429AfECF) |
+| **Multi-Level Tournament Factory** | [`0x74A82BAeD499a19e007243b86830e0A86154E816`](https://etherscan.io/address/0x74A82BAeD499a19e007243b86830e0A86154E816) |
+| **Canonical Tournament Parameters Provider** | [`0xEf77920dA48Ed9b16Bee85291A9B29C74d0e32eb`](https://etherscan.io/address/0xEf77920dA48Ed9b16Bee85291A9B29C74d0e32eb) |
 
 
 ## Honeypot v3 Deployments
