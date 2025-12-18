@@ -405,6 +405,14 @@ html[data-theme="dark"] {
 
 /* Details */
 
+details {
+  background-color: #F6F7F8 !important;
+  border: 1px solid rgb(246, 247, 248);
+  padding: 1rem;
+  border-radius: 8px;
+  border-color: rgb(246, 247, 248) !important;
+}
+
 .details {
   border: 0 !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
@@ -412,8 +420,8 @@ html[data-theme="dark"] {
   margin: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  background-color: transparent !important;
-  color: inherit;
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  color: rgba(0, 0, 0, 0.1) !important;
 }
 
 [data-theme="dark"] .details {
