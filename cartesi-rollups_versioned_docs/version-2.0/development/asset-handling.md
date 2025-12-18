@@ -143,7 +143,7 @@ const emitVoucher = async (voucher) => {
 ```
 
 :::note epoch length
-By default, Cartesi nodes close one epoch every 7200 blocks. You can [manually set the epoch length](./cli-commands.md/#run) to facilitate quicker asset-handling methods.
+By default, Cartesi nodes close one epoch every 7200 blocks. You can [manually set the epoch length](../../../get-started/cli-commands.md#run) to facilitate quicker asset-handling methods.
 :::
 
 Here are the function signatures used by vouchers to withdraw the different types of assets:

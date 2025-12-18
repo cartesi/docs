@@ -289,5 +289,5 @@ One common use of vouchers in Cartesi dApps is to withdraw assets. Users initiat
 You can manually set the epoch length to facilitate quicker asset deposits and withdrawals.
 
 :::note epoch duration
-[Refer to the documentation here](../../development/cli-commands.md/#run) to manually configure epoch length during development.
+[Refer to the documentation here](../../../../get-started/cli-commands.md/#run) to manually configure epoch length during development.
 :::
