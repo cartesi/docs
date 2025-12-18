@@ -136,6 +136,8 @@
             "items": [
                 "development/installation",
                 "development/creating-application",
+                "development/Integrating-the-CMA-parser-library",
+                "development/Integrating-the-CMA-ledger-library",
                 "development/building-the-application",
                 "development/running-the-application",
                 "development/cli-commands",
