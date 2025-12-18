@@ -5,7 +5,7 @@ Welcome to the official Cartesi documentation repository. This documentation is 
 ## Requirements
 
 * Install [Node.js](https://nodejs.org/en/download/) version >= 20.x
-* Install [Yarn](https://yarnpkg.com/getting-started/install) version >= 1.5  
+* Install [Yarn](https://yarnpkg.com/getting-started/install) version >= 1.5
 
 ## Installation
 
@@ -41,9 +41,9 @@ This repo build is automatically deployed using AWS Amplify.
 
 The following branches and pull requests are deployed to the following URLs:
 
-| Branch  | URL                             |
-| ------- | ------------------------------- |
-| main  | https://github.com/cartesi/docs |
+| Branch | URL                             |
+| ------ | ------------------------------- |
+| main   | https://github.com/cartesi/docs |
 
 ## Project Structure
 
@@ -54,7 +54,6 @@ The following branches and pull requests are deployed to the following URLs:
 We welcome contributions to improve the documentation! Please see the [Contributing Guide](./CONTRIBUTING.md) for more details.
 
 ## License
-This project is licensed under the [Apache 2.0 License](
-https://github.com/cartesi/rollups-contracts/blob/main/LICENSE).
+This project is licensed under the [Apache 2.0 License](https://github.com/cartesi/rollups-contracts/blob/main/LICENSE).
 
 
