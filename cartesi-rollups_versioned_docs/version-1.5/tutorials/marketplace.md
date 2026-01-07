@@ -156,9 +156,10 @@ cargo add hex@0.4.3
 </TabItem>
 </Tabs>
 
-**NOTE::** For python developers, add the below snippet to `line 26` of your Dockerfile. It should come immediately after the line `COPY ./requirements.txt .`.
-
-This command would help install essential compilers to help compile some dependencies we'll be using.
+:::caution Note for Python Developers
+Add the below snippet to `line 26` of your Dockerfile. It should come immediately after the line `COPY ./requirements.txt .`
+This command would install essential meta-packages to help compile some dependencies we'll be using.
+:::
 
 ```Dockerfile
 # Install build dependencies for compiling native extensions
