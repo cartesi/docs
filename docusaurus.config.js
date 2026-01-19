@@ -377,10 +377,6 @@ const config = {
       '@docusaurus/plugin-client-redirects',
       {
         redirects: [
-          {
-            from: '/cartesi-rollups',      // the old/base route
-            to:   '/cartesi-rollups/2.0/', // the new route to redirect to
-          },
         ],
       },
     ],

@@ -14,14 +14,14 @@ This article explains common practices for developing dApps using the Cartesi Ro
 Please, check the [dApp architecture](../dapp-architecture.md) article to explore more essential topics such as the [back-end](../dapp-architecture.md#back-end) and [front-end](../dapp-architecture.md#front-end) components, and the [communication](../dapp-architecture.md#communication) between them.
 :::
 
-Cartesi dApps communicate between the front-end and back-end using the Rollups framework via a [set of HTTP APIs](..//http-api.md). The Cartesi dApp back-end contains the application's business logic and executes within the Cartesi Rollups framework. The back-end produces outputs in the form of [vouchers](../main-concepts.md#vouchers), [notices](../main-concepts.md#notices), or [reports](../main-concepts.md#reports), which provide vital information about the application's status. The Cartesi dApp front-end is responsible for presenting information and collecting user inputs. The front-end communicates with the back-end via APIs, and Cartesi provides a range of APIs that you can use to interact with the Rollups framework.
+Cartesi dApps communicate between the front-end and back-end using the Rollups framework via a [set of HTTP APIs](/cartesi-rollups/1.0/http-api/). The Cartesi dApp back-end contains the application's business logic and executes within the Cartesi Rollups framework. The back-end produces outputs in the form of [vouchers](/cartesi-rollups/1.0/main-concepts/#vouchers), [notices](/cartesi-rollups/1.0/main-concepts/#notices), or [reports](/cartesi-rollups/1.0/main-concepts/#reports), which provide vital information about the application's status. The Cartesi dApp front-end is responsible for presenting information and collecting user inputs. The front-end communicates with the back-end via APIs, and Cartesi provides a range of APIs that you can use to interact with the Rollups framework.
 
 When it comes to dApp architecture and APIs, several points are important to highlight:
 
-- The [Cartesi Machine](/machine/intro) serves as the back-end for the dApp, and it is managed by a [Cartesi Node](../components.md#cartesi-nodes), providing a secure and efficient environment for running the dApp
+- The [Cartesi Machine](/get-started/cartesi-machine/) serves as the back-end for the dApp, and it is managed by a [Cartesi Node](/cartesi-rollups/1.0/main-concepts#cartesi-nodes), providing a secure and efficient environment for running the dApp
 - All inputs are sent to the L1 smart contracts
-- You can query the Rollups state using a [GraphQL API](../api/graphql/basics.md). This state includes the received inputs and the associated outputs produced in the form of notices, vouchers and reports
-- You can retrieve arbitrary application state via the [Inspect HTTP API](../api/inspect/inspect.api.mdx). It allows you to implement a REST-like API on the back-end of your dApp to return arbitrary information about it, much like what web2 applications are used to
+- You can query the Rollups state using a [GraphQL API](/cartesi-rollups/1.0/api/graphql/basics/). This state includes the received inputs and the associated outputs produced in the form of notices, vouchers and reports
+- You can retrieve arbitrary application state via the [Inspect HTTP API](/cartesi-rollups/1.0/api/inspect/inspect/). It allows you to implement a REST-like API on the back-end of your dApp to return arbitrary information about it, much like what web2 applications are used to
 
 ## General recommendations
 
@@ -43,8 +43,8 @@ The Cartesi Machine is a deterministic RISC-V emulator that runs software in an 
 
 The dApp front-end clients have two ways of retrieving information:
 
-- [Inspect HTTP API](../api/inspect/inspect.api.mdx)
-- [GraphQL API](../api/graphql/basics.md)
+- [Inspect HTTP API](/cartesi-rollups/1.0/api/inspect/inspect/)
+- [GraphQL API](/cartesi-rollups/1.0/api/graphql/basics/)
 
 The **Inspect API** provides enhanced flexibility and aligns better with the conventions of modern web2 applications. Enabling the implementation of a REST-like API on the back-end allows for the retrieval of a variety of information about the dApp.
 

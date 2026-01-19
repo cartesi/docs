@@ -6,10 +6,10 @@ tags: [learn, rollups, dapps, low-level developer, components]
 
 In Cartesi Rollups, there are two kinds of requests that can be made to the dApp:
 
-- **Advance** - Utilizing the [addInput()](./api/json-rpc/sol-input.md#addinput) function call via JSON-RPC to the [InputBox contract](./api/json-rpc/sol-input.md) to send data and change the state of the dApp.
-- **Inspect** - Making an external HTTP API call to the [Cartesi Node](./components.md#cartesi-nodes) to read dApp state without changing it.
+- **Advance** - Utilizing the [addInput()](/cartesi-rollups/1.0/api/json-rpc/sol-input/#addinput) function call via JSON-RPC to the [InputBox contract](/cartesi-rollups/1.0/api/json-rpc/sol-input/) to send data and change the state of the dApp.
+- **Inspect** - Making an external HTTP API call to the [Cartesi Node](/cartesi-rollups/1.0/main-concepts#cartesi-nodes) to read dApp state without changing it.
 
-When you initiate your [node](./components.md#cartesi-nodes) for development purposes, you are effectively deploying Cartesi Rollups on a localhost testnet chain, which serves as your Ethereum network for development and mimics the Mainnet's behavior (for example, Ganache, Anvil, Hardhat node). This means you will be sending transactions to contracts on this local chain.
+When you initiate your [node](/cartesi-rollups/1.0/main-concepts#cartesi-nodes) for development purposes, you are effectively deploying Cartesi Rollups on a localhost testnet chain, which serves as your Ethereum network for development and mimics the Mainnet's behavior (for example, Ganache, Anvil, Hardhat node). This means you will be sending transactions to contracts on this local chain.
 
 <video width="100%" controls poster="/img/Nodes.png">
     <source src="/videos/Cartesi_Nodes.mp4" type="video/mp4" />
@@ -29,7 +29,7 @@ In the context of Cartesi Rollups, we focus on two specific [JSON-RPC methods](h
 
 - `eth_sendTransaction`. This method is particularly suitable for development and testing environments, as it sends unsigned transactions that are signed by the Ethereum node using the specified account's private key.
 
-These methods are used to call the [InputBox.addInput(address, bytes)](./api/json-rpc/sol-input.md#addinput) function of the DApp smart contract, using as parameters the alias address of your dApp Rollup and the content to submit.
+These methods are used to call the [InputBox.addInput(address, bytes)](/cartesi-rollups/1.0/api/json-rpc/sol-input/#addinput) function of the DApp smart contract, using as parameters the alias address of your dApp Rollup and the content to submit.
 
 The following snippet uses the [Cast](https://book.getfoundry.sh/cast/) tool to call this function on a local Ethereum node:
 
@@ -37,7 +37,7 @@ The following snippet uses the [Cast](https://book.getfoundry.sh/cast/) tool to 
 cast send 0xInputBoxAddress123 "addInput(address,bytes)" 0xDAppAddress456 0xEncodedPayload789
 ```
 
-Advance requests are handled within the Cartesi Machine using the [/finish](./api/rollup/finish.api.mdx) endpoint, by which you inform the final status of the previous request and retrieve input data.
+Advance requests are handled within the Cartesi Machine using the [/finish](/cartesi-rollups/1.0/api/rollup/finish/) endpoint, by which you inform the final status of the previous request and retrieve input data.
 
 The following Python code example shows how a dApp back-end can read the input payload into a variable:
 
@@ -66,7 +66,7 @@ The _Inspect_ call is a direct request to the Rollup Node, which activates the C
 curl http://localhost:5005/inspect/mypath
 ```
 
-As before, the dApp's back-end code needs to call the [/finish](./api/rollup/finish.api.mdx) endpoint to retrieve the payload that was submitted. Once the call's response is received, the payload is extracted from the response data, allowing the back-end code to examine it and produce outputs in the form of [Reports](../main-concepts#reports). In the example below, the output produced is simply a copy of the payload that was submitted:
+As before, the dApp's back-end code needs to call the [/finish](/cartesi-rollups/1.0/api/rollup/finish/) endpoint to retrieve the payload that was submitted. Once the call's response is received, the payload is extracted from the response data, allowing the back-end code to examine it and produce outputs in the form of [Reports](/cartesi-rollups/1.0/main-concepts/#reports). In the example below, the output produced is simply a copy of the payload that was submitted:
 
 ```python
 while True:
@@ -89,4 +89,4 @@ for (let i in result.reports) {
 }
 ```
 
-Now that we know how to handle generic payloads in our dApp, it is important to mention the concept of handling standardized Solidity interfaces, specifically ERC20 and ERC721 assets. To receive this special kind of _input data_, the Cartesi Rollup Framework provides a set of contracts called the [Portals](./components.md#portals), which are specifically designed to [handle assets](./assets-handling.md) on behalf of your dApp.
+Now that we know how to handle generic payloads in our dApp, it is important to mention the concept of handling standardized Solidity interfaces, specifically ERC20 and ERC721 assets. To receive this special kind of _input data_, the Cartesi Rollup Framework provides a set of contracts called the [Portals](/cartesi-rollups/1.0/api/json-rpc/portals/), which are specifically designed to [handle assets](/cartesi-rollups/1.0/assets-handling/) on behalf of your dApp.

@@ -9,7 +9,7 @@ Notices provide a mechanism to communicate essential off-chain events from the e
 
 Consider a scenario within a gaming dApp where players engage in battles. Upon the conclusion of a match, the dApp's backend generates a notice proclaiming the victorious player. This notice contains pertinent off-chain data regarding the match outcome. Once created, the notice is submitted to the rollup server as evidence of the off-chain event.
 
-Crucially, the base layer conducts on-chain validation of these notices through the [`executeOutput()`](../contracts/application.md/#executeoutput) function of the `Application` contract.
+Crucially, the base layer conducts on-chain validation of these notices through the [`executeOutput()`](/cartesi-rollups/2.0/api-reference/contracts/application/#executeoutput) function of the `Application` contract.
 
 This validation process ensures the integrity and authenticity of the submitted notices, enabling the blockchain to verify and authenticate the declared off-chain events or conditions.
 
@@ -128,6 +128,6 @@ async fn emit_notice(payload: String) -> Option<bool> {
 </TabItem>
 </Tabs>
 
-:::note querying notices
-Frontend clients can query notices using a JSON RPC API exposed by Cartesi Nodes. [Refer to the documentation here](../../development/query-outputs.md#query-all-notices) to query notices from the rollup server.
+:::note querying outputs
+Frontend clients can query outputs using a JSON RPC API exposed by Cartesi Nodes. [Refer to the documentation here](/cartesi-rollups/2.0/development/query-outputs/#query-all-notices-and-vouchers) to query notices from the rollup server.
 :::
