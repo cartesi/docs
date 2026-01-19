@@ -10,7 +10,7 @@ Cartesi Rollups are shaped by the contributions and collaborative efforts of its
 - [Disputes](#disputes)
 - [Large data as input](#large-data-as-input)
 - [Composability](#composability)
-- [Convenience layer: Front-end](#convenience-layer-front-end)
+- [Convenience layer: Front-end](#convenience-layers)
 - [Design for upgradability](#design-for-upgradability)
 
 ## Transaction scalability

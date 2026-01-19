@@ -97,7 +97,7 @@ In this example, the command will fetch and display the balance as shown below:
 
 ##### getNumberOfInputs
 
-The following example is a cast command that shows how to get the number of inputs using the function [getNumberOfInputs](./sol-input.md#addInput):
+The following example is a cast command that shows how to get the number of inputs using the function [getNumberOfInputs](/cartesi-rollups/1.0/api/json-rpc/sol-input/#getnumberofinputs):
 
 ```shell
 cast call <INPUTBOX_ADDRESS> getNumberOfInputs(address) <DAPP_ADDRESS>
@@ -111,7 +111,7 @@ The result of this JSON-RPC call is the number of inputs for the dApp, returned 
 
 ##### addInput
 
-The following example is a cast command that shows how to send an input using the function [addInput](./sol-input.md#addInput) of the [`InputBox`](./sol-input.md) smart contract:
+The following example is a cast command that shows how to send an input using the function [addInput](/cartesi-rollups/1.0/api/json-rpc/sol-input/#addinput) of the [`InputBox`](/cartesi-rollups/1.0/api/json-rpc/sol-input) smart contract:
 
 ```shell
 cast send <INPUTBOX_ADDRESS> addInput(_dapp,_input) <DAPP_ADDRESS> <INPUT>

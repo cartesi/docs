@@ -338,7 +338,7 @@ for (const output of outputs) {
 }
 ```
 
-You can also [query a notice based on its input index](../development/query-outputs.md#query-a-single-notice).
+You can also [query a notice based on its input index](/cartesi-rollups/2.0/development/query-outputs/#query-a-single-notice-or-voucher).
 
 Congratulations, you have successfully built a dApp on Cartesi Rollups!
 

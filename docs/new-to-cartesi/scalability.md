@@ -37,7 +37,7 @@ In general, L2 protocols belong to one of the following four categories:
 1. **Channels** that are fully secured by a blockchain system such as Ethereum and work only for a specific set of applications.
 2. **Commit-chains** that rely on one central intermediary who is trusted regarding availability
 3. **Side-chains** that are usually EVM-compatible and can scale general-purpose applications, but are less secure because they do not rely on the security of the underlying blockchain and thus create their own consensus models.
-4. **Rollups** that aim to achieve the best of all the above, and are described in more detail in the [Cartesi Rollups overview section](/cartesi-rollups/#what-is-a-blockchain-rollup).
+4. **Rollups** that aim to achieve the best of all the above, and are described in more detail in the [Cartesi Rollups overview section](/cartesi-rollups/).
 
 ## See Also
 

@@ -558,7 +558,7 @@ while not machine:read_iflags_H() and not machine:read_iflags_Y() do
     machine:run(math.maxinteger)
 end
 ```
-has exactly the same effect as the example [above](#run-cat-foo-bar), where the machine was instantiated from the configuration and directly run until it halted.
+has exactly the same effect as the example [above](/cartesi-machine/host/lua/#run-cat-foo-bar), where the machine was instantiated from the configuration and directly run until it halted.
 
 As before, the configuration that was used to instantiate a Cartesi Machine can be obtained from the machine instance with the method `machine:get_initial_config()`.
 Note that this is *not* the configuration that was used to instantiate the machine for the first time, but rather the configuration used to instantiate a copy of the machine that was stored.
@@ -1308,12 +1308,12 @@ Finally, hashes for vouchers and notices produced in response to advance-state r
 Data in the input-metadata memory range consists of the following fields: a _message sender_ (an EVM address), a _block-number_, a _timestamp_ (seconds since the _Unix epoch_), the rollup _epoch index_, and the rollup _input index_.
 All entries are 256-bit big-endian unsigned integers.
 In practice, only the least-significant 20 bytes are used for the message sender address, and only the least-significant 8 bytes, or 64-bits, are used for the remaining number entries.
-(See the table in the target perspective [architecture](../target/architecture.md#rollup-format).)
+(See the table in the target perspective [architecture](/cartesi-machine/target/architecture).)
 
 Data for the input to an advance-state request, the query to an inspect-state request, exceptions, notices, and reports are all encoded in the same way: a 256-bit _offset_ field (with value 32), then a 256-bit _length_ field, directly followed by payload with _length_ bytes.
 The offset and length fields are encoded as 256-bit big-endian unsigned integers.
 Data for vouchers start with an _address_ field (an EVM address, again as the least-significant 20 bytes in a 256-bit big-endian unsigned integer) and then continue just like the others: and _offset_ field (this time with value 64), then a 256-bit _length_ field, directly followed by payload with _length_ bytes.
-(See the table in the target perspective [architecture](../target/architecture.md#rollup-format).)
+(See the table in the target perspective [architecture](/cartesi-machine/target/architecture).)
 
 The following script illustrates how the Lua API can be used to send advance-state requests to a Rolling Cartesi Machine, and how it can be used to collect the notices produced as responses (We will use the server calculator [example](./cmdline.md#rolling-cartesi-machine-templates):
 
