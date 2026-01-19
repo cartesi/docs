@@ -3,6 +3,7 @@
 
 # production
 /build
+/TEMP
 
 # generated files
 .docusaurus
