@@ -655,4 +655,10 @@ div.responsive-image img,
   }
 }
 
+/* Hide version 2.0 from version dropdowns */
+.dropdown__menu a[href*="/cartesi-rollups/2.0/"],
+.dropdown__menu li:has(a[href*="/cartesi-rollups/2.0/"]) {
+  display: none !important;
+}
+
 @tailwind utilities;
