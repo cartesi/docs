@@ -1,0 +1,63 @@
+# Cartesi Rollups v2.0
+
+> Cartesi Rollups is a modular blockchain framework that enables developers to build decentralized applications using the Linux operating system and any programming language.
+
+## Getting Started
+- [Overview](https://docs.cartesi.io/cartesi-rollups/2.0/): Introduction to Cartesi Rollups framework
+- [Architecture](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/architecture/): On-chain and off-chain components
+- [Installation](https://docs.cartesi.io/cartesi-rollups/2.0/development/installation/): Install Cartesi CLI and dependencies
+
+## Development
+- [Creating an Application](https://docs.cartesi.io/cartesi-rollups/2.0/development/creating-an-application/): Bootstrap a new Cartesi dApp
+- [Building an Application](https://docs.cartesi.io/cartesi-rollups/2.0/development/building-an-application/): Build your application for the Cartesi Machine
+- [Running an Application](https://docs.cartesi.io/cartesi-rollups/2.0/development/running-an-application/): Run and test locally
+- [Send Inputs and Assets](https://docs.cartesi.io/cartesi-rollups/2.0/development/send-inputs-and-assets/): How to send inputs and assets to your dApp
+- [Query Outputs](https://docs.cartesi.io/cartesi-rollups/2.0/development/query-outputs/): Vouchers and notices
+- [Asset Handling](https://docs.cartesi.io/cartesi-rollups/2.0/development/asset-handling/): Deposits and withdrawals
+
+## Smart Contracts API
+- [Contracts Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/overview/): All smart contracts in the framework
+- [InputBox](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/input-box/): Entry point for user inputs
+- [Application](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application/): Per-dApp contract holding assets
+- [ApplicationFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application-factory/): Deploy Application contracts
+- [EtherPortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/EtherPortal/): ETH deposits
+- [ERC20Portal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC20Portal/): ERC-20 token deposits
+- [ERC721Portal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC721Portal/): NFT deposits
+- [ERC1155SinglePortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155SinglePortal/): ERC-1155 single token deposits
+- [ERC1155BatchPortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155BatchPortal/): ERC-1155 batch deposits
+- [Consensus Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/overview/): Validates claims from validators
+- [Authority](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority/): Single-owner consensus
+- [Quorum](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum/): Multi-validator consensus
+
+## Backend API
+- [HTTP API](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/introduction/): Communication between Cartesi Machine and node
+- [Notices](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/notices/): Informational statements
+- [Vouchers](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/vouchers/): Executable actions on base layer
+- [Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/reports/): Application logs
+- [Exception](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/exception/): Register exceptions
+- [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/finish/): Complete request processing
+
+## Frontend APIs
+- [GraphQL Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/graphql/overview/): Query application state
+- [JSON-RPC Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/overview/): Node management API
+
+## Deployment
+- [Introduction](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/introduction/): Overview of deployment options
+- [Self-Hosted Deployment](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted/): Run your own node
+- [Snapshot](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/snapshot/): Machine state management
+
+## Tutorials
+- [Counter](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/counter/): Simple counter dApp
+- [Calculator](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/calculator/): Mathematical operations
+- [Ether Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/ether-wallet/): Handle ETH deposits and withdrawals
+- [ERC-20 Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/erc-20-token-wallet/): Token wallet
+- [ERC-721 Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/erc-721-token-wallet/): NFT wallet
+- [Marketplace](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/marketplace/): Build a marketplace dApp
+- [React Frontend](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/react-frontend-application/): Build a frontend application
+- [CLI Account Abstraction](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/cli-account-abstraction-feauture/): Use CLI account abstraction features
+
+## Resources
+- [Community Tools](https://docs.cartesi.io/cartesi-rollups/2.0/resources/community-tools/): Third-party tools and integrations
+- [Integration Guides](https://docs.cartesi.io/cartesi-rollups/2.0/resources/integration-guides/): Integration examples
+- [Migration Guide](https://docs.cartesi.io/cartesi-rollups/2.0/resources/migration-guide/): Migrate from v1.x to v2.0
+- [Mainnet Considerations](https://docs.cartesi.io/cartesi-rollups/2.0/resources/mainnet-considerations/): Production deployment considerations
