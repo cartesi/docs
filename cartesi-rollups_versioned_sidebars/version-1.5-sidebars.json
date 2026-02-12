@@ -126,7 +126,16 @@
                             ]
                         }
                     ]
-                }
+                },
+                {
+                    "type": "category",
+                    "label": "Asset Management Library",
+                    "collapsed": true,
+                    "items": [
+                        "rollups-apis/asset-management-library/parser-submodule",
+                        "rollups-apis/asset-management-library/ledger-submodule"
+                    ]
+                }                
             ]
         },
         {
