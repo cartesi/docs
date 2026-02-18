@@ -20,6 +20,8 @@ Here is a simple boilerplate application that shows the default implementation o
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import RequestHandlingGO from './snippets/request_handling_go.md';
+import RequestHandlingCPP from './snippets/request_handling_cpp.md';
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
@@ -192,6 +194,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 ```
+</code></pre>
+</TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+<RequestHandlingGO />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+<RequestHandlingCPP />
 
 </code></pre>
 </TabItem>
