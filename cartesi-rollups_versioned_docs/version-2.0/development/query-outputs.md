@@ -32,6 +32,8 @@ We will send the output to the rollup server as a notice.
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import SendingNoticeGO from './snippets/sending_notice_go.md';
+import SendingNoticeCPP from './snippets/sending_notice_cpp.md';
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
@@ -214,6 +216,22 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+<SendingNoticeGO />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+<SendingNoticeCPP />
+
+</code></pre>
+</TabItem>
+
 </Tabs>
 
 For example, sending an input payload of `“2”` to the application using Cast or `cartesi send generic` will log:
@@ -378,6 +396,9 @@ Reports serve as stateless logs, providing read-only information without affecti
 
 Here is how you can write your application to send reports to the rollup server:
 
+import SendingReportGO from './snippets/sending_report_go.md';
+import SendingReportCPP from './snippets/sending_report_cpp.md';
+
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
 <pre><code>
@@ -498,6 +519,22 @@ async fn emit_report( payload: String) -> Option<bool> {
     }
 }
 ```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+<SendingReportGO />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+<SendingReportCPP />
 
 </code></pre>
 </TabItem>
