@@ -66,6 +66,8 @@ import TabItem from '@theme/TabItem';
 import ImplementingOutputsJS from './snippets/implementing_outputs_js.md';
 import ImplementingOutputsPY from './snippets/implementing_outputs_py.md';
 import ImplementingOutputsRS from './snippets/implementing_outputs_rs.md';
+import ImplementingOutputsGO from './snippets/implementing_outputs_go.md';
+import ImplementingOutputsCPP from './snippets/implementing_outputs_cpp.md';
 
 
 <Tabs>
@@ -89,6 +91,22 @@ import ImplementingOutputsRS from './snippets/implementing_outputs_rs.md';
 <pre><code>
 
 <ImplementingOutputsRS />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+<ImplementingOutputsGO />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+<ImplementingOutputsCPP />
 
 </code></pre>
 </TabItem>

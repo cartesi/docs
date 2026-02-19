@@ -20,53 +20,17 @@ Here is a simple boilerplate application that handles Advance and Inspect reques
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+import RequestHandlingJS from '../../development/snippets/request_handling_js.md';
+import RequestHandlingPY from '../../development/snippets/request_handling_py.md';
+import RequestHandlingRS from '../../development/snippets/request_handling_rs.md';
+import RequestHandlingGO from '../../development/snippets/request_handling_go.md';
+import RequestHandlingCPP from '../../development/snippets/request_handling_cpp.md';
+
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
 <pre><code>
 
-```javascript
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
-
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  return "accept";
-}
-
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
-}
-
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
-
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "accept" }),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
-    } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
-    }
-  }
-})();
-```
+<RequestHandlingJS />
 
 </code></pre>
 </TabItem>
@@ -74,46 +38,7 @@ var finish = { status: "accept" };
 <TabItem value="Python" label="Python" default>
 <pre><code>
 
-```python
-from os import environ
-import logging
-import requests
-
-logging.basicConfig(level="INFO")
-logger = logging.getLogger(__name__)
-
-rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
-logger.info(f"HTTP rollup_server url is {rollup_server}")
-
-def handle_advance(data):
-   logger.info(f"Received advance request data {data}")
-   return "accept"
-
-def handle_inspect(data):
-   logger.info(f"Received inspect request data {data}")
-   return "accept"
-
-
-handlers = {
-   "advance_state": handle_advance,
-   "inspect_state": handle_inspect,
-}
-
-finish = {"status": "accept"}
-
-while True:
-   logger.info("Sending finish")
-   response = requests.post(rollup_server + "/finish", json=finish)
-   logger.info(f"Received finish status {response.status_code}")
-   if response.status_code == 202:
-       logger.info("No pending rollup request, trying again")
-   else:
-       rollup_request = response.json()
-       data = rollup_request["data"]
-       handler = handlers[rollup_request["request_type"]]
-       finish["status"] = handler(rollup_request["data"])
-
-```
+<RequestHandlingPY />
 
 </code></pre>
 </TabItem>
@@ -121,75 +46,23 @@ while True:
 <TabItem value="Rust" label="Rust" default>
 <pre><code>
 
-```rust
-use json::{object, JsonValue};
-use std::env;
+<RequestHandlingRS />
 
-pub async fn handle_advance(
-    _client: &hyper::Client<hyper::client::HttpConnector>,
-    _server_addr: &str,
-    request: JsonValue,
-) -> Result<&'static str, Box<dyn std::error::Error>> {
-    println!("Received advance request data {}", &request);
-    let _payload = request["data"]["payload"]
-        .as_str()
-        .ok_or("Missing payload")?;
-    // TODO: add application logic here
-    Ok("accept")
-}
+</code></pre>
+</TabItem>
 
-pub async fn handle_inspect(
-    _client: &hyper::Client<hyper::client::HttpConnector>,
-    _server_addr: &str,
-    request: JsonValue,
-) -> Result<&'static str, Box<dyn std::error::Error>> {
-    println!("Received inspect request data {}", &request);
-    let _payload = request["data"]["payload"]
-        .as_str()
-        .ok_or("Missing payload")?;
-    // TODO: add application logic here
-    Ok("accept")
-}
+<TabItem value="Go" label="Go" default>
+<pre><code>
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let client = hyper::Client::new();
-    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL")?;
+<RequestHandlingGO />
 
-    let mut status = "accept";
-    loop {
-        println!("Sending finish");
-        let response = object! {"status" => status.clone()};
-        let request = hyper::Request::builder()
-            .method(hyper::Method::POST)
-            .header(hyper::header::CONTENT_TYPE, "application/json")
-            .uri(format!("{}/finish", &server_addr))
-            .body(hyper::Body::from(response.dump()))?;
-        let response = client.request(request).await?;
-        println!("Received finish status {}", response.status());
+</code></pre>
+</TabItem>
 
-        if response.status() == hyper::StatusCode::ACCEPTED {
-            println!("No pending rollup request, trying again");
-        } else {
-            let body = hyper::body::to_bytes(response).await?;
-            let utf = std::str::from_utf8(&body)?;
-            let req = json::parse(utf)?;
+<TabItem value="C++" label="C++" default>
+<pre><code>
 
-            let request_type = req["request_type"]
-                .as_str()
-                .ok_or("request_type is not a string")?;
-            status = match request_type {
-                "advance_state" => handle_advance(&client, &server_addr[..], req).await?,
-                "inspect_state" => handle_inspect(&client, &server_addr[..], req).await?,
-                &_ => {
-                    eprintln!("Unknown request type");
-                    "reject"
-                }
-            };
-        }
-    }
-}
-```
+<RequestHandlingCPP />
 
 </code></pre>
 </TabItem>

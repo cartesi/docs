@@ -119,6 +119,71 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+```go
+func HandleAdvance(data *rollups.AdvanceResponse) error {
+	// Log incoming request for diagnostics.
+	infolog.Printf("Received advance request data %+v\n", data)
+
+	// Example operation that may fail (replace with your app logic).
+	if _, err := rollups.Hex2Str(data.Payload); err != nil {
+		// Emit report with error details.
+		report := rollups.ReportRequest{
+			Payload: rollups.Str2Hex(fmt.Sprintf("Error: %v", err)),
+		}
+		if _, sendErr := rollups.SendReport(&report); sendErr != nil {
+			return fmt.Errorf("HandleAdvance: failed sending report: %w", sendErr)
+		}
+		return fmt.Errorf("HandleAdvance: rejected due to app error: %w", err)
+	}
+
+	return nil
+}
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+```cpp
+std::string handle_advance(httplib::Client &cli, picojson::value data)
+{
+    std::cout << "Received advance request data " << data << std::endl;
+
+    try
+    {
+        // Example operation that may fail (replace with your app logic).
+        const std::string payload_hex = data.get("payload").get<std::string>();
+        (void)hex_to_string(payload_hex);
+    }
+    catch (const std::exception &e)
+    {
+        // Emit report containing the error message.
+        picojson::object report;
+        report["payload"] = picojson::value(string_to_hex(std::string("Error: ") + e.what()));
+        auto response = cli.Post(
+            "/report",
+            picojson::value(report).serialize(),
+            "application/json"
+        );
+        if (!response || response->status >= 400)
+        {
+            std::cout << "Failed to send report" << std::endl;
+        }
+        return "reject";
+    }
+
+    return "accept";
+}
+```
+
+</code></pre>
+</TabItem>
+
 </Tabs>
 
 :::note querying reports
