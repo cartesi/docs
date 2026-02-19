@@ -126,6 +126,63 @@ async fn emit_notice(payload: String) -> Option<bool> {
 
 </code></pre>
 </TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+```go
+func HandleAdvance(data *rollups.AdvanceResponse) error {
+	// Log incoming request for debugging.
+	infolog.Printf("Received advance request data %+v\n", data)
+
+	// Keep the same payload and forward it as a notice.
+	notice := rollups.NoticeRequest{
+		Payload: data.Payload,
+	}
+
+	if _, err := rollups.SendNotice(&notice); err != nil {
+		return fmt.Errorf("HandleAdvance: failed sending notice: %w", err)
+	}
+
+	return nil
+}
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+```cpp
+std::string handle_advance(httplib::Client &cli, picojson::value data)
+{
+    std::cout << "Received advance request data " << data << std::endl;
+
+    // Extract input payload and forward it as a notice.
+    const std::string payload = data.get("payload").get<std::string>();
+    picojson::object notice;
+    notice["payload"] = picojson::value(payload);
+
+    // Send notice to the rollup server.
+    auto response = cli.Post(
+        "/notice",
+        picojson::value(notice).serialize(),
+        "application/json"
+    );
+
+    if (!response || response->status >= 400)
+    {
+        std::cout << "Failed to send notice" << std::endl;
+        return "reject";
+    }
+
+    return "accept";
+}
+```
+
+</code></pre>
+</TabItem>
 </Tabs>
 
 :::note querying notices

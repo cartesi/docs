@@ -205,6 +205,119 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </code></pre>
 </TabItem>
 
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+```go
+func HandleAdvance(data *rollups.AdvanceResponse) error {
+	// Add your state-changing logic here.
+	infolog.Printf("Received advance request data %+v\n", data)
+	return nil
+}
+
+func HandleInspect(data *rollups.InspectResponse) error {
+	// Add your read-only logic here.
+	infolog.Printf("Received inspect request data %+v\n", data)
+	return nil
+}
+
+func main() {
+	finish := rollups.FinishRequest{Status: "accept"}
+
+	for {
+		infolog.Println("Sending finish")
+		res, err := rollups.SendFinish(&finish)
+		if err != nil {
+			errlog.Panicln("Error calling /finish:", err)
+		}
+
+		if res.StatusCode == 202 {
+			infolog.Println("No pending rollup request, trying again")
+			continue
+		}
+
+		// Parse next request and dispatch to the correct handler.
+		response, err := rollups.ParseFinishResponse(res)
+		if err != nil {
+			errlog.Panicln("Error parsing finish response:", err)
+		}
+
+		finish.Status = "accept"
+		if response.Type == "advance_state" {
+			data := new(rollups.AdvanceResponse)
+			_ = json.Unmarshal(response.Data, data)
+			if err = HandleAdvance(data); err != nil {
+				finish.Status = "reject"
+			}
+		} else if response.Type == "inspect_state" {
+			data := new(rollups.InspectResponse)
+			_ = json.Unmarshal(response.Data, data)
+			_ = HandleInspect(data)
+		}
+	}
+}
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+```cpp
+std::string handle_advance(httplib::Client &cli, picojson::value data)
+{
+    // Add your state-changing logic here.
+    std::cout << "Received advance request data " << data << std::endl;
+    return "accept";
+}
+
+std::string handle_inspect(httplib::Client &cli, picojson::value data)
+{
+    // Add your read-only logic here.
+    std::cout << "Received inspect request data " << data << std::endl;
+    return "accept";
+}
+
+int main(int argc, char **argv)
+{
+    std::map<std::string, decltype(&handle_advance)> handlers = {
+        {"advance_state", &handle_advance},
+        {"inspect_state", &handle_inspect},
+    };
+
+    httplib::Client cli(getenv("ROLLUP_HTTP_SERVER_URL"));
+    std::string status = "accept";
+
+    while (true)
+    {
+        // Request next rollup input.
+        auto finish_body = std::string("{\"status\":\"") + status + "\"}";
+        auto response = cli.Post("/finish", finish_body, "application/json");
+        if (!response)
+        {
+            continue;
+        }
+
+        if (response->status == 202)
+        {
+            std::cout << "No pending rollup request, trying again" << std::endl;
+            continue;
+        }
+
+        // Dispatch to advance/inspect handlers.
+        picojson::value req;
+        picojson::parse(req, response->body);
+        auto request_type = req.get("request_type").get<std::string>();
+        auto data = req.get("data");
+        status = handlers[request_type](cli, data);
+    }
+}
+```
+
+</code></pre>
+</TabItem>
+
 </Tabs>
 
 ## Notes

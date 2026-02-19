@@ -189,6 +189,73 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
+<TabItem value="Go" label="Go">
+<pre><code>
+
+```go
+func HandleAdvance(data *rollups.AdvanceResponse) error {
+	// Log incoming request data.
+	infolog.Printf("Received advance request data %+v\n", data)
+
+	// Example ERC-20 transfer payload (transfer(address,uint256)).
+	// Replace with encoded calldata based on your app logic.
+	callData := "0xa9059cbb0000000000000000000000001111111111111111111111111111111111111111000000000000000000000000000000000000000000000000000000000000000a"
+
+	voucher := rollups.VoucherRequest{
+		Destination: "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", // sample ERC-20 token
+		Payload:     callData,
+		Value:       "0x0",
+	}
+
+	if _, err := rollups.SendVoucher(&voucher); err != nil {
+		return fmt.Errorf("HandleAdvance: failed sending voucher: %w", err)
+	}
+
+	return nil
+}
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++">
+<pre><code>
+
+```cpp
+std::string handle_advance(httplib::Client &cli, picojson::value data)
+{
+    std::cout << "Received advance request data " << data << std::endl;
+
+    // Example ERC-20 transfer payload (transfer(address,uint256)).
+    // Replace with encoded calldata generated from your app logic.
+    const std::string call_data =
+        "0xa9059cbb0000000000000000000000001111111111111111111111111111111111111111"
+        "000000000000000000000000000000000000000000000000000000000000000a";
+
+    picojson::object voucher;
+    voucher["destination"] = picojson::value("0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a");
+    voucher["payload"] = picojson::value(call_data);
+    voucher["value"] = picojson::value("0x0");
+
+    auto response = cli.Post(
+        "/voucher",
+        picojson::value(voucher).serialize(),
+        "application/json"
+    );
+
+    if (!response || response->status >= 400)
+    {
+        std::cout << "Failed to send voucher" << std::endl;
+        return "reject";
+    }
+
+    return "accept";
+}
+```
+
+</code></pre>
+</TabItem>
+
 </Tabs>
 
 :::note create a voucher

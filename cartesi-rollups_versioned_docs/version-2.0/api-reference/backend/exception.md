@@ -151,6 +151,70 @@ async fn throw_execption( payload: String) -> Option<bool> {
 </code></pre>
 </TabItem>
 
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+```go
+func HandleAdvance(data *rollups.AdvanceResponse) error {
+	infolog.Printf("Received advance request data %+v\n", data)
+
+	// Process request. Replace with your app logic.
+	if _, err := rollups.Hex2Str(data.Payload); err != nil {
+		// Register exception payload and stop processing.
+		exception := rollups.ExceptionRequest{
+			Payload: rollups.Str2Hex(fmt.Sprintf("Error: %v", err)),
+		}
+		if _, sendErr := rollups.SendException(&exception); sendErr != nil {
+			return fmt.Errorf("HandleAdvance: failed sending exception: %w", sendErr)
+		}
+		return fmt.Errorf("HandleAdvance: fatal exception: %w", err)
+	}
+
+	return nil
+}
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+```cpp
+std::string handle_advance(httplib::Client &cli, picojson::value data)
+{
+    std::cout << "Received advance request data " << data << std::endl;
+
+    try
+    {
+        // Process request. Replace with your app logic.
+        const std::string payload_hex = data.get("payload").get<std::string>();
+        (void)hex_to_string(payload_hex);
+    }
+    catch (const std::exception &e)
+    {
+        // Register exception and stop processing.
+        picojson::object exception_body;
+        exception_body["payload"] = picojson::value(string_to_hex(std::string("Error: ") + e.what()));
+        auto response = cli.Post(
+            "/exception",
+            picojson::value(exception_body).serialize(),
+            "application/json"
+        );
+        if (!response || response->status >= 400)
+        {
+            std::cout << "Failed to register exception" << std::endl;
+        }
+        return "reject";
+    }
+
+    return "accept";
+}
+```
+
+</code></pre>
+</TabItem>
+
 </Tabs>
 
 ## Notes
