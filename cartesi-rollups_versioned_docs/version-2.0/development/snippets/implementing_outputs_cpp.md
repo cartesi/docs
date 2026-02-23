@@ -7,13 +7,13 @@
 #include "3rdparty/cpp-httplib/httplib.h"
 #include "3rdparty/picojson/picojson.h"
 
-namespace sample_config
+namespace voucher_config
 {
-// Sample values for voucher emission.
-const std::string kSampleErc20Token = "0x0000000000000000000000000000000000000001";
-const std::string kSampleRecipient = "0x1111111111111111111111111111111111111111";
-const std::string kSampleAmount1e18Hex = "0de0b6b3a7640000";
-} // namespace sample_config
+// Sample values used to build the voucher payload.
+const std::string kVoucherTokenAddress = "0x5138f529B77B4e0a7c84B77E79c4335D31938fed";
+const std::string kVoucherRecipientAddress = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
+const std::string kVoucherAmountWeiHex = "0de0b6b3a7640000";
+} // namespace voucher_config
 
 std::string get_input_payload(const picojson::value &data)
 {
@@ -50,14 +50,14 @@ void post_payload(httplib::Client &cli, const std::string &endpoint, const std::
 void post_sample_erc20_transfer_voucher(httplib::Client &cli)
 {
     const std::string recipient_padded =
-        "000000000000000000000000" + sample_config::kSampleRecipient.substr(2);
+        "000000000000000000000000" + voucher_config::kVoucherRecipientAddress.substr(2);
     const std::string amount_padded =
-        "000000000000000000000000000000000000000000000000" + sample_config::kSampleAmount1e18Hex;
+        "000000000000000000000000000000000000000000000000" + voucher_config::kVoucherAmountWeiHex;
     // ERC-20 transfer(address,uint256) selector.
     const std::string payload = "0xa9059cbb" + recipient_padded + amount_padded;
 
     picojson::object body;
-    body["destination"] = picojson::value(sample_config::kSampleErc20Token);
+    body["destination"] = picojson::value(voucher_config::kVoucherTokenAddress);
     body["payload"] = picojson::value(payload);
     auto res = cli.Post("/voucher", picojson::value(body).serialize(), "application/json");
     if (res)
