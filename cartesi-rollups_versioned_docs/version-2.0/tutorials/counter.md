@@ -8,7 +8,7 @@ resources:
 
 This tutorial aims to guide you through creating and interacting with a basic Cartesi application, it'll take you through setting up your dev environment, creating a project then finally running and interacting with your application locally.
 
-We would also be providing the Rust, JavaScript, Python and Go implementation of the application, so you could choose whichever language you're more conversant with.
+We provide Rust, JavaScript, Python, Go, and C++ implementations of the application, so you can choose whichever language you're more comfortable with.
 
 ## Set up your environment
 
@@ -55,9 +55,29 @@ cartesi create counter --template rust
 
 </code></pre>
 </TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+```shell
+cartesi create counter --template go
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+```shell
+cartesi create counter --template cpp
+```
+
+</code></pre>
+</TabItem>
 </Tabs>
 
-This command creates a directory called `counter` and depending on your selected language this directory would contain the necessary entry point file to start your application, for Python developers this would be `dapp.py` while for Rust users it would be `src/main.rs`, then finally for JavaScript users, the entry point file would be `src/index.js`.
+This command creates a directory called `counter` and, depending on your selected language, this directory contains the entry point file to start your application (for example: `dapp.py` for Python, `src/main.rs` for Rust, `src/index.js` for JavaScript, `main.go` for Go, and `src/main.cpp` for C++).
 
 This entry point file contains the default template for interacting with the Cartesi Rollups HTTP Server, it also makes available, two function namely `handle_advance()` and `handle_inspect()` which process "advance / write" and "inspect / read" requests to the application. In the next section we would be updating these functions with the implementation for your application.
 
@@ -74,6 +94,8 @@ To try it locally, copy the snippet for your language and replace the contents o
 import CounterJS from './snippets/counter-js.md';
 import CounterPY from './snippets/counter-py.md';
 import CounterRS from './snippets/counter-rs.md';
+import CounterGO from './snippets/counter-go.md';
+import CounterCPP from './snippets/counter-cpp.md';
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
@@ -96,6 +118,22 @@ import CounterRS from './snippets/counter-rs.md';
 <pre><code>
 
 <CounterRS />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+<CounterGO />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+<CounterCPP />
 
 </code></pre>
 </TabItem>
