@@ -107,6 +107,26 @@ cartesi create marketplace --template rust
 
 </code></pre>
 </TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+```shell
+cartesi create marketplace --template go
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+```shell
+cartesi create marketplace --template cpp
+```
+
+</code></pre>
+</TabItem>
 </Tabs>
 
 ## Install Project Dependencies
@@ -151,15 +171,39 @@ cargo add hex serde ethers-core
 
 </code></pre>
 </TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+```shell
+# No extra package needed for this tutorial snippet.
+# The generated Go template already includes the Rollups bindings.
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+```shell
+# No extra package needed for this tutorial snippet.
+# The generated C++ template already includes httplib + picojson.
+```
+
+</code></pre>
+</TabItem>
 </Tabs>
 
 ## Implement the Application Logic
 
-Based on the programming language you selected earlier, copy the appropriate code snippet, then paste in your local entry point file (`dapp.py` or `src/main.rs` or `src/index.js`), created in the setup step:
+Based on the programming language you selected earlier, copy the appropriate code snippet, then paste in your local entry point file (`dapp.py`, `src/main.rs`, `src/index.js`, `main.go`, or `src/main.cpp`) created in the setup step:
 
 import MarketplaceJS from './snippets/marketplace-js.md';
 import MarketplacePY from './snippets/marketplace-py.md';
 import MarketplaceRS from './snippets/marketplace-rs.md';
+import MarketplaceGO from './snippets/marketplace-go.md';
+import MarketplaceCPP from './snippets/marketplace-cpp.md';
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
@@ -182,6 +226,22 @@ import MarketplaceRS from './snippets/marketplace-rs.md';
 <pre><code>
 
 <MarketplaceRS />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+<MarketplaceGO />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+<MarketplaceCPP />
 
 </code></pre>
 </TabItem>

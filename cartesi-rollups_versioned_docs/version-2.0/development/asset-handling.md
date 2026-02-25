@@ -40,7 +40,7 @@ Deposit input payloads are always specified as packed ABI-encoded parameters, as
 | ERC-1155 (single) | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 tokenId`,</li><li>`uint256 value`,</li><li>standard ABI-encoded fields...</li></ul> | <ul><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul>                                                           |
 | ERC-1155 (batch)  | <ul><li>`address token`,</li><li>`address sender`,</li><li>standard ABI-encoded fields...</li></ul>                                                     | <ul><li>`uint256[] tokenIds`,</li><li>`uint256[] values`,</li><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul> |
 
-Refer to the functions provided below to understand how to handle asset deposits. These functions when called inside the `handle_advance` function of your application will help you decode the payload for the asset type being deposited. 
+Refer to the functions provided below to understand how to handle asset deposits. When called inside your application's advance handler, these helpers decode the payload for the deposited asset type.
 
 For example, to decode an ERC-20 deposit payload, you can use the following code snippets:
 
@@ -113,7 +113,7 @@ The application’s off-chain layer often requires knowledge of its address to f
 
 Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the executeOutput() function of the Application contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
-Below is a sample JavaScript code with the implementations to transfer tokens to whoever calls the application, notice that the `const call` variable is an encoded function data containing the token contract ABI, function name and also arguments like recipient and amount, while the actual `voucher` structure itself contains a destination (erc20 token contract where the transfer execution should occur), the payload (encoded function data in `call`) and finally a value field which is initialized to `0` meaning no Ether is intended to be sent alongside this transfer request.
+Below are multi-language examples showing how to transfer tokens to whoever calls the application. In each case, the encoded call data contains the token contract function and arguments (for example, recipient and amount). The voucher then includes a destination (the ERC-20 token contract), a payload (the encoded call data), and a value set to zero to indicate no Ether is sent with this transfer request.
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
@@ -157,7 +157,7 @@ For a full guide, see the Tutorial: [ERC-20 Token Wallet](../tutorials/erc-20-to
 
 To execute Ether withdrawal it is important to emit a voucher with the necessary details as regarding whom you intend to send the Ether to and also the amount to send, nevertheless since the Application contract Executes vouchers by making a [safeCall](https://github.com/cartesi/rollups-contracts/blob/cb52d00ededd2da9f8bf7757710301dccb7d536d/src/library/LibAddress.sol#L18C14-L18C22) to the destination, passing a value (Ether amount to send along with the call) and a payload (function signature to call), it's acceptable to leave the payload section empty if you do not intend to call any functions in the destination address while sending just the specified value of Ether to the destination address. If you intend to call a payable function and also send Ether along, you can add a function signature matching the payable function you intend to call to the payload field.
 
-Below is another sample JavaScript code, this time the voucher structure has been modified to send ether to an address instead of calling a function in a smart contract, notice there is no `encodedFunctionData`, so the payload section is initialized to zeroHash.
+Below are multi-language examples for Ether withdrawal. Here, the voucher sends Ether directly to an address instead of calling a token contract function, so there is no encoded function call payload.
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
