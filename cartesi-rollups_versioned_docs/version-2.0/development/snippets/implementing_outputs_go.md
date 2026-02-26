@@ -73,7 +73,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 	}
 	voucher := rollups.VoucherRequest{
 		Destination: tokenAddress,
-		Value:       "0x0",
+		Value:       "0x00",
 		Payload:     voucherPayload,
 	}
 	if _, err = rollups.SendVoucher(&voucher); err != nil {

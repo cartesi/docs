@@ -1,9 +1,9 @@
 ---
 id: marketplace
-title: Build a marketplace Application
+title: Build a Marketplace Application
 resources:
   - url: https://github.com/Mugen-Builders/Counter-X-Marketplace-apps
-    title: Source code for the marketplace Application
+    title: Source code for the Marketplace Application
 ---
 
 In this tutorial we'll be building a simple NFT Marketplace application, where users are able to deposit a unique token to be sold at a fixed price, then other users are able to purchase and withdraw these purchased tokens to their wallet.

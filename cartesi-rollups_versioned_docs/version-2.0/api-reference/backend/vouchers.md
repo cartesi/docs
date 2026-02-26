@@ -204,7 +204,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 	voucher := rollups.VoucherRequest{
 		Destination: "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", // sample ERC-20 token
 		Payload:     callData,
-		Value:       "0x0",
+		Value:       "0x00",
 	}
 
 	if _, err := rollups.SendVoucher(&voucher); err != nil {
@@ -235,7 +235,7 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
     picojson::object voucher;
     voucher["destination"] = picojson::value("0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a");
     voucher["payload"] = picojson::value(call_data);
-    voucher["value"] = picojson::value("0x0");
+    voucher["value"] = picojson::value("0x00");
 
     auto response = cli.Post(
         "/voucher",
@@ -295,6 +295,9 @@ This mechanism, where the Application contract maintains the state and funds whi
 
 - **Ordered Vouchers**: Vouchers that must be executed in a specific sequence. For example, voucher A can only be executed after voucher B has been executed.
 
+The examples below emit a DELEGATECALL voucher by posting to `/delegate-call-voucher`.  
+In these snippets, `destination` is the contract that contains the logic to run, while `payload` is the ABI-encoded function call data (for example, `safeTransfer(address,address,uint256)`).
+
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
 <pre><code>
@@ -347,6 +350,56 @@ def emit_safe_erc20_transfer(token, to, amount):
     }
     response = requests.post(rollup_server + "/delegate-call-voucher", json=voucher)
     return response
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="Rust" label="Rust">
+<pre><code>
+
+```rust
+use ethers_core::abi::{Function, Param, ParamType, StateMutability, Token};
+use json::object;
+
+pub async fn emit_safe_erc20_transfer(
+    client: &hyper::Client<hyper::client::HttpConnector>,
+    server_addr: &str,
+    token: &str,
+    to: &str,
+    amount: u64,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let safe_transfer = Function {
+        name: "safeTransfer".to_string(),
+        inputs: vec![
+            Param { name: "token".to_string(), kind: ParamType::Address, internal_type: None },
+            Param { name: "to".to_string(), kind: ParamType::Address, internal_type: None },
+            Param { name: "amount".to_string(), kind: ParamType::Uint(256), internal_type: None },
+        ],
+        outputs: vec![],
+        constant: None,
+        state_mutability: StateMutability::NonPayable,
+    };
+
+    let payload_bytes = safe_transfer.encode_input(&[
+        Token::Address(token.parse()?),
+        Token::Address(to.parse()?),
+        Token::Uint(amount.into()),
+    ])?;
+
+    let voucher = object! {
+        destination: "0xfafafafafafafafafafafafafafafafafafafafa", // address of the contract containing the logic
+        payload: format!("0x{}", hex::encode(payload_bytes)),
+    };
+
+    let request = hyper::Request::builder()
+        .method(hyper::Method::POST)
+        .header(hyper::header::CONTENT_TYPE, "application/json")
+        .uri(format!("{}/delegate-call-voucher", server_addr))
+        .body(hyper::Body::from(voucher.dump()))?;
+    client.request(request).await?;
+    Ok(())
+}
 ```
 
 </code></pre>
@@ -406,6 +459,50 @@ func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
 	}
 	
 	return nil
+}
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++">
+<pre><code>
+
+```cpp
+#include <string>
+
+#include "3rdparty/cpp-httplib/httplib.h"
+#include "3rdparty/picojson/picojson.h"
+
+std::string emit_safe_erc20_transfer(
+    httplib::Client &cli,
+    const std::string &token,
+    const std::string &to,
+    const std::string &amount_hex_32bytes
+)
+{
+    // safeTransfer(address,address,uint256)
+    const std::string selector = "eb795549";
+    const std::string token_word = "000000000000000000000000" + token.substr(2);
+    const std::string to_word = "000000000000000000000000" + to.substr(2);
+    const std::string payload = "0x" + selector + token_word + to_word + amount_hex_32bytes;
+
+    picojson::object voucher;
+    voucher["destination"] = picojson::value("0xfafafafafafafafafafafafafafafafafafafafa");
+    voucher["payload"] = picojson::value(payload);
+
+    auto response = cli.Post(
+        "/delegate-call-voucher",
+        picojson::value(voucher).serialize(),
+        "application/json"
+    );
+
+    if (!response || response->status >= 400)
+    {
+        return "error";
+    }
+
+    return "ok";
 }
 ```
 
