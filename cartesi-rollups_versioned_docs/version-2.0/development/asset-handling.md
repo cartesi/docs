@@ -40,6 +40,67 @@ Deposit input payloads are always specified as packed ABI-encoded parameters, as
 | ERC-1155 (single) | <ul><li>`address token`,</li><li>`address sender`,</li><li>`uint256 tokenId`,</li><li>`uint256 value`,</li><li>standard ABI-encoded fields...</li></ul> | <ul><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul>                                                           |
 | ERC-1155 (batch)  | <ul><li>`address token`,</li><li>`address sender`,</li><li>standard ABI-encoded fields...</li></ul>                                                     | <ul><li>`uint256[] tokenIds`,</li><li>`uint256[] values`,</li><li>`bytes baseLayerData`,</li><li>`bytes execLayerData`</li></ul> |
 
+Refer to the functions provided below to understand how to handle asset deposits. When called inside your application's advance handler, these helpers decode the payload for the deposited asset type.
+
+For example, to decode an ERC-20 deposit payload, you can use the following code snippets:
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import AssetDecodeErc20JS from './snippets/asset_decode_erc20_js.md';
+import AssetDecodeErc20PY from './snippets/asset_decode_erc20_py.md';
+import AssetDecodeErc20RS from './snippets/asset_decode_erc20_rs.md';
+import AssetDecodeErc20GO from './snippets/asset_decode_erc20_go.md';
+import AssetDecodeErc20CPP from './snippets/asset_decode_erc20_cpp.md';
+import AssetWithdrawErc20JS from './snippets/asset_withdraw_erc20_js.md';
+import AssetWithdrawErc20PY from './snippets/asset_withdraw_erc20_py.md';
+import AssetWithdrawErc20RS from './snippets/asset_withdraw_erc20_rs.md';
+import AssetWithdrawErc20GO from './snippets/asset_withdraw_erc20_go.md';
+import AssetWithdrawErc20CPP from './snippets/asset_withdraw_erc20_cpp.md';
+import AssetWithdrawEtherJS from './snippets/asset_withdraw_ether_js.md';
+import AssetWithdrawEtherPY from './snippets/asset_withdraw_ether_py.md';
+import AssetWithdrawEtherRS from './snippets/asset_withdraw_ether_rs.md';
+import AssetWithdrawEtherGO from './snippets/asset_withdraw_ether_go.md';
+import AssetWithdrawEtherCPP from './snippets/asset_withdraw_ether_cpp.md';
+
+<Tabs>
+  <TabItem value="JavaScript" label="JavaScript" default>
+<pre><code>
+<AssetDecodeErc20JS />
+</code></pre>
+</TabItem>
+
+<TabItem value="Python" label="Python" default>
+<pre><code>
+<AssetDecodeErc20PY />
+</code></pre>
+</TabItem>
+
+<TabItem value="Rust" label="Rust" default>
+<pre><code>
+<AssetDecodeErc20RS />
+</code></pre>
+</TabItem>
+
+<TabItem value="Go" label="Go" default>
+<pre><code>
+
+<AssetDecodeErc20GO />
+
+</code></pre>
+</TabItem>
+
+<TabItem value="C++" label="C++" default>
+<pre><code>
+
+<AssetDecodeErc20CPP />
+
+</code></pre>
+</TabItem>
+
+</Tabs>
+
+For a full guide, see the Tutorials: [ERC-20 Token Wallet](../tutorials/erc-20-token-wallet.md) and [Utilizing test tokens in dev environment](../tutorials/Utilizing-test-tokens-in-dev-environment.md).
+
 ## Withdrawing assets
 
 Users can deposit assets to a Cartesi Application, but only the Application can initiate withdrawals. When a withdrawal request is made, it’s processed and interpreted off-chain by the Cartesi Machine running the application’s code. Subsequently, the Cartesi Machine creates a voucher containing the necessary instructions for withdrawal, which is executable when an epoch has settled.
@@ -52,95 +113,90 @@ The application’s off-chain layer often requires knowledge of its address to f
 
 Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the executeOutput() function of the Application contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
-Below is a sample JavaScript code with the implementations to transfer tokens to whoever calls the application, notice that the `const call` variable is an encoded function data containing the token contract ABI, function name and also arguments like recipient and amount, while the actual `voucher` structure itself contains a destination (erc20 token contract where the transfer execution should occur), the payload (encoded function data in `call`) and finally a value field which is initialized to `0` meaning no Ether is intended to be sent alongside this transfer request.
+Below are multi-language examples showing how to transfer tokens to whoever calls the application. In each case, the encoded call data contains the token contract function and arguments (for example, recipient and amount). The voucher then includes a destination (the ERC-20 token contract), a payload (the encoded call data), and a value set to zero to indicate no Ether is sent with this transfer request.
 
-```javascript
-import { stringToHex, encodeFunctionData, erc20Abi, hexToString, zeroHash } from "viem";
+<Tabs>
+  <TabItem value="JavaScript" label="JavaScript" default>
+<pre><code>
+<AssetWithdrawErc20JS />
+</code></pre>
+</TabItem>
 
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
+<TabItem value="Python" label="Python" default>
+<pre><code>
+<AssetWithdrawErc20PY />
+</code></pre>
+</TabItem>
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+<TabItem value="Rust" label="Rust" default>
+<pre><code>
+<AssetWithdrawErc20RS />
+</code></pre>
+</TabItem>
 
-  const sender = data["metadata"]["msg_sender"];
-  const payload = hexToString(data.payload);
-  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+<TabItem value="Go" label="Go" default>
+<pre><code>
 
-    const call = encodeFunctionData({
-    abi: erc20Abi,
-    functionName: "transfer",
-    args: [sender, BigInt(10)],
-  });
+<AssetWithdrawErc20GO />
 
-  let voucher = {
-    destination: erc20Token,
-    payload: call,
-    value: zeroHash,
-  };
+</code></pre>
+</TabItem>
 
-  await emitVoucher(voucher);
-  return "accept";
-}
+<TabItem value="C++" label="C++" default>
+<pre><code>
 
-const emitVoucher = async (voucher) => {
-  try {
-    await fetch(rollup_server + "/voucher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(voucher),
-    });
-  } catch (error) {
-    //Do something when there is an error
-  }
-};
-```
+<AssetWithdrawErc20CPP />
+
+</code></pre>
+</TabItem>
+</Tabs>
+
+For a full guide, see the Tutorial: [ERC-20 Token Wallet](../tutorials/erc-20-token-wallet.md).
 
 ### Withdrawing Ether
 
 To execute Ether withdrawal it is important to emit a voucher with the necessary details as regarding whom you intend to send the Ether to and also the amount to send, nevertheless since the Application contract Executes vouchers by making a [safeCall](https://github.com/cartesi/rollups-contracts/blob/cb52d00ededd2da9f8bf7757710301dccb7d536d/src/library/LibAddress.sol#L18C14-L18C22) to the destination, passing a value (Ether amount to send along with the call) and a payload (function signature to call), it's acceptable to leave the payload section empty if you do not intend to call any functions in the destination address while sending just the specified value of Ether to the destination address. If you intend to call a payable function and also send Ether along, you can add a function signature matching the payable function you intend to call to the payload field.
 
-Below is another sample JavaScript code, this time the voucher structure has been modified to send ether to an address instead of calling a function in a smart contract, notice there is no `encodedFunctionData`, so the payload section is initialized to zeroHash.
+Below are multi-language examples for Ether withdrawal. Here, the voucher sends Ether directly to an address instead of calling a token contract function, so there is no encoded function call payload.
 
-```javascript
-import { stringToHex, encodeFunctionData, erc20Abi, hexToString, zeroHash, parseEther } from "viem";
+<Tabs>
+  <TabItem value="JavaScript" label="JavaScript" default>
+<pre><code>
+<AssetWithdrawEtherJS />
+</code></pre>
+</TabItem>
 
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
+<TabItem value="Python" label="Python" default>
+<pre><code>
+<AssetWithdrawEtherPY />
+</code></pre>
+</TabItem>
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+<TabItem value="Rust" label="Rust" default>
+<pre><code>
+<AssetWithdrawEtherRS />
+</code></pre>
+</TabItem>
 
-  const sender = data["metadata"]["msg_sender"];
-  const payload = hexToString(data.payload);
+<TabItem value="Go" label="Go" default>
+<pre><code>
 
+<AssetWithdrawEtherGO />
 
-  let voucher = {
-    destination: sender,
-    payload: zeroHash,
-    value: numberToHex(BigInt(parseEther("1"))).slice(2),
-  };
+</code></pre>
+</TabItem>
 
-  await emitVoucher(voucher);
-  return "accept";
-}
+<TabItem value="C++" label="C++" default>
+<pre><code>
 
-const emitVoucher = async (voucher) => {
-  try {
-    await fetch(rollup_server + "/voucher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(voucher),
-    });
-  } catch (error) {
-    //Do something when there is an error
-  }
-};
-```
+<AssetWithdrawEtherCPP />
+
+</code></pre>
+</TabItem>
+
+</Tabs>
+
+For a full guide, see the Tutorial: [Ether Wallet](../tutorials/ether-wallet.md).
 
 :::note epoch length
 By default, Cartesi nodes close one epoch every 7200 blocks. You can manually set the epoch length to facilitate quicker asset-handling methods.
