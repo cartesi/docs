@@ -337,7 +337,7 @@ Since our app uses the test ERC-721 and ERC-20 contracts automatically deployed 
 - Mint token ID 1:
   
 ```bash
-cast send 0xBa46623aD94AB45850c4ecbA9555D26328917c3B \
+cast send 0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78 \
   "safeMint(address, uint256, string)" \
   0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 1 "" \
   --rpc-url http://127.0.0.1:6751/anvil \
@@ -351,9 +351,9 @@ This command calls the `safeMint` function in the `testNFT` contract deployed by
 Before an NFT can be deposited into the application, the portal contract must have permission to transfer it on behalf of the owner. Use the following command to grant that approval:
 
 ```bash
-cast send 0xBa46623aD94AB45850c4ecbA9555D26328917c3B \
+cast send 0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78 \
   "setApprovalForAll(address,bool)" \
-  0xc700d52F5290e978e9CAe7D1E092935263b60051 true \
+  0x9E8851dadb2b77103928518846c4678d48b5e371 true \
   --rpc-url http://127.0.0.1:6751/anvil \
   --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
@@ -408,7 +408,7 @@ With the NFT successfully listed for sale, it's time to attempt to purchase this
 - Transfer required tokens to purchase address.
   
 ```bash
-cast send 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C \
+cast send 0x5138f529B77B4e0a7c84B77E79c4335D31938fed \
 "transfer(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 100000000000000000000 \
 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
 --rpc-url http://127.0.0.1:6751/anvil
@@ -436,13 +436,16 @@ Sending finish
 
 ### 5. Purchase Token with ID 1 [advance request]
 
-Now that the buyer has deposited funds, we can proceed to purchase the NFT. To do this we make an advance request to the application using the Cartesi CLI by running the command:
+Now that the buyer has deposited funds, we can proceed to purchase the NFT. Use the following Cartesi CLI flow:
 
 ```bash
- cartesi send  "{"method": "purchase_token", "token_id": 1}" --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+cartesi send --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+✔ Input String encoding
+✔ Input (as string) {"method": "purchase_token", "token_id": 1}
+✔ Input sent: 0x61dad3fb284470ab9e049fd45197062704376c797bdf020a5550f66d0dcec884
 ```
 
-This command notifies the marketplace that the address `0x7099797....0d17dc79C8` which initially deposited 100 tokens, would want to purchase token ID 1, The marketplace proceeds to run necessary checks like verifying that the token is for sale, and that the buyer has sufficient tokens to make the purchase, after which it executes the purchase and finally emits a voucher that transfers the tokens to the buyer's address. On a successful purchase, you should get logs similar to the below.
+This sends a purchase request for token ID `1` from the buyer address. The marketplace validates the request (token listed and sufficient balance), executes the purchase, and emits the voucher to transfer the NFT to the buyer.
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
