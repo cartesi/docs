@@ -2,13 +2,19 @@
 package main
 
 import (
+	"dapp/rollups"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/big"
+	"os"
 	"strings"
+)
 
-	"dapp/rollups"
+var (
+	infolog = log.New(os.Stderr, "[ info ]  ", log.Lshortfile)
+	errlog  = log.New(os.Stderr, "[ error ] ", log.Lshortfile)
 )
 
 const (
@@ -31,10 +37,10 @@ type Marketplace struct {
 
 func newMarketplace() *Marketplace {
 	return &Marketplace{
-		ERC721Portal: "0xc700d52F5290e978e9CAe7D1E092935263b60051",
-		ERC20Portal:  "0xc700D6aDd016eECd59d989C028214Eaa0fCC0051",
-		ERC721Token:  "0xBa46623aD94AB45850c4ecbA9555D26328917c3B",
-		ERC20Token:   "0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C",
+		ERC721Portal: "0x9E8851dadb2b77103928518846c4678d48b5e371",
+		ERC20Portal:  "0xACA6586A0Cf05bD831f2501E7B4aea550dA6562D",
+		ERC721Token:  "0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78",
+		ERC20Token:   "0x5138f529B77B4e0a7c84B77E79c4335D31938fed",
 		AppAddress:   zeroAddress,
 		ListPriceWei: big.NewInt(0).SetUint64(100_000_000_000_000_000), // 100 tokens (18 decimals)
 
@@ -100,8 +106,8 @@ func (m *Marketplace) depositErc721(user, tokenID string) {
 }
 
 type UserCommand struct {
-	Method  string `json:"method"`
-	TokenID string `json:"token_id"`
+	Method  string      `json:"method"`
+	TokenID json.Number `json:"token_id"`
 }
 
 var storage = newMarketplace()
@@ -122,6 +128,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 			return fmt.Errorf("HandleAdvance: unsupported ERC20 token")
 		}
 		storage.increaseUserBalance(receiver, amount)
+		infolog.Println("Token deposit processed successfully")
 		return nil
 	}
 
@@ -136,6 +143,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 		storage.depositErc721(receiver, amount.String())
 		notice := rollups.NoticeRequest{Payload: rollups.Str2Hex("Token listed successfully")}
 		_, _ = rollups.SendNotice(&notice)
+		infolog.Println("Token deposit and listing processed successfully")
 		return nil
 	}
 
@@ -151,25 +159,31 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 	if cmd.Method != "purchase_token" {
 		return fmt.Errorf("HandleAdvance: unsupported method")
 	}
-	if !storage.ListedTokens[cmd.TokenID] {
+	tokenID := cmd.TokenID.String()
+	if !storage.ListedTokens[tokenID] {
 		return fmt.Errorf("HandleAdvance: token is not listed")
 	}
 	if !storage.reduceUserBalance(sender, storage.ListPriceWei) {
 		return fmt.Errorf("HandleAdvance: insufficient buyer balance")
 	}
 
-	seller := storage.Erc721OwnerByTokenID[cmd.TokenID]
+	seller := storage.Erc721OwnerByTokenID[tokenID]
 	storage.increaseUserBalance(seller, storage.ListPriceWei)
-	delete(storage.ListedTokens, cmd.TokenID)
-	storage.Erc721OwnerByTokenID[cmd.TokenID] = normAddr(sender)
+	delete(storage.ListedTokens, tokenID)
+	storage.Erc721OwnerByTokenID[tokenID] = normAddr(sender)
 
 	voucher := rollups.VoucherRequest{
 		Destination: storage.ERC721Token,
-		Payload:     encodeTransferFrom(storage.AppAddress, sender, cmd.TokenID),
-		Value:       "0x0",
+		Payload:     encodeTransferFrom(storage.AppAddress, sender, tokenID),
+		Value:       "0x00",
 	}
 	_, err = rollups.SendVoucher(&voucher)
-	return err
+	if err != nil {
+		return fmt.Errorf("HandleAdvance: failed sending voucher: %w", err)
+	}
+	infolog.Println("Voucher generation successful")
+	infolog.Println("Token purchased and Withdrawn successfully")
+	return nil
 }
 
 func HandleInspect(data *rollups.InspectResponse) error {
@@ -211,5 +225,44 @@ func HandleInspect(data *rollups.InspectResponse) error {
 	report := rollups.ReportRequest{Payload: rollups.Str2Hex(reportText)}
 	_, err = rollups.SendReport(&report)
 	return err
+}
+
+func main() {
+	finish := rollups.FinishRequest{Status: "accept"}
+
+	for {
+		infolog.Println("Sending finish")
+		res, err := rollups.SendFinish(&finish)
+		if err != nil {
+			errlog.Panicln("Error calling /finish:", err)
+		}
+
+		if res.StatusCode == 202 {
+			infolog.Println("No pending rollup request, trying again")
+			continue
+		}
+
+		response, err := rollups.ParseFinishResponse(res)
+		if err != nil {
+			errlog.Panicln("Error parsing finish response:", err)
+		}
+
+		finish.Status = "accept"
+		if response.Type == "advance_state" {
+			data := new(rollups.AdvanceResponse)
+			_ = json.Unmarshal(response.Data, data)
+			if err = HandleAdvance(data); err != nil {
+				errlog.Println(err)
+				finish.Status = "reject"
+			}
+		} else if response.Type == "inspect_state" {
+			data := new(rollups.InspectResponse)
+			_ = json.Unmarshal(response.Data, data)
+			if err = HandleInspect(data); err != nil {
+				errlog.Println(err)
+				finish.Status = "reject"
+			}
+		}
+	}
 }
 ```

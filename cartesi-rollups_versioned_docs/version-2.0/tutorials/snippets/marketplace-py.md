@@ -234,10 +234,10 @@ class Storage:
         return True
 
 
-erc_721_portal_address = "0xc700d52F5290e978e9CAe7D1E092935263b60051"
-erc20_portal_address   = "0xc700D6aDd016eECd59d989C028214Eaa0fCC0051"
-erc20_token            = "0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C"
-erc721_token           = "0xBa46623aD94AB45850c4ecbA9555D26328917c3B"
+erc_721_portal_address = "0x9E8851dadb2b77103928518846c4678d48b5e371"
+erc20_portal_address   = "0xACA6586A0Cf05bD831f2501E7B4aea550dA6562D"
+erc20_token            = "0x5138f529B77B4e0a7c84B77E79c4335D31938fed"
+erc721_token           = "0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78"
 list_price             = 100_000_000_000_000_000_000
 
 storage = Storage(erc_721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price)
