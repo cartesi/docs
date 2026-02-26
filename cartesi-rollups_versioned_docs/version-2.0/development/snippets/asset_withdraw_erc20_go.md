@@ -26,7 +26,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 	voucher := rollups.VoucherRequest{
 		Destination: erc20TokenAddress,
 		Payload:     callData,
-		Value:       "0x0",
+		Value:       "0x00",
 	}
 
 	if _, err := rollups.SendVoucher(&voucher); err != nil {

@@ -1,12 +1,12 @@
 ---
 id: calculator
-title: Build a calculator dApp
+title: Build a Calculator Application
 resources:
   - url: https://github.com/Mugen-Builders/calculator
-    title: Source code for the Calculator dApp
+    title: Source code for the Calculator App
 ---
 
-In this tutorial, we will build a simple Calculator dApp to illustrate how requests are sent and processed within Cartesi Rollups Infrastructure.
+In this tutorial, we will build a simple Calculator application to illustrate how requests are sent and processed within Cartesi Rollups Infrastructure.
 
 We provide JavaScript, Python, Rust, Go, and C++ implementations so you can use your preferred backend language.
 

@@ -1,9 +1,9 @@
 ---
 id: counter
-title: Build a counter Application
+title: Build a Counter Application
 resources:
   - url: https://github.com/Mugen-Builders/Counter-X-Marketplace-apps
-    title: Source code for the counter Application
+    title: Source code for the Counter Application
 ---
 
 This tutorial aims to guide you through creating and interacting with a basic Cartesi application, it'll take you through setting up your dev environment, creating a project then finally running and interacting with your application locally.

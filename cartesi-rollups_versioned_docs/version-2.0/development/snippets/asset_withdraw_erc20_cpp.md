@@ -20,7 +20,7 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
     picojson::object voucher;
     voucher["destination"] = picojson::value(kErc20TokenAddress);
     voucher["payload"] = picojson::value(call_data);
-    voucher["value"] = picojson::value("0x0");
+    voucher["value"] = picojson::value("0x00");
 
     auto response = cli.Post(
         "/voucher",
