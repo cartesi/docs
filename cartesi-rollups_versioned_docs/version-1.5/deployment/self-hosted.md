@@ -165,7 +165,7 @@ curl -L https://raw.githubusercontent.com/Mugen-Builders/cartesi-flyio-workaroun
    fly secrets set -a <app-name> CARTESI_POSTGRES_ENDPOINT=<connection_string>
    ```
 
-   Set value of the `connection_string` as provided by step 4.
+   Set value of the `connection_string` as provided by step 5.
 
 1. Deploy the node:
 
