@@ -115,6 +115,16 @@ Fly.io is a platform where you can conveniently deploy applications packaged as
 If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for `linux/amd64` with: `cartesi deploy build --platform linux/amd64`
 :::
 
+:::caution known issue: service startup timeout
+The Cartesi rollups node v1.5 has a hard-coded 5-second startup timeout per service. On Fly.io, services such as the `inspect-server` can take longer to initialise, causing the node to restart immediately after launch.
+
+The steps below replace the default node image with a custom Dockerfile that uses [nitro](https://github.com/leahneukirchen/nitro) and nginx as the process supervisor and HTTP proxy, which have no startup timeout. Download the Dockerfile into your project directory before proceeding:
+
+```shell
+curl -L https://gist.github.com/jplgarcia/09bdffab9e443b7d0e85001a5806ad4a/raw -o Dockerfile.fly
+```
+:::
+
 1. [Install the flyctl CLI](https://fly.io/docs/hands-on/install-flyctl/)
 
 1. [Create an account](https://fly.io/docs/hands-on/sign-up-sign-in/)
@@ -159,11 +169,11 @@ If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for 
 
 1. Deploy the node:
 
-   Tag the image produced at the beginning of the process and push it to the Fly.io registry:
+   Build the image using the `Dockerfile.fly` you downloaded earlier and push it to the Fly.io registry:
 
    ```shell
    flyctl auth docker
-   docker image tag <image-id> registry.fly.io/<app-name>
+   docker build --platform linux/amd64 -f Dockerfile.fly -t registry.fly.io/<app-name> .cartesi/image/
    docker image push registry.fly.io/<app-name>
    fly deploy -a <app-name>
    ```
