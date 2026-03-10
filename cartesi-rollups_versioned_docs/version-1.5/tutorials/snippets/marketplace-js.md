@@ -292,7 +292,7 @@ async function handle_inspect(data) {
 
   switch (payload_arry[0]) {
     case "get_user_erc20_balance": {
-      const user_address = payload_arry[1]; 
+      const user_address = payload_arry[1];
       const bal = storage.getUserERC20TokenBalance(normAddr(user_address));
       await emitReport(`User: ${user_address} Balance: ${bal.toString()}`);
       break;

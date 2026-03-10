@@ -85,6 +85,10 @@ Alternatively, you can use a service like [Fly.io](https://fly.io/) to deploy yo
 
   ![img](../../../static/img/v1.3/alchemy.png)
 
+  :::tip RPC provider
+  [Infura](https://infura.io) works on the free tier for testnets. [Alchemy](https://alchemy.com) requires a paid plan to avoid rate-limit errors under node load.
+  :::
+
   :::caution important
   The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times.
   :::
@@ -113,6 +117,16 @@ Fly.io is a platform where you can conveniently deploy applications packaged as
 
 :::caution important
 If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for `linux/amd64` with: `cartesi deploy build --platform linux/amd64`
+:::
+
+:::caution known issue: service startup timeout
+The Cartesi rollups node v1.5 has a hard-coded 5-second startup timeout per service. On Fly.io, services such as the `inspect-server` can take longer to initialise, causing the node to restart immediately after launch.
+
+The steps below replace the default node image with a custom Dockerfile that uses [nitro](https://github.com/leahneukirchen/nitro) and nginx as the process supervisor and HTTP proxy, which have no startup timeout. Download the Dockerfile into your project directory before proceeding:
+
+```shell
+curl -L https://raw.githubusercontent.com/Mugen-Builders/cartesi-flyio-workaround/8de6beb730957aee453a2b146c23a15a060baf56/Dockerfile.fly -o Dockerfile.fly
+```
 :::
 
 1. [Install the flyctl CLI](https://fly.io/docs/hands-on/install-flyctl/)
@@ -155,15 +169,15 @@ If deploying to Fly.io from macOS with Apple Silicon, create a Docker image for 
    fly secrets set -a <app-name> CARTESI_POSTGRES_ENDPOINT=<connection_string>
    ```
 
-   Set value of the `connection_string` as provided by step 4.
+   Set value of the `connection_string` as provided by step 5.
 
 1. Deploy the node:
 
-   Tag the image produced at the beginning of the process and push it to the Fly.io registry:
+   Build the image using the `Dockerfile.fly` you downloaded earlier and push it to the Fly.io registry:
 
    ```shell
    flyctl auth docker
-   docker image tag <image-id> registry.fly.io/<app-name>
+   docker build --platform linux/amd64 -f Dockerfile.fly -t registry.fly.io/<app-name> .cartesi/image/
    docker image push registry.fly.io/<app-name>
    fly deploy -a <app-name>
    ```

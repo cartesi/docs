@@ -403,6 +403,4 @@ while True:
         data = rollup_request["data"]
         handler = handlers[rollup_request["request_type"]]
         finish["status"] = handler(rollup_request["data"])
-
-
 ```

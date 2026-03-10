@@ -448,7 +448,7 @@ The payload hex `0x416c6...6172653a20` when decoded, returns `All listed tokens 
 
 Congratulations!!!
 
-You’ve successfully built and interacted with your own Marketplace application on Cartesi.
+You've successfully built and interacted with your own Marketplace application on Cartesi.
 
 This example covered essential Cartesi concepts such as routing, asset management, voucher generation, and the use of both Inspect and Advance routes.
 
