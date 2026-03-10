@@ -167,6 +167,10 @@ curl -L https://raw.githubusercontent.com/Mugen-Builders/cartesi-flyio-workaroun
 
    Set value of the `connection_string` as provided by step 5.
 
+   :::tip RPC provider
+   [Infura](https://infura.io) works on the free tier for testnets. [Alchemy](https://alchemy.com) requires a paid plan to avoid rate-limit errors under node load.
+   :::
+
 1. Deploy the node:
 
    Build the image using the `Dockerfile.fly` you downloaded earlier and push it to the Fly.io registry:
