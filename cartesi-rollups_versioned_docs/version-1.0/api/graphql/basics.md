@@ -1,6 +1,6 @@
 # Overview
 
-In order to query the state of a Cartesi Rollups instance, front-end clients can make use of a [GraphQL API](https://graphql.org/learn/) that is exposed by the [Cartesi Nodes](../../components.md#cartesi-nodes).
+In order to query the state of a Cartesi Rollups instance, front-end clients can make use of a [GraphQL API](https://graphql.org/learn/) that is exposed by the [Cartesi Nodes](/cartesi-rollups/1.0/main-concepts/#cartesi-nodes).
 
 Essentially, this API allows any client to retrieve outputs produced by a dApp's back-end, and to link those outputs to the corresponding inputs that triggered them. Outputs can generally come in the form of [vouchers](./objects/voucher.mdx), [notices](./objects/notice.mdx) and [reports](./objects/report.mdx), and allow clients to both receive dApp updates and enforce consequences on the base layer, such as asset transfers.
 

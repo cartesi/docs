@@ -399,7 +399,7 @@ elevated permissions.
 Cartesi Machine templates are machines in which the contents of one or more flash drives are still unknown.
 To put it another way, Cartesi Machine templates behave like functions whose parameters are the yet-to-be-defined contents of one or more flash drives.
 
-As discussed in detail under [the blockchain perspective](../blockchain/hash.md), starting from template hashes, the hashes of the flash drives, and a small amount of [additional information](#sibling-hashes), it is possible to obtain the state hash of the *instantiated template*&mdash;the state hash for a Cartesi Machine with drives replaced by their actual contents.
+As discussed in detail under [the blockchain perspective](../blockchain/hash.md), starting from template hashes, the hashes of the flash drives, and a small amount of [additional information](/cartesi-machine/host/cmdline/#sibling-hashes), it is possible to obtain the state hash of the *instantiated template*&mdash;the state hash for a Cartesi Machine with drives replaced by their actual contents.
 This is how a smart contract can specify a computation to be performed off-chain over arbitrary input.
 Starting from the template hash, and in possession of the flash drive hashes, it instantiates the template, generating the initial state hash for the corresponding Cartesi Machine.
 

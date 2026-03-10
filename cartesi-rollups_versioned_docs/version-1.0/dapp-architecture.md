@@ -19,7 +19,7 @@ Here, the black boxes represent the parts that the developer needs to implement 
 
 The back-end of a Cartesi dApp contains the business logic of the application, similar to what traditional systems would run inside a server. The difference here — and the reason for using blockchain technology in general — is that decentralized applications need this back-end logic to be verifiable and hence trustless. As such, it is executed inside the Cartesi Rollups framework.
 
-The back-end stores and updates the application state as user input is received and produces corresponding outputs. These outputs can come in the form of [vouchers](./components.md#vouchers) (transactions that can be carried out on L1, such as a transfer of assets), [notices](./components.md#notices) (informational statements, such as the resulting score of a game), or [reports](./components.md#reports) (application logs and diagnostic information, such as error or warning messages).
+The back-end stores and updates the application state as user input is received and produces corresponding outputs. These outputs can come in the form of [vouchers](/cartesi-rollups/1.0/main-concepts/#vouchers) (transactions that can be carried out on L1, such as a transfer of assets), [notices](/cartesi-rollups/1.0/main-concepts/#notices) (informational statements, such as the resulting score of a game), or [reports](/cartesi-rollups/1.0/main-concepts/#reports) (application logs and diagnostic information, such as error or warning messages).
 
 In practical terms, a Cartesi dApp back-end can be seen as an advanced smart contract.
 
@@ -38,7 +38,7 @@ The sequence diagram below illustrates how all of this works:
 ![img](./sequence-diagram.png)
 
 :::note
-The Cartesi Rollups framework provides a set of APIs to specify how the dApp's front-end and back-end should communicate with it. These APIs are explained in detail in the [next section](./http-api.md).
+The Cartesi Rollups framework provides a set of APIs to specify how the dApp's front-end and back-end should communicate with it. These APIs are explained in detail in the [next section](/cartesi-rollups/1.0/http-api/).
 :::
 
 ## Other components

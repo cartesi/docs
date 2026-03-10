@@ -102,7 +102,7 @@ You can inspect the [full code of the Echo Python dApp](https://github.com/carte
 
 ## Overview
 
-The Echo-Python dApp simply copies (or "echoes") each input received as a corresponding output [notice](../components.md#notices). The dApp's back-end is written in _Python_, and its front-end is a [simple console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) written in _Typescript_ that can be executed from a terminal.
+The Echo-Python dApp simply copies (or "echoes") each input received as a corresponding output [notice](/cartesi-rollups/1.0/main-concepts/#notices). The dApp's back-end is written in _Python_, and its front-end is a [simple console application](https://github.com/cartesi/rollups-examples/tree/main/frontend-console) written in _Typescript_ that can be executed from a terminal.
 
 The **Quick Start** guide consists of 5 main steps:
 
