@@ -85,6 +85,10 @@ Alternatively, you can use a service like [Fly.io](https://fly.io/) to deploy yo
 
   ![img](../../../static/img/v1.3/alchemy.png)
 
+  :::tip RPC provider
+  [Infura](https://infura.io) works on the free tier for testnets. [Alchemy](https://alchemy.com) requires a paid plan to avoid rate-limit errors under node load.
+  :::
+
   :::caution important
   The web3 provider URLs and wallet mnemonic are sensitive information that can compromise your application and funds. You should keep it **secure** and **private** at all times.
   :::
