@@ -125,7 +125,7 @@ The Cartesi rollups node v1.5 has a hard-coded 5-second startup timeout per serv
 The steps below replace the default node image with a custom Dockerfile that uses [nitro](https://github.com/leahneukirchen/nitro) and nginx as the process supervisor and HTTP proxy, which have no startup timeout. Download the Dockerfile into your project directory before proceeding:
 
 ```shell
-curl -L https://raw.githubusercontent.com/Mugen-Builders/cartesi-flyio-workaround/main/Dockerfile.fly -o Dockerfile.fly
+curl -L https://raw.githubusercontent.com/Mugen-Builders/cartesi-flyio-workaround/8de6beb730957aee453a2b146c23a15a060baf56/Dockerfile.fly -o Dockerfile.fly
 ```
 :::
 
