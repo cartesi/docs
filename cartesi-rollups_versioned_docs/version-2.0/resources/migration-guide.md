@@ -18,7 +18,7 @@ Rollups node v2.0 introduces some major changes in how the node works internally
 - listens to voucher execution events. See the [Outputs](#outputs) section.
 - checks if a voucher was executed. See the [Outputs](#outputs) section.
 - uses inspect calls. See the [Inspect calls](#inspect-calls) section.
-- uses JSON-RPC queries. See the [JSON queries](#jsonrpc-queries) section.
+- queries outputs. See the [JSON queries](#jsonrpc-queries) section.
 
 :::note
 If your application uses a high-level framework(ex. Deroll, Rollmelette etc.) for either backend or frontend, check if the framework has already implemented the changes described in this guide.
@@ -28,69 +28,210 @@ If your application uses a high-level framework(ex. Deroll, Rollmelette etc.) fo
 
 In SDK v1, ERC-20 token deposit inputs start with a 1-byte Boolean field which indicates whether the transfer was successful or not:
 
-#### 1. Define the environment variables
+| Field     | Type      | Size     | Description                              |
+| :-------- | :-------- | :------- | :--------------------------------------- |
+| `success` | `bool`    | 1 byte   | Whether the ERC-20 transfer succeeded    |
+| `token`   | `address` | 20 bytes | Address of the ERC-20 token contract     |
+| `sender`  | `address` | 20 bytes | Address of the depositor                 |
+| `amount`  | `uint256` | 32 bytes | Amount of tokens deposited               |
+| `data`    | `bytes`   | variable | Extra data passed by the depositor       |
 
-- `SALT`: A random 32-byte value for the deterministic deployment functions.
-- `RPC_URL`: The RPC endpoint to be used.
-- `MNEMONIC`: The mnemonic phrase for the Authority owner's wallet (other wallet options may be used).
-- `HISTORY_FACTORY_ADDRESS`: The address of a valid HistoryFactory instance.
-- `AUTHORITY_ADDRESS`: The address of the Authority instance used by the application.
+In SDK v2, the ERC-20 portal was modified to only accept successful transfers. Because the `success` field would always be `true`, it has been removed. The new deposit payload is:
 
-  :::note environment variables
-  A `HistoryFactory` is deployed at `0x1f158b5320BBf677FdA89F9a438df99BbE560A26` for all supported networks, including Ethereum, Optimism, Arbitrum, Base, and their respective Sepolia-based testnets.
-  :::
+| Field    | Type      | Size     | Description                          |
+| :------- | :-------- | :------- | :----------------------------------- |
+| `token`  | `address` | 20 bytes | Address of the ERC-20 token contract |
+| `sender` | `address` | 20 bytes | Address of the depositor             |
+| `amount` | `uint256` | 32 bytes | Amount of tokens deposited           |
+| `data`   | `bytes`   | variable | Extra data passed by the depositor   |
 
-#### 2. Instantiate a New _History_
+Update your back-end to remove any logic that reads or checks the leading `success` byte when decoding ERC-20 deposit inputs.
 
-This is a two-step process. First calculate the address of the new History. After that, the new instance of History may be created.
+### Application address
 
-- To calculate the address of a new _History_ contract call the `calculateHistoryAddress(address,bytes32)(address)` function with the help of Foundry's Cast:
+In SDK v1, the back-end had no direct way to know its own on-chain address. A special contract — `DAppAddressRelay` — was used to relay the application address as an input. The back-end would detect inputs coming from the `DAppAddressRelay` address and store the payload as its own address. This address was required, for example, to construct Ether or ERC-721 withdrawal vouchers.
 
-  ```shell
-  cast call \
-    --trace --verbose \
-    $HISTORY_FACTORY_ADDRESS \
-    "calculateHistoryAddress(address,bytes32)(address)" \
-    $AUTHORITY_ADDRESS \
-    $SALT \
-    --rpc-url "$RPC_URL"
-  ```
-
-  If the command executes successfully, it will display the address of the new History contract. Store this address in the environment variable `NEW_HISTORY_ADDRESS` for later use.
-
-- Create a new instance of _History_ may be created by calling function `newHistory(address,bytes32)`:
-
-  ```shell
-  cast send \
-  --json \
-  --mnemonic "$MNEMONIC" \
-  $HISTORY_FACTORY_ADDRESS \
-  "newHistory(address,bytes32)(History)" \
-  $AUTHORITY_ADDRESS \
-  $SALT \
-  --rpc-url "$RPC_URL"
-  ```
-
-  The `cast send` command will fail if Cast does not recognize the _History_ type during execution. In such cases, replace _History_ with `address` as the return type for `newHistory()` and execute the command again.
-
-The `cast send` command may also fail due to gas estimation issues. To circumvent this, provide gas constraints with the `--gas-limit` parameter (e.g., `--gas-limit 7000000`).
-
-#### 3. Replace the _History_
-
-Ensure the environment variables from the previous step are set, including `NEW_HISTORY_ADDRESS`, which should have the address of the new History.
-
-To replace the _History_ used by the _Authority_, run this command:
-
-```shell
-cast send \
-    --json \
-    --mnemonic "$MNEMONIC" \
-    "$AUTHORITY_ADDRESS" \
-    "setHistory(address)" \
-    "$NEW_HISTORY_ADDRESS" \
-    --rpc-url "$RPC_URL"
+```python
+# v1 — detect and store the relayed application address
+if msg_sender.lower() == dapp_relay_address.lower():
+    rollup_address = payload
 ```
 
-In SDK v2, we modified the ERC-20 portal to only accept successful transactions. With this change, the success field would always be true, so it has been removed:
+In SDK v2, the `DAppAddressRelay` contract has been removed. The application address is now available directly in the metadata of every advance-state input under the `app_contract` field:
 
-When the Cartesi Rollups Node restarts, it processes all existing inputs, recalculates the epochs, and sends the claims to the new _History_ based on the updated configuration.
+```typescript
+// v2 — read the application address from input metadata
+const dAppAddress = data["metadata"]["app_contract"];
+```
+
+Update your back-end to remove any handling of `DAppAddressRelay` inputs and instead read the application address from `data["metadata"]["app_contract"]` whenever it is needed.
+
+### Ether withdrawal vouchers
+
+In SDK v1, withdrawing Ether required a two-step process:
+1. Relay the application address using `DAppAddressRelay`.
+2. Emit a voucher that called `withdrawEther(address,uint256)` on the `CartesiDApp` contract itself, with the destination set to the application's own address.
+
+```typescript
+// v1 — Ether withdrawal voucher
+import { encodeFunctionData } from "viem";
+import { CartesiDAppAbi } from "./abi/CartesiDAppAbi";
+
+const call = encodeFunctionData({
+  abi: CartesiDAppAbi,
+  functionName: "withdrawEther",
+  args: [receiver, amount],
+});
+
+const voucher = {
+  destination: applicationAddress, // the dApp contract itself
+  payload: call,
+};
+```
+
+In SDK v2, the `withdrawEther` function on the application contract has been removed. Ether withdrawal vouchers now send Ether directly to the recipient by using the `value` field of the voucher. The application contract executes vouchers by making a `safeCall` to the destination, forwarding the specified `value`:
+
+- Set `destination` to the recipient address.
+- Set `payload` to `0x` (empty — no function call needed).
+- Set `value` to the amount of Ether (in Wei) encoded as a 32-byte big-endian hex string.
+
+```typescript
+// v2 — Ether withdrawal voucher
+import { numberToHex, parseEther, zeroHash } from "viem";
+
+const voucher = {
+  destination: receiver,       // the recipient address
+  payload: zeroHash,           // empty payload
+  value: numberToHex(BigInt(parseEther("1"))).slice(2), // amount in Wei as hex
+};
+```
+
+Update your back-end to replace any `withdrawEther` vouchers with the new direct-transfer format shown above. Note that `value` should be a 32-character (64 hex digits) big-endian encoding of the Wei amount without the `0x` prefix.
+
+### Outputs
+
+In SDK v1, notices and vouchers were separate on-chain concepts, each with their own contract functions:
+
+| Action | v1 function |
+| :----- | :---------- |
+| Validate a notice | `validateNotice(bytes notice, Proof proof)` |
+| Execute a voucher | `executeVoucher(address destination, bytes payload, Proof proof)` |
+| Check if a voucher was executed | `wasVoucherExecuted(uint256 inputIndex, uint256 outputIndex)` |
+| Listen for execution | `event VoucherExecuted(uint256 voucherId)` |
+
+In SDK v2, notices and vouchers are unified into a single **output** type. The `Application` contract exposes a single set of functions for all output kinds:
+
+| Action | v2 function |
+| :----- | :---------- |
+| Validate a notice | `validateOutput(bytes output, OutputValidityProof proof)` |
+| Execute a voucher | `executeOutput(bytes output, OutputValidityProof proof)` |
+| Check if an output was executed | `wasOutputExecuted(uint256 outputIndex)` |
+| Listen for execution | `event OutputExecuted(uint64 outputIndex, bytes output)` |
+
+Update your front-end to:
+- Replace all calls to `validateNotice()` with `validateOutput()`.
+- Replace all calls to `executeVoucher()` with `executeOutput()`. The `output` argument is the ABI-encoded output bytes retrieved from the JSON-RPC node (see [JSON-RPC queries](#jsonrpc-queries)).
+- Replace all calls to `wasVoucherExecuted()` with `wasOutputExecuted(uint256 outputIndex)`. Note the single `outputIndex` parameter instead of separate `inputIndex` and `outputIndex`.
+- Update any event listeners from `VoucherExecuted` to `OutputExecuted`.
+
+### JSON-RPC queries
+
+In SDK v1, notices, vouchers, and reports were queried through a GraphQL API hosted at `<node>/graphql`:
+
+```javascript
+// v1 — query notices via GraphQL
+const response = await fetch("http://localhost:8080/graphql", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    query: `{ notices { edges { node { index input { index } payload } } } }`,
+  }),
+});
+const { data } = await response.json();
+```
+
+In SDK v2, the GraphQL API has been removed. Notices and vouchers are unified under a single **output** concept and are queried through a JSON-RPC API:
+
+```javascript
+// v2 — list outputs (notices + vouchers) via JSON-RPC
+const response = await fetch("http://localhost:8080/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    method: "cartesi_listOutputs",
+    params: { application: "0xYourAppAddress", limit: 50, offset: 0 },
+    id: 1,
+  }),
+});
+const { result } = await response.json();
+```
+
+To fetch a single output by index, use `cartesi_getOutput`:
+
+```javascript
+// v2 — get a specific output by index
+const response = await fetch("http://localhost:8080/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    jsonrpc: "2.0",
+    method: "cartesi_getOutput",
+    params: { application: "0xYourAppAddress", output_index: "0x0" },
+    id: 1,
+  }),
+});
+const { result } = await response.json();
+```
+
+Each output in the response has a `decoded_data.type` field that identifies its kind:
+
+| Type selector | Output kind |
+| :------------ | :---------- |
+| `0xc258d6e5`  | Notice |
+| `0x237a816f`  | Voucher |
+| `0x10321e8b`  | DelegateCall Voucher |
+
+The `raw_data` field contains the ABI-encoded output bytes needed for `executeOutput()` and `validateOutput()` on the Application contract. Reports are stateless and are not returned by the JSON-RPC output endpoints; they are available from the inspect response only.
+
+Update your front-end to replace all GraphQL queries with the equivalent JSON-RPC calls. Refer to the [JSON-RPC API reference](../api-reference/jsonrpc/methods/outputs/list.md) for the full list of available methods and parameters.
+
+:::tip Using @cartesi/viem
+Writing raw JSON-RPC calls can be verbose. Consider using the [`@cartesi/viem`](https://github.com/cartesi/viem) extension, which provides high-level TypeScript utilities for interacting with the JSON-RPC API. It simplifies querying outputs, executing vouchers, and validating notices with a more ergonomic API.
+
+```typescript
+// Using @cartesi/viem (simplified)
+import { createPublicClient, http } from "viem";
+import { getOutputs } from "@cartesi/viem";
+
+const client = createPublicClient({ transport: http("http://localhost:8080") });
+const outputs = await getOutputs(client, { app: "0xYourAppAddress", limit: 50 });
+```
+:::
+
+### Inspect calls
+
+In SDK v1, inspect calls were HTTP GET requests with the payload encoded in the URL path:
+
+```javascript
+// v1 — inspect via GET
+const response = await fetch(`http://localhost:8080/inspect/${encodeURIComponent(payload)}`);
+const result = await response.json();
+```
+
+In SDK v2, inspect calls are HTTP POST requests to `/inspect/<application-name-or-address>` with the payload in the JSON request body:
+
+```javascript
+// v2 — inspect via POST
+const response = await fetch(
+  `http://localhost:8080/inspect/0xYourAppAddress`,
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }
+);
+const result = await response.json();
+```
+
+The response format is the same — a list of reports with hex-encoded payloads. Update any inspect callers to use POST and place the payload in the request body rather than the URL.
