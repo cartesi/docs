@@ -6,14 +6,14 @@ title: Self-hosted deployment
 This guide explains how to run a Cartesi Rollups node locally on your machine for development and testing purposes on **testnet**.
 
 :::warning Production Warning
-**This self-hosted approach should NOT be used in *production*.** 
+**This self-hosted approach should NOT be used in _production_.**
 
 While this setup works with testnet environments, it's designed exclusively for development purposes. It lacks critical production requirements such as:
 
 - Public snapshot verification
 - Proper security hardening
-- Production-grade infrastructure
-:::
+- Production-grade infrastructure.
+  :::
 
 ## Prerequisites
 
@@ -31,42 +31,37 @@ Before running the node, you need to configure your `.env` file with the followi
 
 ```shell
 BLOCKCHAIN_ID=<blockchain-id>
-AUTH_KIND="private_key_file"
-PRIVATE_KEY_FILE="/run/secrets/pk"
+AUTH_KIND="private_key"
+CARTESI_AUTH_PRIVATE_KEY="<funded-private-key>"
 BLOCKCHAIN_WS_ENDPOINT="<ws-endpoint>"
 BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
+CARTESI_BLOCKCHAIN_DEFAULT_BLOCK="<latest or finalized>"
 ```
 
 **Important notes:**
 
-| Variable | Description |
-|----------|-------------|
-| `BLOCKCHAIN_ID` | Replace `<blockchain-id>` with your blockchain network ID |
-| `BLOCKCHAIN_WS_ENDPOINT` | Replace `<ws-endpoint>` with your WebSocket endpoint |
-| `BLOCKCHAIN_HTTP_ENDPOINT` | Replace `<http-endpoint>` with your HTTP endpoint |
-| `PRIVATE_KEY_FILE` | Points to the private key file created in [**step 2**](#setting-up-the-local-node) |
-| `AUTH_KIND` | Set to `"private_key_file"` for local development |
+| Variable                           | Description                                                          |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| `BLOCKCHAIN_ID`                    | Replace `<blockchain-id>` with your blockchain network ID            |
+| `BLOCKCHAIN_WS_ENDPOINT`           | Replace `<ws-endpoint>` with your WebSocket endpoint                 |
+| `BLOCKCHAIN_HTTP_ENDPOINT`         | Replace `<http-endpoint>` with your HTTP endpoint                    |
+| `AUTH_KIND`                        | Set to `private_key` for local development                           |
+| `CARTESI_AUTH_PRIVATE_KEY`         | Replace `<funded-private-key>` with a private key for selected chain |
+| `CARTESI_BLOCKCHAIN_DEFAULT_BLOCK` | Set to either `latest` or `finalized`                                |
+
+:::danger Security
+Ensure to follow best practices when handling private keys during local development and deployment to production.
+:::
 
 ## Setting up the local node
 
 1. **Download the Cartesi Rollups Node docker compose file in your project root:**
 
    ```shell
-   curl -L https://raw.githubusercontent.com/cartesi/docs/refs/heads/docs/deployment/cartesi-rollups_versioned_docs/version-2.0/deployment/src/compose.local.yaml -o compose.local.yaml
+   curl -L https://raw.githubusercontent.com/Mugen-Builders/deployment-setup-v2.0/main/compose.local.yaml -o compose.local.yaml
    ```
 
-2. **Create a secret for private key storage:**
-
-   ```shell
-   mkdir -p secrets
-   echo "YOUR_PRIVATE_KEY" > secrets/pk
-   ```
-
-   :::danger Security
-   Ensure the `secrets/` directory is in a secure location and has restricted permissions, different from the project root to avoid leaking your private key.
-   :::
-
-3. **Build the application with the Cartesi CLI:**
+2. **Build the application with the Cartesi CLI:**
 
    ```shell
    cartesi build
@@ -74,7 +69,7 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
 
    This command compiles your application into RISC-V architecture and creates a Cartesi machine snapshot locally.
 
-4. **Run the Cartesi Rollups Node with the application's initial snapshot attached:**
+3. **Run the Cartesi Rollups Node with the application's initial snapshot attached:**
 
    ```shell
    docker compose -f compose.local.yaml --env-file .env up -d
@@ -82,15 +77,14 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
 
    This starts the local node using the configuration from your `.env` file.
 
-5. **Deploy and register the application to the node:**
+4. **Deploy and register the application to the node:**
 
    ```shell
    docker compose --project-name cartesi-rollups-node \
-        exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
-        --epoch-length 720 \
-        --self-hosted \
-        --salt <salt> \
-        --json
+      exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
+      --epoch-length 10 \
+      --salt <salt> \
+      --register
    ```
 
    Replace `<app-name>` with your application name and `<salt>` with a unique identifier. The salt must be unique for each deployment and cannot be repeated. You can generate a unique salt using:
@@ -101,9 +95,45 @@ BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
 
    After this process, you'll have your application deployed and registered to the node.
 
+   If deployment fails during the automated process, fall back to manually deploying the authority and application contracts.
+
+   ### Manual deployment fallback
+
+   1. Deploy an authority contract with `cast`. Replace each placeholder with the expected value, and grab the returned address from the command output (the final `sed` call normalizes the address).
+
+      ```shell
+      cast send <AuthorityFactory-Address> "newAuthority(address,uint256)" <Application-Owner-Address> \
+      10 --private-key <PRIVATE-KEY> --rpc-url <RPC-URL>\
+      --json | jq -r '.logs[-1].data' | sed 's/^0x000000000000000000000000/0x/'
+      ```
+
+   You can find the AuthorityFactory, portals and inputbox addresses for your target chain in the **Deployed Contracts** section below; Replace `<AuthorityFactory-Address>` with the appropriate address.
+
+   2. Use the address you got above as the `<Authority-contract>` in the deploy command below. This command re-runs the snapshot registration using the specified authority and epoch values.
+
+      ```shell
+      docker compose --project-name cartesi-rollups-node \
+         exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
+         --epoch-length 10 \
+         --consensus <Authority-contract> \
+         --json
+      ```
+
+      On success this command deploys, registers and returns the address of the deployed application contract, this should be notted for further interaction with your applciation.
+
+## Deployed Contracts:
+
+Depending on your intended deployment chain, you can find the list of required contracts like the Inputbox, Portals, Authority Factory etc, below:
+
+- [Cannon Devnet](https://usecannon.com/packages/cartesi-rollups/2.2.0/13370-main/deployment/contracts)
+- [Ethereum Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/11155111-main/deployment/contracts)
+- [Arbitrum Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/421614-main/deployment/contracts)
+- [OP Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/11155420-main/deployment/contracts)
+- [Base Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/84532-main/deployment/contracts)
+
 ## Accessing the node
 
 Once running, your local Cartesi Rollups Node will be accessible through the standard APIs:
 
-- Inspect endpoint: `http://localhost:10012`
-- JSON-RPC endpoint: `http://localhost:10011`
+- Inspect endpoint: `http://localhost:10012/inspect/<application-address>`
+- JSON-RPC endpoint: `http://localhost:10011/rpc`
