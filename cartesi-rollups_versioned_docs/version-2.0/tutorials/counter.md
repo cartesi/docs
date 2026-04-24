@@ -148,7 +148,7 @@ cartesi build
 ```
 
 - Expected Logs:
-  
+
 ```shell
 user@user-MacBook-Pro counter % cartesi build
 (node:4460) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
@@ -183,7 +183,7 @@ Storing machine: please wait
 
 The build command compiles your application then builds a Cartesi machine that contains your application.
 
-This recently built machine alongside other necessary service, like an Anvil network, inspect service, etc. wound next be started by running the command:
+This recently built machine alongside other necessary service, like an Anvil network, inspect service, etc. would next be started by running the command:
 
 ```bash
 cartesi run
@@ -197,10 +197,10 @@ user@user-MacBook-Pro counter % cartesi run
 (Use `node --trace-warnings ...` to show where the warning was created)
 WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
 [+] Pulling 4/0
- ✔ database Skipped - Image is already present locally  
- ✔ rollups-node Skipped - Image is already present locally 
- ✔ anvil Skipped - Image is already present locally  
- ✔ proxy Skipped - Image is already present locally                                                                                                                                                                                                                   
+ ✔ database Skipped - Image is already present locally
+ ✔ rollups-node Skipped - Image is already present locally
+ ✔ anvil Skipped - Image is already present locally
+ ✔ proxy Skipped - Image is already present locally
 ✔ counter starting at http://127.0.0.1:6751
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
@@ -221,7 +221,7 @@ We start by querying the current count value, this is done by making an inspect 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/counter \
   -H "Content-Type: application/json" \
-  -d '{""}' 
+  -d '{""}'
 ```
 
 :::note Inspect endpoint
