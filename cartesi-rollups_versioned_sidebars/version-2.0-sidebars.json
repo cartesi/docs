@@ -183,7 +183,8 @@
                 "tutorials/erc-721-token-wallet",
                 "tutorials/react-frontend-application",
                 "tutorials/cli-account-abstraction-feauture",
-                "tutorials/utilizing-the-cli-test-tokens"
+                "tutorials/utilizing-the-cli-test-tokens",
+                "tutorials/understanding-the-cartesi.toml-configuration-file"
             ]
         },
         {
