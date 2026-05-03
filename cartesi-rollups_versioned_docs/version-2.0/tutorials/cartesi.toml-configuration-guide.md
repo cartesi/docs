@@ -18,7 +18,7 @@ Here is what the file controls at a high level:
 - **Machine settings**: How the machine boots, how much RAM it has, what program it runs, and how it behaves.
 - **Drives**: The file systems attached to your machine, including your application code and any additional data.
 
-The best part? Almost everything has sensible defaults. You can start with a nearly empty file and only add configuration as your needs grow.
+It is important to note that `cartesi.toml` is only read when you run `cartesi build` or `cartesi shell`. By default, the CLI looks for a `cartesi.toml` in the project root, unless you point it to a different path using the `-c` or `--config` flag with a relative path to the configuration file. If no config file is found, the CLI applies sensible defaults, most of which are covered in the sections below. The default Cartesi templates do not include a `cartesi.toml` in the project root hence you manually create a configuration file when you have an explicit need for it.
 
 ## Getting Started with Minimal Configuration
 
@@ -27,13 +27,12 @@ You do not need to fill out every field to get started. In fact, the simplest `c
 Here is what the defaults look like behind the scenes:
 
 ```toml
-sdk = "cartesi/sdk:0.12.0"
+sdk = "cartesi/sdk:<version>"
 
 [machine]
 ram_length = "128Mi"
 use_docker_env = true
 use_docker_workdir = true
-no_rollup = false
 
 [drives.root]
 builder = "docker"
@@ -43,7 +42,7 @@ format = "ext2"
 
 This means that by default, the CLI will:
 
-1. Use SDK version `0.12.0`.
+1. Use SDK version specified i.e `0.12.0`.
 2. Give your machine 128 megabytes of RAM.
 3. Build your root drive from a `Dockerfile` in your project directory.
 4. Pull environment variables and the working directory from that Docker image.
@@ -54,14 +53,12 @@ If those defaults work for you, all you need is a `Dockerfile` and you are ready
 ## SDK Version
 
 ```toml
-sdk = "cartesi/sdk:0.12.0"
+sdk = "cartesi/<version>"
 ```
 
-The `sdk` field tells the CLI which version of the Cartesi SDK image to use when building your machine. This image contains the Linux kernel, the RISC‑V toolchain, and everything else needed to assemble your Cartesi Machine.
+The `sdk` field tells the CLI which version of the Cartesi SDK image to use when building your machine. This is a docker image containing the Linux kernel, the RISC‑V toolchain, Cartesi Node and everything else needed to assemble your Cartesi Machine.
 
-Think of it as pinning a version of your build environment. If you are working on a team, setting this explicitly ensures everyone builds with the same SDK, avoiding the classic "it works on my machine" problem.
-
-The format is `cartesi/sdk:<version>`. When you omit this field entirely, the CLI uses its own built in default version.
+Think of it as pinning a version of your build environment. If you are working on a team, setting this explicitly ensures everyone builds with the same SDK, avoiding the classic "it works on my machine" problem. Each SDK is tied to a Cartesi CLI version, hence it's important you have a compatible CLI installed for the sdk version you specify. When you omit the SDK field the CLI uses its own built in default version.
 
 **When to change this:** When there's a new SDK version and you want to adopt it, or when you need to stay on a specific version for compatibility.
 
@@ -76,7 +73,7 @@ The `[machine]` section controls how your Cartesi Machine is set up and how it b
 ### Entrypoint
 
 ```toml
-entrypoint = "/usr/local/bin/app"
+entrypoint = "/usr/local/bin/python3 /mnt/app/main.py"
 ```
 
 The `entrypoint` tells the machine which program to run when it starts up. This is the path to your application binary inside the machine's file system.
@@ -104,28 +101,25 @@ ram_image = "/usr/share/cartesi-machine/images/linux.bin"
 
 **`ram_length`** sets how much RAM your Cartesi Machine has. The default is `128Mi` (128 mebibytes). You can use human readable sizes like `"64Mi"`, `"256Mi"`, or `"1Gi"`.
 
-How much RAM do you need? It depends on your application. A lightweight app that processes small inputs might be fine with 64Mi. A machine learning model or an application that handles large data structures might need 256Mi or more. Start with the default and increase it if your application runs out of memory.
+Exact RAM requirements are unique for each application. A lightweight app that processes small inputs might be fine with 64Mi. A machine learning model or an application that handles large data structures might need 256Mi or more. It's important to stress test your application during development and testing to figure out an optimal RAM configuration for your application.
 
 **`ram_image`** specifies the path to the Linux kernel binary used inside the machine. This path points to a location inside the SDK image, not on your local file system. You almost never need to change this unless you are working with a custom kernel.
 
 ### Execution Limits
 
 ```toml
-max_mcycle = 0
+max_mcycle = 2305843009213693952
 ```
 
 The `max_mcycle` field sets the maximum number of machine cycles the Cartesi Machine is allowed to execute. This acts as a computational budget. Once the machine reaches this limit, it stops.
 
-A value of `0` means no limit, and the machine runs until your application exits on its own. Setting a specific number is useful when you want to guarantee that computation stays within a certain bound, which can be important for on chain verification where predictable execution costs matter.
+A value of `2305843009213693952` is the default machine cycle the Cartesi machine operates. Setting a specific number is useful when you want to guarantee that computation stays within a certain bound, which can be important for on chain verification where predictable execution costs matter.
 
 ### Rollup Behavior
 
 ```toml
-no_rollup = false
 assert_rolling_update = true
 ```
-
-**`no_rollup`** controls whether your application runs in rollup mode. The default is `false`, meaning rollup mode is enabled. In rollup mode, your application receives inputs from the blockchain, processes them, and produces outputs (notices, vouchers, or reports).
 
 Set this to `true` when you are building a standalone application that does not need to interact with the blockchain's input/output system. This is useful during early development or for tools that run inside the machine but do not need the rollup lifecycle.
 
@@ -187,8 +181,6 @@ extra_size = "100Mb"
 
 The root drive is special. It is the main file system of your Cartesi Machine, the one that contains your operating system, libraries, and application code. It is always named `root`, and if you do not define it in your `cartesi.toml`, the CLI creates one automatically using the Docker builder.
 
-The root drive is where your `entrypoint` binary lives. When you write a Dockerfile for your Cartesi application, everything you install and copy into that image ends up in the root drive.
-
 ### Docker Builder
 
 ```toml
@@ -236,7 +228,7 @@ builder = "directory"
 directory = "./data"
 extra_size = "100Mb"
 format = "ext2"
-mount = "/var/lib/app"
+mount = "/var/lib/app_two"
 ```
 
 The directory builder takes a folder from your local machine and packages it into a drive image. This is a straightforward way to include data files, configuration, or any other content without going through Docker.
@@ -256,7 +248,7 @@ The directory builder takes a folder from your local machine and packages it int
 builder = "tar"
 filename = "build/files.tar"
 extra_size = "100Mb"
-mount = "/var/lib/app"
+mount = "/var/lib/app_three"
 ```
 
 The tar builder creates a drive from a tar archive. This is handy when your build process already produces a `.tar` file, or when you want to bundle files from a CI pipeline into a drive without needing Docker or a directory on disk.
@@ -288,11 +280,17 @@ This builder is great for including large, static assets that you do not want to
 
 A few options are shared across all builder types:
 
+**`builder`** is required and determines how the drive is assembled. The available values are `"docker"`, `"directory"`, `"tar"`, `"none"`, and `"empty"`. Each builder is covered in its own section above.
+
 **`mount`** controls where the drive is mounted inside the machine. It defaults to `/mnt/<name>`. You can set it to any absolute path. For example, `mount = "/var/lib/app"` makes the drive accessible at that path inside the machine.
 
-**`format`** determines the file system type. Choose `"ext2"` when your application needs to read and write to the drive, or `"sqfs"` for a compressed read only image. Not all builders support this option (the empty builder uses `"ext2"` or `"raw"`, and the none builder infers the format from the file extension).
+**`shared`** when set to `true`, maps the drive as a shared memory region, meaning the host and the machine access the same underlying memory rather than the data being copied in. This avoids the overhead of loading large drives into the machine's address space and is useful when you need to pass large amounts of data in and out of the machine efficiently. Defaults to `false`.
 
-**`extra_size`** adds free space beyond the actual content size. Useful for drives where you expect your application to write additional files at runtime. Specified as a string like `"100Mb"` or `"50Mi"`.
+**`user`** sets the Linux user that owns the files inside the drive. This matters when your application runs as a non-root user and needs read or write access to the drive's contents. Defaults to the user defined in the Docker image, or root if unset.
+
+**`format`** determines the file system type. Choose `"ext2"` when your application needs to read and write to the drive, or `"sqfs"` for a compressed read only image. Not all builders support this option (the empty builder uses `"ext2"` or `"raw"`, and it's completely absent in the none builder).
+
+**`extra_size`** adds free space beyond the actual content size. Useful for drives when you intend to convert to an ext2 format, it takes the actual size of the existing directory contents then adds the specified `extra_size` to it, allowing for future additions. Specified as a string like `"100Mb"` or `"50Mi"`.
 
 ## Putting It All Together: A Complete Example
 
@@ -304,7 +302,7 @@ sdk = "cartesi/sdk:0.12.0"
 
 [machine]
 # Run the Python application when the machine starts
-entrypoint = "/opt/app/main.py"
+entrypoint = "/usr/local/bin/python3 /mnt/app/main.py"
 
 # Give the machine 256 megabytes of RAM for document processing
 ram_length = "256Mi"
@@ -315,9 +313,6 @@ use_docker_workdir = true
 
 # Run as the default non root user
 user = "dapp"
-
-# Enable rollup mode to receive inputs from the blockchain
-no_rollup = false
 
 # Compute the final hash for on chain verification
 final_hash = true
@@ -359,8 +354,7 @@ The reference drive contains a pre built SquashFS image with static reference da
 | `boot_args`             | `[machine]`  | String array     | CLI defaults           | Linux kernel boot arguments                                     |
 | `ram_length`            | `[machine]`  | String           | `"128Mi"`              | Amount of RAM for the machine                                   |
 | `ram_image`             | `[machine]`  | String           | SDK default            | Path to the Linux kernel binary                                 |
-| `max_mcycle`            | `[machine]`  | Number           | `0` (no limit)         | Maximum machine cycles allowed                                  |
-| `no_rollup`             | `[machine]`  | Boolean          | `false`                | Disable rollup input/output mode                                |
+| `max_mcycle`            | `[machine]`  | Number           | `2305843009213693952` (default) | Maximum machine cycles allowed                                  |
 | `assert_rolling_update` | `[machine]`  | Boolean          | —                      | Assert rolling update compatibility                             |
 | `use_docker_env`        | `[machine]`  | Boolean          | `true`                 | Inject Docker ENV into the machine                              |
 | `use_docker_workdir`    | `[machine]`  | Boolean          | `true`                 | Use Docker WORKDIR in the machine                               |
@@ -375,19 +369,3 @@ The reference drive contains a pre built SquashFS image with static reference da
 | `directory`             | `[drives.*]` | String           | —                      | Local directory to package (directory builder)                  |
 | `filename`              | `[drives.*]` | String           | —                      | Path to tar or existing image file                              |
 | `mount`                 | `[drives.*]` | String           | `/mnt/<name>`          | Where the drive is mounted in the machine                       |
-
-## Common Patterns and Tips
-
-**Start simple, add complexity later.** Begin with just a Dockerfile and no `cartesi.toml` at all. The CLI defaults handle the rest. Add configuration only when you need to change something specific.
-
-**Choose the right file system format.** Use `ext2` when your application writes to the drive at runtime. Use `sqfs` for static data that never changes. SquashFS images are smaller and faster to load, but they are read only.
-
-**Size your RAM appropriately.** The default 128Mi is enough for most lightweight applications. If your app processes large data, handles complex computations, or runs a language runtime like Python or Node.js, consider bumping it to 256Mi or higher. You can monitor memory usage during development to find the sweet spot.
-
-**Use empty drives for runtime storage.** If your application needs to write temporary files, logs, or database entries, create a separate empty drive rather than relying on extra space in the root drive. This keeps your concerns separated and makes it easy to adjust sizes independently.
-
-**Use the none builder for large static assets.** If you have a large dataset or pre built file system that does not change often, build it once as a `.sqfs` file and reference it with `builder = "none"`. This avoids rebuilding it every time you change your application code.
-
-**Pin your SDK version.** Always set the `sdk` field explicitly in your `cartesi.toml`. This ensures that your builds are reproducible and that a new SDK release does not unexpectedly change your machine's behavior.
-
-**Keep `no_rollup = false` for production.** Rollup mode is what connects your Cartesi Machine to the blockchain. Only disable it during development or for standalone tools that do not need blockchain interaction.
