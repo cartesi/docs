@@ -157,7 +157,8 @@
                 "development/running-an-application",
                 "development/send-inputs-and-assets",
                 "development/query-outputs",
-                "development/asset-handling"
+                "development/asset-handling",
+                "development/Advanced-configuration"
             ]
         },
         {
@@ -182,9 +183,8 @@
                 "tutorials/erc-20-token-wallet",
                 "tutorials/erc-721-token-wallet",
                 "tutorials/react-frontend-application",
-                "tutorials/cli-account-abstraction-feauture",
-                "tutorials/utilizing-the-cli-test-tokens",
-                "tutorials/understanding-the-cartesi.toml-configuration-file"
+                "tutorials/cli-account-abstraction-feature",
+                "tutorials/utilizing-the-cli-test-tokens"
             ]
         },
         {

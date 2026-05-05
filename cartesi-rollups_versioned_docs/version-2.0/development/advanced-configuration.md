@@ -1,10 +1,8 @@
 ---
-id: understanding-the-cartesi.toml-configuration-file
-title: Understanding the cartesi.toml Configuration File
+id: Advanced-configuration
+title: Advanced configuration
 resources:
 ---
-
-## Introduction
 
 When you build an application with the Cartesi CLI, the CLI needs to know how to set up your Cartesi Machine. Things like how much memory to allocate, what code to run, and what data to include. All of these choices live in a single file at the root of your project called `cartesi.toml`.
 
@@ -347,25 +345,25 @@ The reference drive contains a pre built SquashFS image with static reference da
 
 ## Quick Reference
 
-| Field                   | Section      | Type             | Default                | Description                                                     |
-| ----------------------- | ------------ | ---------------- | ---------------------- | --------------------------------------------------------------- |
-| `sdk`                   | Top level    | String           | `"cartesi/sdk:0.12.0"` | SDK image and version used for building                         |
-| `entrypoint`            | `[machine]`  | String           | From Docker image      | Path to the application binary                                  |
-| `boot_args`             | `[machine]`  | String array     | CLI defaults           | Linux kernel boot arguments                                     |
-| `ram_length`            | `[machine]`  | String           | `"128Mi"`              | Amount of RAM for the machine                                   |
-| `ram_image`             | `[machine]`  | String           | SDK default            | Path to the Linux kernel binary                                 |
+| Field                   | Section      | Type             | Default                         | Description                                                     |
+| ----------------------- | ------------ | ---------------- | ------------------------------- | --------------------------------------------------------------- |
+| `sdk`                   | Top level    | String           | `"cartesi/sdk:0.12.0"`          | SDK image and version used for building                         |
+| `entrypoint`            | `[machine]`  | String           | From Docker image               | Path to the application binary                                  |
+| `boot_args`             | `[machine]`  | String array     | CLI defaults                    | Linux kernel boot arguments                                     |
+| `ram_length`            | `[machine]`  | String           | `"128Mi"`                       | Amount of RAM for the machine                                   |
+| `ram_image`             | `[machine]`  | String           | SDK default                     | Path to the Linux kernel binary                                 |
 | `max_mcycle`            | `[machine]`  | Number           | `2305843009213693952` (default) | Maximum machine cycles allowed                                  |
-| `assert_rolling_update` | `[machine]`  | Boolean          | —                      | Assert rolling update compatibility                             |
-| `use_docker_env`        | `[machine]`  | Boolean          | `true`                 | Inject Docker ENV into the machine                              |
-| `use_docker_workdir`    | `[machine]`  | Boolean          | `true`                 | Use Docker WORKDIR in the machine                               |
-| `user`                  | `[machine]`  | String           | —                      | User to run the application as                                  |
-| `final_hash`            | `[machine]`  | Boolean          | —                      | Compute machine hash after build                                |
-| `builder`               | `[drives.*]` | String           | `"docker"`             | How to create the drive: docker, empty, directory, tar, or none |
-| `dockerfile`            | `[drives.*]` | String           | `"Dockerfile"`         | Path to Dockerfile (docker builder)                             |
-| `target`                | `[drives.*]` | String           | Last stage             | Docker multi stage build target                                 |
-| `format`                | `[drives.*]` | String           | `"ext2"`               | File system format: ext2 or sqfs                                |
-| `extra_size`            | `[drives.*]` | String           | `0`                    | Extra free space added to the drive                             |
-| `size`                  | `[drives.*]` | String or Number | —                      | Total drive size (empty builder only)                           |
-| `directory`             | `[drives.*]` | String           | —                      | Local directory to package (directory builder)                  |
-| `filename`              | `[drives.*]` | String           | —                      | Path to tar or existing image file                              |
-| `mount`                 | `[drives.*]` | String           | `/mnt/<name>`          | Where the drive is mounted in the machine                       |
+| `assert_rolling_update` | `[machine]`  | Boolean          | —                               | Assert rolling update compatibility                             |
+| `use_docker_env`        | `[machine]`  | Boolean          | `true`                          | Inject Docker ENV into the machine                              |
+| `use_docker_workdir`    | `[machine]`  | Boolean          | `true`                          | Use Docker WORKDIR in the machine                               |
+| `user`                  | `[machine]`  | String           | —                               | User to run the application as                                  |
+| `final_hash`            | `[machine]`  | Boolean          | —                               | Compute machine hash after build                                |
+| `builder`               | `[drives.*]` | String           | `"docker"`                      | How to create the drive: docker, empty, directory, tar, or none |
+| `dockerfile`            | `[drives.*]` | String           | `"Dockerfile"`                  | Path to Dockerfile (docker builder)                             |
+| `target`                | `[drives.*]` | String           | Last stage                      | Docker multi stage build target                                 |
+| `format`                | `[drives.*]` | String           | `"ext2"`                        | File system format: ext2 or sqfs                                |
+| `extra_size`            | `[drives.*]` | String           | `0`                             | Extra free space added to the drive                             |
+| `size`                  | `[drives.*]` | String or Number | —                               | Total drive size (empty builder only)                           |
+| `directory`             | `[drives.*]` | String           | —                               | Local directory to package (directory builder)                  |
+| `filename`              | `[drives.*]` | String           | —                               | Path to tar or existing image file                              |
+| `mount`                 | `[drives.*]` | String           | `/mnt/<name>`                   | Where the drive is mounted in the machine                       |
