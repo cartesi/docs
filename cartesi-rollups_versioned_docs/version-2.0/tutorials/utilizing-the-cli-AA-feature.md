@@ -1,5 +1,5 @@
 ---
-id: cli-account-abstraction-feauture
+id: cli-account-abstraction-feature
 title: Utilizing the account abstraction feature of the CLI for Sponsored Transactions
 resources:
   - url: https://github.com/Mugen-Builders/docs_examples/tree/main/account-abstraction-frontend-demo
