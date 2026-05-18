@@ -65,6 +65,16 @@ const config = {
   organizationName: "cartesi", // Usually your GitHub org/user name.
   projectName: "cartesi", // Usually your repo name.
   scripts: ["/js/index.js"],
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'alternate',
+        type: 'text/plain',
+        href: '/llms.txt',
+      },
+    },
+  ],
   // markdown: { format: "md" }, // NOTE: Use this to disable MDX and use MD instead
   presets: [
     [
@@ -340,6 +350,7 @@ const config = {
       },
     }),
   plugins: [
+    require.resolve("./plugins/serve-markdown.js"),
     [
       "@docusaurus/plugin-content-docs",
       {
