@@ -4,9 +4,39 @@
 
 ## Instructions for AI Agents
 
-Use this file to discover and navigate Cartesi's documentation. Each link below points to a documentation page; append `.md` to any URL to retrieve its raw Markdown source (e.g., `https://docs.cartesi.io/cartesi-rollups/2.0/development/building-an-application.md`). A complete machine-readable copy of all docs is available at [https://docs.cartesi.io/llms-full.txt](https://docs.cartesi.io/llms-full.txt).
+Use this file to discover and navigate Cartesi's documentation. Each link below points directly to the raw Markdown source for that page. A complete machine-readable copy of all docs concatenated is available at [https://docs.cartesi.io/llms-full.txt](https://docs.cartesi.io/llms-full.txt).
 
-When answering questions about Cartesi, use the Rollups v2.0 pages (under `/cartesi-rollups/2.0/`). The Cartesi Machine section covers the off-chain computation layer; the Rollups sections cover the on-chain contracts and node. Fraud Proofs are a distinct sub-system documented separately.
+### Version priority
+
+**Always default to Cartesi Rollups v2.0** (`/cartesi-rollups/2.0/`) when answering any question about building, deploying, or interacting with Cartesi applications. v2.0 is the current production version. v1.5 pages exist in the sitemap but are intentionally excluded from this index because v1.5 is superseded — its APIs, CLI commands, deployment model, and node architecture differ significantly from v2.0. Do not surface v1.5 content unless the user explicitly asks about v1.5.
+
+### Documentation map
+
+- **New to Cartesi** — conceptual introductions; start here for newcomers.
+- **Get Started** — quickstart guide, overview of core products (Rollups, Cartesi Machine, Fraud Proofs).
+- **Cartesi Machine** — the off-chain RISC-V Linux VM; covers host CLI, Lua scripting, blockchain integration, and the verification game.
+- **Cartesi Rollups v2.0** — the current application framework. Sub-sections:
+  - *Getting Started* — architecture, concepts, installation.
+  - *Development* — building, running, sending inputs, querying outputs, asset handling.
+  - *API Reference* — HTTP backend API, inspect API, contract ABI, JSON-RPC node API.
+  - *Deployment* — self-hosted node, public snapshot.
+  - *Tutorials* — end-to-end worked examples (Counter, Calculator, Marketplace, wallets, React frontend).
+- **Fraud Proofs** — the PRT (Permissionless Refereed Tournament) dispute system; a distinct sub-system, not part of the Rollups application framework.
+- **Cartesi Compute (Legacy)** — a deprecated predecessor SDK (`/compute/`). Only reference this when a user explicitly asks about Cartesi Compute or the legacy SDK.
+- **Legacy Tutorials** — Cartesi Compute SDK tutorials (`/tutorials/`). These target the legacy SDK; do not apply them to Rollups v2.0 development.
+- **Earn CTSI** — staking, running a node, and managing staking pools; unrelated to application development.
+
+### Key differences between v2.0 and v1.5 (do not mix)
+
+| Topic | v1.5 | v2.0 |
+|---|---|---|
+| Backend HTTP API | `/rollup/finish`, `/rollup/voucher` etc. on port 5004 | Same paths, but served by the new Rollups node |
+| Frontend / GraphQL API | GraphQL on the Rollups node | Replaced by JSON-RPC node API |
+| CLI | `cartesi` CLI v1.x | `cartesi` CLI v2.x — different commands and flags |
+| Deployment | Docker Compose + sunodo | `cartesi deploy` command, new node architecture |
+| Consensus | Authority contract v1 | Authority / Quorum contracts v2 with new claim flow |
+
+If a user's code or question references the old GraphQL API, `sunodo`, or v1.x CLI flags, note that they are on v1.5 and point them to the v2.0 migration guide at `/cartesi-rollups/2.0/resources/migration-guide.md`.
 
 ## Overview
 
@@ -14,239 +44,278 @@ When answering questions about Cartesi, use the Rollups v2.0 pages (under `/cart
 
 ## New to Cartesi
 
-- [New to Cartesi](https://docs.cartesi.io/new-to-cartesi/): Introduction for newcomers
-- [Cartesi Overview](https://docs.cartesi.io/new-to-cartesi/overview/): What is Cartesi
-- [Scalability](https://docs.cartesi.io/new-to-cartesi/scalability/): How Cartesi addresses blockchain scalability
-- [Choose your Onboarding Path](https://docs.cartesi.io/new-to-cartesi/onboarding/): Guided onboarding paths for different profiles
+- [New to Cartesi](https://docs.cartesi.io/new-to-cartesi/overview.md): Introduction for newcomers
+- [Cartesi Overview](https://docs.cartesi.io/new-to-cartesi/overview.md): What is Cartesi
+- [Scalability](https://docs.cartesi.io/new-to-cartesi/scalability.md): How Cartesi addresses blockchain scalability
+- [Choose your Onboarding Path](https://docs.cartesi.io/new-to-cartesi/onboarding.md): Guided onboarding paths for different profiles
 
 ## Get Started
 
-- [Get Started](https://docs.cartesi.io/get-started/): Entry point for all Cartesi products
-- [Quickstart](https://docs.cartesi.io/get-started/quickstart/): Build and run your first Cartesi application
-- [Optimistic Rollups](https://docs.cartesi.io/get-started/optimistic-rollups/): How optimistic rollups work
-- [Appchains](https://docs.cartesi.io/get-started/app-chains/): Application-specific rollup chains
-- [Cartesi Machine](https://docs.cartesi.io/get-started/cartesi-machine/): Introduction to the Cartesi Machine
-- [CLI commands](https://docs.cartesi.io/get-started/cli-commands/): Cartesi CLI reference
-- [Fraud-proof system](https://docs.cartesi.io/get-started/fraud-proofs/): Overview of Cartesi fraud proofs
+- [Get Started](https://docs.cartesi.io/get-started.md): Entry point for all Cartesi products
+- [Quickstart](https://docs.cartesi.io/get-started/quickstart.md): Build and run your first Cartesi application
+- [Optimistic Rollups](https://docs.cartesi.io/get-started/optimistic-rollups.md): How optimistic rollups work
+- [Appchains](https://docs.cartesi.io/get-started/app-chains.md): Application-specific rollup chains
+- [Cartesi Machine](https://docs.cartesi.io/get-started/cartesi-machine.md): Introduction to the Cartesi Machine
+- [CLI commands](https://docs.cartesi.io/get-started/cli-commands.md): Cartesi CLI reference
+- [Fraud-proof system](https://docs.cartesi.io/get-started/fraud-proofs.md): Overview of Cartesi fraud proofs
 
 ## Cartesi Machine
 
-- [Introduction](https://docs.cartesi.io/cartesi-machine/): Cartesi Machine overview
-- [Blockchain - Introduction](https://docs.cartesi.io/cartesi-machine/blockchain/): Machine in the blockchain context
-- [Hash view of state](https://docs.cartesi.io/cartesi-machine/blockchain/hash/): Merkle-tree based state hashing
-- [Verification game](https://docs.cartesi.io/cartesi-machine/blockchain/vg/): On-chain dispute resolution
-- [Host - Overview](https://docs.cartesi.io/cartesi-machine/host/): Running the machine from the host
-- [Command-line interface](https://docs.cartesi.io/cartesi-machine/host/cmdline/): cartesi-machine CLI reference
-- [Lua interface](https://docs.cartesi.io/cartesi-machine/host/lua/): Scripting the machine with Lua
-- [Target - Overview](https://docs.cartesi.io/cartesi-machine/target/): Software running inside the machine
-- [System architecture](https://docs.cartesi.io/cartesi-machine/target/architecture/): RISC-V ISA and hardware model
-- [Linux environment](https://docs.cartesi.io/cartesi-machine/target/linux/): Linux OS inside the Cartesi Machine
+- [Introduction](https://docs.cartesi.io/cartesi-machine.md): Cartesi Machine overview
+- [Blockchain - Introduction](https://docs.cartesi.io/cartesi-machine/blockchain.md): Machine in the blockchain context
+- [Hash view of state](https://docs.cartesi.io/cartesi-machine/blockchain/hash.md): Merkle-tree based state hashing
+- [Verification game](https://docs.cartesi.io/cartesi-machine/blockchain/vg.md): On-chain dispute resolution
+- [Host - Overview](https://docs.cartesi.io/cartesi-machine/host.md): Running the machine from the host
+- [Command-line interface](https://docs.cartesi.io/cartesi-machine/host/cmdline.md): cartesi-machine CLI reference
+- [Lua interface](https://docs.cartesi.io/cartesi-machine/host/lua.md): Scripting the machine with Lua
+- [Target - Overview](https://docs.cartesi.io/cartesi-machine/target.md): Software running inside the machine
+- [System architecture](https://docs.cartesi.io/cartesi-machine/target/architecture.md): RISC-V ISA and hardware model
+- [Linux environment](https://docs.cartesi.io/cartesi-machine/target/linux.md): Linux OS inside the Cartesi Machine
 
 ## Cartesi Rollups v2.0 — Getting Started
 
-- [Overview](https://docs.cartesi.io/cartesi-rollups/2.0/): Cartesi Rollups v2.0 introduction
-- [Architecture](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/architecture/): On-chain and off-chain components
-- [Concepts](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/concepts/): Key concepts and terminology
-- [Installation](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/Installation/): Install Cartesi CLI and dependencies
-- [Cartesi Machine](https://docs.cartesi.io/cartesi-rollups/2.0/core-concepts/cartesi-machine/): Cartesi Machine in the rollups context
+- [Overview](https://docs.cartesi.io/cartesi-rollups/overview.md): Cartesi Rollups v2.0 introduction
+- [Architecture](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/architecture.md): On-chain and off-chain components
+- [Concepts](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/concepts.md): Key concepts and terminology
+- [Installation](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/Installation.md): Install Cartesi CLI and dependencies
+- [Cartesi Machine](https://docs.cartesi.io/cartesi-rollups/2.0/core-concepts/cartesi-machine.md): Cartesi Machine in the rollups context
 
 ## Cartesi Rollups v2.0 — Development
 
-- [Installation](https://docs.cartesi.io/cartesi-rollups/2.0/development/installation/): Install development tools
-- [Creating an Application](https://docs.cartesi.io/cartesi-rollups/2.0/development/creating-an-application/): Bootstrap a new Cartesi dApp
-- [Building an application](https://docs.cartesi.io/cartesi-rollups/2.0/development/building-an-application/): Build your application for the Cartesi Machine
-- [Running an application](https://docs.cartesi.io/cartesi-rollups/2.0/development/running-an-application/): Run and test locally
-- [Sending inputs and assets](https://docs.cartesi.io/cartesi-rollups/2.0/development/send-inputs-and-assets/): How to send inputs and assets to your dApp
-- [Query outputs](https://docs.cartesi.io/cartesi-rollups/2.0/development/query-outputs/): Vouchers, notices and reports
-- [Asset handling](https://docs.cartesi.io/cartesi-rollups/2.0/development/asset-handling/): Deposits and withdrawals
-- [Advanced configuration](https://docs.cartesi.io/cartesi-rollups/2.0/development/Advanced-configuration/): cartesi.toml configuration guide
+- [Installation](https://docs.cartesi.io/cartesi-rollups/2.0/development/installation.md): Install development tools
+- [Creating an Application](https://docs.cartesi.io/cartesi-rollups/2.0/development/creating-an-application.md): Bootstrap a new Cartesi dApp
+- [Building an application](https://docs.cartesi.io/cartesi-rollups/2.0/development/building-an-application.md): Build your application for the Cartesi Machine
+- [Running an application](https://docs.cartesi.io/cartesi-rollups/2.0/development/running-an-application.md): Run and test locally
+- [Sending inputs and assets](https://docs.cartesi.io/cartesi-rollups/2.0/development/send-inputs-and-assets.md): How to send inputs and assets to your dApp
+- [Query outputs](https://docs.cartesi.io/cartesi-rollups/2.0/development/query-outputs.md): Vouchers, notices and reports
+- [Asset handling](https://docs.cartesi.io/cartesi-rollups/2.0/development/asset-handling.md): Deposits and withdrawals
 
 ## Cartesi Rollups v2.0 — Development Snippets
 
-- [Request handling (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_cpp/): C++ advance/inspect handler snippet
-- [Request handling (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_go/): Go advance/inspect handler snippet
-- [Request handling (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_js/): JavaScript handler snippet
-- [Request handling (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_py/): Python handler snippet
-- [Request handling (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_rs/): Rust handler snippet
-- [Implementing outputs (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_cpp/): C++ outputs snippet
-- [Implementing outputs (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_go/): Go outputs snippet
-- [Implementing outputs (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_js/): JavaScript outputs snippet
-- [Implementing outputs (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_py/): Python outputs snippet
-- [Implementing outputs (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_rs/): Rust outputs snippet
-- [Sending notice (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/sending_notice_cpp/): C++ notice snippet
-- [Sending notice (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/sending_notice_go/): Go notice snippet
-- [Sending report (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/sending_report_cpp/): C++ report snippet
-- [Sending report (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/sending_report_go/): Go report snippet
-- [Decode ERC-20 (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_cpp/): C++ ERC-20 decode snippet
-- [Decode ERC-20 (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_go/): Go ERC-20 decode snippet
-- [Decode ERC-20 (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_js/): JavaScript ERC-20 decode snippet
-- [Decode ERC-20 (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_py/): Python ERC-20 decode snippet
-- [Decode ERC-20 (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_rs/): Rust ERC-20 decode snippet
-- [Withdraw ERC-20 (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_cpp/): C++ ERC-20 withdraw snippet
-- [Withdraw ERC-20 (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_go/): Go ERC-20 withdraw snippet
-- [Withdraw ERC-20 (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_js/): JavaScript ERC-20 withdraw snippet
-- [Withdraw ERC-20 (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_py/): Python ERC-20 withdraw snippet
-- [Withdraw ERC-20 (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_rs/): Rust ERC-20 withdraw snippet
-- [Withdraw Ether (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_cpp/): C++ Ether withdraw snippet
-- [Withdraw Ether (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_go/): Go Ether withdraw snippet
-- [Withdraw Ether (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_js/): JavaScript Ether withdraw snippet
-- [Withdraw Ether (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_py/): Python Ether withdraw snippet
-- [Withdraw Ether (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_rs/): Rust Ether withdraw snippet
+- [Request handling (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_cpp.md): C++ advance/inspect handler snippet
+- [Request handling (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_go.md): Go advance/inspect handler snippet
+- [Request handling (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_js.md): JavaScript handler snippet
+- [Request handling (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_py.md): Python handler snippet
+- [Request handling (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/request_handling_rs.md): Rust handler snippet
+- [Implementing outputs (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_cpp.md): C++ outputs snippet
+- [Implementing outputs (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_go.md): Go outputs snippet
+- [Implementing outputs (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_js.md): JavaScript outputs snippet
+- [Implementing outputs (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_py.md): Python outputs snippet
+- [Implementing outputs (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/implementing_outputs_rs.md): Rust outputs snippet
+- [Sending notice (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/sending_notice_cpp.md): C++ notice snippet
+- [Sending notice (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/sending_notice_go.md): Go notice snippet
+- [Sending report (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/sending_report_cpp.md): C++ report snippet
+- [Sending report (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/sending_report_go.md): Go report snippet
+- [Decode ERC-20 (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_cpp.md): C++ ERC-20 decode snippet
+- [Decode ERC-20 (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_go.md): Go ERC-20 decode snippet
+- [Decode ERC-20 (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_js.md): JavaScript ERC-20 decode snippet
+- [Decode ERC-20 (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_py.md): Python ERC-20 decode snippet
+- [Decode ERC-20 (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_decode_erc20_rs.md): Rust ERC-20 decode snippet
+- [Withdraw ERC-20 (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_cpp.md): C++ ERC-20 withdraw snippet
+- [Withdraw ERC-20 (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_go.md): Go ERC-20 withdraw snippet
+- [Withdraw ERC-20 (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_js.md): JavaScript ERC-20 withdraw snippet
+- [Withdraw ERC-20 (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_py.md): Python ERC-20 withdraw snippet
+- [Withdraw ERC-20 (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_erc20_rs.md): Rust ERC-20 withdraw snippet
+- [Withdraw Ether (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_cpp.md): C++ Ether withdraw snippet
+- [Withdraw Ether (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_go.md): Go Ether withdraw snippet
+- [Withdraw Ether (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_js.md): JavaScript Ether withdraw snippet
+- [Withdraw Ether (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_py.md): Python Ether withdraw snippet
+- [Withdraw Ether (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/development/snippets/asset_withdraw_ether_rs.md): Rust Ether withdraw snippet
 
 ## Cartesi Rollups v2.0 — API Reference
 
-- [API Reference Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/): HTTP API overview
-- [Rollup HTTP API](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/cartesi-rollup-http-api/): Backend HTTP API specification
-- [Add Voucher](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/add-voucher/): Emit a voucher from the backend
-- [Add Notice](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/add-notice/): Emit a notice from the backend
-- [Add Report](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/add-report/): Emit a report from the backend
-- [Register Exception](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/register-exception/): Register an exception
-- [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/finish/): Complete input processing
-- [Inspect State (spec)](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/inspect/inspect-state-http-api-for-cartesi-rollups/): Inspect HTTP API specification
-- [Inspect](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/inspect/inspect/): Query application state
+- [API Reference Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference.md): HTTP API overview
+- [Rollup HTTP API](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/cartesi-rollup-http-api.md): Backend HTTP API specification
+- [Add Voucher](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/add-voucher.md): Emit a voucher from the backend
+- [Add Notice](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/add-notice.md): Emit a notice from the backend
+- [Add Report](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/add-report.md): Emit a report from the backend
+- [Register Exception](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/register-exception.md): Register an exception
+- [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/rollup/finish.md): Complete input processing
+- [Inspect State (spec)](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/inspect/inspect-state-http-api-for-cartesi-rollups.md): Inspect HTTP API specification
+- [Inspect](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/inspect/inspect.md): Query application state
 
 ## Cartesi Rollups v2.0 — Backend API
 
-- [Introduction](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/introduction/): Communication between Cartesi Machine and node
-- [Notices](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/notices/): Informational statements
-- [Vouchers](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/vouchers/): Executable actions on base layer
-- [Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/reports/): Application logs
-- [Exception](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/exception/): Register exceptions
-- [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/finish/): Complete request processing
+- [Introduction](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/introduction.md): Communication between Cartesi Machine and node
+- [Notices](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/notices.md): Informational statements
+- [Vouchers](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/vouchers.md): Executable actions on base layer
+- [Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/reports.md): Application logs
+- [Exception](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/exception.md): Register exceptions
+- [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/finish.md): Complete request processing
 
 ## Cartesi Rollups v2.0 — Contracts API
 
-- [Contracts Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/overview/): All smart contracts in the framework
-- [InputBox](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/input-box/): Entry point for user inputs
-- [Application](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application/): Per-dApp contract holding assets
-- [ApplicationFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application-factory/): Deploy Application contracts
-- [EtherPortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/EtherPortal/): ETH deposits
-- [ERC20Portal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC20Portal/): ERC-20 token deposits
-- [ERC721Portal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC721Portal/): NFT deposits
-- [ERC1155SinglePortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155SinglePortal/): ERC-1155 single token deposits
-- [ERC1155BatchPortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155BatchPortal/): ERC-1155 batch deposits
-- [Consensus Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/overview/): Validates claims from validators
-- [AbstractConsensus](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/abstract-consensus/): Base consensus contract
-- [IConsensus](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/iconsensus/): Consensus interface
-- [IOutputsMerkleRootValidator](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/ioutputs-merkle-root-validator/): Outputs Merkle root validator interface
-- [Authority](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority/): Single-owner consensus
-- [AuthorityFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority/authority-factory/): Deploy Authority contracts
-- [IAuthority](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority/iauthority/): Authority interface
-- [IAuthorityFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority/iauthority-factory/): Authority factory interface
-- [Quorum](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum/): Multi-validator consensus
-- [QuorumFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum/quorum-factory/): Deploy Quorum contracts
-- [IQuorum](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum/iquorum/): Quorum interface
-- [IQuorumFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum/iquorum-factory/): Quorum factory interface
+- [Contracts Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/overview.md): All smart contracts in the framework
+- [InputBox](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/input-box.md): Entry point for user inputs
+- [Application](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application.md): Per-dApp contract holding assets
+- [ApplicationFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application-factory.md): Deploy Application contracts
+- [EtherPortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/EtherPortal.md): ETH deposits
+- [ERC20Portal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC20Portal.md): ERC-20 token deposits
+- [ERC721Portal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC721Portal.md): NFT deposits
+- [ERC1155SinglePortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155SinglePortal.md): ERC-1155 single token deposits
+- [ERC1155BatchPortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155BatchPortal.md): ERC-1155 batch deposits
+- [Consensus Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/overview.md): Validates claims from validators
+- [AbstractConsensus](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/abstract-consensus.md): Base consensus contract
+- [IConsensus](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/iconsensus.md): Consensus interface
+- [IOutputsMerkleRootValidator](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/ioutputs-merkle-root-validator.md): Outputs Merkle root validator interface
+- [Authority](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority.md): Single-owner consensus
+- [AuthorityFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority/authority-factory.md): Deploy Authority contracts
+- [IAuthority](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority/iauthority.md): Authority interface
+- [IAuthorityFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/authority/iauthority-factory.md): Authority factory interface
+- [Quorum](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum.md): Multi-validator consensus
+- [QuorumFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum/quorum-factory.md): Deploy Quorum contracts
+- [IQuorum](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum/iquorum.md): Quorum interface
+- [IQuorumFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/consensus/quorum/iquorum-factory.md): Quorum factory interface
 
 ## Cartesi Rollups v2.0 — JSON-RPC API
 
-- [JSON-RPC Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/overview/): Node management API overview
-- [Methods](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/): All JSON-RPC methods
-- [Types](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/types/): JSON-RPC type definitions
-- [List Applications](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/applications/applications-list/): List all applications
-- [Get Application](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/applications/applications-get/): Get a specific application
-- [List Epochs](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/epochs/epochs-list/): List all epochs
-- [Get Epoch](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/epochs/epochs-get/): Get a specific epoch
-- [Get Last Accepted Epoch Index](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/epochs/jsonrpc-epochs-last-accepted/): Get last accepted epoch
-- [List Inputs](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/inputs/inputs-list/): List all inputs
-- [Get Input](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/inputs/inputs-get/): Get a specific input
-- [Get Processed Input Count](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/inputs/jsonrpc-inputs-processed-count/): Get processed input count
-- [List Outputs](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/outputs/outputs-list/): List all outputs
-- [Get Output](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/outputs/outputs-get/): Get a specific output
-- [List Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/reports/reports-list/): List all reports
-- [Get Report](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/reports/reports-get/): Get a specific report
-- [Get Chain ID](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/node/node-chain-id/): Get node chain ID
-- [Get Node Version](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/node/node-version/): Get node version
+- [JSON-RPC Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/overview.md): Node management API overview
+- [Methods](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods.md): All JSON-RPC methods
+- [Types](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/types.md): JSON-RPC type definitions
+- [List Applications](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/applications/applications-list.md): List all applications
+- [Get Application](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/applications/applications-get.md): Get a specific application
+- [List Epochs](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/epochs/epochs-list.md): List all epochs
+- [Get Epoch](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/epochs/epochs-get.md): Get a specific epoch
+- [Get Last Accepted Epoch Index](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/epochs/jsonrpc-epochs-last-accepted.md): Get last accepted epoch
+- [List Inputs](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/inputs/inputs-list.md): List all inputs
+- [Get Input](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/inputs/inputs-get.md): Get a specific input
+- [Get Processed Input Count](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/inputs/jsonrpc-inputs-processed-count.md): Get processed input count
+- [List Outputs](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/outputs/outputs-list.md): List all outputs
+- [Get Output](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/outputs/outputs-get.md): Get a specific output
+- [List Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/reports/reports-list.md): List all reports
+- [Get Report](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/reports/reports-get.md): Get a specific report
+- [Get Chain ID](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/node/node-chain-id.md): Get node chain ID
+- [Get Node Version](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/node/node-version.md): Get node version
 
 ## Cartesi Rollups v2.0 — Deployment
 
-- [Introduction](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/introduction/): Overview of deployment options
-- [Self-hosted deployment](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted/): Run your own node
-- [Public snapshot](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/snapshot/): Machine state management
+- [Introduction](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/introduction.md): Overview of deployment options
+- [Self-hosted deployment](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted.md): Run your own node
+- [Public snapshot](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/snapshot.md): Machine state management
 
 ## Cartesi Rollups v2.0 — Tutorials
 
-- [Counter](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/counter/): Build a counter application
-- [Calculator](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/calculator/): Build a calculator application
-- [Marketplace](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/marketplace/): Build a marketplace application
-- [Ether Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/ether-wallet/): Integrating Ether wallet functionality
-- [ERC-20 Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/erc-20-token-wallet/): Integrating ERC20 token wallet functionality
-- [ERC-721 Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/erc-721-token-wallet/): Integrating ERC721 token wallet functionality
-- [React Frontend](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/react-frontend-application/): Build a React frontend for Cartesi apps
-- [CLI Account Abstraction](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/cli-account-abstraction-feature/): Sponsored transactions via CLI account abstraction
-- [Utilizing test tokens](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/utilizing-the-cli-test-tokens/): Utilizing test tokens in dev environment
+- [Counter](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/counter.md): Build a counter application
+- [Calculator](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/calculator.md): Build a calculator application
+- [Marketplace](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/marketplace.md): Build a marketplace application
+- [Ether Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/ether-wallet.md): Integrating Ether wallet functionality
+- [ERC-20 Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/erc-20-token-wallet.md): Integrating ERC20 token wallet functionality
+- [ERC-721 Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/erc-721-token-wallet.md): Integrating ERC721 token wallet functionality
+- [React Frontend](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/react-frontend-application.md): Build a React frontend for Cartesi apps
+- [CLI Account Abstraction](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/cli-account-abstraction-feauture.md): Sponsored transactions via CLI account abstraction
+- [Utilizing test tokens](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/utilizing-the-cli-test-tokens.md): Utilizing test tokens in dev environment
 
 ## Cartesi Rollups v2.0 — Tutorial Snippets
 
-- [Counter (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-cpp/): Counter application C++ snippet
-- [Counter (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-go/): Counter application Go snippet
-- [Counter (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-js/): Counter application JavaScript snippet
-- [Counter (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-py/): Counter application Python snippet
-- [Counter (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-rs/): Counter application Rust snippet
-- [Calculator (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-cpp/): Calculator application C++ snippet
-- [Calculator (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-go/): Calculator application Go snippet
-- [Calculator (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-js/): Calculator application JavaScript snippet
-- [Calculator (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-py/): Calculator application Python snippet
-- [Calculator (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-rs/): Calculator application Rust snippet
-- [Marketplace (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-cpp/): Marketplace application C++ snippet
-- [Marketplace (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-go/): Marketplace application Go snippet
-- [Marketplace (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-js/): Marketplace application JavaScript snippet
-- [Marketplace (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-py/): Marketplace application Python snippet
-- [Marketplace (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-rs/): Marketplace application Rust snippet
+- [Counter (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-cpp.md): Counter application C++ snippet
+- [Counter (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-go.md): Counter application Go snippet
+- [Counter (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-js.md): Counter application JavaScript snippet
+- [Counter (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-py.md): Counter application Python snippet
+- [Counter (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/counter-rs.md): Counter application Rust snippet
+- [Calculator (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-cpp.md): Calculator application C++ snippet
+- [Calculator (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-go.md): Calculator application Go snippet
+- [Calculator (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-js.md): Calculator application JavaScript snippet
+- [Calculator (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-py.md): Calculator application Python snippet
+- [Calculator (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/calculator-rs.md): Calculator application Rust snippet
+- [Marketplace (C++)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-cpp.md): Marketplace application C++ snippet
+- [Marketplace (Go)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-go.md): Marketplace application Go snippet
+- [Marketplace (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-js.md): Marketplace application JavaScript snippet
+- [Marketplace (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-py.md): Marketplace application Python snippet
+- [Marketplace (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-rs.md): Marketplace application Rust snippet
 
 ## Cartesi Rollups v2.0 — Resources
 
-- [Community tools](https://docs.cartesi.io/cartesi-rollups/2.0/resources/community-tools/): Third-party tools and integrations
-- [Integrations guide](https://docs.cartesi.io/cartesi-rollups/2.0/resources/integration-guides/): Integration examples
-- [Migration Guide](https://docs.cartesi.io/cartesi-rollups/2.0/resources/migration-guide/): Migrate from v1.x to v2.0
-- [Mainnet considerations](https://docs.cartesi.io/cartesi-rollups/2.0/resources/mainnet-considerations/): Production deployment considerations
+- [Community tools](https://docs.cartesi.io/cartesi-rollups/2.0/resources/community-tools.md): Third-party tools and integrations
+- [Integrations guide](https://docs.cartesi.io/cartesi-rollups/2.0/resources/integration-guides.md): Integration examples
+- [Migration Guide](https://docs.cartesi.io/cartesi-rollups/2.0/resources/migration-guide.md): Migrate from v1.x to v2.0
+- [Mainnet considerations](https://docs.cartesi.io/cartesi-rollups/2.0/resources/mainnet-considerations.md): Production deployment considerations
 
 ## Fraud Proofs
 
-- [Overview](https://docs.cartesi.io/fraud-proofs/): Fraud proof system overview and PRT introduction
-- [Introduction](https://docs.cartesi.io/fraud-proofs/fraud-proof-basics/introduction/): Beginner-friendly fraud proof introduction
-- [Bonds](https://docs.cartesi.io/fraud-proofs/fraud-proof-basics/bonds/): Bond mechanism in the fraud-proof system
-- [Epoch Lifecycle](https://docs.cartesi.io/fraud-proofs/fraud-proof-basics/epochs/): Epoch boundaries and lifecycle
-- [State Transition Function](https://docs.cartesi.io/fraud-proofs/fraud-proof-basics/state-transition-function/): State transition function explained
-- [PRT Introduction](https://docs.cartesi.io/fraud-proofs/prt/prt-introduction/): Permissionless Refereed Tournament overview
-- [PRT Algorithm](https://docs.cartesi.io/fraud-proofs/prt/prt-algorithm/): PRT algorithm details
-- [PRT Architecture](https://docs.cartesi.io/fraud-proofs/prt/prt-architecture/): PRT system architecture
-- [Honeypot Introduction](https://docs.cartesi.io/fraud-proofs/honeypot/introduction/): Honeypot application overview
-- [Honeypot Application Logic](https://docs.cartesi.io/fraud-proofs/honeypot/application-logic/): Honeypot implementation details
-- [Honeypot with PRT](https://docs.cartesi.io/fraud-proofs/honeypot/prt-integration/): Honeypot PRT integration
-- [DaveConsensus API Reference](https://docs.cartesi.io/fraud-proofs/references/daveconsensus/): DaveConsensus contract reference
-- [Deployments](https://docs.cartesi.io/fraud-proofs/references/deployments/): PRT and Honeypot deployed contracts
-- [PRT v1 Deployments](https://docs.cartesi.io/fraud-proofs/references/prt-v1-deployments/): PRT v1 deployed contracts
-- [PRT Core Contracts](https://docs.cartesi.io/fraud-proofs/references/tournament/): Tournament contract reference
+- [Overview](https://docs.cartesi.io/fraud-proofs.md): Fraud proof system overview and PRT introduction
+- [Introduction](https://docs.cartesi.io/fraud-proofs/fraud-proof-basics/introduction.md): Beginner-friendly fraud proof introduction
+- [Bonds](https://docs.cartesi.io/fraud-proofs/fraud-proof-basics/bonds.md): Bond mechanism in the fraud-proof system
+- [Epoch Lifecycle](https://docs.cartesi.io/fraud-proofs/fraud-proof-basics/epochs.md): Epoch boundaries and lifecycle
+- [State Transition Function](https://docs.cartesi.io/fraud-proofs/fraud-proof-basics/state-transition-function.md): State transition function explained
+- [PRT Introduction](https://docs.cartesi.io/fraud-proofs/prt/prt-introduction.md): Permissionless Refereed Tournament overview
+- [PRT Algorithm](https://docs.cartesi.io/fraud-proofs/prt/prt-algorithm.md): PRT algorithm details
+- [PRT Architecture](https://docs.cartesi.io/fraud-proofs/prt/prt-architecture.md): PRT system architecture
+- [Honeypot Introduction](https://docs.cartesi.io/fraud-proofs/honeypot/introduction.md): Honeypot application overview
+- [Honeypot Application Logic](https://docs.cartesi.io/fraud-proofs/honeypot/application-logic.md): Honeypot implementation details
+- [Honeypot with PRT](https://docs.cartesi.io/fraud-proofs/honeypot/prt-integration.md): Honeypot PRT integration
+- [DaveConsensus API Reference](https://docs.cartesi.io/fraud-proofs/references/daveconsensus.md): DaveConsensus contract reference
+- [Deployments](https://docs.cartesi.io/fraud-proofs/references/deployments.md): PRT and Honeypot deployed contracts
+- [PRT v1 Deployments](https://docs.cartesi.io/fraud-proofs/references/prt-v1-deployments.md): PRT v1 deployed contracts
+- [PRT Core Contracts](https://docs.cartesi.io/fraud-proofs/references/tournament.md): Tournament contract reference
 
 ## Cartesi Compute (Legacy)
 
-- [Cartesi Compute](https://docs.cartesi.io/cartesi-compute/): Cartesi Compute SDK category root
-- [Cartesi Compute SDK](https://docs.cartesi.io/compute/): Cartesi Compute SDK overview
-- [Overview](https://docs.cartesi.io/compute/overview/): Overview of Cartesi Compute
-- [How it works](https://docs.cartesi.io/compute/how/): How Cartesi Compute works
-- [Architecture](https://docs.cartesi.io/compute/architecture/): Cartesi Compute architecture
-- [Drives](https://docs.cartesi.io/compute/drives/): Input and output drives
-- [Instantiate](https://docs.cartesi.io/compute/instantiate/): Instantiate a computation
-- [Integer Drive](https://docs.cartesi.io/compute/integer_drive/): Integer drive type
-- [Logger drives](https://docs.cartesi.io/compute/logger_drive/): Logger drive type
-- [Machines off-chain](https://docs.cartesi.io/compute/machine-offchain/): Off-chain machine management
-- [Machines on-chain](https://docs.cartesi.io/compute/machine-onchain/): On-chain machine management
-- [The off-chain API](https://docs.cartesi.io/compute/off-chain-api/): Off-chain API reference
-- [Provider drives](https://docs.cartesi.io/compute/provider/): Provider drive type
-- [Platform services](https://docs.cartesi.io/compute/services/): Platform services
-- [Supported networks](https://docs.cartesi.io/compute/supported-networks/): Supported blockchain networks
-- [Execution timeline](https://docs.cartesi.io/compute/timeline/): Computation execution timeline
-- [Topologies](https://docs.cartesi.io/compute/topologies/): Network topologies
-- [Wallets](https://docs.cartesi.io/compute/wallet/): Wallet integration
-- [Putting Things Together](https://docs.cartesi.io/compute/workflow/): End-to-end workflow
-- [On-chain API](https://docs.cartesi.io/compute/api/): On-chain API reference
+- [Cartesi Compute SDK](https://docs.cartesi.io/compute.md): Cartesi Compute SDK overview
+- [Overview](https://docs.cartesi.io/compute/overview.md): Overview of Cartesi Compute
+- [How it works](https://docs.cartesi.io/compute/how.md): How Cartesi Compute works
+- [Architecture](https://docs.cartesi.io/compute/architecture.md): Cartesi Compute architecture
+- [Drives](https://docs.cartesi.io/compute/drives.md): Input and output drives
+- [Instantiate](https://docs.cartesi.io/compute/instantiate.md): Instantiate a computation
+- [Integer Drive](https://docs.cartesi.io/compute/integer_drive.md): Integer drive type
+- [Logger drives](https://docs.cartesi.io/compute/logger_drive.md): Logger drive type
+- [Machines off-chain](https://docs.cartesi.io/compute/machine-offchain.md): Off-chain machine management
+- [Machines on-chain](https://docs.cartesi.io/compute/machine-onchain.md): On-chain machine management
+- [The off-chain API](https://docs.cartesi.io/compute/off-chain-api.md): Off-chain API reference
+- [Provider drives](https://docs.cartesi.io/compute/provider.md): Provider drive type
+- [Platform services](https://docs.cartesi.io/compute/services.md): Platform services
+- [Supported networks](https://docs.cartesi.io/compute/supported-networks.md): Supported blockchain networks
+- [Execution timeline](https://docs.cartesi.io/compute/timeline.md): Computation execution timeline
+- [Topologies](https://docs.cartesi.io/compute/topologies.md): Network topologies
+- [Wallets](https://docs.cartesi.io/compute/wallet.md): Wallet integration
+- [Putting Things Together](https://docs.cartesi.io/compute/workflow.md): End-to-end workflow
+- [On-chain API](https://docs.cartesi.io/compute/api.md): On-chain API reference
 - [References](https://docs.cartesi.io/compute/references/): Reference documentation
+
+## Legacy Tutorials (Cartesi Compute SDK)
+
+- [Introduction](https://docs.cartesi.io/tutorials/introduction.md): Introduction to the Cartesi Compute SDK tutorials
+- [General requirements](https://docs.cartesi.io/tutorials/requirements.md): Environment and tooling requirements
+- [Cartesi Compute SDK Environment](https://docs.cartesi.io/tutorials/compute-env.md): Setting up the Cartesi Compute SDK environment
+
+### Hello World Tutorial
+
+- [Hello World machine](https://docs.cartesi.io/tutorials/helloworld/cartesi-machine.md): Build the Hello World Cartesi Machine
+- [Creating basic dApp](https://docs.cartesi.io/tutorials/helloworld/create-project.md): Create the Hello World dApp project
+- [Instantiating computation](https://docs.cartesi.io/tutorials/helloworld/instantiate.md): Instantiate the Hello World computation
+- [Deploying and running](https://docs.cartesi.io/tutorials/helloworld/deploy-run.md): Deploy and run the Hello World dApp
+- [Retrieving result](https://docs.cartesi.io/tutorials/helloworld/getresult.md): Retrieve the Hello World computation result
+
+### Calculator Tutorial
+
+- [Calculator machine](https://docs.cartesi.io/tutorials/calculator/cartesi-machine.md): Build the Calculator Cartesi Machine
+- [Calculator project](https://docs.cartesi.io/tutorials/calculator/create-project.md): Create the Calculator dApp project
+- [Full Calculator dApp](https://docs.cartesi.io/tutorials/calculator/full-dapp.md): Complete Calculator dApp implementation
+
+### Dogecoin Hash Tutorial
+
+- [Dogecoin Hash machine](https://docs.cartesi.io/tutorials/dogecoin-hash/cartesi-machine.md): Build the Dogecoin Hash Cartesi Machine
+- [Dogecoin Hash project](https://docs.cartesi.io/tutorials/dogecoin-hash/create-project.md): Create the Dogecoin Hash dApp project
+- [Computing scrypt using C](https://docs.cartesi.io/tutorials/dogecoin-hash/scrypt-c.md): Implement scrypt computation in C
+- [Full Dogecoin Hash dApp](https://docs.cartesi.io/tutorials/dogecoin-hash/full-dapp.md): Complete Dogecoin Hash dApp implementation
+
+### Generic Script Tutorial
+
+- [Generic Script machine](https://docs.cartesi.io/tutorials/generic-script/cartesi-machine.md): Build the Generic Script Cartesi Machine
+- [Generic Script project](https://docs.cartesi.io/tutorials/generic-script/create-project.md): Create the Generic Script dApp project
+- [Custom root file-system](https://docs.cartesi.io/tutorials/generic-script/custom-rootfs.md): Build a custom root filesystem
+- [Full Generic Script dApp](https://docs.cartesi.io/tutorials/generic-script/full-dapp.md): Complete Generic Script dApp implementation
+
+### GPG Verify Tutorial
+
+- [GPG Verify machine](https://docs.cartesi.io/tutorials/gpg-verify/cartesi-machine.md): Build the GPG Verify Cartesi Machine
+- [GPG Verify project](https://docs.cartesi.io/tutorials/gpg-verify/create-project.md): Create the GPG Verify dApp project
+- [Using ext2 files and GPG](https://docs.cartesi.io/tutorials/gpg-verify/ext2-gpg.md): Work with ext2 files and GPG in the machine
+- [Full GPG Verify dApp](https://docs.cartesi.io/tutorials/gpg-verify/full-dapp.md): Complete GPG Verify dApp implementation
+- [Processing larger files](https://docs.cartesi.io/tutorials/gpg-verify/larger-files.md): Handle larger file inputs
 
 ## Earn CTSI
 
-- [Earn CTSI](https://docs.cartesi.io/earn-ctsi/): Staking and earning CTSI overview
-- [How to stake](https://docs.cartesi.io/earn-ctsi/staking/): Step-by-step staking guide
-- [Create a public pool](https://docs.cartesi.io/earn-ctsi/public-pool/): Create and manage a staking pool
-- [Run a private node](https://docs.cartesi.io/earn-ctsi/run-node/): Run a Cartesi node privately
-- [FAQs](https://docs.cartesi.io/earn-ctsi/staking-faq/): Staking frequently asked questions
+- [Staking overview](https://docs.cartesi.io/earn-ctsi/staking.md): Staking and earning CTSI overview
+- [Create a public pool](https://docs.cartesi.io/earn-ctsi/public-pool.md): Create and manage a staking pool
+- [Run a private node](https://docs.cartesi.io/earn-ctsi/run-node.md): Run a Cartesi node privately
+- [FAQs](https://docs.cartesi.io/earn-ctsi/staking-faq.md): Staking frequently asked questions

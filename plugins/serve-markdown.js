@@ -109,24 +109,77 @@ function toPermalink(reqPath, wantsMarkdown) {
 }
 
 /**
+ * Inject an llms.txt discovery directive into a markdown string.
+ * Mirrors the HTML <link rel="alternate" type="text/plain" href="/llms.txt"> pattern
+ * so that agents parsing raw markdown can discover the site index.
+ *
+ * The directive is inserted as an HTML comment immediately after the YAML
+ * frontmatter block (if one exists) or at the very top of the file.
+ *
+ * @param {string} content   raw markdown source
+ * @param {string} siteUrl   e.g. "https://docs.cartesi.io"
+ * @returns {string}
+ */
+function injectLlmsDirective(content, siteUrl) {
+  const directive = `> For the complete documentation index, see [llms.txt](${siteUrl}/llms.txt)`;
+  // If the file starts with YAML frontmatter, insert after the closing ---
+  if (content.startsWith('---')) {
+    const end = content.indexOf('\n---', 3);
+    if (end !== -1) {
+      const afterFrontmatter = end + 4; // past the closing ---
+      return content.slice(0, afterFrontmatter) + '\n\n' + directive + '\n' + content.slice(afterFrontmatter);
+    }
+  }
+  return directive + '\n\n' + content;
+}
+
+/**
+ * Permalinks whose .md form should serve llms.txt instead of their own page
+ * content.  Agents hitting these routes get a full navigation index rather
+ * than a single page.
+ *
+ * '/'                      — site root; no doc source exists anyway.
+ * '/cartesi-rollups/2.0/'  — versioned docs entry point; the overview page
+ *                            is still reachable via the SECTION_ALIASES alias
+ *                            at /cartesi-rollups/overview.md.
+ */
+const LLMS_INDEX_ROUTES = new Set(['/', '/cartesi-rollups/2.0/']);
+
+/**
+ * Virtual .md aliases: a permalink that has no real Docusaurus route but
+ * should serve the content of another permalink's source file.
+ *
+ * '/cartesi-rollups/overview/' → '/cartesi-rollups/2.0/'
+ *   Gives agents a stable URL for the v2.0 overview page now that
+ *   /cartesi-rollups/2.0.md is reserved for the llms.txt index.
+ */
+const SECTION_ALIASES = new Map([
+  ['/cartesi-rollups/overview/', '/cartesi-rollups/2.0/'],
+]);
+
+/**
  * Build the Express request handler that serves raw Markdown for individual pages.
  *
  * @param {Map<string, string>} urlMap
  * @param {string} siteDir
+ * @param {string} siteUrl
  * @returns {import('express').RequestHandler}
  */
-function makeMarkdownHandler(urlMap, siteDir) {
+function makeMarkdownHandler(urlMap, siteDir, siteUrl) {
   return function markdownHandler(req, res, next) {
     const wantsMarkdown = (req.headers['accept'] ?? '').includes('text/markdown');
     const permalink = toPermalink(req.path, wantsMarkdown);
     if (!permalink) return next();
 
-    const sourceFile = urlMap.get(permalink);
-
-    // Root URL has no markdown doc source — serve llms.txt as the site index.
-    if (!sourceFile && permalink === '/') {
+    // Permalinks in LLMS_INDEX_ROUTES serve llms.txt (with host rewriting)
+    // so agents get a navigation index rather than a single page.
+    if (LLMS_INDEX_ROUTES.has(permalink)) {
       try {
-        const content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
+        let content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
+        const reqOrigin = `${req.protocol}://${req.headers['host']}`;
+        if (reqOrigin && reqOrigin !== siteUrl) {
+          content = content.split(siteUrl).join(reqOrigin);
+        }
         res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
         res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
         res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -136,6 +189,12 @@ function makeMarkdownHandler(urlMap, siteDir) {
       }
     }
 
+    // Virtual aliases: resolve to the source file of another permalink.
+    const aliasTarget = SECTION_ALIASES.get(permalink);
+    const sourceFile = aliasTarget
+      ? urlMap.get(aliasTarget)
+      : urlMap.get(permalink);
+
     if (!sourceFile) return next();
 
     let content;
@@ -144,6 +203,9 @@ function makeMarkdownHandler(urlMap, siteDir) {
     } catch {
       return next();
     }
+
+    const reqOrigin = `${req.protocol}://${req.headers['host']}`;
+    content = injectLlmsDirective(content, reqOrigin || siteUrl);
 
     res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
@@ -280,7 +342,7 @@ module.exports = function serveMarkdownPlugin(context) {
     configureWebpack(_config, isServer) {
       if (isServer) return {};
 
-      const markdownHandler = makeMarkdownHandler(urlMap, siteDir);
+      const markdownHandler = makeMarkdownHandler(urlMap, siteDir, siteUrl);
       const llmsFullHandler = makeLlmsFullHandler(urlMap, siteUrl);
       const llmsTxtHandler = makeLlmsTxtHandler(siteDir, siteUrl);
 
@@ -314,12 +376,37 @@ module.exports = function serveMarkdownPlugin(context) {
         const outputDir = path.dirname(mdOutputPath);
 
         try {
-          if (!fs.existsSync(sourcePath)) { skipped++; continue; }
           fs.mkdirSync(outputDir, { recursive: true });
-          fs.writeFileSync(mdOutputPath, fs.readFileSync(sourcePath, 'utf8'), 'utf8');
+
+          // LLMS_INDEX_ROUTES: write llms.txt content instead of the page.
+          if (LLMS_INDEX_ROUTES.has(permalink)) {
+            const llmsTxt = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
+            fs.writeFileSync(mdOutputPath, llmsTxt, 'utf8');
+            written++;
+            continue;
+          }
+
+          if (!fs.existsSync(sourcePath)) { skipped++; continue; }
+          const raw = fs.readFileSync(sourcePath, 'utf8');
+          fs.writeFileSync(mdOutputPath, injectLlmsDirective(raw, siteUrl), 'utf8');
           written++;
         } catch {
           skipped++;
+        }
+      }
+
+      // Write virtual alias .md files (e.g. cartesi-rollups/overview.md).
+      for (const [aliasPermalink, realPermalink] of SECTION_ALIASES) {
+        const sourcePath = urlMap.get(realPermalink);
+        if (!sourcePath || !fs.existsSync(sourcePath)) continue;
+        const relPath = aliasPermalink.replace(/^\//, '').replace(/\/$/, '');
+        const mdOutputPath = path.join(outDir, relPath + '.md');
+        try {
+          fs.mkdirSync(path.dirname(mdOutputPath), { recursive: true });
+          const raw = fs.readFileSync(sourcePath, 'utf8');
+          fs.writeFileSync(mdOutputPath, injectLlmsDirective(raw, siteUrl), 'utf8');
+        } catch {
+          // Non-fatal: alias files are convenience routes
         }
       }
 
