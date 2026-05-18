@@ -98,7 +98,9 @@ function buildUrlMap(allContent, siteDir) {
 function toPermalink(reqPath, wantsMarkdown) {
   if (reqPath.endsWith('.md')) {
     // /some/page.md  →  /some/page/
-    return reqPath.slice(0, -'.md'.length) + '/';
+    // /some/dir/.md  →  /some/dir/  (don't double the trailing slash)
+    const stripped = reqPath.slice(0, -'.md'.length);
+    return stripped.endsWith('/') ? stripped : stripped + '/';
   }
   if (wantsMarkdown) {
     return reqPath.endsWith('/') ? reqPath : reqPath + '/';
@@ -110,15 +112,30 @@ function toPermalink(reqPath, wantsMarkdown) {
  * Build the Express request handler that serves raw Markdown for individual pages.
  *
  * @param {Map<string, string>} urlMap
+ * @param {string} siteDir
  * @returns {import('express').RequestHandler}
  */
-function makeMarkdownHandler(urlMap) {
+function makeMarkdownHandler(urlMap, siteDir) {
   return function markdownHandler(req, res, next) {
     const wantsMarkdown = (req.headers['accept'] ?? '').includes('text/markdown');
     const permalink = toPermalink(req.path, wantsMarkdown);
     if (!permalink) return next();
 
     const sourceFile = urlMap.get(permalink);
+
+    // Root URL has no markdown doc source — serve llms.txt as the site index.
+    if (!sourceFile && permalink === '/') {
+      try {
+        const content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
+        res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+        res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        return res.send(content);
+      } catch {
+        return next();
+      }
+    }
+
     if (!sourceFile) return next();
 
     let content;
@@ -160,6 +177,42 @@ function buildLlmsFullContent(urlMap, siteUrl) {
   }
 
   return parts.join('');
+}
+
+/**
+ * Build the Express request handler that serves /llms.txt dynamically in dev,
+ * rewriting the hardcoded production domain to match the incoming request host.
+ * This allows tools/scorers running against a tunnel or staging URL to discover
+ * and test pages on that host rather than the production domain.
+ *
+ * @param {string} siteDir
+ * @param {string} siteUrl   canonical production URL (e.g. "https://docs.cartesi.io")
+ * @returns {import('express').RequestHandler}
+ */
+function makeLlmsTxtHandler(siteDir, siteUrl) {
+  return function llmsTxtHandler(req, res, next) {
+    if (req.path !== '/llms.txt') return next();
+
+    let content;
+    try {
+      content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
+    } catch {
+      return next();
+    }
+
+    // Rewrite the canonical domain to the host of this request so that
+    // scanners/scorers (e.g. running against an ngrok tunnel) can follow
+    // the links and test markdown serving on the correct origin.
+    const reqOrigin = `${req.protocol}://${req.headers['host']}`;
+    if (reqOrigin && reqOrigin !== siteUrl) {
+      content = content.split(siteUrl).join(reqOrigin);
+    }
+
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    return res.send(content);
+  };
 }
 
 /**
@@ -227,8 +280,9 @@ module.exports = function serveMarkdownPlugin(context) {
     configureWebpack(_config, isServer) {
       if (isServer) return {};
 
-      const markdownHandler = makeMarkdownHandler(urlMap);
+      const markdownHandler = makeMarkdownHandler(urlMap, siteDir);
       const llmsFullHandler = makeLlmsFullHandler(urlMap, siteUrl);
+      const llmsTxtHandler = makeLlmsTxtHandler(siteDir, siteUrl);
 
       return {
         devServer: {
@@ -236,8 +290,9 @@ module.exports = function serveMarkdownPlugin(context) {
             // devServer.app is the underlying Express application.
             // Middleware registered here runs before webpack-dev-server's
             // built-in static-file / HMR routes.
-            devServer.app.use(llmsFullHandler);
-            devServer.app.use(markdownHandler);
+            devServer.app.use(llmsTxtHandler);   // dynamic /llms.txt (host-rewritten)
+            devServer.app.use(llmsFullHandler);  // dynamic /llms-full.txt
+            devServer.app.use(markdownHandler);  // .md URLs + Accept: text/markdown
             return middlewares; // leave existing middlewares untouched
           },
         },
