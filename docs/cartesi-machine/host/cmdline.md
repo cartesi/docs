@@ -564,7 +564,7 @@ d8b96e5b7f6f459e9cb6a2f41bf276c7b85c10cd4662c04cbbb365434726c0a0
 ```
 As expected, the hash values match.
 
-The <a name="sibling-hashes"> `sibling_hashes` </a> array contains the hashes of the siblings to all nodes in the path from the root all the way down to the target node (excluding the root, which has no sibling).
+The <a id="sibling-hashes"> `sibling_hashes` </a> array contains the hashes of the siblings to all nodes in the path from the root all the way down to the target node (excluding the root, which has no sibling).
 In a process explained in the [blockchain perspective](../blockchain/hash.md), using the `address` field, the `target_hash` hash, and the `sibling_hashes` array, it is possible to go up the tree computing the hashes along the path, until the root hash is produced.
 If the root hash obtained by this process matches the expected root hash, the proof is valid.
 Otherwise, something is amiss.

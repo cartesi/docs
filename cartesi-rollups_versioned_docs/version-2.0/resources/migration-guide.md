@@ -9,16 +9,16 @@ Rollups node v2.0 introduces some major changes in how the node works internally
 
 ### My back-end...
 - handles ERC-20 token deposit inputs. See the [ERC-20 token deposit inputs](#erc-20-token-deposit-inputs) section.
-- handles application address relay inputs. See the [Application address](#application-address) section.
-- generates Ether withdrawal vouchers. See the [Ether withdrawal vouchers](#ether-withdrawal-vouchers) section.
+- handles application address relay inputs. See the Application address section.
+- generates Ether withdrawal vouchers. See the Ether withdrawal vouchers section.
 
 ### My front-end...
-- validates notices. See the [Outputs](#outputs) section.
-- executes vouchers. See the [Outputs](#outputs) section.
-- listens to voucher execution events. See the [Outputs](#outputs) section.
-- checks if a voucher was executed. See the [Outputs](#outputs) section.
-- uses inspect calls. See the [Inspect calls](#inspect-calls) section.
-- uses JSON-RPC queries. See the [JSON queries](#jsonrpc-queries) section.
+- validates notices. See the Outputs section.
+- executes vouchers. See the Outputs section.
+- listens to voucher execution events. See the Outputs section.
+- checks if a voucher was executed. See the Outputs section.
+- uses inspect calls. See the Inspect calls section.
+- uses JSON-RPC queries. See the JSON queries section.
 
 :::note
 If your application uses a high-level framework(ex. Deroll, Rollmelette etc.) for either backend or frontend, check if the framework has already implemented the changes described in this guide.

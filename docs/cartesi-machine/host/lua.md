@@ -494,7 +494,7 @@ Note that the `machine:run()` method can return precociously for a variety of re
 The `iflags` CSR contains a bit `H` that is set to true whenever the machine is halted, and a bit `Y` that is set to true whenever the machine has yielded manual.
 The `machine:read_iflags_H()` and `machine:read_iflags_Y()` methods return the value of these bits, respectively, and the loop breaks if any of them is set.
 
-<a name="run-cat-foo-bar"></a>
+<a id="run-cat-foo-bar"></a>
 
 For example, to run the configuration stored in `./config/cat-foo-bar.lua` (assuming `./foo.ext2` is available) simply run
 

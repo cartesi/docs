@@ -186,5 +186,5 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 </Tabs>
 
 :::note querying notices
-Frontend clients can query notices using a JSON RPC API exposed by Cartesi Nodes. [Refer to the documentation here](../../development/query-outputs.md#query-all-notices) to query notices from the rollup server.
+Frontend clients can query notices using a JSON RPC API exposed by Cartesi Nodes. [Refer to the documentation here](../../development/query-outputs.md#query-all-notices-and-vouchers) to query notices from the rollup server.
 :::

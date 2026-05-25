@@ -573,7 +573,7 @@ When an application identifies an inspect-state request, it obtains the query fr
 While processing inspect-state requests, the application can emit vouchers, or exceptions.
 It writes data for all these to the Rollup TX buffer memory range and sends the appropriate command to the HTIF yield device.
 
-The format for all these request and response data are as follows: <a title="#rollup-format"></a>
+The format for all these request and response data are as follows: <a id="rollup-format"></a>
 
 <center>
 <table>

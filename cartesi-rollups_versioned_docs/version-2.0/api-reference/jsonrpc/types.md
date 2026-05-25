@@ -467,4 +467,5 @@ Result for getting the node version.
 ```typescript
 interface NodeVersionResult {
   data: string; // Semantic version format
-} 
+}
+```

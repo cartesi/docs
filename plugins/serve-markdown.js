@@ -122,14 +122,7 @@ function toPermalink(reqPath, wantsMarkdown) {
  */
 function injectLlmsDirective(content, siteUrl) {
   const directive = `> For the complete documentation index, see [llms.txt](${siteUrl}/llms.txt)`;
-  // If the file starts with YAML frontmatter, insert after the closing ---
-  if (content.startsWith('---')) {
-    const end = content.indexOf('\n---', 3);
-    if (end !== -1) {
-      const afterFrontmatter = end + 4; // past the closing ---
-      return content.slice(0, afterFrontmatter) + '\n\n' + directive + '\n' + content.slice(afterFrontmatter);
-    }
-  }
+  // Always prepend at the very top, before any YAML frontmatter.
   return directive + '\n\n' + content;
 }
 
@@ -166,65 +159,102 @@ const SECTION_ALIASES = new Map([
  * @returns {import('express').RequestHandler}
  */
 function makeMarkdownHandler(urlMap, siteDir, siteUrl) {
-  return function markdownHandler(req, res, next) {
-    const wantsMarkdown = (req.headers['accept'] ?? '').includes('text/markdown');
-    const permalink = toPermalink(req.path, wantsMarkdown);
-    if (!permalink) return next();
+  return async function markdownHandler(req, res, next) {
+    try {
+      const wantsMarkdown = (req.headers['accept'] ?? '').includes('text/markdown');
+      const permalink = toPermalink(req.path, wantsMarkdown);
+      if (!permalink) return next();
 
-    // Permalinks in LLMS_INDEX_ROUTES serve llms.txt (with host rewriting)
-    // so agents get a navigation index rather than a single page.
-    if (LLMS_INDEX_ROUTES.has(permalink)) {
-      try {
-        let content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
-        const reqOrigin = `${req.protocol}://${req.headers['host']}`;
-        if (reqOrigin && reqOrigin !== siteUrl) {
-          content = content.split(siteUrl).join(reqOrigin);
+      const reqOrigin = `${req.protocol}://${req.headers['host']}`;
+
+      // Permalinks in LLMS_INDEX_ROUTES serve llms.txt (with host rewriting)
+      // so agents get a navigation index rather than a single page.
+      if (LLMS_INDEX_ROUTES.has(permalink)) {
+        try {
+          let content = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
+          if (reqOrigin && reqOrigin !== siteUrl) {
+            content = content.split(siteUrl).join(reqOrigin);
+          }
+          res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+          res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+          res.setHeader('X-Content-Type-Options', 'nosniff');
+          return res.send(content);
+        } catch {
+          return next();
         }
-        res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
-        res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-        res.setHeader('X-Content-Type-Options', 'nosniff');
-        return res.send(content);
+      }
+
+      // Virtual aliases: resolve to the source file of another permalink.
+      const aliasTarget = SECTION_ALIASES.get(permalink);
+      const sourceFile = aliasTarget
+        ? urlMap.get(aliasTarget)
+        : urlMap.get(permalink);
+
+      if (!sourceFile) {
+        // Generated-index fallback: the page has no markdown source but
+        // Docusaurus builds an HTML page for it (e.g. sidebar categories with
+        // link: { type: 'generated-index' }).  Fetch the HTML from the dev
+        // server itself, extract the <title>, and return a minimal .md file.
+        // Node.js 20 built-in fetch is used — no extra dependency needed.
+        try {
+          const htmlRes = await fetch(`${reqOrigin}${permalink}`);
+          if (htmlRes.ok) {
+            const html = await htmlRes.text();
+            const titleMatch = html.match(/<title>([^|<]+)/);
+            const title = titleMatch ? titleMatch[1].trim() : permalink;
+            const content = injectLlmsDirective(`# ${title}\n`, reqOrigin || siteUrl);
+            res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+            res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+            res.setHeader('X-Content-Type-Options', 'nosniff');
+            return res.send(content);
+          }
+        } catch { /* fall through to next() */ }
+        return next();
+      }
+
+      let content;
+      try {
+        content = fs.readFileSync(sourceFile, 'utf8');
       } catch {
         return next();
       }
+
+      content = injectLlmsDirective(content, reqOrigin || siteUrl);
+
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      return res.send(content);
+    } catch (err) {
+      next(err);
     }
-
-    // Virtual aliases: resolve to the source file of another permalink.
-    const aliasTarget = SECTION_ALIASES.get(permalink);
-    const sourceFile = aliasTarget
-      ? urlMap.get(aliasTarget)
-      : urlMap.get(permalink);
-
-    if (!sourceFile) return next();
-
-    let content;
-    try {
-      content = fs.readFileSync(sourceFile, 'utf8');
-    } catch {
-      return next();
-    }
-
-    const reqOrigin = `${req.protocol}://${req.headers['host']}`;
-    content = injectLlmsDirective(content, reqOrigin || siteUrl);
-
-    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    return res.send(content);
   };
 }
 
 /**
  * Concatenate all documentation pages into a single string for llms-full.txt.
  * Pages are sorted by permalink for consistent ordering.
- * Each page is preceded by a URL header so LLMs can anchor content to its source.
+ * Each page is preceded by a comment so LLMs can anchor content to its source.
+ *
+ * The file starts with the llms.txt header so it has the mandatory H1 heading
+ * required by the llmstxt.org specification and expected by agent checkers.
  *
  * @param {Map<string, string>} urlMap
  * @param {string} siteUrl   e.g. "https://docs.cartesi.io"
+ * @param {string} siteDir   absolute path to the Docusaurus site directory
  * @returns {string}
  */
-function buildLlmsFullContent(urlMap, siteUrl) {
+function buildLlmsFullContent(urlMap, siteUrl, siteDir) {
   const parts = [];
+
+  // Prepend the llms.txt header — provides the required H1 heading and index preamble.
+  try {
+    const llmsHeader = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
+    parts.push(llmsHeader.trim());
+  } catch {
+    parts.push('# Cartesi Documentation\n\n> Full documentation snapshot for AI agents.');
+  }
+
   const sortedEntries = [...urlMap.entries()].sort(([a], [b]) => a.localeCompare(b));
 
   for (const [permalink, sourcePath] of sortedEntries) {
@@ -235,7 +265,7 @@ function buildLlmsFullContent(urlMap, siteUrl) {
       continue;
     }
     const pageUrl = siteUrl.replace(/\/$/, '') + permalink;
-    parts.push(`\n\n---\n\nSource: ${pageUrl}\n\n${content.trim()}`);
+    parts.push(`\n\n---\n\n<!-- source: ${pageUrl} -->\n\n${content.trim()}`);
   }
 
   return parts.join('');
@@ -282,13 +312,14 @@ function makeLlmsTxtHandler(siteDir, siteUrl) {
  *
  * @param {Map<string, string>} urlMap
  * @param {string} siteUrl
+ * @param {string} siteDir
  * @returns {import('express').RequestHandler}
  */
-function makeLlmsFullHandler(urlMap, siteUrl) {
+function makeLlmsFullHandler(urlMap, siteUrl, siteDir) {
   return function llmsFullHandler(req, res, next) {
     if (req.path !== '/llms-full.txt') return next();
 
-    const content = buildLlmsFullContent(urlMap, siteUrl);
+    const content = buildLlmsFullContent(urlMap, siteUrl, siteDir);
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -306,7 +337,11 @@ function makeLlmsFullHandler(urlMap, siteUrl) {
  */
 module.exports = function serveMarkdownPlugin(context) {
   const { siteDir, siteConfig } = context;
-  const siteUrl = siteConfig.url || 'https://docs.cartesi.io';
+  // Derive the site URL from DOCS_DOMAIN (the same variable used by the CDK
+  // stack for the CloudFront custom domain) so only one variable needs to be
+  // set per branch in Amplify Console.
+  // Defaults to staging so unset branches get correct staging URLs.
+  const siteUrl = `https://${process.env.DOCS_DOMAIN ?? 'staging.docs.cartesi.io'}`;
 
   // Shared mutable map populated in allContentLoaded and consumed in
   // configureWebpack + postBuild.  allContentLoaded always runs before both.
@@ -314,6 +349,35 @@ module.exports = function serveMarkdownPlugin(context) {
 
   return {
     name: 'docusaurus-plugin-serve-markdown',
+
+    // ── 0. Inject a hidden in-body element linking to /llms.txt ─────────────
+    //
+    // AFDocs and similar agent-readiness checkers look for an in-body element
+    // that references /llms.txt so agents fetching the HTML version of a page
+    // can discover the documentation index.  The element is visually hidden
+    // (clipped off-screen) so it does not affect the page layout, but it
+    // survives HTML-to-markdown conversion and is visible to DOM parsers.
+    //
+    // preBodyTags are inserted as the very first element inside <body>, which
+    // ensures the directive appears well within the first 50% of the page.
+    //
+    injectHtmlTags() {
+      return {
+        preBodyTags: [
+          {
+            tagName: 'div',
+            attributes: {
+              style:
+                'position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;',
+            },
+            innerHTML:
+              'AI agent documentation index: <a href="/llms.txt">llms.txt</a>.' +
+              ' Raw markdown for any page is available by appending .md to the URL.' +
+              ' Full content snapshot: <a href="/llms-full.txt">llms-full.txt</a>.',
+          },
+        ],
+      };
+    },
 
     // ── 1. Build URL → source file map (Docusaurus v3 hook) ─────────────────
     //
@@ -325,6 +389,16 @@ module.exports = function serveMarkdownPlugin(context) {
       const discovered = buildUrlMap(allContent, siteDir);
       for (const [permalink, absPath] of discovered) {
         urlMap.set(permalink, absPath);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const logger = require('@docusaurus/logger').default;
+      if (urlMap.size === 0) {
+        logger.warn(
+          '[serve-markdown] No docs discovered in allContent — .md files and llms-full.txt will NOT be generated. ' +
+            'Check that @docusaurus/plugin-content-docs instances are correctly configured.',
+        );
+      } else {
+        logger.info(`[serve-markdown] Discovered ${urlMap.size} pages for .md generation.`);
       }
     },
 
@@ -343,7 +417,7 @@ module.exports = function serveMarkdownPlugin(context) {
       if (isServer) return {};
 
       const markdownHandler = makeMarkdownHandler(urlMap, siteDir, siteUrl);
-      const llmsFullHandler = makeLlmsFullHandler(urlMap, siteUrl);
+      const llmsFullHandler = makeLlmsFullHandler(urlMap, siteUrl, siteDir);
       const llmsTxtHandler = makeLlmsTxtHandler(siteDir, siteUrl);
 
       return {
@@ -366,6 +440,21 @@ module.exports = function serveMarkdownPlugin(context) {
       let written = 0;
       let skipped = 0;
 
+      // Build the rewritten llms.txt content once.
+      // static/llms.txt always contains the production domain; when siteUrl
+      // differs (e.g. staging) every internal link is substituted so agents
+      // following links from llms.txt land on the correct environment.
+      const llmsTxtRaw = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
+      const llmsTxtContent = llmsTxtRaw.replaceAll('https://docs.cartesi.io', siteUrl);
+
+      // Overwrite the llms.txt that Docusaurus copied from static/ so the
+      // served file also has the correct URLs.
+      try {
+        fs.writeFileSync(path.join(outDir, 'llms.txt'), llmsTxtContent, 'utf8');
+      } catch {
+        // Non-fatal
+      }
+
       // Write individual .md files next to HTML pages
       for (const [permalink, sourcePath] of urlMap.entries()) {
         // /some/page/  →  outDir/some/page.md
@@ -378,10 +467,9 @@ module.exports = function serveMarkdownPlugin(context) {
         try {
           fs.mkdirSync(outputDir, { recursive: true });
 
-          // LLMS_INDEX_ROUTES: write llms.txt content instead of the page.
+          // LLMS_INDEX_ROUTES: write the rewritten llms.txt instead of the page.
           if (LLMS_INDEX_ROUTES.has(permalink)) {
-            const llmsTxt = fs.readFileSync(path.join(siteDir, 'static', 'llms.txt'), 'utf8');
-            fs.writeFileSync(mdOutputPath, llmsTxt, 'utf8');
+            fs.writeFileSync(mdOutputPath, llmsTxtContent, 'utf8');
             written++;
             continue;
           }
@@ -410,9 +498,62 @@ module.exports = function serveMarkdownPlugin(context) {
         }
       }
 
-      // Write llms-full.txt — all documentation concatenated
+      // Write .md files for generated-index pages.
+      //
+      // Docusaurus generates HTML pages for sidebar categories that use
+      // link: { type: 'generated-index' } — e.g. /new-to-cartesi/, /earn-ctsi/,
+      // /compute/tutorials/calculator/. These pages appear in the sitemap but
+      // have no markdown source file, so the urlMap loop above skips them and
+      // they produce a 404 when requested with the .md extension.
+      //
+      // Fix: walk outDir after the main loop and write a minimal .md file for
+      // every directory that has an index.html but no sibling .md file yet.
+      // The title is extracted from the <title> tag in index.html.
+      //
+      // Directories that are not documentation pages are skipped.
+      const SKIP_DIRS = new Set(['assets', 'img', '.well-known', 'search']);
+
+      function generateIndexMd(dir) {
+        let count = 0;
+        let entries;
+        try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return count; }
+
+        for (const entry of entries) {
+          if (!entry.isDirectory() || SKIP_DIRS.has(entry.name)) continue;
+          const subDir = path.join(dir, entry.name);
+          const indexHtml = path.join(subDir, 'index.html');
+          if (!fs.existsSync(indexHtml)) { count += generateIndexMd(subDir); continue; }
+
+          // Derive the sibling .md path: outDir/some/section.md
+          const relDir = path.relative(outDir, subDir);
+          const mdPath = path.join(outDir, relDir + '.md');
+
+          if (!fs.existsSync(mdPath)) {
+            try {
+              const html = fs.readFileSync(indexHtml, 'utf8');
+              // Extract just the page title (before the " | Site Name" suffix).
+              const titleMatch = html.match(/<title>([^|<]+)/);
+              const title = titleMatch ? titleMatch[1].trim() : relDir;
+              const content = injectLlmsDirective(`# ${title}\n`, siteUrl);
+              fs.mkdirSync(path.dirname(mdPath), { recursive: true });
+              fs.writeFileSync(mdPath, content, 'utf8');
+              count++;
+            } catch { /* non-fatal */ }
+          }
+
+          count += generateIndexMd(subDir);
+        }
+        return count;
+      }
+
+      const generatedIndexCount = generateIndexMd(outDir);
+
+      // Write llms-full.txt — all documentation concatenated.
+      // buildLlmsFullContent uses siteUrl for page URLs but reads the static
+      // llms.txt header from disk; replaceAll fixes the header section too.
       try {
-        const llmsFullContent = buildLlmsFullContent(urlMap, siteUrl);
+        const llmsFullContent = buildLlmsFullContent(urlMap, siteUrl, siteDir)
+          .replaceAll('https://docs.cartesi.io', siteUrl);
         fs.writeFileSync(path.join(outDir, 'llms-full.txt'), llmsFullContent, 'utf8');
       } catch {
         // Non-fatal: llms-full.txt is a convenience file
@@ -422,7 +563,7 @@ module.exports = function serveMarkdownPlugin(context) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const logger = require('@docusaurus/logger').default;
       logger.info(
-        `[serve-markdown] wrote ${written} .md files and llms-full.txt to build output` +
+        `[serve-markdown] wrote ${written} .md files, ${generatedIndexCount} index .md files, and llms-full.txt to build output` +
           (skipped ? ` (${skipped} skipped)` : ''),
       );
     },
