@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "transport": "http",
+  "url": "https://server.mcp.mugen.builders/mcp",
+  "servers": [
+    {
+      "name": "public",
+      "url": "https://server.mcp.mugen.builders/mcp",
+      "transport": "http",
+      "authentication": "none"
+    }
+  ]
+}
