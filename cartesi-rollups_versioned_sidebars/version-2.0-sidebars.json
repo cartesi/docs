@@ -162,6 +162,16 @@
         },
         {
             "type": "category",
+            "label": "Deployment",
+            "collapsed": true,
+            "items": [
+                "deployment/introduction",
+                "deployment/snapshot",
+                "deployment/self-hosted"
+            ]
+        },
+        {
+            "type": "category",
             "label": "Build with AI",
             "collapsed": true,
             "items": [
@@ -169,16 +179,6 @@
                 "build-with-ai/mcp-server",
                 "build-with-ai/skills",
                 "build-with-ai/prompting"
-            ]
-        },
-        {
-            "type": "category",
-            "label": "Deployment",
-            "collapsed": true,
-            "items": [
-                "deployment/introduction",
-                "deployment/snapshot",
-                "deployment/self-hosted"
             ]
         },
         {
