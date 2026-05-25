@@ -351,6 +351,7 @@ const config = {
     }),
   plugins: [
     require.resolve("./plugins/serve-markdown.js"),
+    require.resolve("./plugins/copy-page-button"),
     [
       "@docusaurus/plugin-content-docs",
       {
