@@ -83,6 +83,64 @@ What to do instead:
 
 ## Prompt patterns
 
+### Spec-driven development
+
+Use this pattern when you want requirements locked before code: explicit user stories, tests that trace to those stories, a Cartesi Rollups v2 backend implementation, then a verification step where you run the tests locally. This avoids agents inventing APIs, skipping validation, or getting lost during vibe coding.
+
+```text
+Drive this work spec-first for a Cartesi Rollups v2 app called "voting-app".
+
+Use cartesi-scaffold, cartesi-backend-core, cartesi-backend-js-ts, and
+cartesi-local-dev. Scope: Cartesi machine backend only (advance/inspect,
+validation, state). No frontend unless I ask later.
+
+Step 1 — Spec and user stories:
+- Read my requirements below and produce SPEC.md with:
+  - User stories (required), each with ID US-001, US-002, ...
+    Format: "As a <actor>, I want <action>, so that <outcome>."
+    Add acceptance criteria (Given / When / Then) per story.
+  - Map each story to advance actions, inspect routes, or reject paths.
+  - Actors, inputs, and state transitions.
+  - Payload schemas for every advance input and inspect route.
+  - Invariants (one vote per address per proposal, no votes after deadline).
+  - Error cases and how each is rejected.
+- Stop after SPEC.md and wait for my approval.
+
+Step 2 — Plan and test scripts:
+- After I approve SPEC.md, generate PLAN.md (folder layout, modules, data flow).
+- Add a failing test suite that covers every user story in SPEC.md:
+  - Name tests after story IDs (e.g. US-003_reject_vote_after_deadline).
+  - Cover happy path, validation failures, and inspect responses per story.
+  - Use the project's test runner (e.g. npm test / pytest) for handler and
+    validation logic; document any Cartesi CLI smoke checks separately.
+- Do not implement production handlers yet.
+
+Step 3 — Cartesi backend implementation:
+- Only after I approve PLAN.md, implement the Rollups v2 backend to make tests
+  pass: advance_state, inspect handlers, validation/, serialization as needed.
+- Deliver backend code plus the test files from Step 2 (updated to pass).
+- Keep changes scoped to SPEC.md and user story IDs. Flag gaps; do not guess.
+- Do not run tests or cartesi commands in this step.
+
+Step 4 — Verify (I run locally):
+- Print exact commands for me to run, in order:
+  1) Install deps (if needed)
+  2) Run the full test suite
+  3) cartesi build and cartesi run (if applicable)
+  4) Sample cartesi send / inspect commands to manually confirm one story
+- Summarize expected outcomes per user story ID after each command group.
+
+Constraints:
+- Cartesi Rollups v2 only. Pin alpha packages explicitly.
+- Every test and code change must trace to a user story ID in SPEC.md.
+- Print CLI commands for me to run; do not execute them.
+
+Requirements:
+- Proposals with a title, options, and a deadline.
+- advance_state actions: create_proposal, cast_vote, close_proposal.
+- inspect routes: /proposals, /proposals/:id, /results/:id.
+```
+
 ### Scaffold a new app
 
 ```text
