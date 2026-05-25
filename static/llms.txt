@@ -4,11 +4,13 @@
 
 ## Instructions for AI Agents
 
-Use this file to discover and navigate Cartesi's documentation. Each link below points directly to the raw Markdown source for that page. A complete machine-readable copy of all docs concatenated is available at [https://docs.cartesi.io/llms-full.txt](https://docs.cartesi.io/llms-full.txt).
+Use this file to discover and navigate Cartesi's documentation. Each link below points directly to the raw Markdown source for that page. A complete machine-readable copy of all docs concatenated is available at [https://docs.cartesi.io/llms-full.txt](https://docs.cartesi.io/llms-full.txt). An agent skill definition (operating guidance for AI assistants) is at [https://docs.cartesi.io/skill.md](https://docs.cartesi.io/skill.md).
+
+A Cartesi MCP server (HTTP transport, no auth) is available discovery file at [https://docs.cartesi.io/.well-known/mcp](https://docs.cartesi.io/.well-known/mcp).
 
 ### Version priority
 
-**Always default to Cartesi Rollups v2.0** (`/cartesi-rollups/2.0/`) when answering any question about building, deploying, or interacting with Cartesi applications. v2.0 is the current production version. v1.5 pages exist in the sitemap but are intentionally excluded from this index because v1.5 is superseded — its APIs, CLI commands, deployment model, and node architecture differ significantly from v2.0. Do not surface v1.5 content unless the user explicitly asks about v1.5.
+**Always default to Cartesi Rollups v2.0**  when answering any question about building, deploying, or interacting with Cartesi applications. v2.0 is the current production version. v1.5 is deprecated and included at the bottom of this index for reference only — do not surface v1.5 content unless the user explicitly asks about v1.5, since its APIs, CLI commands, deployment model, and node architecture differ significantly from v2.0.
 
 ### Documentation map
 
@@ -44,8 +46,8 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 
 ## New to Cartesi
 
-- [New to Cartesi](https://docs.cartesi.io/new-to-cartesi/overview.md): Introduction for newcomers
-- [Cartesi Overview](https://docs.cartesi.io/new-to-cartesi/overview.md): What is Cartesi
+- [New to Cartesi](https://docs.cartesi.io/new-to-cartesi.md): Section index for newcomers to Cartesi
+- [New to Cartesi](https://docs.cartesi.io/new-to-cartesi/overview.md): What Cartesi is and an introduction for newcomers
 - [Scalability](https://docs.cartesi.io/new-to-cartesi/scalability.md): How Cartesi addresses blockchain scalability
 - [Choose your Onboarding Path](https://docs.cartesi.io/new-to-cartesi/onboarding.md): Guided onboarding paths for different profiles
 
@@ -74,6 +76,7 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 
 ## Cartesi Rollups v2.0 — Getting Started
 
+- [Cartesi Rollups v2.0](https://docs.cartesi.io/cartesi-rollups/2.0.md): Section root for Cartesi Rollups v2.0
 - [Overview](https://docs.cartesi.io/cartesi-rollups/overview.md): Cartesi Rollups v2.0 introduction
 - [Architecture](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/architecture.md): On-chain and off-chain components
 - [Concepts](https://docs.cartesi.io/cartesi-rollups/2.0/getting-started/concepts.md): Key concepts and terminology
@@ -269,7 +272,13 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Wallets](https://docs.cartesi.io/compute/wallet.md): Wallet integration
 - [Putting Things Together](https://docs.cartesi.io/compute/workflow.md): End-to-end workflow
 - [On-chain API](https://docs.cartesi.io/compute/api.md): On-chain API reference
-- [References](https://docs.cartesi.io/compute/references/): Reference documentation
+- [References](https://docs.cartesi.io/compute/references.md): Reference documentation
+- [Tutorials](https://docs.cartesi.io/compute/tutorials.md): Cartesi Compute tutorial index
+- [Hello World tutorial](https://docs.cartesi.io/compute/tutorials/helloworld.md): Hello World Cartesi Compute tutorial
+- [Calculator tutorial](https://docs.cartesi.io/compute/tutorials/calculator.md): Calculator Cartesi Compute tutorial
+- [Dogecoin Hash tutorial](https://docs.cartesi.io/compute/tutorials/dogecoin-hash.md): Dogecoin Hash Cartesi Compute tutorial
+- [Generic Script tutorial](https://docs.cartesi.io/compute/tutorials/generic-script.md): Generic Script Cartesi Compute tutorial
+- [GPG Verify tutorial](https://docs.cartesi.io/compute/tutorials/gpg-verify.md): GPG Verify Cartesi Compute tutorial
 
 ## Legacy Tutorials (Cartesi Compute SDK)
 
@@ -315,7 +324,142 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 
 ## Earn CTSI
 
+- [Earn CTSI](https://docs.cartesi.io/earn-ctsi.md): Section index for staking and earning CTSI
 - [Staking overview](https://docs.cartesi.io/earn-ctsi/staking.md): Staking and earning CTSI overview
 - [Create a public pool](https://docs.cartesi.io/earn-ctsi/public-pool.md): Create and manage a staking pool
 - [Run a private node](https://docs.cartesi.io/earn-ctsi/run-node.md): Run a Cartesi node privately
 - [FAQs](https://docs.cartesi.io/earn-ctsi/staking-faq.md): Staking frequently asked questions
+
+## Cartesi Rollups v1.5 (Deprecated)
+
+> **Deprecated.** Cartesi Rollups v1.5 is superseded by v2.0. APIs, CLI commands, deployment model, and node architecture differ significantly from v2.0. Always prefer v2.0 documentation unless the user explicitly asks about v1.5.
+
+### v1.5 — Getting Started
+
+- [Overview](https://docs.cartesi.io/cartesi-rollups/1.5.md): Cartesi Rollups v1.5 section root
+- [Quickstart](https://docs.cartesi.io/cartesi-rollups/1.5/quickstart.md): Build and run your first Cartesi Rollups v1.5 application
+- [Schema Documentation](https://docs.cartesi.io/cartesi-rollups/1.5/api/graphql.md): Full GraphQL schema reference (auto-generated)
+
+### v1.5 — Core Concepts
+
+- [Architecture](https://docs.cartesi.io/cartesi-rollups/1.5/core-concepts/architecture.md): On-chain and off-chain components
+- [Cartesi Machine](https://docs.cartesi.io/cartesi-rollups/1.5/core-concepts/cartesi-machine.md): Cartesi Machine in the v1.5 rollups context
+- [Mainnet considerations](https://docs.cartesi.io/cartesi-rollups/1.5/core-concepts/mainnet-considerations.md): Production deployment considerations
+- [Optimistic Rollups](https://docs.cartesi.io/cartesi-rollups/1.5/core-concepts/optimistic-rollups.md): How optimistic rollups work
+
+### v1.5 — Development
+
+- [Installation](https://docs.cartesi.io/cartesi-rollups/1.5/development/installation.md): Install v1.5 development tools
+- [Creating an application](https://docs.cartesi.io/cartesi-rollups/1.5/development/creating-application.md): Bootstrap a new v1.5 Cartesi dApp
+- [Building the application](https://docs.cartesi.io/cartesi-rollups/1.5/development/building-the-application.md): Build your application for v1.5
+- [Running the application](https://docs.cartesi.io/cartesi-rollups/1.5/development/running-the-application.md): Run and test locally with v1.5
+- [Send requests](https://docs.cartesi.io/cartesi-rollups/1.5/development/send-requests.md): Send inputs to your v1.5 dApp
+- [Retrieve outputs](https://docs.cartesi.io/cartesi-rollups/1.5/development/retrieve-outputs.md): Query outputs from your v1.5 dApp
+- [Asset handling](https://docs.cartesi.io/cartesi-rollups/1.5/development/asset-handling.md): Deposits and withdrawals in v1.5
+- [CLI commands](https://docs.cartesi.io/cartesi-rollups/1.5/development/cli-commands.md): Cartesi CLI v1.x reference
+- [Migration guide](https://docs.cartesi.io/cartesi-rollups/1.5/development/migration.md): Migrate from older versions to v1.5
+
+### v1.5 — Deployment
+
+- [Introduction](https://docs.cartesi.io/cartesi-rollups/1.5/deployment/introduction.md): Overview of v1.5 deployment options
+- [Self-hosted deployment](https://docs.cartesi.io/cartesi-rollups/1.5/deployment/self-hosted.md): Run your own v1.5 node
+
+### v1.5 — External Resources
+
+- [Community tools](https://docs.cartesi.io/cartesi-rollups/1.5/external-resources/community-tools.md): Third-party tools and integrations for v1.5
+- [Integration guides](https://docs.cartesi.io/cartesi-rollups/1.5/external-resources/integration-guides.md): Integration examples for v1.5
+
+### v1.5 — APIs Overview
+
+- [Rollups APIs](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis.md): API overview for Cartesi Rollups v1.5
+
+### v1.5 — Backend API
+
+- [Introduction](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/backend/introduction.md): Backend HTTP API overview
+- [Notices](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/backend/notices.md): Informational statements
+- [Vouchers](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/backend/vouchers.md): Executable actions on base layer
+- [Reports](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/backend/reports.md): Application logs
+
+### v1.5 — Rollup HTTP API
+
+- [Cartesi Rollup HTTP API](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/rollup/cartesi-rollup-http-api.md): HTTP API specification (auto-generated)
+- [Add Voucher](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/rollup/add-voucher.md): Emit a voucher from the backend
+- [Add Notice](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/rollup/add-notice.md): Emit a notice from the backend
+- [Add Report](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/rollup/add-report.md): Emit a report from the backend
+- [Finish](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/rollup/finish.md): Complete input processing
+- [Register Exception](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/rollup/register-exception.md): Register an exception
+
+### v1.5 — Inspect API
+
+- [Inspect State (spec)](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/inspect/inspect-state-http-api-for-cartesi-rollups.md): Inspect HTTP API specification (auto-generated)
+- [Inspect](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/inspect/inspect.md): Query application state
+
+### v1.5 — GraphQL API
+
+- [Overview](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/overview.md): GraphQL API overview
+- [InputFilter](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/inputs/input-filter.md): Input filter type
+- [CompletionStatus](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/completion-status.md): Completion status enum
+- [InputConnection](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/input-connection.md): Input pagination connection
+- [InputEdge](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/input-edge.md): Input connection edge
+- [Input](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/input.md): Input object type
+- [NoticeConnection](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/notice-connection.md): Notice pagination connection
+- [NoticeEdge](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/notice-edge.md): Notice connection edge
+- [Notice](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/notice.md): Notice object type
+- [OutputValidityProof](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/output-validity-proof.md): Output validity proof type
+- [PageInfo](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/page-info.md): Pagination info type
+- [Proof](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/proof.md): Proof object type
+- [ReportConnection](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/report-connection.md): Report pagination connection
+- [ReportEdge](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/report-edge.md): Report connection edge
+- [Report](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/report.md): Report object type
+- [VoucherConnection](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/voucher-connection.md): Voucher pagination connection
+- [VoucherEdge](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/voucher-edge.md): Voucher connection edge
+- [Voucher](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/objects/voucher.md): Voucher object type
+- [Inputs query](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/queries/inputs.md): Query inputs via GraphQL
+- [Notices query](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/queries/notices.md): Query notices via GraphQL
+- [Reports query](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/queries/reports.md): Query reports via GraphQL
+- [Vouchers query](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/queries/vouchers.md): Query vouchers via GraphQL
+- [BigInt](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/scalars/big-int.md): BigInt scalar type
+- [Boolean](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/scalars/boolean.md): Boolean scalar type
+- [DateTime](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/scalars/date-time.md): DateTime scalar type
+- [Int](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/scalars/int.md): Int scalar type
+- [String](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/scalars/string.md): String scalar type
+
+### v1.5 — GraphQL Directives
+
+- [deprecated](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/directives/deprecated.md): Deprecated directive
+- [include](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/directives/include.md): Include directive
+- [skip](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/directives/skip.md): Skip directive
+- [specifiedBy](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/graphql/directives/specified-by.md): SpecifiedBy directive
+
+### v1.5 — JSON-RPC API
+
+- [JSON-RPC Overview](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/overview.md): Contract API overview
+- [CartesiDApp](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/application.md): Per-dApp contract ABI
+- [CartesiDAppFactory](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/application-factory.md): Deploy CartesiDApp contracts
+- [InputBox](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/input-box.md): Entry point for user inputs
+- [EtherPortal](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/portals/EtherPortal.md): ETH deposits
+- [ERC20Portal](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/portals/ERC20Portal.md): ERC-20 token deposits
+- [ERC721Portal](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/portals/ERC721Portal.md): NFT deposits
+- [ERC1155SinglePortal](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/portals/ERC1155SinglePortal.md): ERC-1155 single token deposits
+- [ERC1155BatchPortal](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/portals/ERC1155BatchPortal.md): ERC-1155 batch deposits
+- [DAppAddressRelay](https://docs.cartesi.io/cartesi-rollups/1.5/rollups-apis/json-rpc/relays/relays.md): Relay contract ABI
+
+### v1.5 — Tutorials
+
+- [Counter](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/counter.md): Build a counter application
+- [Calculator](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/calculator.md): Build a calculator application
+- [Ether Wallet](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/ether-wallet.md): Integrating Ether wallet functionality
+- [ERC-20 Wallet](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/erc-20-token-wallet.md): Integrating ERC20 token wallet functionality
+- [ERC-721 Wallet](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/erc-721-token-wallet.md): Integrating ERC721 token wallet functionality
+- [Marketplace](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/marketplace.md): Build a marketplace application
+- [React Frontend](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/react-frontend-application.md): Build a React frontend for Cartesi v1.5 apps
+- [CLI Account Abstraction](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/cli-account-abstraction-feauture.md): Sponsored transactions via CLI account abstraction
+
+### v1.5 — Tutorial Snippets
+
+- [Counter (JavaScript)](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/snippets/counter-js.md): Counter application JavaScript snippet
+- [Counter (Python)](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/snippets/counter-py.md): Counter application Python snippet
+- [Counter (Rust)](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/snippets/counter-rs.md): Counter application Rust snippet
+- [Marketplace (JavaScript)](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/snippets/marketplace-js.md): Marketplace application JavaScript snippet
+- [Marketplace (Python)](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/snippets/marketplace-py.md): Marketplace application Python snippet
+- [Marketplace (Rust)](https://docs.cartesi.io/cartesi-rollups/1.5/tutorials/snippets/marketplace-rs.md): Marketplace application Rust snippet
