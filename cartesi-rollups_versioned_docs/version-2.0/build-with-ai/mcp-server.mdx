@@ -1,0 +1,162 @@
+---
+title: MCP Server
+resources:
+  - url: https://modelcontextprotocol.io/docs/getting-started/intro
+    title: MCP Server Standard
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The Cartesi MCP server is a read-only knowledge service your AI assistant connects to for Cartesi-specific context. Instead of guessing CLI flags or hallucinating APIs, your assistant can query curated documentation routes, repositories, articles, and skills. Many of the resources are returned inline without fetching external URLs.
+
+The server runs at `https://server.mcp.mugen.builders/mcp`. No API key or local install is required; add the URL to your MCP client and connect.
+
+Once connected, your assistant can:
+
+- Look up **CLI commands** matched to the Cartesi CLI version you have installed
+- Pull **step-by-step skills** for local dev bootstrapping, frontend and backend development, asset deposits, L1 contract interactions, and on-chain deployment
+- **Search** documentation routes, repositories, and articles by topic for deeper context
+- Prepare **workflow commands** (`cartesi create`, `cartesi build`, `cartesi run`, deposits, and inputs) as instructions to run on your machine; the MCP server does not execute the CLI for you
+
+## Connect your client
+
+<Tabs groupId="mcp-client" values={[
+  { label: 'Cursor', value: 'cursor' },
+  { label: 'Claude Code', value: 'claude' },
+  { label: 'Codex', value: 'codex' },
+  { label: 'Claude Desktop', value: 'claude-desktop' },
+  { label: 'VS Code Copilot', value: 'vscode' },
+]} defaultValue="cursor">
+
+<TabItem value="cursor">
+
+1. Open **Settings**.
+2. In the sidebar, click **Tools and MCPs**, then select **New MCP Server**.
+3. Cursor opens your MCP config file (`~/.cursor/mcp.json` globally, or `.cursor/mcp.json` in your project). Add:
+
+```json
+{
+  "mcpServers": {
+    "cartesi-mcp": {
+      "transport": "http",
+      "url": "https://server.mcp.mugen.builders/mcp"
+    }
+  }
+}
+```
+
+4. Restart Cursor, then verify under **Settings → Tools and MCPs** that `cartesi-mcp` is connected.
+
+</TabItem>
+
+<TabItem value="claude">
+
+1. Install the [Claude CLI](https://docs.anthropic.com/en/docs/claude-code), then add the server:
+
+```shell
+claude mcp add --transport http cartesi https://server.mcp.mugen.builders/mcp
+```
+
+2. Restart Claude Code (or start a new conversation).
+3. Run `/mcp` and confirm `cartesi` appears in the list of active MCP servers.
+
+</TabItem>
+
+<TabItem value="codex">
+
+1. Add the server:
+
+```shell
+codex mcp add cartesi-mcp --url https://server.mcp.mugen.builders/mcp
+```
+
+2. Verify it was added:
+
+```shell
+codex mcp list
+```
+
+</TabItem>
+
+<TabItem value="claude-desktop">
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "cartesi-mcp": {
+      "type": "streamable-http",
+      "url": "https://server.mcp.mugen.builders/mcp"
+    }
+  }
+}
+```
+
+Restart Claude Desktop after saving.
+
+</TabItem>
+
+<TabItem value="vscode">
+
+Add to `.vscode/mcp.json` in your project:
+
+```json
+{
+  "servers": {
+    "cartesi-mcp": {
+      "type": "http",
+      "url": "https://server.mcp.mugen.builders/mcp"
+    }
+  }
+}
+```
+
+Restart VS Code after saving. Requires GitHub Copilot with MCP support enabled.
+
+</TabItem>
+
+</Tabs>
+
+For any other MCP-compatible client, point it at `https://server.mcp.mugen.builders/mcp` using HTTP transport.
+
+## Getting started
+
+Once connected, a typical workflow looks like this:
+
+1. **Scaffold or extend an app**, e.g. *"Create a Cartesi Rollups v2 JavaScript echo app using cartesi-scaffold"*
+2. **Run locally**, e.g. *"Give me the exact cartesi build and cartesi run commands for this project"*
+3. **Interact and debug**, e.g. *"How do I send an ERC-20 deposit to my app?"* or *"My advance handler is rejecting inputs; help me debug"*
+
+:::tip Demo
+See the MCP server in action: [demo video](https://drive.google.com/file/d/1a0Ad4qgXY8ebjYtJXt0ycq8vtG95VlsM/view?usp=drive_link). Claude scaffolds a Cartesi app from a single prompt, builds and runs it locally, interacts via text input and token deposits, and deploys to Base Sepolia.
+:::
+
+## Available tools
+
+The server exposes developer-facing tools in three categories:
+
+**Knowledge search**: find curated Cartesi resources and documentation routes:
+
+- `search_knowledge_resources`: search repos, articles, docs, and skills by topic
+- `search_documentation_routes`: find docs pages by keyword
+- `get_resource_detail`: fetch metadata and related doc routes for a resource
+- `list_resources_for_tag` / `list_resources_for_source`: browse by tag or source
+- `list_resource_doc_routes`: list documentation routes linked to a resource
+- `get_knowledge_taxonomy` / `summarize_knowledge_base`: explore what the knowledge base covers
+
+**Workflow helpers**: generate step-by-step instructions to run on your machine:
+
+- `prepare_cartesi_create_command`: scaffold a new app with the correct CLI flags for your CLI version
+- `prepare_cartesi_build_command` / `prepare_cartesi_run_command`: build and run locally
+- `send_input_to_application`: send generic inputs or deposits via the CLI
+- `prepare_erc20_deposit_instructions` / `prepare_erc721_deposit_instructions` / `prepare_erc1155_deposit_instructions`: portal deposit workflows
+- `get_cartesi_app_logic_guidance`: guidance for advance/inspect handlers, address-book usage, and outputs
+- `build_debugging_context`: assemble docs and resources for a debugging query
+
+**Prompts**: reusable prompt templates your assistant can invoke:
+
+- `find_cartesi_docs`: locate the best documentation for a topic
+- `debug_cartesi_issue`: investigate an error using curated knowledge
+- `explain_repository_context`: understand a Cartesi repo before making changes
