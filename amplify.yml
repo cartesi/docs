@@ -1,0 +1,80 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        - yarn install --frozen-lockfile
+        - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - yarn install
+        - yarn docusaurus clean-api-docs all --all-versions
+        - yarn docusaurus gen-api-docs all --all-versions
+    build:
+      commands:
+        - yarn build
+  artifacts:
+    baseDirectory: build
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+
+  # Explicit rewrite rules so Amplify's SPA fallback never intercepts agent-facing
+  # static files (.md pages, llms-full.txt, skill.md).  Rules are evaluated in
+  # order; the SPA catch-all should come last if you ever add one.
+  customRules:
+    - source: "**/*.md"
+      target: "**/*.md"
+      status: "200"
+    - source: "/llms-full.txt"
+      target: "/llms-full.txt"
+      status: "200"
+    - source: "/skill.md"
+      target: "/skill.md"
+      status: "200"
+    - source: "/.well-known/mcp"
+      target: "/.well-known/mcp.json"
+      status: "200"
+
+customHeaders:
+  # HTML pages — short CDN TTL so deployments propagate within 1 hour
+  - pattern: "**/*.html"
+    headers:
+      - key: Cache-Control
+        value: "public, max-age=0, s-maxage=3500, must-revalidate"
+
+  # JS / CSS / fonts — content-addressed filenames, safe to cache forever
+  - pattern: "**/assets/**"
+    headers:
+      - key: Cache-Control
+        value: "public, max-age=31536000, immutable"
+
+  # Raw Markdown files — short TTL + correct Content-Type for LLM agents
+  - pattern: "**/*.md"
+    headers:
+      - key: Cache-Control
+        value: "public, max-age=0, s-maxage=3500, must-revalidate"
+      - key: Content-Type
+        value: "text/markdown; charset=utf-8"
+
+  # llms.txt and llms-full.txt — short TTL so index updates are visible quickly
+  - pattern: "**/llms*.txt"
+    headers:
+      - key: Cache-Control
+        value: "public, max-age=0, s-maxage=3500, must-revalidate"
+      - key: Content-Type
+        value: "text/plain; charset=utf-8"
+
+  # MCP discovery endpoint — must be JSON with open CORS so any agent client can fetch it.
+  - pattern: "**/.well-known/mcp.json"
+    headers:
+      - key: Content-Type
+        value: "application/json; charset=utf-8"
+      - key: Cache-Control
+        value: "public, max-age=0, s-maxage=3500, must-revalidate"
+      - key: Access-Control-Allow-Origin
+        value: "*"
