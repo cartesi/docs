@@ -48,6 +48,9 @@ Download or reference: [https://docs.cartesi.io/llms-full.txt](https://docs.cart
 <Tabs groupId="static-docs-client" values={[
   { label: 'Cursor', value: 'cursor' },
   { label: 'Claude Code', value: 'claude' },
+  { label: 'Codex', value: 'codex' },
+  { label: 'Claude Desktop', value: 'claude-desktop' },
+  { label: 'VS Code Copilot', value: 'vscode' },
 ]} defaultValue="cursor">
 
 <TabItem value="cursor">
@@ -71,6 +74,80 @@ For live Cartesi-specific tools (CLI commands, skills, repo search), also connec
 3. Reference it in chat with `/read` or by attaching the file path so Claude Code has Cartesi documentation for that session.
 
 For ongoing work, add the Cartesi MCP server to your project's `.mcp.json` (see [MCP server](./mcp-server.mdx)) so lookups stay current without re-downloading `llms-full.txt`.
+
+</TabItem>
+
+<TabItem value="codex">
+
+[Codex CLI](https://github.com/openai/codex) loads an `AGENTS.md` file from your project root into context for every session.
+
+1. Download the static documentation file to your project:
+
+   ```shell
+   curl -fSL https://docs.cartesi.io/llms-full.txt -o docs/cartesi-llms-full.txt
+   ```
+
+2. Add a pointer in `AGENTS.md` at the repo root so Codex grounds answers in Cartesi docs:
+
+   ```md
+   # Cartesi context
+
+   This project targets **Cartesi Rollups v2**. When answering questions or
+   generating code:
+
+   - Read `docs/cartesi-llms-full.txt` for the full Cartesi documentation corpus.
+   - Default to `/cartesi-rollups/2.0/` routes; do not surface v1.x APIs unless asked.
+   - Prefer fetching individual pages from `https://docs.cartesi.io/<path>.md` when
+     you need fresh, focused context.
+   ```
+
+3. In a session, reference the file directly with `@docs/cartesi-llms-full.txt` when you want the assistant to ground a specific answer in docs.
+
+For live tooling, also connect the [MCP server](./mcp-server.mdx).
+
+</TabItem>
+
+<TabItem value="claude-desktop">
+
+[Claude Desktop](https://claude.ai/download) supports **Projects** with persistent knowledge files.
+
+1. Download the static documentation file: [https://docs.cartesi.io/llms-full.txt](https://docs.cartesi.io/llms-full.txt)
+2. In Claude Desktop, create a new **Project** (for example, "Cartesi Rollups v2").
+3. Open **Project knowledge** and upload `llms-full.txt` (rename to `cartesi-llms-full.txt` if you keep multiple sources).
+4. Add a short **Project instructions** entry such as:
+
+   > Default to Cartesi Rollups v2.0. Use the attached `cartesi-llms-full.txt` as the source of truth. Do not surface v1.x APIs unless explicitly asked.
+
+5. Start a new chat inside the project; Claude will ground answers in the uploaded docs.
+
+For live tools (CLI commands, skills, repo search), connect the [MCP server](./mcp-server.mdx) in Claude Desktop's MCP config.
+
+</TabItem>
+
+<TabItem value="vscode">
+
+[GitHub Copilot in VS Code](https://code.visualstudio.com/docs/copilot/overview) reads custom instructions from `.github/copilot-instructions.md` and lets you attach files to chat with `#file:`.
+
+1. Download the static documentation file into your repo:
+
+   ```shell
+   curl -fSL https://docs.cartesi.io/llms-full.txt -o docs/cartesi-llms-full.txt
+   ```
+
+2. Create `.github/copilot-instructions.md` (or extend the existing one) with a Cartesi grounding block:
+
+   ```md
+   This repository builds on **Cartesi Rollups v2**.
+
+   - Use `docs/cartesi-llms-full.txt` as the source of truth for Cartesi APIs,
+     CLI commands, and deployment.
+   - Default to `/cartesi-rollups/2.0/` routes; ignore v1.x guidance unless asked.
+   - When generating CLI steps, prepare commands for the user to run locally.
+   ```
+
+3. In Copilot Chat, attach the file on demand with `#file:docs/cartesi-llms-full.txt` when you want the assistant to cite specific Cartesi docs.
+
+For live, version-aware tooling, also connect the [MCP server](./mcp-server.mdx) via VS Code's MCP support.
 
 </TabItem>
 
