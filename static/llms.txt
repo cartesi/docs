@@ -194,6 +194,13 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Self-hosted deployment](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted.md): Run your own node
 - [Public snapshot](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/snapshot.md): Machine state management
 
+## Cartesi Rollups v2.0 — Build with AI
+
+- [Overview](https://docs.cartesi.io/cartesi-rollups/2.0/build-with-ai/overview.md): Using AI assistants and agents to build Cartesi applications
+- [MCP Server](https://docs.cartesi.io/cartesi-rollups/2.0/build-with-ai/mcp-server.md): Cartesi MCP server for AI-assisted development
+- [Skills](https://docs.cartesi.io/cartesi-rollups/2.0/build-with-ai/skills.md): Agent skills for Cartesi development workflows
+- [Prompting](https://docs.cartesi.io/cartesi-rollups/2.0/build-with-ai/prompting.md): Effective prompting patterns for Cartesi development
+
 ## Cartesi Rollups v2.0 — Tutorials
 
 - [Counter](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/counter.md): Build a counter application
