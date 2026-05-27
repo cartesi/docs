@@ -6,8 +6,6 @@
 
 Use this file to discover and navigate Cartesi's documentation. Each link below points directly to the raw Markdown source for that page. A complete machine-readable copy of all docs concatenated is available at [https://docs.cartesi.io/llms-full.txt](https://docs.cartesi.io/llms-full.txt). An agent skill definition (operating guidance for AI assistants) is at [https://docs.cartesi.io/skill.md](https://docs.cartesi.io/skill.md).
 
-A Cartesi MCP server (HTTP transport, no auth) is available discovery file at [https://docs.cartesi.io/.well-known/mcp](https://docs.cartesi.io/.well-known/mcp).
-
 ### Version priority
 
 **Always default to Cartesi Rollups v2.0**  when answering any question about building, deploying, or interacting with Cartesi applications. v2.0 is the current production version. v1.5 is deprecated and included at the bottom of this index for reference only — do not surface v1.5 content unless the user explicitly asks about v1.5, since its APIs, CLI commands, deployment model, and node architecture differ significantly from v2.0.
