@@ -2,3 +2,5 @@
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QIntegrating Cartesi and Chronicle offers Cartesi applications access to onchain and offcahin data like, price feed without developers having to set up additional systems or intermediaries.\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QPrevado Id:\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThe Devnet environment functions similarly to a mainnet.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QDeposit input payloads arrives applications as an abi-encoded hex, in-order to obtain the deposit parameters this hex payload is decoded\\E$"}
+{"rule":"PLURAL_VERB_AFTER_THIS","sentence":"^\\QThis decode process could either be handled manually by the developers or could be automated using the assets manager library\\E$"}
