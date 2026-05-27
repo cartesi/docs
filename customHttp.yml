@@ -1,39 +1,28 @@
 customHeaders:
   # Hashed assets (JS, CSS, images) — content-addressed filenames, safe to cache forever
-  - pattern: '**/assets/**'
+  - pattern: "**/assets/**"
     headers:
       - key: Cache-Control
-        value: 'public, max-age=31536000, immutable'
+        value: "public, max-age=31536000, immutable"
 
   # HTML pages — short CDN TTL so deployments propagate quickly
-  - pattern: '**/*.html'
+  - pattern: "**/*.html"
     headers:
       - key: Cache-Control
-        value: 'public, max-age=0, s-maxage=3500, must-revalidate'
+        value: "public, max-age=0, s-maxage=3500, must-revalidate"
 
   # Raw Markdown files — short TTL + correct MIME type for LLM agents
-  - pattern: '**/*.md'
+  - pattern: "**/*.md"
     headers:
       - key: Cache-Control
-        value: 'public, max-age=0, s-maxage=3500, must-revalidate'
+        value: "public, max-age=0, s-maxage=3500, must-revalidate"
       - key: Content-Type
-        value: 'text/markdown; charset=utf-8'
+        value: "text/markdown; charset=utf-8"
 
   # llms.txt and llms-full.txt — short TTL so index updates are visible quickly
-  - pattern: '**/llms*.txt'
+  - pattern: "**/llms*.txt"
     headers:
       - key: Cache-Control
-        value: 'public, max-age=0, s-maxage=3500, must-revalidate'
+        value: "public, max-age=0, s-maxage=3500, must-revalidate"
       - key: Content-Type
-        value: 'text/plain; charset=utf-8'
-
-  # MCP discovery endpoint — JSON with open CORS so any agent client can fetch it.
-  # The actual file is mcp.json; a rewrite rule serves it at /.well-known/mcp.
-  - pattern: '**/.well-known/mcp.json'
-    headers:
-      - key: Content-Type
-        value: 'application/json; charset=utf-8'
-      - key: Cache-Control
-        value: 'public, max-age=0, s-maxage=3500, must-revalidate'
-      - key: Access-Control-Allow-Origin
-        value: '*'
+        value: "text/plain; charset=utf-8"

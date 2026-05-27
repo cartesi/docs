@@ -30,9 +30,6 @@ frontend:
     - source: "/skill.md"
       target: "/skill.md"
       status: "200"
-    - source: "/.well-known/mcp"
-      target: "/.well-known/mcp.json"
-      status: "200"
 
 customHeaders:
   # HTML pages — short CDN TTL so deployments propagate within 1 hour
@@ -62,13 +59,3 @@ customHeaders:
         value: "public, max-age=0, s-maxage=3500, must-revalidate"
       - key: Content-Type
         value: "text/plain; charset=utf-8"
-
-  # MCP discovery endpoint — must be JSON with open CORS so any agent client can fetch it.
-  - pattern: "**/.well-known/mcp.json"
-    headers:
-      - key: Content-Type
-        value: "application/json; charset=utf-8"
-      - key: Cache-Control
-        value: "public, max-age=0, s-maxage=3500, must-revalidate"
-      - key: Access-Control-Allow-Origin
-        value: "*"
