@@ -340,8 +340,8 @@ module.exports = function serveMarkdownPlugin(context) {
   // Derive the site URL from DOCS_DOMAIN (the same variable used by the CDK
   // stack for the CloudFront custom domain) so only one variable needs to be
   // set per branch in Amplify Console.
-  // Defaults to staging so unset branches get correct staging URLs.
-  const siteUrl = `https://${process.env.DOCS_DOMAIN ?? 'staging.docs.cartesi.io'}`;
+  // Defaults to the production domain when the variable is not set.
+  const siteUrl = `https://${process.env.DOCS_DOMAIN ?? 'docs.cartesi.io'}`;
 
   // Shared mutable map populated in allContentLoaded and consumed in
   // configureWebpack + postBuild.  allContentLoaded always runs before both.
