@@ -90,6 +90,7 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Sending inputs and assets](https://docs.cartesi.io/cartesi-rollups/2.0/development/send-inputs-and-assets.md): How to send inputs and assets to your dApp
 - [Query outputs](https://docs.cartesi.io/cartesi-rollups/2.0/development/query-outputs.md): Vouchers, notices and reports
 - [Asset handling](https://docs.cartesi.io/cartesi-rollups/2.0/development/asset-handling.md): Deposits and withdrawals
+- [Advanced configuration](https://docs.cartesi.io/cartesi-rollups/2.0/development/Advanced-configuration.md): Configure the Cartesi Machine via cartesi.toml
 
 ## Cartesi Rollups v2.0 — Development Snippets
 
@@ -210,8 +211,9 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [ERC-20 Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/erc-20-token-wallet.md): Integrating ERC20 token wallet functionality
 - [ERC-721 Wallet](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/erc-721-token-wallet.md): Integrating ERC721 token wallet functionality
 - [React Frontend](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/react-frontend-application.md): Build a React frontend for Cartesi apps
-- [CLI Account Abstraction](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/cli-account-abstraction-feauture.md): Sponsored transactions via CLI account abstraction
+- [CLI Account Abstraction](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/cli-account-abstraction-feature.md): Sponsored transactions via CLI account abstraction
 - [Utilizing test tokens](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/utilizing-the-cli-test-tokens.md): Utilizing test tokens in dev environment
+- [Running applications on a forked network](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/running-applications-on-a-forked-network.md): Run Cartesi applications against a forked Sepolia network
 
 ## Cartesi Rollups v2.0 — Tutorial Snippets
 
@@ -230,6 +232,9 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Marketplace (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-js.md): Marketplace application JavaScript snippet
 - [Marketplace (Python)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-py.md): Marketplace application Python snippet
 - [Marketplace (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/marketplace-rs.md): Marketplace application Rust snippet
+- [Fork Sepolia (JavaScript)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/fork-sepolia-js.md): Fork Sepolia network JavaScript snippet for forked network tutorial
+- [Fork Sepolia (Rust)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/fork-sepolia-rs.md): Fork Sepolia network Rust snippet for forked network tutorial
+- [InputRelayer (Solidity)](https://docs.cartesi.io/cartesi-rollups/2.0/tutorials/snippets/inputRelayer-sol.md): InputRelayer Solidity contract snippet for forked network tutorial
 
 ## Cartesi Rollups v2.0 — Resources
 
