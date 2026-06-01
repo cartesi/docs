@@ -1,16 +1,9 @@
 ---
 id: erc-20-token-wallet
 title: Integrating ERC20 token wallet functionality
-resources:
-  - url: https://github.com/masiedu4/erc20-wallet-tutorial
-    title: Source code for ERC20 wallet tutorial
 ---
 
 This tutorial will guide you through creating a basic ERC20 token wallet for a Cartesi backend application using TypeScript.
-
-:::note community tools
-This tutorial is for educational purposes. For production dApps, we recommend using [Deroll](https://deroll.dev/), a TypeScript package that simplifies app and wallet functionality across all token standards for Cartesi applications.
-:::
 
 ## Setting up the project
 
@@ -26,92 +19,13 @@ Run the following to generate the types for your project:
 yarn && yarn run codegen
 ```
 
-Now, navigate to the project directory and install [`ethers`](https://docs.ethers.org/v5/), [`viem`](https://viem.sh/) and [`@cartesi/rollups`](https://www.npmjs.com/package/@cartesi/rollups) package:
+Now, navigate to the project directory and install [`viem`](https://viem.sh/):
 
 ```bash
-yarn add ethers viem
-yarn add -D @cartesi/rollups
+yarn add viem
 ```
 
-## Define the ABIs
-
-Let's write a configuration to generate the ABIs of the Cartesi Rollups Contracts.
-
-We will need the Solidity compiler and the contract code from the `@cartesi/rollups` package to generate the ABIs as constants.
-
-1. [Install the Solidity compiler](https://docs.soliditylang.org/en/latest/installing-solidity.html).
-
-2. Create a new file named `generate_abis.sh` in the root of your project and add the following code:
-
-```bash
-#!/bin/bash
-
-set -e  # Exit immediately if a command exits with a non-zero status.
-
-# Output directory for TypeScript files
-TS_DIR="src/wallet/abi"
-
-# Temporary directory for compilation output
-TEMP_DIR="temp_solc_output"
-
-# Create output and temporary directories
-mkdir -p "$TS_DIR"
-mkdir -p "$TEMP_DIR"
-
-# Function to generate ABI and export as a TypeScript variable
-generate_abi() {
-    local sol_file="$1"
-    local contract_name="$2"
-    local output_file="$TS_DIR/${contract_name}Abi.ts"
-
-    echo "Compiling $sol_file..."
-
-    # Compile the contract in the temporary directory
-    npx solcjs --abi "$sol_file" --base-path . --include-path node_modules/ --output-dir "$TEMP_DIR"
-
-    # Find the generated ABI file
-    abi_file=$(find "$TEMP_DIR" -name "*_${contract_name}.abi")
-
-    if [ ! -f "$abi_file" ]; then
-        echo "Error: ABI file not found for $contract_name"
-        return 1
-    fi
-
-    # Read the ABI content
-    abi=$(cat "$abi_file")
-
-    echo "Extracted ABI for $contract_name"
-
-    # Create a TypeScript file with exported ABI
-    echo "export const ${contract_name}Abi = $abi as const;" > "$output_file"
-
-    echo "Generated ABI for $contract_name"
-    echo "----------------------"
-}
-
-# Generate ABIs
-generate_abi "node_modules/@cartesi/rollups/contracts/dapp/CartesiDApp.sol" "CartesiDApp"
-generate_abi "node_modules/@cartesi/rollups/contracts/portals/EtherPortal.sol" "EtherPortal"
-
-# Clean up the temporary directory
-rm -rf "$TEMP_DIR"
-
-echo "ABI generation complete"
-```
-
-This script will look for all specified `.sol` files and create a TypeScript file with the ABIs in the `src/wallet/abi` directory.
-
-Now, let's make the script executable:
-
-```bash
-chmod +x generate_abis.sh
-```
-
-And run it:
-
-```bash
-./generate_abis.sh
-```
+Deposit payloads from portals are packed ABI-encoded fields; see [asset handling](../development/asset-handling.md#abi-encoding-for-deposits) for the ERC-20 layout (`token`, `sender`, `amount`). Withdrawals use vouchers executed by the on-chain [`Application`](../api-reference/contracts/application.md) contract—see [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
 
 ## Building the ERC20 wallet
 
@@ -187,8 +101,14 @@ The `Balance` class represents an individual account's balance. It includes meth
 Now, create a file named `wallet.ts` in the `src/wallet` directory and add the following code:
 
 ```typescript
-import { Address, getAddress, encodeFunctionData } from "viem";
-import { ethers } from "ethers";
+import {
+  Address,
+  getAddress,
+  encodeFunctionData,
+  sliceHex,
+  zeroHash,
+  type Hex,
+} from "viem";
 import { Balance } from "./balance";
 import { erc20Abi } from "viem";
 import { Voucher } from "..";
@@ -231,18 +151,12 @@ export class Wallet {
     }
   };
 
-  private parseErc20Deposit = (payload: string): [Address, Address, bigint] => {
+  private parseErc20Deposit = (payload: Hex): [Address, Address, bigint] => {
     try {
-      let inputData = [];
-      inputData[0] = ethers.dataSlice(payload, 0, 20);
-      inputData[1] = ethers.dataSlice(payload, 20, 40);
-      inputData[2] = ethers.dataSlice(payload, 40, 72);
-
-      return [
-        getAddress(inputData[0]),
-        getAddress(inputData[1]),
-        BigInt(inputData[2]),
-      ];
+      const erc20 = getAddress(sliceHex(payload, 0, 20));
+      const account = getAddress(sliceHex(payload, 20, 40));
+      const amount = BigInt(sliceHex(payload, 40, 72));
+      return [erc20, account, amount];
     } catch (e) {
       throw new Error(`Error parsing ERC20 deposit: ${e}`);
     }
@@ -267,6 +181,7 @@ export class Wallet {
   };
 
   withdrawErc20 = (
+    application: Address,
     account: Address,
     erc20: Address,
     amount: bigint
@@ -276,8 +191,8 @@ export class Wallet {
       balance.decreaseErc20Balance(erc20, amount);
       const call = encodeFunctionData({
         abi: erc20Abi,
-        functionName: "transfer",
-        args: [account, amount],
+        functionName: "transferFrom",
+        args: [application, account, amount],
       });
 
       console.log(`Voucher creation success`, {
@@ -288,7 +203,7 @@ export class Wallet {
       return {
         destination: erc20,
         payload: call,
-        value: "0x0",
+        value: zeroHash,
       };
     } catch (e) {
       throw Error(`Error withdrawing ERC20 tokens: ${e}`);
@@ -326,19 +241,25 @@ export class Wallet {
 }
 ```
 
+### Voucher creation
+
+The `withdrawErc20` method encodes `transferFrom(application, recipient, amount)` and returns a voucher. Tokens deposited through the portal sit in your on-chain `Application` contract; the application address in the voucher must match `metadata.app_contract` from the advance. Set `value` to [`zeroHash`](https://viem.sh/docs/glossary/types#zeroHash) when no Ether is sent with the call. See [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
+
 ## Using the ERC20 wallet
 
-Now, let's create a simple wallet app at the entry point `src/index.ts` to test the wallet’s functionality.
+Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-:::note
-Run `cartesi address-book` to get the contract address of the `ERC20Portal` contract. Save this as a const in the `index.ts` file.
+The [`ERC20Portal`](../api-reference/contracts/portals/ERC20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+
+:::note ERC20Portal address
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC20Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
 import createClient from "openapi-fetch";
 import type { components, paths } from "./schema";
 import { Wallet } from "./wallet/wallet";
-import { stringToHex, getAddress, Address, hexToString, toHex } from "viem";
+import { stringToHex, getAddress, Address, hexToString } from "viem";
 
 type AdvanceRequestData = components["schemas"]["Advance"];
 type InspectRequestData = components["schemas"]["Inspect"];
@@ -355,9 +276,8 @@ export type Report = components["schemas"]["Report"];
 export type Voucher = components["schemas"]["Voucher"];
 
 const wallet = new Wallet();
-
-const ERC20Portal = `0x05355c2F9bA566c06199DEb17212c3B78C1A3C31`;
-
+// Replace with the ERC20Portal address from `cartesi address-book`
+const ERC20Portal = `0xYOUR_ERC20_PORTAL_ADDRESS`;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log(`HTTP rollup_server url is ${rollupServer}`);
@@ -365,6 +285,7 @@ console.log(`HTTP rollup_server url is ${rollupServer}`);
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
 
+  const application = data["metadata"]["app_contract"];
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
 
@@ -390,6 +311,7 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
         await createNotice({ payload: stringToHex(transfer) });
       } else if (operation === "withdraw") {
         const voucher = wallet.withdrawErc20(
+          getAddress(application as Address),
           getAddress(from as Address),
           getAddress(erc20 as Address),
           BigInt(amount)
@@ -428,7 +350,7 @@ const handleInspect: InspectRequestHandler = async (data) => {
 
     await createReport({ payload: stringToHex(balmsg) });
   } catch (error) {
-    const error_message = `Error processing inspect payload:", ${error}`;
+    const error_message = `Error processing inspect payload: ${error}`;
 
     await createReport({ payload: stringToHex(error_message) });
   }
@@ -507,9 +429,9 @@ Here is a breakdown of the wallet functionality:
 
 - For `transfers`, we call `wallet.transferErc20` and create a notice with the parsed parameters.
 
-- For `withdrawals`, we call `wallet.withdrawErc20` and create voucher using the dApp dress and the parsed parameters.
+- For `withdrawals`, we call `wallet.withdrawErc20` with the on-chain application address (`metadata.app_contract`) as the `transferFrom` sender, then emit a voucher to the token contract.
 
-- We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
+- We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks, and `createVoucher` for withdrawals.
 
 ## Build and run the application
 
@@ -537,21 +459,59 @@ You will encounter this error if you don't approve the `ERC20Portal` address bef
 `ContractFunctionExecutionError: The contract function "depositERC20Tokens" reverted with the following reason: ERC20: insufficient allowance`
 :::
 
-To deposit ERC20 tokens, use the `cartesi deposit erc20` command and follow the prompts.
+To deposit ERC20 tokens interactively:
 
-### Balance checks(used in Inspect requests)
+```bash
+cartesi deposit erc20
+```
 
-To inspect balance, make an HTTP (post) call to:
+Non-interactive alternative. Run from your **project root** (with `cartesi run` up). Resolve addresses from [`cartesi address-book`](../development/send-inputs-and-assets.md):
+
+```bash
+TOKEN=$(cartesi address-book 2>&1 | grep -i TestToken | awk '{print $NF}')
+ERC20_PORTAL=$(cartesi address-book 2>&1 | grep -i ERC20Portal | awk '{print $NF}')
+
+cast send "$TOKEN" \
+  "approve(address,uint256)" \
+  "$ERC20_PORTAL" \
+  1000000000000000000 \
+  --rpc-url http://127.0.0.1:6751/anvil \
+  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+cartesi deposit erc20 100000000000000000 \
+  --token "$TOKEN" \
+  --project-name erc-20-token-wallet \
+  --rpc-url http://127.0.0.1:6751/anvil
+```
+
+### Balance checks (used in Inspect requests)
+
+Inspect payloads use the form `userAddress/erc20TokenAddress` as a UTF-8 string (hex-encoded in the JSON body). Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and token `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/erc-20-token-wallet \
   -H "Content-Type: application/json" \
-  -d '{0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266}'
+  -d '{"payload": "0x3078663339466436653531616164383846364634636536614238383237323739636666466239323236362f307835466244423233313536373861666563623336376630333264393346363432663634313830616133"}'
 ```
+
+Replace the inspect path if your project name is not `erc-20-token-wallet` (see the URL printed by `cartesi run`). Build the payload with `stringToHex` from viem if you use different addresses.
 
 ### Transfers and Withdrawals
 
-Use the `cartesi send` command then follow the prompts to select `String encoding`, finally enter any of the sample payloads:
+To process transfers and withdrawals interactively, run the command below, select `String encoding`, then enter one of the sample payloads:
+
+```bash
+cartesi send
+```
+
+Non-interactive alternative (from your project root):
+
+```bash
+cartesi send --encoding string \
+  '{"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}' \
+  --project-name erc-20-token-wallet \
+  --rpc-url http://127.0.0.1:6751/anvil
+```
 
 1. For transfers:
 
@@ -564,6 +524,20 @@ Use the `cartesi send` command then follow the prompts to select `String encodin
    ```js
    {"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}
    ```
+
+### Using the explorer
+
+[CartesiScan](https://cartesiscan.io/) is a web application that offers a comprehensive overview of your application. It provides expandable data regarding notices, vouchers, and reports.
+
+Start the node with the explorer service enabled:
+
+```shell
+cartesi run --services explorer
+```
+
+The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
+
+You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
 
 :::info Repo Link
    You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/erc-20-token-wallet)!

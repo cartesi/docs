@@ -1,24 +1,15 @@
 ---
 id: erc-721-token-wallet
 title: Integrating ERC721 token wallet functionality
-resources:
-  - url: https://github.com/masiedu4/erc721-wallet-tutorials
-    title: Source code for ERC721 wallet tutorial
 ---
 
 This tutorial will guide you through creating a basic ERC721(NFT) token wallet using TypeScript for a Cartesi backend application.
 
-:::note community tools
-This tutorial is for educational purposes. For production dApps, we recommend using [Deroll](https://deroll.dev/), a TypeScript package that simplifies app and wallet functionality across all token standards for Cartesi applications.
-:::
-
 ## Setting up the project
 
-First, set up your Cartesi project as described in the [Erc20 token wallet tutorial](./erc-20-token-wallet.md#setting-up-the-project). Make sure you have the necessary dependencies installed.
+First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md#setting-up-the-project). Create a new project (for example `erc-721-token-wallet`) and install [`viem`](https://viem.sh/) only.
 
-## Define the ABIs
-
-Next, Define the necessary Abi's as described in the [Erc20 token wallet tutorial](./erc-20-token-wallet.md#define-the-abis).
+ERC-721 deposit payloads use packed fields (`token`, `sender`, `tokenId`) with an optional standard-ABI tail; see [asset handling](../development/asset-handling.md#abi-encoding-for-deposits). Withdrawals emit vouchers whose `safeTransferFrom` sender is your on-chain application address (`metadata.app_contract` on each advance)—see [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
 
 ## Building the ERC721 wallet
 
@@ -79,10 +70,15 @@ The `Balance` class represents an account's balance. It contains a map of ERC721
 Now, create a file named `wallet.ts` in the `src/wallet` directory and add the following code:
 
 ```typescript
-import { Address, getAddress, hexToBytes, encodeFunctionData } from "viem";
-import { ethers } from "ethers";
+import {
+  Address,
+  getAddress,
+  encodeFunctionData,
+  sliceHex,
+  zeroHash,
+  type Hex,
+} from "viem";
 import { Balance } from "./balance";
-
 import { erc721Abi } from "viem";
 import { Voucher } from "..";
 
@@ -138,10 +134,10 @@ export class Wallet {
     }
   }
 
-  private parseErc721Deposit(payload: string): [Address, Address, number] {
-    const erc721 = getAddress(ethers.dataSlice(payload, 0, 20));
-    const account = getAddress(ethers.dataSlice(payload, 20, 40));
-    const tokenId = parseInt(ethers.dataSlice(payload, 40, 72));
+  private parseErc721Deposit(payload: Hex): [Address, Address, number] {
+    const erc721 = getAddress(sliceHex(payload, 0, 20));
+    const account = getAddress(sliceHex(payload, 20, 40));
+    const tokenId = Number(BigInt(sliceHex(payload, 40, 72)));
     return [erc721, account, tokenId];
   }
 
@@ -164,7 +160,7 @@ export class Wallet {
   }
 
   withdrawErc721(
-    rollupAddress: Address,
+    application: Address,
     account: Address,
     erc721: Address,
     tokenId: number
@@ -175,7 +171,7 @@ export class Wallet {
       const call = encodeFunctionData({
         abi: erc721Abi,
         functionName: "safeTransferFrom",
-        args: [rollupAddress, account, BigInt(tokenId)],
+        args: [application, account, BigInt(tokenId)],
       });
       console.log("Voucher creator success", {
         destination: erc721,
@@ -185,7 +181,7 @@ export class Wallet {
       return {
         destination: erc721,
         payload: call,
-        value: "0x0"
+        value: zeroHash,
       };
     } catch (e) {
       throw Error(`Error withdrawing ERC721 token: ${e}`);
@@ -223,12 +219,18 @@ export class Wallet {
 }
 ```
 
+### Voucher creation
+
+The `withdrawErc721` method encodes `safeTransferFrom(application, recipient, tokenId)` and returns a voucher. NFTs deposited through the portal are held by your on-chain `Application` contract; pass `metadata.app_contract` from the advance as the `from` address. Set `value` to [`zeroHash`](https://viem.sh/docs/glossary/types#zeroHash) when no Ether is sent with the call. See [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
+
 ## Using the wallet
 
-Now, let's create a simple wallet app at the entry point `src/index.ts` to test the wallet’s functionality.
+Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-:::note
-Run `cartesi address-book` to get the addresses of the `ERC721Portal` contract. Save these as constants in the `index.ts` file.
+The [`ERC721Portal`](../api-reference/contracts/portals/ERC721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+
+:::note ERC721Portal address
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
@@ -252,8 +254,8 @@ export type Report = components["schemas"]["Report"];
 export type Voucher = components["schemas"]["Voucher"];
 
 const wallet = new Wallet();
-
-const ERC721Portal = `0x237F8DD094C0e47f4236f12b4Fa01d6Dae89fb87`;
+// Replace with the ERC721Portal address from `cartesi address-book`
+const ERC721Portal = `0xYOUR_ERC721_PORTAL_ADDRESS`;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log(`HTTP rollup_server url is ${rollupServer}`);
@@ -261,7 +263,7 @@ console.log(`HTTP rollup_server url is ${rollupServer}`);
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
 
-  const dAppAddress = data["metadata"]["app_contract"];
+  const application = data["metadata"]["app_contract"];
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
 
@@ -287,7 +289,7 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
         await createNotice({ payload: stringToHex(transfer) });
       } else if (operation === "withdraw") {
         const voucher = wallet.withdrawErc721(
-          getAddress(dAppAddress as Address),
+          getAddress(application as Address),
           getAddress(from as Address),
           getAddress(erc721 as Address),
           parseInt(tokenId)
@@ -398,9 +400,9 @@ Here is a breakdown of the wallet functionality:
 
 - For `transfers`, we call `wallet.transferErc721` and create a notice with the parsed parameters.
 
-- For `withdrawals`, we call `wallet.withdrawErc721` and create voucher using the dApp dress and the parsed parameters.
+- For `withdrawals`, we call `wallet.withdrawErc721` with the on-chain application address (`metadata.app_contract`) as the `safeTransferFrom` sender, then emit a voucher to the token contract.
 
-- We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks and `createVoucher` for withdrawals.
+- We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks, and `createVoucher` for withdrawals.
 
 ## Build and run the application
 
@@ -423,26 +425,74 @@ An approval step is needed for the [**ERC721 token standard**](https://ethereum.
 
 Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cartesi backend.
 
-You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
+You will encounter this error if you don't approve the `ERC721Portal` address before deposits:
 
 `ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
 :::
 
-To deposit ERC721 tokens, use the `cartesi deposit erc721` command and follow the prompts.
+To deposit ERC721 tokens interactively:
 
-### Balance checks(used in Inspect requests)
+```bash
+cartesi deposit erc721
+```
 
-To inspect the balance, make an HTTP call to:
+Non-interactive alternative. Run from your **project root** (with `cartesi run` up). Resolve addresses from [`cartesi address-book`](../development/send-inputs-and-assets.md):
+
+```bash
+NFT=$(cartesi address-book 2>&1 | grep -i TestNFT | awk '{print $NF}')
+ERC721_PORTAL=$(cartesi address-book 2>&1 | grep -i ERC721Portal | awk '{print $NF}')
+
+cast send "$NFT" \
+  "safeMint(address,uint256,string)" \
+  0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  1 \
+  "https://example.com/metadata/1.json" \
+  --rpc-url http://127.0.0.1:6751/anvil \
+  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+cast send "$NFT" \
+  "setApprovalForAll(address,bool)" \
+  "$ERC721_PORTAL" \
+  true \
+  --rpc-url http://127.0.0.1:6751/anvil \
+  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+cartesi deposit erc721 1 \
+  --token "$NFT" \
+  --project-name erc-721-token-wallet \
+  --rpc-url http://127.0.0.1:6751/anvil
+```
+
+Skip `safeMint` if token ID `1` is already minted to your address.
+
+### Balance checks (used in Inspect requests)
+
+Inspect payloads use the form `userAddress/erc721TokenAddress` as a UTF-8 string (hex-encoded in the JSON body). Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and collection `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/erc-721-token-wallet \
   -H "Content-Type: application/json" \
-  -d '{0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266}'
+  -d '{"payload": "0x3078663339466436653531616164383846364634636536614238383237323739636666466239323236362f307835466244423233313536373861666563623336376630333264393346363432663634313830616133"}'
 ```
+
+Replace the inspect path if your project name is not `erc-721-token-wallet` (see the URL printed by `cartesi run`). Build the payload with `stringToHex` from viem if you use different addresses.
 
 ### Transfers and Withdrawals
 
-Use the `cartesi send` command then follow the prompts to select `String encoding`, finally enter any of the sample payloads:
+To process transfers and withdrawals interactively, run the command below, select `String encoding`, then enter one of the sample payloads:
+
+```bash
+cartesi send
+```
+
+Non-interactive alternative (from your project root):
+
+```bash
+cartesi send --encoding string \
+  '{"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}' \
+  --project-name erc-721-token-wallet \
+  --rpc-url http://127.0.0.1:6751/anvil
+```
 
 1. For transfers:
 
@@ -455,6 +505,20 @@ Use the `cartesi send` command then follow the prompts to select `String encodin
    ```js
    {"operation":"withdraw","erc721":"0xTokenAddress","from":"0xFromAddress","tokenId":"1"}
    ```
+
+### Using the explorer
+
+[CartesiScan](https://cartesiscan.io/) is a web application that offers a comprehensive overview of your application. It provides expandable data regarding notices, vouchers, and reports.
+
+Start the node with the explorer service enabled:
+
+```shell
+cartesi run --services explorer
+```
+
+The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
+
+You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
 
 :::info Repo Link
    You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/erc-721-token-wallet)!
