@@ -99,7 +99,7 @@ import AssetWithdrawEtherCPP from './snippets/asset_withdraw_ether_cpp.md';
 
 </Tabs>
 
-For a full guide, see the Tutorials: [ERC-20 Token Wallet](../tutorials/erc-20-token-wallet.md) and [Utilizing test tokens in dev environment](../tutorials/utilizing-the-cli-test-tokens.md).
+For a full guide, see the Tutorials: [ERC-20 Token Wallet](../tutorials/erc-20-token-wallet.md), [ERC-1155 Token Wallet](../tutorials/erc-1155-token-wallet.md), and [Utilizing test tokens in dev environment](../tutorials/utilizing-the-cli-test-tokens.md).
 
 ## Withdrawing assets
 
