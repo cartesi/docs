@@ -56,8 +56,12 @@ const openApiDocsConfig = versions.reduce((config, version) => {
 const config = {
   title: "Cartesi Documentation",
   tagline: "Application-specific rollups with a Linux runtime.",
-  url: "https://docs.cartesi.io",
-  baseUrl: "/",
+  // url/baseUrl default to production (AWS Amplify @ docs.cartesi.io). PR-preview
+  // builds override them via env vars to publish under a GitHub Pages sub-path
+  // (https://<owner>.github.io/<repo>/pr-preview/pr-<N>/). The vars are unset for
+  // local builds and on Amplify, so production behavior is unchanged.
+  url: process.env.DOCS_URL || "https://docs.cartesi.io",
+  baseUrl: process.env.DOCS_BASE_URL || "/",
   trailingSlash: true,
   onBrokenLinks: "ignore",
   onBrokenMarkdownLinks: "throw",

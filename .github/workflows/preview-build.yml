@@ -1,0 +1,82 @@
+name: preview-build
+
+# Builds the docs for every PR and uploads the result as an artifact.
+#
+# SECURITY: this is triggered by `pull_request` (NOT `pull_request_target`), so code
+# from forked PRs runs with a read-only token and NO access to repository secrets. This
+# job only ever produces a build artifact. All privileged work (publishing to GitHub
+# Pages, commenting on the PR) happens in the separate `preview-deploy` workflow, which
+# runs in the trusted base-repo context and never executes PR code.
+
+on:
+  pull_request:
+    branches: [main, "release/*"]
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: read
+
+# One build per PR; newer pushes cancel in-flight builds for the same PR.
+concurrency:
+  group: preview-build-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          # Untrusted PR code runs in this job; don't leave the auth token behind in
+          # .git/config where a build script could read it.
+          persist-credentials: false
+
+      # Carry the PR number + event action across to the trusted deploy workflow.
+      # The `workflow_run` event does not expose the PR number for forked PRs, so we
+      # pass it explicitly via this artifact.
+      - name: Save PR metadata
+        run: |
+          mkdir -p pr-meta
+          echo "${{ github.event.number }}" > pr-meta/number
+          echo "${{ github.event.action }}" > pr-meta/action
+      - name: Upload PR metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-meta
+          path: pr-meta/
+          retention-days: 1
+          if-no-files-found: error
+
+      # On `closed` the deploy workflow only needs the metadata above to tear the
+      # preview down, so skip the (slow) build entirely.
+      - name: Set up Node.js
+        if: github.event.action != 'closed'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: yarn
+
+      # Plain `yarn install` to mirror the upstream build (build.yml / amplify.yml).
+      - name: Install dependencies
+        if: github.event.action != 'closed'
+        run: yarn install
+
+      - name: Build Docusaurus site
+        if: github.event.action != 'closed'
+        env:
+          # Point this build at the GitHub Pages sub-path the PR will be published to.
+          # The defaults in docusaurus.config.js keep production (Amplify) unchanged.
+          DOCS_URL: https://${{ github.repository_owner }}.github.io
+          DOCS_BASE_URL: /${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.number }}/
+        run: yarn build
+
+      - name: Upload site artifact
+        if: github.event.action != 'closed'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-preview-site
+          path: build/
+          retention-days: 1
+          if-no-files-found: error
