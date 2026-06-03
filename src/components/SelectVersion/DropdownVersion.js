@@ -5,6 +5,7 @@ import {
 } from "@docusaurus/plugin-content-docs/client";
 import { useLocation } from "@docusaurus/router";
 import useGlobalData from "@docusaurus/useGlobalData";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 import clsx from "clsx";
 
@@ -14,11 +15,21 @@ import NavbarItem from "@theme/NavbarItem";
 const useVersionsForDropdown = () => {
   const global = useGlobalData();
   const location = useLocation();
+  const {
+    siteConfig: { baseUrl },
+  } = useDocusaurusContext();
   const sidebars = Object.keys(global["docusaurus-plugin-content-docs"]);
 
+  // Detect the active docs plugin from the first path segment *after* the site
+  // baseUrl. Using the raw pathname breaks when the site is served from a
+  // sub-path (e.g. GitHub Pages PR previews at /<repo>/pr-preview/pr-<N>/),
+  // where the first segment is the baseUrl prefix instead of the docs route.
   const docsPluginId = sidebars.find((sidebar) => {
-    const path = location.pathname.split("/")[1];
-    return sidebar.includes(path);
+    const relativePath = location.pathname.startsWith(baseUrl)
+      ? location.pathname.slice(baseUrl.length)
+      : location.pathname.replace(/^\/+/, "");
+    const path = relativePath.split("/")[0];
+    return path && sidebar.includes(path);
   });
 
   const versions = useVersions(docsPluginId);

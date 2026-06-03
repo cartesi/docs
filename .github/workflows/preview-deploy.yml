@@ -1,0 +1,179 @@
+name: preview-deploy
+
+# Publishes (and tears down) the per-PR preview produced by `preview-build`.
+#
+# This workflow runs from the DEFAULT branch in the trusted base-repo context, so it has
+# write access to the repository. It NEVER executes PR code: it only downloads the
+# already-built static artifact and publishes it to the `gh-pages` branch under
+# pr-preview/pr-<N>/. This is the GitHub-recommended pattern for safely handling
+# artifacts that were built from forked pull requests.
+
+on:
+  workflow_run:
+    workflows: ["preview-build"]
+    types: [completed]
+
+permissions:
+  contents: write # push to gh-pages
+  pull-requests: write # post/update the preview comment
+  issues: write # the PR comment is posted via the issues endpoint
+  actions: read # download artifacts from the triggering run
+
+# Serialize all writes to the shared gh-pages branch across every PR.
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Only act on successful builds that originated from a pull_request.
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Download PR metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-meta
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: pr-meta
+
+      - name: Read and validate PR metadata
+        id: meta
+        run: |
+          set -euo pipefail
+          number="$(cat pr-meta/number)"
+          action="$(cat pr-meta/action)"
+          # pr-meta is produced in the untrusted build context, so validate before
+          # using it in filesystem paths / API calls (a forked PR could tamper with it).
+          if ! [[ "$number" =~ ^[0-9]+$ ]]; then
+            echo "::error::Refusing to deploy: PR number '$number' is not a positive integer."
+            exit 1
+          fi
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+          echo "action=$action" >> "$GITHUB_OUTPUT"
+
+      - name: Download site artifact
+        if: steps.meta.outputs.action != 'closed'
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-preview-site
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: site
+
+      - name: Publish or remove preview on gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.meta.outputs.number }}
+          PR_ACTION: ${{ steps.meta.outputs.action }}
+          SRC_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          TARGET="pr-preview/pr-${PR_NUMBER}"
+
+          # A successful (non-close) build must contain a homepage; bail rather than
+          # publish a broken/empty preview.
+          if [ "$PR_ACTION" != "closed" ] && [ ! -f "${GITHUB_WORKSPACE}/site/index.html" ]; then
+            echo "::error::Built site artifact is missing index.html; aborting."
+            exit 1
+          fi
+
+          # Shallow clone of just gh-pages (fast even as its history grows), or start an
+          # orphan branch on the very first deploy.
+          if git clone --quiet --depth 1 --branch gh-pages --single-branch "$REPO_URL" gh-pages 2>/dev/null; then
+            cd gh-pages
+          else
+            mkdir gh-pages && cd gh-pages
+            git init --quiet
+            git remote add origin "$REPO_URL"
+            git checkout --quiet --orphan gh-pages
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Re-apply only this PR's directory onto the current tree, leaving every other
+          # PR's preview intact. Idempotent, so it is safe to replay on a push retry.
+          apply_change() {
+            rm -rf "$TARGET"
+            if [ "$PR_ACTION" != "closed" ]; then
+              mkdir -p "$TARGET"
+              cp -R "${GITHUB_WORKSPACE}/site/." "$TARGET/"
+            fi
+            touch .nojekyll # serve Docusaurus output verbatim (skip GitHub Pages' Jekyll)
+            git add -A
+          }
+
+          if [ "$PR_ACTION" != "closed" ]; then
+            MSG="Deploy preview for PR #${PR_NUMBER} (${SRC_SHA})"
+          else
+            MSG="Remove preview for PR #${PR_NUMBER}"
+          fi
+
+          apply_change
+          if git diff --quiet --cached; then
+            echo "Nothing to publish."
+            exit 0
+          fi
+          git commit --quiet -m "$MSG"
+
+          # Deploys are serialized by the workflow concurrency group, so a plain push
+          # should succeed. If the branch moved anyway, adopt the latest tree and
+          # re-apply our isolated change (never clobbering other PRs) before retrying.
+          if ! git push --quiet origin gh-pages; then
+            echo "Push rejected; re-syncing gh-pages and retrying."
+            git fetch --quiet --depth 1 origin gh-pages
+            git reset --hard origin/gh-pages
+            apply_change
+            git diff --quiet --cached || git commit --quiet -m "$MSG"
+            git push --quiet origin gh-pages
+          fi
+
+      - name: Comment the preview URL on the PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.meta.outputs.number }}
+          PR_ACTION: ${{ steps.meta.outputs.action }}
+          SRC_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          OWNER="${GITHUB_REPOSITORY%%/*}"
+          REPO="${GITHUB_REPOSITORY##*/}"
+          OWNER_LC="$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')"
+          URL="https://${OWNER_LC}.github.io/${REPO}/pr-preview/pr-${PR_NUMBER}/"
+          SHORT_SHA="${SRC_SHA:0:7}"
+          MARKER="<!-- docs-pr-preview -->"
+
+          if [ "$PR_ACTION" != "closed" ]; then
+            {
+              echo "$MARKER"
+              echo "### 📖 Docs preview is ready"
+              echo ""
+              echo "**Preview:** $URL"
+              echo ""
+              echo "Built from commit \`$SHORT_SHA\` and published to GitHub Pages. Updates on every push; removed automatically when this PR is closed."
+            } > body.md
+          else
+            {
+              echo "$MARKER"
+              echo "### 📖 Docs preview removed"
+              echo ""
+              echo "The preview for this PR was taken down because the PR is now closed."
+            } > body.md
+          fi
+
+          # Sticky behaviour: update our existing marked comment if present, else create it.
+          existing="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --jq "[.[] | select(.body | contains(\"${MARKER}\"))][0].id // empty")"
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" -f body="$(cat body.md)" >/dev/null
+            echo "Updated comment $existing"
+          else
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -f body="$(cat body.md)" >/dev/null
+            echo "Created preview comment"
+          fi
+          echo "Preview URL: $URL"
