@@ -47,6 +47,26 @@ function resolveSource(siteDir, source) {
 }
 
 /**
+ * Strip the site baseUrl from a permalink so paths are baseUrl-relative.
+ *
+ * Docusaurus permalinks include the configured baseUrl, but the build output
+ * (and the URLs people request) are relative to it. Under a sub-path baseUrl —
+ * e.g. GitHub Pages PR previews at /<repo>/pr-preview/pr-<N>/ — using the raw
+ * permalink writes .md files to a baseUrl-nested dead path and breaks the
+ * llms.txt index/alias matching. At baseUrl "/" this is a no-op.
+ *
+ * @param {string} permalink
+ * @param {string} baseUrl   e.g. "/" or "/repo/pr-preview/pr-12/"
+ * @returns {string}
+ */
+function stripBaseUrl(permalink, baseUrl) {
+  if (baseUrl && baseUrl !== '/' && permalink.startsWith(baseUrl)) {
+    return '/' + permalink.slice(baseUrl.length);
+  }
+  return permalink;
+}
+
+/**
  * Walk the allContent object and collect every { permalink → absFilePath }
  * pair from all @docusaurus/plugin-content-docs instances.
  *
@@ -58,9 +78,10 @@ function resolveSource(siteDir, source) {
  *
  * @param {Record<string, Record<string, any>>} allContent
  * @param {string} siteDir
+ * @param {string} baseUrl   site baseUrl; keys are stored baseUrl-relative
  * @returns {Map<string, string>}  permalink → absolute source path
  */
-function buildUrlMap(allContent, siteDir) {
+function buildUrlMap(allContent, siteDir, baseUrl) {
   const map = new Map();
 
   for (const instancesById of Object.values(allContent)) {
@@ -75,9 +96,13 @@ function buildUrlMap(allContent, siteDir) {
         for (const doc of docs) {
           const { permalink, source } = doc;
           if (!permalink || !source) continue;
+          // Store keys baseUrl-relative so the .md output paths and the llms
+          // index/alias routes line up under any baseUrl (incl. sub-path
+          // previews). No-op when baseUrl is "/".
+          const sitePermalink = stripBaseUrl(permalink, baseUrl);
           // Normalize: always store with trailing slash so toPermalink lookups
           // are consistent regardless of how Docusaurus emits the permalink.
-          const normalised = permalink.endsWith('/') ? permalink : permalink + '/';
+          const normalised = sitePermalink.endsWith('/') ? sitePermalink : sitePermalink + '/';
           map.set(normalised, resolveSource(siteDir, source));
         }
       }
@@ -386,7 +411,7 @@ module.exports = function serveMarkdownPlugin(context) {
     // contentLoaded, and before configureWebpack / postBuild.
     //
     async allContentLoaded({ allContent }) {
-      const discovered = buildUrlMap(allContent, siteDir);
+      const discovered = buildUrlMap(allContent, siteDir, siteConfig.baseUrl);
       for (const [permalink, absPath] of discovered) {
         urlMap.set(permalink, absPath);
       }
