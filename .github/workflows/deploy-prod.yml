@@ -1,0 +1,93 @@
+name: deploy-prod
+
+# Builds the docs on every push to the default branch and publishes them to the
+# ROOT of the gh-pages branch — the production site — while preserving any
+# pr-preview/ directories so PR previews are never clobbered.
+#
+# Runs in the trusted base-repo context (push to the default branch), so it has
+# write access and needs no fork-safety split.
+#
+# Environment is driven by repo Actions variables, so the SAME workflow serves the
+# github.io sub-path, a staging custom domain, and production with no code edits:
+#   vars.DOCS_URL       default: https://<owner>.github.io
+#   vars.DOCS_BASE_URL  default: /<repo>/          (set to "/" for a root custom domain)
+#   vars.PAGES_CNAME    optional: when set, written as the gh-pages CNAME each deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Shared with preview-deploy so prod and preview writes to gh-pages never race.
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: yarn
+
+      - run: yarn install
+
+      - name: Build production site
+        env:
+          DOCS_URL: ${{ vars.DOCS_URL || format('https://{0}.github.io', github.repository_owner) }}
+          DOCS_BASE_URL: ${{ vars.DOCS_BASE_URL || format('/{0}/', github.event.repository.name) }}
+        run: yarn build
+
+      - name: Publish to gh-pages root (preserve pr-preview/)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAGES_CNAME: ${{ vars.PAGES_CNAME }}
+        run: |
+          set -euo pipefail
+          REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          if git clone --quiet --depth 1 --branch gh-pages --single-branch "$REPO_URL" gh-pages 2>/dev/null; then
+            cd gh-pages
+          else
+            mkdir gh-pages && cd gh-pages
+            git init --quiet
+            git remote add origin "$REPO_URL"
+            git checkout --quiet --orphan gh-pages
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Replace the production site at the root while keeping pr-preview/ (and .git).
+          # Defined as a function so it can be replayed verbatim on a push retry.
+          publish() {
+            find . -mindepth 1 -maxdepth 1 ! -name '.git' ! -name 'pr-preview' -exec rm -rf {} +
+            cp -R "${GITHUB_WORKSPACE}/build/." .
+            touch .nojekyll # serve Docusaurus output verbatim (skip GitHub Pages' Jekyll)
+            if [ -n "${PAGES_CNAME:-}" ]; then echo "$PAGES_CNAME" > CNAME; fi
+            git add -A
+          }
+
+          publish
+          if git diff --quiet --cached; then
+            echo "No changes to publish."
+            exit 0
+          fi
+          git commit --quiet -m "Deploy production ($GITHUB_SHA)"
+
+          # Serialized by the concurrency group; if the branch moved anyway, adopt the
+          # latest tree and replay (never touching pr-preview/) before retrying.
+          if ! git push --quiet origin gh-pages; then
+            echo "Push rejected; re-syncing gh-pages and retrying."
+            git fetch --quiet --depth 1 origin gh-pages
+            git reset --hard origin/gh-pages
+            publish
+            git diff --quiet --cached || git commit --quiet -m "Deploy production ($GITHUB_SHA)"
+            git push --quiet origin gh-pages
+          fi

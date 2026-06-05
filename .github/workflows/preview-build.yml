@@ -66,10 +66,13 @@ jobs:
       - name: Build Docusaurus site
         if: github.event.action != 'closed'
         env:
-          # Point this build at the GitHub Pages sub-path the PR will be published to.
-          # The defaults in docusaurus.config.js keep production (Amplify) unchanged.
-          DOCS_URL: https://${{ github.repository_owner }}.github.io
-          DOCS_BASE_URL: /${{ github.event.repository.name }}/pr-preview/pr-${{ github.event.number }}/
+          # Point this build at the path the PR will be published to. When a root custom
+          # domain is configured (the PAGES_CNAME repo variable), previews live at
+          # <domain>/pr-preview/pr-<N>/; otherwise at the github.io project sub-path
+          # <owner>.github.io/<repo>/pr-preview/pr-<N>/. Defaults in docusaurus.config.js
+          # keep production builds unchanged.
+          DOCS_URL: ${{ vars.PAGES_CNAME && format('https://{0}', vars.PAGES_CNAME) || format('https://{0}.github.io', github.repository_owner) }}
+          DOCS_BASE_URL: ${{ vars.PAGES_CNAME && format('/pr-preview/pr-{0}/', github.event.number) || format('/{0}/pr-preview/pr-{1}/', github.event.repository.name, github.event.number) }}
         run: yarn build
 
       - name: Upload site artifact
