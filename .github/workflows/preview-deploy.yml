@@ -139,12 +139,19 @@ jobs:
           PR_NUMBER: ${{ steps.meta.outputs.number }}
           PR_ACTION: ${{ steps.meta.outputs.action }}
           SRC_SHA: ${{ github.event.workflow_run.head_sha }}
+          PAGES_CNAME: ${{ vars.PAGES_CNAME }}
         run: |
           set -euo pipefail
           OWNER="${GITHUB_REPOSITORY%%/*}"
           REPO="${GITHUB_REPOSITORY##*/}"
-          OWNER_LC="$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')"
-          URL="https://${OWNER_LC}.github.io/${REPO}/pr-preview/pr-${PR_NUMBER}/"
+          # When a root custom domain is configured, previews are served at
+          # <domain>/pr-preview/pr-<N>/; otherwise at the github.io project sub-path.
+          if [ -n "${PAGES_CNAME:-}" ]; then
+            URL="https://${PAGES_CNAME}/pr-preview/pr-${PR_NUMBER}/"
+          else
+            OWNER_LC="$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')"
+            URL="https://${OWNER_LC}.github.io/${REPO}/pr-preview/pr-${PR_NUMBER}/"
+          fi
           SHORT_SHA="${SRC_SHA:0:7}"
           MARKER="<!-- docs-pr-preview -->"
 
