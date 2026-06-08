@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[3956],{33181:e=>{e.exports=JSON.parse('{"categoryGeneratedIndex":{"title":"References","slug":"/compute/references","permalink":"/docs/compute/references","sidebar":"cartesicompute","navigation":{"previous":{"title":"Full Dogecoin Hash dApp","permalink":"/docs/tutorials/dogecoin-hash/full-dapp"}}}}')}}]);

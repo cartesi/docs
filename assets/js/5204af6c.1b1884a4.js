@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[3554],{48617:e=>{e.exports=JSON.parse('{"tag":{"label":"wallets","permalink":"/docs/tags/wallets","allTagsPath":"/docs/tags","count":1,"items":[{"id":"compute/wallet","title":"Wallets","description":"Cartesi is a second layer solution.","permalink":"/docs/compute/wallet"}],"unlisted":false}}')}}]);
