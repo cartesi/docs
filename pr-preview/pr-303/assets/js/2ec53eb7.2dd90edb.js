@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[3449],{64726:e=>{e.exports=JSON.parse('{"categoryGeneratedIndex":{"title":"Staking Delegation","slug":"earn-ctsi","permalink":"/docs/pr-preview/pr-303/earn-ctsi","sidebar":"staking","navigation":{"next":{"title":"How to stake","permalink":"/docs/pr-preview/pr-303/earn-ctsi/staking"}}}}')}}]);
