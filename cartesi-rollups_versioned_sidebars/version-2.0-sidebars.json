@@ -86,6 +86,21 @@
                 },
                 {
                     "type": "category",
+                    "label": "Asset Management Library",
+                    "collapsed": true,
+                    "items": [
+                        "api-reference/asset-management/overview",
+                        "api-reference/asset-management/getting-started",
+                        "api-reference/asset-management/parsing-inputs",
+                        "api-reference/asset-management/managing-balances",
+                        "api-reference/asset-management/vouchers",
+                        "api-reference/asset-management/parser-reference",
+                        "api-reference/asset-management/ledger-reference",
+                        "api-reference/asset-management/types-and-selectors"
+                    ]
+                },
+                {
+                    "type": "category",
                     "label": "JSON-RPC API",
                     "collapsed": true,
                     "items": [
