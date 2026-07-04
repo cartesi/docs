@@ -150,6 +150,7 @@ emit_erc1155_batch_voucher(token: str, receiver: str, token_ids: list, amounts: 
 ```rust
 pub fn cma_encode_voucher(
     req_type: CmaParserVoucherType,
+    app_address: Option<Address>,
     voucher_request: CmaVoucherFieldType,
 ) -> Result<CmaVoucher, CmaParserError>
 ```
@@ -172,7 +173,7 @@ int cma_parser_encode_voucher(
 
 - **type / req_type**: the voucher type, one entry per asset standard. See [voucher types](./types-and-selectors.md#voucher-fields).
 - **voucher_request**: the fields for that voucher type, such as token address, receiver and amount.
-- **app_address** (C and C++ only): your application's address on the base layer, available in the advance request metadata. The Python binding captures it for you from `read_advance_state()`. The Rust binding takes it as a field of the ERC721 voucher request.
+- **app_address**: your application's address on the base layer, available in the advance request metadata. In C, C++ and Rust you pass it to the encode call, in Rust as `Some(address)`. The Python binding captures it for you from `read_advance_state()`. ERC721 vouchers also keep the application address inside their fields struct, because the token contract moves the token out of the application's custody.
 
 ### Returns
 
@@ -182,4 +183,4 @@ int cma_parser_encode_voucher(
 
 ### Errors
 
-Fails when the request fields do not match the voucher type. In the Rust binding, ERC1155 single and batch voucher types are not implemented yet and return an error.
+Fails when the request fields do not match the voucher type.

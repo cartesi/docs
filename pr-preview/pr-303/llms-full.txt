@@ -17555,7 +17555,7 @@ title: Getting started
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This page shows you how to add the CMA library to a Cartesi application and build a small wallet that accepts Ether deposits and answers balance queries.
+This page shows you how to add the CMA library to a Cartesi application and build a small wallet that accepts deposits of a single ERC20 token and answers balance queries.
 
 ## Start from a template
 
@@ -17617,31 +17617,43 @@ This installs the shared library. Use the `_dev` artifact when you also need the
 
 ## Your first wallet
 
-The example below accepts Ether deposits, records them in the ledger and answers balance queries. It is a trimmed version of the [wallet sample application](https://github.com/Mugen-Builders/libcma-binding-python/tree/main/sample_apps/wallet_app) that ships with the Python binding.
+The example below accepts deposits of one ERC20 token, records them in a single asset ledger and answers balance queries. The single asset ledger keeps balances on the accounts flash drive, so they can be recovered on the base layer with the default emergency withdrawal tooling. See [Single-asset ledger](./managing-balances.md#single-asset-ledger) for the details.
 
 <Tabs groupId="language">
 <TabItem value="python" label="Python" default>
 
 ```python
-from pycma import RollupCma, Ledger, decode_ether_deposit, decode_inspect
+from pycma import RollupCma, Ledger, decode_erc20_deposit, decode_inspect
 
-ETHER_PORTAL_ADDRESS = "0xA632c5c05812c6a6149B7af5C56117d1D2603828"[2:].lower()
+ERC20_PORTAL_ADDRESS = "0x22E57511C30CcE6CDaa742E13CE3b774fDC663b1"[2:].lower()
+TOKEN = "0x88A2120B7068E78692C8fd12E751d610B6377E4d"
 
 rollup = RollupCma()
-ledger = Ledger()
 
-# Create the asset entry for Ether once, at startup
-ether = ledger.retrieve_asset(base_token=True)
-ETHER_ID = ether["asset_id"]
+# A single asset ledger on the accounts flash drive, fixed to one ERC20 token
+ledger = Ledger(
+    memory_filename="/dev/pmem1",
+    offset=0,
+    mem_length=4 * 1024 * 1024,
+    n_accounts=4096,
+    n_assets=1,    # unused by the single asset ledger, but must be non zero
+    n_balances=1,  # unused by the single asset ledger, but must be non zero
+    single_asset_account_drive=True,
+    account_drive_token=TOKEN,
+)
+
+# The single asset always has id 0
+asset = ledger.retrieve_asset(token=TOKEN)
+ASSET_ID = asset["asset_id"]
 
 def handle_advance(rollup, ledger):
     advance = rollup.read_advance_state()
     msg_sender = advance["msg_sender"].hex().lower()
 
-    if msg_sender == ETHER_PORTAL_ADDRESS:
-        deposit = decode_ether_deposit(advance)
+    if msg_sender == ERC20_PORTAL_ADDRESS:
+        deposit = decode_erc20_deposit(advance)
         account = ledger.retrieve_account(account=deposit["sender"])
-        ledger.deposit(ETHER_ID, account["account_id"], deposit["amount"])
+        ledger.deposit(ASSET_ID, account["account_id"], deposit["amount"])
         return True
 
     return False
@@ -17652,7 +17664,7 @@ def handle_inspect(rollup, ledger):
 
     if query["type"] == "BALANCE":
         account = ledger.retrieve_account(account=query["account"])
-        balance = ledger.balance(ETHER_ID, account["account_id"])
+        balance = ledger.balance(ASSET_ID, account["account_id"])
         rollup.emit_report(balance.to_bytes(32, "big"))
         return True
 
@@ -17673,12 +17685,23 @@ The Rust template uses [libcmt-binding-rust](https://github.com/Mugen-Builders/l
 
 ```rust
 use libcma_binding_rust::parser::{cma_decode_advance, CmaParserInputType, CmaParserInputData};
-use libcma_binding_rust::Ledger;
+use libcma_binding_rust::{Ledger, LedgerAsset, LedgerSingleFileConfig, Address};
 use json::object;
 
-const ETHER_PORTAL: &str = "0xA632c5c05812c6a6149B7af5C56117d1D2603828";
+const ERC20_PORTAL: &str = "0x22E57511C30CcE6CDaa742E13CE3b774fDC663b1";
 
-fn handle_ether_deposit(
+// A single asset ledger on the accounts flash drive, fixed to one ERC20 token
+fn open_ledger(token: Address) -> Result<Ledger, Box<dyn std::error::Error>> {
+    let mut ledger = Ledger::new()?;
+    ledger.init_single_from_file(
+        "/dev/pmem1",
+        LedgerSingleFileConfig { offset: 0, memory_length: 4 * 1024 * 1024, max_accounts: 4096 },
+        LedgerAsset::Erc20(token),
+    )?;
+    Ok(ledger)
+}
+
+fn handle_erc20_deposit(
     ledger: &mut Ledger,
     msg_sender: &str,
     payload_hex: &str,
@@ -17693,20 +17716,21 @@ fn handle_ether_deposit(
     };
 
     let decoded = cma_decode_advance(
-        CmaParserInputType::CmaParserInputTypeEtherDeposit,
+        CmaParserInputType::CmaParserInputTypeErc20Deposit,
         request,
     )?;
 
-    if let CmaParserInputData::EtherDeposit(deposit) = decoded.input {
-        let ether_id = ledger.retrieve_ether_assets()?;
+    if let CmaParserInputData::Erc20Deposit(deposit) = decoded.input {
+        // The single asset always has id 0
+        let asset_id = ledger.retrieve_erc20_asset_via_address(deposit.token)?;
         let account_id = ledger.retrieve_account_via_address(deposit.sender)?;
-        ledger.deposit(ether_id, account_id, deposit.amount)?;
+        ledger.deposit(asset_id, account_id, deposit.amount)?;
     }
     Ok(())
 }
 ```
 
-Compare the sender of each advance request against the portal addresses to pick the right input type, as shown in the [Rust template](https://github.com/Mugen-Builders/libcma-app-templates/blob/main/rust/src/main.rs).
+Compare the sender of each advance request against the ERC20 portal address to pick the right input type, as shown in the [application templates](https://github.com/Mugen-Builders/libcma-app-templates).
 
 </TabItem>
 <TabItem value="cpp" label="C++">
@@ -17723,13 +17747,14 @@ extern "C" {
 // input is a cmt_rollup_advance_t filled by cmt_rollup_read_advance_state(rollup, &input)
 cma_parser_input_t parser_input;
 
-const int err = cma_parser_decode_advance(CMA_PARSER_INPUT_TYPE_ETHER_DEPOSIT, &input, &parser_input);
+const int err = cma_parser_decode_advance(CMA_PARSER_INPUT_TYPE_ERC20_DEPOSIT, &input, &parser_input);
 if (err < 0) {
     printf("unable to decode deposit: %d - %s\n", -err, cma_parser_get_last_error_message());
 }
 
-// parser_input.ether_deposit.sender  -> who deposited
-// parser_input.ether_deposit.amount  -> how much
+// parser_input.erc20_deposit.sender  -> who deposited
+// parser_input.erc20_deposit.token   -> the token contract
+// parser_input.erc20_deposit.amount  -> how much
 ```
 
 The [C++ template](https://github.com/Mugen-Builders/libcma-app-templates/blob/main/cpp/app.cpp) shows the complete request loop.
@@ -17745,6 +17770,7 @@ Applications using the CMA library build and run like any other Cartesi applicat
 
 - [Parsing inputs](./parsing-inputs.md) covers every input the parser can decode.
 - [Managing balances](./managing-balances.md) covers the full ledger API.
+- [Single-asset ledger](./managing-balances.md#single-asset-ledger) tracks one fixed token and makes balances recoverable on the base layer with the default emergency withdrawal tooling.
 - [Vouchers and withdrawals](./vouchers.md) shows how users take their assets back to the base layer.
 
 ---
@@ -17765,13 +17791,16 @@ This page lists every ledger operation with its signature per language. For a gu
 
 Create, persist, reset and release a ledger.
 
+The ledger comes in two flavors. The multi asset ledger tracks many assets at once. The single asset ledger tracks one fixed asset, Ether or one ERC20, chosen when the store is created and immutable after that. It keeps 64 bit balances and stores each account as a 32 byte record, which is the layout the default emergency withdrawal tooling reads. See [Managing balances](./managing-balances.md#single-asset-ledger) for when to use each one.
+
 <Tabs groupId="language">
 <TabItem value="python" label="Python" default>
 
 | Method | Description |
 | :--- | :--- |
 | `Ledger()` | Creates an in memory ledger |
-| `Ledger(memory_filename, offset, mem_length, n_accounts, n_assets, n_balances, initialize_memory)` | Creates or opens a file backed ledger. Pass `initialize_memory=True` only the first time, to create and size the file |
+| `Ledger(memory_filename, offset, mem_length, n_accounts, n_assets, n_balances)` | Creates or opens a file backed multi asset ledger. The file is created and sized when missing, and validated when it already exists |
+| `Ledger(memory_filename, offset, mem_length, n_accounts, n_assets, n_balances, single_asset_account_drive=True, account_drive_token=None)` | Creates or opens a file backed single asset ledger. Leave `account_drive_token` unset for Ether, or pass an ERC20 address for a token drive. `n_assets` and `n_balances` are unused here but must still be non zero |
 | `reset()` | Clears all accounts, assets and balances |
 
 </TabItem>
@@ -17780,8 +17809,10 @@ Create, persist, reset and release a ledger.
 | Method | Returns | Description |
 | :--- | :--- | :--- |
 | `Ledger::new()` | `Result<Ledger, LedgerError>` | Creates an in memory ledger |
-| `Ledger::init_from_file(config)` | `Result<Ledger, LedgerError>` | Opens or creates a file backed ledger from a `LedgerFileConfig` |
-| `Ledger::init_from_buffer(config)` | `Result<Ledger, LedgerError>` | Creates a ledger backed by a caller provided buffer from a `LedgerBufferConfig` |
+| `init_from_file(file_path, config)` | `Result<(), LedgerError>` | Reinitializes the ledger as a file backed multi asset ledger from a `LedgerFileConfig` |
+| `init_from_buffer(buffer, config)` | `Result<(), LedgerError>` | Reinitializes the ledger over a caller provided buffer from a `LedgerBufferConfig` |
+| `init_single_from_file(file_path, config, asset)` | `Result<(), LedgerError>` | Reinitializes the ledger as a file backed single asset ledger from a `LedgerSingleFileConfig` and a `LedgerAsset` |
+| `init_single_from_buffer(buffer, max_accounts, asset)` | `Result<(), LedgerError>` | Reinitializes the ledger as a single asset ledger over a caller provided buffer |
 | `reset()` | `Result<(), LedgerError>` | Clears all records |
 | `get_last_error_message()` | `Result<String, LedgerError>` | Returns the text of the last error |
 
@@ -17791,8 +17822,10 @@ Create, persist, reset and release a ledger.
 | Function | Description |
 | :--- | :--- |
 | `cma_ledger_init(ledger)` | Creates an in memory ledger |
-| `cma_ledger_init_file(ledger, memory_file_name, mode, offset, mem_length, n_accounts, n_assets, n_balances)` | Opens (`CMA_LEDGER_OPEN_ONLY`) or creates (`CMA_LEDGER_CREATE_ONLY`) a file backed ledger |
-| `cma_ledger_init_buffer(ledger, buffer, mem_length, n_accounts, n_assets, n_balances)` | Creates a ledger backed by a caller provided buffer |
+| `cma_ledger_init_file(ledger, memory_file_name, offset, mem_length, n_accounts, n_assets, n_balances)` | Opens or creates a file backed multi asset ledger. The file is created when missing and validated when it already exists |
+| `cma_ledger_init_buffer(ledger, buffer, mem_length, n_accounts, n_assets, n_balances)` | Creates a multi asset ledger backed by a caller provided buffer |
+| `cma_ledger_init_single_file(ledger, memory_file_name, offset, mem_length, n_accounts, asset_type, token_address)` | Opens or creates a file backed single asset ledger. Pass `CMA_LEDGER_ASSET_TYPE_BASE` with a null `token_address` for Ether, or `CMA_LEDGER_ASSET_TYPE_TOKEN_ADDRESS` with a `token_address` for one ERC20 |
+| `cma_ledger_init_single_buffer(ledger, buffer, mem_length, n_accounts, asset_type, token_address)` | Creates a single asset ledger backed by a caller provided buffer |
 | `cma_ledger_reset(ledger)` | Clears all records |
 | `cma_ledger_fini(ledger)` | Releases the ledger |
 | `cma_ledger_get_last_error_message()` | Returns the text of the last error |
@@ -17803,6 +17836,8 @@ Create, persist, reset and release a ledger.
 ## Retrieving accounts and assets
 
 These calls find an entry and return its internal ID. With the find or create operation they also create missing entries, which is the common case when handling deposits.
+
+In a single asset ledger the asset is fixed, so the asset retrieve calls always return id `0`, and balances are 64 bit values.
 
 <Tabs groupId="language">
 <TabItem value="python" label="Python" default>
@@ -17928,6 +17963,8 @@ The ledger works with three things:
 
 Most ledger calls follow a retrieve pattern: you describe the account or asset, and the ledger finds it or creates it and hands back its ID. After that, you work with IDs only.
 
+The ledger comes in two flavors. The multi asset ledger described above tracks many assets at once. The single asset ledger tracks one fixed asset and stores balances in a form the default emergency withdrawal tooling can prove. See [Single-asset ledger](#single-asset-ledger) below.
+
 ## Creating a ledger
 
 <Tabs groupId="language">
@@ -17941,7 +17978,8 @@ from pycma import Ledger
 # In memory
 ledger = Ledger()
 
-# File backed, sized for your application
+# File backed, sized for your application. The file is created and sized
+# when missing, and validated when it already exists.
 ledger = Ledger(
     memory_filename="/dev/pmem2",
     offset=0,
@@ -17949,7 +17987,6 @@ ledger = Ledger(
     n_accounts=16 * 1024,
     n_assets=8,
     n_balances=8 * 16 * 1024,
-    initialize_memory=True,  # True only on first creation
 )
 ```
 
@@ -17963,7 +18000,7 @@ use libcma_binding_rust::Ledger;
 let mut ledger = Ledger::new()?;
 ```
 
-The binding also exposes `Ledger::init_from_file` and `Ledger::init_from_buffer` for persistent ledgers, configured through `LedgerFileConfig` and `LedgerBufferConfig`.
+The binding also exposes `init_from_file` and `init_from_buffer` for persistent multi asset ledgers, configured through `LedgerFileConfig` and `LedgerBufferConfig`, and `init_single_from_file` and `init_single_from_buffer` for the single asset ledger. Call them on a ledger created with `Ledger::new()`.
 
 </TabItem>
 <TabItem value="cpp" label="C++">
@@ -17979,7 +18016,68 @@ if (cma_ledger_init(&ledger) < 0) {
 cma_ledger_fini(&ledger);
 ```
 
-`cma_ledger_init_file` and `cma_ledger_init_buffer` create persistent ledgers backed by a memory file or a buffer you provide.
+`cma_ledger_init_file` and `cma_ledger_init_buffer` create persistent multi asset ledgers backed by a memory file or a buffer you provide. `cma_ledger_init_single_file` and `cma_ledger_init_single_buffer` create the single asset ledger.
+
+</TabItem>
+</Tabs>
+
+## Single-asset ledger
+
+The single asset ledger is a variant that tracks one fixed asset for the life of the store. You choose the asset when you create it, either Ether or one ERC20, and it cannot change after that. Use it when your application handles a single token and you want balances that are easy to recover on the base layer.
+
+It differs from the multi asset ledger in a few ways:
+
+- **One immutable asset**. There is always exactly one asset, with id `0`. Reopening the store with a different asset is rejected.
+- **64 bit balances**. Amounts are 64 bit values rather than 256 bit.
+- **A 32 byte account record**. Each withdrawable account is stored as a 32 byte record: an 8 byte balance in little endian order, then the 20 byte owner address, then 4 bytes of padding. This is the standard accounts drive layout, so the default emergency withdrawal tooling can prove a balance and release it without a custom output builder.
+- **Withdrawable and virtual accounts**. Accounts keyed by a wallet address are withdrawable and live in the drive records. Accounts keyed by an internal id are virtual and live off the drive, so they are not part of the provable set.
+
+Create it from a file. The deposit, withdraw, transfer and query calls are the same as the multi asset ledger, and the asset id is always `0`.
+
+<Tabs groupId="language">
+<TabItem value="python" label="Python" default>
+
+```python
+from pycma import Ledger
+
+# Single ERC20 drive. Omit account_drive_token for an Ether drive.
+ledger = Ledger(
+    memory_filename="/dev/pmem1",
+    offset=0,
+    mem_length=4 * 1024 * 1024,
+    n_accounts=4096,
+    n_assets=1,    # unused by the single asset ledger, but must be non zero
+    n_balances=1,  # unused by the single asset ledger, but must be non zero
+    single_asset_account_drive=True,
+    account_drive_token="0x88A2120B7068E78692C8fd12E751d610B6377E4d",
+)
+```
+
+</TabItem>
+<TabItem value="rust" label="Rust">
+
+```rust
+use libcma_binding_rust::{Ledger, LedgerAsset, LedgerSingleFileConfig};
+
+let mut ledger = Ledger::new()?;
+ledger.init_single_from_file(
+    "/dev/pmem1",
+    LedgerSingleFileConfig { offset: 0, memory_length: 4 * 1024 * 1024, max_accounts: 4096 },
+    LedgerAsset::Erc20(token_address), // or LedgerAsset::Ether
+)?;
+```
+
+</TabItem>
+<TabItem value="cpp" label="C++">
+
+```cpp
+cma_ledger_t ledger;
+cma_token_address_t token = { /* 20 bytes */ };
+
+// Single ERC20 drive. Use CMA_LEDGER_ASSET_TYPE_BASE and a null token for Ether.
+cma_ledger_init_single_file(&ledger, "/dev/pmem1", 0, 4 * 1024 * 1024, 4096,
+    CMA_LEDGER_ASSET_TYPE_TOKEN_ADDRESS, &token);
+```
 
 </TabItem>
 </Tabs>
@@ -18018,7 +18116,7 @@ existing = ledger.retrieve_asset(base_token=True, force_find=True)
 The binding has one generic method and shortcuts for the common cases:
 
 ```rust
-use libcma_binding_rust::types::{AssetType, AccountType, RetrieveOperation, AddressCBindingsExt};
+use libcma_binding_rust::types::{AssetType, AccountType, RetrieveOperation};
 use libcma_binding_rust::types::{Address, U256};
 
 // Shortcuts
@@ -18209,7 +18307,9 @@ The ledger is a small in machine database for managing assets. It stores:
 - **Assets**, identified by a token address, a token address plus token ID, or a plain ID.
 - **Balances**, the amount of each asset held by each account, plus the total supply of each asset.
 
-It exposes deposit, withdraw and transfer operations, and read only balance and supply queries. Every operation either succeeds or returns a clear error code, so your application state stays consistent. See [Managing balances](./managing-balances.md) for an advance guide.
+It exposes deposit, withdraw and transfer operations, and read only balance and supply queries. Every operation either succeeds or returns a clear error code, so your application state stays consistent.
+
+The ledger comes in two flavors. The multi asset ledger tracks many assets at once. The single asset ledger tracks one fixed asset, Ether or one ERC20, and stores balances in the standard accounts drive layout, so they can be recovered on the base layer with the default emergency withdrawal tooling. See [Managing balances](./managing-balances.md) for an advance guide.
 
 ## Language support
 
@@ -18381,6 +18481,7 @@ emit_erc1155_batch_voucher(token: str, receiver: str, token_ids: list, amounts: 
 ```rust
 pub fn cma_encode_voucher(
     req_type: CmaParserVoucherType,
+    app_address: Option<Address>,
     voucher_request: CmaVoucherFieldType,
 ) -> Result<CmaVoucher, CmaParserError>
 ```
@@ -18403,7 +18504,7 @@ int cma_parser_encode_voucher(
 
 - **type / req_type**: the voucher type, one entry per asset standard. See [voucher types](./types-and-selectors.md#voucher-fields).
 - **voucher_request**: the fields for that voucher type, such as token address, receiver and amount.
-- **app_address** (C and C++ only): your application's address on the base layer, available in the advance request metadata. The Python binding captures it for you from `read_advance_state()`. The Rust binding takes it as a field of the ERC721 voucher request.
+- **app_address**: your application's address on the base layer, available in the advance request metadata. In C, C++ and Rust you pass it to the encode call, in Rust as `Some(address)`. The Python binding captures it for you from `read_advance_state()`. ERC721 vouchers also keep the application address inside their fields struct, because the token contract moves the token out of the application's custody.
 
 ### Returns
 
@@ -18413,7 +18514,7 @@ int cma_parser_encode_voucher(
 
 ### Errors
 
-Fails when the request fields do not match the voucher type. In the Rust binding, ERC1155 single and batch voucher types are not implemented yet and return an error.
+Fails when the request fields do not match the voucher type.
 
 ---
 
@@ -18638,7 +18739,7 @@ elif query["type"] == "SUPPLY":
 </TabItem>
 <TabItem value="rust" label="Rust">
 
-The Rust binding accepts the methods `ledgerGetBalance` and `ledgerGetTotalSupply`. The inspect payload is the hex encoding of the JSON document:
+The Rust binding accepts the same `ledger_getBalance` and `ledger_getTotalSupply` methods, and also accepts the camelCase spellings `ledgerGetBalance` and `ledgerGetTotalSupply`. The inspect payload is the hex encoding of the JSON document:
 
 ```rust
 use libcma_binding_rust::parser::{cma_decode_inspect, CmaParserInputType, CmaParserInputData};
@@ -18648,12 +18749,12 @@ let decoded = cma_decode_inspect(request)?;
 match decoded.req_type {
     CmaParserInputType::CmaParserInputTypeBalance => {
         if let CmaParserInputData::Balance(q) = decoded.input {
-            // q.account, q.token, q.token_ids
+            // q.account, q.token, q.token_id
         }
     }
     CmaParserInputType::CmaParserInputTypeSupply => {
         if let CmaParserInputData::Supply(q) = decoded.input {
-            // q.token, q.token_ids
+            // q.token, q.token_id
         }
     }
     _ => {}
@@ -18854,7 +18955,7 @@ For balance queries, `params` holds the account, then an optional token address 
 </TabItem>
 <TabItem value="rust" label="Rust">
 
-Methods: `ledgerGetBalance` and `ledgerGetTotalSupply`. The payload is the hex encoding of the JSON document, and `params` holds the account, the token address and an optional array of token IDs.
+Methods: `ledger_getBalance` and `ledger_getTotalSupply`, with the camelCase spellings `ledgerGetBalance` and `ledgerGetTotalSupply` also accepted. The payload is the hex encoding of the JSON document, and `params` holds the account, an optional token address and an optional token ID.
 
 </TabItem>
 </Tabs>
@@ -18876,12 +18977,15 @@ Each voucher type takes these fields. In C and C++ the receiver lives in the out
 | Concept            | C and C++                                                                                                     | Rust                                                |
 | :----------------- | :------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
 | Retrieve operation | `CMA_LEDGER_OP_FIND`, `CMA_LEDGER_OP_CREATE`, `CMA_LEDGER_OP_FIND_OR_CREATE`, `CMA_LEDGER_OP_FIND_AND_REMOVE` | `RetrieveOperation::Find`, `Create`, `FindOrCreate` |
-| Asset type         | `CMA_LEDGER_ASSET_TYPE_ID`, `BASE`, `TOKEN_ADDRESS`, `TOKEN_ADDRESS_ID`, `TOKEN_ADDRESS_ID_AMOUNT`            | `AssetType::Id`, `TokenAddress`, `TokenAddressId`   |
+| Asset type         | `CMA_LEDGER_ASSET_TYPE_ID`, `BASE`, `TOKEN_ADDRESS`, `TOKEN_ADDRESS_ID`, `TOKEN_ADDRESS_ID_AMOUNT`            | `AssetType::Id`, `Base`, `TokenAddress`, `TokenAddressId`, `TokenAddressIdAmount` |
 | Account type       | `CMA_LEDGER_ACCOUNT_TYPE_ID`, `WALLET_ADDRESS`, `ACCOUNT_ID`                                                  | `AccountType::Id`, `WalletAddress`, `AccountId`     |
+| Single asset       | `CMA_LEDGER_ASSET_TYPE_BASE`, or `CMA_LEDGER_ASSET_TYPE_TOKEN_ADDRESS` with a token address                   | `LedgerAsset::Ether`, `LedgerAsset::Erc20(token)`   |
 | Asset ID           | `cma_ledger_asset_id_t`                                                                                       | `LedgerAssetId(u64)`                                |
 | Account ID         | `cma_ledger_account_id_t`                                                                                     | `LedgerAccountId(u64)`                              |
 
 The Python `Ledger` methods select these types for you from the arguments you pass, as described in the [Ledger reference](./ledger-reference.md).
+
+The single asset ledger is created with `cma_ledger_init_single_file` or `cma_ledger_init_single_buffer` in C and C++, and with `init_single_from_file` or `init_single_from_buffer` in Rust. The Rust file backed form takes a `LedgerSingleFileConfig { offset, memory_length, max_accounts }`, and the Python form uses the `single_asset_account_drive` and `account_drive_token` arguments of `Ledger`.
 
 ## Error codes
 
@@ -18992,6 +19096,7 @@ use libcma_binding_rust::parser::{
 
 let voucher = cma_encode_voucher(
     CmaParserVoucherType::CmaParserVoucherTypeErc20,
+    Some(application_address),
     CmaVoucherFieldType::Erc20VoucherFields(CmaParserErc20VoucherFields {
         token,
         receiver,
@@ -19000,7 +19105,11 @@ let voucher = cma_encode_voucher(
 )?;
 
 // voucher.destination -> address the voucher calls
+// voucher.value       -> base layer value to send, used by Ether vouchers
 // voucher.payload     -> hex encoded call data
+
+// Emit it through your rollup I/O layer, for example libcmt-binding-rust:
+rollup.emit_voucher(&voucher.destination, Some(&voucher.value), &voucher.payload)?;
 ```
 
 ERC721 vouchers also need your application address, because the token contract transfers the token out of the application's custody:
@@ -19010,6 +19119,7 @@ use libcma_binding_rust::parser::CmaParserErc721VoucherFields;
 
 let voucher = cma_encode_voucher(
     CmaParserVoucherType::CmaParserVoucherTypeErc721,
+    Some(application_address),
     CmaVoucherFieldType::Erc721VoucherFields(CmaParserErc721VoucherFields {
         token,
         token_id,

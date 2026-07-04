@@ -14,13 +14,16 @@ This page lists every ledger operation with its signature per language. For a gu
 
 Create, persist, reset and release a ledger.
 
+The ledger comes in two flavors. The multi asset ledger tracks many assets at once. The single asset ledger tracks one fixed asset, Ether or one ERC20, chosen when the store is created and immutable after that. It keeps 64 bit balances and stores each account as a 32 byte record, which is the layout the default emergency withdrawal tooling reads. See [Managing balances](./managing-balances.md#single-asset-ledger) for when to use each one.
+
 <Tabs groupId="language">
 <TabItem value="python" label="Python" default>
 
 | Method | Description |
 | :--- | :--- |
 | `Ledger()` | Creates an in memory ledger |
-| `Ledger(memory_filename, offset, mem_length, n_accounts, n_assets, n_balances, initialize_memory)` | Creates or opens a file backed ledger. Pass `initialize_memory=True` only the first time, to create and size the file |
+| `Ledger(memory_filename, offset, mem_length, n_accounts, n_assets, n_balances)` | Creates or opens a file backed multi asset ledger. The file is created and sized when missing, and validated when it already exists |
+| `Ledger(memory_filename, offset, mem_length, n_accounts, n_assets, n_balances, single_asset_account_drive=True, account_drive_token=None)` | Creates or opens a file backed single asset ledger. Leave `account_drive_token` unset for Ether, or pass an ERC20 address for a token drive. `n_assets` and `n_balances` are unused here but must still be non zero |
 | `reset()` | Clears all accounts, assets and balances |
 
 </TabItem>
@@ -29,8 +32,10 @@ Create, persist, reset and release a ledger.
 | Method | Returns | Description |
 | :--- | :--- | :--- |
 | `Ledger::new()` | `Result<Ledger, LedgerError>` | Creates an in memory ledger |
-| `Ledger::init_from_file(config)` | `Result<Ledger, LedgerError>` | Opens or creates a file backed ledger from a `LedgerFileConfig` |
-| `Ledger::init_from_buffer(config)` | `Result<Ledger, LedgerError>` | Creates a ledger backed by a caller provided buffer from a `LedgerBufferConfig` |
+| `init_from_file(file_path, config)` | `Result<(), LedgerError>` | Reinitializes the ledger as a file backed multi asset ledger from a `LedgerFileConfig` |
+| `init_from_buffer(buffer, config)` | `Result<(), LedgerError>` | Reinitializes the ledger over a caller provided buffer from a `LedgerBufferConfig` |
+| `init_single_from_file(file_path, config, asset)` | `Result<(), LedgerError>` | Reinitializes the ledger as a file backed single asset ledger from a `LedgerSingleFileConfig` and a `LedgerAsset` |
+| `init_single_from_buffer(buffer, max_accounts, asset)` | `Result<(), LedgerError>` | Reinitializes the ledger as a single asset ledger over a caller provided buffer |
 | `reset()` | `Result<(), LedgerError>` | Clears all records |
 | `get_last_error_message()` | `Result<String, LedgerError>` | Returns the text of the last error |
 
@@ -40,8 +45,10 @@ Create, persist, reset and release a ledger.
 | Function | Description |
 | :--- | :--- |
 | `cma_ledger_init(ledger)` | Creates an in memory ledger |
-| `cma_ledger_init_file(ledger, memory_file_name, mode, offset, mem_length, n_accounts, n_assets, n_balances)` | Opens (`CMA_LEDGER_OPEN_ONLY`) or creates (`CMA_LEDGER_CREATE_ONLY`) a file backed ledger |
-| `cma_ledger_init_buffer(ledger, buffer, mem_length, n_accounts, n_assets, n_balances)` | Creates a ledger backed by a caller provided buffer |
+| `cma_ledger_init_file(ledger, memory_file_name, offset, mem_length, n_accounts, n_assets, n_balances)` | Opens or creates a file backed multi asset ledger. The file is created when missing and validated when it already exists |
+| `cma_ledger_init_buffer(ledger, buffer, mem_length, n_accounts, n_assets, n_balances)` | Creates a multi asset ledger backed by a caller provided buffer |
+| `cma_ledger_init_single_file(ledger, memory_file_name, offset, mem_length, n_accounts, asset_type, token_address)` | Opens or creates a file backed single asset ledger. Pass `CMA_LEDGER_ASSET_TYPE_BASE` with a null `token_address` for Ether, or `CMA_LEDGER_ASSET_TYPE_TOKEN_ADDRESS` with a `token_address` for one ERC20 |
+| `cma_ledger_init_single_buffer(ledger, buffer, mem_length, n_accounts, asset_type, token_address)` | Creates a single asset ledger backed by a caller provided buffer |
 | `cma_ledger_reset(ledger)` | Clears all records |
 | `cma_ledger_fini(ledger)` | Releases the ledger |
 | `cma_ledger_get_last_error_message()` | Returns the text of the last error |
@@ -52,6 +59,8 @@ Create, persist, reset and release a ledger.
 ## Retrieving accounts and assets
 
 These calls find an entry and return its internal ID. With the find or create operation they also create missing entries, which is the common case when handling deposits.
+
+In a single asset ledger the asset is fixed, so the asset retrieve calls always return id `0`, and balances are 64 bit values.
 
 <Tabs groupId="language">
 <TabItem value="python" label="Python" default>

@@ -68,6 +68,7 @@ use libcma_binding_rust::parser::{
 
 let voucher = cma_encode_voucher(
     CmaParserVoucherType::CmaParserVoucherTypeErc20,
+    Some(application_address),
     CmaVoucherFieldType::Erc20VoucherFields(CmaParserErc20VoucherFields {
         token,
         receiver,
@@ -76,7 +77,11 @@ let voucher = cma_encode_voucher(
 )?;
 
 // voucher.destination -> address the voucher calls
+// voucher.value       -> base layer value to send, used by Ether vouchers
 // voucher.payload     -> hex encoded call data
+
+// Emit it through your rollup I/O layer, for example libcmt-binding-rust:
+rollup.emit_voucher(&voucher.destination, Some(&voucher.value), &voucher.payload)?;
 ```
 
 ERC721 vouchers also need your application address, because the token contract transfers the token out of the application's custody:
@@ -86,6 +91,7 @@ use libcma_binding_rust::parser::CmaParserErc721VoucherFields;
 
 let voucher = cma_encode_voucher(
     CmaParserVoucherType::CmaParserVoucherTypeErc721,
+    Some(application_address),
     CmaVoucherFieldType::Erc721VoucherFields(CmaParserErc721VoucherFields {
         token,
         token_id,
