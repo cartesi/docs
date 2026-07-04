@@ -217,7 +217,7 @@ elif query["type"] == "SUPPLY":
 </TabItem>
 <TabItem value="rust" label="Rust">
 
-The Rust binding accepts the methods `ledgerGetBalance` and `ledgerGetTotalSupply`. The inspect payload is the hex encoding of the JSON document:
+The Rust binding accepts the same `ledger_getBalance` and `ledger_getTotalSupply` methods, and also accepts the camelCase spellings `ledgerGetBalance` and `ledgerGetTotalSupply`. The inspect payload is the hex encoding of the JSON document:
 
 ```rust
 use libcma_binding_rust::parser::{cma_decode_inspect, CmaParserInputType, CmaParserInputData};
@@ -227,12 +227,12 @@ let decoded = cma_decode_inspect(request)?;
 match decoded.req_type {
     CmaParserInputType::CmaParserInputTypeBalance => {
         if let CmaParserInputData::Balance(q) = decoded.input {
-            // q.account, q.token, q.token_ids
+            // q.account, q.token, q.token_id
         }
     }
     CmaParserInputType::CmaParserInputTypeSupply => {
         if let CmaParserInputData::Supply(q) = decoded.input {
-            // q.token, q.token_ids
+            // q.token, q.token_id
         }
     }
     _ => {}

@@ -160,7 +160,7 @@ For balance queries, `params` holds the account, then an optional token address 
 </TabItem>
 <TabItem value="rust" label="Rust">
 
-Methods: `ledgerGetBalance` and `ledgerGetTotalSupply`. The payload is the hex encoding of the JSON document, and `params` holds the account, the token address and an optional array of token IDs.
+Methods: `ledger_getBalance` and `ledger_getTotalSupply`, with the camelCase spellings `ledgerGetBalance` and `ledgerGetTotalSupply` also accepted. The payload is the hex encoding of the JSON document, and `params` holds the account, an optional token address and an optional token ID.
 
 </TabItem>
 </Tabs>
@@ -182,12 +182,15 @@ Each voucher type takes these fields. In C and C++ the receiver lives in the out
 | Concept            | C and C++                                                                                                     | Rust                                                |
 | :----------------- | :------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------- |
 | Retrieve operation | `CMA_LEDGER_OP_FIND`, `CMA_LEDGER_OP_CREATE`, `CMA_LEDGER_OP_FIND_OR_CREATE`, `CMA_LEDGER_OP_FIND_AND_REMOVE` | `RetrieveOperation::Find`, `Create`, `FindOrCreate` |
-| Asset type         | `CMA_LEDGER_ASSET_TYPE_ID`, `BASE`, `TOKEN_ADDRESS`, `TOKEN_ADDRESS_ID`, `TOKEN_ADDRESS_ID_AMOUNT`            | `AssetType::Id`, `TokenAddress`, `TokenAddressId`   |
+| Asset type         | `CMA_LEDGER_ASSET_TYPE_ID`, `BASE`, `TOKEN_ADDRESS`, `TOKEN_ADDRESS_ID`, `TOKEN_ADDRESS_ID_AMOUNT`            | `AssetType::Id`, `Base`, `TokenAddress`, `TokenAddressId`, `TokenAddressIdAmount` |
 | Account type       | `CMA_LEDGER_ACCOUNT_TYPE_ID`, `WALLET_ADDRESS`, `ACCOUNT_ID`                                                  | `AccountType::Id`, `WalletAddress`, `AccountId`     |
+| Single asset       | `CMA_LEDGER_ASSET_TYPE_BASE`, or `CMA_LEDGER_ASSET_TYPE_TOKEN_ADDRESS` with a token address                   | `LedgerAsset::Ether`, `LedgerAsset::Erc20(token)`   |
 | Asset ID           | `cma_ledger_asset_id_t`                                                                                       | `LedgerAssetId(u64)`                                |
 | Account ID         | `cma_ledger_account_id_t`                                                                                     | `LedgerAccountId(u64)`                              |
 
 The Python `Ledger` methods select these types for you from the arguments you pass, as described in the [Ledger reference](./ledger-reference.md).
+
+The single asset ledger is created with `cma_ledger_init_single_file` or `cma_ledger_init_single_buffer` in C and C++, and with `init_single_from_file` or `init_single_from_buffer` in Rust. The Rust file backed form takes a `LedgerSingleFileConfig { offset, memory_length, max_accounts }`, and the Python form uses the `single_asset_account_drive` and `account_drive_token` arguments of `Ledger`.
 
 ## Error codes
 

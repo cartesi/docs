@@ -18,6 +18,8 @@ The ledger works with three things:
 
 Most ledger calls follow a retrieve pattern: you describe the account or asset, and the ledger finds it or creates it and hands back its ID. After that, you work with IDs only.
 
+The ledger comes in two flavors. The multi asset ledger described above tracks many assets at once. The single asset ledger tracks one fixed asset and stores balances in a form the default emergency withdrawal tooling can prove. See [Single-asset ledger](#single-asset-ledger) below.
+
 ## Creating a ledger
 
 <Tabs groupId="language">
@@ -31,7 +33,8 @@ from pycma import Ledger
 # In memory
 ledger = Ledger()
 
-# File backed, sized for your application
+# File backed, sized for your application. The file is created and sized
+# when missing, and validated when it already exists.
 ledger = Ledger(
     memory_filename="/dev/pmem2",
     offset=0,
@@ -39,7 +42,6 @@ ledger = Ledger(
     n_accounts=16 * 1024,
     n_assets=8,
     n_balances=8 * 16 * 1024,
-    initialize_memory=True,  # True only on first creation
 )
 ```
 
@@ -53,7 +55,7 @@ use libcma_binding_rust::Ledger;
 let mut ledger = Ledger::new()?;
 ```
 
-The binding also exposes `Ledger::init_from_file` and `Ledger::init_from_buffer` for persistent ledgers, configured through `LedgerFileConfig` and `LedgerBufferConfig`.
+The binding also exposes `init_from_file` and `init_from_buffer` for persistent multi asset ledgers, configured through `LedgerFileConfig` and `LedgerBufferConfig`, and `init_single_from_file` and `init_single_from_buffer` for the single asset ledger. Call them on a ledger created with `Ledger::new()`.
 
 </TabItem>
 <TabItem value="cpp" label="C++">
@@ -69,7 +71,68 @@ if (cma_ledger_init(&ledger) < 0) {
 cma_ledger_fini(&ledger);
 ```
 
-`cma_ledger_init_file` and `cma_ledger_init_buffer` create persistent ledgers backed by a memory file or a buffer you provide.
+`cma_ledger_init_file` and `cma_ledger_init_buffer` create persistent multi asset ledgers backed by a memory file or a buffer you provide. `cma_ledger_init_single_file` and `cma_ledger_init_single_buffer` create the single asset ledger.
+
+</TabItem>
+</Tabs>
+
+## Single-asset ledger
+
+The single asset ledger is a variant that tracks one fixed asset for the life of the store. You choose the asset when you create it, either Ether or one ERC20, and it cannot change after that. Use it when your application handles a single token and you want balances that are easy to recover on the base layer.
+
+It differs from the multi asset ledger in a few ways:
+
+- **One immutable asset**. There is always exactly one asset, with id `0`. Reopening the store with a different asset is rejected.
+- **64 bit balances**. Amounts are 64 bit values rather than 256 bit.
+- **A 32 byte account record**. Each withdrawable account is stored as a 32 byte record: an 8 byte balance in little endian order, then the 20 byte owner address, then 4 bytes of padding. This is the standard accounts drive layout, so the default emergency withdrawal tooling can prove a balance and release it without a custom output builder.
+- **Withdrawable and virtual accounts**. Accounts keyed by a wallet address are withdrawable and live in the drive records. Accounts keyed by an internal id are virtual and live off the drive, so they are not part of the provable set.
+
+Create it from a file. The deposit, withdraw, transfer and query calls are the same as the multi asset ledger, and the asset id is always `0`.
+
+<Tabs groupId="language">
+<TabItem value="python" label="Python" default>
+
+```python
+from pycma import Ledger
+
+# Single ERC20 drive. Omit account_drive_token for an Ether drive.
+ledger = Ledger(
+    memory_filename="/dev/pmem1",
+    offset=0,
+    mem_length=4 * 1024 * 1024,
+    n_accounts=4096,
+    n_assets=1,    # unused by the single asset ledger, but must be non zero
+    n_balances=1,  # unused by the single asset ledger, but must be non zero
+    single_asset_account_drive=True,
+    account_drive_token="0x88A2120B7068E78692C8fd12E751d610B6377E4d",
+)
+```
+
+</TabItem>
+<TabItem value="rust" label="Rust">
+
+```rust
+use libcma_binding_rust::{Ledger, LedgerAsset, LedgerSingleFileConfig};
+
+let mut ledger = Ledger::new()?;
+ledger.init_single_from_file(
+    "/dev/pmem1",
+    LedgerSingleFileConfig { offset: 0, memory_length: 4 * 1024 * 1024, max_accounts: 4096 },
+    LedgerAsset::Erc20(token_address), // or LedgerAsset::Ether
+)?;
+```
+
+</TabItem>
+<TabItem value="cpp" label="C++">
+
+```cpp
+cma_ledger_t ledger;
+cma_token_address_t token = { /* 20 bytes */ };
+
+// Single ERC20 drive. Use CMA_LEDGER_ASSET_TYPE_BASE and a null token for Ether.
+cma_ledger_init_single_file(&ledger, "/dev/pmem1", 0, 4 * 1024 * 1024, 4096,
+    CMA_LEDGER_ASSET_TYPE_TOKEN_ADDRESS, &token);
+```
 
 </TabItem>
 </Tabs>
@@ -108,7 +171,7 @@ existing = ledger.retrieve_asset(base_token=True, force_find=True)
 The binding has one generic method and shortcuts for the common cases:
 
 ```rust
-use libcma_binding_rust::types::{AssetType, AccountType, RetrieveOperation, AddressCBindingsExt};
+use libcma_binding_rust::types::{AssetType, AccountType, RetrieveOperation};
 use libcma_binding_rust::types::{Address, U256};
 
 // Shortcuts

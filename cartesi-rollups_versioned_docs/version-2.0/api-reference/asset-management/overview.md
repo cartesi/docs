@@ -43,7 +43,9 @@ The ledger is a small in machine database for managing assets. It stores:
 - **Assets**, identified by a token address, a token address plus token ID, or a plain ID.
 - **Balances**, the amount of each asset held by each account, plus the total supply of each asset.
 
-It exposes deposit, withdraw and transfer operations, and read only balance and supply queries. Every operation either succeeds or returns a clear error code, so your application state stays consistent. See [Managing balances](./managing-balances.md) for an advance guide.
+It exposes deposit, withdraw and transfer operations, and read only balance and supply queries. Every operation either succeeds or returns a clear error code, so your application state stays consistent.
+
+The ledger comes in two flavors. The multi asset ledger tracks many assets at once. The single asset ledger tracks one fixed asset, Ether or one ERC20, and stores balances in the standard accounts drive layout, so they can be recovered on the base layer with the default emergency withdrawal tooling. See [Managing balances](./managing-balances.md) for an advance guide.
 
 ## Language support
 
