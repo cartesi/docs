@@ -68,6 +68,18 @@
                                     ]
                                 }
                             ]
+                        },
+                        {
+                            "type": "category",
+                            "label": "Withdrawal",
+                            "collapsed": true,
+                            "items": [
+                                "api-reference/contracts/withdrawal/overview",
+                                "api-reference/contracts/withdrawal/withdrawal-config",
+                                "api-reference/contracts/withdrawal/iwithdrawal-output-builder",
+                                "api-reference/contracts/withdrawal/usd-withdrawal-output-builder",
+                                "api-reference/contracts/withdrawal/usd-withdrawal-output-builder-factory"
+                            ]
                         }
                     ]
                 },
@@ -81,7 +93,8 @@
                         "api-reference/backend/reports",
                         "api-reference/backend/vouchers",
                         "api-reference/backend/exception",
-                        "api-reference/backend/finish"
+                        "api-reference/backend/finish",
+                        "api-reference/backend/emergency-withdrawal"
                     ]
                 },
                 {
@@ -141,6 +154,14 @@
                                 "api-reference/jsonrpc/methods/node/node-version"
                             ]
                         },
+                        {
+                            "type": "category",
+                            "label": "Withdrawals",
+                            "items": [
+                                "api-reference/jsonrpc/methods/withdrawals/withdrawals-list",
+                                "api-reference/jsonrpc/methods/withdrawals/withdrawals-get"
+                            ]
+                        },
                         "api-reference/jsonrpc/types"
                     ]
                 }
@@ -158,7 +179,17 @@
                 "development/send-inputs-and-assets",
                 "development/query-outputs",
                 "development/asset-handling",
-                "development/Advanced-configuration"
+                "development/Advanced-configuration",
+                {
+                    "type": "category",
+                    "label": "Foreclosure & Emergency Withdrawal",
+                    "collapsed": true,
+                    "items": [
+                        "foreclosure/overview",
+                        "foreclosure/lifecycle",
+                        "foreclosure/recovery-guide"
+                    ]
+                }
             ]
         },
         {
@@ -168,7 +199,16 @@
             "items": [
                 "deployment/introduction",
                 "deployment/snapshot",
-                "deployment/self-hosted"
+                {
+                    "type": "category",
+                    "label": "Self-hosted deployment",
+                    "collapsed": true,
+                    "items": [
+                        "deployment/self-hosted/overview",
+                        "deployment/self-hosted/standard",
+                        "deployment/self-hosted/with-emergency-withdrawal"
+                    ]
+                }
             ]
         },
         {

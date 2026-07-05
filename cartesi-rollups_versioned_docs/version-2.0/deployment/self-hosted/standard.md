@@ -1,6 +1,6 @@
 ---
-id: self-hosted
-title: Self-hosted deployment
+id: standard
+title: Self-hosted deployment (standard)
 ---
 
 This guide explains how to run a Cartesi Rollups node locally on your machine for development and testing purposes on **testnet**.
@@ -23,7 +23,7 @@ Before starting, ensure you have the following installed:
 
 - Docker Desktop 4.x: The required tool to distribute the Cartesi Rollups framework and its dependencies.
 
-For more details about the installation process for each of these tools, please refer to the [this section](../development/installation.md).
+For more details about the installation process for each of these tools, please refer to the [this section](../../development/installation.md).
 
 ## Configuration
 
