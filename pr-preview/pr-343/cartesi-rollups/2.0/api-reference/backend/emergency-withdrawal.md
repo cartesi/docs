@@ -5,7 +5,7 @@ id: emergency-withdrawal
 title: Emergency Withdrawal (guest requirements)
 ---
 
-[Emergency withdrawal](../../foreclosure/overview.md) lets users recover their in-app balances directly from the base layer after an application is foreclosed. For that to work, the on-chain contracts need a way to read each account's balance from the settled machine state. This page describes what the **guest application** (the code running inside the Cartesi Machine) must do to support it.
+[Emergency withdrawal](../../development/foreclosure/overview.md) lets users recover their in-app balances directly from the base layer after an application is foreclosed. For that to work, the on-chain contracts need a way to read each account's balance from the settled machine state. This page describes what the **guest application** (the code running inside the Cartesi Machine) must do to support it.
 
 ## The accounts drive
 

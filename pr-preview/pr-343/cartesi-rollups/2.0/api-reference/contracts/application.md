@@ -14,7 +14,7 @@ The **Application** contract serves as the base layer representation of the appl
 
 Every Application is subscribed to a consensus contract and governed by a single address (owner). The consensus has the authority to submit claims, which are then used to validate outputs. The owner has complete control over the Application and can replace the consensus at any time. Consequently, users of an Application must trust both the consensus and the application owner. Depending on centralization or ownership concerns, the ownership model can be modified. This process is managed by the consensus contract. For more information about different ownership and consensus models, refer to the [consensus contracts](./consensus/overview.md).
 
-An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that turns on **foreclosure and emergency withdrawal**. A chosen **guardian** can foreclose the application. Once it is foreclosed, users can withdraw their in-app balances straight from this contract by proving their accounts against the last-finalized machine state, without a running node. See [Foreclosure & Emergency Withdrawal](../../foreclosure/overview.md) for the full flow. These functions are documented below under [Guardian & Foreclosure](#guardian--foreclosure) and [Emergency Withdrawal](#emergency-withdrawal).
+An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that turns on **foreclosure and emergency withdrawal**. A chosen **guardian** can foreclose the application. Once it is foreclosed, users can withdraw their in-app balances straight from this contract by proving their accounts against the last-finalized machine state, without a running node. See [Foreclosure & Emergency Withdrawal](../../development/foreclosure/overview.md) for the full flow. These functions are documented below under [Guardian & Foreclosure](#guardian--foreclosure) and [Emergency Withdrawal](#emergency-withdrawal).
 
 ## Functions
 
@@ -322,7 +322,7 @@ Triggered when the application is foreclosed.
 
 ## Emergency Withdrawal
 
-These members come from the [`IApplicationWithdrawal`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/IApplicationWithdrawal.sol) interface. After the application is foreclosed, its **accounts drive** (the in-app balance ledger) is proved on-chain once, and then each account's funds can be withdrawn permissionlessly. For the end-to-end procedure see the [recovery guide](../../foreclosure/recovery-guide.md); for the output-building contracts see the [Withdrawal](./withdrawal/overview.md) subsection.
+These members come from the [`IApplicationWithdrawal`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/IApplicationWithdrawal.sol) interface. After the application is foreclosed, its **accounts drive** (the in-app balance ledger) is proved on-chain once, and then each account's funds can be withdrawn permissionlessly. For the end-to-end procedure see the [recovery guide](../../development/foreclosure/recovery-guide.md); for the output-building contracts see the [Withdrawal](./withdrawal/overview.md) subsection.
 
 Withdrawal-related functions take an `AccountValidityProof`:
 

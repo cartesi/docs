@@ -5,7 +5,7 @@ id: with-emergency-withdrawal
 title: Self-hosted with Emergency Withdrawal
 ---
 
-This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../foreclosure/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../foreclosure/overview.md) first for the concept.
+This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/foreclosure/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/foreclosure/overview.md) first for the concept.
 
 :::warning Production Warning
 Like the standard setup, this is for development and testing on **testnet**, not production.
@@ -136,4 +136,4 @@ Create a `withdrawal.json` describing the guardian and the accounts-drive layout
 
 ## Recovery
 
-When the operator is gone, the guardian forecloses and users withdraw directly from the contracts. The full procedure (foreclose, replay, prove the accounts drive, anchor the root, withdraw, and verify) is in the [Emergency Withdrawal Recovery Guide](../../foreclosure/recovery-guide.md).
+When the operator is gone, the guardian forecloses and users withdraw directly from the contracts. The full procedure (foreclose, replay, prove the accounts drive, anchor the root, withdraw, and verify) is in the [Emergency Withdrawal Recovery Guide](../../development/foreclosure/recovery-guide.md).
