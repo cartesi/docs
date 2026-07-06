@@ -2,7 +2,7 @@
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/consensus
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus
     title: Consensus Smart Contracts
 ---
 

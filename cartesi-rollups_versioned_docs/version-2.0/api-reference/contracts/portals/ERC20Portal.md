@@ -1,6 +1,6 @@
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/portals/ERC20Portal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/ERC20Portal.sol
     title: ERC20Portal contract
 ---
 
