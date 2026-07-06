@@ -28,7 +28,7 @@ For the single-token case (see [`UsdWithdrawalOutputBuilder`](../contracts/withd
 
 ## Keeping the balances
 
-You rarely need to write the drive by hand. A ledger library such as **libcma** (the Cartesi Machine accounts library used by asset-holding applications) maintains the accounts drive for you: it credits deposits, debits withdrawals and transfers, and stores every balance in the drive so it stays provable from the machine state.
+You rarely need to write the drive by hand. A ledger library maintains the accounts drive for you: it credits deposits, debits withdrawals and transfers, and stores every balance in the drive so it stays provable from the machine state. See the [Asset Management Library](https://cartesi.github.io/docs/pr-preview/pr-303/cartesi-rollups/2.0/api-reference/asset-management/overview/) for how to store and manage balances this way.
 
 ## The account encoding must round-trip
 
