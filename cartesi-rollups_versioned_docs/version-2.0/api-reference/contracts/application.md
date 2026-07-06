@@ -12,7 +12,7 @@ The **Application** contract serves as the base layer representation of the appl
 
 Every Application is subscribed to a consensus contract and governed by a single address (owner). The consensus has the authority to submit claims, which are then used to validate outputs. The owner has complete control over the Application and can replace the consensus at any time. Consequently, users of an Application must trust both the consensus and the application owner. Depending on centralization or ownership concerns, the ownership model can be modified. This process is managed by the consensus contract. For more information about different ownership and consensus models, refer to the [consensus contracts](./consensus/overview.md).
 
-An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that enables **foreclosure and emergency withdrawal**. A designated **guardian** can foreclose the application; once foreclosed, users can withdraw their in-app balances directly from this contract by proving their accounts against the last-finalized machine state — without a live node. See [Foreclosure & Emergency Withdrawal](../../foreclosure/overview.md) for the end-to-end flow. The relevant surface is documented below under [Guardian & Foreclosure](#guardian--foreclosure) and [Emergency Withdrawal](#emergency-withdrawal).
+An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that turns on **foreclosure and emergency withdrawal**. A chosen **guardian** can foreclose the application. Once it is foreclosed, users can withdraw their in-app balances straight from this contract by proving their accounts against the last-finalized machine state, without a running node. See [Foreclosure & Emergency Withdrawal](../../foreclosure/overview.md) for the full flow. These functions are documented below under [Guardian & Foreclosure](#guardian--foreclosure) and [Emergency Withdrawal](#emergency-withdrawal).
 
 ## Functions
 
@@ -383,7 +383,7 @@ Withdraw the funds of an account from the foreclosed application. First the acco
 |-------|-----------|
 | `NotForeclosed` | The application has not been foreclosed |
 | `AccountFundsAlreadyWithdrawn(uint64)` | The account's funds were already withdrawn (argument is the account index) |
-| — | Any error raised by [`validateAccount()`](#validateaccount) |
+| Errors from `validateAccount()` | The account fails validation (see [`validateAccount()`](#validateaccount)) |
 
 ### `getWithdrawalConfig()`
 

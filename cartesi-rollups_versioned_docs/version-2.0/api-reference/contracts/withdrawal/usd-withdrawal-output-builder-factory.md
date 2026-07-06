@@ -8,7 +8,7 @@ resources:
     title: IUsdWithdrawalOutputBuilderFactory interface
 ---
 
-**`UsdWithdrawalOutputBuilderFactory`** lets anyone deterministically deploy a [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) for a given ERC-20 token. Because these builders are **stateless**, it does not matter whether you deploy one yourself or reuse an existing one for the same token — the address is deterministic (`CREATE2`) from the token and salt.
+**`UsdWithdrawalOutputBuilderFactory`** lets anyone deploy a [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) for a given ERC-20 token at a predictable address. Because these builders are **stateless**, it does not matter whether you deploy one yourself or reuse an existing one for the same token. The address is derived deterministically from the token and salt (using `CREATE2`).
 
 The factory is constructed with a shared `SafeERC20Transfer` contract, which it passes to every builder it deploys (used as the delegate-call voucher destination).
 
