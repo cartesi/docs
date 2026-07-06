@@ -10,7 +10,7 @@ resources:
 
 A **withdrawal output builder** turns an account (as encoded in the application's [accounts drive](./withdrawal-config.md#drive-geometry)) into an [output](../../backend/vouchers.md) that, when executed by the [`Application`](../application.md) contract, transfers that account's funds to its owner.
 
-During [`withdraw()`](../application.md#withdraw), the Application **static-calls** the builder referenced by its [`WithdrawalConfig`](./withdrawal-config.md) and executes the returned output. Because the call is a `STATICCALL`, `buildWithdrawalOutput` must be side-effect free (`view`/`pure`): any state change — contract creation, log emission, storage write, self-destruct, or Ether transfer — reverts the call and aborts the withdrawal.
+During [`withdraw()`](../application.md#withdraw), the Application **static-calls** the builder set in its [`WithdrawalConfig`](./withdrawal-config.md) and runs the returned output. Because the call is a `STATICCALL`, `buildWithdrawalOutput` must not change any state (it is `view`/`pure`). Any state change, such as contract creation, log emission, storage write, self-destruct, or Ether transfer, reverts the call and aborts the withdrawal.
 
 The account encoding is **application-specific**. See [UsdWithdrawalOutputBuilder](./usd-withdrawal-output-builder.md) for the single-ERC-20 implementation.
 

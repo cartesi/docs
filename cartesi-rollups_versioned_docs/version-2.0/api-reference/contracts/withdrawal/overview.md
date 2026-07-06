@@ -3,7 +3,7 @@ id: overview
 title: Withdrawal Contracts Overview
 ---
 
-These contracts implement **emergency withdrawal** — the ability for users to recover their in-app balances directly from the base layer after an application is [foreclosed](../application.md#guardian--foreclosure), without a live node. For the end-to-end concept and operator procedure, see [Foreclosure & Emergency Withdrawal](../../../foreclosure/overview.md).
+These contracts power **emergency withdrawal**: the ability for users to recover their in-app balances straight from the base layer after an application is [foreclosed](../application.md#guardian--foreclosure), without a running node. For the concept and the operator procedure, see [Foreclosure & Emergency Withdrawal](../../../foreclosure/overview.md).
 
 ## How the pieces fit together
 
@@ -31,4 +31,4 @@ Emergency withdrawal only works if four descriptions of the **accounts drive** a
 3. the **proofs** generated off-chain (via the machine tool) use those same parameters; and
 4. the **output builder** decodes the account encoding the guest produced.
 
-A mismatch on any of the four makes proofs fail to validate or funds impossible to build — so these values must be chosen together at deploy time. See [WithdrawalConfig — drive geometry](./withdrawal-config.md#drive-geometry).
+If any of the four disagree, proofs fail to validate or funds cannot be built, so these values must be chosen together at deploy time. See [drive geometry](./withdrawal-config.md#drive-geometry).

@@ -28,7 +28,7 @@ struct WithdrawalConfig {
 |-------|------|-------------|
 | `guardian` | `address` | The account allowed to call [`foreclose()`](../application.md#foreclose). |
 | `log2LeavesPerAccount` | `uint8` | Log2 of the machine-state-tree leaves reserved per account. Each account record occupies `2^(5 + log2LeavesPerAccount)` bytes. |
-| `log2MaxNumOfAccounts` | `uint8` | Log2 of the maximum number of accounts — i.e. the depth of the accounts-drive tree. |
+| `log2MaxNumOfAccounts` | `uint8` | Log2 of the maximum number of accounts. This is the depth of the accounts-drive tree. |
 | `accountsDriveStartIndex` | `uint64` | Start-index factor that positions the accounts drive in machine memory (see [Drive geometry](#drive-geometry)). |
 | `withdrawalOutputBuilder` | `IWithdrawalOutputBuilder` | The contract that builds the withdrawal output for an account. See [IWithdrawalOutputBuilder](./iwithdrawal-output-builder.md). |
 
@@ -36,13 +36,13 @@ struct WithdrawalConfig {
 
 Let `a = log2LeavesPerAccount`, `b = log2MaxNumOfAccounts`, and `c = accountsDriveStartIndex`. The accounts drive:
 
-- has **size** `2^(a + b + 5)` bytes — the `+5` is the log2 of the 32-byte data block (`CanonicalMachine.LOG2_DATA_BLOCK_SIZE`);
+- has a **size** of `2^(a + b + 5)` bytes (the `+5` is the log2 of the 32-byte data block, `CanonicalMachine.LOG2_DATA_BLOCK_SIZE`);
 - **starts** at machine memory address `c * 2^(a + b + 5)`;
 - holds up to `2^b` accounts, each occupying `2^(a + 5)` bytes.
 
 These same three values are returned on-chain by [`getLog2LeavesPerAccount()`](../application.md#getlog2leavesperaccount), [`getLog2MaxNumOfAccounts()`](../application.md#getlog2maxnumofaccounts), and [`getAccountsDriveStartIndex()`](../application.md#getaccountsdrivestartindex), and must match the layout the guest application actually writes.
 
-## Validation — `LibWithdrawalConfig.isValid()`
+## Validation
 
 ```solidity
 function isValid(WithdrawalConfig memory withdrawalConfig) internal pure returns (bool)
@@ -54,5 +54,5 @@ The `Application` constructor calls `isValid()` and reverts with `InvalidWithdra
 - the drive's end address `(accountsDriveStartIndex + 1) << log2(driveSize)` must not overflow and must not exceed `2^64`.
 
 :::note
-`isValid()` validates only the **drive geometry**. It does **not** reject a zero `guardian` or a zero `withdrawalOutputBuilder` — a geometry-valid config with those zeroed will pass the constructor. Deployment tooling (for example the Cartesi Rollups CLI) additionally refuses a zero guardian or builder for an *enabled* config; a direct factory call would not.
+`isValid()` checks only the **drive geometry**. It does **not** reject a zero `guardian` or a zero `withdrawalOutputBuilder`. A config with those set to zero still passes the constructor, as long as its geometry is valid. Deployment tools such as the Cartesi Rollups CLI go further and refuse a zero guardian or builder for an *enabled* config, but a direct factory call would not.
 :::
