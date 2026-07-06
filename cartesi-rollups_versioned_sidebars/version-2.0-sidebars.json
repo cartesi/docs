@@ -185,9 +185,9 @@
                     "label": "Foreclosure & Emergency Withdrawal",
                     "collapsed": true,
                     "items": [
-                        "foreclosure/overview",
-                        "foreclosure/lifecycle",
-                        "foreclosure/recovery-guide"
+                        "development/foreclosure/overview",
+                        "development/foreclosure/lifecycle",
+                        "development/foreclosure/recovery-guide"
                     ]
                 }
             ]

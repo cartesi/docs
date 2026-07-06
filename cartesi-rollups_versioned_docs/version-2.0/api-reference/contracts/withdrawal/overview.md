@@ -1,9 +1,9 @@
 ---
 id: overview
-title: Withdrawal Contracts Overview
+title: Overview
 ---
 
-These contracts power **emergency withdrawal**: the ability for users to recover their in-app balances straight from the base layer after an application is [foreclosed](../application.md#guardian--foreclosure), without a running node. For the concept and the operator procedure, see [Foreclosure & Emergency Withdrawal](../../../foreclosure/overview.md).
+These contracts power **emergency withdrawal**: the ability for users to recover their in-app balances straight from the base layer after an application is [foreclosed](../application.md#guardian--foreclosure), without a running node. For the concept and the operator procedure, see [Foreclosure & Emergency Withdrawal](../../../development/foreclosure/overview.md).
 
 ## How the pieces fit together
 

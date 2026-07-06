@@ -9,9 +9,9 @@ This guide walks through foreclosing an application and withdrawing an account's
 
 You need:
 
-- an application that was deployed with a [`WithdrawalConfig`](../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch;
+- an application that was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch;
 - the **guardian** key (only the guardian can foreclose);
-- the [`cartesi-rollups-cli`](../development/installation.md) and the **machine tool** (`cartesi-rollups-machine-tool`), which reproduces the settled machine state and generates the proofs;
+- the [`cartesi-rollups-cli`](../installation.md) and the **machine tool** (`cartesi-rollups-machine-tool`), which reproduces the settled machine state and generates the proofs;
 - the application's **accounts-drive parameters** from its withdrawal config: `accountsDriveStartIndex`, `log2MaxNumOfAccounts`, and `log2LeavesPerAccount`. These must match the values the application was deployed with.
 
 ## Step 1: Foreclose the application
@@ -84,4 +84,4 @@ The contract validates the account against the anchored root, builds and runs th
 cartesi-rollups-cli read withdrawals <app-name-or-address>
 ```
 
-You can also read the on-chain state directly: [`wereAccountFundsWithdrawn(accountIndex)`](../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner.
+You can also read the on-chain state directly: [`wereAccountFundsWithdrawn(accountIndex)`](../../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner.
