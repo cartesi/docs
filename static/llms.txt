@@ -17,7 +17,7 @@ Use this file to discover and navigate Cartesi's documentation. Each link below 
 - **Cartesi Machine** — the off-chain RISC-V Linux VM; covers host CLI, Lua scripting, blockchain integration, and the verification game.
 - **Cartesi Rollups v2.0** — the current application framework. Sub-sections:
   - *Getting Started* — architecture, concepts, installation.
-  - *Development* — building, running, sending inputs, querying outputs, asset handling.
+  - *Development* — building, running, sending inputs, querying outputs, asset handling, and foreclosure & emergency withdrawal (recovering funds directly from the contracts after an app is foreclosed).
   - *API Reference* — HTTP backend API, inspect API, contract ABI, JSON-RPC node API.
   - *Deployment* — self-hosted node, public snapshot.
   - *Tutorials* — end-to-end worked examples (Counter, Calculator, Marketplace, wallets, React frontend).
@@ -91,6 +91,9 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Query outputs](https://docs.cartesi.io/cartesi-rollups/2.0/development/query-outputs.md): Vouchers, notices and reports
 - [Asset handling](https://docs.cartesi.io/cartesi-rollups/2.0/development/asset-handling.md): Deposits and withdrawals
 - [Advanced configuration](https://docs.cartesi.io/cartesi-rollups/2.0/development/Advanced-configuration.md): Configure the Cartesi Machine via cartesi.toml
+- [Foreclosure & Emergency Withdrawal](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/overview.md): What foreclosure and emergency withdrawal are, and when application funds are recoverable directly from the contracts
+- [Claim & Foreclosure Lifecycle](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/lifecycle.md): How inputs become settled claims, and how foreclosure fits the epoch and claim lifecycle
+- [Emergency Withdrawal Recovery Guide](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/recovery-guide.md): Step-by-step foreclose, replay, prove the accounts drive, and withdraw
 
 ## Cartesi Rollups v2.0 — Development Snippets
 
@@ -144,13 +147,19 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/reports.md): Application logs
 - [Exception](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/exception.md): Register exceptions
 - [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/finish.md): Complete request processing
+- [Emergency Withdrawal (guest requirements)](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/emergency-withdrawal.md): Maintaining the accounts drive so balances are recoverable after foreclosure
 
 ## Cartesi Rollups v2.0 — Contracts API
 
 - [Contracts Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/overview.md): All smart contracts in the framework
 - [InputBox](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/input-box.md): Entry point for user inputs
 - [Application](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application.md): Per-dApp contract holding assets
-- [ApplicationFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application-factory.md): Deploy Application contracts
+- [ApplicationFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/application-factory.md): Deploy Application contracts (with an optional WithdrawalConfig)
+- [Withdrawal Contracts Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/withdrawal/overview.md): How foreclosure/withdrawal on the Application composes with the WithdrawalConfig and output builder
+- [WithdrawalConfig](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/withdrawal/withdrawal-config.md): The withdrawal configuration struct (guardian, accounts-drive layout, output builder) and its validation
+- [IWithdrawalOutputBuilder](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/withdrawal/iwithdrawal-output-builder.md): Interface that turns an account into a withdrawal output
+- [UsdWithdrawalOutputBuilder](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/withdrawal/usd-withdrawal-output-builder.md): Single-ERC-20 withdrawal output builder
+- [UsdWithdrawalOutputBuilderFactory](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/withdrawal/usd-withdrawal-output-builder-factory.md): Deterministic factory for USD withdrawal output builders
 - [EtherPortal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/EtherPortal.md): ETH deposits
 - [ERC20Portal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC20Portal.md): ERC-20 token deposits
 - [ERC721Portal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC721Portal.md): NFT deposits
@@ -186,13 +195,17 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Get Output](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/outputs/outputs-get.md): Get a specific output
 - [List Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/reports/reports-list.md): List all reports
 - [Get Report](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/reports/reports-get.md): Get a specific report
+- [List Withdrawals](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/withdrawals/withdrawals-list.md): List emergency withdrawals for an application
+- [Get Withdrawal](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/withdrawals/withdrawals-get.md): Get a single withdrawal by account index
 - [Get Chain ID](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/node/node-chain-id.md): Get node chain ID
 - [Get Node Version](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/jsonrpc/methods/node/node-version.md): Get node version
 
 ## Cartesi Rollups v2.0 — Deployment
 
 - [Introduction](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/introduction.md): Overview of deployment options
-- [Self-hosted deployment](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted.md): Run your own node
+- [Self-hosted deployment](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted.md): Run your own node (overview and the two paths below)
+- [Self-hosted (standard)](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted/standard.md): Deploy a standard application without emergency withdrawal
+- [Self-hosted with emergency withdrawal](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted/with-emergency-withdrawal.md): Deploy with a WithdrawalConfig so the app can be foreclosed and funds recovered
 - [Public snapshot](https://docs.cartesi.io/cartesi-rollups/2.0/deployment/snapshot.md): Machine state management
 
 ## Cartesi Rollups v2.0 — Build with AI
