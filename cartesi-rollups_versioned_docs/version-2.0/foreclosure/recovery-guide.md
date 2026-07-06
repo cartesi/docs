@@ -85,11 +85,3 @@ cartesi-rollups-cli read withdrawals <app-name-or-address>
 ```
 
 You can also read the on-chain state directly: [`wereAccountFundsWithdrawn(accountIndex)`](../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner.
-
-## Public-chain gas limit
-
-:::warning
-On public chains, the transaction-sending `cartesi-rollups-cli` subcommands (`foreclose`, `prove-drive-root`, `withdraw`, and others) currently send transactions with a fixed 30,000,000 gas limit. Public networks reject a per-transaction gas limit that high (for example EIP-7825 caps a single transaction at `2^24` gas), so these commands fail there even though the calls themselves use far less gas.
-
-Until this is fixed, perform these calls on public chains with a **direct contract call** using an estimated or sane gas limit (for example with `cast send`), instead of the CLI subcommand. Read-only commands (`app register`, `read withdrawals`, and similar) are not affected.
-:::
