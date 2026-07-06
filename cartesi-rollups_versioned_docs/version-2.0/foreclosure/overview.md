@@ -1,6 +1,6 @@
 ---
 id: overview
-title: Foreclosure & Emergency Withdrawal
+title: Overview
 ---
 
 When users deposit assets into a Cartesi Rollups application, those assets are held by the application contract on the base layer, and the application's off-chain state (an in-app ledger of who owns what) decides how they can be spent. In normal operation the operator runs a node that keeps this state moving and settles it on-chain. But what happens to those funds if the operator stops running the node?

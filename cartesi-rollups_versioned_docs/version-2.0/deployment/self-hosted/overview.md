@@ -1,6 +1,6 @@
 ---
 id: overview
-title: Self-hosted deployment
+title: Overview
 slug: /deployment/self-hosted
 ---
 
