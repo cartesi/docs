@@ -17,6 +17,38 @@ In addition to the [standard prerequisites](./standard.md#prerequisites) (Cartes
 - A **withdrawal output builder** for your token. For a single ERC-20, deploy one with the [`UsdWithdrawalOutputBuilderFactory`](../../api-reference/contracts/withdrawal/usd-withdrawal-output-builder-factory.md), or reuse an existing one for the same token. Note its address.
 - An application whose guest maintains an **accounts drive** in a known layout. See [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md).
 
+## Configure the machine and ledger (`cartesi.toml`)
+
+For an application to support emergency withdrawal, its Cartesi Machine must include a dedicated **accounts drive**: a raw flash drive that holds the balance ledger. Declare it in your `cartesi.toml` alongside the root drive, and enable `final_hash` so the machine hash is produced for on-chain deployment:
+
+```toml
+[machine]
+# ...your existing machine settings...
+final_hash = true
+
+# The application and OS, built from your Dockerfile.
+[drives.root]
+builder = "docker"
+dockerfile = "Dockerfile"
+format = "ext2"
+
+# The accounts drive: a raw, unformatted flash drive for the balance ledger.
+[drives.accounts]
+builder = "empty"
+format = "raw"
+size = 4194304   # size in bytes
+mount = false
+user = "dapp"
+```
+
+The accounts drive is deliberately **raw and unmounted**: the application opens the block device directly (for example `/dev/pmem1`) and writes balance records into it, with no filesystem in between.
+
+**Your application must use a ledger library to write those balances in a recoverable (provable) layout.** The library keeps the record layout consistent with the [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), so that after foreclosure the balances can be proved on-chain and withdrawn. For how to store and manage balances this way, see the [Asset Management Library](https://cartesi.github.io/docs/pr-preview/pr-303/cartesi-rollups/2.0/api-reference/asset-management/overview/).
+
+:::note
+The drive's `size`, the ledger's record layout, and the `WithdrawalConfig` values (`log2_leaves_per_account`, `log2_max_num_of_accounts`, `accounts_drive_start_index`) must be chosen together. `accounts_drive_start_index` equals the drive's machine-memory start address divided by the proven-region size `2^(5 + log2_max_num_of_accounts + log2_leaves_per_account)`. You can read the built drive's position from `.cartesi/image/config.json`.
+:::
+
 ## Configuration
 
 Configure your `.env` file exactly as in the standard flow:
