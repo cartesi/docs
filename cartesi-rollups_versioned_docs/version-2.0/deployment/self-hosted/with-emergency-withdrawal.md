@@ -3,7 +3,7 @@ id: with-emergency-withdrawal
 title: Self-hosted with Emergency Withdrawal
 ---
 
-This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/foreclosure/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/foreclosure/overview.md) first for the concept.
+This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/emergency-withdrawal/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/emergency-withdrawal/overview.md) first for the concept.
 
 :::warning Production Warning
 Like the standard setup, this is for development and testing on **testnet**, not production.
@@ -19,35 +19,9 @@ In addition to the [standard prerequisites](./standard.md#prerequisites) (Cartes
 
 ## Configure the machine and ledger (`cartesi.toml`)
 
-For an application to support emergency withdrawal, its Cartesi Machine must include a dedicated **accounts drive**: a raw flash drive that holds the balance ledger. Declare it in your `cartesi.toml` alongside the root drive, and enable `final_hash` so the machine hash is produced for on-chain deployment:
+For an application to support emergency withdrawal, its Cartesi Machine must include a dedicated **accounts drive**: a raw, unmounted flash drive that holds the balance ledger. You declare it in `cartesi.toml` alongside the root drive, size it to fit the account tree, and enable `final_hash` so the machine hash is produced for deployment. The guest then writes balances into that drive using a ledger library, in a layout that matches the application's `WithdrawalConfig`.
 
-```toml
-[machine]
-# ...your existing machine settings...
-final_hash = true
-
-# The application and OS, built from your Dockerfile.
-[drives.root]
-builder = "docker"
-dockerfile = "Dockerfile"
-format = "ext2"
-
-# The accounts drive: a raw, unformatted flash drive for the balance ledger.
-[drives.accounts]
-builder = "empty"
-format = "raw"
-size = 4194304   # size in bytes
-mount = false
-user = "dapp"
-```
-
-The accounts drive is deliberately **raw and unmounted**: the application opens the block device directly (for example `/dev/pmem1`) and writes balance records into it, with no filesystem in between.
-
-**Your application must use a ledger library to write those balances in a recoverable (provable) layout.** The library keeps the record layout consistent with the [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), so that after foreclosure the balances can be proved on-chain and withdrawn. For how to store and manage balances this way, see the [Asset Management Library](https://cartesi.github.io/docs/pr-preview/pr-303/cartesi-rollups/2.0/api-reference/asset-management/overview/).
-
-:::note
-The drive's `size`, the ledger's record layout, and the `WithdrawalConfig` values (`log2_leaves_per_account`, `log2_max_num_of_accounts`, `accounts_drive_start_index`) must be chosen together. `accounts_drive_start_index` equals the drive's machine-memory start address divided by the proven-region size `2^(5 + log2_max_num_of_accounts + log2_leaves_per_account)`. You can read the built drive's position from `.cartesi/image/config.json`.
-:::
+Because those choices (the drive declaration, its size and position, and the record layout) belong to the guest application, they are documented once, in full, on the guest-requirements page. Set the drive up as described in [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive) before continuing, and see [Keeping the balances](../../api-reference/backend/emergency-withdrawal.md#keeping-the-balances) for the ledger library.
 
 ## Configuration
 
@@ -134,4 +108,4 @@ Create a `withdrawal.json` describing the guardian and the accounts-drive layout
 
 ## Recovery
 
-When the operator is gone, the guardian forecloses and users withdraw directly from the contracts. The full procedure (foreclose, replay, prove the accounts drive, anchor the root, withdraw, and verify) is in the [Emergency Withdrawal Recovery Guide](../../development/foreclosure/recovery-guide.md).
+When the operator is gone, the guardian forecloses and users withdraw directly from the contracts. The full procedure (foreclose, replay, prove the accounts drive, anchor the root, withdraw, and verify) is in the [Emergency Withdrawal Recovery Guide](../../development/emergency-withdrawal/recovery-guide.md).

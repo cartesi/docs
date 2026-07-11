@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 610" role="img" aria-label="Accounts-drive proof and withdrawal sequence: the machine tool produces drive-root-proof.json and account-proof.json; the operator calls proveAccountsDriveMerkleRoot() then withdraw() on the application contract; the node's EVM Reader indexes the AccountsDriveMerkleRootProved and Withdrawal events">
+  <defs>
+    <style>
+      .svg-label { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 18px; font-weight: 800; fill: #17202a; }
+      .svg-code  { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; fill: #27333d; }
+      .svg-small { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 13px; fill: #536070; }
+    </style>
+    <marker id="ad-gold" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c89528"/></marker>
+    <marker id="ad-coral" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#d9664f"/></marker>
+    <marker id="ad-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#376996"/></marker>
+    <marker id="ad-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#0e7c7b"/></marker>
+  </defs>
+
+  <!-- background card -->
+  <rect x="1" y="1" width="1178" height="608" rx="16" fill="#ffffff" stroke="#e5e5df" stroke-width="1.5"/>
+
+  <!-- actors -->
+  <rect x="54" y="44" width="204" height="58" rx="8" fill="#f8ebc9" stroke="#d5b05c" stroke-width="1.5"/>
+  <text x="156" y="80" text-anchor="middle" class="svg-label">Machine tool</text>
+  <rect x="334" y="44" width="220" height="58" rx="8" fill="#f8e3dc" stroke="#df9a88" stroke-width="1.5"/>
+  <text x="444" y="80" text-anchor="middle" class="svg-label">CLI / operator</text>
+  <rect x="630" y="44" width="224" height="58" rx="8" fill="#e1ebf5" stroke="#8fb2d4" stroke-width="1.5"/>
+  <text x="742" y="80" text-anchor="middle" class="svg-label">Application contract</text>
+  <rect x="930" y="44" width="196" height="58" rx="8" fill="#e1f3ef" stroke="#73bcb0" stroke-width="1.5"/>
+  <text x="1028" y="80" text-anchor="middle" class="svg-label">EVM Reader (node)</text>
+
+  <!-- lifelines -->
+  <path d="M 156 112 L 156 560" stroke="#ced6c9" stroke-width="2"/>
+  <path d="M 444 112 L 444 560" stroke="#ced6c9" stroke-width="2"/>
+  <path d="M 742 112 L 742 560" stroke="#ced6c9" stroke-width="2"/>
+  <path d="M 1028 112 L 1028 560" stroke="#ced6c9" stroke-width="2"/>
+
+  <!-- 1. machine tool produces proofs -->
+  <path d="M 156 145 L 444 145" stroke="#c89528" stroke-width="2.1" fill="none" marker-end="url(#ad-gold)"/>
+  <text x="300" y="134" text-anchor="middle" class="svg-code">drive-root-proof.json</text>
+  <text x="300" y="163" text-anchor="middle" class="svg-small">and account-proof.json</text>
+
+  <!-- 2. anchor the ledger -->
+  <path d="M 444 218 L 742 218" stroke="#d9664f" stroke-width="2.1" fill="none" marker-end="url(#ad-coral)"/>
+  <text x="593" y="207" text-anchor="middle" class="svg-code">proveAccountsDriveMerkleRoot(root, proof)</text>
+  <text x="593" y="236" text-anchor="middle" class="svg-small">permissionless, once per app</text>
+
+  <!-- 3. node indexes the anchor -->
+  <path d="M 742 292 L 1028 292" stroke="#376996" stroke-width="2.1" fill="none" marker-end="url(#ad-blue)"/>
+  <text x="885" y="281" text-anchor="middle" class="svg-code">AccountsDriveMerkleRootProved</text>
+  <text x="885" y="310" text-anchor="middle" class="svg-small">record block, tx, root</text>
+
+  <!-- 4. withdraw per account -->
+  <path d="M 444 382 L 742 382" stroke="#d9664f" stroke-width="2.1" fill="none" marker-end="url(#ad-coral)"/>
+  <text x="593" y="371" text-anchor="middle" class="svg-code">withdraw(account, accountProof)</text>
+  <text x="593" y="400" text-anchor="middle" class="svg-small">gas payer can differ from recipient</text>
+
+  <!-- 5. node indexes the withdrawal -->
+  <path d="M 742 462 L 1028 462" stroke="#0e7c7b" stroke-width="2.1" fill="none" marker-end="url(#ad-teal)"/>
+  <text x="885" y="451" text-anchor="middle" class="svg-code">Withdrawal(accountIndex, account, output)</text>
+  <text x="885" y="480" text-anchor="middle" class="svg-small">stored by (application_id, account_index)</text>
+</svg>
