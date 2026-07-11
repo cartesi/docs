@@ -3,7 +3,7 @@ id: overview
 title: Overview
 ---
 
-These contracts power **emergency withdrawal**: the ability for users to recover their in-app balances straight from the base layer after an application is [foreclosed](../application.md#guardian--foreclosure), without a running node. For the concept and the operator procedure, see [Foreclosure & Emergency Withdrawal](../../../development/foreclosure/overview.md).
+These contracts power **emergency withdrawal**: the ability for users to recover their in-app balances straight from the base layer after an application is [foreclosed](../application.md#guardian--foreclosure), without a running node. For the concept and the operator procedure, see [Foreclosure & Emergency Withdrawal](../../../development/emergency-withdrawal/overview.md).
 
 ## How the pieces fit together
 

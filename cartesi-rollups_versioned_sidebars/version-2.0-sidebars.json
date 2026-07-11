@@ -71,7 +71,7 @@
                         },
                         {
                             "type": "category",
-                            "label": "Withdrawal",
+                            "label": "Emergency Withdrawal",
                             "collapsed": true,
                             "items": [
                                 "api-reference/contracts/withdrawal/overview",
@@ -156,7 +156,7 @@
                         },
                         {
                             "type": "category",
-                            "label": "Withdrawals",
+                            "label": "Emergency Withdrawal",
                             "items": [
                                 "api-reference/jsonrpc/methods/withdrawals/withdrawals-list",
                                 "api-reference/jsonrpc/methods/withdrawals/withdrawals-get"
@@ -182,12 +182,13 @@
                 "development/Advanced-configuration",
                 {
                     "type": "category",
-                    "label": "Foreclosure & Emergency Withdrawal",
+                    "label": "Emergency Withdrawal",
                     "collapsed": true,
                     "items": [
-                        "development/foreclosure/overview",
-                        "development/foreclosure/lifecycle",
-                        "development/foreclosure/recovery-guide"
+                        "development/emergency-withdrawal/overview",
+                        "development/emergency-withdrawal/lifecycle",
+                        "development/emergency-withdrawal/installation-Guide",
+                        "development/emergency-withdrawal/recovery-guide"
                     ]
                 }
             ]

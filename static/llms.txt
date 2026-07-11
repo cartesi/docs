@@ -91,9 +91,10 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Query outputs](https://docs.cartesi.io/cartesi-rollups/2.0/development/query-outputs.md): Vouchers, notices and reports
 - [Asset handling](https://docs.cartesi.io/cartesi-rollups/2.0/development/asset-handling.md): Deposits and withdrawals
 - [Advanced configuration](https://docs.cartesi.io/cartesi-rollups/2.0/development/Advanced-configuration.md): Configure the Cartesi Machine via cartesi.toml
-- [Foreclosure & Emergency Withdrawal](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/overview.md): What foreclosure and emergency withdrawal are, and when application funds are recoverable directly from the contracts
-- [Claim & Foreclosure Lifecycle](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/lifecycle.md): How inputs become settled claims, and how foreclosure fits the epoch and claim lifecycle
-- [Emergency Withdrawal Recovery Guide](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/recovery-guide.md): Step-by-step foreclose, replay, prove the accounts drive, and withdraw
+- [Foreclosure & Emergency Withdrawal](https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/overview.md): What foreclosure and emergency withdrawal are, and when application funds are recoverable directly from the contracts
+- [Claim & Foreclosure Lifecycle](https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/lifecycle.md): How inputs become settled claims, how foreclosure fits the epoch and claim lifecycle, and how to prove the accounts drive and withdraw afterward
+- [Emergency Withdrawal Recovery Guide](https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/recovery-guide.md): Step-by-step foreclose, replay, prove the accounts drive, and withdraw, using the Cartesi CLI or cast
+- [Installing the required tools](https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/installation-Guide.md): Install the Cartesi Machine emulator plus cartesi-rollups-cli and the machine tool, on Linux or macOS
 
 ## Cartesi Rollups v2.0 — Development Snippets
 
@@ -147,7 +148,7 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/reports.md): Application logs
 - [Exception](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/exception.md): Register exceptions
 - [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/finish.md): Complete request processing
-- [Emergency Withdrawal (guest requirements)](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/emergency-withdrawal.md): Maintaining the accounts drive so balances are recoverable after foreclosure
+- [Emergency Withdrawal (guest requirements)](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/emergency-withdrawal.md): Creating, sizing, and maintaining the accounts drive so balances stay provable and recoverable after foreclosure
 
 ## Cartesi Rollups v2.0 — Contracts API
 
