@@ -91,9 +91,10 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Query outputs](https://docs.cartesi.io/cartesi-rollups/2.0/development/query-outputs.md): Vouchers, notices and reports
 - [Asset handling](https://docs.cartesi.io/cartesi-rollups/2.0/development/asset-handling.md): Deposits and withdrawals
 - [Advanced configuration](https://docs.cartesi.io/cartesi-rollups/2.0/development/Advanced-configuration.md): Configure the Cartesi Machine via cartesi.toml
-- [Foreclosure & Emergency Withdrawal](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/overview.md): What foreclosure and emergency withdrawal are, and when application funds are recoverable directly from the contracts
-- [Claim & Foreclosure Lifecycle](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/lifecycle.md): How inputs become settled claims, and how foreclosure fits the epoch and claim lifecycle
-- [Emergency Withdrawal Recovery Guide](https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/recovery-guide.md): Step-by-step foreclose, replay, prove the accounts drive, and withdraw
+- [Foreclosure & Emergency Withdrawal](https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/overview.md): What foreclosure and emergency withdrawal are, and when application funds are recoverable directly from the contracts
+- [Claim & Foreclosure Lifecycle](https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/lifecycle.md): How inputs become settled claims, how foreclosure fits the epoch and claim lifecycle, and how to prove the accounts drive and withdraw afterward
+- [Emergency Withdrawal Recovery Guide](https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/recovery-guide.md): Step-by-step foreclose, replay, prove the accounts drive, and withdraw, using the Cartesi CLI or cast
+- [Installing the required tools](https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/installation-Guide.md): Install the Cartesi Machine emulator plus cartesi-rollups-cli and the machine tool, on Linux or macOS
 
 ## Cartesi Rollups v2.0 — Development Snippets
 
@@ -147,7 +148,7 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Reports](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/reports.md): Application logs
 - [Exception](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/exception.md): Register exceptions
 - [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/finish.md): Complete request processing
-- [Emergency Withdrawal (guest requirements)](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/emergency-withdrawal.md): Maintaining the accounts drive so balances are recoverable after foreclosure
+- [Emergency Withdrawal (guest requirements)](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/emergency-withdrawal.md): Creating, sizing, and maintaining the accounts drive so balances stay provable and recoverable after foreclosure
 
 ## Cartesi Rollups v2.0 — Contracts API
 
@@ -17554,7 +17555,7 @@ id: emergency-withdrawal
 title: Emergency Withdrawal (guest requirements)
 ---
 
-[Emergency withdrawal](../../development/foreclosure/overview.md) lets users recover their in-app balances directly from the base layer after an application is foreclosed. For that to work, the on-chain contracts need a way to read each account's balance from the settled machine state. This page describes what the **guest application** (the code running inside the Cartesi Machine) must do to support it.
+[Emergency withdrawal](../../development/emergency-withdrawal/overview.md) lets users recover their in-app balances directly from the base layer after an application is foreclosed. For that to work, the on-chain contracts need a way to read each account's balance from the settled machine state. This page describes what the **guest application** (the code running inside the Cartesi Machine) must do to support it.
 
 ## The accounts drive
 
@@ -17562,8 +17563,9 @@ The application keeps a dedicated region of machine memory called the **accounts
 
 An application supports emergency withdrawal only if:
 
-1. it maintains an accounts drive, and
-2. the drive's layout matches the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) the application was deployed with.
+1. It maintains an accounts drive, and
+2. The drive's layout matches the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) the application was deployed with.
+3. The WithdrawalOutputBuilder contract configured in the application can decode the account and build a valid output to withdraw the assets
 
 If the layout the guest writes and the config the contract was given disagree, proofs will not validate and funds cannot be withdrawn.
 
@@ -17576,6 +17578,41 @@ The [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) describes
 - `log2LeavesPerAccount` sets each record's size, which is `2^(5 + log2LeavesPerAccount)` bytes.
 
 For the single-token case (see [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md)), each record is 32 bytes: an 8-byte little-endian balance, followed by the 20-byte owner address, followed by padding.
+
+## Creating the accounts drive
+
+The accounts drive is a standard Cartesi Machine drive, declared in your project's `cartesi.toml` alongside every other drive. The [Advanced configuration](../../development/advanced-configuration.md#drives) guide covers how drives are defined and built in general; the accounts drive is distinctive only in that it is left raw, so the guest can write balance records into it directly.
+
+Declare it next to the root drive as an empty, raw, unmounted flash drive, and set `final_hash = true` so the build produces the machine hash that on-chain deployment requires:
+
+```toml
+[machine]
+# ...your existing machine settings...
+final_hash = true
+
+# The application and OS, built from your Dockerfile.
+[drives.root]
+builder = "docker"
+dockerfile = "Dockerfile"
+format = "ext2"
+
+# The accounts drive: a raw, unformatted flash drive for the balance ledger.
+[drives.accounts]
+builder = "empty"
+format = "raw"
+size = 4194304   # size in bytes
+mount = false
+user = "dapp"
+```
+
+Leaving the drive raw and unmounted is deliberate. Rather than layering a filesystem on top, the guest opens the block device directly (for example `/dev/pmem1`) and writes fixed-size records at deterministic offsets. That predictable layout is precisely what allows the drive to be Merkle-proven against the machine state after foreclosure. The [Common drive options](../../development/advanced-configuration.md#common-drive-options) reference explains each field used above.
+
+Two properties of the drive must agree with the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md):
+
+- **Size.** The drive must be large enough to hold the entire account tree, which spans `2^(5 + log2MaxNumOfAccounts + log2LeavesPerAccount)` bytes. A single-token ledger with `log2LeavesPerAccount = 0` and `log2MaxNumOfAccounts = 12`, for example, occupies `2^17` bytes (128 KiB), well within the drive declared above.
+- **Position.** `accountsDriveStartIndex` records where the drive begins in machine memory, expressed as its start address divided by that account-tree size. You do not compute it by hand: `cartesi build` places the drive, and you read the assigned position from `.cartesi/image/config.json`. That value is the `accountsDriveStartIndex` you supply in the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md#drive-geometry) at deploy time.
+
+With the drive declared and sized, the guest fills it with balance records, as described next.
 
 ## Keeping the balances
 
@@ -19384,7 +19421,7 @@ The **Application** contract serves as the base layer representation of the appl
 
 Every Application is subscribed to a consensus contract and governed by a single address (owner). The consensus has the authority to submit claims, which are then used to validate outputs. The owner has complete control over the Application and can replace the consensus at any time. Consequently, users of an Application must trust both the consensus and the application owner. Depending on centralization or ownership concerns, the ownership model can be modified. This process is managed by the consensus contract. For more information about different ownership and consensus models, refer to the [consensus contracts](./consensus/overview.md).
 
-An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that turns on **foreclosure and emergency withdrawal**. A chosen **guardian** can foreclose the application. Once it is foreclosed, users can withdraw their in-app balances straight from this contract by proving their accounts against the last-finalized machine state, without a running node. See [Foreclosure & Emergency Withdrawal](../../development/foreclosure/overview.md) for the full flow. These functions are documented below under [Guardian & Foreclosure](#guardian--foreclosure) and [Emergency Withdrawal](#emergency-withdrawal).
+An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that turns on **foreclosure and emergency withdrawal**. A chosen **guardian** can foreclose the application. Once it is foreclosed, users can withdraw their in-app balances straight from this contract by proving their accounts against the last-finalized machine state, without a running node. See [Foreclosure & Emergency Withdrawal](../../development/emergency-withdrawal/overview.md) for the full flow. These functions are documented below under [Guardian & Foreclosure](#guardian--foreclosure) and [Emergency Withdrawal](#emergency-withdrawal).
 
 ## Functions
 
@@ -19692,7 +19729,7 @@ Triggered when the application is foreclosed.
 
 ## Emergency Withdrawal
 
-These members come from the [`IApplicationWithdrawal`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/IApplicationWithdrawal.sol) interface. After the application is foreclosed, its **accounts drive** (the in-app balance ledger) is proved on-chain once, and then each account's funds can be withdrawn permissionlessly. For the end-to-end procedure see the [recovery guide](../../development/foreclosure/recovery-guide.md); for the output-building contracts see the [Withdrawal](./withdrawal/overview.md) subsection.
+These members come from the [`IApplicationWithdrawal`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/IApplicationWithdrawal.sol) interface. After the application is foreclosed, its **accounts drive** (the in-app balance ledger) is proved on-chain once, and then each account's funds can be withdrawn permissionlessly. For the end-to-end procedure see the [recovery guide](../../development/emergency-withdrawal/recovery-guide.md); for the output-building contracts see the [Withdrawal](./withdrawal/overview.md) subsection.
 
 Withdrawal-related functions take an `AccountValidityProof`:
 
@@ -21484,7 +21521,7 @@ id: overview
 title: Overview
 ---
 
-These contracts power **emergency withdrawal**: the ability for users to recover their in-app balances straight from the base layer after an application is [foreclosed](../application.md#guardian--foreclosure), without a running node. For the concept and the operator procedure, see [Foreclosure & Emergency Withdrawal](../../../development/foreclosure/overview.md).
+These contracts power **emergency withdrawal**: the ability for users to recover their in-app balances straight from the base layer after an application is [foreclosed](../application.md#guardian--foreclosure), without a running node. For the concept and the operator procedure, see [Foreclosure & Emergency Withdrawal](../../../development/emergency-withdrawal/overview.md).
 
 ## How the pieces fit together
 
@@ -25455,7 +25492,7 @@ slug: /deployment/self-hosted
 Self-hosting means running a Cartesi Rollups node yourself to deploy and operate your application, instead of using a third-party provider. This section covers two paths:
 
 - **[Standard deployment](./standard.md)** runs the node and deploys a regular application. Start here if you do not need emergency withdrawal.
-- **[Deployment with emergency withdrawal](./with-emergency-withdrawal.md)** builds on the standard setup and deploys the application with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), so a guardian can foreclose it and users can recover their funds directly from the contracts. Read the [Foreclosure & Emergency Withdrawal](../../development/foreclosure/overview.md) concept first.
+- **[Deployment with emergency withdrawal](./with-emergency-withdrawal.md)** builds on the standard setup and deploys the application with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), so a guardian can foreclose it and users can recover their funds directly from the contracts. Read the [Foreclosure & Emergency Withdrawal](../../development/emergency-withdrawal/overview.md) concept first.
 
 :::warning Production Warning
 **This self-hosted approach should NOT be used in _production_.** It is designed for development and testing on **testnet**. It lacks production requirements such as public snapshot verification, security hardening, and production-grade infrastructure.
@@ -25614,7 +25651,7 @@ id: with-emergency-withdrawal
 title: Self-hosted with Emergency Withdrawal
 ---
 
-This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/foreclosure/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/foreclosure/overview.md) first for the concept.
+This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/emergency-withdrawal/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/emergency-withdrawal/overview.md) first for the concept.
 
 :::warning Production Warning
 Like the standard setup, this is for development and testing on **testnet**, not production.
@@ -25630,35 +25667,9 @@ In addition to the [standard prerequisites](./standard.md#prerequisites) (Cartes
 
 ## Configure the machine and ledger (`cartesi.toml`)
 
-For an application to support emergency withdrawal, its Cartesi Machine must include a dedicated **accounts drive**: a raw flash drive that holds the balance ledger. Declare it in your `cartesi.toml` alongside the root drive, and enable `final_hash` so the machine hash is produced for on-chain deployment:
+For an application to support emergency withdrawal, its Cartesi Machine must include a dedicated **accounts drive**: a raw, unmounted flash drive that holds the balance ledger. You declare it in `cartesi.toml` alongside the root drive, size it to fit the account tree, and enable `final_hash` so the machine hash is produced for deployment. The guest then writes balances into that drive using a ledger library, in a layout that matches the application's `WithdrawalConfig`.
 
-```toml
-[machine]
-# ...your existing machine settings...
-final_hash = true
-
-# The application and OS, built from your Dockerfile.
-[drives.root]
-builder = "docker"
-dockerfile = "Dockerfile"
-format = "ext2"
-
-# The accounts drive: a raw, unformatted flash drive for the balance ledger.
-[drives.accounts]
-builder = "empty"
-format = "raw"
-size = 4194304   # size in bytes
-mount = false
-user = "dapp"
-```
-
-The accounts drive is deliberately **raw and unmounted**: the application opens the block device directly (for example `/dev/pmem1`) and writes balance records into it, with no filesystem in between.
-
-**Your application must use a ledger library to write those balances in a recoverable (provable) layout.** The library keeps the record layout consistent with the [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), so that after foreclosure the balances can be proved on-chain and withdrawn. For how to store and manage balances this way, see the [Asset Management Library](https://cartesi.github.io/docs/pr-preview/pr-303/cartesi-rollups/2.0/api-reference/asset-management/overview/).
-
-:::note
-The drive's `size`, the ledger's record layout, and the `WithdrawalConfig` values (`log2_leaves_per_account`, `log2_max_num_of_accounts`, `accounts_drive_start_index`) must be chosen together. `accounts_drive_start_index` equals the drive's machine-memory start address divided by the proven-region size `2^(5 + log2_max_num_of_accounts + log2_leaves_per_account)`. You can read the built drive's position from `.cartesi/image/config.json`.
-:::
+Because those choices (the drive declaration, its size and position, and the record layout) belong to the guest application, they are documented once, in full, on the guest-requirements page. Set the drive up as described in [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive) before continuing, and see [Keeping the balances](../../api-reference/backend/emergency-withdrawal.md#keeping-the-balances) for the ledger library.
 
 ## Configuration
 
@@ -25745,7 +25756,7 @@ Create a `withdrawal.json` describing the guardian and the accounts-drive layout
 
 ## Recovery
 
-When the operator is gone, the guardian forecloses and users withdraw directly from the contracts. The full procedure (foreclose, replay, prove the accounts drive, anchor the root, withdraw, and verify) is in the [Emergency Withdrawal Recovery Guide](../../development/foreclosure/recovery-guide.md).
+When the operator is gone, the guardian forecloses and users withdraw directly from the contracts. The full procedure (foreclose, replay, prove the accounts drive, anchor the root, withdraw, and verify) is in the [Emergency Withdrawal Recovery Guide](../../development/emergency-withdrawal/recovery-guide.md).
 
 ---
 
@@ -26709,7 +26720,97 @@ import ImplementingOutputsCPP from './snippets/implementing_outputs_cpp.md';
 
 ---
 
-<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/lifecycle/ -->
+<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/installation-Guide/ -->
+
+---
+id: installation-Guide
+title: Installing the required tools
+---
+
+The [Emergency Withdrawal Recovery Guide](./recovery-guide.md) runs its tools directly on your machine. This is convenient on a local devnet, where you interact with them directly rather than through the node's containers. This page installs everything you need. Each tool below has a short description, followed by Linux and then macOS steps.
+
+## Cartesi Machine emulator
+
+The Cartesi Machine is the deterministic RISC-V virtual machine your application runs in. The machine tool spawns it to reproduce the settled state and generate the withdrawal proofs, so the emulator must be installed (version 0.20.x).
+
+### Linux (Debian or Ubuntu)
+
+Add the Cartesi APT repository, then install the emulator:
+
+```sh
+wget -qO - https://dist.cartesi.io/apt/keys/cartesi-deb-key.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/cartesi-deb-key.gpg
+echo "deb https://dist.cartesi.io/apt stable/" | sudo tee /etc/apt/sources.list.d/cartesi-deb-apt.list
+sudo apt-get update
+sudo apt-get install cartesi-machine
+```
+
+### macOS
+
+Install with Homebrew:
+
+```sh
+brew tap cartesi/tap
+brew install cartesi-machine
+```
+
+If a package is not yet available for your system, build the emulator from source following the [Cartesi Machine installation instructions](https://github.com/cartesi/machine-emulator#installation).
+
+## Cartesi Rollups Node tools
+
+The recovery flow uses two command-line tools that ship together with the Cartesi Rollups Node:
+
+- **`cartesi-rollups-cli`** sends the on-chain transactions (foreclose, anchor the drive root, withdraw) and reads withdrawals;
+- **`cartesi-rollups-machine-tool`** reproduces the settled machine state (`replay`) and generates the accounts-drive proofs (`prove accounts-drive`).
+
+Prebuilt packages are published only as Debian `.deb` files (amd64 and arm64). On macOS, and on other systems, you build them from source.
+
+### Linux (Debian or Ubuntu, amd64 or arm64)
+
+Download the node package for your architecture from the [Cartesi Rollups Node releases](https://github.com/cartesi/rollups-node/releases). The file is named `cartesi-rollups-node-v<version>_<arch>.deb`. Install it (this installs all node binaries, including both tools):
+
+```sh
+sudo dpkg -i cartesi-rollups-node-v<version>_<arch>.deb
+```
+
+To install only the two tools, extract them from the package instead:
+
+```sh
+dpkg-deb -x cartesi-rollups-node-v<version>_<arch>.deb out/
+sudo cp out/usr/bin/cartesi-rollups-cli out/usr/bin/cartesi-rollups-machine-tool /usr/local/bin/
+```
+
+### macOS
+
+No prebuilt binaries are published for macOS, so build the tools from source. You need the Cartesi Machine emulator (above), Go >= 1.24.1, and GNU Make >= 3.81. Install Go and Make with Homebrew:
+
+```sh
+brew install go make
+```
+
+Then build and install:
+
+```sh
+git clone --branch next/2.0 https://github.com/cartesi/rollups-node.git
+cd rollups-node
+make
+sudo make install
+```
+
+This installs the binaries under `/opt/cartesi/bin` on macOS (and `/usr/bin` on Linux). Make sure that directory is on your `PATH`.
+
+## Verify
+
+```sh
+cartesi-machine --version
+cartesi-rollups-cli --version
+cartesi-rollups-machine-tool --help
+```
+
+Once these run, continue with the [Emergency Withdrawal Recovery Guide](./recovery-guide.md).
+
+---
+
+<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/lifecycle/ -->
 
 ---
 id: lifecycle
@@ -26722,11 +26823,11 @@ To understand foreclosure, it helps to first see how an application's inputs tur
 
 **Inputs.** A user action (a deposit through a portal, or a message sent to the app) becomes an **input**, recorded on-chain in the [`InputBox`](../../api-reference/contracts/input-box.md).
 
-**Epochs.** Inputs are not settled one at a time. They are grouped into **epochs**, where an epoch is a fixed range of blocks (set by the consensus `epochLength`). Every input is assigned to an epoch by the block it arrived in.
+**Epochs.** Inputs are not settled one at a time. They are grouped into **epochs**: batches of consecutive inputs that are settled together as a single claim. Every input belongs to exactly one epoch. How epoch boundaries are drawn depends on the consensus; under Authority and Quorum an epoch covers a range of blocks, set by the consensus `epochLength`.
 
-**Claims.** The application runs as a deterministic Cartesi Machine. Once an epoch's block range closes, the node feeds that epoch's inputs to the machine, which updates its state and produces outputs. The node then reduces the result to a single fingerprint, a **claim** (a Merkle root), and posts it on-chain so the consensus contract can trust the off-chain computation by checking one hash.
+**Claims.** The application runs as a deterministic Cartesi Machine. The node feeds each input to the machine as it arrives, advancing the machine's state and producing outputs. When the epoch closes, the node reduces the resulting state to a single fingerprint, a **claim** (a Merkle root), and posts it on-chain so the consensus contract can trust the off-chain computation by verifying one hash.
 
-Posting a claim happens in **two transactions**, both sent by the operator:
+Posting a claim happens in **two transactions**:
 
 1. **Submit** (`submitClaim`) posts the claim. The epoch becomes `CLAIM_STAGED`.
 2. **Accept** (`acceptClaim`) finalizes it, once a waiting period has passed. The epoch becomes `CLAIM_ACCEPTED`.
@@ -26740,17 +26841,34 @@ An epoch moves through these statuses:
 ![Epoch status flow: OPEN to INPUTS_PROCESSED to CLAIM_COMPUTED to CLAIM_STAGED to CLAIM_ACCEPTED, with a foreclosure branch diverting an unfinalized claim to CLAIM_FORECLOSED](../../epoch-flow.png)
 
 - **OPEN**: the epoch's block range is still current and collecting inputs.
-- **INPUTS_PROCESSED**: the range closed and the machine processed the inputs.
+- **INPUTS_PROCESSED**: the epoch has closed and the machine has processed all of its inputs.
 - **CLAIM_COMPUTED**: the node has the claim ready.
 - **CLAIM_STAGED**: the claim was submitted on-chain and is in its staging window.
 - **CLAIM_ACCEPTED**: the staging period elapsed and the claim was finalized. This is the settled state that outputs (and emergency withdrawal) rely on.
 - **CLAIM_FORECLOSED**: a terminal status a claim reaches if the application is foreclosed before that claim finalizes (see below).
+- **CLAIM_REJECTED**: this is a related terminal status, but a **node-level** one rather than an on-chain outcome. The node marks its own epoch `CLAIM_REJECTED` (and the application `DIVERGED`) when it observes that a claim different from the one it computed was accepted on-chain, for example on a Quorum where another validator's claim won the vote. 
 
 ## Foreclosure
 
-Everything above assumes the operator keeps running the node. Foreclosure is what happens when you no longer want to depend on that.
+Everything above assumes the operator keeps running the node and the application operates in optimum condition. Foreclosure is what happens when you can no longer depend on that. 
 
-The **guardian** calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose). This freezes the application: [`isForeclosed()`](../../api-reference/contracts/application.md#isforeclosed) becomes `true` and stays `true`. Foreclosure has three effects on claims:
+**Foreclosure** is the act of permanently freezing a Cartesi Rollups application at its last accepted state, this process can be triggered in situations where; the operator abandons the application, a bug is discovered in the application code, a compromised authority, a dishonest quorum majority, or a false claim is left unchallenged in a PRT dispute tournament. 
+
+The claim staging period is the guardian's window to act: foreclosing before such a claim is accepted terminalizes it as `CLAIM_FORECLOSED` and freezes the application on the last state it still trusts, so users withdraw against that state and not the bad one. It's important to note that, Foreclosure does not reverse a claim that has already been accepted; once a state is accepted it is what emergency withdrawals pay out from, which is why the guardian's protection depends on acting within the staging window.
+
+
+To forclose an application, the **guardian**, a single address fixed in the withdrawal config, calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose) on the application contract.  [`isForeclosed()`](../../api-reference/contracts/application.md#isforeclosed) becomes `true` and this permanently freezes the application:
+
+**A foreclosed application can no longer process inputs.** Once frozen it takes on no new inputs and settles no new state. The one procedure it can still run is [emergency withdrawal](./recovery-guide.md): returning the assets users already deposited back to them, directly from the contracts. 
+
+Foreclosure is a property of the **application contract** and of the **node**. It takes both to make the freeze permanent:
+
+- **The contract** holds the on-chain truth. `foreclose()` can only be called by the guardian and sets `isForeclosed()`, after which the normal `submitClaim` and `acceptClaim` paths revert. The contract also gates emergency withdrawal so that path only opens once the application is foreclosed.
+- **The node** observes that truth and acts on it. Its EVM Reader detects the on-chain `Foreclosure` event, records it in the node database, and stops claiming new inputs for that application, however it still keeps watching the base layer so as to index subsequent emergency withdrawals. The node also generates the accounts-drive proofs users need to withdraw.
+
+![Foreclosure sequence: the guardian calls foreclose() on the application contract; the node's EVM Reader observes isForeclosed(), records the foreclosure in its database, then continues its scanners to drain pre-foreclosure inputs and index post-foreclosure events](../../foreclosure-sequence.png)
+
+Foreclosure has three effects on claims:
 
 - **Accepted history is kept.** An epoch that already reached `CLAIM_ACCEPTED` stays accepted. Foreclosure does not rewrite settled history.
 - **In-flight claims are cancelled.** A claim that has not finalized cannot finalize once the operator's authority is frozen, so the node marks it terminal as `CLAIM_FORECLOSED` instead of leaving it stuck. This happens whether the claim was still pre-staging (`CLAIM_COMPUTED`) or already `CLAIM_STAGED`.
@@ -26758,16 +26876,19 @@ The **guardian** calls [`foreclose()`](../../api-reference/contracts/application
 
 ## After foreclosure: prove and withdraw
 
-Once frozen, the accounts drive (the in-app balance ledger inside the machine state) at the last settled epoch is the source of truth for balances. Turning that into on-chain payouts takes two on-chain steps:
+Once frozen, the accounts drive (the in-app balance ledger inside the machine state) at the last accepted epoch is the source of truth for balances. Turning that into on-chain payouts takes three steps, one off-chain and two on-chain:
 
-1. **Anchor the ledger.** Anyone calls [`proveAccountsDriveMerkleRoot()`](../../api-reference/contracts/application.md#proveaccountsdrivemerkleroot) once, proving the accounts-drive root against the settled machine state. The contract stores it.
-2. **Withdraw per account.** Each user calls [`withdraw()`](../../api-reference/contracts/application.md#withdraw) with their account and a Merkle proof. The contract validates the account against the anchored root, builds a transfer output, runs it, and marks the account as withdrawn so it cannot be withdrawn twice.
+1. **Generate the proofs.** Off-chain, anyone runs the **machine tool** (`cartesi-rollups-machine-tool`) to replay the settled machine state and then `prove accounts-drive`. Replay is deterministic, so anyone can reproduce the last accepted state independently, with no running node. This writes two proof files: `drive-root-proof.json` (the accounts-drive root and its proof against the machine state, used once in step 2) and `account-proof.json` (the per-account Merkle proofs, used in step 3).
+2. **Anchor the ledger.** Anyone calls [`proveAccountsDriveMerkleRoot()`](../../api-reference/contracts/application.md#proveaccountsdrivemerkleroot) once, passing the root and proof from `drive-root-proof.json`. The contract checks it against the settled machine state and stores it. This is permissionless and happens once per application.
+3. **Withdraw per account.** Each account is withdrawn with [`withdraw()`](../../api-reference/contracts/application.md#withdraw), passing the account and its Merkle proof from `account-proof.json`. The contract validates the account against the anchored root, builds a transfer output, runs it, and marks the account as withdrawn so it cannot be withdrawn twice. The gas payer can differ from the recipient.
 
-The [Emergency Withdrawal Recovery Guide](./recovery-guide.md) turns these steps into concrete commands.
+As each on-chain step lands, the node's EVM Reader indexes it: it records the `AccountsDriveMerkleRootProved` event when the ledger is anchored, and stores each `Withdrawal` event (keyed by application and account index) so clients can read withdrawals over JSON-RPC and the CLI.
+
+![Accounts-drive proof and withdrawal sequence: the machine tool produces drive-root-proof.json and account-proof.json; the operator calls proveAccountsDriveMerkleRoot() then withdraw() on the application contract; the node's EVM Reader indexes the AccountsDriveMerkleRootProved and Withdrawal events](../../accounts-drive-withdrawal.png)
 
 ---
 
-<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/overview/ -->
+<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/overview/ -->
 
 ---
 id: overview
@@ -26778,13 +26899,16 @@ When users deposit assets into a Cartesi Rollups application, those assets are h
 
 **Foreclosure and emergency withdrawal** are the answer. They let a designated **guardian** freeze an application, after which any user can withdraw their in-app balance straight from the base-layer contracts by proving their account, with **no running node required**.
 
-The feature is opt-in: an application only supports it if it was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md). Applications deployed without one behave exactly as before.
+The feature is opt-in: an application only supports it if it was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md). Applications deployed without one behave exactly as before. In addition to that, the application is also expected to record the assets deposited into it using the CMA ledger library. This library keeps those balances inside the accounts drive in a recoverable, provable layout that matches the `WithdrawalConfig`. See the [Asset Management Library](https://cartesi.github.io/docs/pr-preview/pr-303/cartesi-rollups/2.0/api-reference/asset-management/overview/) section for more details about the CMA library. 
 
 ## The two parts
 
 **Foreclosure** freezes the application. A guardian address, set in the withdrawal config, calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose). From that moment the application is frozen at its last settled state, and it stays frozen forever. See [FOR-005](../../api-reference/contracts/application.md#foreclose) for the guardian-only rule.
 
-**Emergency withdrawal** is the recovery path that foreclosure unlocks. The application's **accounts drive** (the in-app balance ledger, held inside the machine state) is proved on-chain once, and then each user withdraws their own balance by proving their account against that proved ledger. Everything happens directly against the contracts, so it keeps working even if the operator and its node are gone.
+**Emergency withdrawal** is the recovery path that foreclosure unlocks, and it is built on the application's **accounts drive**.
+
+The accounts drive is a dedicated [drive](../advanced-configuration.md#drives), a region of the Cartesi Machine's memory, that the application uses as its balance ledger. It records how much each account owns, in a fixed layout described by the [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md). Like every drive, it sits at a known, fixed address in the machine's memory.
+The machine's whole memory is a single Merkle tree whose root, the machine state root hash, is finalized on-chain as part of the settled claim. Because the accounts drive occupies a known address, its own Merkle root is a fixed branch of that tree, so it can be proven up to the machine state root hash with a short list of sibling hashes. After foreclosure, anyone submits that proof once to anchor the accounts-drive root on-chain against the application's last settled machine state. The ledger is then fixed on-chain, and each user withdraws their own balance by proving their account against that anchored drive. Everything happens directly against the contracts, so it keeps working even if the operator and its node are gone.
 
 ## When funds are recoverable
 
@@ -26803,12 +26927,15 @@ All of the following must hold:
 
 ---
 
-<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/development/foreclosure/recovery-guide/ -->
+<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/development/emergency-withdrawal/recovery-guide/ -->
 
 ---
 id: recovery-guide
 title: Emergency Withdrawal Recovery Guide
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 This guide walks through foreclosing an application and withdrawing an account's funds directly from the base-layer contracts. For the concepts behind each step, see [Foreclosure & Emergency Withdrawal](./overview.md) and the [Claim & Foreclosure Lifecycle](./lifecycle.md).
 
@@ -26816,18 +26943,38 @@ This guide walks through foreclosing an application and withdrawing an account's
 
 You need:
 
-- an application that was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch;
-- the **guardian** key (only the guardian can foreclose);
-- the [`cartesi-rollups-cli`](../installation.md) and the **machine tool** (`cartesi-rollups-machine-tool`), which reproduces the settled machine state and generates the proofs;
-- the application's **accounts-drive parameters** from its withdrawal config: `accountsDriveStartIndex`, `log2MaxNumOfAccounts`, and `log2LeavesPerAccount`. These must match the values the application was deployed with.
+- An application that was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch;
+- The **guardian** key (only the guardian can foreclose);
+- The **machine tool** (`cartesi-rollups-machine-tool`), which reproduces the settled machine state and generates the proofs;
+- To send the on-chain transactions, either the **`cartesi-rollups-cli`** (see [Installing the required tools](./installation-guide.md)) or, if you prefer, **Foundry's `cast`** with `jq`;
+- The application's **accounts-drive parameters** from its withdrawal config: `accountsDriveStartIndex`, `log2MaxNumOfAccounts`, and `log2LeavesPerAccount`. These must match the values the application was deployed with.
+- This should be done in the same environment of the node, with access to the database (and configuration variables)
+
+This guide assumes the application already maintains its accounts drive in the layout its `WithdrawalConfig` describes. For how that drive is created, sized, and kept, see [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md), and in particular [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive).
+
+The on-chain steps (1, 4, 5, and 6) can be run with either tool. Choose a tab in each step, and it applies to the others. Steps 2 and 3 use the machine tool either way. In the `cast` tabs, `<app-address>` is the application contract address, `<rpc-url>` is your node RPC endpoint, and the private key is the guardian's (step 1) or your own (steps 4 and 5).
 
 ## Step 1: Foreclose the application
 
 Signed by the guardian, freeze the application:
 
+<Tabs groupId="recovery-tool">
+<TabItem value="cli" label="Cartesi CLI" default>
+
 ```sh
-cartesi-rollups-cli foreclose <app-name-or-address> --yes
+cartesi-rollups-cli foreclose <app-name-or-address>
 ```
+
+</TabItem>
+<TabItem value="cast" label="cast">
+
+```sh
+cast send <app-address> 'foreclose()' \
+  --private-key <guardian-key> --rpc-url <rpc-url>
+```
+
+</TabItem>
+</Tabs>
 
 After this, `isForeclosed()` returns `true` and the application is frozen at its last accepted epoch.
 
@@ -26860,16 +27007,33 @@ cartesi-rollups-machine-tool prove accounts-drive \
   --out-withdraw-proof account-proof.json
 ```
 
-This writes two files: `drive-root-proof.json` (used once, in step 4) and `account-proof.json` (used per account, in step 5).
+This writes two files: `drive-root-proof.json` (used once, in step 4) and `account-proof.json` (used per account, in step 5). The `cast` tabs below read their arguments out of these files with `jq`.
 
 ## Step 4: Anchor the accounts-drive root on-chain
 
 Record the accounts-drive root against the settled machine state. This is permissionless and only needs to happen once per foreclosed application:
 
+<Tabs groupId="recovery-tool">
+<TabItem value="cli" label="Cartesi CLI" default>
+
 ```sh
 cartesi-rollups-cli prove-drive-root <app-name-or-address> \
-  --proof-file drive-root-proof.json --yes
+  --proof-file drive-root-proof.json
 ```
+
+</TabItem>
+<TabItem value="cast" label="cast">
+
+```sh
+ROOT=$(jq -r '.accounts_drive_merkle_root' drive-root-proof.json)
+PROOF=$(jq -rc '.proof | join(",")' drive-root-proof.json)
+
+cast send <app-address> 'proveAccountsDriveMerkleRoot(bytes32,bytes32[])' "$ROOT" "[$PROOF]" \
+  --private-key <your-key> --rpc-url <rpc-url>
+```
+
+</TabItem>
+</Tabs>
 
 On success the contract stores the root and emits `AccountsDriveMerkleRootProved`. Anchoring a root from the wrong epoch, or from a different application, is rejected.
 
@@ -26877,21 +27041,54 @@ On success the contract stores the root and emits `AccountsDriveMerkleRootProved
 
 With the root anchored, withdraw the account:
 
+<Tabs groupId="recovery-tool">
+<TabItem value="cli" label="Cartesi CLI" default>
+
 ```sh
 cartesi-rollups-cli withdraw <app-name-or-address> \
-  --proof-file account-proof.json --yes
+  --proof-file account-proof.json
 ```
+
+</TabItem>
+<TabItem value="cast" label="cast">
+
+```sh
+ACCT=$(jq -r '.account' account-proof.json)
+IDX=$(jq -r '.account_index' account-proof.json)
+SIBS=$(jq -rc '.account_root_siblings | join(",")' account-proof.json)
+
+cast send <app-address> 'withdraw(bytes,(uint64,bytes32[]))' "$ACCT" "($IDX,[$SIBS])" \
+  --private-key <your-key> --rpc-url <rpc-url>
+```
+
+</TabItem>
+</Tabs>
 
 The contract validates the account against the anchored root, builds and runs the transfer, marks the account as withdrawn, and emits a `Withdrawal` event. Withdrawing the same account again is rejected.
 
 ## Step 6: Verify
+
+<Tabs groupId="recovery-tool">
+<TabItem value="cli" label="Cartesi CLI" default>
 
 ```sh
 # the node indexes the on-chain Withdrawal event
 cartesi-rollups-cli read withdrawals <app-name-or-address>
 ```
 
-You can also read the on-chain state directly: [`wereAccountFundsWithdrawn(accountIndex)`](../../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner.
+</TabItem>
+<TabItem value="cast" label="cast">
+
+```sh
+# read the on-chain flag directly (account index from account-proof.json)
+cast call <app-address> 'wereAccountFundsWithdrawn(uint256)(bool)' <account-index> \
+  --rpc-url <rpc-url>
+```
+
+</TabItem>
+</Tabs>
+
+Either way, [`wereAccountFundsWithdrawn(accountIndex)`](../../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner.
 
 ---
 
