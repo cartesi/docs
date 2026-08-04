@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[4367],{71087:e=>{e.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"cartesi-rollups"}')}}]);
