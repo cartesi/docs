@@ -210,6 +210,12 @@ const config = {
             position: "left",
           },
           {
+            label: "App Sequencer",
+            to: "/app-sequencer",
+            activeBaseRegex: "^/app-sequencer",
+            position: "left",
+          },
+          {
             type: "search",
             className: "navbar-search-custom",
             position: "right",
@@ -397,6 +403,14 @@ const config = {
             from: '/cartesi-rollups',      // the old/base route
             to:   '/cartesi-rollups/1.5/', // the new route to redirect to
           },
+          {
+            from: "/app-sequencer/operations/configuration",
+            to: "/app-sequencer/operations/setup-and-running/",
+          },
+          {
+            from: "/app-sequencer/operations/flush-mempool",
+            to: "/app-sequencer/operations/orchestration/",
+          },
         ],
       },
     ],
@@ -448,6 +462,18 @@ const config = {
         routeBasePath: 'fraud-proofs', 
         sidebarPath: require.resolve('./sidebarsFraudProofs.js'),
         editUrl: 'https://github.com/cartesi/docs/tree/develop',
+        showLastUpdateTime: true,
+        docItemComponent: "@theme/ApiItem",
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "app-sequencer",
+        path: "app-sequencer",
+        routeBasePath: "app-sequencer",
+        sidebarPath: require.resolve("./sidebarsAppSequencer.js"),
+        editUrl: "https://github.com/cartesi/docs/tree/develop",
         showLastUpdateTime: true,
         docItemComponent: "@theme/ApiItem",
       },
