@@ -1683,22 +1683,22 @@ This is why the sequencer can answer immediately and still be right. It applies 
 
 A batch could have carried a single safe block for everything in it. Frames exist so the number can move forward part way through.
 
-While the sequencer is filling a batch, the base layer keeps producing blocks and direct inputs keep arriving. Frames let one batch record that some transactions were evaluated at block 100 and later transactions at block 105. The batch can therefore remain open while the sequencer's base-layer view advances.
+While the sequencer is filling a batch, the base layer keeps producing blocks and direct inputs keep arriving. Frames let one batch record that some transactions were evaluated at block 95 and later transactions at block 100. The batch can therefore remain open while the sequencer's base-layer view advances.
 
 ![A sequencer batch with nonce 42 contains two frames. Each frame records its own safe block, status, and transactions, while references to the base-layer chain show how the safe block advances as the batch remains open.](../images/batch-frame-interleaving.png)
 
 ```
 Batch, nonce 42
-  frame 1   safe block 100   transactions A, B, C
-  frame 2   safe block 105   transaction D
+  frame 1   safe block 95  transactions A, B, C
+  frame 2   safe block 100 transaction D
 ```
 
 Run by the machine, that becomes:
 
 ```
-run direct inputs recorded up to block 100
+run direct inputs recorded up to block 95
 run A, B, C
-run direct inputs recorded up to block 105
+run direct inputs recorded up to block 100
 run D
 ```
 
