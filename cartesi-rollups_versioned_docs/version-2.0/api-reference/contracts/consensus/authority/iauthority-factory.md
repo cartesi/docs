@@ -6,6 +6,8 @@ resources:
     title: IAuthorityFactory Interface
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **IAuthorityFactory** interface defines the contract for deploying new `IAuthority` contracts.
 
 ## Events

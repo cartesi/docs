@@ -6,6 +6,8 @@ resources:
     title: IQuorum Interface
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The `IQuorum` interface defines a consensus model controlled by a small, immutable set of validators.
 
 ## Description

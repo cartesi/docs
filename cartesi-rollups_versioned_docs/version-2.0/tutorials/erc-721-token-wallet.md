@@ -3,6 +3,8 @@ id: erc-721-token-wallet
 title: Integrating ERC721 token wallet functionality
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 This tutorial will guide you through creating a basic ERC721(NFT) token wallet using TypeScript for a Cartesi backend application.
 
 ## Setting up the project

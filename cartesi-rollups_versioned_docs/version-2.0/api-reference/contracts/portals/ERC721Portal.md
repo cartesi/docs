@@ -4,6 +4,8 @@ resources:
     title: ERC721Portal contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **ERC721Portal** allows anyone to perform transfers of
 ERC-721 tokens to a dApp while informing the off-chain machine.
 

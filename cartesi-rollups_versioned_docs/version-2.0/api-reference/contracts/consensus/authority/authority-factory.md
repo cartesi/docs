@@ -6,6 +6,8 @@ resources:
     title: AuthorityFactory Contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **AuthorityFactory** contract allows anyone to reliably deploy new `IAuthority` contracts.
 
 ## Functions

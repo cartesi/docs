@@ -10,6 +10,8 @@ resources:
     title: Smart Contracts for Cartesi Rollups
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 In a Cartesi dApp, the frontend and backend components communicate through the Rollups framework using HTTP and JSON-RPC APIs.
 
 When designing the APIs for this communication framework, we aimed to ensure that developers could create their applications without excessive concern about the low-level components of Cartesi Rollups. 

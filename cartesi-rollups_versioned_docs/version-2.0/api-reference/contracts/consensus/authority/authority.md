@@ -6,6 +6,8 @@ resources:
     title: Authority Contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **Authority** contract implements a single-owner consensus mechanism where only the contract owner can submit and accept claims.
 
 ## Functions

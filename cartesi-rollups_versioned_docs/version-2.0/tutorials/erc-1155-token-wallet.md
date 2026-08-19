@@ -3,6 +3,8 @@ id: erc-1155-token-wallet
 title: Integrating ERC1155 token wallet functionality
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 This tutorial guides you through building an ERC-1155 token wallet for a Cartesi backend application using TypeScript. It covers **single** and **batch** deposits from the base layer, internal balance tracking, transfers, and withdrawals for both modes.
 
 ## Setting up the project

@@ -3,6 +3,8 @@ id: integration-guides
 title: Integrations guide
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Guides for integrating external protocols into your Cartesi application. Each integration offers a unique functionality to your application.
 
 ## Avail Integration

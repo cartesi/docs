@@ -4,6 +4,8 @@ resources:
     title: ERC20Portal contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **ERC20Portal** allows anyone to perform transfers of
 ERC-20 tokens to a dApp while informing the off-chain machine.
 

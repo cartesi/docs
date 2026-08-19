@@ -6,6 +6,8 @@ resources:
     title: IAuthority Interface
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The `IAuthority` interface defines a consensus contract controlled by a single address, the owner.
 
 ## Description

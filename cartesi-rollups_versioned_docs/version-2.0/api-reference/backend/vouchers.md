@@ -6,6 +6,8 @@ resources:
     title: DELEGATECALL Opcode
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Vouchers serve as a mechanism for facilitating on-chain actions initiated in the execution layer.
 
 Imagine vouchers as digital authorization tickets that grant dApps the authority to execute specific actions directly on the base layer. These vouchers encapsulate the details of the desired on-chain action, such as a token swap request or asset transfer.

@@ -6,6 +6,8 @@ resources:
     title: IQuorumFactory Interface
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **IQuorumFactory** interface defines the contract for deploying new `IQuorum` contracts.
 
 ## Events

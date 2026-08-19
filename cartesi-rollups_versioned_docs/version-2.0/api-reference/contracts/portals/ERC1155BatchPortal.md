@@ -4,6 +4,8 @@ resources:
     title: ERC1155BatchPortal contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **ERC1155BatchPortal** allows anyone to perform batch transfers of
 ERC-1155 tokens to a dApp while informing the off-chain machine.
 

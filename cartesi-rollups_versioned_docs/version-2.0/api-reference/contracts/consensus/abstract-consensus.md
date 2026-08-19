@@ -6,6 +6,8 @@ resources:
     title: AbstractConsensus Contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **AbstractConsensus** contract provides an abstract implementation of `IConsensus` with common consensus functionality.
 
 ## Functions
