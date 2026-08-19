@@ -7,6 +7,8 @@ resources:
 
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Applications built on Cartesi Rollups are intended to be deployed to public blockchains so users can access them. This can be done by taking advantage of a cloud-based infrastructure.
 
 Deploying a Cartesi dApp involves two steps: deploying a smart contract that defines your dApp on-chain and then instantiating a node that runs the application's intended backend logic.

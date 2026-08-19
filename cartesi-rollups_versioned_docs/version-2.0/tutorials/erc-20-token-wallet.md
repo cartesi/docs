@@ -3,6 +3,8 @@ id: erc-20-token-wallet
 title: Integrating ERC20 token wallet functionality
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 This tutorial will guide you through creating a basic ERC20 token wallet for a Cartesi backend application using TypeScript.
 
 ## Setting up the project

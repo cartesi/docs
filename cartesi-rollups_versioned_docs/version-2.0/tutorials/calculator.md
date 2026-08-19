@@ -6,6 +6,8 @@ resources:
     title: Source code for the Calculator App
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 In this tutorial, we will build a simple Calculator application to illustrate how requests are sent and processed within Cartesi Rollups Infrastructure.
 
 We provide JavaScript, Python, Rust, Go, and C++ implementations so you can use your preferred backend language.

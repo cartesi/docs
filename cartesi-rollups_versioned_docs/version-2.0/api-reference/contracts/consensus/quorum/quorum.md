@@ -6,6 +6,8 @@ resources:
     title: Quorum Contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **Quorum** contract implements a multi-validator consensus mechanism where claims are accepted when a majority of validators vote in favor.
 
 ## Functions

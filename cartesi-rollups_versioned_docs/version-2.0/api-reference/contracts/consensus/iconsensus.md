@@ -6,6 +6,8 @@ resources:
     title: IConsensus Interface
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The `IConsensus` interface defines the main consensus contract behavior for validating and accepting claims submitted by validators.
 
 ## Description

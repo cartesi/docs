@@ -6,6 +6,8 @@ resources:
     title: Consensus Smart Contracts
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The consensus mechanism in Cartesi Rollups is responsible for validating and accepting claims submitted by validators. These contracts ensure the integrity of the rollup by validating outputs Merkle roots.
 
 ## Consensus Contracts

@@ -6,6 +6,8 @@ resources:
     title: Smart Contracts for Cartesi Rollups
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The Cartesi Rollups framework consists of components on two layers: the base layer (the foundational blockchain where an application contract is deployed, such as Ethereum) and the execution layer (the Cartesi off-chain layer where the application runs its backend logic).
 
 The frontend interacts with base layer smart contracts to send inputs to the backend, deposit assets, and process outputs.

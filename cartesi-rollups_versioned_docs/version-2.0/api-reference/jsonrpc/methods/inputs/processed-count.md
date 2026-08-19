@@ -3,6 +3,8 @@ id: jsonrpc-inputs-processed-count
 title: Get Processed Input Count
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 # Get Processed Input Count
 
 ## Example Request

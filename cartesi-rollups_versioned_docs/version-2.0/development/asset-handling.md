@@ -6,6 +6,8 @@ resources:
     title: The Cartesi dApp Developer Free Course
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Assets exist on the base layer, where they have actual meaning and value.
 
 As with any execution layer solution, a Cartesi Application that wants to manipulate assets needs a secure way of "teleporting" the assets from the base layer to the execution layer and when necessary, back to the base layer.

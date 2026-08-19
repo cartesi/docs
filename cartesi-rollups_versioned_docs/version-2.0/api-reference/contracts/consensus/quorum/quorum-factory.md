@@ -6,6 +6,8 @@ resources:
     title: QuorumFactory Contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **QuorumFactory** contract allows anyone to reliably deploy new `IQuorum` contracts.
 
 ## Functions

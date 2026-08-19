@@ -4,6 +4,8 @@ title: Utilizing test tokens in dev environment
 resources:
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 ## Introduction
 
 The **Cartesi CLI** is one of the most important tools for developing applications with Cartesi. It provides a wide range of functionalities that simplify and automate the process of setting up, deploying, and interacting with your applications.

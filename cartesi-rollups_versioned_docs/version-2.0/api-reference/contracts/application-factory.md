@@ -6,6 +6,8 @@ resources:
     title: Application Factory contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **ApplicationFactory** contract is a tool for reliably deploying new instances of the [`Application`](../contracts/application.md) contract with or without a specified salt value for address derivation.
 
 Additionally, it provides a function to calculate the address of a potential new `CartesiDApp` contract based on input parameters.

@@ -9,6 +9,8 @@ resources:
     title: Cartesi skills setup walkthrough
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 **Cartesi Skills** are lightweight, specialized instructions for AI agents. Each skill covers a focused task: scaffolding a new app, building backend logic, wiring a frontend, interacting with L1 contracts, or deploying to a self-hosted node.
 
 Cartesi Skills follow the open [Agent Skills](https://agentskills.io/home) format. For a similar pattern in the broader Ethereum ecosystem, see [eth-skills](https://www.ethskills.com/).

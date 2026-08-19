@@ -14,6 +14,8 @@ resources:
     title: Dave
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The Cartesi Rollups framework is designed to enable complex computations off-chain while maintaining the security guarantees of blockchain technology. It consists of two primary components: **the on-chain base layer** (such as Ethereum), where the dApp contract is deployed, and **the off-chain execution layer**, where the dApp's backend logic operates.
 
 A decentralized application (dApp) built on Cartesi incorporates several key elements:

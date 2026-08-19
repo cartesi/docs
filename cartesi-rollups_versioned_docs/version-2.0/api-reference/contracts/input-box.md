@@ -6,6 +6,8 @@ resources:
       title: InputBox contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **InputBox** is a trustless and permissionless contract that receives arbitrary data blobs (called "inputs") from any sender and adds a compound hash to an append-only list (the "input box").
 
 The hash stored on-chain comprises the hash of the input blob, block number, timestamp, input sender address, and input index.

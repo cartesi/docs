@@ -3,6 +3,8 @@ id: methods
 title: Methods
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 # JSON-RPC API Methods
 
 This page provides a quick reference to all available JSON-RPC methods in the Cartesi Rollups Node API. For each method, you will find:

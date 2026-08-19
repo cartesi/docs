@@ -4,6 +4,8 @@ resources:
     title: EtherPortal contract
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The **EtherPortal** allows anyone to perform transfers of
 Ether to a dApp while informing the off-chain machine.
 

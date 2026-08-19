@@ -3,6 +3,8 @@ id: types
 title: Types
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 # JSON-RPC API Types
 
 This page documents the data types used in the Cartesi Rollups Node API. These types are used in both request parameters and response data.

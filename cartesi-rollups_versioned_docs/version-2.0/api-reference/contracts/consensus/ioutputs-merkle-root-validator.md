@@ -6,6 +6,8 @@ resources:
     title: IOutputsMerkleRootValidator Interface
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The `IOutputsMerkleRootValidator` interface provides valid outputs Merkle roots for validation.
 
 ## Description

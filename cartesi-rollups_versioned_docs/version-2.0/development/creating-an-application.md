@@ -6,6 +6,8 @@ resources:
     title: CartesiScan
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 
 
 Cartesi CLI simplifies creating applications on Cartesi. To create a new application, run:
@@ -33,9 +35,8 @@ This command creates a `new-app` directory with essential files for your applica
 Cartesi CLI has templates for the following languages – `cpp`, `cpp-low-level`, `go`, `java`, `javascript`, `lua`, `python`, `ruby`, `rust`, and `typescript`.
 
 :::note Libraries for simplifying development
-We have high-level framework and alternative templates that simplify development and enhances input management, providing a smoother and more efficient experience.
-For Go use Rollmelette, for Rust use Crabrolls, for Python use python-Cartesi and for Typescript/Javascrips use Deroll.
-Visit this [page](../resources/community-tools.md) to learn more about these and other available tools.
+High-level frameworks can simplify routing, inputs, and testing. For TypeScript use Deroll; for Python use python-Cartesi or Cartesapp.
+See [Community tools](../resources/community-tools.md).
 :::
 
 ## Implementing your application Logic
