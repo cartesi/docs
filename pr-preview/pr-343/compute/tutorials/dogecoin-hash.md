@@ -1,3 +1,0 @@
-> For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
-
-# compute/tutorials/dogecoin-hash
