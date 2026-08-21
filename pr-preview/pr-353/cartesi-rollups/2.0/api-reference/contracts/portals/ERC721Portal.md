@@ -2,7 +2,7 @@
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/portals/ERC721Portal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/ERC721Portal.sol
     title: ERC721Portal contract
 ---
 

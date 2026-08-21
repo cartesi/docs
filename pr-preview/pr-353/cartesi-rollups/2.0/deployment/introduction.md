@@ -33,7 +33,7 @@ After deployment, any changes to the application code will generate a different 
 
 There are two methods to deploy an application:
 
-1. [Self-hosted deployment](./self-hosted.md): Deploy the application node using your infrastructure
+1. [Self-hosted deployment](./self-hosted/overview.md): Deploy the application node using your infrastructure
 2. Third-party service provider: Outsource running the application node to a service provider
 
 :::caution important

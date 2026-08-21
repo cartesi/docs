@@ -4,7 +4,7 @@
 id: application
 title: Application
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/dapp/Application.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/Application.sol
     title: Application contract
   - url: https://docs.openzeppelin.com/contracts/5.x/
     title: OpenZeppelin Contracts
@@ -16,6 +16,8 @@ The **Application** contract serves as the base layer representation of the appl
 
 Every Application is subscribed to a consensus contract and governed by a single address (owner). The consensus has the authority to submit claims, which are then used to validate outputs. The owner has complete control over the Application and can replace the consensus at any time. Consequently, users of an Application must trust both the consensus and the application owner. Depending on centralization or ownership concerns, the ownership model can be modified. This process is managed by the consensus contract. For more information about different ownership and consensus models, refer to the [consensus contracts](./consensus/overview.md).
 
+An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that turns on **foreclosure and emergency withdrawal**. A chosen **guardian** can foreclose the application. Once it is foreclosed, users can withdraw their in-app balances straight from this contract by proving their accounts against the last-finalized machine state, without a running node. See [Foreclosure & Emergency Withdrawal](../../development/emergency-withdrawal/overview.md) for the full flow. These functions are documented below under [Guardian & Foreclosure](#guardian--foreclosure) and [Emergency Withdrawal](#emergency-withdrawal).
+
 ## Functions
 
 ### `constructor()`
@@ -25,11 +27,14 @@ constructor(
     IOutputsMerkleRootValidator outputsMerkleRootValidator,
     address initialOwner,
     bytes32 templateHash,
-    bytes memory dataAvailability
+    bytes memory dataAvailability,
+    WithdrawalConfig memory withdrawalConfig
 ) Ownable(initialOwner)
 ```
 
 Creates an Application contract.
+
+*Reverts with `InvalidWithdrawalConfig` if `withdrawalConfig` is invalid (see [`WithdrawalConfig`](./withdrawal/withdrawal-config.md)). A zero-valued `withdrawalConfig` is valid and deploys an application without the foreclosure / emergency-withdrawal feature.*
 
 **Parameters**
 
@@ -39,6 +44,7 @@ Creates an Application contract.
 | `initialOwner` | `address` | The initial application owner |
 | `templateHash` | `bytes32` | The initial machine state hash |
 | `dataAvailability` | `bytes` | The data availability solution |
+| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (guardian, accounts-drive layout, and output builder). See [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) |
 
 ### `receive()`
 
@@ -259,3 +265,262 @@ The outputs Merkle root validator was changed.
 | Name | Type | Description |
 |------|------|-------------|
 | `newOutputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The new outputs Merkle root validator |
+
+## Guardian & Foreclosure
+
+These members come from the [`IApplicationForeclosure`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/IApplicationForeclosure.sol) interface. They are only meaningful when the application was deployed with a non-empty [`WithdrawalConfig`](./withdrawal/withdrawal-config.md); the guardian is the address set in that configuration.
+
+### `foreclose()`
+
+```solidity
+function foreclose() external override onlyGuardian
+```
+
+Forecloses the application, allowing users to withdraw their funds by providing Merkle proofs of their in-app accounts.
+
+*Can only be called by the application guardian. On success, emits a `Foreclosure` event. An application that has been foreclosed remains so.*
+
+**Errors**
+
+| Error | Condition |
+|-------|-----------|
+| `NotGuardian` | Called by an account other than the guardian |
+
+### `getGuardian()`
+
+```solidity
+function getGuardian() external view override returns (address)
+```
+
+Get the address of the guardian, which has the power to foreclose the application.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `address` | The guardian address |
+
+### `isForeclosed()`
+
+```solidity
+function isForeclosed() external view override returns (bool)
+```
+
+Check whether the application has been foreclosed. An application that has been foreclosed will remain so.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `[0]` | `bool` | Whether the application has been foreclosed |
+
+### `Foreclosure()`
+
+```solidity
+event Foreclosure()
+```
+
+Triggered when the application is foreclosed.
+
+## Emergency Withdrawal
+
+These members come from the [`IApplicationWithdrawal`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/IApplicationWithdrawal.sol) interface. After the application is foreclosed, its **accounts drive** (the in-app balance ledger) is proved on-chain once, and then each account's funds can be withdrawn permissionlessly. For the end-to-end procedure see the [recovery guide](../../development/emergency-withdrawal/recovery-guide.md); for the output-building contracts see the [Withdrawal](./withdrawal/overview.md) subsection.
+
+Withdrawal-related functions take an `AccountValidityProof`:
+
+```solidity
+struct AccountValidityProof {
+    uint64 accountIndex;      // the account's index in the accounts drive
+    bytes32[] accountRootSiblings; // Merkle siblings of the account root
+}
+```
+
+### `proveAccountsDriveMerkleRoot()`
+
+```solidity
+function proveAccountsDriveMerkleRoot(
+    bytes32 accountsDriveMerkleRoot,
+    bytes32[] calldata proof
+) external override
+```
+
+Prove the accounts drive Merkle root against the last-finalized machine state provided by the application's outputs Merkle root validator. Callable by anyone after the application is foreclosed, so that accounts can be validated and their funds withdrawn.
+
+*On success, stores the proved accounts drive Merkle root and emits an `AccountsDriveMerkleRootProved` event.*
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `accountsDriveMerkleRoot` | `bytes32` | The accounts drive Merkle root |
+| `proof` | `bytes32[]` | Siblings of the accounts drive Merkle root in the machine state tree |
+
+**Errors**
+
+| Error | Condition |
+|-------|-----------|
+| `NotForeclosed` | The application has not been foreclosed |
+| `AccountsDriveMerkleRootAlreadyProved` | The root has already been proved |
+| `InvalidAccountsDriveMerkleRootProofSize` | The proof array length is wrong |
+| `InvalidMachineMerkleRoot(bytes32)` | The computed machine root differs from the last-finalized one (argument is the computed root) |
+
+### `withdraw()`
+
+```solidity
+function withdraw(bytes calldata account, AccountValidityProof calldata proof) external override
+```
+
+Withdraw the funds of an account from the foreclosed application. First the account is validated against the proved accounts drive Merkle root; then a withdrawal output is built from the account and executed.
+
+*On success, marks the account funds as withdrawn and emits a `Withdrawal` event.*
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `account` | `bytes` | The account, as encoded in the accounts drive |
+| `proof` | `AccountValidityProof` | The proof used to validate the account |
+
+**Errors**
+
+| Error | Condition |
+|-------|-----------|
+| `NotForeclosed` | The application has not been foreclosed |
+| `AccountFundsAlreadyWithdrawn(uint64)` | The account's funds were already withdrawn (argument is the account index) |
+| Errors from `validateAccount()` | The account fails validation (see [`validateAccount()`](#validateaccount)) |
+
+### `getWithdrawalConfig()`
+
+```solidity
+function getWithdrawalConfig() external view override returns (WithdrawalConfig memory withdrawalConfig)
+```
+
+Get the [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) set upon construction.
+
+### `getAccountsDriveMerkleRoot()`
+
+```solidity
+function getAccountsDriveMerkleRoot()
+    external view override
+    returns (bool wasAccountsDriveMerkleRootProved, bytes32 accountsDriveMerkleRoot)
+```
+
+Check whether the accounts drive Merkle root was proved, and its value.
+
+**Return Values**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `wasAccountsDriveMerkleRootProved` | `bool` | Whether the accounts drive Merkle root was proved |
+| `accountsDriveMerkleRoot` | `bytes32` | The accounts drive Merkle root (if proved) |
+
+### `getNumberOfWithdrawals()`
+
+```solidity
+function getNumberOfWithdrawals() external view override returns (uint256)
+```
+
+Get the number of withdrawals. Useful for fast-syncing `Withdrawal` events.
+
+### `wereAccountFundsWithdrawn()`
+
+```solidity
+function wereAccountFundsWithdrawn(uint256 accountIndex) external view override returns (bool)
+```
+
+Check whether an account had its funds withdrawn.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `accountIndex` | `uint256` | The index of the account in the accounts drive |
+
+### `getLog2LeavesPerAccount()`
+
+```solidity
+function getLog2LeavesPerAccount() external view override returns (uint8)
+```
+
+Get the log (base 2) of the number of machine-state-tree leaves reserved for each account in the accounts drive.
+
+### `getLog2MaxNumOfAccounts()`
+
+```solidity
+function getLog2MaxNumOfAccounts() external view override returns (uint8)
+```
+
+Get the log (base 2) of the maximum number of accounts the accounts drive can store (the depth of the accounts drive tree).
+
+### `getAccountsDriveStartIndex()`
+
+```solidity
+function getAccountsDriveStartIndex() external view override returns (uint64)
+```
+
+Get the start-index factor of the accounts drive. With `a = getLog2LeavesPerAccount()`, `b = getLog2MaxNumOfAccounts()`, and `c = getAccountsDriveStartIndex()`, the accounts drive starts at memory address `c * 2^(a+b+5)` and is `2^(a+b+5)` bytes in size.
+
+### `getWithdrawalOutputBuilder()`
+
+```solidity
+function getWithdrawalOutputBuilder() external view override returns (IWithdrawalOutputBuilder)
+```
+
+Get the [withdrawal output builder](./withdrawal/iwithdrawal-output-builder.md), which is static-called whenever an account's funds are to be withdrawn.
+
+### `validateAccount()`
+
+```solidity
+function validateAccount(bytes calldata account, AccountValidityProof calldata proof) external view override
+```
+
+Validate the existence of an account at a given index in the accounts drive, against the accounts drive Merkle root proved through `proveAccountsDriveMerkleRoot()`.
+
+*May raise any error raised by [`validateAccountMerkleRoot()`](#validateaccountmerkleroot), as well as `DriveSmallerThanData` (if the provided account is too large).*
+
+### `validateAccountMerkleRoot()`
+
+```solidity
+function validateAccountMerkleRoot(bytes32 accountMerkleRoot, AccountValidityProof calldata proof) external view override
+```
+
+Validate the existence of an account root at a given index in the accounts drive.
+
+**Errors**
+
+| Error | Condition |
+|-------|-----------|
+| `InvalidAccountRootSiblingsArrayLength` | The siblings array length is wrong |
+| `InvalidNodeIndex` | The account index is outside the accounts drive |
+| `AccountsDriveMerkleRootNotProved` | The accounts drive root has not been proved yet |
+| `InvalidAccountsDriveMerkleRoot(bytes32)` | The computed accounts drive root differs from the proved one (argument is the computed root) |
+
+### `AccountsDriveMerkleRootProved()`
+
+```solidity
+event AccountsDriveMerkleRootProved(bytes32 accountsDriveMerkleRoot)
+```
+
+Triggered when the accounts drive Merkle root is proved.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `accountsDriveMerkleRoot` | `bytes32` | The accounts drive Merkle root |
+
+### `Withdrawal()`
+
+```solidity
+event Withdrawal(uint64 accountIndex, bytes account, bytes output)
+```
+
+Triggered when the funds of an account are withdrawn.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `accountIndex` | `uint64` | The account index in the accounts drive |
+| `account` | `bytes` | The account as encoded in the accounts drive |
+| `output` | `bytes` | The withdrawal output |

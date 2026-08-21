@@ -330,6 +330,22 @@ interface Report {
 }
 ```
 
+### Withdrawal
+Represents an emergency withdrawal observed on-chain (a `Withdrawal` event emitted by the application after foreclosure). See [`Application.withdraw()`](../contracts/application.md#withdraw).
+
+```typescript
+interface Withdrawal {
+  account_index: UnsignedInteger;
+  account: ByteArray;
+  output: ByteArray;
+  block_number: UnsignedInteger;
+  transaction_hash: Hash;
+  log_index: UnsignedInteger;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+```
+
 ### Pagination
 Represents pagination information for list responses.
 
@@ -453,6 +469,25 @@ Result for getting a single report.
 ```typescript
 interface ReportGetResult {
   data: Report;
+}
+```
+
+### WithdrawalListResult
+Result for listing withdrawals.
+
+```typescript
+interface WithdrawalListResult {
+  data: Withdrawal[];
+  pagination: Pagination;
+}
+```
+
+### WithdrawalGetResult
+Result for getting a single withdrawal.
+
+```typescript
+interface WithdrawalGetResult {
+  data: Withdrawal;
 }
 ```
 

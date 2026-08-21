@@ -2,7 +2,7 @@
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/contracts/portals/EtherPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/EtherPortal.sol
     title: EtherPortal contract
 ---
 
