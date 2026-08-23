@@ -4,7 +4,7 @@
 id: authority-factory
 title: AuthorityFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/consensus/authority/AuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/AuthorityFactory.sol
     title: AuthorityFactory Contract
 ---
 

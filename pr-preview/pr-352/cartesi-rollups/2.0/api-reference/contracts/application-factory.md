@@ -4,7 +4,7 @@
 id: application-factory
 title: ApplicationFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v2.0.1/src/dapp/ApplicationFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/ApplicationFactory.sol
     title: Application Factory contract
 ---
 
@@ -23,7 +23,8 @@ function newApplication(
     IOutputsMerkleRootValidator outputsMerkleRootValidator,
     address appOwner,
     bytes32 templateHash,
-    bytes calldata dataAvailability
+    bytes calldata dataAvailability,
+    WithdrawalConfig calldata withdrawalConfig
 ) external override returns (IApplication)
 ```
 
@@ -37,6 +38,7 @@ Deploys a new Application contract without a salt value for address derivation.
 | `appOwner` | `address` | Address of the owner of the application |
 | `templateHash` | `bytes32` | Hash of the template for the application |
 | `dataAvailability` | `bytes` | The data availability solution |
+| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
 
 **Return Values**
 
@@ -52,6 +54,7 @@ function newApplication(
     address appOwner,
     bytes32 templateHash,
     bytes calldata dataAvailability,
+    WithdrawalConfig calldata withdrawalConfig,
     bytes32 salt
 ) external override returns (IApplication)
 ```
@@ -66,6 +69,7 @@ Deploys a new `Application` contract with a specified salt value for address der
 | `appOwner` | `address` | Address of the owner of the application |
 | `templateHash` | `bytes32` | Hash of the template for the application |
 | `dataAvailability` | `bytes` | The data availability solution |
+| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
 | `salt` | `bytes32` | Salt value for address derivation |
 
 **Return Values**
@@ -82,6 +86,7 @@ function calculateApplicationAddress(
     address appOwner,
     bytes32 templateHash,
     bytes calldata dataAvailability,
+    WithdrawalConfig calldata withdrawalConfig,
     bytes32 salt
 ) external view override returns (address)
 ```
@@ -96,6 +101,7 @@ Calculates the address of a potential new Application contract based on input pa
 | `appOwner` | `address` | Address of the owner of the application |
 | `templateHash` | `bytes32` | Hash of the template for the application |
 | `dataAvailability` | `bytes` | The data availability solution |
+| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
 | `salt` | `bytes32` | Salt value for address derivation |
 
 **Return Values**
@@ -114,6 +120,7 @@ event ApplicationCreated(
     address appOwner,
     bytes32 templateHash,
     bytes dataAvailability,
+    WithdrawalConfig withdrawalConfig,
     IApplication appContract
 )
 ```
@@ -128,4 +135,21 @@ A new Application contract was deployed.
 | `appOwner` | `address` | The owner of the application |
 | `templateHash` | `bytes32` | The template hash |
 | `dataAvailability` | `bytes` | The data availability solution |
+| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
 | `appContract` | `IApplication` | The deployed Application contract |
+
+## Errors
+
+### `InvalidWithdrawalConfig()`
+
+```solidity
+error InvalidWithdrawalConfig(WithdrawalConfig withdrawalConfig)
+```
+
+Raised at deployment when the provided [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) is invalid, meaning its accounts-drive layout does not fit inside the machine memory (see [`LibWithdrawalConfig.isValid`](./withdrawal/withdrawal-config.md#validation)). Checking the config in the factory means users and the node do not have to check it themselves.
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `withdrawalConfig` | `WithdrawalConfig` | The invalid withdrawal configuration |
