@@ -248,7 +248,17 @@
             "items": [
                 "resources/community-tools",
                 "resources/mainnet-considerations",
-                "resources/migration-guide"
+                "resources/migration-guide",
+                {
+                    "type": "link",
+                    "label": "Dave",
+                    "href": "https://arxiv.org/abs/2411.05463"
+                },
+                {
+                    "type": "link",
+                    "label": "PRT",
+                    "href": "https://arxiv.org/abs/2212.12439"
+                }
             ]
         },
         {
