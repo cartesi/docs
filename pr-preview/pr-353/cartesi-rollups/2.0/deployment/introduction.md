@@ -35,6 +35,8 @@ There are two methods to deploy an application:
 1. [Self-hosted deployment](./self-hosted/overview.md): Deploy the application node using your infrastructure
 2. Third-party service provider: Outsource running the application node to a service provider
 
+Applications that custody assets should follow [Deployment with emergency withdrawal](./self-hosted/with-emergency-withdrawal.md) so a guardian can foreclose and users can recover funds without a live operator.
+
 :::caution important
 Deployment with a third-party service provider is under development and will be available soon.
 :::

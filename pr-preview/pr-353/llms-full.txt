@@ -25533,6 +25533,8 @@ There are two methods to deploy an application:
 1. [Self-hosted deployment](./self-hosted/overview.md): Deploy the application node using your infrastructure
 2. Third-party service provider: Outsource running the application node to a service provider
 
+Applications that custody assets should follow [Deployment with emergency withdrawal](./self-hosted/with-emergency-withdrawal.md) so a guardian can foreclose and users can recover funds without a live operator.
+
 :::caution important
 Deployment with a third-party service provider is under development and will be available soon.
 :::
@@ -25584,7 +25586,7 @@ title: Self-hosted deployment (standard)
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-This guide explains how to run a Cartesi Rollups node on your machine for **testnet** development and testing.
+This guide explains how to run a Cartesi Rollups node locally on your machine for development and testing on **testnet**.
 
 :::warning Production Warning
 **Do not use this compose file as a production deployment.**
@@ -25592,37 +25594,12 @@ This guide explains how to run a Cartesi Rollups node on your machine for **test
 It is a testnet-oriented starting point. It does not include public snapshot verification, production-grade secrets, high availability, or hardened Postgres.
 :::
 
-## Node topology
-
-The [Mugen-Builders compose file](https://github.com/Mugen-Builders/deployment-setup-v2.0) already runs **one process per container**, not a single combined node:
-
-| Service | Role |
-| :-- | :-- |
-| `database` | Postgres |
-| `evm-reader` | Reads L1 inputs and related events |
-| `advancer` | Runs the Cartesi Machine; serves inspect |
-| `validator` | Computes epoch claims and proofs |
-| `claimer` | Submits claims on-chain |
-| `jsonrpc-api` | JSON-RPC query API |
-
-Keep that split. Do not collapse reader, advancer, validator, claimer, and JSON-RPC into one process except for short local experiments.
-
-The sample compose shares one Postgres role (`postgres`) and one database (`rollupsdb`). That is acceptable only for this testnet compose. For any longer-lived deployment, create a **dedicated database user per service**, grant only the tables that service needs, and do not use the superuser in application containers.
-
-The EVM reader **polls HTTP**. `BLOCKCHAIN_HTTP_ENDPOINT` is required. A WebSocket endpoint is optional and is not required for reading blocks.
-
-Pin runtime and database image tags to the rollups-node release you intend to run. The compose file on GitHub may lag a newer node alpha.
-
 ## Prerequisites
 
-- Cartesi CLI 2.0 (currently alpha)
+- Cartesi CLI 2.0
 - Docker Desktop 4.x (Compose and Buildx)
 
-- Cartesi CLI: An easy-to-use tool for developing and deploying your dApps.
-
-- Docker Desktop 4.x: The required tool to distribute the Cartesi Rollups framework and its dependencies.
-
-For more details about the installation process for each of these tools, please refer to the [this section](../../development/installation.md).
+See [installation](../../development/installation.md).
 
 ## Configuration
 
@@ -25630,10 +25607,10 @@ Create a `.env` file in the project root:
 
 ```shell
 BLOCKCHAIN_ID=<blockchain-id>
-AUTH_KIND="private_key"
-CARTESI_AUTH_PRIVATE_KEY="<funded-private-key>"
-BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
-CARTESI_BLOCKCHAIN_DEFAULT_BLOCK="<latest or finalized>"
+AUTH_KIND=private_key
+CARTESI_AUTH_PRIVATE_KEY=<funded-private-key>
+BLOCKCHAIN_HTTP_ENDPOINT=<http-endpoint>
+CARTESI_BLOCKCHAIN_DEFAULT_BLOCK=latest
 ```
 
 | Variable                           | Description                                                          |
@@ -25642,7 +25619,11 @@ CARTESI_BLOCKCHAIN_DEFAULT_BLOCK="<latest or finalized>"
 | `BLOCKCHAIN_HTTP_ENDPOINT`         | HTTP JSON-RPC endpoint for the base layer                            |
 | `AUTH_KIND`                        | `private_key` for local and testnet experiments                      |
 | `CARTESI_AUTH_PRIVATE_KEY`         | Funded private key for the selected chain                            |
-| `CARTESI_BLOCKCHAIN_DEFAULT_BLOCK` | `latest` or `finalized`                                              |
+| `CARTESI_BLOCKCHAIN_DEFAULT_BLOCK` | `latest` for testnet tip-tracking; `finalized` for reorg-safe reads  |
+
+The EVM reader polls HTTP only. Do **not** set `BLOCKCHAIN_WS_ENDPOINT` or `CARTESI_BLOCKCHAIN_WS_ENDPOINT` with alpha.12: a blank or missing WS value crashes `evm-reader`.
+
+Factory addresses default to cartesi-rollups 3.0.0-alpha.6 in the compose file. Override them in `.env` only if you are not using that suite.
 
 :::danger Security
 Do not commit private keys. Use Docker secrets or a file-backed key in any environment that is not a throwaway testnet.
@@ -25660,66 +25641,108 @@ Do not commit private keys. Use Docker secrets or a file-backed key in any envir
 
    ```shell
    cartesi build
+   cartesi hash
    ```
+
+   `cartesi build` writes the machine to `.cartesi/image/`. `cartesi hash` prints the template hash (`0x…`). Current CLI snapshots do not write `.cartesi/image/hash`, which `cartesi-rollups-cli` still reads by default, so pass `--template-hash` in the deploy step.
 
 3. **Start the stack:**
 
    ```shell
    docker compose -f compose.local.yaml --env-file .env up -d
+   docker compose -f compose.local.yaml exec advancer cartesi-rollups-node --version
    ```
+
+   Expect `cartesi-rollups-node version 2.0.0-alpha.12`. All six services should be running.
 
 4. **Deploy and register the application:**
 
    ```shell
-   docker compose --project-name cartesi-rollups-node \
-      exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
+   docker compose -f compose.local.yaml exec advancer \
+      cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
       --epoch-length 10 \
       --salt <salt> \
+      --template-hash <template-hash> \
       --register
    ```
 
-   Replace `<app-name>` with the application name. The salt must be unique. Generate one with:
+   Replace `<app-name>` with the application name and `<template-hash>` with the value from `cartesi hash`. The salt must be unique. Generate one with:
 
    ```shell
    cast keccak256 "your-unique-string"
    ```
 
-   If deployment fails, fall back to deploying authority and application contracts separately.
+   On success the command prints the application contract address and registers the app on the node.
+
+   If the combined self-hosted factory deploy fails with `execution reverted`, fall back to deploying authority and application separately (see below). Emergency-withdrawal apps should use that two-step path from the start; see [Deployment with emergency withdrawal](./with-emergency-withdrawal.md).
 
    ### Manual deployment fallback
 
-   1. Deploy an authority with `cast`. Capture the returned address (the `sed` call normalizes it):
+   1. Deploy an authority with the CLI (preferred) or with `cast`. With the CLI:
+
+      ```shell
+      docker compose -f compose.local.yaml exec advancer \
+         cartesi-rollups-cli deploy authority --claim-staging-period <blocks>
+      ```
+
+      Or with `cast` (capture the returned address; the `sed` call normalizes it):
 
       ```shell
       cast send <AuthorityFactory-Address> "newAuthority(address,uint256,uint256)" <Application-Owner-Address> \
-      10 <claimStagingPeriod> --private-key <PRIVATE-KEY> --rpc-url <RPC-URL>\
+      10 <claimStagingPeriod> --private-key <PRIVATE-KEY> --rpc-url <RPC-URL> \
       --json | jq -r '.logs[-1].data' | sed 's/^0x000000000000000000000000/0x/'
       ```
 
-      `claimStagingPeriod` is the number of base-layer blocks that must elapse after a claim is staged before it can be accepted. Factory, portal, and InputBox addresses for the target chain are listed under **Deployed contracts** below.
+      `claimStagingPeriod` is the number of base-layer blocks that must elapse after a claim is staged before it can be accepted. Factory addresses are listed under **Deployed contracts** below.
 
-   2. Register the snapshot against that authority:
+   2. Deploy the application against that authority:
 
       ```shell
-      docker compose --project-name cartesi-rollups-node \
-         exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
+      docker compose -f compose.local.yaml exec advancer \
+         cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
          --epoch-length 10 \
          --consensus <Authority-contract> \
-         --json
+         --salt <salt> \
+         --template-hash <template-hash> \
+         --register
       ```
 
       On success the command returns the application contract address.
 
 ## Deployed contracts
 
-Rollups contract deployment addresses are published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) as `cartesi-rollups-contracts-<version>-deployment-addresses.tar.gz` (plaintext `.txt` files per chain and contract; JSON artifacts are deprecated). Devnet addresses ship in the Anvil state dump artifact for that release.
+This node version uses **cartesi-rollups 3.0.0-alpha.6**. Infrastructure addresses are identical on Ethereum, Optimism, Arbitrum, and Base (mainnet and Sepolia). Only `BLOCKCHAIN_ID` and the HTTP RPC URL change per chain.
 
-Cannon distribution of `@cartesi/rollups` has been discontinued; use the GitHub release assets or the Soldeer package instead.
+| Contract | Address |
+| :-- | :-- |
+| InputBox | `0x346B3df038FE9f8380071eC6514D5a83aD143939` |
+| AuthorityFactory | `0x3C1FE01c542a88A523FF6847eD1E26176c8C4ED0` |
+| ApplicationFactory | `0xC549F89cF1ca43eDDECC64Ac2208F4b283B1c483` |
+| SelfHostedApplicationFactory | `0x6145C5996a71a379E030aEb0440df79D60833418` |
+| QuorumFactory | `0x1f94009389F408B8D0ADfFcF8BBDCe5552BaCa5F` |
+| ERC20Portal | `0x22E57511C30CcE6CDaa742E13CE3b774fDC663b1` |
+
+Rollups contract deployment addresses are also published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) as `cartesi-rollups-contracts-<version>-deployment-addresses.tar.gz`. Use the suite that matches the node you run; API reference pages may track a newer contracts alpha than this compose pin.
 
 ## Accessing the node
 
-- Inspect: `http://localhost:10012/inspect/<application-address>`
-- JSON-RPC: `http://localhost:10011/rpc`
+Once running, your local Cartesi Rollups Node will be accessible through the standard APIs:
+
+- Inspect endpoint: `http://localhost:10012/inspect/<application-address-or-name>`
+
+```shell
+curl -s -X POST "http://localhost:10012/inspect/<application-address-or-name>" \
+  -H "Content-Type: application/json" \
+  -d '{"payload":"0x"}'
+```
+
+- JSON-RPC is `http://localhost:10011/rpc`:
+
+```shell
+curl -s -X POST http://localhost:10011/rpc \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"cartesi_listInputs","params":["<app-name>"],"id":1}'
+```
 
 ---
 
@@ -25729,6 +25752,8 @@ Cannon distribution of `@cartesi/rollups` has been discontinued; use the GitHub 
 id: with-emergency-withdrawal
 title: Self-hosted with Emergency Withdrawal
 ---
+
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
 This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/emergency-withdrawal/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/emergency-withdrawal/overview.md) first for the concept.
 
@@ -25742,7 +25767,7 @@ In addition to the [standard prerequisites](./standard.md#prerequisites) (Cartes
 
 - A **guardian** address. This account, and only this account, can foreclose the application.
 - A **withdrawal output builder** for your token. For a single ERC-20, deploy one with the [`UsdWithdrawalOutputBuilderFactory`](../../api-reference/contracts/withdrawal/usd-withdrawal-output-builder-factory.md), or reuse an existing one for the same token. Note its address.
-- An application whose guest maintains an **accounts drive** in a known layout. See [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md).
+- An application whose guest maintains an **accounts drive** in a known layout. A generic echo application cannot be withdrawal-enabled. See [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md).
 
 ## Configure the machine and ledger (`cartesi.toml`)
 
@@ -25750,86 +25775,102 @@ For an application to support emergency withdrawal, its Cartesi Machine must inc
 
 Because those choices (the drive declaration, its size and position, and the record layout) belong to the guest application, they are documented once, in full, on the guest-requirements page. Set the drive up as described in [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive) before continuing, and see [Keeping the balances](../../api-reference/backend/emergency-withdrawal.md#keeping-the-balances) for the ledger library.
 
+Build the machine against the portal and token you will deposit on that chain. A template compiled for a different portal will reject deposits.
+
 ## Configuration
 
-Configure your `.env` file exactly as in the standard flow:
+Configure your `.env` file exactly as in the [standard flow](./standard.md#configuration). Do **not** set a WebSocket endpoint with node alpha.12:
 
 ```shell
 BLOCKCHAIN_ID=<blockchain-id>
-AUTH_KIND="private_key"
-CARTESI_AUTH_PRIVATE_KEY="<funded-private-key>"
-BLOCKCHAIN_WS_ENDPOINT="<ws-endpoint>"
-BLOCKCHAIN_HTTP_ENDPOINT="<http-endpoint>"
-CARTESI_BLOCKCHAIN_DEFAULT_BLOCK="<latest or finalized>"
+AUTH_KIND=private_key
+CARTESI_AUTH_PRIVATE_KEY=<funded-private-key>
+BLOCKCHAIN_HTTP_ENDPOINT=<http-endpoint>
+CARTESI_BLOCKCHAIN_DEFAULT_BLOCK=latest
 ```
 
-| Variable                           | Description                                                          |
-| ---------------------------------- | -------------------------------------------------------------------- |
-| `BLOCKCHAIN_ID`                    | Your blockchain network ID                                           |
-| `BLOCKCHAIN_WS_ENDPOINT`           | Your WebSocket endpoint                                              |
-| `BLOCKCHAIN_HTTP_ENDPOINT`         | Your HTTP endpoint                                                   |
-| `AUTH_KIND`                        | Set to `private_key` for local development                           |
-| `CARTESI_AUTH_PRIVATE_KEY`         | A funded private key for the selected chain                          |
-| `CARTESI_BLOCKCHAIN_DEFAULT_BLOCK` | Set to either `latest` or `finalized`                               |
-
 :::danger Security
-Follow best practices when handling private keys during local development and deployment.
+Do not commit private keys. The guardian key used later for foreclosure can differ from `CARTESI_AUTH_PRIVATE_KEY`; keep both out of source control.
 :::
 
 ## Prepare the withdrawal config
 
-Create a `withdrawal.json` describing the guardian and the accounts-drive layout. These values must match what your guest application actually writes (see [WithdrawalConfig](../../api-reference/contracts/withdrawal/withdrawal-config.md#drive-geometry)):
+Create a `withdrawal.json` describing the guardian and the accounts-drive layout. All fields are required when withdrawal config is supplied. These values must match what your guest application actually writes (see [WithdrawalConfig](../../api-reference/contracts/withdrawal/withdrawal-config.md#drive-geometry)):
 
 ```json
 {
   "guardian": "<guardian-address>",
   "log2_leaves_per_account": 0,
-  "log2_max_num_of_accounts": 12,
-  "accounts_drive_start_index": 309237645312,
+  "log2_max_num_of_accounts": 17,
+  "accounts_drive_start_index": 0,
   "withdrawal_output_builder": "<withdrawal-output-builder-address>"
 }
 ```
 
+Derive `accounts_drive_start_index` from the stored machine. For a 4 MiB accounts drive:
+
+```shell
+jq -r '.config.flash_drive[] | select(.length == 4194304) | (.start / 4194304 | floor)' \
+  .cartesi/image/config.json
+```
+
+Do not leave the index as a placeholder `0` unless that is the real value from `config.json`.
+
 ## Setting up the local node
 
-1. **Download the Cartesi Rollups Node docker compose file in your project root:**
+1. **Download the compose file into the project root** (alongside `.cartesi/`):
 
    ```shell
    curl -L https://raw.githubusercontent.com/Mugen-Builders/deployment-setup-v2.0/main/compose.local.yaml -o compose.local.yaml
    ```
 
-   This is the same compose file used by the standard flow. It already includes the machine-tool service used later for recovery, so there is nothing extra to add.
+   This is the same compose file used by the standard flow. There is no separate machine-tool service: `cartesi-rollups-machine-tool` ships inside `cartesi/rollups-runtime` and is invoked with `docker compose … exec advancer` during recovery.
 
-2. **Build the application with the Cartesi CLI:**
+2. **Build the application snapshot:**
 
    ```shell
    cartesi build
+   cartesi hash
    ```
 
-   This compiles your application into RISC-V and creates a Cartesi machine snapshot locally. Make sure your application maintains its accounts drive in the layout described by `withdrawal.json`.
+   Make sure your application maintains its accounts drive in the layout described by `withdrawal.json`. Pass the printed template hash to deploy.
 
-3. **Run the Cartesi Rollups Node with the application's initial snapshot attached:**
+3. **Start the stack:**
 
    ```shell
    docker compose -f compose.local.yaml --env-file .env up -d
    ```
 
-4. **Deploy and register the application with its withdrawal config:**
+4. **Deploy authority, then the application with its withdrawal config:**
 
-   Make the config file readable inside the `advancer` container, then deploy with `--withdrawal-config-file`:
+   The combined self-hosted factory call (`deploy application` with no `--consensus`) currently reverts on alpha.12, with or without withdrawal config. Deploy the authority first, then the application against that consensus.
+
+   Copy the config into the `advancer` container, then deploy:
 
    ```shell
-   docker compose --project-name cartesi-rollups-node cp withdrawal.json advancer:/tmp/withdrawal.json
+   docker compose -f compose.local.yaml cp withdrawal.json advancer:/tmp/withdrawal.json
 
-   docker compose --project-name cartesi-rollups-node \
-      exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
+   docker compose -f compose.local.yaml exec advancer \
+      cartesi-rollups-cli deploy authority --claim-staging-period <blocks>
+
+   docker compose -f compose.local.yaml exec advancer \
+      cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
+      --consensus <authority-address> \
       --epoch-length 10 \
-      --withdrawal-config-file /tmp/withdrawal.json \
       --salt <salt> \
+      --template-hash <template-hash> \
+      --withdrawal-config-file /tmp/withdrawal.json \
       --register
    ```
 
-   Replace `<app-name>` with your application name and `<salt>` with a unique identifier (generate one with `cast keccak256 "your-unique-string"`). The deployment is rejected if the config is invalid, meaning its accounts-drive layout does not fit the machine memory. A zero-valued config would deploy an application without emergency withdrawal, which is the standard case.
+   Replace `<app-name>` with your application name, `<authority-address>` with the address from `deploy authority`, `<template-hash>` with the value from `cartesi hash`, and `<salt>` with a unique identifier (generate one with `cast keccak256 "your-unique-string"`). The deployment is rejected if the config is invalid, meaning its accounts-drive layout does not fit the machine memory. Omit `--withdrawal-config-file` entirely to deploy without emergency withdrawal.
+
+5. **Commit the accounts-drive root every epoch:**
+
+   ```shell
+   docker compose -f compose.local.yaml exec advancer \
+      cartesi-rollups-cli app execution-parameters set <app-name> snapshot_policy EVERY_EPOCH
+   ```
 
    After this, your application is deployed and registered, and a guardian can foreclose it when needed.
 
@@ -26945,14 +26986,14 @@ Everything above assumes the operator keeps running the node and the application
 The claim staging period is the guardian's window to act: foreclosing before such a claim is accepted terminalizes it as `CLAIM_FORECLOSED` and freezes the application on the last state it still trusts, so users withdraw against that state and not the bad one. It's important to note that, Foreclosure does not reverse a claim that has already been accepted; once a state is accepted it is what emergency withdrawals pay out from, which is why the guardian's protection depends on acting within the staging window.
 
 
-To forclose an application, the **guardian**, a single address fixed in the withdrawal config, calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose) on the application contract.  [`isForeclosed()`](../../api-reference/contracts/application.md#isforeclosed) becomes `true` and this permanently freezes the application:
+To foreclose an application, the **guardian**, a single address fixed in the withdrawal config, calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose) on the application contract. [`isForeclosed()`](../../api-reference/contracts/application.md#isforeclosed) becomes `true` and this permanently freezes the application:
 
 **A foreclosed application can no longer process inputs.** Once frozen it takes on no new inputs and settles no new state. The one procedure it can still run is [emergency withdrawal](./recovery-guide.md): returning the assets users already deposited back to them, directly from the contracts. 
 
 Foreclosure is a property of the **application contract** and of the **node**. It takes both to make the freeze permanent:
 
 - **The contract** holds the on-chain truth. `foreclose()` can only be called by the guardian and sets `isForeclosed()`, after which the normal `submitClaim` and `acceptClaim` paths revert. The contract also gates emergency withdrawal so that path only opens once the application is foreclosed.
-- **The node** observes that truth and acts on it. Its EVM Reader detects the on-chain `Foreclosure` event, records it in the node database, and stops claiming new inputs for that application, however it still keeps watching the base layer so as to index subsequent emergency withdrawals. The node also generates the accounts-drive proofs users need to withdraw.
+- **The node** observes that truth and acts on it. Its EVM Reader detects the on-chain `Foreclosure` event, records it in the node database, and stops claiming new inputs for that application, however it still keeps watching the base layer so as to index subsequent emergency withdrawals. Users generate accounts-drive proofs with `cartesi-rollups-machine-tool` (replay needs the node database or an equivalent input archive).
 
 ![Foreclosure sequence: the guardian calls foreclose() on the application contract; the node's EVM Reader observes isForeclosed(), records the foreclosure in its database, then continues its scanners to drain pre-foreclosure inputs and index post-foreclosure events](../../foreclosure-sequence.png)
 
@@ -26966,8 +27007,8 @@ Foreclosure has three effects on claims:
 
 Once frozen, the accounts drive (the in-app balance ledger inside the machine state) at the last accepted epoch is the source of truth for balances. Turning that into on-chain payouts takes three steps, one off-chain and two on-chain:
 
-1. **Generate the proofs.** Off-chain, anyone runs the **machine tool** (`cartesi-rollups-machine-tool`) to replay the settled machine state and then `prove accounts-drive`. Replay is deterministic, so anyone can reproduce the last accepted state independently, with no running node. This writes two proof files: `drive-root-proof.json` (the accounts-drive root and its proof against the machine state, used once in step 2) and `account-proof.json` (the per-account Merkle proofs, used in step 3).
-2. **Anchor the ledger.** Anyone calls [`proveAccountsDriveMerkleRoot()`](../../api-reference/contracts/application.md#proveaccountsdrivemerkleroot) once, passing the root and proof from `drive-root-proof.json`. The contract checks it against the settled machine state and stores it. This is permissionless and happens once per application.
+1. **Generate the proofs.** Off-chain, anyone with the accepted inputs runs the **machine tool** (`cartesi-rollups-machine-tool`) to replay the settled machine state and then `prove accounts-drive`. Replay is deterministic for the same inputs; on a self-hosted node those inputs come from the node database (see the [recovery guide](./recovery-guide.md)). This writes two proof files: `drive-root-proof.json` (the accounts-drive root and its proof against the machine state, used once in step 2) and `account-proof.json` (the per-account Merkle proofs, used in step 3).
+2. **Anchor the ledger.** Anyone calls [`proveAccountsDriveMerkleRoot()`](../../api-reference/contracts/application.md#proveaccountsdrivemerkleroot) once, passing the root and proof from `drive-root-proof.json`. The contract checks it against the settled machine state and stores it. This is permissionless and happens once per application. Wait for the transaction to mine before withdrawing.
 3. **Withdraw per account.** Each account is withdrawn with [`withdraw()`](../../api-reference/contracts/application.md#withdraw), passing the account and its Merkle proof from `account-proof.json`. The contract validates the account against the anchored root, builds a transfer output, runs it, and marks the account as withdrawn so it cannot be withdrawn twice. The gas payer can differ from the recipient.
 
 As each on-chain step lands, the node's EVM Reader indexes it: it records the `AccountsDriveMerkleRootProved` event when the ledger is anchored, and stores each `Withdrawal` event (keyed by application and account index) so clients can read withdrawals over JSON-RPC and the CLI.
@@ -26985,13 +27026,13 @@ title: Overview
 
 When users deposit assets into a Cartesi Rollups application, those assets are held by the application contract on the base layer, and the application's off-chain state (an in-app ledger of who owns what) decides how they can be spent. In normal operation the operator runs a node that keeps this state moving and settles it on-chain. But what happens to those funds if the operator stops running the node?
 
-**Foreclosure and emergency withdrawal** are the answer. They let a designated **guardian** freeze an application, after which any user can withdraw their in-app balance straight from the base-layer contracts by proving their account, with **no running node required**.
+**Foreclosure and emergency withdrawal** are the answer. They let a designated **guardian** freeze an application, after which any user can withdraw their in-app balance straight from the base-layer contracts by proving their account. After foreclosure, payouts do not depend on the operator continuing to advance the application; generating the proofs still needs the accepted inputs (typically from the node database or an equivalent archive). See the [recovery guide](./recovery-guide.md).
 
 The feature is opt-in: an application only supports it if it was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md). Applications deployed without one behave exactly as before. In addition to that, the application is also expected to record the assets deposited into it using the CMA ledger library. This library keeps those balances inside the accounts drive in a recoverable, provable layout that matches the `WithdrawalConfig`. See the [Asset Management Library](https://cartesi.github.io/docs/pr-preview/pr-303/cartesi-rollups/2.0/api-reference/asset-management/overview/) section for more details about the CMA library. 
 
 ## The two parts
 
-**Foreclosure** freezes the application. A guardian address, set in the withdrawal config, calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose). From that moment the application is frozen at its last settled state, and it stays frozen forever. See [FOR-005](../../api-reference/contracts/application.md#foreclose) for the guardian-only rule.
+**Foreclosure** freezes the application. A guardian address, set in the withdrawal config, calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose). From that moment the application is frozen at its last settled state, and it stays frozen forever. Only the configured guardian can call `foreclose()`; any other signer reverts with `NotGuardian`.
 
 **Emergency withdrawal** is the recovery path that foreclosure unlocks, and it is built on the application's **accounts drive**.
 
@@ -27031,26 +27072,39 @@ This guide walks through foreclosing an application and withdrawing an account's
 
 You need:
 
-- An application that was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch;
+- An application that was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch (`CLAIM_ACCEPTED`);
 - The **guardian** key (only the guardian can foreclose);
 - The **machine tool** (`cartesi-rollups-machine-tool`), which reproduces the settled machine state and generates the proofs;
 - To send the on-chain transactions, either the **`cartesi-rollups-cli`** (see [Installing the required tools](./installation-guide.md)) or, if you prefer, **Foundry's `cast`** with `jq`;
 - The application's **accounts-drive parameters** from its withdrawal config: `accountsDriveStartIndex`, `log2MaxNumOfAccounts`, and `log2LeavesPerAccount`. These must match the values the application was deployed with.
-- This should be done in the same environment of the node, with access to the database (and configuration variables)
+- Access to the **node database** (and configuration variables) for `machine-tool replay`. On the self-hosted stack, run the CLI and machine tool inside the `advancer` container, which already has DB and snapshot access:
+
+```sh
+docker compose -f compose.local.yaml exec advancer <command>
+```
 
 This guide assumes the application already maintains its accounts drive in the layout its `WithdrawalConfig` describes. For how that drive is created, sized, and kept, see [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md), and in particular [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive).
 
-The on-chain steps (1, 4, 5, and 6) can be run with either tool. Choose a tab in each step, and it applies to the others. Steps 2 and 3 use the machine tool either way. In the `cast` tabs, `<app-address>` is the application contract address, `<rpc-url>` is your node RPC endpoint, and the private key is the guardian's (step 1) or your own (steps 4 and 5).
+The on-chain steps (1, 4, 5, and 6) can be run with either tool. Choose a tab in each step, and it applies to the others. Steps 2 and 3 use the machine tool either way. In the `cast` tabs, `<app-address>` is the application contract address, `<rpc-url>` is your base-layer RPC endpoint, and the private key is the guardian's (step 1) or your own (steps 4 and 5).
+
+Find the last accepted epoch before foreclosure proofs:
+
+```sh
+cartesi-rollups-cli read epochs <app> --status CLAIM_ACCEPTED --limit 1 --descending
+```
+
+`--to-epoch` for replay is a **decimal** integer. Convert the hex `index` from `read epochs` (for example `0x1197ca` → `1152970`).
 
 ## Step 1: Foreclose the application
 
-Signed by the guardian, freeze the application:
+Signed by the guardian, freeze the application. The CLI signer is `CARTESI_AUTH_*`. If the guardian is not the node's default signer, override the key for this call (or set `CARTESI_AUTH_MNEMONIC_ACCOUNT_INDEX` when using a mnemonic):
 
 <Tabs groupId="recovery-tool">
 <TabItem value="cli" label="Cartesi CLI" default>
 
 ```sh
-cartesi-rollups-cli foreclose <app-name-or-address>
+CARTESI_AUTH_PRIVATE_KEY=<guardian-private-key> \
+  cartesi-rollups-cli foreclose <app-name-or-address> --yes
 ```
 
 </TabItem>
@@ -27064,21 +27118,23 @@ cast send <app-address> 'foreclose()' \
 </TabItem>
 </Tabs>
 
-After this, `isForeclosed()` returns `true` and the application is frozen at its last accepted epoch.
+After this, `isForeclosed()` returns `true` and the application is frozen at its last accepted epoch. The node indexes foreclosure asynchronously. Wait until `foreclose_block` is non-zero in `cartesi-rollups-cli app list` before proving the drive root.
 
 ## Step 2: Reproduce the settled machine state
 
-Find the last accepted epoch, then replay the node database into a machine snapshot up to that epoch:
+Replay accepted inputs from the node database into a machine snapshot up to that epoch. `--store` must be a path that does **not** already exist; `cartesi-machine` refuses to overwrite it.
 
 ```sh
 cartesi-rollups-machine-tool replay \
   --template <template-path> \
   --application <app-name-or-address> \
-  --to-epoch <accepted-epoch-index> \
-  --store replay-snapshot
+  --to-epoch <accepted-epoch-decimal> \
+  --store <new-snapshot-path>
 ```
 
-Replay is deterministic: running it again produces the same machine state, so anyone can reproduce this snapshot independently.
+On the self-hosted stack, `<template-path>` is typically `/var/lib/cartesi-rollups-node/snapshot`. If replay fails writing reports under `/tmp` (`Permission denied`), run the tool as root inside the container (`docker compose exec -u root advancer …`) and ensure `/tmp` is world-writable.
+
+Replay is deterministic for the same inputs: running it again with the same database contents produces the same machine state. It still needs those inputs (from the node database or an equivalent archive), not only the on-chain claim hash.
 
 ## Step 3: Generate the proofs
 
@@ -27086,7 +27142,7 @@ From that snapshot, generate the accounts-drive-root proof and the per-account p
 
 ```sh
 cartesi-rollups-machine-tool prove accounts-drive \
-  --snapshot replay-snapshot \
+  --snapshot <new-snapshot-path> \
   --accounts-drive-start-index <accountsDriveStartIndex> \
   --log2-max-num-of-accounts <log2MaxNumOfAccounts> \
   --log2-leaves-per-account <log2LeavesPerAccount> \
@@ -27106,7 +27162,7 @@ Record the accounts-drive root against the settled machine state. This is permis
 
 ```sh
 cartesi-rollups-cli prove-drive-root <app-name-or-address> \
-  --proof-file drive-root-proof.json
+  --proof-file drive-root-proof.json --yes
 ```
 
 </TabItem>
@@ -27125,6 +27181,8 @@ cast send <app-address> 'proveAccountsDriveMerkleRoot(bytes32,bytes32[])' "$ROOT
 
 On success the contract stores the root and emits `AccountsDriveMerkleRootProved`. Anchoring a root from the wrong epoch, or from a different application, is rejected.
 
+Wait until that transaction is mined (and `accounts_drive_proved_block` is set on the app, if you are watching the node) before withdrawing. Calling `withdraw` too early reverts with `AccountsDriveMerkleRootNotProved()`.
+
 ## Step 5: Withdraw the account's funds
 
 With the root anchored, withdraw the account:
@@ -27134,7 +27192,7 @@ With the root anchored, withdraw the account:
 
 ```sh
 cartesi-rollups-cli withdraw <app-name-or-address> \
-  --proof-file account-proof.json
+  --proof-file account-proof.json --yes
 ```
 
 </TabItem>
@@ -27152,7 +27210,7 @@ cast send <app-address> 'withdraw(bytes,(uint64,bytes32[]))' "$ACCT" "($IDX,[$SI
 </TabItem>
 </Tabs>
 
-The contract validates the account against the anchored root, builds and runs the transfer, marks the account as withdrawn, and emits a `Withdrawal` event. Withdrawing the same account again is rejected.
+The contract validates the account against the anchored root, builds and runs the transfer, marks the account as withdrawn, and emits a `Withdrawal` event. Withdrawing the same account again is rejected. The gas payer does not need to be the withdrawal recipient; the recipient is encoded in the account proof according to the app's `withdrawal_output_builder`.
 
 ## Step 6: Verify
 
@@ -27176,7 +27234,7 @@ cast call <app-address> 'wereAccountFundsWithdrawn(uint256)(bool)' <account-inde
 </TabItem>
 </Tabs>
 
-Either way, [`wereAccountFundsWithdrawn(accountIndex)`](../../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner.
+Either way, [`wereAccountFundsWithdrawn(accountIndex)`](../../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner. The same indexed data is available through JSON-RPC with `cartesi_listWithdrawals` and `cartesi_getWithdrawal`.
 
 ---
 
@@ -31319,10 +31377,6 @@ v1.5 frontends typically called GraphQL directly. v2 TypeScript clients should u
 | Input/output codec | — | [`@cartesi/codec`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/codec) |
 
 Replace `@cartesi/viem` imports with `@cartesi/client` and `@cartesi/wagmi` with `@cartesi/react`. Pin explicit alpha versions; the `@alpha` npm tag can resolve to an older prerelease.
-
-:::note
-See [rollups-ts#123](https://github.com/cartesi/rollups-ts/pull/123) and [#124](https://github.com/cartesi/rollups-ts/pull/124) for RPC type updates against the node API. Component layout for a React app is in the [React frontend tutorial](../tutorials/react-frontend-application.md); that page may still show the earlier package names.
-:::
 
 ---
 
