@@ -272,7 +272,7 @@ Tokens deposited through the portals are held by your on-chain `Application` con
 Create `src/index.ts` to wire deposits from both portals and user operations sent as JSON inputs.
 
 :::note Portal addresses
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC1155SinglePortal` and `ERC1155BatchPortal` addresses into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc1155SinglePortal` and `Erc1155BatchPortal` addresses into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
@@ -525,7 +525,7 @@ cartesi run
 ### Deposits
 
 :::caution token approvals
-ERC-1155 uses `setApprovalForAll` on the token contract for each portal operator. Approve **both** [`ERC1155SinglePortal`](../api-reference/contracts/portals/ERC1155SinglePortal.md) and [`ERC1155BatchPortal`](../api-reference/contracts/portals/ERC1155BatchPortal.md) before depositing through the corresponding portal.
+ERC-1155 uses `setApprovalForAll` on the token contract for each portal operator. Approve **both** [`Erc1155SinglePortal`](../api-reference/contracts/portals/Erc1155SinglePortal.md) and [`Erc1155BatchPortal`](../api-reference/contracts/portals/Erc1155BatchPortal.md) before depositing through the corresponding portal.
 :::
 
 **Single deposit** — interactively:

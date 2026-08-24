@@ -2,7 +2,7 @@
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9
     title: Smart Contracts for Cartesi Rollups
 ---
 
@@ -20,6 +20,8 @@ Clients can interact with Ethereum-compatible nodes using the JSON-RPC API in tw
 
 - Changing state: The state is changed by submitting a transaction that incurs gas fees. The transaction must be cryptographically signed by an Ethereum account with sufficient funds in its wallet.
 
+Contract sources and artifacts are published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) (Soldeer package and GitHub release assets). The npm `@cartesi/rollups` package and Cannon distribution have been discontinued.
+
 ## Cartesi Rollups Smart Contracts
 
 - [`InputBox`](../contracts/input-box.md): This contract receives inputs from users who want to interact with the off-chain layer. All inputs to your application are processed through this contract. 
@@ -28,6 +30,6 @@ Clients can interact with Ethereum-compatible nodes using the JSON-RPC API in tw
 
 - [`ApplicationFactory`](../contracts/application-factory.md): This contract enables anyone to deploy [`Application`](../contracts/application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they can verify that the bytecode has not been maliciously altered.
 
-- [`Portals`](../contracts/portals/): These contracts are used to safely transfer assets from the base layer to the execution environment of your application. Currently, Portal contracts are available for the following types of assets: [Ether (ETH)](../contracts/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../contracts/portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](../contracts/portals/ERC721Portal.md), [ERC-1155 single transfer](../contracts/portals/ERC1155SinglePortal.md), and [ERC-1155 batch token transfers](../contracts/portals/ERC1155BatchPortal.md).
+- [`Portals`](../contracts/portals/): These contracts are used to safely transfer assets from the base layer to the execution environment of your application. Currently, Portal contracts are available for the following types of assets: [Ether (ETH)](../contracts/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../contracts/portals/Erc20Portal.md), [ERC-721 (Non-fungible tokens)](../contracts/portals/Erc721Portal.md), [ERC-1155 single transfer](../contracts/portals/Erc1155SinglePortal.md), and [ERC-1155 batch token transfers](../contracts/portals/Erc1155BatchPortal.md).
 
 - [`Consensus`](../contracts/consensus/overview.md): These contracts are crucial for the framework's security and integrity. They validate and accept claims submitted by validators, ensuring the rollup's integrity by validating outputs Merkle roots. The framework supports different consensus mechanisms including [Authority-based consensus](../contracts/consensus/authority/authority.md) for single-owner control and [Quorum-based consensus](../contracts/consensus/quorum/quorum.md) for multi-validator approval.
