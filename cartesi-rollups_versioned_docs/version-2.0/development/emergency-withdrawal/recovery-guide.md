@@ -12,26 +12,39 @@ This guide walks through foreclosing an application and withdrawing an account's
 
 You need:
 
-- An application that was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch;
+- An application that was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch (`CLAIM_ACCEPTED`);
 - The **guardian** key (only the guardian can foreclose);
 - The **machine tool** (`cartesi-rollups-machine-tool`), which reproduces the settled machine state and generates the proofs;
 - To send the on-chain transactions, either the **`cartesi-rollups-cli`** (see [Installing the required tools](./installation-guide.md)) or, if you prefer, **Foundry's `cast`** with `jq`;
 - The application's **accounts-drive parameters** from its withdrawal config: `accountsDriveStartIndex`, `log2MaxNumOfAccounts`, and `log2LeavesPerAccount`. These must match the values the application was deployed with.
-- This should be done in the same environment of the node, with access to the database (and configuration variables)
+- Access to the **node database** (and configuration variables) for `machine-tool replay`. On the self-hosted stack, run the CLI and machine tool inside the `advancer` container, which already has DB and snapshot access:
+
+```sh
+docker compose -f compose.local.yaml exec advancer <command>
+```
 
 This guide assumes the application already maintains its accounts drive in the layout its `WithdrawalConfig` describes. For how that drive is created, sized, and kept, see [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md), and in particular [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive).
 
-The on-chain steps (1, 4, 5, and 6) can be run with either tool. Choose a tab in each step, and it applies to the others. Steps 2 and 3 use the machine tool either way. In the `cast` tabs, `<app-address>` is the application contract address, `<rpc-url>` is your node RPC endpoint, and the private key is the guardian's (step 1) or your own (steps 4 and 5).
+The on-chain steps (1, 4, 5, and 6) can be run with either tool. Choose a tab in each step, and it applies to the others. Steps 2 and 3 use the machine tool either way. In the `cast` tabs, `<app-address>` is the application contract address, `<rpc-url>` is your base-layer RPC endpoint, and the private key is the guardian's (step 1) or your own (steps 4 and 5).
+
+Find the last accepted epoch before foreclosure proofs:
+
+```sh
+cartesi-rollups-cli read epochs <app> --status CLAIM_ACCEPTED --limit 1 --descending
+```
+
+`--to-epoch` for replay is a **decimal** integer. Convert the hex `index` from `read epochs` (for example `0x1197ca` → `1152970`).
 
 ## Step 1: Foreclose the application
 
-Signed by the guardian, freeze the application:
+Signed by the guardian, freeze the application. The CLI signer is `CARTESI_AUTH_*`. If the guardian is not the node's default signer, override the key for this call (or set `CARTESI_AUTH_MNEMONIC_ACCOUNT_INDEX` when using a mnemonic):
 
 <Tabs groupId="recovery-tool">
 <TabItem value="cli" label="Cartesi CLI" default>
 
 ```sh
-cartesi-rollups-cli foreclose <app-name-or-address>
+CARTESI_AUTH_PRIVATE_KEY=<guardian-private-key> \
+  cartesi-rollups-cli foreclose <app-name-or-address> --yes
 ```
 
 </TabItem>
@@ -45,21 +58,23 @@ cast send <app-address> 'foreclose()' \
 </TabItem>
 </Tabs>
 
-After this, `isForeclosed()` returns `true` and the application is frozen at its last accepted epoch.
+After this, `isForeclosed()` returns `true` and the application is frozen at its last accepted epoch. The node indexes foreclosure asynchronously. Wait until `foreclose_block` is non-zero in `cartesi-rollups-cli app list` before proving the drive root.
 
 ## Step 2: Reproduce the settled machine state
 
-Find the last accepted epoch, then replay the node database into a machine snapshot up to that epoch:
+Replay accepted inputs from the node database into a machine snapshot up to that epoch. `--store` must be a path that does **not** already exist; `cartesi-machine` refuses to overwrite it.
 
 ```sh
 cartesi-rollups-machine-tool replay \
   --template <template-path> \
   --application <app-name-or-address> \
-  --to-epoch <accepted-epoch-index> \
-  --store replay-snapshot
+  --to-epoch <accepted-epoch-decimal> \
+  --store <new-snapshot-path>
 ```
 
-Replay is deterministic: running it again produces the same machine state, so anyone can reproduce this snapshot independently.
+On the self-hosted stack, `<template-path>` is typically `/var/lib/cartesi-rollups-node/snapshot`. If replay fails writing reports under `/tmp` (`Permission denied`), run the tool as root inside the container (`docker compose exec -u root advancer …`) and ensure `/tmp` is world-writable.
+
+Replay is deterministic for the same inputs: running it again with the same database contents produces the same machine state. It still needs those inputs (from the node database or an equivalent archive), not only the on-chain claim hash.
 
 ## Step 3: Generate the proofs
 
@@ -67,7 +82,7 @@ From that snapshot, generate the accounts-drive-root proof and the per-account p
 
 ```sh
 cartesi-rollups-machine-tool prove accounts-drive \
-  --snapshot replay-snapshot \
+  --snapshot <new-snapshot-path> \
   --accounts-drive-start-index <accountsDriveStartIndex> \
   --log2-max-num-of-accounts <log2MaxNumOfAccounts> \
   --log2-leaves-per-account <log2LeavesPerAccount> \
@@ -87,7 +102,7 @@ Record the accounts-drive root against the settled machine state. This is permis
 
 ```sh
 cartesi-rollups-cli prove-drive-root <app-name-or-address> \
-  --proof-file drive-root-proof.json
+  --proof-file drive-root-proof.json --yes
 ```
 
 </TabItem>
@@ -106,6 +121,8 @@ cast send <app-address> 'proveAccountsDriveMerkleRoot(bytes32,bytes32[])' "$ROOT
 
 On success the contract stores the root and emits `AccountsDriveMerkleRootProved`. Anchoring a root from the wrong epoch, or from a different application, is rejected.
 
+Wait until that transaction is mined (and `accounts_drive_proved_block` is set on the app, if you are watching the node) before withdrawing. Calling `withdraw` too early reverts with `AccountsDriveMerkleRootNotProved()`.
+
 ## Step 5: Withdraw the account's funds
 
 With the root anchored, withdraw the account:
@@ -115,7 +132,7 @@ With the root anchored, withdraw the account:
 
 ```sh
 cartesi-rollups-cli withdraw <app-name-or-address> \
-  --proof-file account-proof.json
+  --proof-file account-proof.json --yes
 ```
 
 </TabItem>
@@ -133,7 +150,7 @@ cast send <app-address> 'withdraw(bytes,(uint64,bytes32[]))' "$ACCT" "($IDX,[$SI
 </TabItem>
 </Tabs>
 
-The contract validates the account against the anchored root, builds and runs the transfer, marks the account as withdrawn, and emits a `Withdrawal` event. Withdrawing the same account again is rejected.
+The contract validates the account against the anchored root, builds and runs the transfer, marks the account as withdrawn, and emits a `Withdrawal` event. Withdrawing the same account again is rejected. The gas payer does not need to be the withdrawal recipient; the recipient is encoded in the account proof according to the app's `withdrawal_output_builder`.
 
 ## Step 6: Verify
 
@@ -157,4 +174,4 @@ cast call <app-address> 'wereAccountFundsWithdrawn(uint256)(bool)' <account-inde
 </TabItem>
 </Tabs>
 
-Either way, [`wereAccountFundsWithdrawn(accountIndex)`](../../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner.
+Either way, [`wereAccountFundsWithdrawn(accountIndex)`](../../api-reference/contracts/application.md#wereaccountfundswithdrawn) returns `true`, and the token balance has moved from the application contract to the account owner. The same indexed data is available through JSON-RPC with `cartesi_listWithdrawals` and `cartesi_getWithdrawal`.

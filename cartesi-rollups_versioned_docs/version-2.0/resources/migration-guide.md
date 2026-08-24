@@ -428,7 +428,3 @@ v1.5 frontends typically called GraphQL directly. v2 TypeScript clients should u
 
 Replace `@cartesi/viem` imports with `@cartesi/client` and `@cartesi/wagmi` with `@cartesi/react`. Pin explicit alpha versions; the `@alpha` npm tag can resolve to an older prerelease.
 
-:::note
-See [rollups-ts#123](https://github.com/cartesi/rollups-ts/pull/123) and [#124](https://github.com/cartesi/rollups-ts/pull/124) for RPC type updates against the node API. Component layout for a React app is in the [React frontend tutorial](../tutorials/react-frontend-application.md); that page may still show the earlier package names.
-:::
-
