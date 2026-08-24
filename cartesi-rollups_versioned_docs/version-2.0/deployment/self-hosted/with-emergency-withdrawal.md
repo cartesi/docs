@@ -8,7 +8,7 @@ title: Self-hosted with Emergency Withdrawal
 This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/emergency-withdrawal/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/emergency-withdrawal/overview.md) first for the concept.
 
 :::warning Production Warning
-Like the standard setup, this is for development and testing on **testnet**, not production.
+Like the standard setup, this is for development and testing on **testnet**, not production. Follow the [good practices](./standard.md#good-practices) in the standard deployment guide before the stack stays up, holds a funded key, or exposes APIs beyond localhost.
 :::
 
 ## Prerequisites
