@@ -25591,7 +25591,7 @@ This guide explains how to run a Cartesi Rollups node locally on your machine fo
 :::warning Production Warning
 **Do not use this compose file as a production deployment.**
 
-It is a testnet-oriented starting point. It does not include public snapshot verification, production-grade secrets, high availability, or hardened Postgres.
+It is a testnet-oriented starting point. It does not include public snapshot verification, proper security hardening, or production-grade infrastructure. See [Good practices](#good-practices) before running a longer-lived node.
 :::
 
 ## Prerequisites
@@ -25744,6 +25744,48 @@ curl -s -X POST http://localhost:10011/rpc \
   -d '{"jsonrpc":"2.0","method":"cartesi_listInputs","params":["<app-name>"],"id":1}'
 ```
 
+## Good practices
+
+The walkthrough above is enough to get a testnet node running. Apply the following before the stack stays up, holds a funded key, or exposes APIs beyond localhost.
+
+### Keep one process per container
+
+Do not collapse reader, advancer, validator, claimer, and JSON-RPC into one process except for short local experiments. They have different trust boundaries and failure modes.
+
+### Scope the signing key
+
+The sample compose puts `CARTESI_AUTH_PRIVATE_KEY` in the shared environment, so every service receives the funded key. Only `claimer` and the one-off `deploy` CLI need to sign. Give the key to those processes only, preferably as a file-backed Docker secret (`CARTESI_AUTH_PRIVATE_KEY_FILE`), not an environment variable. Env vars are readable via `docker inspect` and often appear in crash dumps.
+
+`deploy application` derives both the application owner and the authority owner from the auth key unless you pass `--application-owner` / `--authority-owner`. Use a separate cold owner key from the hot claiming key.
+
+### Use dedicated database roles
+
+The sample compose shares one Postgres role (`postgres`) and one database (`rollupsdb`). For any longer-lived deployment, create a dedicated database user per service, grant only the tables that service needs, and do not use the superuser in application containers. Give Postgres a named volume, and back it up. Inputs live in the InputBox on L1, so a node can be rebuilt from chain plus the **exact** snapshot that produced the registered template hash — keep that published snapshot, not only a local rebuild.
+
+### Limit what is published on the network
+
+The compose publishes telemetry on ports `10001`–`10005` as well as inspect (`10012`) and JSON-RPC (`10011`). Bind telemetry to `127.0.0.1` or keep it on an internal network. Put inspect and JSON-RPC behind a reverse proxy with TLS, rate limiting, and a body-size cap.
+
+Inspect runs on a temporary machine fork. An open inspect endpoint is an easy way to exhaust the host. The node logs `HTTP service bound to all interfaces; restrict access via firewall or reverse proxy` when it starts.
+
+Drop hardcoded `container_name` values if you intend to run more than one application on the same host; otherwise Compose cannot start a second stack.
+
+### Choose a default block and cap RPC ranges
+
+Use `CARTESI_BLOCKCHAIN_DEFAULT_BLOCK=finalized` whenever the node submits claims of value. `latest` is for fast local iteration; a reorg can orphan inputs the node already processed. Hosted RPC providers cap `eth_getLogs` ranges. Set a maximum block range on the EVM reader (for example `--max-block-range`) so a resync from an old InputBox deployment block does not fail against Infura or Alchemy.
+
+### Pin images and verify the snapshot
+
+Pin `cartesi/rollups-runtime` and `cartesi/rollups-database` by digest (`image@sha256:…`), not only a mutable tag. Before `--register`, compare `cartesi hash` with the hash of the [public snapshot](../snapshot.md) you intend to run. Registering a local rebuild that does not match the published artifact means other validators cannot reproduce your machine.
+
+### Restart, monitor, and rotate logs
+
+Give every service a restart policy. Watch `evm-reader` specifically: it can exit while the other containers stay up, and the node then accepts no inputs. Alert on reader block lag, claim submission failures, and the gas balance of the claimer key. Configure log rotation. The advancer logs application stdout, so input payloads can end up in logs.
+
+### Set a withdrawal guardian for apps that custody assets
+
+A zero-address guardian means no foreclosure path. If the application holds funds, pass a valid `--withdrawal-config-file` at deploy time so a guardian can foreclose if claims go wrong. See [Deployment with emergency withdrawal](./with-emergency-withdrawal.md).
+
 ---
 
 <!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/deployment/self-hosted/with-emergency-withdrawal/ -->
@@ -25758,7 +25800,7 @@ title: Self-hosted with Emergency Withdrawal
 This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/emergency-withdrawal/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/emergency-withdrawal/overview.md) first for the concept.
 
 :::warning Production Warning
-Like the standard setup, this is for development and testing on **testnet**, not production.
+Like the standard setup, this is for development and testing on **testnet**, not production. Follow the [good practices](./standard.md#good-practices) in the standard deployment guide before the stack stays up, holds a funded key, or exposes APIs beyond localhost.
 :::
 
 ## Prerequisites
