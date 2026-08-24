@@ -114,12 +114,12 @@ Do not commit private keys. Use Docker secrets or a file-backed key in any envir
    1. Deploy an authority with `cast`. Capture the returned address (the `sed` call normalizes it):
 
       ```shell
-      cast send <AuthorityFactory-Address> "newAuthority(address,uint256)" <Application-Owner-Address> \
-      10 --private-key <PRIVATE-KEY> --rpc-url <RPC-URL>\
+      cast send <AuthorityFactory-Address> "newAuthority(address,uint256,uint256)" <Application-Owner-Address> \
+      10 <claimStagingPeriod> --private-key <PRIVATE-KEY> --rpc-url <RPC-URL>\
       --json | jq -r '.logs[-1].data' | sed 's/^0x000000000000000000000000/0x/'
       ```
 
-      Factory, portal, and InputBox addresses for the target chain are listed under **Deployed contracts** below.
+      `claimStagingPeriod` is the number of base-layer blocks that must elapse after a claim is staged before it can be accepted. Factory, portal, and InputBox addresses for the target chain are listed under **Deployed contracts** below.
 
    2. Register the snapshot against that authority:
 
@@ -135,15 +135,9 @@ Do not commit private keys. Use Docker secrets or a file-backed key in any envir
 
 ## Deployed contracts
 
-Rollups contract addresses for supported networks:
+Rollups contract deployment addresses are published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) as `cartesi-rollups-contracts-<version>-deployment-addresses.tar.gz` (plaintext `.txt` files per chain and contract; JSON artifacts are deprecated). Devnet addresses ship in the Anvil state dump artifact for that release.
 
-- [Cannon Devnet](https://usecannon.com/packages/cartesi-rollups/2.2.0/13370-main/deployment/contracts)
-- [Ethereum Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/11155111-main/deployment/contracts)
-- [Arbitrum Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/421614-main/deployment/contracts)
-- [OP Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/11155420-main/deployment/contracts)
-- [Base Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/84532-main/deployment/contracts)
-
-Use the Cannon package version that matches the contract suite your node was built against.
+Cannon distribution of `@cartesi/rollups` has been discontinued; use the GitHub release assets or the Soldeer package instead.
 
 ## Accessing the node
 

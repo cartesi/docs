@@ -4,8 +4,10 @@
 id: quorum-factory
 title: QuorumFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/QuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/QuorumFactory.sol
     title: QuorumFactory Contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorumFactory.sol
+    title: IQuorumFactory Interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
@@ -17,7 +19,11 @@ The **QuorumFactory** contract allows anyone to reliably deploy new `IQuorum` co
 ### `newQuorum()`
 
 ```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength) external override returns (IQuorum)
+function newQuorum(
+    address[] calldata validators,
+    uint256 epochLength,
+    uint256 claimStagingPeriod
+) external override returns (IQuorum)
 ```
 
 Deploy a new quorum contract.
@@ -26,8 +32,9 @@ Deploy a new quorum contract.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `validators` | `address[]` | The list of validators |
+| `validators` | `address[]` | The list of validators (duplicates are ignored) |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 
 **Return Values**
 
@@ -38,7 +45,12 @@ Deploy a new quorum contract.
 ### `newQuorum()` (with salt)
 
 ```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength, bytes32 salt) external override returns (IQuorum)
+function newQuorum(
+    address[] calldata validators,
+    uint256 epochLength,
+    uint256 claimStagingPeriod,
+    bytes32 salt
+) external override returns (IQuorum)
 ```
 
 Deploy a new quorum contract deterministically using CREATE2.
@@ -47,8 +59,9 @@ Deploy a new quorum contract deterministically using CREATE2.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `validators` | `address[]` | The list of validators |
+| `validators` | `address[]` | The list of validators (duplicates are ignored) |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 | `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
 
 **Return Values**
@@ -63,6 +76,7 @@ Deploy a new quorum contract deterministically using CREATE2.
 function calculateQuorumAddress(
     address[] calldata validators,
     uint256 epochLength,
+    uint256 claimStagingPeriod,
     bytes32 salt
 ) external view override returns (address)
 ```
@@ -75,10 +89,29 @@ Calculate the address of a quorum to be deployed deterministically.
 |------|------|-------------|
 | `validators` | `address[]` | The list of validators |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 | `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
 
 **Return Values**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `address` | The deterministic quorum address | 
+| `[0]` | `address` | The deterministic quorum address |
+
+### `version()`
+
+```solidity
+function version() external view returns (string memory)
+```
+
+Return the rollups-contracts package version string.
+
+## Events
+
+### `QuorumCreated()`
+
+```solidity
+event QuorumCreated(IQuorum quorum)
+```
+
+Emitted when a new quorum is deployed.

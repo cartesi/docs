@@ -4,9 +4,9 @@
 id: withdrawal-config
 title: WithdrawalConfig
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/common/WithdrawalConfig.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/common/WithdrawalConfig.sol
     title: WithdrawalConfig struct
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/library/LibWithdrawalConfig.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/library/LibWithdrawalConfig.sol
     title: LibWithdrawalConfig library
 ---
 

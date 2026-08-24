@@ -174,7 +174,7 @@ class Storage:
         self.users_erc20_token_balance[addr] = current - amt
         return True
 
-    def depositERC721Token(self, userAddress: str, tokenId):
+    def depositErc721Token(self, userAddress: str, tokenId):
         addr = norm_addr(userAddress)
         tid = as_int(tokenId)
         zero_addr = "0x" + "0" * 40;
@@ -259,7 +259,7 @@ def handle_erc20_deposit(depositor_address: str, amount_deposited, token_address
 def handle_erc721_deposit(depositor_address: str, token_id, token_address: str):
     if norm_addr(token_address) == storage.erc721_token:
         try:
-            storage.depositERC721Token(depositor_address, as_int(token_id))
+            storage.depositErc721Token(depositor_address, as_int(token_id))
             storage.listTokenForSale(token_id)
             logger.info("Token Listed Successfully")
             emitNotice(f"Token ID: {token_id}  Deposited by User: {depositor_address}")

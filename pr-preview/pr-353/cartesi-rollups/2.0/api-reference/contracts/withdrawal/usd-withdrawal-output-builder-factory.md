@@ -4,15 +4,15 @@
 id: usd-withdrawal-output-builder-factory
 title: UsdWithdrawalOutputBuilderFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/UsdWithdrawalOutputBuilderFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/UsdWithdrawalOutputBuilderFactory.sol
     title: UsdWithdrawalOutputBuilderFactory contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IUsdWithdrawalOutputBuilderFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IUsdWithdrawalOutputBuilderFactory.sol
     title: IUsdWithdrawalOutputBuilderFactory interface
 ---
 
 **`UsdWithdrawalOutputBuilderFactory`** lets anyone deploy a [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) for a given ERC-20 token at a predictable address. Because these builders are **stateless**, it does not matter whether you deploy one yourself or reuse an existing one for the same token. The address is derived deterministically from the token and salt (using `CREATE2`).
 
-The factory is constructed with a shared `SafeERC20Transfer` contract, which it passes to every builder it deploys (used as the delegate-call voucher destination).
+The factory is constructed with a shared `SafeErc20Transfer` contract, which it passes to every builder it deploys (used as the delegate-call voucher destination).
 
 ## Functions
 
@@ -66,7 +66,7 @@ Compute the deterministic address a builder for `token`/`salt` would have, wheth
 ### `getSafeErc20Transfer()`
 
 ```solidity
-function getSafeErc20Transfer() external view returns (ISafeERC20Transfer safeErc20Transfer)
+function getSafeErc20Transfer() external view returns (ISafeErc20Transfer safeErc20Transfer)
 ```
 
 Get the shared safe ERC-20 transfer contract passed down to the builders (used as the delegate-call voucher destination).

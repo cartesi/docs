@@ -17508,7 +17508,7 @@ resources:
     title: Off-chain implementation of the Cartesi Machine
   - url: https://github.com/cartesi/rollups-node
     title: Reference implementation of the Rollups Node
-  - url: https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/contracts
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9
     title: Smart Contracts for Cartesi Rollups
 ---
 
@@ -17581,7 +17581,7 @@ The [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) describes
 - `log2MaxNumOfAccounts` sets how many accounts fit (the tree depth);
 - `log2LeavesPerAccount` sets each record's size, which is `2^(5 + log2LeavesPerAccount)` bytes.
 
-For the single-token case (see [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md)), each record is 32 bytes: an 8-byte little-endian balance, followed by the 20-byte owner address, followed by padding.
+For the single-token case (see [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md)), each record is exactly 32 bytes: a 12-byte little-endian `uint96` balance, followed by the 20-byte owner address (no tail padding).
 
 ## Creating the accounts drive
 
@@ -19023,7 +19023,7 @@ const abi = [
   "function safeTransfer(address,address,uint256)"
 ];
 
-async function emitSafeERC20Transfer(token, to, amount) {
+async function emitSafeErc20Transfer(token, to, amount) {
   const call = encodeFunctionData({
     abi,
     functionName: "safeTransfer",
@@ -19136,7 +19136,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
+func emitSafeErc20Transfer(token, to common.Address, amount *big.Int) error {
 	abiJSON := `[{
 		"type":"function",
 		"name":"safeTransfer",
@@ -19269,19 +19269,33 @@ You can manually set the epoch length to facilitate quicker asset deposits and w
 id: application-factory
 title: ApplicationFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/ApplicationFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/ApplicationFactory.sol
     title: Application Factory contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/IApplicationFactory.sol
+    title: IApplicationFactory interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
 The **ApplicationFactory** contract is a tool for reliably deploying new instances of the [`Application`](../contracts/application.md) contract with or without a specified salt value for address derivation.
 
-Additionally, it provides a function to calculate the address of a potential new `CartesiDApp` contract based on input parameters.
+Additionally, it provides a function to calculate the address of a potential new `Application` contract based on input parameters.
 
-This contract ensures efficient and secure deployment of `Application` contracts within the Cartesi Rollups framework.
+The factory takes an [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/refund/IRefundOutputBuilder.sol) in its constructor. That refund builder is a factory-wide immutable: every application deployed by this factory shares it, and it is not part of `WithdrawalConfig` or of `newApplication` parameters.
 
 ## Functions
+
+### `constructor()`
+
+```solidity
+constructor(IRefundOutputBuilder refundOutputBuilder)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `refundOutputBuilder` | `IRefundOutputBuilder` | Factory-wide builder used for deposit refunds after foreclosure |
 
 ### `newApplication()`
 
@@ -19290,7 +19304,7 @@ function newApplication(
     IOutputsMerkleRootValidator outputsMerkleRootValidator,
     address appOwner,
     bytes32 templateHash,
-    bytes calldata dataAvailability,
+    IInputBox inputBox,
     WithdrawalConfig calldata withdrawalConfig
 ) external override returns (IApplication)
 ```
@@ -19304,7 +19318,7 @@ Deploys a new Application contract without a salt value for address derivation.
 | `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
 | `appOwner` | `address` | Address of the owner of the application |
 | `templateHash` | `bytes32` | Hash of the template for the application |
-| `dataAvailability` | `bytes` | The data availability solution |
+| `inputBox` | `IInputBox` | The input box contract |
 | `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
 
 **Return Values**
@@ -19320,7 +19334,7 @@ function newApplication(
     IOutputsMerkleRootValidator outputsMerkleRootValidator,
     address appOwner,
     bytes32 templateHash,
-    bytes calldata dataAvailability,
+    IInputBox inputBox,
     WithdrawalConfig calldata withdrawalConfig,
     bytes32 salt
 ) external override returns (IApplication)
@@ -19335,7 +19349,7 @@ Deploys a new `Application` contract with a specified salt value for address der
 | `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
 | `appOwner` | `address` | Address of the owner of the application |
 | `templateHash` | `bytes32` | Hash of the template for the application |
-| `dataAvailability` | `bytes` | The data availability solution |
+| `inputBox` | `IInputBox` | The input box contract |
 | `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
 | `salt` | `bytes32` | Salt value for address derivation |
 
@@ -19352,7 +19366,7 @@ function calculateApplicationAddress(
     IOutputsMerkleRootValidator outputsMerkleRootValidator,
     address appOwner,
     bytes32 templateHash,
-    bytes calldata dataAvailability,
+    IInputBox inputBox,
     WithdrawalConfig calldata withdrawalConfig,
     bytes32 salt
 ) external view override returns (address)
@@ -19367,7 +19381,7 @@ Calculates the address of a potential new Application contract based on input pa
 | `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
 | `appOwner` | `address` | Address of the owner of the application |
 | `templateHash` | `bytes32` | Hash of the template for the application |
-| `dataAvailability` | `bytes` | The data availability solution |
+| `inputBox` | `IInputBox` | The input box contract |
 | `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
 | `salt` | `bytes32` | Salt value for address derivation |
 
@@ -19377,16 +19391,24 @@ Calculates the address of a potential new Application contract based on input pa
 |------|------|-------------|
 | `[0]` | `address` | Address of the potential new Application contract |
 
+### `version()`
+
+```solidity
+function version() external view returns (string memory)
+```
+
+Return the rollups-contracts package version string.
+
 ## Events
 
 ### `ApplicationCreated()`
 
 ```solidity
 event ApplicationCreated(
-    IOutputsMerkleRootValidator outputsMerkleRootValidator,
+    IOutputsMerkleRootValidator indexed outputsMerkleRootValidator,
     address appOwner,
     bytes32 templateHash,
-    bytes dataAvailability,
+    IInputBox inputBox,
     WithdrawalConfig withdrawalConfig,
     IApplication appContract
 )
@@ -19401,8 +19423,8 @@ A new Application contract was deployed.
 | `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The outputs Merkle root validator contract |
 | `appOwner` | `address` | The owner of the application |
 | `templateHash` | `bytes32` | The template hash |
-| `dataAvailability` | `bytes` | The data availability solution |
-| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
+| `inputBox` | `IInputBox` | The input box contract |
+| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration |
 | `appContract` | `IApplication` | The deployed Application contract |
 
 ## Errors
@@ -19415,11 +19437,23 @@ error InvalidWithdrawalConfig(WithdrawalConfig withdrawalConfig)
 
 Raised at deployment when the provided [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) is invalid, meaning its accounts-drive layout does not fit inside the machine memory (see [`LibWithdrawalConfig.isValid`](./withdrawal/withdrawal-config.md#validation)). Checking the config in the factory means users and the node do not have to check it themselves.
 
-**Parameters**
+## Self-hosted factory
 
-| Name | Type | Description |
-|------|------|-------------|
-| `withdrawalConfig` | `WithdrawalConfig` | The invalid withdrawal configuration |
+[`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/ISelfHostedApplicationFactory.sol) deploys an Authority + Application pair in one transaction.
+
+```solidity
+function deployContracts(
+    address authorityOwner,
+    uint256 epochLength,
+    uint256 claimStagingPeriod,
+    bytes32 templateHash,
+    IInputBox inputBox,
+    WithdrawalConfig calldata withdrawalConfig,
+    bytes32 salt
+) external returns (IApplication, IAuthority);
+```
+
+There is no `appOwner` parameter: the factory deploys the application under its own ownership and immediately renounces it, so self-hosted applications are ownerless and cannot migrate to another outputs Merkle root validator after deployment. `calculateAddresses` takes the same arguments (without returning ownership control).
 
 ---
 
@@ -19429,8 +19463,10 @@ Raised at deployment when the provided [`WithdrawalConfig`](./withdrawal/withdra
 id: application
 title: Application
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/Application.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/Application.sol
     title: Application contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/IApplication.sol
+    title: IApplication interface
   - url: https://docs.openzeppelin.com/contracts/5.x/
     title: OpenZeppelin Contracts
 ---
@@ -19439,9 +19475,11 @@ resources:
 
 The **Application** contract serves as the base layer representation of the application running on the execution layer. The application can interact with other smart contracts through the execution and validation of outputs. These outputs, generated by the application backend on the execution layer, can be proven in the base layer through claims submitted by a consensus contract.
 
-Every Application is subscribed to a consensus contract and governed by a single address (owner). The consensus has the authority to submit claims, which are then used to validate outputs. The owner has complete control over the Application and can replace the consensus at any time. Consequently, users of an Application must trust both the consensus and the application owner. Depending on centralization or ownership concerns, the ownership model can be modified. This process is managed by the consensus contract. For more information about different ownership and consensus models, refer to the [consensus contracts](./consensus/overview.md).
+Every Application is subscribed to a consensus contract (an outputs Merkle root validator) and may be governed by a single address (owner). The consensus has the authority to accept claims, which are then used to validate outputs. The owner can replace the outputs Merkle root validator, but only in the deployment block. Consequently, users of an Application must trust both the consensus and the application owner. Depending on centralization or ownership concerns, the ownership model can be modified. For more information about different ownership and consensus models, refer to the [consensus contracts](./consensus/overview.md).
 
-An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that turns on **foreclosure and emergency withdrawal**. A chosen **guardian** can foreclose the application. Once it is foreclosed, users can withdraw their in-app balances straight from this contract by proving their accounts against the last-finalized machine state, without a running node. See [Foreclosure & Emergency Withdrawal](../../development/emergency-withdrawal/overview.md) for the full flow. These functions are documented below under [Guardian & Foreclosure](#guardian--foreclosure) and [Emergency Withdrawal](#emergency-withdrawal).
+An Application may optionally be deployed with a [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) that turns on **foreclosure and emergency withdrawal**. A chosen **guardian** can foreclose the application. Once it is foreclosed, users can withdraw their in-app balances straight from this contract by proving their accounts against the last-finalized machine state, without a running node. After foreclosure, users can also **refund** unprocessed deposits through `issueRefund`. See [Foreclosure & Emergency Withdrawal](../../development/emergency-withdrawal/overview.md) for the full flow.
+
+All foreclosure, withdrawal, and refund APIs live on `IApplication` (there are no separate `IApplicationForeclosure` / `IApplicationWithdrawal` interfaces).
 
 ## Functions
 
@@ -19452,14 +19490,15 @@ constructor(
     IOutputsMerkleRootValidator outputsMerkleRootValidator,
     address initialOwner,
     bytes32 templateHash,
-    bytes memory dataAvailability,
+    IInputBox inputBox,
+    IRefundOutputBuilder refundOutputBuilder,
     WithdrawalConfig memory withdrawalConfig
 ) Ownable(initialOwner)
 ```
 
 Creates an Application contract.
 
-*Reverts with `InvalidWithdrawalConfig` if `withdrawalConfig` is invalid (see [`WithdrawalConfig`](./withdrawal/withdrawal-config.md)). A zero-valued `withdrawalConfig` is valid and deploys an application without the foreclosure / emergency-withdrawal feature.*
+*Reverts with `InvalidWithdrawalConfig` if `withdrawalConfig` is invalid (see [`WithdrawalConfig`](./withdrawal/withdrawal-config.md)). A zero-valued `withdrawalConfig` is valid and deploys an application without the foreclosure / emergency-withdrawal feature. When deploying through [`ApplicationFactory`](./application-factory.md), the refund output builder is a factory-wide immutable and is not passed to `newApplication`.*
 
 **Parameters**
 
@@ -19468,7 +19507,8 @@ Creates an Application contract.
 | `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
 | `initialOwner` | `address` | The initial application owner |
 | `templateHash` | `bytes32` | The initial machine state hash |
-| `dataAvailability` | `bytes` | The data availability solution |
+| `inputBox` | `IInputBox` | The input box contract used by the application |
+| `refundOutputBuilder` | `IRefundOutputBuilder` | Builds refund outputs for unprocessed deposits after foreclosure |
 | `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (guardian, accounts-drive layout, and output builder). See [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) |
 
 ### `receive()`
@@ -19484,12 +19524,12 @@ Accept Ether transfers.
 ### `executeOutput()`
 
 ```solidity
-function executeOutput(bytes calldata output, OutputValidityProof calldata proof) external override nonReentrant
+function executeOutput(bytes calldata output, OutputValidityProof calldata proof) external override
 ```
 
 Execute an output.
 
-*On a successful execution, emits an OutputExecuted event.*
+*On a successful execution, emits an `OutputExecuted` event. Uses checks-effects-interactions (no reentrancy guard): `wasOutputExecuted` returns `true` and the event is emitted before the output is executed. Reverts with `TargetHasNoCode` when a voucher with a non-empty payload or a delegate-call voucher targets an account with no code.*
 
 **Parameters**
 
@@ -19506,7 +19546,7 @@ function migrateToOutputsMerkleRootValidator(IOutputsMerkleRootValidator newOutp
 
 Migrate the application to a new outputs Merkle root validator.
 
-*Can only be called by the application owner.*
+*Can only be called by the application owner, and only in the block in which the application was deployed. Reverts with `NotDeploymentBlock` if called later, and with `Foreclosed` if the application has been foreclosed.*
 
 **Parameters**
 
@@ -19520,7 +19560,7 @@ Migrate the application to a new outputs Merkle root validator.
 function wasOutputExecuted(uint256 outputIndex) external view override returns (bool)
 ```
 
-Check whether an output has been executed.
+Check whether an output has been executed (or is currently being executed in the current transaction).
 
 **Parameters**
 
@@ -19542,7 +19582,7 @@ function validateOutput(bytes calldata output, OutputValidityProof calldata proo
 
 Validate an output.
 
-*May raise any of the errors raised by validateOutputHash.*
+*May raise any of the errors raised by `validateOutputHash`.*
 
 **Parameters**
 
@@ -19559,7 +19599,7 @@ function validateOutputHash(bytes32 outputHash, OutputValidityProof calldata pro
 
 Validate an output hash.
 
-*May raise InvalidOutputHashesSiblingsArrayLength or InvalidOutputsMerkleRoot.*
+*May raise `InvalidOutputHashesSiblingsArrayLength` or `InvalidOutputsMerkleRoot`.*
 
 **Parameters**
 
@@ -19576,12 +19616,6 @@ function getTemplateHash() external view override returns (bytes32)
 
 Get the application's template hash.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bytes32` | The application's template hash |
-
 ### `getOutputsMerkleRootValidator()`
 
 ```solidity
@@ -19590,25 +19624,13 @@ function getOutputsMerkleRootValidator() external view override returns (IOutput
 
 Get the current outputs Merkle root validator.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `IOutputsMerkleRootValidator` | The current outputs Merkle root validator |
-
-### `getDataAvailability()`
+### `getInputBox()`
 
 ```solidity
-function getDataAvailability() external view override returns (bytes memory)
+function getInputBox() external view override returns (IInputBox)
 ```
 
-Get the data availability solution used by application.
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bytes` | Solidity ABI-encoded function call that describes the source of inputs that should be fed to the application. |
+Get the input box contract used by the application.
 
 ### `getDeploymentBlockNumber()`
 
@@ -19616,66 +19638,37 @@ Get the data availability solution used by application.
 function getDeploymentBlockNumber() external view override returns (uint256)
 ```
 
-Get number of block in which contract was deployed.
+Get the number of the block in which the contract was deployed.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `uint256` | The deployment block number |
-
-### `owner()`
+### `getNumberOfExecutedOutputs()`
 
 ```solidity
-function owner() public view override(IOwnable, Ownable) returns (address)
+function getNumberOfExecutedOutputs() external view override returns (uint256)
 ```
 
-Returns the address of the current owner.
+Get the number of outputs executed by the application.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `address` | The address of the current owner |
-
-### `renounceOwnership()`
+### `version()`
 
 ```solidity
-function renounceOwnership() public override(IOwnable, Ownable)
+function version() external view returns (string memory)
 ```
 
-Leaves the contract without owner. It will not be possible to call onlyOwner functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.
+Return the rollups-contracts package version string.
 
-### `transferOwnership()`
+### `owner()` / `renounceOwnership()` / `transferOwnership()`
 
-```solidity
-function transferOwnership(address newOwner) public override(IOwnable, Ownable)
-```
-
-Transfers ownership of the contract to a new account (newOwner). Can only be called by the current owner.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `newOwner` | `address` | The new owner address |
+Standard OpenZeppelin Ownable methods for reading and transferring ownership.
 
 ## Events
 
 ### `OutputExecuted()`
 
 ```solidity
-event OutputExecuted(uint64 outputIndex, bytes output)
+event OutputExecuted(uint64 indexed outputIndex, bytes output)
 ```
 
 An output was executed from the Application.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `outputIndex` | `uint64` | The index of the output |
-| `output` | `bytes` | The output |
 
 ### `OutputsMerkleRootValidatorChanged()`
 
@@ -19685,15 +19678,9 @@ event OutputsMerkleRootValidatorChanged(IOutputsMerkleRootValidator newOutputsMe
 
 The outputs Merkle root validator was changed.
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `newOutputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The new outputs Merkle root validator |
-
 ## Guardian & Foreclosure
 
-These members come from the [`IApplicationForeclosure`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/IApplicationForeclosure.sol) interface. They are only meaningful when the application was deployed with a non-empty [`WithdrawalConfig`](./withdrawal/withdrawal-config.md); the guardian is the address set in that configuration.
+These members are only meaningful when the application was deployed with a non-empty [`WithdrawalConfig`](./withdrawal/withdrawal-config.md); the guardian is the address set in that configuration.
 
 ### `foreclose()`
 
@@ -19701,15 +19688,16 @@ These members come from the [`IApplicationForeclosure`](https://github.com/carte
 function foreclose() external override onlyGuardian
 ```
 
-Forecloses the application, allowing users to withdraw their funds by providing Merkle proofs of their in-app accounts.
+Forecloses the application, allowing users to withdraw their funds by providing Merkle proofs of their in-app accounts, and to refund unprocessed deposits.
 
-*Can only be called by the application guardian. On success, emits a `Foreclosure` event. An application that has been foreclosed remains so.*
+*Can only be called by the application guardian. On success, emits a `Foreclosure` event. Reverts with `Foreclosed` if the application has already been foreclosed (the event is emitted at most once).*
 
 **Errors**
 
 | Error | Condition |
 |-------|-----------|
 | `NotGuardian` | Called by an account other than the guardian |
+| `Foreclosed` | The application has already been foreclosed |
 
 ### `getGuardian()`
 
@@ -19719,12 +19707,6 @@ function getGuardian() external view override returns (address)
 
 Get the address of the guardian, which has the power to foreclose the application.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `address` | The guardian address |
-
 ### `isForeclosed()`
 
 ```solidity
@@ -19732,12 +19714,6 @@ function isForeclosed() external view override returns (bool)
 ```
 
 Check whether the application has been foreclosed. An application that has been foreclosed will remain so.
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bool` | Whether the application has been foreclosed |
 
 ### `Foreclosure()`
 
@@ -19747,9 +19723,89 @@ event Foreclosure()
 
 Triggered when the application is foreclosed.
 
+## Deposit Refunds
+
+After foreclosure, anyone can refund deposits that were never finalized. The application static-calls the factory-wide [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/refund/IRefundOutputBuilder.sol) to build a transfer back to the original depositor for Ether, ERC-20, ERC-721, and ERC-1155 deposits made through the canonical portals.
+
+### `issueRefund()`
+
+```solidity
+function issueRefund(uint256 inputIndex, bytes calldata input) external override
+```
+
+Issue a refund for an unprocessed input.
+
+*On success, marks the input as refunded, emits a `RefundIssued` event, and executes the refund output. A refund may fail if the depositor is a contract that does not accept the asset back (for example, no `receive` entrypoint or missing ERC-721/ERC-1155 receiver hooks).*
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `inputIndex` | `uint256` | The index of the input in the application's input box |
+| `input` | `bytes` | The input that was sent to the application |
+
+**Errors**
+
+| Error | Condition |
+|-------|-----------|
+| `CannotRefundFinalizedInput` | The input was already finalized |
+| `RefundAlreadyIssued` | A refund was already issued for this input |
+| `UnknownInputSender` | Non-deposit input or input from a non-canonical portal |
+| Errors from `validateInput()` | The input fails validation |
+
+### `getRefundOutputBuilder()`
+
+```solidity
+function getRefundOutputBuilder() external view override returns (IRefundOutputBuilder)
+```
+
+Get the refund output builder.
+
+### `getNumberOfIssuedRefunds()`
+
+```solidity
+function getNumberOfIssuedRefunds() external view override returns (uint256)
+```
+
+Get the number of issued refunds (useful for fast-syncing `RefundIssued` events).
+
+### `wasRefundForInputIssued()`
+
+```solidity
+function wasRefundForInputIssued(uint256 inputIndex) external view override returns (bool)
+```
+
+Check whether a refund has been issued for an input (or is currently being issued).
+
+### `validateInput()`
+
+```solidity
+function validateInput(uint256 inputIndex, bytes calldata input)
+    external view override
+    returns (uint256 blockNumber, address inputSender, bytes memory inputPayload)
+```
+
+Validate an input against the application's input box and decode it.
+
+### `validateInputHash()`
+
+```solidity
+function validateInputHash(uint256 inputIndex, bytes32 inputHash) external view override
+```
+
+Validate an input hash against the application's input box.
+
+### `RefundIssued()`
+
+```solidity
+event RefundIssued(uint256 indexed inputIndex, bytes input, bytes output)
+```
+
+Triggered when a refund for an input is issued.
+
 ## Emergency Withdrawal
 
-These members come from the [`IApplicationWithdrawal`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/IApplicationWithdrawal.sol) interface. After the application is foreclosed, its **accounts drive** (the in-app balance ledger) is proved on-chain once, and then each account's funds can be withdrawn permissionlessly. For the end-to-end procedure see the [recovery guide](../../development/emergency-withdrawal/recovery-guide.md); for the output-building contracts see the [Withdrawal](./withdrawal/overview.md) subsection.
+After the application is foreclosed, its **accounts drive** (the in-app balance ledger) is proved on-chain once, and then each account's funds can be withdrawn permissionlessly. For the end-to-end procedure see the [recovery guide](../../development/emergency-withdrawal/recovery-guide.md); for the output-building contracts see the [Withdrawal](./withdrawal/overview.md) subsection.
 
 Withdrawal-related functions take an `AccountValidityProof`:
 
@@ -19769,16 +19825,9 @@ function proveAccountsDriveMerkleRoot(
 ) external override
 ```
 
-Prove the accounts drive Merkle root against the last-finalized machine state provided by the application's outputs Merkle root validator. Callable by anyone after the application is foreclosed, so that accounts can be validated and their funds withdrawn.
+Prove the accounts drive Merkle root against the last-finalized machine state provided by the application's outputs Merkle root validator. If that root is zero (no accepted claims yet), the application's template hash is used instead. Callable by anyone after the application is foreclosed.
 
 *On success, stores the proved accounts drive Merkle root and emits an `AccountsDriveMerkleRootProved` event.*
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `accountsDriveMerkleRoot` | `bytes32` | The accounts drive Merkle root |
-| `proof` | `bytes32[]` | Siblings of the accounts drive Merkle root in the machine state tree |
 
 **Errors**
 
@@ -19787,7 +19836,7 @@ Prove the accounts drive Merkle root against the last-finalized machine state pr
 | `NotForeclosed` | The application has not been foreclosed |
 | `AccountsDriveMerkleRootAlreadyProved` | The root has already been proved |
 | `InvalidAccountsDriveMerkleRootProofSize` | The proof array length is wrong |
-| `InvalidMachineMerkleRoot(bytes32)` | The computed machine root differs from the last-finalized one (argument is the computed root) |
+| `InvalidMachineMerkleRoot(bytes32)` | The computed machine root differs from the expected one |
 
 ### `withdraw()`
 
@@ -19795,24 +19844,17 @@ Prove the accounts drive Merkle root against the last-finalized machine state pr
 function withdraw(bytes calldata account, AccountValidityProof calldata proof) external override
 ```
 
-Withdraw the funds of an account from the foreclosed application. First the account is validated against the proved accounts drive Merkle root; then a withdrawal output is built from the account and executed.
+Withdraw the funds of an account from the foreclosed application.
 
-*On success, marks the account funds as withdrawn and emits a `Withdrawal` event.*
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `account` | `bytes` | The account, as encoded in the accounts drive |
-| `proof` | `AccountValidityProof` | The proof used to validate the account |
+*Uses checks-effects-interactions: `wereAccountFundsWithdrawn` returns `true` and the `Withdrawal` event is emitted before the output is executed.*
 
 **Errors**
 
 | Error | Condition |
 |-------|-----------|
 | `NotForeclosed` | The application has not been foreclosed |
-| `AccountFundsAlreadyWithdrawn(uint64)` | The account's funds were already withdrawn (argument is the account index) |
-| Errors from `validateAccount()` | The account fails validation (see [`validateAccount()`](#validateaccount)) |
+| `AccountFundsAlreadyWithdrawn(uint64)` | The account's funds were already withdrawn |
+| Errors from `validateAccount()` | The account fails validation |
 
 ### `getWithdrawalConfig()`
 
@@ -19832,13 +19874,6 @@ function getAccountsDriveMerkleRoot()
 
 Check whether the accounts drive Merkle root was proved, and its value.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `wasAccountsDriveMerkleRootProved` | `bool` | Whether the accounts drive Merkle root was proved |
-| `accountsDriveMerkleRoot` | `bytes32` | The accounts drive Merkle root (if proved) |
-
 ### `getNumberOfWithdrawals()`
 
 ```solidity
@@ -19853,37 +19888,11 @@ Get the number of withdrawals. Useful for fast-syncing `Withdrawal` events.
 function wereAccountFundsWithdrawn(uint256 accountIndex) external view override returns (bool)
 ```
 
-Check whether an account had its funds withdrawn.
+Check whether an account had its funds withdrawn (or is currently being withdrawn).
 
-**Parameters**
+### `getLog2LeavesPerAccount()` / `getLog2MaxNumOfAccounts()` / `getAccountsDriveStartIndex()`
 
-| Name | Type | Description |
-|------|------|-------------|
-| `accountIndex` | `uint256` | The index of the account in the accounts drive |
-
-### `getLog2LeavesPerAccount()`
-
-```solidity
-function getLog2LeavesPerAccount() external view override returns (uint8)
-```
-
-Get the log (base 2) of the number of machine-state-tree leaves reserved for each account in the accounts drive.
-
-### `getLog2MaxNumOfAccounts()`
-
-```solidity
-function getLog2MaxNumOfAccounts() external view override returns (uint8)
-```
-
-Get the log (base 2) of the maximum number of accounts the accounts drive can store (the depth of the accounts drive tree).
-
-### `getAccountsDriveStartIndex()`
-
-```solidity
-function getAccountsDriveStartIndex() external view override returns (uint64)
-```
-
-Get the start-index factor of the accounts drive. With `a = getLog2LeavesPerAccount()`, `b = getLog2MaxNumOfAccounts()`, and `c = getAccountsDriveStartIndex()`, the accounts drive starts at memory address `c * 2^(a+b+5)` and is `2^(a+b+5)` bytes in size.
+Views that describe the accounts-drive geometry. With `a = getLog2LeavesPerAccount()`, `b = getLog2MaxNumOfAccounts()`, and `c = getAccountsDriveStartIndex()`, the accounts drive starts at memory address `c * 2^(a+b+5)` and is `2^(a+b+5)` bytes in size.
 
 ### `getWithdrawalOutputBuilder()`
 
@@ -19893,32 +19902,18 @@ function getWithdrawalOutputBuilder() external view override returns (IWithdrawa
 
 Get the [withdrawal output builder](./withdrawal/iwithdrawal-output-builder.md), which is static-called whenever an account's funds are to be withdrawn.
 
-### `validateAccount()`
+### `validateAccount()` / `validateAccountMerkleRoot()`
 
-```solidity
-function validateAccount(bytes calldata account, AccountValidityProof calldata proof) external view override
-```
+Validate an account (or account Merkle root) against the proved accounts drive Merkle root.
 
-Validate the existence of an account at a given index in the accounts drive, against the accounts drive Merkle root proved through `proveAccountsDriveMerkleRoot()`.
-
-*May raise any error raised by [`validateAccountMerkleRoot()`](#validateaccountmerkleroot), as well as `DriveSmallerThanData` (if the provided account is too large).*
-
-### `validateAccountMerkleRoot()`
-
-```solidity
-function validateAccountMerkleRoot(bytes32 accountMerkleRoot, AccountValidityProof calldata proof) external view override
-```
-
-Validate the existence of an account root at a given index in the accounts drive.
-
-**Errors**
+**Errors** for `validateAccountMerkleRoot`
 
 | Error | Condition |
 |-------|-----------|
 | `InvalidAccountRootSiblingsArrayLength` | The siblings array length is wrong |
 | `InvalidNodeIndex` | The account index is outside the accounts drive |
 | `AccountsDriveMerkleRootNotProved` | The accounts drive root has not been proved yet |
-| `InvalidAccountsDriveMerkleRoot(bytes32)` | The computed accounts drive root differs from the proved one (argument is the computed root) |
+| `InvalidAccountsDriveMerkleRoot(bytes32)` | The computed accounts drive root differs from the proved one |
 
 ### `AccountsDriveMerkleRootProved()`
 
@@ -19928,27 +19923,13 @@ event AccountsDriveMerkleRootProved(bytes32 accountsDriveMerkleRoot)
 
 Triggered when the accounts drive Merkle root is proved.
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `accountsDriveMerkleRoot` | `bytes32` | The accounts drive Merkle root |
-
 ### `Withdrawal()`
 
 ```solidity
-event Withdrawal(uint64 accountIndex, bytes account, bytes output)
+event Withdrawal(uint64 indexed accountIndex, bytes account, bytes output)
 ```
 
 Triggered when the funds of an account are withdrawn.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `accountIndex` | `uint64` | The account index in the accounts drive |
-| `account` | `bytes` | The account as encoded in the accounts drive |
-| `output` | `bytes` | The withdrawal output |
 
 ---
 
@@ -19958,13 +19939,13 @@ Triggered when the funds of an account are withdrawn.
 id: abstract-consensus
 title: AbstractConsensus
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/AbstractConsensus.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/AbstractConsensus.sol
     title: AbstractConsensus Contract
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The **AbstractConsensus** contract provides an abstract implementation of `IConsensus` with common consensus functionality.
+The **AbstractConsensus** contract provides an abstract implementation of `IConsensus` with common consensus functionality, including claim staging/acceptance counters and `IOutputsMerkleRootValidator` helpers (`isOutputsMerkleRootValid`, `getLastFinalizedMachineMerkleRoot`, `wasInputFinalized`).
 
 ## Functions
 
@@ -19976,32 +19957,18 @@ function isOutputsMerkleRootValid(address appContract, bytes32 outputsMerkleRoot
 
 Check whether an outputs Merkle root is valid.
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bool` | True if the outputs Merkle root is valid |
-
-### `getEpochLength()`
+### `getEpochLength()` / `getClaimStagingPeriod()`
 
 ```solidity
 function getEpochLength() public view override returns (uint256)
+function getClaimStagingPeriod() public view override returns (uint256)
 ```
 
-Get the epoch length.
+Get the epoch length and claim staging period.
 
-**Return Values**
+### `wasInputFinalized()` / `getLastFinalizedMachineMerkleRoot()`
 
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `uint256` | The epoch length |
+See [`IOutputsMerkleRootValidator`](./ioutputs-merkle-root-validator.md).
 
 ### `supportsInterface()`
 
@@ -20009,19 +19976,7 @@ Get the epoch length.
 function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC165) returns (bool)
 ```
 
-Check if the contract supports a specific interface.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `interfaceId` | `bytes4` | The interface identifier |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bool` | True if the interface is supported |
+Check if the contract supports a specific interface (`IConsensus` / `IOutputsMerkleRootValidator`).
 
 ---
 
@@ -20031,13 +19986,13 @@ Check if the contract supports a specific interface.
 id: authority
 title: Authority
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/Authority.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/Authority.sol
     title: Authority Contract
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The **Authority** contract implements a single-owner consensus mechanism where only the contract owner can submit and accept claims.
+The **Authority** contract implements a single-owner consensus mechanism where only the contract owner can submit claims. Staged claims can be accepted after the claim staging period elapses (see [`IConsensus`](../iconsensus.md)).
 
 ## Functions
 
@@ -20047,19 +20002,26 @@ The **Authority** contract implements a single-owner consensus mechanism where o
 function submitClaim(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot,
+    MachineValidityProof calldata proof
 ) external onlyOwner
 ```
 
 Submit a claim to the consensus. Only the contract owner can call this function.
 
-**Parameters**
+See [`IConsensus.submitClaim`](../iconsensus.md#submitclaim) for parameters, events, and machine-validation requirements.
 
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+### `acceptClaim()`
+
+```solidity
+function acceptClaim(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 machineMerkleRoot
+) external
+```
+
+Accept a staged claim whose staging period has elapsed. See [`IConsensus.acceptClaim`](../iconsensus.md#acceptclaim).
 
 ### `owner()`
 
@@ -20068,12 +20030,6 @@ function owner() public view override(IOwnable, Ownable) returns (address)
 ```
 
 Returns the address of the current owner.
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `address` | The current owner address |
 
 ### `renounceOwnership()`
 
@@ -20091,31 +20047,21 @@ function transferOwnership(address newOwner) public override(IOwnable, Ownable)
 
 Transfers ownership of the contract to a new account.
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `newOwner` | `address` | The new owner address |
-
 ### `supportsInterface()`
 
 ```solidity
 function supportsInterface(bytes4 interfaceId) public view override(IERC165, AbstractConsensus) returns (bool)
 ```
 
-Check if the contract supports a specific interface.
+Check if the contract supports a specific interface. Authority returns `true` for `IOutputsMerkleRootValidator` as well as `IConsensus`.
 
-**Parameters**
+### `version()`
 
-| Name | Type | Description |
-|------|------|-------------|
-| `interfaceId` | `bytes4` | The interface identifier |
+```solidity
+function version() external view returns (string memory)
+```
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bool` | True if the interface is supported |
+Return the rollups-contracts package version string.
 
 ---
 
@@ -20125,8 +20071,10 @@ Check if the contract supports a specific interface.
 id: authority-factory
 title: AuthorityFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/AuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/AuthorityFactory.sol
     title: AuthorityFactory Contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/IAuthorityFactory.sol
+    title: IAuthorityFactory Interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
@@ -20138,7 +20086,11 @@ The **AuthorityFactory** contract allows anyone to reliably deploy new `IAuthori
 ### `newAuthority()`
 
 ```solidity
-function newAuthority(address authorityOwner, uint256 epochLength) external override returns (IAuthority)
+function newAuthority(
+    address authorityOwner,
+    uint256 epochLength,
+    uint256 claimStagingPeriod
+) external override returns (IAuthority)
 ```
 
 Deploy a new authority contract.
@@ -20149,6 +20101,7 @@ Deploy a new authority contract.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 
 **Return Values**
 
@@ -20159,7 +20112,12 @@ Deploy a new authority contract.
 ### `newAuthority()` (with salt)
 
 ```solidity
-function newAuthority(address authorityOwner, uint256 epochLength, bytes32 salt) external override returns (IAuthority)
+function newAuthority(
+    address authorityOwner,
+    uint256 epochLength,
+    uint256 claimStagingPeriod,
+    bytes32 salt
+) external override returns (IAuthority)
 ```
 
 Deploy a new authority contract deterministically using CREATE2.
@@ -20170,6 +20128,7 @@ Deploy a new authority contract deterministically using CREATE2.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 | `salt` | `bytes32` | The salt used to deterministically generate the authority address |
 
 **Return Values**
@@ -20184,6 +20143,7 @@ Deploy a new authority contract deterministically using CREATE2.
 function calculateAuthorityAddress(
     address authorityOwner,
     uint256 epochLength,
+    uint256 claimStagingPeriod,
     bytes32 salt
 ) external view override returns (address)
 ```
@@ -20196,6 +20156,7 @@ Calculate the address of an authority to be deployed deterministically.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 | `salt` | `bytes32` | The salt used to deterministically generate the authority address |
 
 **Return Values**
@@ -20203,6 +20164,24 @@ Calculate the address of an authority to be deployed deterministically.
 | Name | Type | Description |
 |------|------|-------------|
 | `[0]` | `address` | The deterministic authority address |
+
+### `version()`
+
+```solidity
+function version() external view returns (string memory)
+```
+
+Return the rollups-contracts package version string.
+
+## Events
+
+### `AuthorityCreated()`
+
+```solidity
+event AuthorityCreated(IAuthority authority)
+```
+
+Emitted when a new authority is deployed.
 
 ---
 
@@ -20212,7 +20191,7 @@ Calculate the address of an authority to be deployed deterministically.
 id: iauthority-factory
 title: IAuthorityFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/IAuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/IAuthorityFactory.sol
     title: IAuthorityFactory Interface
 ---
 
@@ -20220,92 +20199,7 @@ resources:
 
 The **IAuthorityFactory** interface defines the contract for deploying new `IAuthority` contracts.
 
-## Events
-
-### `AuthorityCreated`
-
-```solidity
-event AuthorityCreated(IAuthority authority)
-```
-
-A new authority was deployed.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `authority` | `IAuthority` | The authority |
-
-## Functions
-
-### `newAuthority()`
-
-```solidity
-function newAuthority(address authorityOwner, uint256 epochLength) external returns (IAuthority)
-```
-
-Deploy a new authority.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `authorityOwner` | `address` | The initial authority owner |
-| `epochLength` | `uint256` | The epoch length |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `IAuthority` | The authority |
-
-### `newAuthority()` (with salt)
-
-```solidity
-function newAuthority(address authorityOwner, uint256 epochLength, bytes32 salt) external returns (IAuthority)
-```
-
-Deploy a new authority deterministically.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `authorityOwner` | `address` | The initial authority owner |
-| `epochLength` | `uint256` | The epoch length |
-| `salt` | `bytes32` | The salt used to deterministically generate the authority address |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `IAuthority` | The authority |
-
-### `calculateAuthorityAddress()`
-
-```solidity
-function calculateAuthorityAddress(
-    address authorityOwner,
-    uint256 epochLength,
-    bytes32 salt
-) external view returns (address)
-```
-
-Calculate the address of an authority to be deployed deterministically.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `authorityOwner` | `address` | The initial authority owner |
-| `epochLength` | `uint256` | The epoch length |
-| `salt` | `bytes32` | The salt used to deterministically generate the authority address |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `address` | The deterministic authority address |
+See [`AuthorityFactory`](./authority-factory.md) for the full API, including the `claimStagingPeriod` parameter on `newAuthority` and `calculateAuthorityAddress`.
 
 ---
 
@@ -20315,7 +20209,7 @@ Calculate the address of an authority to be deployed deterministically.
 id: iauthority
 title: IAuthority
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/IAuthority.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/IAuthority.sol
     title: IAuthority Interface
 ---
 
@@ -20331,7 +20225,7 @@ A consensus contract controlled by a single address, the owner. This interface c
 
 - [`Authority`](./authority.md): Implementation of this interface
 - [`IConsensus`](../iconsensus.md): Base consensus interface
-- [`IOwnable`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/access/IOwnable.sol): Ownership management interface
+- [`IOwnable`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/access/IOwnable.sol): Ownership management interface
 
 ---
 
@@ -20341,29 +20235,70 @@ A consensus contract controlled by a single address, the owner. This interface c
 id: iconsensus
 title: IConsensus
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/IConsensus.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/IConsensus.sol
     title: IConsensus Interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The `IConsensus` interface defines the main consensus contract behavior for validating and accepting claims submitted by validators.
+The `IConsensus` interface defines the main consensus contract behavior for submitting, staging, and accepting claims about Cartesi Rollups applications.
 
 ## Description
 
-Each application has its own stream of inputs. When an input is fed to the application, it may yield several outputs. Since genesis, a Merkle tree of all outputs ever produced is maintained both inside and outside the Cartesi Machine.
+Each application has its own stream of inputs, split into epochs. The epoch of an input is the integer division of the base-layer block number in which it was added by the epoch length (see `getEpochLength`).
 
-The claim that validators may submit to the consensus contract is the root of this Merkle tree after processing all base layer blocks until some height.
+After every epoch, each validator can submit a claim about the post-epoch machine state (a machine Merkle root), while proving the set of all outputs ever emitted (an outputs Merkle root stored at a known address in machine memory). Empty epochs can be skipped to save fees.
 
-A validator should be able to save transaction fees by not submitting a claim if it was:
-- Already submitted by the validator (see the `ClaimSubmitted` event) or
-- Already accepted by the consensus (see the `ClaimAccepted` event)
+If a claim meets the staging criteria of the consensus model, it is **staged**. Acceptance is delayed by the claim staging period (see `getClaimStagingPeriod`) so guardians have time to foreclose the application if a malicious claim appears. After the staging period elapses, anyone can call `acceptClaim` to finalize the claim.
 
-The acceptance criteria for claims may depend on the type of consensus, and is not specified by this interface. For example, a claim may be accepted if it was:
-- Submitted by an authority or
-- Submitted by the majority of a quorum or
-- Submitted and not proven wrong after some period of time or
-- Submitted and proven correct through an on-chain tournament
+The staging criteria may depend on the consensus type (for example authority owner, quorum majority, challenge window, or tournament).
+
+`IConsensus` inherits from `IOutputsMerkleRootValidator`, `IApplicationChecker`, `IVersionGetter`, and `MachineValidationErrors`.
+
+## Types
+
+### `ClaimStatus`
+
+```solidity
+enum ClaimStatus {
+    UNSTAGED,
+    STAGED,
+    ACCEPTED
+}
+```
+
+### `Claim`
+
+```solidity
+struct Claim {
+    ClaimStatus status;
+    uint256 stagingBlockNumber;
+    bytes32 stagedOutputsMerkleRoot;
+}
+```
+
+The `stagingBlockNumber` and `stagedOutputsMerkleRoot` fields are only meaningful when the claim was staged.
+
+### `MachineValidityProof`
+
+```solidity
+struct MachineValidityProof {
+    LeafProof iflagsYProof;     // proves the iflags_Y register
+    LeafProof htifTohostProof;  // proves the HTIF tohost register
+    LeafProof txBufferProof;    // proves the first data block of the CMIO tx buffer
+}
+```
+
+Proves that the post-epoch machine is manually yielded with an `rx accepted` reason and that the outputs Merkle root is stored at the start of the tx buffer.
+
+### `LeafProof`
+
+```solidity
+struct LeafProof {
+    bytes32 dataBlock;      // 32-byte data block at a known offset
+    bytes32[] siblings;     // bottom-up siblings of the leaf node
+}
+```
 
 ## Functions
 
@@ -20373,11 +20308,14 @@ The acceptance criteria for claims may depend on the type of consensus, and is n
 function submitClaim(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot,
+    MachineValidityProof calldata proof
 ) external
 ```
 
 Submit a claim to the consensus.
+
+*Must fire a `ClaimSubmitted` event. May fire a `ClaimStaged` event if the staging criteria is met. The proof must show a valid post-epoch machine (yielded with `rx accepted`); otherwise machine-validation errors are raised.*
 
 **Parameters**
 
@@ -20385,11 +20323,30 @@ Submit a claim to the consensus.
 |------|------|-------------|
 | `appContract` | `address` | The application contract address |
 | `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+| `machineMerkleRoot` | `bytes32` | The machine Merkle root |
+| `proof` | `MachineValidityProof` | Proof of machine validity and outputs Merkle root |
 
-**Events:**
-- `ClaimSubmitted`: Must be fired
-- `ClaimAccepted`: MAY be fired, if the acceptance criteria is met
+### `acceptClaim()`
+
+```solidity
+function acceptClaim(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 machineMerkleRoot
+) external
+```
+
+Accept a staged claim whose staging period has elapsed.
+
+*Must fire a `ClaimAccepted` event.*
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `appContract` | `address` | The application contract address |
+| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
+| `machineMerkleRoot` | `bytes32` | The machine Merkle root |
 
 ### `getEpochLength()`
 
@@ -20397,15 +20354,45 @@ Submit a claim to the consensus.
 function getEpochLength() external view returns (uint256)
 ```
 
-Get the epoch length, in number of base layer blocks.
+Get the epoch length, in number of base-layer blocks.
 
-**Return Values**
+### `getClaimStagingPeriod()`
 
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `uint256` | The epoch length |
+```solidity
+function getClaimStagingPeriod() external view returns (uint256)
+```
 
-**Note:** The epoch number of a block is defined as the integer division of the block number by the epoch length.
+Get the number of base-layer blocks after which a staged claim can be accepted.
+
+### `getNumberOfAcceptedClaims()` / `getNumberOfStagedClaims()` / `getNumberOfSubmittedClaims()`
+
+```solidity
+function getNumberOfAcceptedClaims(address appContract) external view returns (uint256)
+function getNumberOfStagedClaims(address appContract) external view returns (uint256)
+function getNumberOfSubmittedClaims(address appContract) external view returns (uint256)
+```
+
+Per-application counters for accepted, staged, and submitted claims.
+
+### `getClaim()`
+
+```solidity
+function getClaim(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 machineMerkleRoot
+) external view returns (Claim memory claim)
+```
+
+Get information about a claim.
+
+### `version()`
+
+```solidity
+function version() external view returns (string memory)
+```
+
+Return the rollups-contracts package version string.
 
 ## Events
 
@@ -20416,20 +20403,23 @@ event ClaimSubmitted(
     address indexed submitter,
     address indexed appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot
 )
 ```
 
-Must trigger when a claim is submitted.
+### `ClaimStaged()`
 
-**Parameters**
+```solidity
+event ClaimStaged(
+    address indexed appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot
+)
+```
 
-| Name | Type | Description |
-|------|------|-------------|
-| `submitter` | `address` | The submitter address |
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+*For each application and `lastProcessedBlockNumber`, there can be at most one staged claim.*
 
 ### `ClaimAccepted()`
 
@@ -20437,21 +20427,12 @@ Must trigger when a claim is submitted.
 event ClaimAccepted(
     address indexed appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot
 )
 ```
 
-Must trigger when a claim is accepted.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
-
-**Note:** For each application and lastProcessedBlockNumber, there can be at most one accepted claim.
+*For each application and `lastProcessedBlockNumber`, there can be at most one accepted claim.*
 
 ## Errors
 
@@ -20461,14 +20442,7 @@ Must trigger when a claim is accepted.
 error NotEpochFinalBlock(uint256 lastProcessedBlockNumber, uint256 epochLength)
 ```
 
-The claim contains the number of a block that is not at the end of an epoch (its modulo epoch length is not epoch length - 1).
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `epochLength` | `uint256` | The epoch length |
+The claim's last processed block is not at the end of an epoch.
 
 ### `NotPastBlock()`
 
@@ -20476,14 +20450,7 @@ The claim contains the number of a block that is not at the end of an epoch (its
 error NotPastBlock(uint256 lastProcessedBlockNumber, uint256 currentBlockNumber)
 ```
 
-The claim contains the number of a block in the future (it is greater or equal to the current block number).
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `currentBlockNumber` | `uint256` | The number of the current block |
+The claim contains a block number in the future.
 
 ### `NotFirstClaim()`
 
@@ -20493,12 +20460,45 @@ error NotFirstClaim(address appContract, uint256 lastProcessedBlockNumber)
 
 A claim for that application and epoch was already submitted by the validator.
 
-**Parameters**
+### `ClaimNotStaged()`
 
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
+```solidity
+error ClaimNotStaged(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 machineMerkleRoot,
+    ClaimStatus claimStatus
+)
+```
+
+Tried to accept an unstaged or already-accepted claim.
+
+### `ClaimStagingPeriodNotOverYet()`
+
+```solidity
+error ClaimStagingPeriodNotOverYet(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 machineMerkleRoot,
+    uint256 numberOfBlocksAfterStaging,
+    uint256 claimStagingPeriod
+)
+```
+
+Tried to accept a claim during its staging period.
+
+### Machine validation errors
+
+From `MachineValidationErrors`:
+
+| Error | Condition |
+|-------|-----------|
+| `InvalidSiblingsArrayLength` | A leaf-proof siblings array has the wrong length |
+| `InvalidMachineMerkleProof` | A Merkle proof does not produce the stated machine Merkle root |
+| `InvalidPostEpochMachineIflagsYRegister` | Post-epoch `iflags_Y` is unset |
+| `InvalidPostEpochMachineHtifTohostRegister` | Post-epoch HTIF tohost does not signal `rx accepted` |
+
+A machine that fails the post-epoch checks may have reached an unrecoverable state; foreclosure and emergency withdrawal / deposit refunds are the recovery path.
 
 ## Related Contracts
 
@@ -20513,13 +20513,13 @@ A claim for that application and epoch was already submitted by the validator.
 id: ioutputs-merkle-root-validator
 title: IOutputsMerkleRootValidator
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/IOutputsMerkleRootValidator.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/IOutputsMerkleRootValidator.sol
     title: IOutputsMerkleRootValidator Interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The `IOutputsMerkleRootValidator` interface provides valid outputs Merkle roots for validation.
+The `IOutputsMerkleRootValidator` interface provides valid outputs Merkle roots for validation, last-finalized machine Merkle roots, and input finalization checks.
 
 ## Description
 
@@ -20528,6 +20528,7 @@ This interface provides functionality to check whether an outputs Merkle root is
 ## Functions
 
 ### `isOutputsMerkleRootValid`
+
 ```solidity
 function isOutputsMerkleRootValid(address appContract, bytes32 outputsMerkleRoot) external view returns (bool)
 ```
@@ -20540,6 +20541,39 @@ Check whether an outputs Merkle root is valid.
 
 **Returns:**
 - (bool): True if the outputs Merkle root is valid
+
+### `getLastFinalizedMachineMerkleRoot`
+
+```solidity
+function getLastFinalizedMachineMerkleRoot(address appContract) external view returns (bytes32)
+```
+
+Get the last finalized machine Merkle root for an application.
+
+**Returns:**
+- (bytes32): The last finalized machine Merkle root, or zero if none has been finalized yet
+
+### `wasInputFinalized`
+
+```solidity
+function wasInputFinalized(
+    address appContract,
+    uint256 inputIndex,
+    uint256 blockNumber
+) external view returns (bool)
+```
+
+Check whether an input was finalized.
+
+**Parameters:**
+- `appContract` (address): The application contract address
+- `inputIndex` (uint256): The index of the input in the application's input box
+- `blockNumber` (uint256): The number of the base-layer block in which the input was added
+
+**Returns:**
+- (bool): Whether the input was finalized
+
+*Assumes that an input with such an index exists and was added in that block. Foreclosed applications use this when issuing refunds for deposit inputs that were not finalized.*
 
 ## Related Contracts
 
@@ -20554,7 +20588,7 @@ Check whether an outputs Merkle root is valid.
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus
     title: Consensus Smart Contracts
 ---
 
@@ -20577,18 +20611,21 @@ The framework supports different consensus mechanisms:
 
 ## Consensus Mechanism
 
-A claim consists of:
+A claim submission consists of:
 
-- Application Contract Address: The address of the dApp being validated
-- Last Processed Block Number: The block number up to which inputs have been processed
-- Outputs Merkle Root: The root hash of the Merkle tree containing all outputs produced by the application
+- Application contract address
+- Last processed block number
+- Machine Merkle root (post-epoch machine state)
+- Machine validity proof (proves `iflags_Y`, HTIF tohost / `rx accepted`, and the outputs Merkle root in the tx buffer)
+
+If the claim meets the consensus staging criteria, it is **staged**. After the claim staging period elapses, it can be **accepted**. Once accepted, the outputs Merkle root becomes valid and can be used to validate individual outputs in the application contract.
 
 The consensus contract validates that:
+
 - The block number is at the end of an epoch (modulo epoch length equals epoch length - 1)
 - The block number is in the past (not future)
-- No duplicate claim has been submitted for the same application and epoch
-
-Once a claim is accepted, the outputs Merkle root becomes valid and can be used to validate individual outputs in the application contract.
+- No duplicate claim has been submitted for the same application and epoch by that validator
+- The post-epoch machine is manually yielded with an `rx accepted` reason
 
 ---
 
@@ -20598,13 +20635,13 @@ Once a claim is accepted, the outputs Merkle root becomes valid and can be used 
 id: quorum
 title: Quorum
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/Quorum.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/Quorum.sol
     title: Quorum Contract
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The **Quorum** contract implements a multi-validator consensus mechanism where claims are accepted when a majority of validators vote in favor.
+The **Quorum** contract implements a multi-validator consensus mechanism where claims are staged when a majority of validators vote in favor. Staged claims can be accepted after the claim staging period elapses (see [`IConsensus`](../iconsensus.md)).
 
 ## Functions
 
@@ -20614,19 +20651,26 @@ The **Quorum** contract implements a multi-validator consensus mechanism where c
 function submitClaim(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot,
+    MachineValidityProof calldata proof
 ) external override
 ```
 
 Submit a claim to the consensus. Only validators can call this function.
 
-**Parameters**
+See [`IConsensus.submitClaim`](../iconsensus.md#submitclaim) for parameters, events, and machine-validation requirements. Reverts with `CallerIsNotValidator` if the caller is not a validator.
 
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+### `acceptClaim()`
+
+```solidity
+function acceptClaim(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 machineMerkleRoot
+) external
+```
+
+Accept a staged claim whose staging period has elapsed. See [`IConsensus.acceptClaim`](../iconsensus.md#acceptclaim).
 
 ### `numOfValidators()`
 
@@ -20636,31 +20680,13 @@ function numOfValidators() external view override returns (uint256)
 
 Get the number of validators.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `uint256` | The total number of validators |
-
 ### `validatorId()`
 
 ```solidity
 function validatorId(address validator) external view override returns (uint256)
 ```
 
-Get the ID of a validator.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `validator` | `address` | The validator address |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `uint256` | The validator ID (0 for non-validators, >0 for validators) |
+Get the ID of a validator (0 for non-validators, 1..N for validators).
 
 ### `validatorById()`
 
@@ -20668,19 +20694,7 @@ Get the ID of a validator.
 function validatorById(uint256 id) external view override returns (address)
 ```
 
-Get the address of a validator by its ID.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `id` | `uint256` | The validator ID |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `address` | The validator address (address(0) for invalid IDs) |
+Get the address of a validator by its ID (`address(0)` for invalid IDs).
 
 ### `numOfValidatorsInFavorOfAnyClaimInEpoch()`
 
@@ -20692,19 +20706,6 @@ function numOfValidatorsInFavorOfAnyClaimInEpoch(
 ```
 
 Get the number of validators in favor of any claim in a given epoch.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `uint256` | Number of validators in favor of any claim in the epoch |
 
 ### `isValidatorInFavorOfAnyClaimInEpoch()`
 
@@ -20718,45 +20719,17 @@ function isValidatorInFavorOfAnyClaimInEpoch(
 
 Check whether a validator is in favor of any claim in a given epoch.
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `id` | `uint256` | The ID of the validator |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bool` | Whether validator is in favor of any claim in the epoch |
-
 ### `numOfValidatorsInFavorOf()`
 
 ```solidity
 function numOfValidatorsInFavorOf(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot
 ) external view override returns (uint256)
 ```
 
-Get the number of validators in favor of a claim.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `uint256` | Number of validators in favor of claim |
+Get the number of validators in favor of a claim identified by its machine Merkle root.
 
 ### `isValidatorInFavorOf()`
 
@@ -20764,27 +20737,12 @@ Get the number of validators in favor of a claim.
 function isValidatorInFavorOf(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot,
     uint256 id
 ) external view override returns (bool)
 ```
 
-Check whether a validator is in favor of a claim.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
-| `id` | `uint256` | The ID of the validator |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bool` | Whether validator is in favor of claim |
+Check whether a validator is in favor of a claim identified by its machine Merkle root.
 
 ### `supportsInterface()`
 
@@ -20792,19 +20750,15 @@ Check whether a validator is in favor of a claim.
 function supportsInterface(bytes4 interfaceId) public view override(IERC165, AbstractConsensus) returns (bool)
 ```
 
-Check if the contract supports a specific interface.
+Check if the contract supports a specific interface. Quorum returns `true` for `IOutputsMerkleRootValidator` as well as `IConsensus`.
 
-**Parameters**
+### `version()`
 
-| Name | Type | Description |
-|------|------|-------------|
-| `interfaceId` | `bytes4` | The interface identifier |
+```solidity
+function version() external view returns (string memory)
+```
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `bool` | True if the interface is supported |
+Return the rollups-contracts package version string.
 
 ---
 
@@ -20814,7 +20768,7 @@ Check if the contract supports a specific interface.
 id: iquorum-factory
 title: IQuorumFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/IQuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorumFactory.sol
     title: IQuorumFactory Interface
 ---
 
@@ -20822,92 +20776,7 @@ resources:
 
 The **IQuorumFactory** interface defines the contract for deploying new `IQuorum` contracts.
 
-## Events
-
-### `QuorumCreated`
-
-```solidity
-event QuorumCreated(IQuorum quorum)
-```
-
-A new quorum was deployed.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `quorum` | `IQuorum` | The quorum |
-
-## Functions
-
-### `newQuorum()`
-
-```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength) external returns (IQuorum)
-```
-
-Deploy a new quorum.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `validators` | `address[]` | The list of validators |
-| `epochLength` | `uint256` | The epoch length |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `IQuorum` | The quorum |
-
-### `newQuorum()` (with salt)
-
-```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength, bytes32 salt) external returns (IQuorum)
-```
-
-Deploy a new quorum deterministically.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `validators` | `address[]` | The list of validators |
-| `epochLength` | `uint256` | The epoch length |
-| `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `IQuorum` | The quorum |
-
-### `calculateQuorumAddress()`
-
-```solidity
-function calculateQuorumAddress(
-    address[] calldata validators,
-    uint256 epochLength,
-    bytes32 salt
-) external view returns (address)
-```
-
-Calculate the address of a quorum to be deployed deterministically.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `validators` | `address[]` | The list of validators |
-| `epochLength` | `uint256` | The epoch length |
-| `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `address` | The deterministic quorum address |
+See [`QuorumFactory`](./quorum-factory.md) for the full API, including the `claimStagingPeriod` parameter on `newQuorum` and `calculateQuorumAddress`.
 
 ---
 
@@ -20917,7 +20786,7 @@ Calculate the address of a quorum to be deployed deterministically.
 id: iquorum
 title: IQuorum
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/IQuorum.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorum.sol
     title: IQuorum Interface
 ---
 
@@ -21014,7 +20883,7 @@ Check whether a validator is in favor of any claim in a given epoch.
 function numOfValidatorsInFavorOf(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot
 ) external view returns (uint256)
 ```
 
@@ -21023,7 +20892,7 @@ Get the number of validators in favor of a claim.
 **Parameters:**
 - `appContract` (address): The application contract address
 - `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `outputsMerkleRoot` (bytes32): The outputs Merkle root
+- `machineMerkleRoot` (bytes32): The machine Merkle root
 
 **Returns:**
 - (uint256): Number of validators in favor of claim
@@ -21033,7 +20902,7 @@ Get the number of validators in favor of a claim.
 function isValidatorInFavorOf(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot,
     uint256 id
 ) external view returns (bool)
 ```
@@ -21043,7 +20912,7 @@ Check whether a validator is in favor of a claim.
 **Parameters:**
 - `appContract` (address): The application contract address
 - `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `outputsMerkleRoot` (bytes32): The outputs Merkle root
+- `machineMerkleRoot` (bytes32): The machine Merkle root
 - `id` (uint256): The ID of the validator
 
 **Returns:**
@@ -21064,8 +20933,10 @@ Check whether a validator is in favor of a claim.
 id: quorum-factory
 title: QuorumFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/QuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/QuorumFactory.sol
     title: QuorumFactory Contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorumFactory.sol
+    title: IQuorumFactory Interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
@@ -21077,7 +20948,11 @@ The **QuorumFactory** contract allows anyone to reliably deploy new `IQuorum` co
 ### `newQuorum()`
 
 ```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength) external override returns (IQuorum)
+function newQuorum(
+    address[] calldata validators,
+    uint256 epochLength,
+    uint256 claimStagingPeriod
+) external override returns (IQuorum)
 ```
 
 Deploy a new quorum contract.
@@ -21086,8 +20961,9 @@ Deploy a new quorum contract.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `validators` | `address[]` | The list of validators |
+| `validators` | `address[]` | The list of validators (duplicates are ignored) |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 
 **Return Values**
 
@@ -21098,7 +20974,12 @@ Deploy a new quorum contract.
 ### `newQuorum()` (with salt)
 
 ```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength, bytes32 salt) external override returns (IQuorum)
+function newQuorum(
+    address[] calldata validators,
+    uint256 epochLength,
+    uint256 claimStagingPeriod,
+    bytes32 salt
+) external override returns (IQuorum)
 ```
 
 Deploy a new quorum contract deterministically using CREATE2.
@@ -21107,8 +20988,9 @@ Deploy a new quorum contract deterministically using CREATE2.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `validators` | `address[]` | The list of validators |
+| `validators` | `address[]` | The list of validators (duplicates are ignored) |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 | `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
 
 **Return Values**
@@ -21123,6 +21005,7 @@ Deploy a new quorum contract deterministically using CREATE2.
 function calculateQuorumAddress(
     address[] calldata validators,
     uint256 epochLength,
+    uint256 claimStagingPeriod,
     bytes32 salt
 ) external view override returns (address)
 ```
@@ -21135,6 +21018,7 @@ Calculate the address of a quorum to be deployed deterministically.
 |------|------|-------------|
 | `validators` | `address[]` | The list of validators |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
 | `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
 
 **Return Values**
@@ -21142,6 +21026,24 @@ Calculate the address of a quorum to be deployed deterministically.
 | Name | Type | Description |
 |------|------|-------------|
 | `[0]` | `address` | The deterministic quorum address |
+
+### `version()`
+
+```solidity
+function version() external view returns (string memory)
+```
+
+Return the rollups-contracts package version string.
+
+## Events
+
+### `QuorumCreated()`
+
+```solidity
+event QuorumCreated(IQuorum quorum)
+```
+
+Emitted when a new quorum is deployed.
 
 ---
 
@@ -21151,7 +21053,7 @@ Calculate the address of a quorum to be deployed deterministically.
 id: input-box
 title: InputBox
 resources:
-    - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/inputs/InputBox.sol
+    - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/inputs/InputBox.sol
       title: InputBox contract
 ---
 
@@ -21291,7 +21193,7 @@ Emitted when an input is added to an application's input box.
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9
     title: Smart Contracts for Cartesi Rollups
 ---
 
@@ -21309,6 +21211,8 @@ Clients can interact with Ethereum-compatible nodes using the JSON-RPC API in tw
 
 - Changing state: The state is changed by submitting a transaction that incurs gas fees. The transaction must be cryptographically signed by an Ethereum account with sufficient funds in its wallet.
 
+Contract sources and artifacts are published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) (Soldeer package and GitHub release assets). The npm `@cartesi/rollups` package and Cannon distribution have been discontinued.
+
 ## Cartesi Rollups Smart Contracts
 
 - [`InputBox`](../contracts/input-box.md): This contract receives inputs from users who want to interact with the off-chain layer. All inputs to your application are processed through this contract. 
@@ -21317,29 +21221,33 @@ Clients can interact with Ethereum-compatible nodes using the JSON-RPC API in tw
 
 - [`ApplicationFactory`](../contracts/application-factory.md): This contract enables anyone to deploy [`Application`](../contracts/application.md) contracts with a simple function call. It provides greater convenience to the deployer and security to users and validators, as they can verify that the bytecode has not been maliciously altered.
 
-- [`Portals`](../contracts/portals/): These contracts are used to safely transfer assets from the base layer to the execution environment of your application. Currently, Portal contracts are available for the following types of assets: [Ether (ETH)](../contracts/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../contracts/portals/ERC20Portal.md), [ERC-721 (Non-fungible tokens)](../contracts/portals/ERC721Portal.md), [ERC-1155 single transfer](../contracts/portals/ERC1155SinglePortal.md), and [ERC-1155 batch token transfers](../contracts/portals/ERC1155BatchPortal.md).
+- [`Portals`](../contracts/portals/): These contracts are used to safely transfer assets from the base layer to the execution environment of your application. Currently, Portal contracts are available for the following types of assets: [Ether (ETH)](../contracts/portals/EtherPortal.md), [ERC-20 (Fungible tokens)](../contracts/portals/Erc20Portal.md), [ERC-721 (Non-fungible tokens)](../contracts/portals/Erc721Portal.md), [ERC-1155 single transfer](../contracts/portals/Erc1155SinglePortal.md), and [ERC-1155 batch token transfers](../contracts/portals/Erc1155BatchPortal.md).
 
 - [`Consensus`](../contracts/consensus/overview.md): These contracts are crucial for the framework's security and integrity. They validate and accept claims submitted by validators, ensuring the rollup's integrity by validating outputs Merkle roots. The framework supports different consensus mechanisms including [Authority-based consensus](../contracts/consensus/authority/authority.md) for single-owner control and [Quorum-based consensus](../contracts/consensus/quorum/quorum.md) for multi-validator approval.
 
 ---
 
-<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155BatchPortal/ -->
+<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/Erc1155BatchPortal/ -->
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/ERC1155BatchPortal.sol
-    title: ERC1155BatchPortal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc1155BatchPortal.sol
+    title: Erc1155BatchPortal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc1155BatchPortal.sol
+    title: IErc1155BatchPortal interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The **ERC1155BatchPortal** allows anyone to perform batch transfers of
+The **Erc1155BatchPortal** allows anyone to perform batch transfers of
 ERC-1155 tokens to a dApp while informing the off-chain machine.
 
-## `depositBatchERC1155Token()`
+Portals inherit `IPortal`, which extends `IApplicationChecker` and `IVersionGetter`. They do not hold an input box address; deposits are routed to the input box advertised by the application (`getInputBox()`). Deposits may revert with `ApplicationNotDeployed`, `ApplicationReverted`, `IllformedApplicationReturnData`, `InputBoxNotDeployed`, or `ApplicationForeclosed`.
+
+## `depositBatchErc1155Token()`
 
 ```solidity
-function depositBatchERC1155Token( IERC1155 token, address appContract, uint256[] calldata tokenIds, uint256[] calldata values, bytes calldata baseLayerData, bytes calldata execLayerData) external;
+function depositBatchErc1155Token(IERC1155 token, address appContract, uint256[] calldata tokenIds, uint256[] calldata values, bytes calldata baseLayerData, bytes calldata execLayerData) external;
 ```
 
 Transfer a batch of ERC-1155 tokens to a dApp and add an input to
@@ -21348,7 +21256,11 @@ the dApp's input box to signal such operation.
 The caller must enable approval for the portal to manage all of their tokens
 beforehand, by calling the `setApprovalForAll` function in the token contract.
 
-_Please make sure `tokenIds` and `values` have the same length._
+*Please make sure `tokenIds` and `values` have the same length.*
+
+If the application is foreclosed and the deposit input is not processed,
+the user can issue a refund. If the depositor is a smart contract, a refund
+succeeds only if it implements the ERC-1155 receiver hooks.
 
 #### Parameters
 
@@ -21363,23 +21275,26 @@ _Please make sure `tokenIds` and `values` have the same length._
 
 ---
 
-<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155SinglePortal/ -->
+<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/Erc1155SinglePortal/ -->
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/ERC1155SinglePortal.sol
-    title: ERC1155SinglePortal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc1155SinglePortal.sol
+    title: Erc1155SinglePortal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc1155SinglePortal.sol
+    title: IErc1155SinglePortal interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The **ERC1155SinglePortal** allows anyone to perform single transfers of ERC-1155 tokens to a dApp while informing the off-chain machine.
+The **Erc1155SinglePortal** allows anyone to perform single transfers of ERC-1155 tokens to a dApp while informing the off-chain machine.
 
-### `depositSingleERC1155Token()`
+Portals inherit `IPortal`, which extends `IApplicationChecker` and `IVersionGetter`. They do not hold an input box address; deposits are routed to the input box advertised by the application (`getInputBox()`). Deposits may revert with `ApplicationNotDeployed`, `ApplicationReverted`, `IllformedApplicationReturnData`, `InputBoxNotDeployed`, or `ApplicationForeclosed`.
+
+### `depositSingleErc1155Token()`
 
 ```solidity
-function depositSingleERC1155Token( IERC1155 token, address appContract, uint256 tokenId, uint256 value, bytes calldata baseLayerData, bytes calldata execLayerData) external;
-
+function depositSingleErc1155Token(IERC1155 token, address appContract, uint256 tokenId, uint256 value, bytes calldata baseLayerData, bytes calldata execLayerData) external;
 ```
 
 Transfer an ERC-1155 token to a dApp and add an input to
@@ -21387,6 +21302,10 @@ the dApp's input box to signal such operation.
 
 The caller must enable approval for the portal to manage all of their tokens
 beforehand, by calling the `setApprovalForAll` function in the token contract.
+
+If the application is foreclosed and the deposit input is not processed,
+the user can issue a refund. If the depositor is a smart contract, a refund
+succeeds only if it implements the ERC-1155 receiver hooks.
 
 #### Parameters
 
@@ -21401,31 +21320,40 @@ beforehand, by calling the `setApprovalForAll` function in the token contract.
 
 ---
 
-<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC20Portal/ -->
+<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/Erc20Portal/ -->
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/ERC20Portal.sol
-    title: ERC20Portal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc20Portal.sol
+    title: Erc20Portal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc20Portal.sol
+    title: IErc20Portal interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The **ERC20Portal** allows anyone to perform transfers of
+The **Erc20Portal** allows anyone to perform transfers of
 ERC-20 tokens to a dApp while informing the off-chain machine.
 
-## `depositERC20Tokens()`
+Portals inherit `IPortal`, which extends `IApplicationChecker` and `IVersionGetter`. They do not hold an input box address; deposits are routed to the input box advertised by the application (`getInputBox()`). Deposits may revert with `ApplicationNotDeployed`, `ApplicationReverted`, `IllformedApplicationReturnData`, `InputBoxNotDeployed`, or `ApplicationForeclosed`.
+
+## `depositErc20Tokens()`
 
 ```solidity
-function depositERC20Tokens(IERC20 token, address appContract, uint256 value, bytes calldata execLayerData) external;
+function depositErc20Tokens(IERC20 token, address appContract, uint256 value, bytes calldata execLayerData) external;
 ```
 
 Transfer ERC-20 tokens to a dApp and add an input to
 the dApp's input box to signal such operation.
 
-The caller must allow the portal to withdraw at least `_amount` tokens
+The caller must allow the portal to withdraw at least `value` tokens
 from their account beforehand, by calling the `approve` function in the
 token contract.
+
+Only ERC-20 compliant tokens are supported. The portal rejects deposits
+of fee-on-transfer ERC-20 tokens by comparing the application balance
+before and after the transfer. Empty or ill-formed `transferFrom` return
+values raise a low-level error.
 
 #### Parameters
 
@@ -21436,25 +21364,37 @@ token contract.
 | value         | uint256 | The amount of tokens to be transferred                   |
 | execLayerData | bytes   | Additional data to be interpreted by the execution layer |
 
+#### Errors
+
+| Error | Condition |
+|-------|-----------|
+| `Erc20TransferFailed` | Token transfer did not succeed |
+| `Erc20TransferDecreasedApplicationBalance` | Application balance fell during the transfer |
+| `Erc20TransferValueIsNotBalanceDelta` | Balance delta did not equal `value` (fee-on-transfer) |
+
 ---
 
-<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/ERC721Portal/ -->
+<!-- source: https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/portals/Erc721Portal/ -->
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/ERC721Portal.sol
-    title: ERC721Portal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc721Portal.sol
+    title: Erc721Portal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc721Portal.sol
+    title: IErc721Portal interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
-The **ERC721Portal** allows anyone to perform transfers of
+The **Erc721Portal** allows anyone to perform transfers of
 ERC-721 tokens to a dApp while informing the off-chain machine.
 
-## `depositERC721Token()`
+Portals inherit `IPortal`, which extends `IApplicationChecker` and `IVersionGetter`. They do not hold an input box address; deposits are routed to the input box advertised by the application (`getInputBox()`). Deposits may revert with `ApplicationNotDeployed`, `ApplicationReverted`, `IllformedApplicationReturnData`, `InputBoxNotDeployed`, or `ApplicationForeclosed`.
+
+## `depositErc721Token()`
 
 ```solidity
-function depositERC721Token( IERC721 token, address appContract, uint256 tokenId, bytes baseLayerData, bytes execLayerData) external
+function depositErc721Token(IERC721 token, address appContract, uint256 tokenId, bytes calldata baseLayerData, bytes calldata execLayerData) external
 ```
 
 Transfer an ERC-721 token to a dApp and add an input to
@@ -21463,6 +21403,10 @@ the dApp's input box to signal such operation.
 The caller must change the approved address for the ERC-721 token
 to the portal address beforehand, by calling the `approve` function in the
 token contract.
+
+If the application is foreclosed and the deposit input is not processed,
+the user can issue a refund. If the depositor is a smart contract, a refund
+succeeds only if it accepts the NFT through `onERC721Received`.
 
 #### Parameters
 
@@ -21480,8 +21424,10 @@ token contract.
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/EtherPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/EtherPortal.sol
     title: EtherPortal contract
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IEtherPortal.sol
+    title: IEtherPortal interface
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
@@ -21489,16 +21435,23 @@ resources:
 The **EtherPortal** allows anyone to perform transfers of
 Ether to a dApp while informing the off-chain machine.
 
+Portals inherit `IPortal`, which extends `IApplicationChecker` and `IVersionGetter`. They do not hold an input box address; deposits are routed to the input box advertised by the application (`getInputBox()`). Deposits may revert with `ApplicationNotDeployed`, `ApplicationReverted`, `IllformedApplicationReturnData`, `InputBoxNotDeployed`, or `ApplicationForeclosed`.
+
 ## `depositEther()`
 
 ```solidity
-function depositEther(address appContract, bytes execLayerData) external payable
+function depositEther(address appContract, bytes calldata execLayerData) external payable
 ```
 
 Transfer Ether to a dApp and add an input to
 the dApp's input box to signal such operation.
 
 All the value sent through this function is forwarded to the dApp.
+If the transfer fails, an `EtherTransferFailed` error is raised.
+
+If the application is foreclosed and the deposit input is not processed,
+the user can issue a refund. If the depositor is a smart contract, a refund
+succeeds only if it accepts Ether through a message call.
 
 #### Parameters
 
@@ -21515,9 +21468,9 @@ All the value sent through this function is forwarded to the dApp.
 id: iwithdrawal-output-builder
 title: IWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilder.sol
     title: IWithdrawalOutputBuilder interface
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
     title: IWithdrawalOutputBuilderErrors
 ---
 
@@ -21555,20 +21508,20 @@ Build an output that, when executed by the application contract, transfers the f
 
 ## Errors
 
-### `AccountTooShort()`
+### `InvalidAccountSize()`
 
 ```solidity
-error AccountTooShort(uint64 attemptedAccountSize, uint64 minAccountSize)
+error InvalidAccountSize(uint256 attemptedAccountSize, uint64 accountSize)
 ```
 
-Raised when the provided account is too short for the builder to decode on-chain.
+Raised when the provided account does not match the exact size the builder expects for on-chain decoding.
 
 **Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `attemptedAccountSize` | `uint64` | The attempted account size, in bytes |
-| `minAccountSize` | `uint64` | The minimum expected account size, in bytes |
+| `attemptedAccountSize` | `uint256` | The attempted account size, in bytes |
+| `accountSize` | `uint64` | The expected account size, in bytes |
 
 ---
 
@@ -21587,10 +21540,11 @@ The withdrawal machinery lives partly on the [`Application`](../application.md) 
 
 | Piece | Where | Role |
 |-------|-------|------|
-| Foreclosure + withdrawal logic | [`Application`](../application.md) (`IApplicationForeclosure`, `IApplicationWithdrawal`) | `foreclose`, `proveAccountsDriveMerkleRoot`, `withdraw`, and the account/getter views |
+| Foreclosure + withdrawal logic | [`Application`](../application.md) (`IApplication`) | `foreclose`, `proveAccountsDriveMerkleRoot`, `withdraw`, and the account/getter views |
+| Deposit refunds | [`Application`](../application.md) + `IRefundOutputBuilder` | `issueRefund` recovers unprocessed portal deposits after foreclosure |
 | [`WithdrawalConfig`](./withdrawal-config.md) | passed to the `Application` constructor | Guardian, accounts-drive geometry, and the output builder to use |
 | [`IWithdrawalOutputBuilder`](./iwithdrawal-output-builder.md) | referenced by the config | Turns an account into a withdrawal output (static-called during `withdraw`) |
-| [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) (+ [factory](./usd-withdrawal-output-builder-factory.md)) | one per ERC-20 token | The single-ERC-20 builder; emits a `DelegateCallVoucher` to a shared `SafeERC20Transfer` |
+| [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) (+ [factory](./usd-withdrawal-output-builder-factory.md)) | one per ERC-20 token | The single-ERC-20 builder; emits a `DelegateCallVoucher` to a shared `SafeErc20Transfer` |
 
 ## The withdrawal flow, on-chain
 
@@ -21617,15 +21571,15 @@ If any of the four disagree, proofs fail to validate or funds cannot be built, s
 id: usd-withdrawal-output-builder-factory
 title: UsdWithdrawalOutputBuilderFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/UsdWithdrawalOutputBuilderFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/UsdWithdrawalOutputBuilderFactory.sol
     title: UsdWithdrawalOutputBuilderFactory contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IUsdWithdrawalOutputBuilderFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IUsdWithdrawalOutputBuilderFactory.sol
     title: IUsdWithdrawalOutputBuilderFactory interface
 ---
 
 **`UsdWithdrawalOutputBuilderFactory`** lets anyone deploy a [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) for a given ERC-20 token at a predictable address. Because these builders are **stateless**, it does not matter whether you deploy one yourself or reuse an existing one for the same token. The address is derived deterministically from the token and salt (using `CREATE2`).
 
-The factory is constructed with a shared `SafeERC20Transfer` contract, which it passes to every builder it deploys (used as the delegate-call voucher destination).
+The factory is constructed with a shared `SafeErc20Transfer` contract, which it passes to every builder it deploys (used as the delegate-call voucher destination).
 
 ## Functions
 
@@ -21679,7 +21633,7 @@ Compute the deterministic address a builder for `token`/`salt` would have, wheth
 ### `getSafeErc20Transfer()`
 
 ```solidity
-function getSafeErc20Transfer() external view returns (ISafeERC20Transfer safeErc20Transfer)
+function getSafeErc20Transfer() external view returns (ISafeErc20Transfer safeErc20Transfer)
 ```
 
 Get the shared safe ERC-20 transfer contract passed down to the builders (used as the delegate-call voucher destination).
@@ -21708,29 +21662,31 @@ Triggered on a successful call to `newUsdWithdrawalOutputBuilder`.
 id: usd-withdrawal-output-builder
 title: UsdWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/UsdWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/UsdWithdrawalOutputBuilder.sol
     title: UsdWithdrawalOutputBuilder contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IUsdWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IUsdWithdrawalOutputBuilder.sol
     title: IUsdWithdrawalOutputBuilder interface
 ---
 
 **`UsdWithdrawalOutputBuilder`** is a concrete [`IWithdrawalOutputBuilder`](./iwithdrawal-output-builder.md) for applications whose accounts drive denominates a **single ERC-20 token**. It is a stateless contract fixed to one token at construction; deploy one per token with the [factory](./usd-withdrawal-output-builder-factory.md).
 
-For each account it produces a **`DelegateCallVoucher`** that delegate-calls a shared `SafeERC20Transfer` contract to move `balance` of the token to the account owner.
+For each account it produces a **`DelegateCallVoucher`** that delegate-calls a shared `SafeErc20Transfer` contract to move `balance` of the token to the account owner.
+
+USD accounts are **exactly 32 bytes**: a little-endian `uint96` balance in the first 12 bytes, and the owner address in the last 20 bytes (no tail padding). Account encodings must end with the owner address so nodes can serve owner-to-account-index lookups.
 
 ## Functions
 
 ### `constructor()`
 
 ```solidity
-constructor(ISafeERC20Transfer safeErc20Transfer, IERC20 usd)
+constructor(ISafeErc20Transfer safeErc20Transfer, IERC20 usd)
 ```
 
 **Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `safeErc20Transfer` | `ISafeERC20Transfer` | The shared safe-transfer contract used as the delegate-call destination |
+| `safeErc20Transfer` | `ISafeErc20Transfer` | The shared safe-transfer contract used as the delegate-call destination |
 | `usd` | `IERC20` | The ERC-20 token this builder denominates withdrawals in |
 
 ### `token()`
@@ -21757,7 +21713,7 @@ function buildWithdrawalOutput(address, bytes calldata account)
     returns (bytes memory output)
 ```
 
-Decode `account` as `(address user, uint256 balance)` and return a `DelegateCallVoucher` that, when executed by the application, calls `SafeERC20Transfer.safeTransfer(token, user, balance)`.
+Decode `account` as `(address user, uint96 balance)` and return a `DelegateCallVoucher` that, when executed by the application, calls `SafeErc20Transfer.safeTransfer(token, user, balance)`.
 
 **Parameters**
 
@@ -21769,9 +21725,9 @@ Decode `account` as `(address user, uint256 balance)` and return a `DelegateCall
 
 | Name | Type | Description |
 |------|------|-------------|
-| `output` | `bytes` | An ABI-encoded `DelegateCallVoucher(destination, payload)` where `destination` is the `SafeERC20Transfer` contract and `payload` is `safeTransfer(token, user, balance)` |
+| `output` | `bytes` | An ABI-encoded `DelegateCallVoucher(destination, payload)` where `destination` is the `SafeErc20Transfer` contract and `payload` is `safeTransfer(token, user, balance)` |
 
-*Raises [`AccountTooShort`](./iwithdrawal-output-builder.md#accounttooshort) if the account cannot be decoded.*
+*Raises [`InvalidAccountSize`](./iwithdrawal-output-builder.md#invalidaccountsize) if the account is not exactly 32 bytes.*
 
 ---
 
@@ -21781,9 +21737,9 @@ Decode `account` as `(address user, uint256 balance)` and return a `DelegateCall
 id: withdrawal-config
 title: WithdrawalConfig
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/common/WithdrawalConfig.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/common/WithdrawalConfig.sol
     title: WithdrawalConfig struct
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/library/LibWithdrawalConfig.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/library/LibWithdrawalConfig.sol
     title: LibWithdrawalConfig library
 ---
 
@@ -25546,9 +25502,8 @@ The Cartesi Machine is a state machine that remains idle until a new request ari
 id: introduction
 title: Introduction
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/deployments
-    title: Supported networks
-
+  - url: https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.9
+    title: Supported networks (deployment addresses)
 ---
 
 <!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
@@ -25584,9 +25539,9 @@ Deployment with a third-party service provider is under development and will be 
 
 ## Supported networks
 
-As stated above, the first step in deploying a new Cartesi dApp to a blockchain requires creating a smart contract on that network that uses the Cartesi Rollups smart contracts. Cartesi has already deployed the Rollups smart contracts to several networks for convenience.
+As stated above, the first step in deploying a new Cartesi dApp to a blockchain requires creating a smart contract on that network that uses the Cartesi Rollups smart contracts. Cartesi publishes core contract deployment addresses with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) (see the `deployment-addresses` artifact).
 
-The table below shows the list of all [networks that are currently supported](https://usecannon.com/packages/cartesi-rollups) in the latest release:
+The table below shows networks covered in recent releases:
 
 | Network Name     | Chain ID |
 | ---------------- | -------- |
@@ -25736,12 +25691,12 @@ Do not commit private keys. Use Docker secrets or a file-backed key in any envir
    1. Deploy an authority with `cast`. Capture the returned address (the `sed` call normalizes it):
 
       ```shell
-      cast send <AuthorityFactory-Address> "newAuthority(address,uint256)" <Application-Owner-Address> \
-      10 --private-key <PRIVATE-KEY> --rpc-url <RPC-URL>\
+      cast send <AuthorityFactory-Address> "newAuthority(address,uint256,uint256)" <Application-Owner-Address> \
+      10 <claimStagingPeriod> --private-key <PRIVATE-KEY> --rpc-url <RPC-URL>\
       --json | jq -r '.logs[-1].data' | sed 's/^0x000000000000000000000000/0x/'
       ```
 
-      Factory, portal, and InputBox addresses for the target chain are listed under **Deployed contracts** below.
+      `claimStagingPeriod` is the number of base-layer blocks that must elapse after a claim is staged before it can be accepted. Factory, portal, and InputBox addresses for the target chain are listed under **Deployed contracts** below.
 
    2. Register the snapshot against that authority:
 
@@ -25757,15 +25712,9 @@ Do not commit private keys. Use Docker secrets or a file-backed key in any envir
 
 ## Deployed contracts
 
-Rollups contract addresses for supported networks:
+Rollups contract deployment addresses are published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) as `cartesi-rollups-contracts-<version>-deployment-addresses.tar.gz` (plaintext `.txt` files per chain and contract; JSON artifacts are deprecated). Devnet addresses ship in the Anvil state dump artifact for that release.
 
-- [Cannon Devnet](https://usecannon.com/packages/cartesi-rollups/2.2.0/13370-main/deployment/contracts)
-- [Ethereum Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/11155111-main/deployment/contracts)
-- [Arbitrum Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/421614-main/deployment/contracts)
-- [OP Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/11155420-main/deployment/contracts)
-- [Base Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/84532-main/deployment/contracts)
-
-Use the Cannon package version that matches the contract suite your node was built against.
+Cannon distribution of `@cartesi/rollups` has been discontinued; use the GitHub release assets or the Soldeer package instead.
 
 ## Accessing the node
 
@@ -26476,10 +26425,10 @@ As with any execution layer solution, a Cartesi Application that wants to manipu
 Currently, Cartesi Rollups support the following types of assets:
 
 - [Ether (ETH)](../api-reference/contracts/portals/EtherPortal.md)
-- [ERC-20](../api-reference/contracts/portals/ERC20Portal.md)
-- [ERC-721](../api-reference/contracts/portals/ERC721Portal.md)
-- [ERC-1155 Single](../api-reference/contracts/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch](../api-reference/contracts/portals/ERC1155BatchPortal.md)
+- [ERC-20](../api-reference/contracts/portals/Erc20Portal.md)
+- [ERC-721](../api-reference/contracts/portals/Erc721Portal.md)
+- [ERC-1155 Single](../api-reference/contracts/portals/Erc1155SinglePortal.md)
+- [ERC-1155 Batch](../api-reference/contracts/portals/Erc1155BatchPortal.md)
 
 ![img](../../..//static/img/v2.0/onchain-contracts.jpg)
 
@@ -30593,10 +30542,10 @@ The [CartesiDAppFactory](../api-reference/contracts/application-factory.md) cont
 Portal contracts facilitate the secure transfer of assets between the base layer and the Cartesi execution environment. Currently, Cartesi supports the following types of asset transfers:
 
 - [Ether (ETH)](../api-reference/contracts/portals/EtherPortal.md)
-- [ERC-20 (Fungible tokens)](../api-reference/contracts/portals/ERC20Portal.md)
-- [ERC-721 (Non-fungible tokens)](../api-reference/contracts/portals/ERC721Portal.md)
-- [ERC-1155 Single transfers](../api-reference/contracts/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch transfers](../api-reference/contracts/portals/ERC1155BatchPortal.md)
+- [ERC-20 (Fungible tokens)](../api-reference/contracts/portals/Erc20Portal.md)
+- [ERC-721 (Non-fungible tokens)](../api-reference/contracts/portals/Erc721Portal.md)
+- [ERC-1155 Single transfers](../api-reference/contracts/portals/Erc1155SinglePortal.md)
+- [ERC-1155 Batch transfers](../api-reference/contracts/portals/Erc1155BatchPortal.md)
 
 These Portal contracts implement the logic to "teleport" assets safely between layers, maintaining their integrity and ownership throughout the transfer process.
  
@@ -32720,7 +32669,7 @@ Tokens deposited through the portals are held by your on-chain `Application` con
 Create `src/index.ts` to wire deposits from both portals and user operations sent as JSON inputs.
 
 :::note Portal addresses
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC1155SinglePortal` and `ERC1155BatchPortal` addresses into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc1155SinglePortal` and `Erc1155BatchPortal` addresses into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
@@ -32973,7 +32922,7 @@ cartesi run
 ### Deposits
 
 :::caution token approvals
-ERC-1155 uses `setApprovalForAll` on the token contract for each portal operator. Approve **both** [`ERC1155SinglePortal`](../api-reference/contracts/portals/ERC1155SinglePortal.md) and [`ERC1155BatchPortal`](../api-reference/contracts/portals/ERC1155BatchPortal.md) before depositing through the corresponding portal.
+ERC-1155 uses `setApprovalForAll` on the token contract for each portal operator. Approve **both** [`Erc1155SinglePortal`](../api-reference/contracts/portals/Erc1155SinglePortal.md) and [`Erc1155BatchPortal`](../api-reference/contracts/portals/Erc1155BatchPortal.md) before depositing through the corresponding portal.
 :::
 
 **Single deposit** — interactively:
@@ -33342,10 +33291,10 @@ The `withdrawErc20` method encodes `transferFrom(application, recipient, amount)
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`ERC20Portal`](../api-reference/contracts/portals/ERC20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+The [`Erc20Portal`](../api-reference/contracts/portals/Erc20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
 
 :::note ERC20Portal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC20Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc20Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
@@ -33369,7 +33318,7 @@ export type Report = components["schemas"]["Report"];
 export type Voucher = components["schemas"]["Voucher"];
 
 const wallet = new Wallet();
-// Replace with the ERC20Portal address from `cartesi address-book`
+// Replace with the Erc20Portal address from `cartesi address-book`
 const ERC20Portal = `0xYOUR_ERC20_PORTAL_ADDRESS`;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
@@ -33516,7 +33465,7 @@ main().catch((e) => {
 
 Here is a breakdown of the wallet functionality:
 
-- We handle deposits when the sender is the `ERC20Portal`.
+- We handle deposits when the sender is the `Erc20Portal`.
 
 - We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
@@ -33543,13 +33492,13 @@ cartesi run
 ### Deposits
 
 :::caution token approvals
-An approval step is needed for the [**ERC20 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC20Portal` to transfer tokens on your behalf.
+An approval step is needed for the [**ERC20 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `Erc20Portal` to transfer tokens on your behalf.
 
-Without this approval, the `ERC20Portal` cannot deposit your tokens to the Cartesi backend.
+Without this approval, the `Erc20Portal` cannot deposit your tokens to the Cartesi backend.
 
-You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
+You will encounter this error if you don't approve the `Erc20Portal` address before deposits:
 
-`ContractFunctionExecutionError: The contract function "depositERC20Tokens" reverted with the following reason: ERC20: insufficient allowance`
+`ContractFunctionExecutionError: The contract function "depositErc20Tokens" reverted with the following reason: ERC20: insufficient allowance`
 :::
 
 To deposit ERC20 tokens interactively:
@@ -33871,10 +33820,10 @@ The `withdrawErc721` method encodes `safeTransferFrom(application, recipient, to
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`ERC721Portal`](../api-reference/contracts/portals/ERC721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+The [`Erc721Portal`](../api-reference/contracts/portals/Erc721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
 
 :::note ERC721Portal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
@@ -33898,7 +33847,7 @@ export type Report = components["schemas"]["Report"];
 export type Voucher = components["schemas"]["Voucher"];
 
 const wallet = new Wallet();
-// Replace with the ERC721Portal address from `cartesi address-book`
+// Replace with the Erc721Portal address from `cartesi address-book`
 const ERC721Portal = `0xYOUR_ERC721_PORTAL_ADDRESS`;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
@@ -34038,7 +33987,7 @@ main().catch((e) => {
 
 Here is a breakdown of the wallet functionality:
 
-- We handle deposits when the sender is the `ERC721Portal`.
+- We handle deposits when the sender is the `Erc721Portal`.
 
 - We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
@@ -34065,13 +34014,13 @@ cartesi run
 ### Deposits
 
 :::caution token approvals
-An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf.
+An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `Erc721Portal` to transfer tokens on your behalf.
 
-Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cartesi backend.
+Without this approval, the `Erc721Portal` cannot deposit your tokens to the Cartesi backend.
 
-You will encounter this error if you don't approve the `ERC721Portal` address before deposits:
+You will encounter this error if you don't approve the `Erc721Portal` address before deposits:
 
-`ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
+`ContractFunctionExecutionError: The contract function "depositErc721Tokens" reverted with the following reason: ERC721: insufficient allowance`
 :::
 
 To deposit ERC721 tokens interactively:
@@ -38102,7 +38051,7 @@ class Storage {
     this.users_erc20_token_balance.set(addr, current - BigInt(amount));
   }
 
-  depositERC721Token(userAddress, tokenId) {
+  depositErc721Token(userAddress, tokenId) {
     const addr = normAddr(userAddress);
     const tid = asBigInt(tokenId); 
     this.erc721_id_to_owner_address.set(tid, addr);
@@ -38179,7 +38128,7 @@ async function handleERC20Deposit(depositorAddress, amountDeposited, tokenAddres
 async function handleERC721Deposit(depositorAddress, tokenId, tokenAddress) {
   if (normAddr(tokenAddress) === normAddr(storage.erc721_token)) {
     try {
-      storage.depositERC721Token(depositorAddress, tokenId);
+      storage.depositErc721Token(depositorAddress, tokenId);
        storage.listTokenForSale(tokenId);
       console.log("Token deposit and Listing processed successfully");
       emitNotice("Token ID: " + tokenId + " Deposited by User: " + depositorAddress)
@@ -38627,7 +38576,7 @@ class Storage:
         self.users_erc20_token_balance[addr] = current - amt
         return True
 
-    def depositERC721Token(self, userAddress: str, tokenId):
+    def depositErc721Token(self, userAddress: str, tokenId):
         addr = norm_addr(userAddress)
         tid = as_int(tokenId)
         zero_addr = "0x" + "0" * 40;
@@ -38712,7 +38661,7 @@ def handle_erc20_deposit(depositor_address: str, amount_deposited, token_address
 def handle_erc721_deposit(depositor_address: str, token_id, token_address: str):
     if norm_addr(token_address) == storage.erc721_token:
         try:
-            storage.depositERC721Token(depositor_address, as_int(token_id))
+            storage.depositErc721Token(depositor_address, as_int(token_id))
             storage.listTokenForSale(token_id)
             logger.info("Token Listed Successfully")
             emitNotice(f"Token ID: {token_id}  Deposited by User: {depositor_address}")
@@ -39440,9 +39389,9 @@ For a successful deposit process you should show logs similar to this:
 
 #### Using Cast
 
-It's also possible to use cast commands to deposit assets to your application, but this would require a more manual process of granting approval, then calling the deposit function in the ERC20Portal contract. Below is a step-by-step process to achieve this:
+It's also possible to use cast commands to deposit assets to your application, but this would require a more manual process of granting approval, then calling the deposit function in the Erc20Portal contract. Below is a step-by-step process to achieve this:
 
-- Call the `testToken` contract to approve the `ERC20Portal` an equivalent of the amount of tokens you intend to deposit, using the below command
+- Call the `testToken` contract to approve the `Erc20Portal` an equivalent of the amount of tokens you intend to deposit, using the below command
 
 <Tabs>
 
@@ -39470,7 +39419,7 @@ cast send 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C "approve(address,uint256)" 
 
 The snippet above is an example of how to deposit 300 units of the test tokens, `http://127.0.0.1:6751/anvil` is the anvil_rpc to the local devnet where the application contract is deployed, finally the private_key `0xac0974bec39a17...e784d7bf4f2ff80` is the private key of the default anvil address which is also the owner of the erc20 test contract.
 
-- Call the `depositERC20Tokens` function in the `ERC20Portal` contract, passing in the address of your contract along with the token address and amount of tokens deposited
+- Call the `depositErc20Tokens` function in the `Erc20Portal` contract, passing in the address of your contract along with the token address and amount of tokens deposited
 
 <Tabs>
 
@@ -39478,7 +39427,7 @@ The snippet above is an example of how to deposit 300 units of the test tokens, 
 <pre><code>
 
 ```bash
-cast send <ERC20Portal address> "depositERC20Tokens(address,address,uint256,bytes)" <testTokenContract address> <Application address> <token_Amount> <execution layer Data> --rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <ERC20Portal address> "depositErc20Tokens(address,address,uint256,bytes)" <testTokenContract address> <Application address> <token_Amount> <execution layer Data> --rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -39488,7 +39437,7 @@ cast send <ERC20Portal address> "depositERC20Tokens(address,address,uint256,byte
 <pre><code>
 
 ```bash
-cast send 0xc700D6aDd016eECd59d989C028214Eaa0fCC0051 "depositERC20Tokens(address,address,uint256,bytes)" 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C 0xba3347e79665924033beeb7362629ca7992897d9 202 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send 0xc700D6aDd016eECd59d989C028214Eaa0fCC0051 "depositErc20Tokens(address,address,uint256,bytes)" 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C 0xba3347e79665924033beeb7362629ca7992897d9 202 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>
@@ -39496,7 +39445,7 @@ cast send 0xc700D6aDd016eECd59d989C028214Eaa0fCC0051 "depositERC20Tokens(address
 
 </Tabs>
 
-The above command interacts with the ERC20Portal which utilizes the allowance issued in the previous function to call the `transferFrom` function in the `testToken` contract. This operation transfers the amount of tokens listed to the application contract, and calls the input box to send an input to your application.
+The above command interacts with the Erc20Portal which utilizes the allowance issued in the previous function to call the `transferFrom` function in the `testToken` contract. This operation transfers the amount of tokens listed to the application contract, and calls the input box to send an input to your application.
 
 The next section covers implementations on your application to handle deposits.
 
@@ -40005,9 +39954,9 @@ For a successful deposit process you should get a log similar to this below:
 
 #### Using Cast
 
-It's also possible to deposit the ERC721 test tokens to your application using Cast, this process, requires a more manual approach and happens in 2 phases, one is granting approval to the ERC721Portal then the second is calling the `depositERC721Token` function in the ERC721Portal contract. Below is a step-by-step process for this:
+It's also possible to deposit the ERC721 test tokens to your application using Cast, this process, requires a more manual approach and happens in 2 phases, one is granting approval to the Erc721Portal then the second is calling the `depositErc721Token` function in the Erc721Portal contract. Below is a step-by-step process for this:
 
-- Grant the `ERC721Portal` contract approval
+- Grant the `Erc721Portal` contract approval
 
 <Tabs>
 
@@ -40033,9 +39982,9 @@ cast send 0xBa46623aD94AB45850c4ecbA9555D26328917c3B "setApprovalForAll(address,
 
 </Tabs>
 
-The above command calls the `testNFT` contract `0xBa46...8917c3B` to approve the `ERC721Portal` `0xc700d5...0051` to withdraw tokens to be deposited to your application, the arguments listed above should be the same if you intend to deposit the `testNFT` token, for other ERC721 tokens, then you could change the token address to match the tokens you intend to transfer.
+The above command calls the `testNFT` contract `0xBa46...8917c3B` to approve the `Erc721Portal` `0xc700d5...0051` to withdraw tokens to be deposited to your application, the arguments listed above should be the same if you intend to deposit the `testNFT` token, for other ERC721 tokens, then you could change the token address to match the tokens you intend to transfer.
 
-- Call the `depositERC721Token` function in the ERC721Portal contract
+- Call the `depositErc721Token` function in the Erc721Portal contract
 
 <Tabs>
 
@@ -40043,7 +39992,7 @@ The above command calls the `testNFT` contract `0xBa46...8917c3B` to approve the
 <pre><code>
 
 ```bash
-cast send <ERC721Portal address> "depositERC721Token(address,address,uint256,bytes,bytes)" <testNFT Contract address> <Application address>  <token_Id> <base layer Data>  <execution layer Data> --rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <ERC721Portal address> "depositErc721Token(address,address,uint256,bytes,bytes)" <testNFT Contract address> <Application address>  <token_Id> <base layer Data>  <execution layer Data> --rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -40053,7 +40002,7 @@ cast send <ERC721Portal address> "depositERC721Token(address,address,uint256,byt
 <pre><code>
 
 ```bash
-cast send 0xc700d52F5290e978e9CAe7D1E092935263b60051 "depositERC721Token(address,address,uint256,bytes,bytes)" 0xBa46623aD94AB45850c4ecbA9555D26328917c3B 0xba3347e79665924033beeb7362629ca7992897d9 8 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send 0xc700d52F5290e978e9CAe7D1E092935263b60051 "depositErc721Token(address,address,uint256,bytes,bytes)" 0xBa46623aD94AB45850c4ecbA9555D26328917c3B 0xba3347e79665924033beeb7362629ca7992897d9 8 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>
@@ -40061,7 +40010,7 @@ cast send 0xc700d52F5290e978e9CAe7D1E092935263b60051 "depositERC721Token(address
 
 </Tabs>
 
-From the above command we call the `depositERC721Token` function in the `ERC721Portal` contract `0xc700...60051`, passing the `testNFT` contract `0xBa46...8917c3B`, the `Application contract address` `0x23eff...560fc`, the token_id `4` and finally the optional baseLayer and executionLayer data `0x` and `0x`. For this implementation it's expected that the token_id passed to the function should already be minted and owned by the wallet whose private key is used to sign the transaction.
+From the above command we call the `depositErc721Token` function in the `Erc721Portal` contract `0xc700...60051`, passing the `testNFT` contract `0xBa46...8917c3B`, the `Application contract address` `0x23eff...560fc`, the token_id `4` and finally the optional baseLayer and executionLayer data `0x` and `0x`. For this implementation it's expected that the token_id passed to the function should already be minted and owned by the wallet whose private key is used to sign the transaction.
 
 #### Handling Deposited ERC721 tokens
 
@@ -40551,7 +40500,7 @@ cartesi deposit
 
 #### Using Cast
 
-- Grant the `ERC1155SinglePortal` contract approval
+- Grant the `Erc1155SinglePortal` contract approval
 
 <Tabs>
 
@@ -40577,7 +40526,7 @@ cast send 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 "setApprovalForAll(address,
 
 </Tabs>
 
-- Call the `depositSingleERC1155Token` function in the ERC1155SinglePortal contract
+- Call the `depositSingleErc1155Token` function in the Erc1155SinglePortal contract
 
 <Tabs>
 
@@ -40585,7 +40534,7 @@ cast send 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 "setApprovalForAll(address,
 <pre><code>
 
 ```bash
-cast send <ERC1155SinglePortal Contract address> "depositSingleERC1155Token(address,address,uint256,uint256,bytes,bytes)" <TestMultiToken Contract address> <Application address> <token_id> <Token_amount> <base layer Data>  <execution layer Data>  ---rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <ERC1155SinglePortal Contract address> "depositSingleErc1155Token(address,address,uint256,uint256,bytes,bytes)" <TestMultiToken Contract address> <Application address> <token_id> <Token_amount> <base layer Data>  <execution layer Data>  ---rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -40595,7 +40544,7 @@ cast send <ERC1155SinglePortal Contract address> "depositSingleERC1155Token(addr
 <pre><code>
 
 ```bash
-cast send 0xc700A261279aFC6F755A3a67D86ae43E2eBD0051 "depositSingleERC1155Token(address,address,uint256,uint256,bytes,bytes)" 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 0x0c0fe740dcd46f0a6ddb8498d0bfdca93c5910e6 5 1 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send 0xc700A261279aFC6F755A3a67D86ae43E2eBD0051 "depositSingleErc1155Token(address,address,uint256,uint256,bytes,bytes)" 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 0x0c0fe740dcd46f0a6ddb8498d0bfdca93c5910e6 5 1 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>

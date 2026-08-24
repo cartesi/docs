@@ -13,10 +13,11 @@ The withdrawal machinery lives partly on the [`Application`](../application.md) 
 
 | Piece | Where | Role |
 |-------|-------|------|
-| Foreclosure + withdrawal logic | [`Application`](../application.md) (`IApplicationForeclosure`, `IApplicationWithdrawal`) | `foreclose`, `proveAccountsDriveMerkleRoot`, `withdraw`, and the account/getter views |
+| Foreclosure + withdrawal logic | [`Application`](../application.md) (`IApplication`) | `foreclose`, `proveAccountsDriveMerkleRoot`, `withdraw`, and the account/getter views |
+| Deposit refunds | [`Application`](../application.md) + `IRefundOutputBuilder` | `issueRefund` recovers unprocessed portal deposits after foreclosure |
 | [`WithdrawalConfig`](./withdrawal-config.md) | passed to the `Application` constructor | Guardian, accounts-drive geometry, and the output builder to use |
 | [`IWithdrawalOutputBuilder`](./iwithdrawal-output-builder.md) | referenced by the config | Turns an account into a withdrawal output (static-called during `withdraw`) |
-| [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) (+ [factory](./usd-withdrawal-output-builder-factory.md)) | one per ERC-20 token | The single-ERC-20 builder; emits a `DelegateCallVoucher` to a shared `SafeERC20Transfer` |
+| [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) (+ [factory](./usd-withdrawal-output-builder-factory.md)) | one per ERC-20 token | The single-ERC-20 builder; emits a `DelegateCallVoucher` to a shared `SafeErc20Transfer` |
 
 ## The withdrawal flow, on-chain
 

@@ -80,7 +80,7 @@ class Storage {
     this.users_erc20_token_balance.set(addr, current - BigInt(amount));
   }
 
-  depositERC721Token(userAddress, tokenId) {
+  depositErc721Token(userAddress, tokenId) {
     const addr = normAddr(userAddress);
     const tid = asBigInt(tokenId); 
     this.erc721_id_to_owner_address.set(tid, addr);
@@ -157,7 +157,7 @@ async function handleERC20Deposit(depositorAddress, amountDeposited, tokenAddres
 async function handleERC721Deposit(depositorAddress, tokenId, tokenAddress) {
   if (normAddr(tokenAddress) === normAddr(storage.erc721_token)) {
     try {
-      storage.depositERC721Token(depositorAddress, tokenId);
+      storage.depositErc721Token(depositorAddress, tokenId);
        storage.listTokenForSale(tokenId);
       console.log("Token deposit and Listing processed successfully");
       emitNotice("Token ID: " + tokenId + " Deposited by User: " + depositorAddress)
