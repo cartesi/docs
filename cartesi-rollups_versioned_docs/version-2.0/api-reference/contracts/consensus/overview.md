@@ -2,7 +2,7 @@
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus
     title: Consensus Smart Contracts
 ---
 
@@ -25,17 +25,18 @@ The framework supports different consensus mechanisms:
 
 ## Consensus Mechanism
 
-A claim consists of:
+A claim submission consists of:
 
-- Application Contract Address: The address of the dApp being validated
-- Last Processed Block Number: The block number up to which inputs have been processed
-- Outputs Merkle Root: The root hash of the Merkle tree containing all outputs produced by the application
+- Application contract address
+- Last processed block number
+- Machine Merkle root (post-epoch machine state)
+- Machine validity proof (proves `iflags_Y`, HTIF tohost / `rx accepted`, and the outputs Merkle root in the tx buffer)
+
+If the claim meets the consensus staging criteria, it is **staged**. After the claim staging period elapses, it can be **accepted**. Once accepted, the outputs Merkle root becomes valid and can be used to validate individual outputs in the application contract.
 
 The consensus contract validates that:
+
 - The block number is at the end of an epoch (modulo epoch length equals epoch length - 1)
 - The block number is in the past (not future)
-- No duplicate claim has been submitted for the same application and epoch
-
-Once a claim is accepted, the outputs Merkle root becomes valid and can be used to validate individual outputs in the application contract.
-
-
+- No duplicate claim has been submitted for the same application and epoch by that validator
+- The post-epoch machine is manually yielded with an `rx accepted` reason

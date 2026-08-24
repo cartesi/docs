@@ -311,7 +311,7 @@ const abi = [
   "function safeTransfer(address,address,uint256)"
 ];
 
-async function emitSafeERC20Transfer(token, to, amount) {
+async function emitSafeErc20Transfer(token, to, amount) {
   const call = encodeFunctionData({
     abi,
     functionName: "safeTransfer",
@@ -424,7 +424,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
+func emitSafeErc20Transfer(token, to common.Address, amount *big.Int) error {
 	abiJSON := `[{
 		"type":"function",
 		"name":"safeTransfer",
