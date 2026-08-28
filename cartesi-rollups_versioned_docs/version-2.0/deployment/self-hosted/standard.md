@@ -72,61 +72,182 @@ Do not commit private keys. Use Docker secrets or a file-backed key in any envir
    docker compose -f compose.local.yaml exec advancer cartesi-rollups-node --version
    ```
 
-   Expect `cartesi-rollups-node version 2.0.0-alpha.12`. All six services should be running.
+   Expect `cartesi-rollups-node version 2.0.0-alpha.12`. All six Compose services should be running: `database`, `evm-reader`, `advancer`, `validator`, `claimer`, and `jsonrpc-api`.
 
-4. **Deploy and register the application:**
+## Deploying the application
+
+The node is running. Next, create the on-chain contracts and register the app. Factory addresses are under [Deployed contracts](#deployed-contracts). The commands below match **cartesi-rollups 3.0.0-alpha.6** ([interfaces](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6)).
+
+Choose a deployment method:
+
+- **One-shot CLI (default):** deploys a new Authority and Application, then registers the app.
+- **CLI two-step (alternative):** deploys the Authority first, then deploys and registers the Application.
+- **Direct factory calls (alternative):** provides granular on-chain control for scripts and multisigs. Registration is a separate required step.
+
+### One-shot CLI (default)
+
+This method creates a new Authority and Application in one call, then registers the app on the node.
+
+```shell
+docker compose -f compose.local.yaml exec advancer \
+   cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
+   --epoch-length 10 \
+   --salt <salt> \
+   --template-hash <template-hash> \
+   --register
+```
+
+Replace `<app-name>` with the application name and `<template-hash>` with the value from `cartesi hash`. The salt must be unique. Generate one with:
+
+```shell
+cast keccak256 "your-unique-string"
+```
+
+On success the command prints the application contract address and registers the app on the node.
+
+:::caution
+On alpha.12 testnet, this command has reverted with `execution reverted` on some runs. Fall back to [CLI two-step](#cli-two-step). [Route B: Self-hosted factory](#route-b-self-hosted-factory) calls the same on-chain factory via `cast` and may succeed when the CLI wrapper does not. Still complete [Registering a cast-deployed application](#registering-a-cast-deployed-application) afterward.
+:::
+
+Emergency-withdrawal apps should use [CLI two-step](#cli-two-step) from the start; see [Deployment with emergency withdrawal](./with-emergency-withdrawal.md).
+
+### CLI two-step (alternative) {#cli-two-step}
+
+Preferred when you need a dedicated Authority (including emergency-withdrawal apps) or when the one-shot command reverts.
+
+1. Deploy an authority:
+
+   ```shell
+   docker compose -f compose.local.yaml exec advancer \
+      cartesi-rollups-cli deploy authority --claim-staging-period <blocks>
+   ```
+
+   `claim-staging-period` is the number of base-layer blocks that must elapse after a claim is staged before it can be accepted. If you omit the flag, the CLI defaults to `0`.
+
+2. Deploy and register the application against that authority:
 
    ```shell
    docker compose -f compose.local.yaml exec advancer \
       cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
       --epoch-length 10 \
+      --consensus <Authority-contract> \
       --salt <salt> \
       --template-hash <template-hash> \
       --register
    ```
 
-   Replace `<app-name>` with the application name and `<template-hash>` with the value from `cartesi hash`. The salt must be unique. Generate one with:
+### Direct factory calls (alternative) {#direct-factory-calls}
+
+Use direct factory calls for multisigs, scripts, or predicting addresses before broadcasting. They only deploy the contracts on-chain; after either route below, complete [Registering a cast-deployed application](#registering-a-cast-deployed-application).
+
+Pick one route; do not run both. Each deploys an Authority and an Application for the same app.
+
+#### Prepare the deployment values
+
+Set the shared values used by whichever route you choose:
+
+```shell
+RPC_URL=<http-endpoint>
+PRIVATE_KEY=<funded-private-key>
+AUTHORITY_OWNER=$(cast wallet address --private-key "$PRIVATE_KEY")
+APP_OWNER="$AUTHORITY_OWNER"
+EPOCH_LENGTH=10
+CLAIM_STAGING_PERIOD=0
+TEMPLATE_HASH=<template-hash>   # from `cartesi hash`
+SALT=$(cast keccak "your-unique-string")
+
+INPUT_BOX=0x346B3df038FE9f8380071eC6514D5a83aD143939
+# `calldata` includes the 4-byte selector (`0xb12c9ede…`). `abi-encode` does not, and CREATE2s a different app.
+DATA_AVAILABILITY=$(cast calldata "InputBox(address)" "$INPUT_BOX")
+
+WITHDRAWAL_CONFIG='(0x0000000000000000000000000000000000000000,0,0,0,0x0000000000000000000000000000000000000000)'
+```
+
+For a full emergency-withdrawal config, see [Deployment with emergency withdrawal](./with-emergency-withdrawal.md).
+
+#### Route A: Authority and Application factories
+
+Deploy the Authority and Application in **two transactions**. Use this route when you need separate broadcasts (for example a multisig that signs Authority and Application independently) or when the Authority already exists and you only deploy the Application.
+
+Predict each address, then deploy with the same salt and arguments. Set `AUTHORITY` to the address returned by `calculateAuthorityAddress` before the application calls.
+
+```shell
+AUTHORITY_FACTORY=0x3C1FE01c542a88A523FF6847eD1E26176c8C4ED0
+APPLICATION_FACTORY=0xC549F89cF1ca43eDDECC64Ac2208F4b283B1c483
+
+cast call "$AUTHORITY_FACTORY" \
+  "calculateAuthorityAddress(address,uint256,uint256,bytes32)(address)" \
+  "$AUTHORITY_OWNER" "$EPOCH_LENGTH" "$CLAIM_STAGING_PERIOD" "$SALT" \
+  --rpc-url "$RPC_URL"
+
+cast send "$AUTHORITY_FACTORY" \
+  "newAuthority(address,uint256,uint256,bytes32)" \
+  "$AUTHORITY_OWNER" "$EPOCH_LENGTH" "$CLAIM_STAGING_PERIOD" "$SALT" \
+  --private-key "$PRIVATE_KEY" --rpc-url "$RPC_URL"
+
+cast call "$APPLICATION_FACTORY" \
+  "calculateApplicationAddress(address,address,bytes32,bytes,(address,uint8,uint8,uint64,address),bytes32)(address)" \
+  "$AUTHORITY" "$APP_OWNER" "$TEMPLATE_HASH" "$DATA_AVAILABILITY" \
+  "$WITHDRAWAL_CONFIG" "$SALT" \
+  --rpc-url "$RPC_URL"
+
+cast send "$APPLICATION_FACTORY" \
+  "newApplication(address,address,bytes32,bytes,(address,uint8,uint8,uint64,address),bytes32)" \
+  "$AUTHORITY" "$APP_OWNER" "$TEMPLATE_HASH" "$DATA_AVAILABILITY" \
+  "$WITHDRAWAL_CONFIG" "$SALT" \
+  --private-key "$PRIVATE_KEY" --rpc-url "$RPC_URL"
+```
+
+Without salt, use `newAuthority(address,uint256,uint256)` and `newApplication(address,address,bytes32,bytes,(address,uint8,uint8,uint64,address))` and read addresses from the `AuthorityCreated` / `ApplicationCreated` events.
+
+#### Route B: Self-hosted factory {#route-b-self-hosted-factory}
+
+Deploy the Authority and Application in **one transaction** via [`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.6/src/dapp/ISelfHostedApplicationFactory.sol). Use `calculateAddresses` and `deployContracts` with a shared salt. This matches the one-shot CLI semantics without going through `cartesi-rollups-cli`.
+
+Run `calculateAddresses` first and confirm the predicted Application and Authority addresses before broadcasting `deployContracts`.
+
+```shell
+SELF_HOSTED_FACTORY=0x6145C5996a71a379E030aEb0440df79D60833418
+
+cast call "$SELF_HOSTED_FACTORY" \
+  "calculateAddresses(address,uint256,uint256,address,bytes32,bytes,(address,uint8,uint8,uint64,address),bytes32)(address,address)" \
+  "$AUTHORITY_OWNER" "$EPOCH_LENGTH" "$CLAIM_STAGING_PERIOD" \
+  "$APP_OWNER" "$TEMPLATE_HASH" "$DATA_AVAILABILITY" \
+  "$WITHDRAWAL_CONFIG" "$SALT" \
+  --rpc-url "$RPC_URL"
+# returns (application, authority)
+
+cast send "$SELF_HOSTED_FACTORY" \
+  "deployContracts(address,uint256,uint256,address,bytes32,bytes,(address,uint8,uint8,uint64,address),bytes32)" \
+  "$AUTHORITY_OWNER" "$EPOCH_LENGTH" "$CLAIM_STAGING_PERIOD" \
+  "$APP_OWNER" "$TEMPLATE_HASH" "$DATA_AVAILABILITY" \
+  "$WITHDRAWAL_CONFIG" "$SALT" \
+  --private-key "$PRIVATE_KEY" --rpc-url "$RPC_URL"
+```
+
+## Registering a cast-deployed application
+
+This step is **required after either direct factory route**. An on-chain deployment does not register the app in the node database. Do **not** re-run `deploy application` with the same salt: the CLI tries to deploy again and reverts with `application … already exists`.
+
+1. Register the existing contract. The snapshot mounted on `advancer` must be the machine whose hash you deployed (`cartesi hash` / `--template-hash`).
 
    ```shell
-   cast keccak256 "your-unique-string"
+   docker compose -f compose.local.yaml exec advancer \
+     cartesi-rollups-cli app register \
+     -n <app-name> \
+     -a <application-address> \
+     -t /var/lib/cartesi-rollups-node/snapshot
    ```
 
-   On success the command prints the application contract address and registers the app on the node.
+2. List the registered applications:
 
-   If the combined self-hosted factory deploy fails with `execution reverted`, fall back to deploying authority and application separately (see below). Emergency-withdrawal apps should use that two-step path from the start; see [Deployment with emergency withdrawal](./with-emergency-withdrawal.md).
+   ```shell
+   docker compose -f compose.local.yaml exec advancer cartesi-rollups-cli app list
+   ```
 
-   ### Manual deployment fallback
+3. Confirm that the application `status` is `OK`.
 
-   1. Deploy an authority with the CLI (preferred) or with `cast`. With the CLI:
-
-      ```shell
-      docker compose -f compose.local.yaml exec advancer \
-         cartesi-rollups-cli deploy authority --claim-staging-period <blocks>
-      ```
-
-      Or with `cast` (capture the returned address; the `sed` call normalizes it):
-
-      ```shell
-      cast send <AuthorityFactory-Address> "newAuthority(address,uint256,uint256)" <Application-Owner-Address> \
-      10 <claimStagingPeriod> --private-key <PRIVATE-KEY> --rpc-url <RPC-URL> \
-      --json | jq -r '.logs[-1].data' | sed 's/^0x000000000000000000000000/0x/'
-      ```
-
-      `claimStagingPeriod` is the number of base-layer blocks that must elapse after a claim is staged before it can be accepted. Factory addresses are listed under **Deployed contracts** below.
-
-   2. Deploy the application against that authority:
-
-      ```shell
-      docker compose -f compose.local.yaml exec advancer \
-         cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
-         --epoch-length 10 \
-         --consensus <Authority-contract> \
-         --salt <salt> \
-         --template-hash <template-hash> \
-         --register
-      ```
-
-      On success the command returns the application contract address.
+`app` is not on `PATH` by itself; use `cartesi-rollups-cli app list`.
 
 ## Deployed contracts
 
@@ -179,7 +300,9 @@ The sample compose puts `CARTESI_AUTH_PRIVATE_KEY` in the shared environment, so
 
 ### Use dedicated database roles
 
-The sample compose shares one Postgres role (`postgres`) and one database (`rollupsdb`). For any longer-lived deployment, create a dedicated database user per service, grant only the tables that service needs, and do not use the superuser in application containers. Give Postgres a named volume, and back it up. Inputs live in the InputBox on L1, so a node can be rebuilt from chain plus the **exact** snapshot that produced the registered template hash — keep that published snapshot, not only a local rebuild.
+The sample compose shares one Postgres role (`postgres`) and one database (`rollupsdb`). For any longer-lived deployment, create a dedicated database user per service, grant only the tables that service needs, and do not use the superuser in application containers. Give Postgres a named volume, and back it up. Inputs live in the InputBox on L1, so a node can be rebuilt from chain plus the **exact** snapshot that produced the registered template hash. Keep that published snapshot, not only a local rebuild.
+
+Also cap how many connections each role can open. Postgres has a global `max_connections`; without per-role limits, public inspect or JSON-RPC traffic can exhaust that pool and starve reader, advancer, and claimer. Give each role a Postgres `CONNECTION LIMIT`, run the public API under a **read-only** role with a low limit, and as a client-side bound set `?pool_max_conns=N` on `CARTESI_DATABASE_CONNECTION`.
 
 ### Limit what is published on the network
 
