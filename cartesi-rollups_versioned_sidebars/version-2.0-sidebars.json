@@ -251,6 +251,11 @@
                 "resources/migration-guide",
                 {
                     "type": "link",
+                    "label": "Cartesi Whitepaper",
+                    "href": "https://cartesi.io/cartesi_whitepaper.pdf"
+                },
+                {
+                    "type": "link",
                     "label": "Dave",
                     "href": "https://arxiv.org/abs/2411.05463"
                 },

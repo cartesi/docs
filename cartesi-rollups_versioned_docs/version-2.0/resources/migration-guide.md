@@ -61,7 +61,7 @@ Sources: [rollups-contracts `InputEncoding`](https://github.com/cartesi/rollups-
 
 ## Application address
 
-In SDK v1, the back-end had no direct way to know its own on-chain address. `DAppAddressRelay` relayed it as an input. The back-end detected inputs from that contract and stored the payload. That address was required to build Ether or ERC-721 withdrawal vouchers.
+In SDK v1, the back-end had no direct way to know its own on-chain address. `DAppAddressRelay` relayed it as an input. The back-end detected inputs from that contract and stored the payload. That address was required to build withdrawal vouchers: for Ether, as the voucher destination (`withdrawEther` on the application), and for ERC-20, ERC-721, and ERC-1155 as the `from` / `sender` in calls such as `transferFrom` or `safeTransferFrom` on the token contract.
 
 ```python
 # v1 — detect and store the relayed application address
@@ -126,27 +126,23 @@ See [asset handling](../development/asset-handling.md#withdrawing-tokens) and th
 
 The application still runs inside a Cartesi Machine. The guest-tools package that provides the rollup HTTP loop was renamed and versioned independently of the node.
 
-| | v1.5 | v2.0-alpha |
+| | v1.5 | v2.0 |
 | :-- | :-- | :-- |
-| Guest tools | `machine-emulator-tools` (typically `0.14.1`) | `machine-guest-tools` (typically `0.17.2` with node `alpha.12`) |
+| Guest tools | `machine-emulator-tools` (typically `0.14.1`) | `machine-guest-tools` (typically `0.17.2`) |
 | Typical base | Ubuntu Jammy RISC-V images | Ubuntu Noble RISC-V images |
-| Node emulator (released) | Emulator SDK 0.17.x | Emulator `v0.20.0` ([rollups-node#720](https://github.com/cartesi/rollups-node/pull/720)) |
+| Node emulator | Emulator SDK 0.17.x | Emulator `v0.20.0` |
 
 The machine snapshot (template hash) must match the hash registered with the application contract and the node. Rebuilding against a different emulator or guest-tools version produces a different hash.
 
 ### Building for SDK 2.0
 
-Do not retrofit a v1.5 Dockerfile. Start the application from scratch with **Cartesi CLI 2.0** (currently alpha) and the **prerelease application templates**. Those templates are the source of truth for the v2 image layout.
+Do not retrofit a v1.5 Dockerfile. Start the application from scratch with **Cartesi CLI 2.0** and the current application templates. Those templates are the source of truth for the v2 image layout.
 
 ```shell
 cartesi create my-dapp --template javascript --branch prerelease/sdk-12
 ```
 
 `--branch` selects a branch of [cartesi/application-templates](https://github.com/cartesi/application-templates/tree/prerelease/sdk-12). `prerelease/sdk-12` is the CLI 2.0 default. Then port application logic into the new project and run `cartesi build`.
-
-:::caution Next emulator line
-[`rollups-node#791`](https://github.com/cartesi/rollups-node/pull/791) (merged, **not in a node release yet**) bumps the node to machine-emulator `v0.21.0` and machine-guest-tools `v0.18.0`. After that ships, rebuild the image with matching guest tools before registering it.
-:::
 
 ---
 
@@ -165,7 +161,7 @@ The `Application` contract API changed accordingly. The following subsections ma
 | Execution check | `wasVoucherExecuted(uint256 inputIndex, uint256 outputIndex)` | `wasOutputExecuted(uint256 outputIndex)` |
 | Execution event | `VoucherExecuted(uint256 voucherId)` | `OutputExecuted(uint64 outputIndex, bytes output)` |
 
-On contracts v3, do not treat a voucher as executable until the epoch status is `CLAIM_ACCEPTED`. `CLAIM_SUBMITTED` and `CLAIM_STAGED` are not enough. See [`rollups-contracts#514`](https://github.com/cartesi/rollups-contracts/pull/514) and [`rollups-node#779`](https://github.com/cartesi/rollups-node/pull/779).
+On contracts v3, do not treat a voucher as executable until the epoch status is `CLAIM_ACCEPTED`. `CLAIM_SUBMITTED` and `CLAIM_STAGED` are not enough.
 
 ### Encoding
 
@@ -361,7 +357,7 @@ GraphQL → JSON-RPC map:
 | — | `cartesi_listEpochs` / `cartesi_getEpoch` / `cartesi_getLastAcceptedEpochIndex` |
 | — | `cartesi_getChainId` / `cartesi_getNodeVersion` |
 
-On node `v2.0.0-alpha.12` (contracts v3), also:
+On contracts v3, also:
 
 | Method | Use |
 | :-- | :-- |
@@ -370,17 +366,11 @@ On node `v2.0.0-alpha.12` (contracts v3), also:
 
 `cartesi_getApplication` on contracts v3 returns `enabled` plus `status` (`OK`, `FAILED`, `INOPERABLE` / `DIVERGED` / `CORRUPTED`, `FORECLOSED`). Do not read a single `state: ENABLED` field from older examples.
 
-From [`rollups-node#789`](https://github.com/cartesi/rollups-node/pull/789) (merged after `alpha.12`): inputs are identified by `transaction_hash` + `log_index` (multiple `InputAdded` logs in one L1 transaction are distinct). `cartesi_listInputs` accepts `transaction_hash`. There is no `transaction_reference`.
+Inputs are identified by `transaction_hash` + `log_index` (multiple `InputAdded` logs in one L1 transaction are distinct). `cartesi_listInputs` accepts `transaction_hash`. There is no `transaction_reference`.
 
-Unknown application errors use a dedicated JSON-RPC code ([`rollups-node#783`](https://github.com/cartesi/rollups-node/pull/783)).
+The node's EVM reader polls HTTP for new blocks. A WebSocket blockchain endpoint is no longer required for the reader.
 
-The node's EVM reader now **polls HTTP** for new blocks ([`rollups-node#781`](https://github.com/cartesi/rollups-node/pull/781)). A WebSocket blockchain endpoint is no longer required for the reader.
-
-:::caution Open JSON-RPC work
-[`rollups-node#793`](https://github.com/cartesi/rollups-node/pull/793) (open) adds batch requests, index ranges, multi-status epoch filters, executed/pending output counts, `cartesi_getNodeInfo`, and renames `cartesi_getMatchAdvanced` → `cartesi_getMatchAdvance`. Do not treat those methods as released until that PR merges and a node alpha ships.
-:::
-
-Full method list: [JSON-RPC methods](../api-reference/jsonrpc/methods.md). Spec source: [`internal/jsonrpc/jsonrpc-discover.json` on `next/2.0`](https://github.com/cartesi/rollups-node/blob/next/2.0/internal/jsonrpc/jsonrpc-discover.json).
+Full method list: [JSON-RPC methods](../api-reference/jsonrpc/methods.md).
 
 ---
 
@@ -411,20 +401,20 @@ The OpenAPI spec also accepts `application/octet-stream` for a binary body ([`ap
 
 The response is still a list of reports with hex payloads, plus `status`, `exception_payload`, and `processed_input_count`.
 
-Inspect is served from a temporary machine fork and is synchronous. It returns **503** when the machine is not ready, inspect capacity is exhausted, or the application was **foreclosed** (`Application was foreclosed; machine unavailable`). Body size is limited ([`rollups-node#761`](https://github.com/cartesi/rollups-node/pull/761)).
+Inspect is served from a temporary machine fork and is synchronous. It returns **503** when the machine is not ready, inspect capacity is exhausted, or the application was **foreclosed** (`Application was foreclosed; machine unavailable`). Request body size is limited.
 
 ---
 
 ## TypeScript applications
 
-v1.5 frontends typically called GraphQL directly. v2 TypeScript clients should use the packages in [cartesi/rollups-ts](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha) (`prerelease/v2-alpha`). They wrap the JSON-RPC node API, InputBox, and output execution.
+v1.5 frontends typically called GraphQL directly. v2 TypeScript clients should use the packages in [cartesi/rollups-ts](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha). They wrap the JSON-RPC node API, InputBox, and output execution.
 
-| Role | Earlier v2-alpha name | Current package |
+| Role | Earlier name | Current package |
 | :-- | :-- | :-- |
 | JSON-RPC typed client | `@cartesi/rpc` | [`@cartesi/rpc`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/rpc) |
 | viem L1 / node helpers | `@cartesi/viem` | [`@cartesi/client`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/client) |
 | React / wagmi hooks | `@cartesi/wagmi` | [`@cartesi/react`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/react) |
 | Input/output codec | — | [`@cartesi/codec`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/codec) |
 
-Replace `@cartesi/viem` imports with `@cartesi/client` and `@cartesi/wagmi` with `@cartesi/react`. Pin explicit alpha versions; the `@alpha` npm tag can resolve to an older prerelease.
+Replace `@cartesi/viem` imports with `@cartesi/client` and `@cartesi/wagmi` with `@cartesi/react`.
 
