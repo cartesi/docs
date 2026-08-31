@@ -12,14 +12,14 @@ This guide walks through foreclosing an application and withdrawing an account's
 
 You need:
 
-- An application that was deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md), and that has reached at least one accepted epoch;
+- An application deployed with a [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md);
 - The **guardian** key (only the guardian can foreclose);
 - The **machine tool** (`cartesi-rollups-machine-tool`), which reproduces the settled machine state and generates the proofs;
 - To send the on-chain transactions, either the **`cartesi-rollups-cli`** (see [Installing the required tools](./installation-guide.md)) or, if you prefer, **Foundry's `cast`** with `jq`;
 - The application's **accounts-drive parameters** from its withdrawal config: `accountsDriveStartIndex`, `log2MaxNumOfAccounts`, and `log2LeavesPerAccount`. These must match the values the application was deployed with.
 - This should be done in the same environment of the node, with access to the database (and configuration variables)
 
-This guide assumes the application already maintains its accounts drive in the layout its `WithdrawalConfig` describes. For how that drive is created, sized, and kept, see [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md), and in particular [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive).
+This guide assumes the application maintains its accounts drive in the layout its `WithdrawalConfig` describes. Each account record must end with its owner's 20-byte address. For how that drive is created, sized, and kept, see [Emergency Withdrawal guest requirements](../../api-reference/backend/emergency-withdrawal.md), especially [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive).
 
 The on-chain steps (1, 4, 5, and 6) can be run with either tool. Choose a tab in each step, and it applies to the others. Steps 2 and 3 use the machine tool either way. In the `cast` tabs, `<app-address>` is the application contract address, `<rpc-url>` is your node RPC endpoint, and the private key is the guardian's (step 1) or your own (steps 4 and 5).
 
@@ -45,11 +45,11 @@ cast send <app-address> 'foreclose()' \
 </TabItem>
 </Tabs>
 
-After this, `isForeclosed()` returns `true` and the application is frozen at its last accepted epoch.
+After this, `isForeclosed()` returns `true`. The recovery state is the last accepted machine state, or the initial template state if no claim was accepted.
 
-## Step 2: Reproduce the settled machine state
+## Step 2: Prepare the recovery machine state
 
-Find the last accepted epoch, then replay the node database into a machine snapshot up to that epoch:
+If the application has an accepted epoch, replay the node database into a machine snapshot up to the latest accepted epoch:
 
 ```sh
 cartesi-rollups-machine-tool replay \
@@ -60,6 +60,14 @@ cartesi-rollups-machine-tool replay \
 ```
 
 Replay is deterministic: running it again produces the same machine state, so anyone can reproduce this snapshot independently.
+
+If no claim was ever accepted, use an exact copy of the initial template snapshot instead:
+
+```sh
+cp -a <template-path> replay-snapshot
+```
+
+The root of the selected snapshot must equal the machine root returned by `getLastFinalizedMachineMerkleRoot`, or the Application's `getTemplateHash()` when the finalized root is zero.
 
 ## Step 3: Generate the proofs
 

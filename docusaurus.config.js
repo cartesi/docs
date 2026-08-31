@@ -397,6 +397,22 @@ const config = {
             from: '/cartesi-rollups',      // the old/base route
             to:   '/cartesi-rollups/1.5/', // the new route to redirect to
           },
+          {
+            from: '/cartesi-rollups/2.0/api-reference/contracts/portals/ERC20Portal',
+            to: '/cartesi-rollups/2.0/api-reference/contracts/portals/Erc20Portal',
+          },
+          {
+            from: '/cartesi-rollups/2.0/api-reference/contracts/portals/ERC721Portal',
+            to: '/cartesi-rollups/2.0/api-reference/contracts/portals/Erc721Portal',
+          },
+          {
+            from: '/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155SinglePortal',
+            to: '/cartesi-rollups/2.0/api-reference/contracts/portals/Erc1155SinglePortal',
+          },
+          {
+            from: '/cartesi-rollups/2.0/api-reference/contracts/portals/ERC1155BatchPortal',
+            to: '/cartesi-rollups/2.0/api-reference/contracts/portals/Erc1155BatchPortal',
+          },
         ],
       },
     ],

@@ -227,10 +227,10 @@ The `withdrawErc721` method encodes `safeTransferFrom(application, recipient, to
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`ERC721Portal`](../api-reference/contracts/portals/ERC721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+The portal contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
 
-:::note ERC721Portal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+:::note Portal address
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC721Portal` address into `index.ts`. Read the address from the active environment instead of hardcoding it. The contract interface is documented on the [`Erc721Portal`](../api-reference/contracts/portals/Erc721Portal.md) page.
 :::
 
 ```typescript
@@ -427,7 +427,7 @@ Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cart
 
 You will encounter this error if you don't approve the `ERC721Portal` address before deposits:
 
-`ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
+`ContractFunctionExecutionError: The contract function "depositErc721Token" reverted with the following reason: ERC721: insufficient allowance`
 :::
 
 To deposit ERC721 tokens interactively:

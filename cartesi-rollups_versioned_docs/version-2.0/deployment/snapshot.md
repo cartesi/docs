@@ -143,7 +143,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: release-assets/*
-          prerelease: ${{ contains(github.ref, '-rc') }}
           fail_on_unmatched_files: true
 ```
 
@@ -163,7 +162,7 @@ The build job sets up the environment with Docker Buildx, QEMU, and Node.js, ins
 
 ### Release Job
 
-The release job downloads the build artifacts, prepares the release assets, and creates a GitHub release with the tag. It attaches the snapshot files and checksums, marking the release as prerelease if the tag contains `-rc`.
+The release job downloads the build artifacts, prepares the release assets, and creates a GitHub release with the tag. It attaches the snapshot files and checksums to the release.
 
 ## Release Management
 
@@ -176,9 +175,7 @@ The release job downloads the build artifacts, prepares the release assets, and 
    git push origin v1.0.0
    ```
 
-2. **Prereleases**: Use tags like `v1.0.0-rc` for release candidates
-
-3. **Release artifacts** will include:
+2. **Release artifacts** will include:
 
    - `snapshot.tar.gz` - Compressed snapshot
    - `snapshot.tar.gz.sha256` - Checksum file

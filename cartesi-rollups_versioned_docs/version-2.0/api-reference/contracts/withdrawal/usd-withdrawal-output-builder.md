@@ -2,67 +2,63 @@
 id: usd-withdrawal-output-builder
 title: UsdWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/UsdWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/withdrawal/UsdWithdrawalOutputBuilder.sol
     title: UsdWithdrawalOutputBuilder contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IUsdWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/withdrawal/IUsdWithdrawalOutputBuilder.sol
     title: IUsdWithdrawalOutputBuilder interface
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/library/LibUsdAccount.sol
+    title: LibUsdAccount encoding
 ---
 
-**`UsdWithdrawalOutputBuilder`** is a concrete [`IWithdrawalOutputBuilder`](./iwithdrawal-output-builder.md) for applications whose accounts drive denominates a **single ERC-20 token**. It is a stateless contract fixed to one token at construction; deploy one per token with the [factory](./usd-withdrawal-output-builder-factory.md).
+**`UsdWithdrawalOutputBuilder`** implements [`IWithdrawalOutputBuilder`](./iwithdrawal-output-builder.md) for an accounts drive denominated in one ERC-20 token.
 
-For each account it produces a **`DelegateCallVoucher`** that delegate-calls a shared `SafeERC20Transfer` contract to move `balance` of the token to the account owner.
+The contract is stateless and fixed to a token at construction. Its output is a delegate-call voucher that invokes the shared `SafeErc20Transfer` helper from the Application's context.
 
-## Functions
+## USD account encoding
 
-### `constructor()`
+The builder accepts exactly 32 bytes:
+
+| Byte range | Value |
+| --- | --- |
+| `0..11` | `uint96` token balance in little-endian byte order |
+| `12..31` | 20-byte account-owner address |
+
+This layout places the owner in the final 20 bytes, as required for accounts-drive records. The balance is measured in the token's base units. For a six-decimal token such as USDC, one token is represented as `1_000_000`.
+
+## `constructor()`
 
 ```solidity
-constructor(ISafeERC20Transfer safeErc20Transfer, IERC20 usd)
+constructor(ISafeErc20Transfer safeErc20Transfer, IERC20 usd)
 ```
 
-**Parameters**
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `safeErc20Transfer` | `ISafeErc20Transfer` | Delegate-call target that performs the ERC-20 transfer |
+| `usd` | `IERC20` | Token held and withdrawn by the Application |
 
-| Name | Type | Description |
-|------|------|-------------|
-| `safeErc20Transfer` | `ISafeERC20Transfer` | The shared safe-transfer contract used as the delegate-call destination |
-| `usd` | `IERC20` | The ERC-20 token this builder denominates withdrawals in |
-
-### `token()`
+## `token()`
 
 ```solidity
-function token() external view override returns (IERC20)
+function token() external view returns (IERC20)
 ```
 
-Get the ERC-20 token used to generate withdrawal outputs.
+Returns the configured ERC-20 token.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `IERC20` | The configured token |
-
-### `buildWithdrawalOutput()`
+## `buildWithdrawalOutput()`
 
 ```solidity
-function buildWithdrawalOutput(address, bytes calldata account)
+function buildWithdrawalOutput(address appContract, bytes calldata account)
     external
     view
-    override
     returns (bytes memory output)
 ```
 
-Decode `account` as `(address user, uint256 balance)` and return a `DelegateCallVoucher` that, when executed by the application, calls `SafeERC20Transfer.safeTransfer(token, user, balance)`.
+Decodes the 32-byte account and returns a `DelegateCallVoucher` whose payload calls:
 
-**Parameters**
+```solidity
+SafeErc20Transfer.safeTransfer(token, owner, balance)
+```
 
-| Name | Type | Description |
-|------|------|-------------|
-| `account` | `bytes` | The account, decoded via `LibUsdAccount.decode` into `(user, balance)` |
+The `appContract` parameter is unused because the voucher executes from the calling Application's context.
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `output` | `bytes` | An ABI-encoded `DelegateCallVoucher(destination, payload)` where `destination` is the `SafeERC20Transfer` contract and `payload` is `safeTransfer(token, user, balance)` |
-
-*Raises [`AccountTooShort`](./iwithdrawal-output-builder.md#accounttooshort) if the account cannot be decoded.*
+The function reverts with [`InvalidAccountSize`](./iwithdrawal-output-builder.md#invalidaccountsize) unless `account` is exactly 32 bytes.

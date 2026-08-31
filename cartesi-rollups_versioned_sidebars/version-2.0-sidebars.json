@@ -24,16 +24,28 @@
                         "api-reference/contracts/input-box",
                         "api-reference/contracts/application",
                         "api-reference/contracts/application-factory",
+                        "api-reference/contracts/self-hosted-application-factory",
+                        "api-reference/contracts/devnet-test-tokens",
+                        {
+                            "type": "category",
+                            "label": "Deposit Refunds",
+                            "collapsed": true,
+                            "items": [
+                                "api-reference/contracts/refund/overview",
+                                "api-reference/contracts/refund/refund-output-builder"
+                            ]
+                        },
                         {
                             "type": "category",
                             "label": "Portals",
                             "collapsed": true,
                             "items": [
+                                "api-reference/contracts/portals/overview",
                                 "api-reference/contracts/portals/EtherPortal",
-                                "api-reference/contracts/portals/ERC20Portal",
-                                "api-reference/contracts/portals/ERC721Portal",
-                                "api-reference/contracts/portals/ERC1155SinglePortal",
-                                "api-reference/contracts/portals/ERC1155BatchPortal"
+                                "api-reference/contracts/portals/Erc20Portal",
+                                "api-reference/contracts/portals/Erc721Portal",
+                                "api-reference/contracts/portals/Erc1155SinglePortal",
+                                "api-reference/contracts/portals/Erc1155BatchPortal"
                             ]
                         },
                         {

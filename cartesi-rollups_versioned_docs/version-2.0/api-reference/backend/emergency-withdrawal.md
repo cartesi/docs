@@ -11,9 +11,10 @@ The application keeps a dedicated region of machine memory called the **accounts
 
 An application supports emergency withdrawal only if:
 
-1. It maintains an accounts drive, and
-2. The drive's layout matches the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) the application was deployed with.
-3. The WithdrawalOutputBuilder contract configured in the application can decode the account and build a valid output to withdraw the assets
+1. It maintains an accounts drive.
+2. The drive's layout matches the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) used when the application was deployed.
+3. Every account record stores its owner address in the final 20 bytes.
+4. The configured withdrawal output builder can decode each account and produce a valid withdrawal output.
 
 If the layout the guest writes and the config the contract was given disagree, proofs will not validate and funds cannot be withdrawn.
 
@@ -25,19 +26,15 @@ The [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) describes
 - `log2MaxNumOfAccounts` sets how many accounts fit (the tree depth);
 - `log2LeavesPerAccount` sets each record's size, which is `2^(5 + log2LeavesPerAccount)` bytes.
 
-For the single-token case (see [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md)), each record is 32 bytes: an 8-byte little-endian balance, followed by the 20-byte owner address, followed by padding.
+For the single-token case, each record is exactly 32 bytes. The [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md) reads the first 12 bytes as a little-endian `uint96` balance and the final 20 bytes as the owner's address. There is no padding between these fields.
 
 ## Creating the accounts drive
 
 The accounts drive is a standard Cartesi Machine drive, declared in your project's `cartesi.toml` alongside every other drive. The [Advanced configuration](../../development/advanced-configuration.md#drives) guide covers how drives are defined and built in general; the accounts drive is distinctive only in that it is left raw, so the guest can write balance records into it directly.
 
-Declare it next to the root drive as an empty, raw, unmounted flash drive, and set `final_hash = true` so the build produces the machine hash that on-chain deployment requires:
+Declare it next to the root drive as an empty, raw, unmounted flash drive. `cartesi build` computes and stores the final machine hash automatically:
 
 ```toml
-[machine]
-# ...your existing machine settings...
-final_hash = true
-
 # The application and OS, built from your Dockerfile.
 [drives.root]
 builder = "docker"
@@ -53,7 +50,7 @@ mount = false
 user = "dapp"
 ```
 
-Leaving the drive raw and unmounted is deliberate. Rather than layering a filesystem on top, the guest opens the block device directly (for example `/dev/pmem1`) and writes fixed-size records at deterministic offsets. That predictable layout is precisely what allows the drive to be Merkle-proven against the machine state after foreclosure. The [Common drive options](../../development/advanced-configuration.md#common-drive-options) reference explains each field used above.
+Leaving the drive raw and unmounted allows the guest to open the block device directly, for example `/dev/pmem1`, and write fixed-size records at deterministic offsets. This predictable layout allows the drive to be proven against the machine state after foreclosure. The [Common drive options](../../development/advanced-configuration.md#common-drive-options) reference explains each field used above.
 
 Two properties of the drive must agree with the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md):
 
@@ -68,7 +65,7 @@ You rarely need to write the drive by hand. A ledger library maintains the accou
 
 ## The account encoding must round-trip
 
-The bytes the guest writes for an account must be the same bytes the on-chain [withdrawal output builder](../contracts/withdrawal/iwithdrawal-output-builder.md) decodes at withdrawal time. For the USD builder, that means the `(owner, balance)` encoding the guest produces must match what the builder reads back to build the transfer.
+The bytes written by the guest must match the account format decoded by the on-chain [withdrawal output builder](../contracts/withdrawal/iwithdrawal-output-builder.md). For the USD builder, write the balance into bytes 0 through 11 in little-endian order and the owner address into bytes 12 through 31. The builder reads those same bytes when it creates the token-transfer output.
 
 :::note
 Emergency withdrawal relies on four descriptions of the accounts drive agreeing: the layout the **guest** writes, the **`WithdrawalConfig`** on-chain, the parameters used to **generate proofs** off-chain, and the account encoding the **output builder** decodes. Choose these together at deploy time. See [Withdrawal Contracts Overview](../contracts/withdrawal/overview.md#the-four-way-agreement).

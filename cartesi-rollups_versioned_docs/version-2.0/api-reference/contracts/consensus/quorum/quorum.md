@@ -2,11 +2,11 @@
 id: quorum
 title: Quorum
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/Quorum.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/consensus/quorum/Quorum.sol
     title: Quorum Contract
 ---
 
-The **Quorum** contract implements a multi-validator consensus mechanism where claims are accepted when a majority of validators vote in favor.
+The **Quorum** contract implements a multi-validator consensus mechanism. A claim is staged when a strict majority of validators vote for it. Anyone can accept the staged claim after its claim-staging period through the inherited `acceptClaim()` function.
 
 ## Functions
 
@@ -16,11 +16,12 @@ The **Quorum** contract implements a multi-validator consensus mechanism where c
 function submitClaim(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot,
+    MachineValidityProof calldata proof
 ) external override
 ```
 
-Submit a claim to the consensus. Only validators can call this function.
+Submit a claim and cast the caller's vote for it. Only validators can call this function, and each validator can vote for only one claim in an Application epoch. The claim is staged when it reaches a strict majority.
 
 **Parameters**
 
@@ -28,7 +29,8 @@ Submit a claim to the consensus. Only validators can call this function.
 |------|------|-------------|
 | `appContract` | `address` | The application contract address |
 | `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+| `machineMerkleRoot` | `bytes32` | The post-epoch machine Merkle root |
+| `proof` | `MachineValidityProof` | Proof of a valid `rx accepted` yield and the outputs Merkle root stored in the machine |
 
 ### `numOfValidators()`
 
@@ -140,7 +142,7 @@ Check whether a validator is in favor of any claim in a given epoch.
 function numOfValidatorsInFavorOf(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot
 ) external view override returns (uint256)
 ```
 
@@ -152,7 +154,7 @@ Get the number of validators in favor of a claim.
 |------|------|-------------|
 | `appContract` | `address` | The application contract address |
 | `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+| `machineMerkleRoot` | `bytes32` | The machine Merkle root |
 
 **Return Values**
 
@@ -166,7 +168,7 @@ Get the number of validators in favor of a claim.
 function isValidatorInFavorOf(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot,
     uint256 id
 ) external view override returns (bool)
 ```
@@ -179,7 +181,7 @@ Check whether a validator is in favor of a claim.
 |------|------|-------------|
 | `appContract` | `address` | The application contract address |
 | `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+| `machineMerkleRoot` | `bytes32` | The machine Merkle root |
 | `id` | `uint256` | The ID of the validator |
 
 **Return Values**
@@ -206,4 +208,4 @@ Check if the contract supports a specific interface.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `bool` | True if the interface is supported | 
+| `[0]` | `bool` | True if the interface is supported |
