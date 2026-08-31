@@ -15,6 +15,7 @@ Here is what the file controls at a high level:
 - **SDK version**: Which version of the Cartesi SDK to use when building your machine.
 - **Machine settings**: How the machine boots, how much RAM it has, what program it runs, and how it behaves.
 - **Drives**: The file systems attached to your machine, including your application code and any additional data.
+- **Withdrawal configuration**: How an application exposes its accounts drive for emergency withdrawal.
 
 It is important to note that `cartesi.toml` is only read when you run `cartesi build` or `cartesi shell`. By default, the CLI looks for a `cartesi.toml` in the project root, unless you point it to a different path using the `-c` or `--config` flag with a relative path to the configuration file. If no config file is found, the CLI applies sensible defaults, most of which are covered in the sections below. The default Cartesi templates do not include a `cartesi.toml` in the project root hence you manually create a configuration file when you have an explicit need for it.
 
@@ -40,7 +41,7 @@ format = "ext2"
 
 This means that by default, the CLI will:
 
-1. Use SDK version specified i.e `0.12.0`.
+1. Use the SDK version specified by `<version>`.
 2. Give your machine 128 megabytes of RAM.
 3. Build your root drive from a `Dockerfile` in your project directory.
 4. Pull environment variables and the working directory from that Docker image.
@@ -51,7 +52,7 @@ If those defaults work for you, all you need is a `Dockerfile` and you are ready
 ## SDK Version
 
 ```toml
-sdk = "cartesi/<version>"
+sdk = "cartesi/sdk:<version>"
 ```
 
 The `sdk` field tells the CLI which version of the Cartesi SDK image to use when building your machine. This is a docker image containing the Linux kernel, the RISC‑V toolchain, Cartesi Node and everything else needed to assemble your Cartesi Machine.
@@ -116,12 +117,10 @@ A value of `2305843009213693952` is the default machine cycle the Cartesi machin
 ### Rollup Behavior
 
 ```toml
-assert_rolling_update = true
+assert_rolling_template = true
 ```
 
-Set this to `true` when you are building a standalone application that does not need to interact with the blockchain's input/output system. This is useful during early development or for tools that run inside the machine but do not need the rollup lifecycle.
-
-**`assert_rolling_update`** is related to rolling template assertions. When set to `true`, the CLI will verify that your machine is compatible with rolling updates. This is important for production deployments where you want to ensure your application can be updated without breaking the existing state.
+**`assert_rolling_template`** asks `cartesi-machine` to verify the rolling-template invariants while building the machine. Enable it when you need the build to fail if the resulting machine cannot serve as a valid rolling template.
 
 ### Docker Integration
 
@@ -138,16 +137,6 @@ These fields control how the CLI uses information from your Docker image when bu
 **`use_docker_workdir`** (default: `true`) tells the CLI to use the `WORKDIR` from your Docker image as the working directory inside the machine. This keeps your Docker and Cartesi environments consistent.
 
 **`user`** sets the user that your application runs as inside the machine. The default value `"dapp"` is a non root user, which is a good security practice. You can change this if your application needs to run as a different user.
-
-### Final Hash
-
-```toml
-final_hash = true
-```
-
-When `final_hash` is set to `true`, the CLI computes a hash of the machine after it finishes building. This hash uniquely identifies the exact state of your Cartesi Machine, including all its drives, memory, and configuration.
-
-This is important for on chain verification. The hash is what gets registered on the blockchain, and it allows anyone to verify that the machine running off chain is exactly the same one that was agreed upon. If you are deploying to production, you will want this enabled.
 
 ## Drives
 
@@ -290,13 +279,38 @@ A few options are shared across all builder types:
 
 **`extra_size`** adds free space beyond the actual content size. Useful for drives when you intend to convert to an ext2 format, it takes the actual size of the existing directory contents then adds the specified `extra_size` to it, allowing for future additions. Specified as a string like `"100Mb"` or `"50Mi"`.
 
+## Emergency Withdrawal Configuration
+
+Add `[withdrawal.config]` when the application must support [emergency withdrawal](./emergency-withdrawal/overview.md). The CLI passes this configuration to the Application contract during `cartesi run` deployment.
+
+```toml
+[withdrawal.config]
+guardian = "0x1111111111111111111111111111111111111111"
+log2_leaves_per_account = 0
+log2_max_num_of_accounts = 12
+accounts_drive_start_index = 32
+withdrawal_output_builder = "0x2222222222222222222222222222222222222222"
+```
+
+All five fields are required when the section is present:
+
+| Field | Meaning |
+| --- | --- |
+| `guardian` | Address allowed to foreclose the application |
+| `log2_leaves_per_account` | Base-2 logarithm of the 32-byte leaves used by each account record |
+| `log2_max_num_of_accounts` | Base-2 logarithm of the maximum account count |
+| `accounts_drive_start_index` | Accounts-drive start position from `.cartesi/image/config.json` |
+| `withdrawal_output_builder` | Contract that decodes an account and builds its withdrawal output |
+
+The drive geometry, guest record layout, proof parameters, and output builder must agree. An incomplete section or invalid address causes configuration parsing to fail. See [Emergency withdrawal](./emergency-withdrawal/overview.md) for the complete workflow.
+
 ## Putting It All Together: A Complete Example
 
 Here is a realistic `cartesi.toml` for a Python application that processes uploaded documents. It has a root drive built from a Dockerfile, an empty drive for temporary storage, and a pre built drive containing reference data.
 
 ```toml
 # Pin the SDK version for reproducible builds
-sdk = "cartesi/sdk:0.12.0"
+sdk = "cartesi/sdk:<version>"
 
 [machine]
 # Run the Python application when the machine starts
@@ -311,9 +325,6 @@ use_docker_workdir = true
 
 # Run as the default non root user
 user = "dapp"
-
-# Compute the final hash for on chain verification
-final_hash = true
 
 # The root drive contains the OS, Python runtime, and application code
 [drives.root]
@@ -347,17 +358,16 @@ The reference drive contains a pre built SquashFS image with static reference da
 
 | Field                   | Section      | Type             | Default                         | Description                                                     |
 | ----------------------- | ------------ | ---------------- | ------------------------------- | --------------------------------------------------------------- |
-| `sdk`                   | Top level    | String           | `"cartesi/sdk:0.12.0"`          | SDK image and version used for building                         |
+| `sdk`                   | Top level    | String           | `"cartesi/sdk:<version>"` | SDK image and version used for building                      |
 | `entrypoint`            | `[machine]`  | String           | From Docker image               | Path to the application binary                                  |
 | `boot_args`             | `[machine]`  | String array     | CLI defaults                    | Linux kernel boot arguments                                     |
 | `ram_length`            | `[machine]`  | String           | `"128Mi"`                       | Amount of RAM for the machine                                   |
 | `ram_image`             | `[machine]`  | String           | SDK default                     | Path to the Linux kernel binary                                 |
 | `max_mcycle`            | `[machine]`  | Number           | `2305843009213693952` (default) | Maximum machine cycles allowed                                  |
-| `assert_rolling_update` | `[machine]`  | Boolean          | —                               | Assert rolling update compatibility                             |
+| `assert_rolling_template` | `[machine]` | Boolean          | CLI default                     | Verify rolling-template invariants                              |
 | `use_docker_env`        | `[machine]`  | Boolean          | `true`                          | Inject Docker ENV into the machine                              |
 | `use_docker_workdir`    | `[machine]`  | Boolean          | `true`                          | Use Docker WORKDIR in the machine                               |
 | `user`                  | `[machine]`  | String           | —                               | User to run the application as                                  |
-| `final_hash`            | `[machine]`  | Boolean          | —                               | Compute machine hash after build                                |
 | `builder`               | `[drives.*]` | String           | `"docker"`                      | How to create the drive: docker, empty, directory, tar, or none |
 | `dockerfile`            | `[drives.*]` | String           | `"Dockerfile"`                  | Path to Dockerfile (docker builder)                             |
 | `target`                | `[drives.*]` | String           | Last stage                      | Docker multi stage build target                                 |
@@ -367,3 +377,8 @@ The reference drive contains a pre built SquashFS image with static reference da
 | `directory`             | `[drives.*]` | String           | —                               | Local directory to package (directory builder)                  |
 | `filename`              | `[drives.*]` | String           | —                               | Path to tar or existing image file                              |
 | `mount`                 | `[drives.*]` | String           | `/mnt/<name>`                   | Where the drive is mounted in the machine                       |
+| `guardian`              | `[withdrawal.config]` | Address | Required when enabled | Address allowed to foreclose the application |
+| `log2_leaves_per_account` | `[withdrawal.config]` | Number | Required when enabled | Account-record size expressed in 32-byte leaves |
+| `log2_max_num_of_accounts` | `[withdrawal.config]` | Number | Required when enabled | Maximum account count as a base-2 logarithm |
+| `accounts_drive_start_index` | `[withdrawal.config]` | Number | Required when enabled | Accounts-drive position in machine memory |
+| `withdrawal_output_builder` | `[withdrawal.config]` | Address | Required when enabled | Builder used to create withdrawal outputs |

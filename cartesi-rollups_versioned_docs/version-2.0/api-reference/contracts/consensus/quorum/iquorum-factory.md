@@ -2,7 +2,7 @@
 id: iquorum-factory
 title: IQuorumFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/IQuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/consensus/quorum/IQuorumFactory.sol
     title: IQuorumFactory Interface
 ---
 
@@ -29,7 +29,11 @@ A new quorum was deployed.
 ### `newQuorum()`
 
 ```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength) external returns (IQuorum)
+function newQuorum(
+    address[] calldata validators,
+    uint256 epochLength,
+    uint256 claimStagingPeriod
+) external returns (IQuorum)
 ```
 
 Deploy a new quorum.
@@ -40,6 +44,7 @@ Deploy a new quorum.
 |------|------|-------------|
 | `validators` | `address[]` | The list of validators |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | Blocks that must pass between claim staging and acceptance |
 
 **Return Values**
 
@@ -50,7 +55,12 @@ Deploy a new quorum.
 ### `newQuorum()` (with salt)
 
 ```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength, bytes32 salt) external returns (IQuorum)
+function newQuorum(
+    address[] calldata validators,
+    uint256 epochLength,
+    uint256 claimStagingPeriod,
+    bytes32 salt
+) external returns (IQuorum)
 ```
 
 Deploy a new quorum deterministically.
@@ -61,6 +71,7 @@ Deploy a new quorum deterministically.
 |------|------|-------------|
 | `validators` | `address[]` | The list of validators |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | Blocks that must pass between claim staging and acceptance |
 | `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
 
 **Return Values**
@@ -75,6 +86,7 @@ Deploy a new quorum deterministically.
 function calculateQuorumAddress(
     address[] calldata validators,
     uint256 epochLength,
+    uint256 claimStagingPeriod,
     bytes32 salt
 ) external view returns (address)
 ```
@@ -87,10 +99,11 @@ Calculate the address of a quorum to be deployed deterministically.
 |------|------|-------------|
 | `validators` | `address[]` | The list of validators |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | Blocks that must pass between claim staging and acceptance |
 | `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
 
 **Return Values**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `address` | The deterministic quorum address | 
+| `[0]` | `address` | The deterministic quorum address |

@@ -2,152 +2,146 @@
 id: application-factory
 title: ApplicationFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/dapp/ApplicationFactory.sol
-    title: Application Factory contract
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/dapp/ApplicationFactory.sol
+    title: ApplicationFactory contract
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/dapp/IApplicationFactory.sol
+    title: IApplicationFactory interface
 ---
 
-The **ApplicationFactory** contract is a tool for reliably deploying new instances of the [`Application`](../contracts/application.md) contract with or without a specified salt value for address derivation.
+The **ApplicationFactory** deploys [`Application`](./application.md) contracts directly or at deterministic `CREATE2` addresses.
 
-Additionally, it provides a function to calculate the address of a potential new `CartesiDApp` contract based on input parameters.
+Every Application created by one factory uses the same immutable [refund output builder](./refund/overview.md). The caller still chooses the validator, owner, template hash, input box, and withdrawal configuration for each deployment.
 
-This contract ensures efficient and secure deployment of `Application` contracts within the Cartesi Rollups framework.
-
-## Functions
-
-### `newApplication()`
+## `constructor()`
 
 ```solidity
-function newApplication(
-    IOutputsMerkleRootValidator outputsMerkleRootValidator,
-    address appOwner,
-    bytes32 templateHash,
-    bytes calldata dataAvailability,
-    WithdrawalConfig calldata withdrawalConfig
-) external override returns (IApplication)
+constructor(IRefundOutputBuilder refundOutputBuilder)
 ```
 
-Deploys a new Application contract without a salt value for address derivation.
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `refundOutputBuilder` | `IRefundOutputBuilder` | Builder assigned to every Application deployed by this factory |
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
-| `appOwner` | `address` | Address of the owner of the application |
-| `templateHash` | `bytes32` | Hash of the template for the application |
-| `dataAvailability` | `bytes` | The data availability solution |
-| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `IApplication` | The deployed Application contract |
-
-### `newApplication()` (with salt)
+## `newApplication()`
 
 ```solidity
 function newApplication(
     IOutputsMerkleRootValidator outputsMerkleRootValidator,
     address appOwner,
     bytes32 templateHash,
-    bytes calldata dataAvailability,
+    IInputBox inputBox,
+    WithdrawalConfig calldata withdrawalConfig
+) external returns (IApplication appContract)
+```
+
+Deploys an Application with the standard `CREATE` opcode.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | Initial output validator |
+| `appOwner` | `address` | Nonzero initial Application owner |
+| `templateHash` | `bytes32` | Initial machine state hash |
+| `inputBox` | `IInputBox` | Input box used by the Application and its portals |
+| `withdrawalConfig` | `WithdrawalConfig` | Guardian, accounts-drive geometry, and withdrawal builder; use a zero-valued config to disable recovery |
+
+Returns the deployed Application and emits `ApplicationCreated`.
+
+| Return value | Type | Description |
+| --- | --- | --- |
+| `appContract` | `IApplication` | Deployed Application contract |
+
+## `newApplication()` with salt
+
+```solidity
+function newApplication(
+    IOutputsMerkleRootValidator outputsMerkleRootValidator,
+    address appOwner,
+    bytes32 templateHash,
+    IInputBox inputBox,
     WithdrawalConfig calldata withdrawalConfig,
     bytes32 salt
-) external override returns (IApplication)
+) external returns (IApplication appContract)
 ```
 
-Deploys a new `Application` contract with a specified salt value for address derivation.
+Deploys the same configuration with `CREATE2`. The address depends on every constructor value, the factory's immutable refund builder, and `salt`.
 
-**Parameters**
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | Initial output validator |
+| `appOwner` | `address` | Nonzero initial Application owner |
+| `templateHash` | `bytes32` | Initial machine state hash |
+| `inputBox` | `IInputBox` | Input box used by the Application and its portals |
+| `withdrawalConfig` | `WithdrawalConfig` | Guardian, accounts-drive geometry, and withdrawal builder; use a zero-valued config to disable recovery |
+| `salt` | `bytes32` | Value used to derive the deterministic deployment address |
 
-| Name | Type | Description |
-|------|------|-------------|
-| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
-| `appOwner` | `address` | Address of the owner of the application |
-| `templateHash` | `bytes32` | Hash of the template for the application |
-| `dataAvailability` | `bytes` | The data availability solution |
-| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
-| `salt` | `bytes32` | Salt value for address derivation |
+| Return value | Type | Description |
+| --- | --- | --- |
+| `appContract` | `IApplication` | Deployed Application contract |
 
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `IApplication` | The deployed Application contract |
-
-### `calculateApplicationAddress()`
+## `calculateApplicationAddress()`
 
 ```solidity
 function calculateApplicationAddress(
     IOutputsMerkleRootValidator outputsMerkleRootValidator,
     address appOwner,
     bytes32 templateHash,
-    bytes calldata dataAvailability,
+    IInputBox inputBox,
     WithdrawalConfig calldata withdrawalConfig,
     bytes32 salt
-) external view override returns (address)
+) external view returns (address appContract)
 ```
 
-Calculates the address of a potential new Application contract based on input parameters.
+Returns the address at which the salted `newApplication` overload would deploy the Application. It does not deploy a contract.
 
-**Parameters**
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | Initial output validator |
+| `appOwner` | `address` | Nonzero initial Application owner |
+| `templateHash` | `bytes32` | Initial machine state hash |
+| `inputBox` | `IInputBox` | Input box used by the Application and its portals |
+| `withdrawalConfig` | `WithdrawalConfig` | Guardian, accounts-drive geometry, and withdrawal builder; use a zero-valued config to disable recovery |
+| `salt` | `bytes32` | Value used to derive the deterministic deployment address |
 
-| Name | Type | Description |
-|------|------|-------------|
-| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The initial outputs Merkle root validator contract |
-| `appOwner` | `address` | Address of the owner of the application |
-| `templateHash` | `bytes32` | Hash of the template for the application |
-| `dataAvailability` | `bytes` | The data availability solution |
-| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
-| `salt` | `bytes32` | Salt value for address derivation |
+| Return value | Type | Description |
+| --- | --- | --- |
+| `appContract` | `address` | Address calculated for the Application |
 
-**Return Values**
+Use exactly the same factory and arguments for calculation and deployment. Changing the input box, validator, withdrawal configuration, or any other constructor value changes the resulting address.
 
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `address` | Address of the potential new Application contract |
-
-## Events
-
-### `ApplicationCreated()`
+## `ApplicationCreated`
 
 ```solidity
 event ApplicationCreated(
-    IOutputsMerkleRootValidator outputsMerkleRootValidator,
+    IOutputsMerkleRootValidator indexed outputsMerkleRootValidator,
     address appOwner,
     bytes32 templateHash,
-    bytes dataAvailability,
+    IInputBox inputBox,
     WithdrawalConfig withdrawalConfig,
     IApplication appContract
 )
 ```
 
-A new Application contract was deployed.
+Emitted after either deployment method succeeds.
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | The outputs Merkle root validator contract |
-| `appOwner` | `address` | The owner of the application |
-| `templateHash` | `bytes32` | The template hash |
-| `dataAvailability` | `bytes` | The data availability solution |
-| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
-| `appContract` | `IApplication` | The deployed Application contract |
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `outputsMerkleRootValidator` | `IOutputsMerkleRootValidator` | Initial output validator assigned to the Application |
+| `appOwner` | `address` | Initial Application owner |
+| `templateHash` | `bytes32` | Initial machine state hash |
+| `inputBox` | `IInputBox` | Input box assigned to the Application |
+| `withdrawalConfig` | `WithdrawalConfig` | Withdrawal configuration assigned to the Application |
+| `appContract` | `IApplication` | Deployed Application contract |
 
 ## Errors
 
-### `InvalidWithdrawalConfig()`
+### `InvalidWithdrawalConfig`
 
 ```solidity
 error InvalidWithdrawalConfig(WithdrawalConfig withdrawalConfig)
 ```
 
-Raised at deployment when the provided [`WithdrawalConfig`](./withdrawal/withdrawal-config.md) is invalid, meaning its accounts-drive layout does not fit inside the machine memory (see [`LibWithdrawalConfig.isValid`](./withdrawal/withdrawal-config.md#validation)). Checking the config in the factory means users and the node do not have to check it themselves.
+Raised when the accounts-drive layout in `withdrawalConfig` does not fit within the Cartesi Machine memory. See [`WithdrawalConfig` validation](./withdrawal/withdrawal-config.md#validation).
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `withdrawalConfig` | `WithdrawalConfig` | The invalid withdrawal configuration |
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `withdrawalConfig` | `WithdrawalConfig` | Invalid withdrawal configuration supplied for deployment |

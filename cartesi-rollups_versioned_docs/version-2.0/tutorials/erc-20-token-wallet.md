@@ -249,10 +249,10 @@ The `withdrawErc20` method encodes `transferFrom(application, recipient, amount)
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`ERC20Portal`](../api-reference/contracts/portals/ERC20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+The portal contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
 
-:::note ERC20Portal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC20Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+:::note Portal address
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC20Portal` address into `index.ts`. Read the address from the active environment instead of hardcoding it. The contract interface is documented on the [`Erc20Portal`](../api-reference/contracts/portals/Erc20Portal.md) page.
 :::
 
 ```typescript
@@ -456,7 +456,7 @@ Without this approval, the `ERC20Portal` cannot deposit your tokens to the Carte
 
 You will encounter this error if you don't approve the `ERC20Portal` address before deposits:
 
-`ContractFunctionExecutionError: The contract function "depositERC20Tokens" reverted with the following reason: ERC20: insufficient allowance`
+`ContractFunctionExecutionError: The contract function "depositErc20Tokens" reverted with the following reason: ERC20: insufficient allowance`
 :::
 
 To deposit ERC20 tokens interactively:

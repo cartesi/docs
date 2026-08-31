@@ -2,8 +2,12 @@
 id: introduction
 title: Introduction
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/deployments
-    title: Supported networks
+  - url: https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.9
+    title: Rollups Contracts v3.0.0
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/docs/deployment.md
+    title: Contract deployment guide
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/docs/verification.md
+    title: Contract verification guide
 
 ---
 
@@ -36,19 +40,21 @@ There are two methods to deploy an application:
 Deployment with a third-party service provider is under development and will be available soon.
 :::
 
-## Supported networks
+## Use published contract addresses
 
-As stated above, the first step in deploying a new Cartesi dApp to a blockchain requires creating a smart contract on that network that uses the Cartesi Rollups smart contracts. Cartesi has already deployed the Rollups smart contracts to several networks for convenience.
+The contract reference in this documentation targets Rollups Contracts `v3.0.0`. Use the deployment addresses published with that release when following its interfaces.
 
-The table below shows the list of all [networks that are currently supported](https://usecannon.com/packages/cartesi-rollups) in the latest release:
+The contracts can be deployed to any EVM-compatible chain that supports the required EVM version. The Cartesi Foundation commonly deploys releases to Ethereum, Arbitrum, Optimism, Base, and their testnets, but availability depends on the release and network.
 
-| Network Name     | Chain ID |
-| ---------------- | -------- |
-| Ethereum Mainnet | 1        |
-| Sepolia          | 11155111 |
-| Optimism         | 10       |
-| Optimism Sepolia | 11155420 |
-| Arbitrum         | 42161    |
-| Arbitrum Sepolia | 421614   |
-| Base             | 8453     |
-| Base Sepolia     | 84532    |
+Before deploying an Application:
+
+1. obtain `cartesi-rollups-contracts-3.0.0-deployment-addresses.tar.gz` from the GitHub release, or deploy the suite from the tagged source;
+2. verify the chain ID and bytecode for each address;
+3. keep that artifact with the Application deployment record; and
+4. configure every client and node component with addresses from the same release.
+
+The repository uses Foundry deployment scripts and stores results under `deployments/<chain-id>`. Each contract has a plain-text `<Contract>.txt` address file. Integrations should read the plain-text address files.
+
+Follow the linked contract deployment guide to simulate and broadcast a deployment. Verification can be retried independently with `make verify-<chain>` or for one contract with `make verify-<chain>-<contract>`.
+
+Contract source is distributed through the Soldeer package `cartesi-rollups-contracts~3.0.0`. Compiled artifacts and the Anvil state are available as separate assets on the GitHub release.
