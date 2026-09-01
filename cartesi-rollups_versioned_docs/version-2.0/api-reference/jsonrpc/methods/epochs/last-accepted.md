@@ -3,6 +3,8 @@ id: jsonrpc-epochs-last-accepted
 title: Get Last Accepted Epoch Index
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 # Get Last Accepted Epoch Index
 
 ## Example Request

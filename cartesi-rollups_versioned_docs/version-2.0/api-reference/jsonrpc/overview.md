@@ -3,6 +3,8 @@ id: overview
 title: Overview
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 # JSON-RPC API Overview
 
 The Cartesi Rollups Node API provides a JSON-RPC interface for interacting with Cartesi Rollups applications. This API allows you to:

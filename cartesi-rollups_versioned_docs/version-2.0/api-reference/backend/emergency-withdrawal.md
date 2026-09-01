@@ -25,7 +25,7 @@ The [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) describes
 - `log2MaxNumOfAccounts` sets how many accounts fit (the tree depth);
 - `log2LeavesPerAccount` sets each record's size, which is `2^(5 + log2LeavesPerAccount)` bytes.
 
-For the single-token case (see [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md)), each record is 32 bytes: an 8-byte little-endian balance, followed by the 20-byte owner address, followed by padding.
+For the single-token case (see [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md)), each record is exactly 32 bytes: a 12-byte little-endian `uint96` balance, followed by the 20-byte owner address (no tail padding).
 
 ## Creating the accounts drive
 

@@ -12,6 +12,8 @@ resources:
     title: Install Ubuntu LTS
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The primary requirements for building on Cartesi are:
 
 - Cartesi CLI: An easy-to-use tool for developing and deploying your dApps.

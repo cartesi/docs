@@ -2,9 +2,9 @@
 id: iwithdrawal-output-builder
 title: IWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilder.sol
     title: IWithdrawalOutputBuilder interface
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
     title: IWithdrawalOutputBuilderErrors
 ---
 
@@ -42,17 +42,17 @@ Build an output that, when executed by the application contract, transfers the f
 
 ## Errors
 
-### `AccountTooShort()`
+### `InvalidAccountSize()`
 
 ```solidity
-error AccountTooShort(uint64 attemptedAccountSize, uint64 minAccountSize)
+error InvalidAccountSize(uint256 attemptedAccountSize, uint64 accountSize)
 ```
 
-Raised when the provided account is too short for the builder to decode on-chain.
+Raised when the provided account does not match the exact size the builder expects for on-chain decoding.
 
 **Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `attemptedAccountSize` | `uint64` | The attempted account size, in bytes |
-| `minAccountSize` | `uint64` | The minimum expected account size, in bytes |
+| `attemptedAccountSize` | `uint256` | The attempted account size, in bytes |
+| `accountSize` | `uint64` | The expected account size, in bytes |

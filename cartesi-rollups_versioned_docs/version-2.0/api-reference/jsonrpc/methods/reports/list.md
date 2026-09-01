@@ -3,6 +3,8 @@ id: reports-list
 title: List Reports
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 # List Reports
 
 ## Example Request

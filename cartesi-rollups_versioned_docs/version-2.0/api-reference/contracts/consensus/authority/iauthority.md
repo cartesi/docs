@@ -2,9 +2,11 @@
 id: iauthority
 title: IAuthority
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/IAuthority.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/IAuthority.sol
     title: IAuthority Interface
 ---
+
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
 The `IAuthority` interface defines a consensus contract controlled by a single address, the owner.
 
@@ -16,4 +18,4 @@ A consensus contract controlled by a single address, the owner. This interface c
 
 - [`Authority`](./authority.md): Implementation of this interface
 - [`IConsensus`](../iconsensus.md): Base consensus interface
-- [`IOwnable`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/access/IOwnable.sol): Ownership management interface 
+- [`IOwnable`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/access/IOwnable.sol): Ownership management interface 

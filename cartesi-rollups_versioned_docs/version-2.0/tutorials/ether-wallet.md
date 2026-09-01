@@ -3,6 +3,8 @@ id: ether-wallet
 title: Integrating Ether wallet functionality
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 This tutorial will build a basic Ether wallet inside a Cartesi backend application using TypeScript.
 
 The goal is to have a backend application to track balances and receive, transfer, and withdraw Ether.

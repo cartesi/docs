@@ -6,6 +6,8 @@ resources:
     title: Source code for the frontend application
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 # Building a React Frontend for Cartesi Apps
 
 This is a comprehensive guide for building a React frontend that interacts with the deployed Cartesi applications using Cartesi TypeScript packages, wagmi hooks and viem library.

@@ -2,9 +2,11 @@
 id: iquorum
 title: IQuorum
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/IQuorum.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorum.sol
     title: IQuorum Interface
 ---
+
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
 The `IQuorum` interface defines a consensus model controlled by a small, immutable set of validators.
 
@@ -97,7 +99,7 @@ Check whether a validator is in favor of any claim in a given epoch.
 function numOfValidatorsInFavorOf(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot
 ) external view returns (uint256)
 ```
 
@@ -106,7 +108,7 @@ Get the number of validators in favor of a claim.
 **Parameters:**
 - `appContract` (address): The application contract address
 - `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `outputsMerkleRoot` (bytes32): The outputs Merkle root
+- `machineMerkleRoot` (bytes32): The machine Merkle root
 
 **Returns:**
 - (uint256): Number of validators in favor of claim
@@ -116,7 +118,7 @@ Get the number of validators in favor of a claim.
 function isValidatorInFavorOf(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot,
     uint256 id
 ) external view returns (bool)
 ```
@@ -126,7 +128,7 @@ Check whether a validator is in favor of a claim.
 **Parameters:**
 - `appContract` (address): The application contract address
 - `lastProcessedBlockNumber` (uint256): The number of the last processed block
-- `outputsMerkleRoot` (bytes32): The outputs Merkle root
+- `machineMerkleRoot` (bytes32): The machine Merkle root
 - `id` (uint256): The ID of the validator
 
 **Returns:**

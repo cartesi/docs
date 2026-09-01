@@ -2,6 +2,8 @@
 title: Prompting
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Effective prompting helps your AI assistant use Cartesi docs, skills, and the MCP server reliably. Clear prompts tell the assistant what to generate and which skill or doc source to follow.
 
 ## Anatomy of a strong prompt

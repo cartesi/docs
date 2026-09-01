@@ -6,9 +6,11 @@ resources:
     title: Off-chain implementation of the Cartesi Machine
   - url: https://github.com/cartesi/rollups-node
     title: Reference implementation of the Rollups Node
-  - url: https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/contracts
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9
     title: Smart Contracts for Cartesi Rollups
 ---
+
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
 
 In a Cartesi dApp, the frontend and backend components communicate through the Rollups framework using HTTP and JSON-RPC APIs.
 

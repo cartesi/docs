@@ -6,6 +6,8 @@ resources:
     title: Source code for the Counter Application
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 This tutorial aims to guide you through creating and interacting with a basic Cartesi application, it'll take you through setting up your dev environment, creating a project then finally running and interacting with your application locally.
 
 We provide Rust, JavaScript, Python, Go, and C++ implementations of the application, so you can choose whichever language you're more comfortable with.

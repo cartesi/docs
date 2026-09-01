@@ -1,26 +1,30 @@
+# Cartesi Rollups Node 2.0.0-alpha.12 (images 0.12.0-alpha.41).
+# Testnet-oriented compose. The EVM reader polls HTTP only; do not set
+# CARTESI_BLOCKCHAIN_WS_ENDPOINT (unsupported in alpha.12).
+# Factory defaults are cartesi-rollups 3.0.0-alpha.6 (identical CREATE2
+# addresses on Ethereum / Optimism / Arbitrum / Base mainnet and Sepolia).
+# Wipe the database volume when upgrading from 0.12.0-alpha.39 (node alpha.11).
 name: cartesi-rollups-node
 x-env: &env
   CARTESI_LOG_LEVEL: info
   CARTESI_AUTH_KIND: ${AUTH_KIND}
   CARTESI_BLOCKCHAIN_ID: ${BLOCKCHAIN_ID}
-  CARTESI_AUTH_PRIVATE_KEY_FILE: ${PRIVATE_KEY_FILE}
-  CARTESI_BLOCKCHAIN_WS_ENDPOINT: ${BLOCKCHAIN_WS_ENDPOINT}
+  CARTESI_AUTH_PRIVATE_KEY: ${CARTESI_AUTH_PRIVATE_KEY}
   CARTESI_BLOCKCHAIN_HTTP_ENDPOINT: ${BLOCKCHAIN_HTTP_ENDPOINT}
   CARTESI_SNAPSHOTS_DIR: "/var/lib/cartesi-rollups-node/snapshot"
-  CARTESI_CONTRACTS_INPUT_BOX_ADDRESS: 0xc70074BDD26d8cF983Ca6A5b89b8db52D5850051
-  CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS: 0xC7003566dD09Aa0fC0Ce201aC2769aFAe3BF0051
-  CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS: 0xc7006f70875BaDe89032001262A846D3Ee160051
-  CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS: 0xc700285Ab555eeB5201BC00CFD4b2CC8DED90051
+  CARTESI_CONTRACTS_INPUT_BOX_ADDRESS: ${CARTESI_CONTRACTS_INPUT_BOX_ADDRESS:-0x346B3df038FE9f8380071eC6514D5a83aD143939}
+  CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_AUTHORITY_FACTORY_ADDRESS:-0x3C1FE01c542a88A523FF6847eD1E26176c8C4ED0}
+  CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_APPLICATION_FACTORY_ADDRESS:-0xC549F89cF1ca43eDDECC64Ac2208F4b283B1c483}
+  CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS:-0x6145C5996a71a379E030aEb0440df79D60833418}
+  CARTESI_CONTRACTS_QUORUM_FACTORY_ADDRESS: ${CARTESI_CONTRACTS_QUORUM_FACTORY_ADDRESS:-0x1f94009389F408B8D0ADfFcF8BBDCe5552BaCa5F}
   CARTESI_DATABASE_CONNECTION: postgres://postgres:password@database:5432/rollupsdb?sslmode=disable
-
-secrets:
-  pk:
-    file: ./secrets/pk # TODO: change to the path of the your private key file
+  CARTESI_EPOCH_LENGTH: 1
+  CARTESI_BLOCKCHAIN_DEFAULT_BLOCK: ${CARTESI_BLOCKCHAIN_DEFAULT_BLOCK:-latest}
 
 services:
   database:
     container_name: database
-    image: cartesi/rollups-database:0.12.0-alpha.20
+    image: cartesi/rollups-database:0.12.0-alpha.41
     environment:
       POSTGRES_PASSWORD: password
     networks:
@@ -37,8 +41,8 @@ services:
 
   evm-reader:
     container_name: evm-reader
-    image: cartesi/rollups-runtime:0.12.0-alpha.20
-    command: cartesi-rollups-evm-reader
+    image: cartesi/rollups-runtime:0.12.0-alpha.41
+    command: cartesi-rollups-evm-reader --default-block ${CARTESI_BLOCKCHAIN_DEFAULT_BLOCK:-latest}
     depends_on:
       database:
         condition: service_healthy
@@ -51,7 +55,7 @@ services:
 
   advancer:
     container_name: advancer
-    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    image: cartesi/rollups-runtime:0.12.0-alpha.41
     command: cartesi-rollups-advancer
     depends_on:
       database:
@@ -66,12 +70,10 @@ services:
       - "10012:10012"
     environment:
       <<: *env
-    secrets:
-      - pk
 
   validator:
     container_name: validator
-    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    image: cartesi/rollups-runtime:0.12.0-alpha.41
     command: cartesi-rollups-validator
     depends_on:
       database:
@@ -85,7 +87,7 @@ services:
 
   claimer:
     container_name: claimer
-    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    image: cartesi/rollups-runtime:0.12.0-alpha.41
     command: cartesi-rollups-claimer
     depends_on:
       database:
@@ -96,12 +98,10 @@ services:
       - "10004:10004"
     environment:
       <<: *env
-    secrets:
-      - pk
 
   jsonrpc-api:
     container_name: jsonrpc-api
-    image: cartesi/rollups-runtime:0.12.0-alpha.20
+    image: cartesi/rollups-runtime:0.12.0-alpha.41
     command: cartesi-rollups-jsonrpc-api
     depends_on:
       database:
