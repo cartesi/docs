@@ -22,7 +22,7 @@ import DocCard from '@theme/DocCard';
     <DocCard item={{
       type: "link",
       label: "Cartesi Rollups",
-      href: "/cartesi-rollups/1.5/",
+      href: "/cartesi-rollups/2.0/",
       description: "Deploy scalable Appchains as L2/L3"
     }} />
   </div>
