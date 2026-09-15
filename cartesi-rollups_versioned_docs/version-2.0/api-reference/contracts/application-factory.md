@@ -2,9 +2,9 @@
 id: application-factory
 title: ApplicationFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/ApplicationFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/ApplicationFactory.sol
     title: Application Factory contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/IApplicationFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/IApplicationFactory.sol
     title: IApplicationFactory interface
 ---
 
@@ -14,7 +14,7 @@ The **ApplicationFactory** contract is a tool for reliably deploying new instanc
 
 Additionally, it provides a function to calculate the address of a potential new `Application` contract based on input parameters.
 
-The factory takes an [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/refund/IRefundOutputBuilder.sol) in its constructor. That refund builder is a factory-wide immutable: every application deployed by this factory shares it, and it is not part of `WithdrawalConfig` or of `newApplication` parameters.
+The factory takes an [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/refund/IRefundOutputBuilder.sol) in its constructor. That refund builder is a factory-wide immutable: every application deployed by this factory shares it, and it is not part of `WithdrawalConfig` or of `newApplication` parameters.
 
 ## Functions
 
@@ -172,7 +172,7 @@ Raised at deployment when the provided [`WithdrawalConfig`](./withdrawal/withdra
 
 ## Self-hosted factory
 
-[`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/ISelfHostedApplicationFactory.sol) deploys an Authority + Application pair in one transaction.
+[`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/ISelfHostedApplicationFactory.sol) deploys an Authority + Application pair in one transaction.
 
 ```solidity
 function deployContracts(

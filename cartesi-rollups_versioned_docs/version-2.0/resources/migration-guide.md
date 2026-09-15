@@ -128,9 +128,9 @@ The application still runs inside a Cartesi Machine. The guest-tools package tha
 
 | | v1.5 | v2.0 |
 | :-- | :-- | :-- |
-| Guest tools | `machine-emulator-tools` (typically `0.14.1`) | `machine-guest-tools` (typically `0.17.2`) |
+| Guest tools | `machine-emulator-tools` (typically `0.14.1`) | `machine-guest-tools` (typically `0.18.0`) |
 | Typical base | Ubuntu Jammy RISC-V images | Ubuntu Noble RISC-V images |
-| Node emulator | Emulator SDK 0.17.x | Emulator `v0.20.0` |
+| Node emulator | Emulator SDK 0.17.x | Emulator `v0.21.0` |
 
 The machine snapshot (template hash) must match the hash registered with the application contract and the node. Rebuilding against a different emulator or guest-tools version produces a different hash.
 

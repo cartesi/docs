@@ -2,9 +2,9 @@
 id: iwithdrawal-output-builder
 title: IWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IWithdrawalOutputBuilder.sol
     title: IWithdrawalOutputBuilder interface
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
     title: IWithdrawalOutputBuilderErrors
 ---
 

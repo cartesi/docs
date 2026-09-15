@@ -2,7 +2,7 @@
 id: abstract-consensus
 title: AbstractConsensus
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/AbstractConsensus.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/AbstractConsensus.sol
     title: AbstractConsensus Contract
 ---
 

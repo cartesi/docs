@@ -2,7 +2,7 @@
 id: iquorum
 title: IQuorum
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorum.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/IQuorum.sol
     title: IQuorum Interface
 ---
 

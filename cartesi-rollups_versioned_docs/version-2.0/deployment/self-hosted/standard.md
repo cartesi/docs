@@ -40,9 +40,9 @@ CARTESI_BLOCKCHAIN_DEFAULT_BLOCK=latest
 | `CARTESI_AUTH_PRIVATE_KEY`         | Funded private key for the selected chain                            |
 | `CARTESI_BLOCKCHAIN_DEFAULT_BLOCK` | `latest` for testnet tip-tracking; `finalized` for reorg-safe reads  |
 
-The EVM reader polls HTTP only. Do **not** set `BLOCKCHAIN_WS_ENDPOINT` or `CARTESI_BLOCKCHAIN_WS_ENDPOINT` with alpha.12: a blank or missing WS value crashes `evm-reader`.
+The EVM reader polls HTTP only. Do **not** set `BLOCKCHAIN_WS_ENDPOINT` or `CARTESI_BLOCKCHAIN_WS_ENDPOINT`.
 
-Factory addresses default to cartesi-rollups 3.0.0-alpha.6 in the compose file. Override them in `.env` only if you are not using that suite.
+Factory addresses default to cartesi-rollups 3.0.0-alpha.10 in the compose file. Override them in `.env` only if you are not using that suite.
 
 :::danger Security
 Do not commit private keys. Use Docker secrets or a file-backed key in any environment that is not a throwaway testnet.
@@ -76,7 +76,7 @@ Do not commit private keys. Use Docker secrets or a file-backed key in any envir
 
 ## Deploying the application
 
-The node is running. Next, create the on-chain contracts and register the app. Factory addresses are under [Deployed contracts](#deployed-contracts). The commands below match **cartesi-rollups 3.0.0-alpha.6** ([interfaces](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6)).
+The node is running. Next, create the on-chain contracts and register the app. Factory addresses are under [Deployed contracts](#deployed-contracts). The commands below match **cartesi-rollups 3.0.0-alpha.10** ([interfaces](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10)).
 
 Choose a deployment method:
 
@@ -156,7 +156,7 @@ CLAIM_STAGING_PERIOD=0
 TEMPLATE_HASH=<template-hash>   # from `cartesi hash`
 SALT=$(cast keccak "your-unique-string")
 
-INPUT_BOX=0x346B3df038FE9f8380071eC6514D5a83aD143939
+INPUT_BOX=0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C
 # `calldata` includes the 4-byte selector (`0xb12c9ede…`). `abi-encode` does not, and CREATE2s a different app.
 DATA_AVAILABILITY=$(cast calldata "InputBox(address)" "$INPUT_BOX")
 
@@ -172,8 +172,8 @@ Deploy the Authority and Application in **two transactions**. Use this route whe
 Predict each address, then deploy with the same salt and arguments. Set `AUTHORITY` to the address returned by `calculateAuthorityAddress` before the application calls.
 
 ```shell
-AUTHORITY_FACTORY=0x3C1FE01c542a88A523FF6847eD1E26176c8C4ED0
-APPLICATION_FACTORY=0xC549F89cF1ca43eDDECC64Ac2208F4b283B1c483
+AUTHORITY_FACTORY=0xB4d29c86e36385b5321a453C34D288AEB0ad11f9
+APPLICATION_FACTORY=0x35Cd91f13141Bb6A6FC69E1eeDD241bbA1Ddd45F
 
 cast call "$AUTHORITY_FACTORY" \
   "calculateAuthorityAddress(address,uint256,uint256,bytes32)(address)" \
@@ -202,12 +202,12 @@ Without salt, use `newAuthority(address,uint256,uint256)` and `newApplication(ad
 
 #### Route B: Self-hosted factory {#route-b-self-hosted-factory}
 
-Deploy the Authority and Application in **one transaction** via [`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.6/src/dapp/ISelfHostedApplicationFactory.sol). Use `calculateAddresses` and `deployContracts` with a shared salt. This matches the one-shot CLI semantics without going through `cartesi-rollups-cli`.
+Deploy the Authority and Application in **one transaction** via [`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/src/dapp/ISelfHostedApplicationFactory.sol). Use `calculateAddresses` and `deployContracts` with a shared salt. This matches the one-shot CLI semantics without going through `cartesi-rollups-cli`.
 
 Run `calculateAddresses` first and confirm the predicted Application and Authority addresses before broadcasting `deployContracts`.
 
 ```shell
-SELF_HOSTED_FACTORY=0x6145C5996a71a379E030aEb0440df79D60833418
+SELF_HOSTED_FACTORY=0x9e6866A965dC5f99f95EF6B0d8399dad18eEf98b
 
 cast call "$SELF_HOSTED_FACTORY" \
   "calculateAddresses(address,uint256,uint256,address,bytes32,bytes,(address,uint8,uint8,uint64,address),bytes32)(address,address)" \
@@ -251,18 +251,24 @@ This step is **required after either direct factory route**. An on-chain deploym
 
 ## Deployed contracts
 
-This node version uses **cartesi-rollups 3.0.0-alpha.6**. Infrastructure addresses are identical on Ethereum, Optimism, Arbitrum, and Base (mainnet and Sepolia). Only `BLOCKCHAIN_ID` and the HTTP RPC URL change per chain.
+This node version uses **cartesi-rollups 3.0.0-alpha.10**. Infrastructure addresses are identical on Ethereum, Optimism, Arbitrum, and Base (mainnet and Sepolia). Only `BLOCKCHAIN_ID` and the HTTP RPC URL change per chain.
 
 | Contract | Address |
 | :-- | :-- |
-| InputBox | `0x346B3df038FE9f8380071eC6514D5a83aD143939` |
-| AuthorityFactory | `0x3C1FE01c542a88A523FF6847eD1E26176c8C4ED0` |
-| ApplicationFactory | `0xC549F89cF1ca43eDDECC64Ac2208F4b283B1c483` |
-| SelfHostedApplicationFactory | `0x6145C5996a71a379E030aEb0440df79D60833418` |
-| QuorumFactory | `0x1f94009389F408B8D0ADfFcF8BBDCe5552BaCa5F` |
-| ERC20Portal | `0x22E57511C30CcE6CDaa742E13CE3b774fDC663b1` |
+| InputBox | `0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C` |
+| AuthorityFactory | `0xB4d29c86e36385b5321a453C34D288AEB0ad11f9` |
+| ApplicationFactory | `0x35Cd91f13141Bb6A6FC69E1eeDD241bbA1Ddd45F` |
+| SelfHostedApplicationFactory | `0x9e6866A965dC5f99f95EF6B0d8399dad18eEf98b` |
+| QuorumFactory | `0x0754D5Eb680c71bf469B39e48C5b64AB0813fdb9` |
+| EtherPortal | `0x035b11Be55656c6cfC822D1CaE568C1Af2e497b0` |
+| ERC20Portal | `0x3332DE61a8BB9aC84893b2f552Fe81C9a6dC5419` |
+| ERC721Portal | `0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E` |
+| ERC1155SinglePortal | `0x585F56351A66f131E176a345662215C772f80451` |
+| ERC1155BatchPortal | `0xee33550a22e3Cf6Cc265524dC9bcfD99D2307EBe` |
+| RefundOutputBuilder | `0xff50b237b3e61cD810Bd1236644a887ec78762CF` |
+| UsdWithdrawalOutputBuilderFactory | `0x60b8b3c0AecEb193755038fa9372FfE910E63e39` |
 
-Rollups contract deployment addresses are also published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) as `cartesi-rollups-contracts-<version>-deployment-addresses.tar.gz`. Use the suite that matches the node you run; API reference pages may track a newer contracts alpha than this compose pin.
+Rollups contract deployment addresses are also published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) as `cartesi-rollups-contracts-<version>-deployment-addresses.tar.gz`. Use the suite that matches the node you run.
 
 ## Accessing the node
 

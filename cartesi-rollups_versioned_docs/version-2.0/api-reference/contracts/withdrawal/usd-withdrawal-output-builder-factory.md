@@ -2,9 +2,9 @@
 id: usd-withdrawal-output-builder-factory
 title: UsdWithdrawalOutputBuilderFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/UsdWithdrawalOutputBuilderFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/UsdWithdrawalOutputBuilderFactory.sol
     title: UsdWithdrawalOutputBuilderFactory contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IUsdWithdrawalOutputBuilderFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IUsdWithdrawalOutputBuilderFactory.sol
     title: IUsdWithdrawalOutputBuilderFactory interface
 ---
 
