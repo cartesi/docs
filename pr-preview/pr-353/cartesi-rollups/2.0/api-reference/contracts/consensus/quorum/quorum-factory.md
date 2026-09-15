@@ -4,9 +4,9 @@
 id: quorum-factory
 title: QuorumFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/QuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/QuorumFactory.sol
     title: QuorumFactory Contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/IQuorumFactory.sol
     title: IQuorumFactory Interface
 ---
 

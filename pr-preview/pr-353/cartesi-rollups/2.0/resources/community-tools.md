@@ -32,6 +32,7 @@ C++ library for parsing portal deposits and managing an in-machine asset ledger 
 
 - Core: [Mugen-Builders/machine-asset-tools](https://github.com/Mugen-Builders/machine-asset-tools)
 - Rust bindings: [Mugen-Builders/cma-rust-parser](https://github.com/Mugen-Builders/cma-rust-parser)
+- Python bindings: [Mugen-Builders/libcma-binding-python](https://github.com/Mugen-Builders/libcma-binding-python)
 - Node.js / TypeScript bindings: [riseandshaheen/libcma-binding-node](https://github.com/riseandshaheen/libcma-binding-node)
 
 Related: [libcmt bindings](https://github.com/Mugen-Builders/libcmt-bindings) expose the guest `libcmt` C API (rollup I/O, ABI, Merkle) without the HTTP rollup server.
@@ -43,8 +44,10 @@ Related: [libcmt bindings](https://github.com/Mugen-Builders/libcmt-bindings) ex
 Python framework with local testing helpers and control over inputs and outputs.
 
 ```bash
-pip install python-cartesi
+pip3 install cartesi@git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1 --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
 ```
+
+Use `cartesi[machine]` or `cartesi[machine-asset]` when you need those extras. `--find-links` supplies pre-built RISC-V wheels.
 
 - [GitHub](https://github.com/prototyp3-dev/python-cartesi)
 

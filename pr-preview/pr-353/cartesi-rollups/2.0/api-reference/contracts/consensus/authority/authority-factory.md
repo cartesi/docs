@@ -4,9 +4,9 @@
 id: authority-factory
 title: AuthorityFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/AuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/AuthorityFactory.sol
     title: AuthorityFactory Contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/IAuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/IAuthorityFactory.sol
     title: IAuthorityFactory Interface
 ---
 

@@ -4,9 +4,9 @@
 id: usd-withdrawal-output-builder
 title: UsdWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/UsdWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/UsdWithdrawalOutputBuilder.sol
     title: UsdWithdrawalOutputBuilder contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IUsdWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IUsdWithdrawalOutputBuilder.sol
     title: IUsdWithdrawalOutputBuilder interface
 ---
 

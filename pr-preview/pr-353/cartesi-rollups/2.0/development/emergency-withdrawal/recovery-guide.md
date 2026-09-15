@@ -82,6 +82,8 @@ Replay is deterministic for the same inputs: running it again with the same data
 
 From that snapshot, generate the accounts-drive-root proof and the per-account proof for the account you want to withdraw. The `--accounts-drive-*` values **must match the withdrawal config**.
 
+`--account <account-address>` only works for a compatible **32-byte** account record: the single-token USD layout (`log2LeavesPerAccount = 0`), a 12-byte little-endian `uint96` balance followed by the 20-byte owner address. See [`UsdWithdrawalOutputBuilder`](../../api-reference/contracts/withdrawal/usd-withdrawal-output-builder.md) and [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md#matching-the-layout). Larger or differently encoded records are not accepted by this flag.
+
 ```sh
 cartesi-rollups-machine-tool prove accounts-drive \
   --snapshot <new-snapshot-path> \

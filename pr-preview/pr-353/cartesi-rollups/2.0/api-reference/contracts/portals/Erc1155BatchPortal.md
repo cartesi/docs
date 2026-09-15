@@ -2,9 +2,9 @@
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc1155BatchPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/Erc1155BatchPortal.sol
     title: Erc1155BatchPortal contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc1155BatchPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/IErc1155BatchPortal.sol
     title: IErc1155BatchPortal interface
 ---
 

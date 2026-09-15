@@ -17508,7 +17508,7 @@ resources:
     title: Off-chain implementation of the Cartesi Machine
   - url: https://github.com/cartesi/rollups-node
     title: Reference implementation of the Rollups Node
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10
     title: Smart Contracts for Cartesi Rollups
 ---
 
@@ -19269,9 +19269,9 @@ You can manually set the epoch length to facilitate quicker asset deposits and w
 id: application-factory
 title: ApplicationFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/ApplicationFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/ApplicationFactory.sol
     title: Application Factory contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/IApplicationFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/IApplicationFactory.sol
     title: IApplicationFactory interface
 ---
 
@@ -19281,7 +19281,7 @@ The **ApplicationFactory** contract is a tool for reliably deploying new instanc
 
 Additionally, it provides a function to calculate the address of a potential new `Application` contract based on input parameters.
 
-The factory takes an [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/refund/IRefundOutputBuilder.sol) in its constructor. That refund builder is a factory-wide immutable: every application deployed by this factory shares it, and it is not part of `WithdrawalConfig` or of `newApplication` parameters.
+The factory takes an [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/refund/IRefundOutputBuilder.sol) in its constructor. That refund builder is a factory-wide immutable: every application deployed by this factory shares it, and it is not part of `WithdrawalConfig` or of `newApplication` parameters.
 
 ## Functions
 
@@ -19439,7 +19439,7 @@ Raised at deployment when the provided [`WithdrawalConfig`](./withdrawal/withdra
 
 ## Self-hosted factory
 
-[`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/ISelfHostedApplicationFactory.sol) deploys an Authority + Application pair in one transaction.
+[`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/ISelfHostedApplicationFactory.sol) deploys an Authority + Application pair in one transaction.
 
 ```solidity
 function deployContracts(
@@ -19463,9 +19463,9 @@ There is no `appOwner` parameter: the factory deploys the application under its 
 id: application
 title: Application
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/Application.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/Application.sol
     title: Application contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/IApplication.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/IApplication.sol
     title: IApplication interface
   - url: https://docs.openzeppelin.com/contracts/5.x/
     title: OpenZeppelin Contracts
@@ -19725,7 +19725,7 @@ Triggered when the application is foreclosed.
 
 ## Deposit Refunds
 
-After foreclosure, anyone can refund deposits that were never finalized. The application static-calls the factory-wide [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/refund/IRefundOutputBuilder.sol) to build a transfer back to the original depositor for Ether, ERC-20, ERC-721, and ERC-1155 deposits made through the canonical portals.
+After foreclosure, anyone can refund deposits that were never finalized. The application static-calls the factory-wide [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/refund/IRefundOutputBuilder.sol) to build a transfer back to the original depositor for Ether, ERC-20, ERC-721, and ERC-1155 deposits made through the canonical portals.
 
 ### `issueRefund()`
 
@@ -19939,7 +19939,7 @@ Triggered when the funds of an account are withdrawn.
 id: abstract-consensus
 title: AbstractConsensus
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/AbstractConsensus.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/AbstractConsensus.sol
     title: AbstractConsensus Contract
 ---
 
@@ -19986,7 +19986,7 @@ Check if the contract supports a specific interface (`IConsensus` / `IOutputsMer
 id: authority
 title: Authority
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/Authority.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/Authority.sol
     title: Authority Contract
 ---
 
@@ -20071,9 +20071,9 @@ Return the rollups-contracts package version string.
 id: authority-factory
 title: AuthorityFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/AuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/AuthorityFactory.sol
     title: AuthorityFactory Contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/IAuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/IAuthorityFactory.sol
     title: IAuthorityFactory Interface
 ---
 
@@ -20191,7 +20191,7 @@ Emitted when a new authority is deployed.
 id: iauthority-factory
 title: IAuthorityFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/IAuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/IAuthorityFactory.sol
     title: IAuthorityFactory Interface
 ---
 
@@ -20209,7 +20209,7 @@ See [`AuthorityFactory`](./authority-factory.md) for the full API, including the
 id: iauthority
 title: IAuthority
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/authority/IAuthority.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/IAuthority.sol
     title: IAuthority Interface
 ---
 
@@ -20225,7 +20225,7 @@ A consensus contract controlled by a single address, the owner. This interface c
 
 - [`Authority`](./authority.md): Implementation of this interface
 - [`IConsensus`](../iconsensus.md): Base consensus interface
-- [`IOwnable`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/access/IOwnable.sol): Ownership management interface
+- [`IOwnable`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/access/IOwnable.sol): Ownership management interface
 
 ---
 
@@ -20235,7 +20235,7 @@ A consensus contract controlled by a single address, the owner. This interface c
 id: iconsensus
 title: IConsensus
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/IConsensus.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/IConsensus.sol
     title: IConsensus Interface
 ---
 
@@ -20513,7 +20513,7 @@ A machine that fails the post-epoch checks may have reached an unrecoverable sta
 id: ioutputs-merkle-root-validator
 title: IOutputsMerkleRootValidator
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/IOutputsMerkleRootValidator.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/IOutputsMerkleRootValidator.sol
     title: IOutputsMerkleRootValidator Interface
 ---
 
@@ -20588,7 +20588,7 @@ Check whether an input was finalized.
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus
     title: Consensus Smart Contracts
 ---
 
@@ -20635,7 +20635,7 @@ The consensus contract validates that:
 id: quorum
 title: Quorum
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/Quorum.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/Quorum.sol
     title: Quorum Contract
 ---
 
@@ -20768,7 +20768,7 @@ Return the rollups-contracts package version string.
 id: iquorum-factory
 title: IQuorumFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/IQuorumFactory.sol
     title: IQuorumFactory Interface
 ---
 
@@ -20786,7 +20786,7 @@ See [`QuorumFactory`](./quorum-factory.md) for the full API, including the `clai
 id: iquorum
 title: IQuorum
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorum.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/IQuorum.sol
     title: IQuorum Interface
 ---
 
@@ -20933,9 +20933,9 @@ Check whether a validator is in favor of a claim.
 id: quorum-factory
 title: QuorumFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/QuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/QuorumFactory.sol
     title: QuorumFactory Contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus/quorum/IQuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/IQuorumFactory.sol
     title: IQuorumFactory Interface
 ---
 
@@ -21053,7 +21053,7 @@ Emitted when a new quorum is deployed.
 id: input-box
 title: InputBox
 resources:
-    - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/inputs/InputBox.sol
+    - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/inputs/InputBox.sol
       title: InputBox contract
 ---
 
@@ -21193,7 +21193,7 @@ Emitted when an input is added to an application's input box.
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10
     title: Smart Contracts for Cartesi Rollups
 ---
 
@@ -21231,9 +21231,9 @@ Contract sources and artifacts are published with each [rollups-contracts releas
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc1155BatchPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/Erc1155BatchPortal.sol
     title: Erc1155BatchPortal contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc1155BatchPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/IErc1155BatchPortal.sol
     title: IErc1155BatchPortal interface
 ---
 
@@ -21279,9 +21279,9 @@ succeeds only if it implements the ERC-1155 receiver hooks.
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc1155SinglePortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/Erc1155SinglePortal.sol
     title: Erc1155SinglePortal contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc1155SinglePortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/IErc1155SinglePortal.sol
     title: IErc1155SinglePortal interface
 ---
 
@@ -21324,9 +21324,9 @@ succeeds only if it implements the ERC-1155 receiver hooks.
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc20Portal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/Erc20Portal.sol
     title: Erc20Portal contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc20Portal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/IErc20Portal.sol
     title: IErc20Portal interface
 ---
 
@@ -21378,9 +21378,9 @@ values raise a low-level error.
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/Erc721Portal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/Erc721Portal.sol
     title: Erc721Portal contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IErc721Portal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/IErc721Portal.sol
     title: IErc721Portal interface
 ---
 
@@ -21424,9 +21424,9 @@ succeeds only if it accepts the NFT through `onERC721Received`.
 
 ---
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/EtherPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/EtherPortal.sol
     title: EtherPortal contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/portals/IEtherPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/IEtherPortal.sol
     title: IEtherPortal interface
 ---
 
@@ -21468,9 +21468,9 @@ succeeds only if it accepts Ether through a message call.
 id: iwithdrawal-output-builder
 title: IWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IWithdrawalOutputBuilder.sol
     title: IWithdrawalOutputBuilder interface
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
     title: IWithdrawalOutputBuilderErrors
 ---
 
@@ -21571,9 +21571,9 @@ If any of the four disagree, proofs fail to validate or funds cannot be built, s
 id: usd-withdrawal-output-builder-factory
 title: UsdWithdrawalOutputBuilderFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/UsdWithdrawalOutputBuilderFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/UsdWithdrawalOutputBuilderFactory.sol
     title: UsdWithdrawalOutputBuilderFactory contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IUsdWithdrawalOutputBuilderFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IUsdWithdrawalOutputBuilderFactory.sol
     title: IUsdWithdrawalOutputBuilderFactory interface
 ---
 
@@ -21662,9 +21662,9 @@ Triggered on a successful call to `newUsdWithdrawalOutputBuilder`.
 id: usd-withdrawal-output-builder
 title: UsdWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/UsdWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/UsdWithdrawalOutputBuilder.sol
     title: UsdWithdrawalOutputBuilder contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/withdrawal/IUsdWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IUsdWithdrawalOutputBuilder.sol
     title: IUsdWithdrawalOutputBuilder interface
 ---
 
@@ -21737,9 +21737,9 @@ Decode `account` as `(address user, uint96 balance)` and return a `DelegateCallV
 id: withdrawal-config
 title: WithdrawalConfig
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/common/WithdrawalConfig.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/common/WithdrawalConfig.sol
     title: WithdrawalConfig struct
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/library/LibWithdrawalConfig.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/library/LibWithdrawalConfig.sol
     title: LibWithdrawalConfig library
 ---
 
@@ -21775,7 +21775,7 @@ Let `a = log2LeavesPerAccount`, `b = log2MaxNumOfAccounts`, and `c = accountsDri
 - **starts** at machine memory address `c * 2^(a + b + 5)`;
 - holds up to `2^b` accounts, each occupying `2^(a + 5)` bytes.
 
-These same three values are returned on-chain by [`getLog2LeavesPerAccount()`](../application.md#getlog2leavesperaccount), [`getLog2MaxNumOfAccounts()`](../application.md#getlog2maxnumofaccounts), and [`getAccountsDriveStartIndex()`](../application.md#getaccountsdrivestartindex), and must match the layout the guest application actually writes.
+These same three values are returned on-chain by [`getLog2LeavesPerAccount()`](../application.md#getlog2leavesperaccount--getlog2maxnumofaccounts--getaccountsdrivestartindex), [`getLog2MaxNumOfAccounts()`](../application.md#getlog2leavesperaccount--getlog2maxnumofaccounts--getaccountsdrivestartindex), and [`getAccountsDriveStartIndex()`](../application.md#getlog2leavesperaccount--getlog2maxnumofaccounts--getaccountsdrivestartindex), and must match the layout the guest application actually writes.
 
 ## Validation
 
@@ -25502,7 +25502,7 @@ The Cartesi Machine is a state machine that remains idle until a new request ari
 id: introduction
 title: Introduction
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.9
+  - url: https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.10
     title: Supported networks (deployment addresses)
 ---
 
@@ -25621,9 +25621,9 @@ CARTESI_BLOCKCHAIN_DEFAULT_BLOCK=latest
 | `CARTESI_AUTH_PRIVATE_KEY`         | Funded private key for the selected chain                            |
 | `CARTESI_BLOCKCHAIN_DEFAULT_BLOCK` | `latest` for testnet tip-tracking; `finalized` for reorg-safe reads  |
 
-The EVM reader polls HTTP only. Do **not** set `BLOCKCHAIN_WS_ENDPOINT` or `CARTESI_BLOCKCHAIN_WS_ENDPOINT` with alpha.12: a blank or missing WS value crashes `evm-reader`.
+The EVM reader polls HTTP only. Do **not** set `BLOCKCHAIN_WS_ENDPOINT` or `CARTESI_BLOCKCHAIN_WS_ENDPOINT`.
 
-Factory addresses default to cartesi-rollups 3.0.0-alpha.6 in the compose file. Override them in `.env` only if you are not using that suite.
+Factory addresses default to cartesi-rollups 3.0.0-alpha.10 in the compose file. Override them in `.env` only if you are not using that suite.
 
 :::danger Security
 Do not commit private keys. Use Docker secrets or a file-backed key in any environment that is not a throwaway testnet.
@@ -25657,7 +25657,7 @@ Do not commit private keys. Use Docker secrets or a file-backed key in any envir
 
 ## Deploying the application
 
-The node is running. Next, create the on-chain contracts and register the app. Factory addresses are under [Deployed contracts](#deployed-contracts). The commands below match **cartesi-rollups 3.0.0-alpha.6** ([interfaces](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6)).
+The node is running. Next, create the on-chain contracts and register the app. Factory addresses are under [Deployed contracts](#deployed-contracts). The commands below match **cartesi-rollups 3.0.0-alpha.10** ([interfaces](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10)).
 
 Choose a deployment method:
 
@@ -25737,7 +25737,7 @@ CLAIM_STAGING_PERIOD=0
 TEMPLATE_HASH=<template-hash>   # from `cartesi hash`
 SALT=$(cast keccak "your-unique-string")
 
-INPUT_BOX=0x346B3df038FE9f8380071eC6514D5a83aD143939
+INPUT_BOX=0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C
 # `calldata` includes the 4-byte selector (`0xb12c9ede…`). `abi-encode` does not, and CREATE2s a different app.
 DATA_AVAILABILITY=$(cast calldata "InputBox(address)" "$INPUT_BOX")
 
@@ -25753,8 +25753,8 @@ Deploy the Authority and Application in **two transactions**. Use this route whe
 Predict each address, then deploy with the same salt and arguments. Set `AUTHORITY` to the address returned by `calculateAuthorityAddress` before the application calls.
 
 ```shell
-AUTHORITY_FACTORY=0x3C1FE01c542a88A523FF6847eD1E26176c8C4ED0
-APPLICATION_FACTORY=0xC549F89cF1ca43eDDECC64Ac2208F4b283B1c483
+AUTHORITY_FACTORY=0xB4d29c86e36385b5321a453C34D288AEB0ad11f9
+APPLICATION_FACTORY=0x35Cd91f13141Bb6A6FC69E1eeDD241bbA1Ddd45F
 
 cast call "$AUTHORITY_FACTORY" \
   "calculateAuthorityAddress(address,uint256,uint256,bytes32)(address)" \
@@ -25783,12 +25783,12 @@ Without salt, use `newAuthority(address,uint256,uint256)` and `newApplication(ad
 
 #### Route B: Self-hosted factory {#route-b-self-hosted-factory}
 
-Deploy the Authority and Application in **one transaction** via [`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.6/src/dapp/ISelfHostedApplicationFactory.sol). Use `calculateAddresses` and `deployContracts` with a shared salt. This matches the one-shot CLI semantics without going through `cartesi-rollups-cli`.
+Deploy the Authority and Application in **one transaction** via [`ISelfHostedApplicationFactory`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/src/dapp/ISelfHostedApplicationFactory.sol). Use `calculateAddresses` and `deployContracts` with a shared salt. This matches the one-shot CLI semantics without going through `cartesi-rollups-cli`.
 
 Run `calculateAddresses` first and confirm the predicted Application and Authority addresses before broadcasting `deployContracts`.
 
 ```shell
-SELF_HOSTED_FACTORY=0x6145C5996a71a379E030aEb0440df79D60833418
+SELF_HOSTED_FACTORY=0x9e6866A965dC5f99f95EF6B0d8399dad18eEf98b
 
 cast call "$SELF_HOSTED_FACTORY" \
   "calculateAddresses(address,uint256,uint256,address,bytes32,bytes,(address,uint8,uint8,uint64,address),bytes32)(address,address)" \
@@ -25832,18 +25832,24 @@ This step is **required after either direct factory route**. An on-chain deploym
 
 ## Deployed contracts
 
-This node version uses **cartesi-rollups 3.0.0-alpha.6**. Infrastructure addresses are identical on Ethereum, Optimism, Arbitrum, and Base (mainnet and Sepolia). Only `BLOCKCHAIN_ID` and the HTTP RPC URL change per chain.
+This node version uses **cartesi-rollups 3.0.0-alpha.10**. Infrastructure addresses are identical on Ethereum, Optimism, Arbitrum, and Base (mainnet and Sepolia). Only `BLOCKCHAIN_ID` and the HTTP RPC URL change per chain.
 
 | Contract | Address |
 | :-- | :-- |
-| InputBox | `0x346B3df038FE9f8380071eC6514D5a83aD143939` |
-| AuthorityFactory | `0x3C1FE01c542a88A523FF6847eD1E26176c8C4ED0` |
-| ApplicationFactory | `0xC549F89cF1ca43eDDECC64Ac2208F4b283B1c483` |
-| SelfHostedApplicationFactory | `0x6145C5996a71a379E030aEb0440df79D60833418` |
-| QuorumFactory | `0x1f94009389F408B8D0ADfFcF8BBDCe5552BaCa5F` |
-| ERC20Portal | `0x22E57511C30CcE6CDaa742E13CE3b774fDC663b1` |
+| InputBox | `0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C` |
+| AuthorityFactory | `0xB4d29c86e36385b5321a453C34D288AEB0ad11f9` |
+| ApplicationFactory | `0x35Cd91f13141Bb6A6FC69E1eeDD241bbA1Ddd45F` |
+| SelfHostedApplicationFactory | `0x9e6866A965dC5f99f95EF6B0d8399dad18eEf98b` |
+| QuorumFactory | `0x0754D5Eb680c71bf469B39e48C5b64AB0813fdb9` |
+| EtherPortal | `0x035b11Be55656c6cfC822D1CaE568C1Af2e497b0` |
+| ERC20Portal | `0x3332DE61a8BB9aC84893b2f552Fe81C9a6dC5419` |
+| ERC721Portal | `0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E` |
+| ERC1155SinglePortal | `0x585F56351A66f131E176a345662215C772f80451` |
+| ERC1155BatchPortal | `0xee33550a22e3Cf6Cc265524dC9bcfD99D2307EBe` |
+| RefundOutputBuilder | `0xff50b237b3e61cD810Bd1236644a887ec78762CF` |
+| UsdWithdrawalOutputBuilderFactory | `0x60b8b3c0AecEb193755038fa9372FfE910E63e39` |
 
-Rollups contract deployment addresses are also published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) as `cartesi-rollups-contracts-<version>-deployment-addresses.tar.gz`. Use the suite that matches the node you run; API reference pages may track a newer contracts alpha than this compose pin.
+Rollups contract deployment addresses are also published with each [rollups-contracts release](https://github.com/cartesi/rollups-contracts/releases) as `cartesi-rollups-contracts-<version>-deployment-addresses.tar.gz`. Use the suite that matches the node you run.
 
 ## Accessing the node
 
@@ -26028,9 +26034,9 @@ Do not leave the index as a placeholder `0` unless that is the real value from `
       --register
    ```
 
-   Replace `<app-name>` with your application name, `<authority-address>` with the address from `deploy authority`, `<template-hash>` with the value from `cartesi hash`, and `<salt>` with a unique identifier (generate one with `cast keccak256 "your-unique-string"`). The deployment is rejected if the config is invalid, meaning its accounts-drive layout does not fit the machine memory. Omit `--withdrawal-config-file` entirely to deploy without emergency withdrawal.
+   Replace `<app-name>` with your application name, `<authority-address>` with the address from `deploy authority`, `<template-hash>` with the value from `cartesi hash`, and `<salt>` with a random seed (generate one with `cast keccak256 "your-unique-string"`). The deployment is rejected if the config is invalid, meaning its accounts-drive layout does not fit the machine memory. Omit `--withdrawal-config-file` entirely to deploy without emergency withdrawal.
 
-5. **Commit the accounts-drive root every epoch:**
+5. **Set the snapshot policy to every epoch:**
 
    ```shell
    docker compose -f compose.local.yaml exec advancer \
@@ -27304,6 +27310,8 @@ Replay is deterministic for the same inputs: running it again with the same data
 ## Step 3: Generate the proofs
 
 From that snapshot, generate the accounts-drive-root proof and the per-account proof for the account you want to withdraw. The `--accounts-drive-*` values **must match the withdrawal config**.
+
+`--account <account-address>` only works for a compatible **32-byte** account record: the single-token USD layout (`log2LeavesPerAccount = 0`), a 12-byte little-endian `uint96` balance followed by the 20-byte owner address. See [`UsdWithdrawalOutputBuilder`](../../api-reference/contracts/withdrawal/usd-withdrawal-output-builder.md) and [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md#matching-the-layout). Larger or differently encoded records are not accepted by this flag.
 
 ```sh
 cartesi-rollups-machine-tool prove accounts-drive \
@@ -30968,6 +30976,7 @@ C++ library for parsing portal deposits and managing an in-machine asset ledger 
 
 - Core: [Mugen-Builders/machine-asset-tools](https://github.com/Mugen-Builders/machine-asset-tools)
 - Rust bindings: [Mugen-Builders/cma-rust-parser](https://github.com/Mugen-Builders/cma-rust-parser)
+- Python bindings: [Mugen-Builders/libcma-binding-python](https://github.com/Mugen-Builders/libcma-binding-python)
 - Node.js / TypeScript bindings: [riseandshaheen/libcma-binding-node](https://github.com/riseandshaheen/libcma-binding-node)
 
 Related: [libcmt bindings](https://github.com/Mugen-Builders/libcmt-bindings) expose the guest `libcmt` C API (rollup I/O, ABI, Merkle) without the HTTP rollup server.
@@ -30979,8 +30988,10 @@ Related: [libcmt bindings](https://github.com/Mugen-Builders/libcmt-bindings) ex
 Python framework with local testing helpers and control over inputs and outputs.
 
 ```bash
-pip install python-cartesi
+pip3 install cartesi@git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1 --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
 ```
+
+Use `cartesi[machine]` or `cartesi[machine-asset]` when you need those extras. `--find-links` supplies pre-built RISC-V wheels.
 
 - [GitHub](https://github.com/prototyp3-dev/python-cartesi)
 
@@ -31243,9 +31254,9 @@ The application still runs inside a Cartesi Machine. The guest-tools package tha
 
 | | v1.5 | v2.0 |
 | :-- | :-- | :-- |
-| Guest tools | `machine-emulator-tools` (typically `0.14.1`) | `machine-guest-tools` (typically `0.17.2`) |
+| Guest tools | `machine-emulator-tools` (typically `0.14.1`) | `machine-guest-tools` (typically `0.18.0`) |
 | Typical base | Ubuntu Jammy RISC-V images | Ubuntu Noble RISC-V images |
-| Node emulator | Emulator SDK 0.17.x | Emulator `v0.20.0` |
+| Node emulator | Emulator SDK 0.17.x | Emulator `v0.21.0` |
 
 The machine snapshot (template hash) must match the hash registered with the application contract and the node. Rebuilding against a different emulator or guest-tools version produces a different hash.
 

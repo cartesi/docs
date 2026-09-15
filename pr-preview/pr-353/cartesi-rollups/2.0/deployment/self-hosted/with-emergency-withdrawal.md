@@ -115,9 +115,9 @@ Do not leave the index as a placeholder `0` unless that is the real value from `
       --register
    ```
 
-   Replace `<app-name>` with your application name, `<authority-address>` with the address from `deploy authority`, `<template-hash>` with the value from `cartesi hash`, and `<salt>` with a unique identifier (generate one with `cast keccak256 "your-unique-string"`). The deployment is rejected if the config is invalid, meaning its accounts-drive layout does not fit the machine memory. Omit `--withdrawal-config-file` entirely to deploy without emergency withdrawal.
+   Replace `<app-name>` with your application name, `<authority-address>` with the address from `deploy authority`, `<template-hash>` with the value from `cartesi hash`, and `<salt>` with a random seed (generate one with `cast keccak256 "your-unique-string"`). The deployment is rejected if the config is invalid, meaning its accounts-drive layout does not fit the machine memory. Omit `--withdrawal-config-file` entirely to deploy without emergency withdrawal.
 
-5. **Commit the accounts-drive root every epoch:**
+5. **Set the snapshot policy to every epoch:**
 
    ```shell
    docker compose -f compose.local.yaml exec advancer \

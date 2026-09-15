@@ -4,9 +4,9 @@
 id: application
 title: Application
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/Application.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/Application.sol
     title: Application contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/dapp/IApplication.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/dapp/IApplication.sol
     title: IApplication interface
   - url: https://docs.openzeppelin.com/contracts/5.x/
     title: OpenZeppelin Contracts
@@ -266,7 +266,7 @@ Triggered when the application is foreclosed.
 
 ## Deposit Refunds
 
-After foreclosure, anyone can refund deposits that were never finalized. The application static-calls the factory-wide [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/refund/IRefundOutputBuilder.sol) to build a transfer back to the original depositor for Ether, ERC-20, ERC-721, and ERC-1155 deposits made through the canonical portals.
+After foreclosure, anyone can refund deposits that were never finalized. The application static-calls the factory-wide [`IRefundOutputBuilder`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/refund/IRefundOutputBuilder.sol) to build a transfer back to the original depositor for Ether, ERC-20, ERC-721, and ERC-1155 deposits made through the canonical portals.
 
 ### `issueRefund()`
 
