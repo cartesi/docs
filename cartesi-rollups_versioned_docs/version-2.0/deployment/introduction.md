@@ -2,7 +2,7 @@
 id: introduction
 title: Introduction
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.9
+  - url: https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.10
     title: Supported networks (deployment addresses)
 ---
 
