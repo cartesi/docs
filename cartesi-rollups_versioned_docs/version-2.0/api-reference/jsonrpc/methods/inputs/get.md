@@ -3,6 +3,8 @@ id: inputs-get
 title: Get Input
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 # Get Input
 
 ## Example Request

@@ -3,6 +3,8 @@ id: exception
 title: Exception
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The `/exception` endpoint is used to register an exception when the dApp cannot proceed with request processing. This should be the last method called by the dApp backend while processing a request.
 
 When an exception occurs during request processing, the dApp backend should:

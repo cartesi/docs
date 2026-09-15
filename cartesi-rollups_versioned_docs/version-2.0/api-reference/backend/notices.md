@@ -3,6 +3,8 @@ id: notices
 title: Notices
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 A notice is a verifiable data declaration that attests to off-chain events or conditions and is accompanied by proof.
 
 Notices provide a mechanism to communicate essential off-chain events from the execution layer to the base layer in a verifiable manner.

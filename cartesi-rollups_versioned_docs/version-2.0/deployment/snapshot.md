@@ -3,6 +3,8 @@ id: snapshot
 title: Public snapshot
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 A Cartesi snapshot is a compressed representation of your application's machine state that can be deployed to rollups nodes. This process involves:
 
 1. Building your application with the Cartesi CLI

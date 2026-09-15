@@ -30,10 +30,10 @@
                             "collapsed": true,
                             "items": [
                                 "api-reference/contracts/portals/EtherPortal",
-                                "api-reference/contracts/portals/ERC20Portal",
-                                "api-reference/contracts/portals/ERC721Portal",
-                                "api-reference/contracts/portals/ERC1155SinglePortal",
-                                "api-reference/contracts/portals/ERC1155BatchPortal"
+                                "api-reference/contracts/portals/Erc20Portal",
+                                "api-reference/contracts/portals/Erc721Portal",
+                                "api-reference/contracts/portals/Erc1155SinglePortal",
+                                "api-reference/contracts/portals/Erc1155BatchPortal"
                             ]
                         },
                         {
@@ -249,7 +249,21 @@
                 "resources/community-tools",
                 "resources/mainnet-considerations",
                 "resources/migration-guide",
-                "resources/integration-guides"
+                {
+                    "type": "link",
+                    "label": "Cartesi Whitepaper",
+                    "href": "https://cartesi.io/cartesi_whitepaper.pdf"
+                },
+                {
+                    "type": "link",
+                    "label": "Dave",
+                    "href": "https://arxiv.org/abs/2411.05463"
+                },
+                {
+                    "type": "link",
+                    "label": "PRT",
+                    "href": "https://arxiv.org/abs/2212.12439"
+                }
             ]
         },
         {

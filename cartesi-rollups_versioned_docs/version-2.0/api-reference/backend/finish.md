@@ -3,6 +3,8 @@ id: finish
 title: Finish
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The `/finish` endpoint is used to indicate that any previous processing has been completed and the backend is ready to handle the next request. The subsequent request is returned as the call's response.
 
 The dApp backend should call the `/finish` endpoint to start processing rollup requests. The Rollup HTTP Server returns the next rollup request in the response body.

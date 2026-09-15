@@ -3,6 +3,8 @@ id: erc-721-token-wallet
 title: Integrating ERC721 token wallet functionality
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 This tutorial will guide you through creating a basic ERC721(NFT) token wallet using TypeScript for a Cartesi backend application.
 
 ## Setting up the project
@@ -227,10 +229,10 @@ The `withdrawErc721` method encodes `safeTransferFrom(application, recipient, to
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`ERC721Portal`](../api-reference/contracts/portals/ERC721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+The [`Erc721Portal`](../api-reference/contracts/portals/Erc721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
 
 :::note ERC721Portal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
@@ -254,7 +256,7 @@ export type Report = components["schemas"]["Report"];
 export type Voucher = components["schemas"]["Voucher"];
 
 const wallet = new Wallet();
-// Replace with the ERC721Portal address from `cartesi address-book`
+// Replace with the Erc721Portal address from `cartesi address-book`
 const ERC721Portal = `0xYOUR_ERC721_PORTAL_ADDRESS`;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
@@ -394,7 +396,7 @@ main().catch((e) => {
 
 Here is a breakdown of the wallet functionality:
 
-- We handle deposits when the sender is the `ERC721Portal`.
+- We handle deposits when the sender is the `Erc721Portal`.
 
 - We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
@@ -421,13 +423,13 @@ cartesi run
 ### Deposits
 
 :::caution token approvals
-An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf.
+An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `Erc721Portal` to transfer tokens on your behalf.
 
-Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cartesi backend.
+Without this approval, the `Erc721Portal` cannot deposit your tokens to the Cartesi backend.
 
-You will encounter this error if you don't approve the `ERC721Portal` address before deposits:
+You will encounter this error if you don't approve the `Erc721Portal` address before deposits:
 
-`ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
+`ContractFunctionExecutionError: The contract function "depositErc721Tokens" reverted with the following reason: ERC721: insufficient allowance`
 :::
 
 To deposit ERC721 tokens interactively:

@@ -6,6 +6,8 @@ resources:
     title: The Cartesi dApp Developer Free Course
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Assets exist on the base layer, where they have actual meaning and value.
 
 As with any execution layer solution, a Cartesi Application that wants to manipulate assets needs a secure way of "teleporting" the assets from the base layer to the execution layer and when necessary, back to the base layer.
@@ -13,10 +15,10 @@ As with any execution layer solution, a Cartesi Application that wants to manipu
 Currently, Cartesi Rollups support the following types of assets:
 
 - [Ether (ETH)](../api-reference/contracts/portals/EtherPortal.md)
-- [ERC-20](../api-reference/contracts/portals/ERC20Portal.md)
-- [ERC-721](../api-reference/contracts/portals/ERC721Portal.md)
-- [ERC-1155 Single](../api-reference/contracts/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch](../api-reference/contracts/portals/ERC1155BatchPortal.md)
+- [ERC-20](../api-reference/contracts/portals/Erc20Portal.md)
+- [ERC-721](../api-reference/contracts/portals/Erc721Portal.md)
+- [ERC-1155 Single](../api-reference/contracts/portals/Erc1155SinglePortal.md)
+- [ERC-1155 Batch](../api-reference/contracts/portals/Erc1155BatchPortal.md)
 
 ![img](../../..//static/img/v2.0/onchain-contracts.jpg)
 

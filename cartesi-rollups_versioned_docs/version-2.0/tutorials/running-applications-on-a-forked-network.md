@@ -4,6 +4,8 @@ title: Running applications on a forked network
 resources:
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 ## Introduction
 
 When building Cartesi applications, it is often necessary to interact with contracts and services that are already deployed on a live blockchain network. While a local clean chain is useful during early development, it does not always reflect real world conditions.

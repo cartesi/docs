@@ -6,6 +6,8 @@ resources:
     title: DELEGATECALL Opcode
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Vouchers serve as a mechanism for facilitating on-chain actions initiated in the execution layer.
 
 Imagine vouchers as digital authorization tickets that grant dApps the authority to execute specific actions directly on the base layer. These vouchers encapsulate the details of the desired on-chain action, such as a token swap request or asset transfer.
@@ -309,7 +311,7 @@ const abi = [
   "function safeTransfer(address,address,uint256)"
 ];
 
-async function emitSafeERC20Transfer(token, to, amount) {
+async function emitSafeErc20Transfer(token, to, amount) {
   const call = encodeFunctionData({
     abi,
     functionName: "safeTransfer",
@@ -422,7 +424,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
+func emitSafeErc20Transfer(token, to common.Address, amount *big.Int) error {
 	abiJSON := `[{
 		"type":"function",
 		"name":"safeTransfer",

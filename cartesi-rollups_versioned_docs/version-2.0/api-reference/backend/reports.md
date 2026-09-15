@@ -3,6 +3,8 @@ id: reports
 title: Reports
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Reports are stateless logs, offering a means to record read-only information without changing the state. Primarily used for logging and diagnostic purposes, reports provide valuable insights into the operation and performance of a dApp.
 
 Unlike notices, reports lack any association with proof and are therefore unsuitable for facilitating trustless interactions, such as on-chain processing or convincing independent third parties of dApp outcomes.

@@ -6,6 +6,8 @@ resources:
     title: Source code for the Marketplace Application
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 In this tutorial we'll be building a simple NFT Marketplace application, where users are able to deposit a unique token to be sold at a fixed price, then other users are able to purchase and withdraw these purchased tokens to their wallet.
 
 This Tutorial is built using an Object oriented approach and aims to cover, application creation, Notice, Voucher and Report generation, we'll also be decoding and consuming the payload passed alongside advance and inspect requests.

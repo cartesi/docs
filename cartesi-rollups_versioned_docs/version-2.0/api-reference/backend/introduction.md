@@ -3,6 +3,8 @@ id: introduction
 title: Introduction
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The backend of a Cartesi dApp processes requests in the following manner:
 
   - **Finish** — Called via [`/finish`](./finish.md), indicates that any previous processing has been completed and the backend is ready to handle the next request. The subsequent request is returned as the call's response and can be of the following types:
