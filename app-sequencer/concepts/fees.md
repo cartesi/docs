@@ -14,7 +14,7 @@ The fee is charged in the application's own terms. The sequencer does not define
 
 ## The exponent encoding
 
-The protocol represents every fee as a 16 bit**exponent**. This includes the maximum fee signed by a user and the price assigned to a frame. The corresponding amount is calculated as:
+The protocol represents every fee as a 16-bit exponent. This includes the maximum fee signed by a user and the price assigned to a frame. The corresponding amount is calculated as:
 
 ```text
 fee amount = floor((129 / 128)ⁿ)
@@ -45,13 +45,13 @@ This representation provides three protocol benefits:
 
 ## Maximum fee and frame price
 
-**`max_fee`** travels with a transaction. It is the most the sender is willing to pay, set by whoever signs.
+Each signed **sequenced transaction**, or `UserOp`, contains a `max_fee` exponent. It is the highest frame-price exponent the signer authorizes for that transaction. It is a limit, not the amount automatically charged. The fee passed to the application for an accepted transaction is the frame price.
 
-**The frame price** is set by the sequencer for each frame, and is fixed once that frame is closed. The next frame samples a fresh recommended price, so the price can move as conditions change, but never underneath transactions already placed.
+**The frame price** is selected when the sequencer opens a frame and remains fixed for that frame's lifetime. The next frame samples the current recommended price, so later transactions may receive a different price without changing the price of transactions already stored.
 
-**The comparison happens at submission, not later.** When a transaction arrives, the sequencer checks it against the price of the frame currently open, and a transaction that does not meet it is rejected there and then with HTTP `422`. Only transactions that pass are stored and acknowledged.
+**The first comparison happens at submission.** When a transaction arrives, the sequencer compares its `max_fee` with the price of the open frame. A transaction with a lower limit is rejected immediately with HTTP `422`, before it is stored or acknowledged.
 
-An accepted transaction **cannot** later become underpriced. A frame's price remains fixed for that frame's lifetime, and the transaction has already passed the fee check. A higher price in a later frame does not affect it.
+The scheduler repeats the same comparison during canonical execution. This protects the machine from malformed batch contents. A correctly accepted transaction cannot become underpriced merely because the recommended price rises later, because its frame price remains unchanged.
 
 So `max_fee` fails fast, not late. If it is too low you find out in the response.
 
@@ -64,8 +64,8 @@ A bid below the current price returns HTTP `422` immediately. The client learns 
 
 The practical approaches are:
 
-- **Start from the deployment's baseline.** The default policy derives a recommended fee exponent of **1060**, so a bid of `1` is rejected. Obtain the deployment's current baseline from its operator.
-- **Bid comfortably above it.** The encoding is exponential, so a modest bump in the exponent is a large bump in the amount.
+- **Start from the deployment's baseline.** With a fixed local gas-price exponent of `0`, the current policy derives a recommended fee exponent of **1356**, so a bid of `1` is rejected. Obtain the deployment's current value from its operator.
+- **Bid above it.** Each exponent step changes the unrounded amount by about 0.78 percent, while larger increases compound and can authorize a much higher amount.
 - **Retry on `422`.** The typed rejection allows a client to raise its bid and resubmit after a failed attempt.
 - **Publish a default.** For an application whose sequencer you run, the policy is yours, and a sensible client default can ship alongside the application.
 
@@ -77,5 +77,5 @@ The same policy determines the target batch size and recommended fee, so the two
 
 ## Related concepts
 
-- To set a fee on a transaction, see [Submitting operations](../usage/submitting-operations.md).
+- To set a fee on a transaction, see [Submitting transactions](../usage/submitting-operations.md).
 - For how frames are formed, see [Batches, frames, and the safe block](./batches-frames-safe-block.md).

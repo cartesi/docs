@@ -85,6 +85,6 @@ If accepted base-layer batch content differs from the matching local sealed batc
 
 ## Next steps
 
-- To see where each trusted component sits, read [Architecture at a glance](./architecture.md).
+- To locate each trusted component, read [Architecture at a glance](./architecture.md).
 - To design client behavior around provisional results, read [Soft confirmations](../concepts/soft-confirmations.md).
 - To understand failure recovery, read [Staleness and the danger zone](../concepts/staleness.md) and [Preemptive recovery](../recovery/preemptive.md).

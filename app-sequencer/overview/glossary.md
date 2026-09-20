@@ -8,7 +8,7 @@ This glossary provides concise definitions for App Sequencer terminology. Follow
 
 **Anchor.** The batch number at which a deployment's local record begins. It is zero for a new deployment or the resume number for a deployment rebuilt from a checkpoint. See [Understanding the batch tree](../concepts/batch-tree.md).
 
-**App-specific sequencer.** A sequencer dedicated to one application deployment. It uses that application's validation and execution logic to provide a provisional transaction order and soft confirmations. See [App-specific sequencing](../overview/app-specific-sequencing.md).
+**App-specific sequencer.** A sequencer dedicated to one application deployment. It uses that application's validation and execution logic to provide a provisional transaction order and soft confirmations. See [App-specific sequencing](./app-specific-sequencing.md).
 
 **Base layer.** The blockchain that records application inputs and supports settlement of the rollup's state commitments, usually Ethereum.
 
@@ -30,7 +30,7 @@ This glossary provides concise definitions for App Sequencer terminology. Follow
 
 **Divergence.** A fault in which a batch observed in canonical execution differs from the batch the sequencer sealed for the same position. The sequencer records the fault and stops. See [Divergence handling](../advanced/divergence.md).
 
-**Feed.** The ordered stream of the sequencer's current valid transactions. It is provisional, can publish before base-layer acceptance, and does not send rollback messages after recovery. See [Consuming the sequenced transaction feed](../usage/reading-the-feed.md).
+**Feed.** The ordered stream of the sequencer's current valid transactions. It is provisional, can publish before base-layer acceptance, and does not send rollback messages after recovery. See [Reading the sequenced feed](../usage/reading-the-feed.md).
 
 **Frame.** An ordered section inside a batch. It carries a safe block, a frame fee, and zero or more sequenced transactions.
 

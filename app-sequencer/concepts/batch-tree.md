@@ -4,7 +4,7 @@ sidebar_label: "The batch tree"
 description: "How the sequencer records alternative batch histories and uses an anchor to identify where local history begins."
 ---
 
-The sequencer keeps its own record of every batch it has built and how they relate. In normal running that record is a straight line, one batch after another. It is a tree because failure sometimes makes it branch.
+The sequencer stores each batch and its relationship to previous batches. During normal operation, this history forms a straight line. In exceptional cases, recovery preserves an abandoned history and creates a replacement branch, causing the record to form a tree.
 
 ## Where the batch tree exists
 
@@ -34,7 +34,7 @@ The anchor is what stops a rebuilt deployment from believing it should begin at 
 
 Mostly it does not. The tree is the sequencer's internal bookkeeping, and an application never sees it.
 
-It matters indirectly, in one way. The tree is how the sequencer can tell the difference between work that is settled, work that is still a prediction, and work that has been abandoned. That distinction is what a soft confirmation ultimately rests on. See [Soft confirmations](./soft-confirmations.md).
+It matters indirectly, in one way. The tree is how the sequencer can tell the difference between work accepted through the safe view, work that is still a prediction, and work that has been abandoned. That distinction is what a soft confirmation ultimately rests on. See [Soft confirmations](./soft-confirmations.md).
 
 ## Related concepts
 

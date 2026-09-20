@@ -12,7 +12,7 @@ A batch contains transactions, frames, and a safe block reference.
 
 - A **batch** is what the sequencer posts to the base layer. It carries a number, its nonce, and a list of frames.
 - A **frame** is a group of transactions inside a batch. It carries a **safe block** and a fee price alongside its transactions.
-- The **safe block** is a base-layer block number, and it is the instruction that ties the two sides together.
+- The **safe block** is a base-layer block number that allows the off-chain sequencer and the scheduler inside the Cartesi machine to interleave direct inputs and sequenced transactions in the same order.
 
 ## How the safe block determines execution order
 
@@ -72,11 +72,11 @@ Once the machine begins executing a valid batch, a problem with one transaction 
 
 A skipped transaction makes no change to the application state. The machine continues with the rest of the batch, and the batch still advances the expected batch number.
 
-Transactions submitted through the public API normally fail before reaching this stage. The API checks the signature first and returns `400` if it is invalid. The sequencer then checks the transaction against the application and the current price, returning `422` if either check fails. Only a transaction that passes these checks is stored in a batch. See [Submitting operations](../usage/submitting-operations.md).
+Transactions submitted through the public API normally fail before reaching this stage. The API checks the signature first and returns `400` if it is invalid. The sequencer then checks the transaction against the application and the current price, returning `422` if either check fails. Only a transaction that passes these checks is stored in a batch. See [Submitting transactions](../usage/submitting-operations.md).
 
 The machine still needs its own rule because it cannot assume that every batch was constructed correctly. If unexpected transaction data reaches the base layer, the machine must produce a predictable result. Skipping only the invalid transaction allows the remaining valid transactions to continue without invalidating the entire batch.
 
 ## Related concepts
 
-- To see where this sits in the whole system, read [Architecture at a glance](../foundations/architecture.md).
+- To see where this sits in the whole system, read [Architecture at a glance](../overview/architecture.md).
 - To see how the two ways in differ, read [Direct inputs vs sequenced transactions](./direct-vs-sequenced.md).

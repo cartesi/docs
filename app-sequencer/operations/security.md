@@ -124,4 +124,4 @@ The deployment has no leader election or distributed writer coordination. Enforc
 
 - Configure the runtime using [Configure, set up, and run the sequencer](./setup-and-running.md).
 - Supervise keyed processes with [Process supervision and recovery operations](./orchestration.md).
-- Review the broader assumptions in [Trust model and guarantees](../foundations/trust-model.md).
+- Review the broader assumptions in [Trust model and guarantees](../overview/trust-model.md).

@@ -12,7 +12,7 @@ By default it listens on `127.0.0.1:3000`, which is local only. See [Configure, 
 
 ### POST /tx
 
-Submit a signed transaction. Explained in [Submitting operations](../usage/submitting-operations.md).
+Submit a signed transaction. Explained in [Submitting transactions](../usage/submitting-operations.md).
 
 Request:
 
@@ -20,7 +20,7 @@ Request:
 {
   "message": {
     "nonce": 0,
-    "max_fee": 1,
+    "max_fee": 2000,
     "data": "0x..."
   },
   "signature": "0x...",
@@ -73,8 +73,11 @@ Messages are JSON text frames. Binary fields are hex encoded with a `0x` prefix.
   "kind": "user_op",
   "offset": 10,
   "sender": "0x...",
-  "fee": 1,
-  "data": "0x..."
+  "nonce": 7,
+  "fee": 1356,
+  "data": "0x...",
+  "safe_block": 123,
+  "batch_nonce": 4
 }
 ```
 
@@ -84,9 +87,15 @@ Messages are JSON text frames. Binary fields are hex encoded with a `0x` prefix.
   "offset": 11,
   "sender": "0x...",
   "block_number": 123,
-  "payload": "0x..."
+  "payload": "0x...",
+  "input_index": 42,
+  "batch_nonce": 4,
+  "block_timestamp": 1700000000,
+  "transaction_hash": "0x..."
 }
 ```
+
+The complete field meanings and reconciliation guidance are maintained in [Reading the sequenced feed](../usage/reading-the-feed.md#understand-the-two-message-types).
 
 There are no other message kinds. In particular there is no message signalling that an earlier transaction was invalidated.
 
@@ -95,7 +104,7 @@ Limits:
 | Limit                  | Value         | Behaviour when exceeded                                                                    |
 | ---------------------- | ------------- | ------------------------------------------------------------------------------------------ |
 | Concurrent subscribers | 64            | Further connections get HTTP `429` with `OVERLOADED`, before the WebSocket upgrade         |
-| Catch-up window        | 50,000 events | Socket is upgraded then immediately closed, code `1008`, reason `catch-up window exceeded` |
+| Catch-up window        | 50,000 events | Socket is upgraded then immediately closed, code `1008`, reason `catch-up window exceeded: live_start_offset=<u64>` |
 
 ## Batch wire format
 
@@ -144,7 +153,7 @@ These serve application state to an operator's own watchdog and indexers. They h
 | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GET /finalized_state/inclusion_block` | Cheap JSON for detecting progress: `{ "inclusion_block": <u64>, "l2_tx_index": <u64> }`. `404` if no finalized snapshot exists yet.                                               |
 | `GET /finalized_state`                 | The settled state file, as `application/octet-stream`. Headers `X-Inclusion-Block`, `X-L2-Tx-Index`, and `ETag: "block-<n>"`. Send `If-None-Match` to get a `304` when unchanged. |
-| `GET /latest_snapshot`                 | The most recent snapshot, pending if there is one, otherwise finalized. Intended for an indexer that fetches state and then subscribes from `X-L2-Tx-Index`.                      |
+| `GET /latest_snapshot`                 | The most recent snapshot, pending if there is one, otherwise finalized. Intended for an indexer that fetches state and then subscribes from `X-L2-Tx-Index`. It can remain at genesis until the first batch closes. |
 
 Both streaming endpoints hold the snapshot open for the life of the response, including when a client disconnects early.
 

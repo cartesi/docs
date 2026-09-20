@@ -1,8 +1,10 @@
 ---
 title: "Submitting transactions"
-sidebar_label: "Submitting operations"
-description: "How to construct, sign, submit, retry, and interpret an application transaction sent to the sequencer."
+sidebar_label: "Submitting transactions"
+description: "Sign and submit transactions, then handle nonces, retries, fees, and errors."
 ---
+
+import SubmitClient from '../snippets/_submit-client.md';
 
 A client sends a user operation to the sequencer as EIP-712 typed data. The sequencer verifies the signature, applies the protocol and application checks, executes the operation against its predicted state, and stores accepted operations in order.
 
@@ -21,7 +23,7 @@ The request contains the sender's next nonce, maximum fee, application payload, 
 {
   "message": {
     "nonce": 0,
-    "max_fee": 1100,
+    "max_fee": 2000,
     "data": "0x..."
   },
   "signature": "0x...",
@@ -31,11 +33,38 @@ The request contains the sender's next nonce, maximum fee, application payload, 
 
 Use `0x`-prefixed hexadecimal values. The application defines the payload encoding and its maximum decoded size. See [`POST /tx`](../api-reference/api.md#post-tx) for the exact field types, limits, and response schema.
 
+## Encode the application payload
+
+`message.data` is not a generic transaction call. It contains the method bytes defined by the application integrated with the sequencer. A request can be valid JSON and have a valid signature but still fail when the application cannot decode or accept these bytes.
+
+Use the encoder shipped with your application. The reference wallet's complete SSZ transfer encoder is shown in the [Quickstart](./quickstart.md#prepare-a-reference-wallet-transaction). It produces a hexadecimal value that can be passed as `METHOD_DATA`.
+
 ## Sign the transaction with EIP-712
 
 Sign the exact nonce, maximum fee, and payload sent in the request. The domain binds the signature to the deployment's chain and application contract, so a signature for another deployment is rejected.
 
-[EIP-712 domain](../api-reference/eip712.md) defines the exact domain and `UserOp` type. The [Quickstart](./quickstart.md#step-3-sign-and-submit-a-transaction) contains a complete ethers example.
+[EIP-712 domain](../api-reference/eip712.md) defines the exact domain and `UserOp` type. The [Quickstart](./quickstart.md#step-3-sign-and-submit-a-transaction) contains a complete viem example.
+
+For a complete JavaScript request, install `viem`, create `submit.mjs`, and use the following client:
+
+```bash
+npm install viem
+```
+
+<SubmitClient />
+
+Provide a protected private-key file and the deployment values before running it:
+
+```bash
+CHAIN_ID=31337 \
+APP_ADDRESS=0xYourApplicationAddress \
+SEQUENCER_URL=http://127.0.0.1:3000 \
+USER_PRIVATE_KEY_FILE=/path/to/user.key \
+USER_NONCE=0 \
+MAX_FEE=2000 \
+METHOD_DATA=0xYourEncodedApplicationPayload \
+  node submit.mjs
+```
 
 ## Interpret the soft confirmation
 
@@ -112,10 +141,10 @@ let stream = client.subscribe(from_offset).await?;
 
 The current client constructor accepts `http://` endpoints. Deployments that terminate TLS at a gateway need to connect through an appropriate internal HTTP endpoint or use another client until HTTPS endpoint support is added.
 
-The Rust client opens the feed but leaves WebSocket message decoding, cursor persistence, reconnection, and catch-up recovery to the caller. See [Consuming the sequenced transaction feed](./reading-the-feed.md).
+The Rust client opens the feed but leaves WebSocket message decoding, cursor persistence, reconnection, and catch-up recovery to the caller. See [Reading the sequenced feed](./reading-the-feed.md).
 
 ## Next steps
 
 - Run the complete local flow in the [Quickstart](./quickstart.md).
-- Consume accepted operations using [Consuming the sequenced transaction feed](./reading-the-feed.md).
+- Consume accepted operations using [Reading the sequenced feed](./reading-the-feed.md).
 - Check all public response shapes in [HTTP and WebSocket API](../api-reference/api.md).

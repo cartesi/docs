@@ -1,8 +1,10 @@
 ---
-title: "Reading the sequenced transaction feed"
+title: "Reading the sequenced feed"
 sidebar_label: "Reading the sequenced feed"
-description: "How to consume the ordered WebSocket feed, store a reliable resume cursor, recover after disconnection, and account for optimistic delivery."
+description: "Consume the WebSocket feed, store cursors, reconnect, and reconcile provisional transactions."
 ---
+
+import FeedClient from '../snippets/_feed-client.md';
 
 The sequenced transaction feed is a database-backed WebSocket stream of the inputs in the sequencer's current execution order. It includes accepted user operations and direct inputs when they enter that order.
 
@@ -16,7 +18,23 @@ Open a WebSocket connection to:
 GET /ws/subscribe?from_offset=<u64>
 ```
 
-For a local sequencer, the full URL is:
+For a local sequencer, create a small Node.js subscriber. Install its WebSocket dependency:
+
+```bash
+npm install ws
+```
+
+Create `feed.mjs`:
+
+<FeedClient />
+
+Then connect from the beginning of the available feed:
+
+```bash
+SEQUENCER_URL=http://127.0.0.1:3000 FROM_OFFSET=0 node feed.mjs
+```
+
+For a quick manual inspection, you can use `websocat`:
 
 ```bash
 websocat 'ws://127.0.0.1:3000/ws/subscribe?from_offset=0'
@@ -39,22 +57,28 @@ A transaction accepted through `POST /tx` appears as:
   "kind": "user_op",
   "offset": 10,
   "sender": "0x...",
-  "fee": 1060,
-  "data": "0x..."
+  "nonce": 7,
+  "fee": 1356,
+  "data": "0x...",
+  "safe_block": 123,
+  "batch_nonce": 4
 }
 ```
 
-| Field    | Meaning                                                           |
-| -------- | ----------------------------------------------------------------- |
-| `kind`   | Always `user_op` for an operation submitted through the sequencer |
-| `offset` | Resume cursor assigned by the sequencer's database                |
-| `sender` | Address recovered from the operation's EIP-712 signature          |
-| `fee`    | Fee exponent committed for the frame that contains the operation  |
-| `data`   | Application-specific method payload                               |
+| Field         | Meaning                                                           |
+| ------------- | ----------------------------------------------------------------- |
+| `kind`        | Always `user_op` for an operation submitted through the sequencer |
+| `offset`      | Resume cursor assigned by the sequencer's database                |
+| `sender`      | Address recovered from the operation's EIP-712 signature          |
+| `nonce`       | Signed application nonce supplied with the operation              |
+| `fee`         | Fee exponent committed for the frame that contains the operation  |
+| `data`        | Application-specific method payload                               |
+| `safe_block`  | Safe base-layer block committed by the covering frame              |
+| `batch_nonce` | Nonce of the batch containing the covering frame                   |
 
 `fee` is the price assigned to the operation when it was ordered. The sender's offered `max_fee` is a separate value and is absent from the feed.
 
-The message does not contain the operation's nonce, signature, offered `max_fee`, batch number, frame number, safe block, outputs, or execution result. If a client needs to match a feed message to a submission unambiguously, include an application-level identifier in `data`. Matching only by `sender` and `data` can be ambiguous when a sender submits the same payload more than once.
+Use `sender` and `nonce` together to match the message within the current ordering. The message does not contain the operation's signature, offered `max_fee`, frame number, outputs, or execution result. Recovery can invalidate an operation and make its nonce usable again, so include a stable application-level identifier in `data` when a product must track a business action across reconciliation.
 
 ### Direct input
 
@@ -66,19 +90,27 @@ An input that reached the application through the base layer appears as:
   "offset": 11,
   "sender": "0x...",
   "block_number": 123,
-  "payload": "0x..."
+  "payload": "0x...",
+  "input_index": 42,
+  "batch_nonce": 4,
+  "block_timestamp": 1700000000,
+  "transaction_hash": "0x..."
 }
 ```
 
-| Field          | Meaning                                            |
-| -------------- | -------------------------------------------------- |
-| `kind`         | Always `direct_input` for a base-layer input       |
-| `offset`       | Resume cursor assigned by the sequencer's database |
-| `sender`       | Base-layer sender recorded for the input           |
-| `block_number` | Base-layer block that included the input           |
-| `payload`      | Raw input payload passed to the application        |
+| Field              | Meaning                                                               |
+| ------------------ | --------------------------------------------------------------------- |
+| `kind`             | Always `direct_input` for a base-layer input                           |
+| `offset`           | Resume cursor assigned by the sequencer's database                    |
+| `sender`           | Base-layer sender recorded for the input                               |
+| `block_number`     | Base-layer block that included the input                               |
+| `payload`          | Raw input payload passed to the application                            |
+| `input_index`      | InputBox index assigned to this application input                      |
+| `batch_nonce`      | Nonce of the batch whose frame drained and executed the direct input   |
+| `block_timestamp`  | Unix timestamp of the block containing the input, measured in seconds  |
+| `transaction_hash` | Hash of the base-layer transaction that submitted the application input |
 
-A direct input appears when the sequencer places it into the application execution order. Its `block_number` records where it arrived on the base layer.
+A direct input appears when the sequencer places it into the application execution order. Its base-layer fields identify where and when it entered the InputBox. `batch_nonce` identifies the batch that caused the canonical scheduler to drain it before executing that batch's user operations.
 
 Inputs sent by the configured batch submitter are filtered from `direct_input` delivery. Those inputs carry encoded sequencer batches, whose user operations already appear individually as `user_op` messages.
 
@@ -147,7 +179,9 @@ One connection can replay at most 50,000 deliverable events by default. If the r
 | Property   | Value                      |
 | ---------- | -------------------------- |
 | Close code | `1008`                     |
-| Reason     | `catch-up window exceeded` |
+| Reason     | `catch-up window exceeded: live_start_offset=<u64>` |
+
+The reason includes the current live-start offset. Reconnecting at that offset resumes from the live head but skips the older events that exceeded the catch-up limit. Do this only when the consumer can intentionally discard that history.
 
 An operator-managed indexer recovers by using a snapshot as its new starting point:
 
@@ -157,6 +191,16 @@ An operator-managed indexer recovers by using a snapshot as its new starting poi
 4. subscribe with `from_offset` set to the header value.
 
 The snapshot contains application state through that offset. The exclusive subscription then supplies every later feed message.
+
+Snapshots advance when batches close. On a low-traffic deployment, `/latest_snapshot` can therefore continue returning the genesis state until the first batch reaches its size target or its maximum open duration. The default time limit is two hours.
+
+The genesis snapshot is a valid starting point only when replaying from offset `0` remains within the catch-up window. If more than 50,000 deliverable events follow it, wait for or trigger a batch close before using `/latest_snapshot` for recovery. For local testing, start the sequencer with a shorter duration, for example:
+
+```bash
+CARTESI_SEQUENCER_MAX_BATCH_OPEN_SECONDS=5 ./app-sequencer run
+```
+
+Use a production value that balances snapshot and posting latency against base-layer transaction cost.
 
 The snapshot routes are internal operator endpoints. Apply the access controls described in [Sequencer security](../operations/security.md#separate-public-and-internal-routes).
 
@@ -186,7 +230,7 @@ The two interfaces solve different problems:
 | Display a current predicted balance | Application state derived from a snapshot or an indexer |
 | Establish a settled result          | Canonical settled state and the base layer              |
 
-The CMA wallet demo polls `/latest_snapshot` because its interface needs current ledger balances. It does not reconstruct the wallet ledger from WebSocket messages. A production indexer can load the same kind of state snapshot once, then use the feed to keep its materialized view current.
+An application interface that needs current balances can read them from an operator-managed indexer initialized from `/latest_snapshot`. The indexer can load the state snapshot once, then use the feed to keep its materialized view current.
 
 ## Capacity and connection behavior
 

@@ -40,6 +40,20 @@ This ordering prevents a committed database row from referring to an incomplete 
 
 As the safe input frontier advances, the sequencer observes accepted batch submissions. It promotes the newest applicable pending snapshot and advances the direct-input drain in the same database transaction. The atomic update prevents a crash from promoting a snapshot without advancing the input position that justified it.
 
+### When the latest snapshot advances
+
+The sequencer closes an open batch when it reaches its derived size target or its maximum open duration. Snapshot creation follows that batch closure, not each accepted transaction.
+
+The default `CARTESI_SEQUENCER_MAX_BATCH_OPEN_SECONDS` value is `7200`, or two hours. A low-traffic local deployment can therefore continue serving the genesis state from `/latest_snapshot` after accepting its first few operations. This does not mean the operations were rejected. They remain in the ordered feed and the current open batch, but no newer snapshot exists yet.
+
+Use a shorter duration when testing snapshot-dependent clients locally:
+
+```bash
+CARTESI_SEQUENCER_MAX_BATCH_OPEN_SECONDS=5 ./app-sequencer run
+```
+
+For production, choose a value that balances state freshness and batch-posting latency against base-layer transaction cost.
+
 ## How startup selects a snapshot
 
 The inclusion lane loads the newest pending snapshot when one exists. Otherwise, it loads the finalized snapshot. The same database record supplies both the dump path and the sequenced-feed offset, preventing application state and replay position from being mixed.
@@ -77,6 +91,8 @@ The promotion block is absent while a snapshot is pending. It is stamped into `i
 The HTTP API can stream the latest promoted state for watchdogs, the latest available state for indexers, and a lightweight promoted-position cursor. Streaming responses lease their dump so garbage collection cannot remove it during transfer.
 
 [Operator endpoints](../api-reference/api.md#operator-endpoints) defines the exact routes, headers, and cache behavior. Keep these endpoints internal according to [Production security](../operations/security.md#separate-public-and-internal-routes).
+
+An indexer can start from the genesis snapshot and subscribe from offset `0` while the remaining history fits within the feed's catch-up window. If the history exceeds that limit, the indexer needs a newer snapshot created at a later batch boundary.
 
 :::danger Snapshot responses are not recovery checkpoints
 The streaming endpoints return only the application's state bytes. They do not return `info.toml` or package the complete dump directory.

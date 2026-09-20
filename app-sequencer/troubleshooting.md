@@ -10,7 +10,7 @@ description: "Common questions and common errors, with what to do about them."
 No. Treat it as a provisional result. See [Soft confirmations](./concepts/soft-confirmations.md).
 
 **Can the sequencer steal funds?**
-Sequencing does not give the service custody of application assets or authority over canonical state. See [Trust model and guarantees](./foundations/trust-model.md).
+Sequencing does not give the service custody of application assets or authority over canonical state. See [Trust model and guarantees](./overview/trust-model.md).
 
 **Can it censor a user?**
 It can refuse the fast path. Users can still submit supported actions through the application's direct-input path. See [Direct and sequenced inputs](./concepts/direct-vs-sequenced.md).
@@ -39,7 +39,7 @@ Its batch was invalidated after a recovery. Fee and application checks happen at
 
 ## Errors on the feed
 
-**Closed immediately with code `1008`, `catch-up window exceeded`.** Initialize from a snapshot and subscribe from its offset. See [Recover after a long absence](./usage/reading-the-feed.md#recover-after-a-long-absence).
+**Closed immediately with code `1008` and reason `catch-up window exceeded: live_start_offset=<u64>`.** Initialize from a snapshot and subscribe from its offset. See [Recover after a long absence](./usage/reading-the-feed.md#recover-after-a-long-absence).
 
 **Cannot connect because the server reports overload.** The subscriber limit has been reached. Use a small number of durable indexers instead of connecting every client directly.
 
@@ -60,4 +60,4 @@ Its batch was invalidated after a recovery. Fee and application checks happen at
 ## Next steps
 
 - For what can fail and how it is handled, see [Failure modes](./recovery/failure-modes.md).
-- For terms, see the [App Sequencer glossary](./foundations/glossary.md).
+- For terms, see the [App Sequencer glossary](./overview/glossary.md).

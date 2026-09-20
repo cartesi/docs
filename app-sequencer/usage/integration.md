@@ -1,7 +1,7 @@
 ---
-title: "Integrating the sequencer with a Cartesi application"
+title: "Application integration"
 sidebar_label: "Application integration"
-description: "How to connect application logic to the off-chain sequencer, include the canonical scheduler in the Cartesi machine, and verify that both execution paths agree."
+description: "Connect shared application logic to the host sequencer and the canonical Cartesi machine."
 ---
 
 Adding the app-specific sequencer produces two programs that use the same application logic:
@@ -13,6 +13,18 @@ Adding the app-specific sequencer produces two programs that use the same applic
 | Canonical application | Cartesi machine | Reads recorded inputs, applies the authoritative scheduling rules, and emits the application's notices and vouchers |
 
 The sequencer accelerates an existing application. It does not replace the Cartesi machine or change where settlement occurs.
+
+## Before you begin
+
+Prepare the following before changing the application code:
+
+- a Rust toolchain with Cargo for building the shared library and host sequencer;
+- an existing Cartesi application workspace whose domain logic can be moved into a shared Rust crate;
+- the Cartesi machine build environment required to compile and package the canonical application;
+- a selected App Sequencer release or commit that every workspace crate will use;
+- the application contract address, chain ID, `InputBox`, and batch-submitter address for the target deployment.
+
+The host and Cartesi machine builds may use different storage and I/O adapters, but they must share the same application rules, protocol types, and canonical state representation.
 
 ## Recommended project structure
 
@@ -27,7 +39,7 @@ my-application/
 
 `app-core` depends on `sequencer-core`, which contains the shared protocol types and the `Application` trait. `app-sequencer` depends on the higher-level `sequencer` crate. `canonical-app` depends on `sequencer-core` and the rollup I/O library used to read inputs and emit outputs inside the machine.
 
-This separation is important when application dependencies need different host and RISC-V implementations. The CMA wallet, for example, uses the same ledger API in both environments, with a host-backed buffer for prediction and a persistent machine drive for canonical execution.
+This separation is important when application dependencies need different host and RISC-V implementations. Keep those storage adapters behind the same application interface so both programs preserve identical logical state and canonical bytes.
 
 ![The shared app-core library supplies the same application logic to the host app-sequencer and the canonical application. Each executable adds the responsibilities of its own execution environment.](../images/integration-duality.png)
 
@@ -35,7 +47,20 @@ This separation is important when application dependencies need different host a
 
 Implement `sequencer_core::application::Application` on the state type shared by the host sequencer and canonical machine. The interface covers payload limits, validation and execution, direct inputs, progress tracking, durable dumps, and canonical state bytes.
 
-[Application integration requirements](./application-requirements.md) is the authoritative method contract and verification checklist. Complete that contract before wiring either executable. At this stage, the integration-specific goal is to keep the implementation in a dependency that can compile for both the host and the Cartesi machine, with target-specific storage hidden behind the same logical interface.
+Add `sequencer-core` to the shared crate and pin it to the same release or commit used by the host binary:
+
+```toml
+[dependencies]
+sequencer-core = { git = "https://github.com/cartesi/sequencer", rev = "5e3d621e8f04fe93840944421e9625b4a4cc7f34" }
+```
+
+Import the trait on the application state type:
+
+```rust
+use sequencer_core::application::Application;
+```
+
+The [Application trait reference](./application-trait-reference.md) is the authoritative method contract and verification checklist. Complete that contract before wiring either executable. At this stage, the integration-specific goal is to keep the implementation in a dependency that can compile for both the host and the Cartesi machine, with target-specific storage hidden behind the same logical interface.
 
 ## Step 2: build the application-specific sequencer
 
@@ -46,12 +71,12 @@ A typical crate declares these dependencies:
 ```toml
 [dependencies]
 app-core = { path = "../app-core" }
-sequencer = { path = "../sequencer/sequencer" }
-tokio = { version = "1.35", features = ["macros", "rt-multi-thread"] }
+sequencer = { git = "https://github.com/cartesi/sequencer", rev = "5e3d621e8f04fe93840944421e9625b4a4cc7f34" }
+tokio = { version = "1.53", features = ["macros", "rt-multi-thread"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 ```
 
-Adjust the paths or version declarations to match the sequencer release used by your project. The entry point then supplies the application constructor:
+Pin every sequencer dependency in the workspace to the same release or commit. The revision above identifies the implementation used for this page and can be replaced with the release selected by your project. The entry point then supplies the application constructor:
 
 ```rust
 use app_core::{MyApp, MyAppConfig};
@@ -76,7 +101,7 @@ async fn main() -> std::process::ExitCode {
 
 The constructor closure runs during `setup`, when the genesis dump is created. A normal `run` restores the application from a dump. Configuration that affects execution must therefore be stored in the dump, or checked against the stored deployment configuration, instead of depending only on the current process environment.
 
-The resulting executable supports `setup`, `run`, and `flush-mempool`. The sequencer repository's `examples/wallet-sequencer` crate is the smallest reference for this composition.
+The resulting executable supports `setup`, `run`, and `flush-mempool`. The public [`examples/wallet-sequencer`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/wallet-sequencer) crate is the smallest reference for this composition.
 
 ## Step 3: include the canonical scheduler in the machine
 
@@ -89,7 +114,7 @@ The Cartesi machine must process batches and direct inputs according to the cano
 5. emit every returned notice and voucher through the rollup I/O connection;
 6. serve canonical state bytes for supported inspect requests.
 
-The reference I/O loop is in `examples/canonical-app/src/scheduler/mod.rs` in the sequencer repository. With that loop available to the application, the machine entry point has this shape:
+The reference I/O loop is in [`examples/canonical-app/src/scheduler/mod.rs`](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/canonical-app/src/scheduler/mod.rs). With that loop available to the application, the machine entry point has this shape:
 
 ```rust
 use app_core::{MyApp, MyAppConfig};
@@ -121,33 +146,33 @@ The canonical scheduler classifies an input by its base-layer sender:
 
 The address passed to `SchedulerConfig::new` must match both `CARTESI_SEQUENCER_BATCH_SUBMITTER_ADDRESS` used during `setup` and the address derived from the private key used during `run`. A mismatch causes valid batches to be handled as direct inputs.
 
-Do not confuse the batch submitter with an application-level fee recipient. They may use the same address, but they serve different purposes. The CMA wallet keeps them as separate configuration values.
+Do not confuse the batch submitter with an application-level fee recipient. They may use the same address, but they serve different purposes.
 
 ### Flush machine-backed state when required
 
-Applications that keep canonical state on a persistent machine drive must ensure writes reach that drive before the rollup yields and a machine snapshot is taken. The CMA wallet adapts the reference I/O loop to synchronize its accounts drive before each request boundary. An in-memory application does not need this extra step.
+Applications that keep canonical state on a persistent machine drive must ensure writes reach that drive before the rollup yields and a machine snapshot is taken. Synchronize the drive at each request boundary. An in-memory application does not need this extra step.
 
 Compile the canonical program for the machine target, package it with its runtime dependencies, and build a new machine image. Because the scheduler becomes part of that image, its template hash changes. Integrating the sequencer into an existing deployment therefore requires deployment of the new image.
 
 ## Step 4: prove that both paths agree
 
-After the application-level checks in the [requirements checklist](./application-requirements.md#verification-checklist) pass, test the assembled integration at three boundaries:
+After the application-level checks in the [verification checklist](./application-trait-reference.md#verification-checklist) pass, test the assembled integration at three boundaries:
 
 1. **Scheduler agreement:** give direct inputs and batches to `Scheduler<MyApp>`, replay the same operations through the prediction path, and require byte-identical canonical state.
 2. **Machine execution:** boot the built Cartesi machine image, send a direct input followed by a covering batch, and verify the notices and vouchers produced inside the machine.
 3. **End-to-end synchronization:** run the sequencer and rollups node against the same base layer, submit an operation through the sequencer, and compare the predicted state with the machine's finalized state.
 
-The CMA integration contains examples of each important layer:
+The sequencer repository contains public examples for each important layer:
 
-| Path                                                       | What it demonstrates                                                                                   |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `sequencer-integration/cma-app-core`                       | A real application adapter, deterministic execution, target-specific state backing, and complete dumps |
-| `sequencer-integration/cma-sequencer`                      | The thin `run_main` composition                                                                        |
-| `sequencer-integration/cma-canonical-app`                  | The canonical scheduler loop and machine-drive synchronization                                         |
-| `sequencer-integration/cma-canonical-app/tests/duality.rs` | Byte-for-byte agreement between canonical scheduling and off-chain prediction                          |
-| `sequencer-integration/cma-machine-test`                   | Execution of direct inputs and a batch in the built machine image                                      |
+| Public example | What it demonstrates |
+| --- | --- |
+| [`examples/app-core`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/app-core) | Shared application state, deterministic wallet operations, direct inputs, progress, and dumps |
+| [`examples/wallet-sequencer`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/wallet-sequencer) | The thin host executable built around `sequencer::run_main` |
+| [`examples/canonical-app`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/canonical-app) | The canonical scheduler loop and Cartesi Machine entry points |
+| [`sequencer-core` scheduler tests](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/sequencer-core/src/scheduler/mod.rs) | Agreement between canonical scheduling and the protocol acceptance rules |
+| [`examples/canonical-test`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/canonical-test) | Execution against the built canonical machine image |
 
-Application-specific choices in that demo, including its ERC-20 portal format, SSZ method union, libcma ledger, and `/dev/pmem1` drive, are examples and are not sequencer protocol requirements.
+The ERC-20 wallet behavior in these examples is an application design, not a sequencer protocol requirement.
 
 ## Step 5: set up and run the service
 
@@ -163,16 +188,16 @@ Clients that use the sequencer must:
 4. treat the successful response as a soft confirmation;
 5. consume the ordered WebSocket feed and reconcile later status changes.
 
-The original direct-input route remains available. The application decides which actions that route supports through `execute_direct_input`.
+The original direct-input route remains available. The application decides which actions that route supports through `apply_direct_input`.
 
-See [Submitting operations](./submitting-operations.md), [Reading the sequenced feed](./reading-the-feed.md), and [Soft confirmations](../concepts/soft-confirmations.md) before updating production clients.
+See [Submitting transactions](./submitting-operations.md), [Reading the sequenced feed](./reading-the-feed.md), and [Soft confirmations](../concepts/soft-confirmations.md) before updating production clients.
 
 ## Integration checklist
 
 - The same deterministic application logic compiles for the host and the Cartesi machine.
 - The `Application` implementation covers execution, progress, persistence, and canonical state bytes.
 - Dumps restore every value that can affect future execution and are durable when created.
-- The application satisfies the `Clone`, `Send`, `Sync`, and `'static` bounds required by `run_main`.
+- The application satisfies the `Send` and `'static` bounds required by `Application` and `run_main`.
 - The canonical machine runs the scheduler before application execution.
 - The batch submitter address is identical in setup, runtime key configuration, and `SchedulerConfig`.
 - Persistent machine state is synchronized before snapshots when the storage design requires it.
@@ -183,4 +208,4 @@ See [Submitting operations](./submitting-operations.md), [Reading the sequenced 
 
 - Run the local transaction flow in the [Quickstart](./quickstart.md).
 - Send a signed transaction with [Submitting transactions](./submitting-operations.md).
-- Re-check any interface rule in [Application requirements](./application-requirements.md).
+- Re-check any interface rule in the [Application trait reference](./application-trait-reference.md).

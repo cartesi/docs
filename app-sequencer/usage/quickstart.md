@@ -1,10 +1,15 @@
 ---
 title: "Quickstart"
 sidebar_label: "Quickstart"
-description: "Initialize and run an application-specific sequencer, submit a signed transaction, and find it in the ordered feed."
+description: "Run a prepared sequencer, submit a signed transaction, and find it in the ordered feed."
 ---
 
-This guide covers the shortest complete client loop: initialize a sequencer for a deployed application, start it, submit one application transaction, and read that transaction from the ordered feed.
+import FeedClient from '../snippets/_feed-client.md';
+import SubmitClient from '../snippets/_submit-client.md';
+
+This guide covers the client loop for an application that is already deployed and prepared: initialize its sequencer, start the service, submit one application transaction, and read that transaction from the ordered feed.
+
+If you do not yet have a deployed application and a valid application payload, start with [Build an ERC-20 wallet with the App Sequencer](../tutorials/build-wallet-sequencer.md). That tutorial builds every component, funds the wallet, and submits its first transaction.
 
 ## Prerequisites
 
@@ -14,13 +19,15 @@ You need:
 - a deployed Cartesi application contract whose data-availability configuration points to an `InputBox`;
 - an application-specific sequencer binary built with that application's `Application` implementation;
 - a funded base-layer account dedicated to submitting batches;
-- a user account that can pass the application's nonce, fee-balance, and method validation;
-- Node.js with `ethers` installed, plus `curl` and `websocat`.
+- a user account with the application state required to pass nonce, fee-balance, and method validation;
+- Node.js and npm, plus `curl`.
+
+If you are building the application-specific sequencer or running the reference binary from source, you also need the Rust toolchain and Cargo. The reference-wallet preparation later in this guide additionally uses the Cartesi CLI, Foundry, and `jq`.
 
 The sequencer is a library that each application builds into its own executable. If your application does not have one yet, follow [Application integration](./integration.md). The sequencer repository's `examples/wallet-sequencer` crate is a reference binary, but its wallet state and method encoding must still match the application deployment you use.
 
-:::note Application-specific values are required
-This guide uses placeholders for the application address, keys, and `METHOD_DATA`. A successful submission requires a payload your application can decode and state that satisfies its validation rules. For a wallet, that usually means the sender has deposited enough application funds to cover the action and its fee.
+:::note Application-specific preparation is required
+The sequencer can sign and transport application payloads, but it cannot create them or fund application accounts. Before submitting, provide bytes your application can decode and prepare any state its validation requires. The reference wallet example below shows both steps for a local deployment.
 :::
 
 ## Step 1: initialize the sequencer data directory
@@ -37,6 +44,7 @@ export CARTESI_SEQUENCER_BLOCKCHAIN_ID=31337
 export CARTESI_SEQUENCER_APP_ADDRESS=$APP_ADDRESS
 export CARTESI_SEQUENCER_BATCH_SUBMITTER_ADDRESS=$SUBMITTER_ADDRESS
 export CARTESI_SEQUENCER_DATA_DIR=$SEQUENCER_DATA_DIR
+export CARTESI_SEQUENCER_FEE_ORACLE_FIXED_LOG_GAS_PRICE=0
 
 ./app-sequencer setup
 ```
@@ -50,6 +58,8 @@ cargo run -p wallet-sequencer --bin wallet-sequencer-devnet -- setup
 The `wallet-sequencer-devnet` binary selects the reference wallet's local development configuration. The standard `wallet-sequencer` binary uses its non-local configuration.
 
 The application contract must be deployed before this step. During setup, the sequencer verifies the chain identifier and discovers the application's `InputBox` through the contract's data-availability configuration.
+
+The fixed fee-oracle value makes the example work on local chain ID `31337`, which has no public-network fee-source preset. Configure the supported fee source for an operated deployment instead of copying this development value.
 
 `setup` is idempotent for an already prepared data directory. Keep the directory because `run` reads the pinned identity and genesis state from it.
 
@@ -82,6 +92,75 @@ A loopback RPC endpoint may use plaintext HTTP. Remote RPC endpoints require HTT
 
 ## Step 3: sign and submit a transaction
 
+Create a small client directory and install its dependencies:
+
+```bash
+mkdir -p sequencer-client
+cd sequencer-client
+npm init --yes
+npm install viem ws
+```
+
+The application defines the bytes placed in `UserOp.data`. For your own application, use its encoder and assign the resulting hexadecimal value to `METHOD_DATA`.
+
+### Prepare a reference wallet transaction
+
+If the deployment uses the reference wallet, its sender must first have a wallet balance. This local path also requires the Cartesi CLI, Foundry, and `jq`. The following commands mint the CLI test token to Anvil account 0 and deposit one token through the ERC-20 portal. Run them from the Cartesi application project directory in another terminal, with the local environment and sequencer running:
+
+```bash
+export L1_RPC=$CARTESI_SEQUENCER_BLOCKCHAIN_HTTP_ENDPOINT
+export TEST_TOKEN=$(cartesi address-book --json | jq -r .TestToken)
+export DEV_USER_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+cast send "$TEST_TOKEN" "mint(uint256)" 1000000000000000000000 \
+  --rpc-url "$L1_RPC" \
+  --private-key "$DEV_USER_PRIVATE_KEY"
+
+cartesi deposit erc20 1 --token "$TEST_TOKEN"
+```
+
+The private key above is a public Anvil development key. Never use it or fund it on a public network. Wait until the safe base-layer head passes the deposit block before submitting the wallet operation.
+
+Return to the `sequencer-client` directory. The reference wallet encodes a transfer as a one-byte selector, a 32-byte little-endian amount, and a 20-byte recipient address. Create `encode-wallet-transfer.mjs` there:
+
+```js
+import { concatHex, getAddress } from "viem";
+
+function required(name) {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} is required`);
+  return value;
+}
+
+function uint256LittleEndian(value) {
+  if (value < 0n || value >= 1n << 256n) {
+    throw new Error("value does not fit in uint256");
+  }
+  const bigEndian = value.toString(16).padStart(64, "0");
+  return `0x${Buffer.from(bigEndian, "hex").reverse().toString("hex")}`;
+}
+
+const payload = concatHex([
+  "0x01",
+  uint256LittleEndian(BigInt(required("TRANSFER_AMOUNT"))),
+  getAddress(required("TRANSFER_RECIPIENT")),
+]);
+
+console.log(payload);
+```
+
+Encode a transfer of `0.4` token to Anvil account 1:
+
+```bash
+export TRANSFER_RECIPIENT=0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+export TRANSFER_AMOUNT=400000000000000000
+export METHOD_DATA=$(node encode-wallet-transfer.mjs)
+```
+
+For another application, replace this encoder and funding procedure with the rules defined by that application.
+
+### Sign and submit the payload
+
 The user signs this EIP-712 type:
 
 ```solidity
@@ -92,46 +171,9 @@ struct UserOp {
 }
 ```
 
-Create `sign.mjs`:
+Create `submit.mjs`:
 
-```js
-import { readFileSync } from "node:fs";
-import { Wallet } from "ethers";
-
-function required(name) {
-  const value = process.env[name];
-  if (!value) throw new Error(`${name} is required`);
-  return value;
-}
-
-const wallet = new Wallet(
-  readFileSync(required("USER_PRIVATE_KEY_FILE"), "utf8").trim(),
-);
-
-const domain = {
-  name: "CartesiAppSequencer",
-  version: "1",
-  chainId: Number(required("CHAIN_ID")),
-  verifyingContract: required("APP_ADDRESS"),
-};
-
-const types = {
-  UserOp: [
-    { name: "nonce", type: "uint32" },
-    { name: "max_fee", type: "uint16" },
-    { name: "data", type: "bytes" },
-  ],
-};
-
-const message = {
-  nonce: Number(required("USER_NONCE")),
-  max_fee: Number(required("MAX_FEE")),
-  data: required("METHOD_DATA"),
-};
-
-const signature = await wallet.signTypedData(domain, types, message);
-console.log(JSON.stringify({ message, signature, sender: wallet.address }));
-```
+<SubmitClient />
 
 Store the user's key in another protected file:
 
@@ -139,25 +181,22 @@ Store the user's key in another protected file:
 install -m 600 /dev/null /tmp/user.key
 ```
 
-Add the user's private key to the first line of `/tmp/user.key`. Then supply the deployment and application-specific values and post the signed request:
+Add the user's private key to the first line of `/tmp/user.key`. Then supply the deployment and application-specific values and submit the signed request:
 
 ```bash
 CHAIN_ID=31337 \
 APP_ADDRESS=$APP_ADDRESS \
+SEQUENCER_URL=http://127.0.0.1:3000 \
 USER_PRIVATE_KEY_FILE=/tmp/user.key \
 USER_NONCE=0 \
-MAX_FEE=1100 \
-METHOD_DATA=0xYourApplicationPayload \
-  node sign.mjs | \
-  curl --fail-with-body \
-    --request POST http://127.0.0.1:3000/tx \
-    --header 'content-type: application/json' \
-    --data @-
+MAX_FEE=2000 \
+METHOD_DATA=$METHOD_DATA \
+  node submit.mjs
 ```
 
-The nonce starts at `0` for a sender with no accepted user operations. `METHOD_DATA` must be the hexadecimal encoding expected by your application.
+The nonce starts at `0` for a sender with no accepted user operations. Use the same account that received the reference wallet deposit, or provide a funded sender for your own application.
 
-`max_fee` is a fee exponent. The unmodified policy starts at exponent `1060`, so `1100` clears that baseline. A deployment can use a different current price, and there is no public fee-discovery endpoint. Obtain the expected baseline from the operator or handle an `EXECUTION_REJECTED` response by correcting the fee and signing again.
+`max_fee` is a fee exponent. With a fixed local gas-price exponent of `0`, the current policy derives a frame price of `1356`, so `2000` clears that reference configuration. A deployment can use a different current price, and there is no public fee-discovery endpoint. Obtain the expected value from the operator or handle an `EXECUTION_REJECTED` response by correcting the fee and signing again.
 
 A successful request returns:
 
@@ -173,7 +212,17 @@ The server sends this response only after it validates, executes, and durably st
 
 ## Step 4: read the transaction from the feed
 
+Create `feed.mjs` in the same client directory:
+
+<FeedClient />
+
 Subscribe from offset `0`:
+
+```bash
+SEQUENCER_URL=http://127.0.0.1:3000 FROM_OFFSET=0 node feed.mjs
+```
+
+For a quick manual inspection, you can use `websocat` instead:
 
 ```bash
 websocat 'ws://127.0.0.1:3000/ws/subscribe?from_offset=0'
@@ -186,14 +235,17 @@ The feed replays its current valid ordering and then waits for new messages. Fin
   "kind": "user_op",
   "offset": 1,
   "sender": "0x...",
-  "fee": 1060,
-  "data": "0x..."
+  "nonce": 0,
+  "fee": 1356,
+  "data": "0x...",
+  "safe_block": 123,
+  "batch_nonce": 0
 }
 ```
 
 The displayed `fee` is the committed frame price, so it can be lower than the submitted `max_fee`. The offset may also be greater than `1` if other user operations or direct inputs were ordered first.
 
-The feed message does not include the nonce or signature. Applications that need reliable transaction matching should include their own request identifier in the application payload. See [Consuming the sequenced transaction feed](./reading-the-feed.md) for cursor and reconnection handling.
+Within the current ordering, match a submission by its `sender` and `nonce`. The feed does not include the signature or submitted `max_fee`. Because recovery can invalidate an operation and make its nonce usable again, place a stable request identifier in `data` when the client must track a business action across reconciliation. See [Reading the sequenced feed](./reading-the-feed.md) for the complete schema, cursor handling, and reconnection behavior.
 
 ## Understand the confirmation status
 
@@ -206,5 +258,5 @@ For valuable or irreversible actions, verify the outcome from sufficiently settl
 ## Next steps
 
 - Learn the complete request and retry behavior in [Submitting transactions](./submitting-operations.md).
-- Build a reliable feed consumer with [Consuming the sequenced transaction feed](./reading-the-feed.md).
+- Build a reliable feed consumer with [Reading the sequenced feed](./reading-the-feed.md).
 - Prepare a production process using [Configure, set up, and run the sequencer](../operations/setup-and-running.md).

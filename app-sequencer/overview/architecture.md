@@ -54,7 +54,7 @@ The `InputBox` records arrival order. It does not determine the complete applica
 | Scheduler   | Classifies recorded inputs, validates batches, combines direct inputs with sequenced transactions, and produces the authoritative execution order |
 | Application | Validates application-specific behavior and computes state and outputs from that order                                                            |
 
-The Cartesi machine is deterministic and reproducible. Its result can be committed to the base layer and challenged through the fraud-proof system. [Trust model and guarantees](./trust-model.md) explains the assumptions around each boundary.
+The Cartesi machine produces deterministic, reproducible results. Its result can be committed to the base layer and challenged through the fraud-proof system. [Trust model and guarantees](./trust-model.md) explains the assumptions around each boundary.
 
 ## Transaction lifecycle from submission to settlement
 
@@ -98,7 +98,7 @@ An application team integrates and operates three pieces:
 
 The App Sequencer provides the runtime and Rust client components, but application logic, deployment configuration, operational ownership, and user-facing confirmation behavior remain application responsibilities.
 
-See [Application integration](../usage/integration.md), [Application requirements](../usage/application-requirements.md), and [Consuming the sequenced transaction feed](../usage/reading-the-feed.md).
+See [Application integration](../usage/integration.md), the [Application trait reference](../usage/application-trait-reference.md), and [Reading the sequenced feed](../usage/reading-the-feed.md).
 
 ## Next steps
 

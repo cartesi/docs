@@ -1,14 +1,27 @@
 ---
-title: "Application integration requirements"
-sidebar_label: "Application requirements"
-description: "The execution, progress, persistence, and determinism contracts an application must satisfy to work safely with the app-specific sequencer."
+title: "Application trait reference"
+sidebar_label: "Application trait reference"
+description: "Reference for implementing the sequencer's application interface, deterministic state, progress, and recovery methods."
 ---
 
-An application integrates with the sequencer by implementing `sequencer_core::application::Application`. The off-chain sequencer uses this implementation to predict application state, and the canonical scheduler uses it inside the Cartesi machine to compute the authoritative result.
+An application integrates with the sequencer by implementing [`sequencer_core::application::Application`](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/sequencer-core/src/application/mod.rs#L154). The trait is defined in the `sequencer-core` crate and imported with:
+
+```rust
+use sequencer_core::application::Application;
+```
+
+Add the crate to the shared application library using the same sequencer release or revision as the rest of the workspace:
+
+```toml
+[dependencies]
+sequencer-core = { git = "https://github.com/cartesi/sequencer", rev = "5e3d621e8f04fe93840944421e9625b4a4cc7f34" }
+```
+
+The off-chain sequencer uses this implementation to predict application state, and the canonical scheduler uses it inside the Cartesi machine to compute the authoritative result.
 
 Both execution paths must produce the same state and outputs for the same ordered inputs. The interface therefore defines more than application methods. It also defines progress tracking, recovery dumps, canonical state bytes, and failure behavior.
 
-This page describes the application code shared by the two execution paths. The application-specific sequencer binary is covered in [Integrating the sequencer with a Cartesi application](./integration.md).
+This page is an implementation reference for the application code shared by both execution paths. Use it while implementing or reviewing the trait methods. For the complete setup and build sequence, follow [Application integration](./integration.md).
 
 ## Complete interface overview
 
@@ -18,18 +31,16 @@ The required and optional parts of `Application` are grouped below.
 | ------------------------ | -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Payload bound            | `MAX_METHOD_PAYLOAD_BYTES` | Yes         | Limits the encoded application payload accepted in `UserOp.data` and supplies the sequencer's batch-sizing calculation |
 | Validation               | `validate_user_op`         | Yes         | Checks application-level acceptance rules without changing state                                                       |
-| User operation execution | `execute_valid_user_op`    | Yes         | Applies an operation that passed the protocol and application checks                                                   |
-| Direct input execution   | `execute_direct_input`     | Yes         | Applies an input recorded directly on the base layer                                                                   |
-| Progress                 | `last_executed_safe_block` | Yes         | Reports the highest base-layer block covered by executed inputs                                                        |
-| Progress                 | `executed_input_count`     | Yes         | Reports how many user operations and direct inputs have executed                                                       |
+| User operation execution | `apply_valid_user_op`      | Yes         | Applies an operation that passed the protocol and application checks                                                   |
+| Direct input execution   | `apply_direct_input`       | Yes         | Applies an input recorded directly on the base layer                                                                   |
+| Progress                 | `progress`                 | Yes         | Returns the safe-block clock and executed-input count embedded in application state                                    |
 | Persistence              | `create_dump`              | Yes         | Writes a complete and durable recovery dump                                                                            |
 | Persistence              | `from_dump`                | Yes         | Reconstructs equivalent application state from a dump                                                                  |
 | Persistence              | `delete_dump`              | Yes         | Removes a dump that the sequencer no longer needs                                                                      |
 | Persistence              | `state_file_in_dump`       | Yes         | Locates the canonical state file inside a dump                                                                         |
-| State comparison         | `canonical_snapshot_bytes` | Conditional | Returns deterministic state bytes for machine inspection and watchdog comparison                                       |
-| Diagnostics              | `export_state`             | No          | Returns human-readable JSON for debugging                                                                              |
+| State comparison         | `CanonicalState::canonical_snapshot_bytes` | Conditional | Returns deterministic state bytes for machine inspection and watchdog comparison                         |
 
-`canonical_snapshot_bytes` and `export_state` have default implementations that return an error. Implement canonical bytes when the deployment serves machine state through inspect requests or uses the watchdog comparison.
+`canonical_snapshot_bytes` belongs to the separate `CanonicalState` trait. Implement it when the application uses the shared Rust canonical scheduler and serves state for inspection or watchdog comparison.
 
 ## User operation validation and execution
 
@@ -39,10 +50,10 @@ Every user operation must pass through `validate_and_execute_user_op`. This shar
 1. Check user_op.max_fee against the current frame fee
 2. Call app.validate_user_op(...)
 3. Build a ValidUserOp with the committed frame fee
-4. Call app.execute_valid_user_op(...)
+4. Call execute_valid_user_op(...), which invokes app.apply_valid_user_op(...)
 ```
 
-Application code should call the shared function in tests and custom execution paths. Calling `execute_valid_user_op` directly bypasses the protocol fee guard and can create behavior that the canonical scheduler will not reproduce.
+Application code should call the shared function in tests and custom live-execution paths. Calling `apply_valid_user_op` directly bypasses the protocol fee guard and progress verification, which can create behavior that the canonical scheduler will not reproduce. Trusted replay uses the shared `execute_valid_user_op` helper because the operation has already passed validation.
 
 ### Keep validation read-only
 
@@ -66,9 +77,9 @@ The current rejection vocabulary contains:
 
 A validation rejection changes no state, produces no output, and is not placed in the ordered transaction stream.
 
-### Execute an accepted operation deterministically
+### Apply an accepted operation deterministically
 
-`execute_valid_user_op` receives a `ValidUserOp` containing the sender, the committed frame fee, and the application payload. It also receives the frame's `safe_block`.
+`apply_valid_user_op` receives a `ValidUserOp` containing the sender, the committed frame fee, and the application payload. It also receives the frame's `safe_block`.
 
 The method must:
 
@@ -81,13 +92,13 @@ The method must:
 
 The valid operation no longer contains the submitted nonce or offered `max_fee`. Any checks that depend on those fields belong in `validate_user_op`. Execution uses the frame fee selected by the protocol.
 
-An operation may be included while producing no outputs. The CMA wallet uses this behavior when a decoded action cannot be completed after its protocol-level acceptance: it charges the data-availability fee, consumes the nonce, and returns an empty output list. Applications must define this behavior carefully because an included no-op differs from a validation rejection.
+An operation may be included while producing no outputs. The public reference wallet uses this behavior when a decoded action cannot be completed after its protocol-level acceptance: it charges the data-availability fee, consumes the nonce, and returns an empty output list. Applications must define this behavior carefully because an included no-op differs from a validation rejection.
 
 Notices and vouchers computed off-chain are predictions. The corresponding outputs become authoritative when the canonical machine executes the recorded batch.
 
 ## Direct input handling
 
-`execute_direct_input` has no default implementation. Every application must define how inputs that did not enter through `POST /tx` affect its state.
+`apply_direct_input` has no default implementation. Every application must define how inputs that did not enter through `POST /tx` affect its state.
 
 The method receives:
 
@@ -95,9 +106,9 @@ The method receives:
 - the base-layer inclusion block;
 - the raw payload.
 
-The canonical scheduler treats every recorded input from an address other than the configured batch submitter as a direct input. The application must then authenticate and decode the input according to its own rules. For example, the CMA wallet credits a deposit only when the sender is its configured ERC-20 portal and the payload names its supported token.
+The canonical scheduler treats every recorded input from an address other than the configured batch submitter as a direct input. The application must then authenticate and decode the input according to its own rules. For example, the public reference wallet credits a deposit only when the sender is its configured ERC-20 portal and the payload names its supported token.
 
-For every executed direct input, the application must increment `executed_input_count` and update its safe-block clock with `input.block_number`. An ignored or unsupported direct input still counts as executed once the application has processed it.
+For every executed direct input, the application must increment its executed-input count and update its safe-block clock with `input.block_number`. An ignored or unsupported direct input still counts as executed once the application has processed it.
 
 The actions supported through this method determine what users can do while the sequencer is unavailable. See [Direct inputs vs sequenced transactions](../concepts/direct-vs-sequenced.md).
 
@@ -105,7 +116,7 @@ The actions supported through this method determine what users can do while the 
 
 ### Safe-block clock
 
-`last_executed_safe_block` returns the greatest block covered by any input executed by the current application state:
+`progress().last_executed_safe_block()` returns the greatest block covered by any input executed by the current application state:
 
 ```text
 user operation: max(clock, frame.safe_block)
@@ -118,17 +129,17 @@ Recovery uses this clock to determine which base-layer inputs are already reflec
 
 ### Executed input count
 
-`executed_input_count` counts user operations and direct inputs that the application executed. It is primarily a diagnostic agreement check used to compare live and replayed application instances.
+`progress().executed_input_count()` is the canonical history boundary. It counts user operations and direct inputs that the application executed and identifies the next history entry the application is ready to consume.
 
 Persist the count in every dump and restore it exactly. Do not derive it from balances, nonces, or database row numbers because those values can represent different histories.
 
 ## Recovery dump contract
 
-The sequencer creates application dumps at batch boundaries, restores them during startup and recovery, and deletes superseded dumps. A dump may contain several application-specific files.
+The sequencer creates application dumps at batch boundaries, restores them during startup and recovery, and deletes superseded dumps. An application can represent its dump as one file or as a directory containing several files.
 
 ### Creating a dump
 
-`create_dump(prefix)` receives a path that does not yet exist. The implementation creates that directory and writes every value that can influence future execution, including:
+`create_dump(prefix)` receives a path that does not yet exist. The implementation creates a file or directory at that path and writes every value that can influence future execution, including:
 
 - application databases or state bytes;
 - sender nonces and other replay protection;
@@ -137,7 +148,7 @@ The sequencer creates application dumps at batch boundaries, restores them durin
 - `executed_input_count`;
 - metadata required to decode or reconstruct the main state.
 
-When the method returns `Ok`, the dump must survive an immediate kernel crash. On POSIX systems, this requires synchronizing each file, the dump directory, and its parent directory before returning. The sequencer writes the SQLite row that references the dump only after `create_dump` succeeds.
+When the method returns `Ok`, the dump must survive an immediate kernel crash. On POSIX systems, this requires synchronizing every dump file and the directory entries that reference the dump, including the parent of `prefix`, before returning. The sequencer writes the SQLite row that references the dump only after `create_dump` succeeds.
 
 ### Restoring and deleting dumps
 
@@ -147,11 +158,9 @@ When the method returns `Ok`, the dump must survive an immediate kernel crash. O
 
 ### Identifying canonical state
 
-`state_file_in_dump(prefix)` is a pure path function. It must return one file inside the dump without loading application state. The bytes in that file must match the canonical machine's inspected state for the same logical history.
+`state_file_in_dump(prefix)` is a pure path function. It must return one file inside the dump, or `prefix` itself when the dump is a single file, without loading application state. The bytes in that file must match the canonical machine's inspected state for the same logical history.
 
-`canonical_snapshot_bytes()` returns the in-memory form of that same canonical representation. Keeping both paths byte-identical allows the watchdog to compare predicted and canonical state without application-specific conversion. The CMA wallet uses its ledger records image for both values and stores other recovery data, such as nonces and progress, in a separate metadata file.
-
-`export_state()` can expose convenient JSON for debugging, but the sequencer does not use that JSON to restore state.
+`CanonicalState::canonical_snapshot_bytes()` returns the in-memory form of that same canonical representation. Keeping both paths byte-identical allows the watchdog to compare predicted and canonical state without application-specific conversion. The public wallet example stores its complete recovery state in the dump while exposing deterministic wallet state bytes for canonical comparison.
 
 ## Determinism across execution environments
 
@@ -167,7 +176,7 @@ Application behavior must depend only on the ordered input and current applicati
 
 Use the `safe_block`, direct-input block number, and EIP-712 domain supplied by the protocol when execution needs chain context.
 
-Applications with target-specific storage must preserve the same logical and canonical byte representation on the host and in the Cartesi machine. The CMA integration uses a host buffer for sequencer prediction and a machine drive for canonical execution, then verifies that both produce byte-identical records.
+Applications with target-specific storage must preserve the same logical and canonical byte representation on the host and in the Cartesi machine. Test the adapters with the same input history and compare their canonical bytes.
 
 ## Error and replay behavior
 
@@ -179,13 +188,13 @@ Any input that succeeds during live execution must succeed with the same result 
 
 ## Runtime type requirements
 
-The `Application` trait requires `Send`. The `sequencer::run_main` entry point adds these bounds:
+The `Application` trait requires `Send` and `Sized`. The `sequencer::run_main` entry point adds the `'static` lifetime bound:
 
 ```rust
-Application + Clone + Sync + 'static
+Application + 'static
 ```
 
-`Clone` must produce an independent instance with equivalent logical state. A shallow clone of a mutable database handle or foreign pointer may violate that requirement. Applications that wrap non-Rust state must provide safe synchronization and ownership across clones.
+The genesis constructor passed to `run_main` must implement `FnOnce() -> A`, `Send`, and `'static`. Application instances are exclusively owned and reconstructed from dumps when another independent instance is needed.
 
 The genesis constructor is intentionally outside the trait. The application-specific binary passes it to `run_main`, and the closure is invoked only by `setup`. Normal `run` startup restores state through `from_dump`.
 
@@ -198,15 +207,15 @@ Before deploying an application integration, test that:
 - valid operations and direct inputs update both progress values correctly;
 - application payloads at the declared size limit are accepted and larger payloads are rejected at ingress;
 - dumps restore all logical state and canonical bytes exactly;
-- a cloned application has equivalent state without unsafe shared mutation;
+- independently loading the same dump creates equivalent state without shared mutation;
 - replaying persisted inputs reproduces live state and outputs;
 - the canonical scheduler and off-chain prediction produce byte-identical state;
 - the host build and machine build use compatible encodings and arithmetic.
 
-The CMA integration demonstrates these checks in `cma-app-core/tests/application.rs` and `cma-canonical-app/tests/duality.rs`.
+The public [`app-core` tests](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/app-core/src/application/wallet.rs) cover application validation, execution, progress, and dump behavior. The [`scheduler tests`](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/sequencer-core/src/scheduler/mod.rs) exercise agreement between the canonical scheduler and protocol acceptance rules.
 
 ## Next steps
 
-- Follow the full build sequence in [Integrating the sequencer with a Cartesi application](./integration.md).
+- Follow the full build sequence in [Application integration](./integration.md).
 - Review recovery state in [Snapshots and checkpoints](../recovery/snapshots.md).
 - Study ordering agreement in [Deterministic execution order](../concepts/execution-order.md).

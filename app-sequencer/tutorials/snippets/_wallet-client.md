@@ -8,19 +8,15 @@
     "feed": "node feed.mjs"
   },
   "dependencies": {
-    "ethers": "^6.15.0",
+    "viem": "^2.21.51",
     "ws": "^8.18.0"
   }
 }
 ```
 
 ```js title="client/wallet-client.mjs"
-import {
-  Wallet,
-  concat,
-  getAddress,
-  getBytes,
-} from "ethers";
+import { concatHex, getAddress } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 
 function required(name) {
   const value = process.env[name];
@@ -29,24 +25,27 @@ function required(name) {
 }
 
 function uint256LittleEndian(value) {
+  if (value < 0n || value >= 1n << 256n) {
+    throw new Error("value does not fit in uint256");
+  }
   const bigEndian = value.toString(16).padStart(64, "0");
-  return Uint8Array.from(Buffer.from(bigEndian, "hex")).reverse();
+  return `0x${Buffer.from(bigEndian, "hex").reverse().toString("hex")}`;
 }
 
 function encodeTransfer(recipient, amount) {
-  return concat([
+  return concatHex([
     "0x01",
     uint256LittleEndian(amount),
-    getBytes(getAddress(recipient)),
+    getAddress(recipient),
   ]);
 }
 
 function encodeWithdrawal(amount) {
-  return concat(["0x00", uint256LittleEndian(amount)]);
+  return concatHex(["0x00", uint256LittleEndian(amount)]);
 }
 
 async function submitUserOperation(privateKey, nonce, data) {
-  const wallet = new Wallet(privateKey);
+  const account = privateKeyToAccount(privateKey);
   const message = {
     nonce,
     max_fee: Number(process.env.MAX_FEE ?? 2000),
@@ -57,7 +56,7 @@ async function submitUserOperation(privateKey, nonce, data) {
     name: "CartesiAppSequencer",
     version: "1",
     chainId: Number(required("CHAIN_ID")),
-    verifyingContract: required("APP_ADDRESS"),
+    verifyingContract: getAddress(required("APP_ADDRESS")),
   };
 
   const types = {
@@ -68,18 +67,19 @@ async function submitUserOperation(privateKey, nonce, data) {
     ],
   };
 
-  const signature = await wallet.signTypedData(
+  const signature = await account.signTypedData({
     domain,
     types,
+    primaryType: "UserOp",
     message,
-  );
+  });
   const response = await fetch(`${required("SEQUENCER_URL")}/tx`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       message,
       signature,
-      sender: wallet.address,
+      sender: account.address,
     }),
   });
 
@@ -127,29 +127,4 @@ switch (action) {
   default:
     throw new Error("choose one action: transfer or withdraw");
 }
-```
-
-```js title="client/feed.mjs"
-import WebSocket from "ws";
-
-const sequencerUrl = process.env.SEQUENCER_URL;
-if (!sequencerUrl) throw new Error("SEQUENCER_URL is required");
-
-const feedUrl =
-  `${sequencerUrl.replace(/^http/, "ws")}` +
-  "/ws/subscribe?from_offset=0";
-const socket = new WebSocket(feedUrl);
-
-socket.on("open", () => {
-  console.log(`Subscribed to ${feedUrl}`);
-});
-socket.on("message", (data) => {
-  console.log(JSON.stringify(JSON.parse(data.toString()), null, 2));
-});
-socket.on("close", (code, reason) => {
-  console.log(`Feed closed with code ${code}: ${reason.toString()}`);
-});
-socket.on("error", (error) => {
-  console.error("Feed error:", error);
-});
 ```

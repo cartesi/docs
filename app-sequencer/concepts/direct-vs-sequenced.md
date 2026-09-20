@@ -38,13 +38,15 @@ Direct inputs still get executed in the order they were recorded on the base lay
 
 Deposits come from a portal contract on the base layer, which posts to the InputBox itself. They are direct inputs by construction, not by choice, which is a useful property: it means funds can always reach an application.
 
-## Designing the direct-input path
+## Designing application and client support for direct inputs
 
-An application has to be designed to handle both direct inputs and sequenced transactions. The application receives both inputs and decides what each is allowed to do.
+The application must support both direct inputs and sequenced transactions. Its application logic defines which direct inputs are valid, how they are decoded, and which actions they can perform.
 
-That decision sets how much of the application still works without its sequencer. If the direct route only accepts deposits, users can move funds in while the sequencer is unavailable, but everything else waits for it to come back.
+The client or frontend must expose the direct route when users need it. This includes constructing the base-layer transaction, requesting wallet approval, accounting for gas costs, and explaining that confirmation takes longer than a sequenced transaction.
+
+Together, these decisions determine how much of the application remains available without its sequencer. If the application accepts only deposits through direct inputs, the frontend can still let users move funds in while the sequencer is unavailable, but other actions must wait for service to resume.
 
 ## Related concepts
 
-- To see the whole path, read [Architecture at a glance](../foundations/architecture.md).
+- To see the whole path, read [Architecture at a glance](../overview/architecture.md).
 - For the guarantees and limitations of a soft confirmation, read [Soft confirmations](./soft-confirmations.md).

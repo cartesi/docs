@@ -3,34 +3,20 @@ module.exports = {
     {
       type: 'category',
       label: 'Overview',
-      collapsed: false,
+      collapsed: true,
       link: {
         type: 'generated-index',
         title: 'Overview',
         description:
-          'Start here: what the App Sequencer is, and whether your application needs it.',
+          'Start here: understand the App Sequencer, its architecture, use cases, trust model, and terminology.',
         slug: '/',
       },
       items: [
         { type: 'doc', id: 'overview/app-specific-sequencing', label: 'App-specific sequencing' },
         { type: 'doc', id: 'overview/when-to-use', label: 'When to use it' },
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Foundations',
-      collapsed: false,
-      link: {
-        type: 'generated-index',
-        title: 'Foundations',
-        description:
-          'The mental model: how the sequencer is put together, what it can and cannot do, and the vocabulary used throughout.',
-        slug: '/foundations',
-      },
-      items: [
-        { type: 'doc', id: 'foundations/architecture', label: 'Architecture at a glance' },
-        { type: 'doc', id: 'foundations/trust-model', label: 'Trust model and guarantees' },
-        { type: 'doc', id: 'foundations/glossary', label: 'App Sequencer glossary' },
+        { type: 'doc', id: 'overview/architecture', label: 'Architecture at a glance' },
+        { type: 'doc', id: 'overview/trust-model', label: 'Trust model and guarantees' },
+        { type: 'doc', id: 'overview/glossary', label: 'App Sequencer glossary' },
       ],
     },
     {
@@ -56,37 +42,20 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'API Reference',
-      collapsed: true,
-      link: {
-        type: 'generated-index',
-        title: 'API Reference',
-        description:
-          'The interfaces a client talks to: the HTTP and WebSocket API, the typed-data domain used to sign transactions, and the fixed values and codes around them.',
-        slug: '/api-reference',
-      },
-      items: [
-        { type: 'doc', id: 'api-reference/api', label: 'HTTP and WebSocket API' },
-        { type: 'doc', id: 'api-reference/eip712', label: 'EIP-712 domain' },
-        { type: 'doc', id: 'api-reference/constants-and-exit-codes', label: 'Constants and exit codes' },
-      ],
-    },
-    {
-      type: 'category',
       label: 'Usage Guide',
       collapsed: true,
       link: {
         type: 'generated-index',
         title: 'Usage Guide',
         description:
-          'Build against the sequencer: meet the requirements an application has to satisfy, stand one up, submit transactions, and read the ordered feed.',
+          'Integrate an application, run its sequencer, submit transactions, and consume the ordered feed.',
         slug: '/usage',
       },
       items: [
         { type: 'doc', id: 'usage/quickstart', label: 'Quickstart' },
-        { type: 'doc', id: 'usage/application-requirements', label: 'Application requirements' },
         { type: 'doc', id: 'usage/integration', label: 'Application integration' },
-        { type: 'doc', id: 'usage/submitting-operations', label: 'Submitting operations' },
+        { type: 'doc', id: 'usage/application-trait-reference', label: 'Application trait reference' },
+        { type: 'doc', id: 'usage/submitting-operations', label: 'Submitting transactions' },
         { type: 'doc', id: 'usage/reading-the-feed', label: 'Reading the sequenced feed' },
       ],
     },
@@ -159,6 +128,23 @@ module.exports = {
         { type: 'doc', id: 'advanced/invariants', label: 'Invariants' },
         { type: 'doc', id: 'advanced/threat-model', label: 'Threat model' },
         { type: 'doc', id: 'advanced/formal-verification', label: 'Formal verification' },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'API Reference',
+      collapsed: true,
+      link: {
+        type: 'generated-index',
+        title: 'API Reference',
+        description:
+          'The interfaces a client talks to: the HTTP and WebSocket API, the typed-data domain used to sign transactions, and the fixed values and codes around them.',
+        slug: '/api-reference',
+      },
+      items: [
+        { type: 'doc', id: 'api-reference/api', label: 'HTTP and WebSocket API' },
+        { type: 'doc', id: 'api-reference/eip712', label: 'EIP-712 domain' },
+        { type: 'doc', id: 'api-reference/constants-and-exit-codes', label: 'Constants and exit codes' },
       ],
     },
     {

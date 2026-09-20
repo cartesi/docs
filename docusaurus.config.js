@@ -411,6 +411,26 @@ const config = {
             from: "/app-sequencer/operations/flush-mempool",
             to: "/app-sequencer/operations/orchestration/",
           },
+          {
+            from: "/app-sequencer/foundations",
+            to: "/app-sequencer/",
+          },
+          {
+            from: "/app-sequencer/foundations/architecture",
+            to: "/app-sequencer/overview/architecture/",
+          },
+          {
+            from: "/app-sequencer/foundations/trust-model",
+            to: "/app-sequencer/overview/trust-model/",
+          },
+          {
+            from: "/app-sequencer/foundations/glossary",
+            to: "/app-sequencer/overview/glossary/",
+          },
+          {
+            from: "/app-sequencer/usage/application-requirements",
+            to: "/app-sequencer/usage/application-trait-reference/",
+          },
         ],
       },
     ],

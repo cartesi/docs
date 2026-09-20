@@ -83,6 +83,6 @@ If one of these conditions is unacceptable, direct base-layer inputs or another 
 
 ## Next steps
 
-- To understand the system boundaries, read [Architecture at a glance](../foundations/architecture.md).
-- To evaluate its guarantees, read [Trust model and guarantees](../foundations/trust-model.md).
+- To understand the system boundaries, read [Architecture at a glance](./architecture.md).
+- To evaluate its guarantees, read [Trust model and guarantees](./trust-model.md).
 - To begin integrating it, follow the [Quickstart](../usage/quickstart.md).
