@@ -1355,7 +1355,7 @@ By default it listens on `127.0.0.1:3000`, which is local only. See [Configure, 
 
 ### POST /tx
 
-Submit a signed transaction. Explained in [Submitting operations](../usage/submitting-operations.md).
+Submit a signed transaction. Explained in [Submitting transactions](../usage/submitting-operations.md).
 
 Request:
 
@@ -1363,7 +1363,7 @@ Request:
 {
   "message": {
     "nonce": 0,
-    "max_fee": 1,
+    "max_fee": 2000,
     "data": "0x..."
   },
   "signature": "0x...",
@@ -1416,8 +1416,11 @@ Messages are JSON text frames. Binary fields are hex encoded with a `0x` prefix.
   "kind": "user_op",
   "offset": 10,
   "sender": "0x...",
-  "fee": 1,
-  "data": "0x..."
+  "nonce": 7,
+  "fee": 1356,
+  "data": "0x...",
+  "safe_block": 123,
+  "batch_nonce": 4
 }
 ```
 
@@ -1427,9 +1430,15 @@ Messages are JSON text frames. Binary fields are hex encoded with a `0x` prefix.
   "offset": 11,
   "sender": "0x...",
   "block_number": 123,
-  "payload": "0x..."
+  "payload": "0x...",
+  "input_index": 42,
+  "batch_nonce": 4,
+  "block_timestamp": 1700000000,
+  "transaction_hash": "0x..."
 }
 ```
+
+The complete field meanings and reconciliation guidance are maintained in [Reading the sequenced feed](../usage/reading-the-feed.md#understand-the-two-message-types).
 
 There are no other message kinds. In particular there is no message signalling that an earlier transaction was invalidated.
 
@@ -1438,7 +1447,7 @@ Limits:
 | Limit                  | Value         | Behaviour when exceeded                                                                    |
 | ---------------------- | ------------- | ------------------------------------------------------------------------------------------ |
 | Concurrent subscribers | 64            | Further connections get HTTP `429` with `OVERLOADED`, before the WebSocket upgrade         |
-| Catch-up window        | 50,000 events | Socket is upgraded then immediately closed, code `1008`, reason `catch-up window exceeded` |
+| Catch-up window        | 50,000 events | Socket is upgraded then immediately closed, code `1008`, reason `catch-up window exceeded: live_start_offset=<u64>` |
 
 ## Batch wire format
 
@@ -1487,7 +1496,7 @@ These serve application state to an operator's own watchdog and indexers. They h
 | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GET /finalized_state/inclusion_block` | Cheap JSON for detecting progress: `{ "inclusion_block": <u64>, "l2_tx_index": <u64> }`. `404` if no finalized snapshot exists yet.                                               |
 | `GET /finalized_state`                 | The settled state file, as `application/octet-stream`. Headers `X-Inclusion-Block`, `X-L2-Tx-Index`, and `ETag: "block-<n>"`. Send `If-None-Match` to get a `304` when unchanged. |
-| `GET /latest_snapshot`                 | The most recent snapshot, pending if there is one, otherwise finalized. Intended for an indexer that fetches state and then subscribes from `X-L2-Tx-Index`.                      |
+| `GET /latest_snapshot`                 | The most recent snapshot, pending if there is one, otherwise finalized. Intended for an indexer that fetches state and then subscribes from `X-L2-Tx-Index`. It can remain at genesis until the first batch closes. |
 
 Both streaming endpoints hold the snapshot open for the life of the response, including when a client disconnects early.
 
@@ -1615,7 +1624,7 @@ The signature is 65 bytes. The `sender` field sent alongside it must match the a
 
 ## Next steps
 
-- To submit a signed transaction, see [Submitting operations](../usage/submitting-operations.md).
+- To submit a signed transaction, see [Submitting transactions](../usage/submitting-operations.md).
 - For the endpoint that accepts a signed transaction, see the [HTTP and WebSocket API](./api.md).
 
 ---
@@ -1628,7 +1637,7 @@ sidebar_label: "The batch tree"
 description: "How the sequencer records alternative batch histories and uses an anchor to identify where local history begins."
 ---
 
-The sequencer keeps its own record of every batch it has built and how they relate. In normal running that record is a straight line, one batch after another. It is a tree because failure sometimes makes it branch.
+The sequencer stores each batch and its relationship to previous batches. During normal operation, this history forms a straight line. In exceptional cases, recovery preserves an abandoned history and creates a replacement branch, causing the record to form a tree.
 
 ## Where the batch tree exists
 
@@ -1658,7 +1667,7 @@ The anchor is what stops a rebuilt deployment from believing it should begin at 
 
 Mostly it does not. The tree is the sequencer's internal bookkeeping, and an application never sees it.
 
-It matters indirectly, in one way. The tree is how the sequencer can tell the difference between work that is settled, work that is still a prediction, and work that has been abandoned. That distinction is what a soft confirmation ultimately rests on. See [Soft confirmations](./soft-confirmations.md).
+It matters indirectly, in one way. The tree is how the sequencer can tell the difference between work accepted through the safe view, work that is still a prediction, and work that has been abandoned. That distinction is what a soft confirmation ultimately rests on. See [Soft confirmations](./soft-confirmations.md).
 
 ## Related concepts
 
@@ -1683,7 +1692,7 @@ A batch contains transactions, frames, and a safe block reference.
 
 - A **batch** is what the sequencer posts to the base layer. It carries a number, its nonce, and a list of frames.
 - A **frame** is a group of transactions inside a batch. It carries a **safe block** and a fee price alongside its transactions.
-- The **safe block** is a base-layer block number, and it is the instruction that ties the two sides together.
+- The **safe block** is a base-layer block number that allows the off-chain sequencer and the scheduler inside the Cartesi machine to interleave direct inputs and sequenced transactions in the same order.
 
 ## How the safe block determines execution order
 
@@ -1743,13 +1752,13 @@ Once the machine begins executing a valid batch, a problem with one transaction 
 
 A skipped transaction makes no change to the application state. The machine continues with the rest of the batch, and the batch still advances the expected batch number.
 
-Transactions submitted through the public API normally fail before reaching this stage. The API checks the signature first and returns `400` if it is invalid. The sequencer then checks the transaction against the application and the current price, returning `422` if either check fails. Only a transaction that passes these checks is stored in a batch. See [Submitting operations](../usage/submitting-operations.md).
+Transactions submitted through the public API normally fail before reaching this stage. The API checks the signature first and returns `400` if it is invalid. The sequencer then checks the transaction against the application and the current price, returning `422` if either check fails. Only a transaction that passes these checks is stored in a batch. See [Submitting transactions](../usage/submitting-operations.md).
 
 The machine still needs its own rule because it cannot assume that every batch was constructed correctly. If unexpected transaction data reaches the base layer, the machine must produce a predictable result. Skipping only the invalid transaction allows the remaining valid transactions to continue without invalidating the entire batch.
 
 ## Related concepts
 
-- To see where this sits in the whole system, read [Architecture at a glance](../foundations/architecture.md).
+- To see where this sits in the whole system, read [Architecture at a glance](../overview/architecture.md).
 - To see how the two ways in differ, read [Direct inputs vs sequenced transactions](./direct-vs-sequenced.md).
 
 ---
@@ -1796,15 +1805,17 @@ Direct inputs still get executed in the order they were recorded on the base lay
 
 Deposits come from a portal contract on the base layer, which posts to the InputBox itself. They are direct inputs by construction, not by choice, which is a useful property: it means funds can always reach an application.
 
-## Designing the direct-input path
+## Designing application and client support for direct inputs
 
-An application has to be designed to handle both direct inputs and sequenced transactions. The application receives both inputs and decides what each is allowed to do.
+The application must support both direct inputs and sequenced transactions. Its application logic defines which direct inputs are valid, how they are decoded, and which actions they can perform.
 
-That decision sets how much of the application still works without its sequencer. If the direct route only accepts deposits, users can move funds in while the sequencer is unavailable, but everything else waits for it to come back.
+The client or frontend must expose the direct route when users need it. This includes constructing the base-layer transaction, requesting wallet approval, accounting for gas costs, and explaining that confirmation takes longer than a sequenced transaction.
+
+Together, these decisions determine how much of the application remains available without its sequencer. If the application accepts only deposits through direct inputs, the frontend can still let users move funds in while the sequencer is unavailable, but other actions must wait for service to resume.
 
 ## Related concepts
 
-- To see the whole path, read [Architecture at a glance](../foundations/architecture.md).
+- To see the whole path, read [Architecture at a glance](../overview/architecture.md).
 - For the guarantees and limitations of a soft confirmation, read [Soft confirmations](./soft-confirmations.md).
 
 ---
@@ -1817,27 +1828,46 @@ sidebar_label: "Deterministic execution order"
 description: "How the sequencer and the machine reach the same order, and what happens when they do not."
 ---
 
-The sequencer's value rests on one claim: the application runs transactions in the order reported by the sequencer. This page explains how the system maintains that agreement and what happens if it fails.
+The sequencer's value rests on one claim: the canonical application will reproduce the transaction order predicted by the sequencer. This page explains how the two execution paths maintain that agreement and what can cause them to diverge.
 
 ## How the ordering logic stays consistent
 
-The Cartesi machine produces the final execution order. To provide fast confirmations, the live sequencer must predict that order before a batch reaches the base layer.
+The scheduler inside the Cartesi machine produces the canonical execution order. To provide fast confirmations, the live sequencer predicts that order before a batch reaches the base layer.
 
 Three parts of the implementation contribute to this process:
 
-| Component                  | Purpose                                                                                                                                       |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Scheduler**              | Runs inside the Cartesi machine and determines the final execution order. Recovery uses the same scheduler code to rebuild application state. |
-| **Batch acceptance check** | Predicts whether the scheduler will accept a batch based on its sender, number, and timing.                                                   |
-| **Inclusion lane**         | Builds the live local order by processing direct inputs and user transactions in the sequence the scheduler is expected to reproduce.         |
+| Component                  | Purpose                                                                                                                               |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Scheduler**              | Runs inside the Cartesi machine and determines the canonical execution order. Native recovery uses the same scheduler implementation. |
+| **Batch acceptance check** | Predicts whether the scheduler will accept an observed batch into the canonical batch frontier.                                       |
+| **Inclusion lane**         | Processes direct inputs and user transactions locally in the order the scheduler is expected to reproduce.                            |
 
 ![Inside the Cartesi machine, the scheduler classifies InputBox inputs, accepts valid batches, drains direct inputs, and executes frame transactions before the application computes canonical state. Before settlement, the host inclusion lane predicts execution order and transaction outcomes, while the batch acceptance check predicts the accepted frontier.](../images/execution-agreement.jpg)
 
-The scheduler is the authority. The other two components predict its decisions so the sequencer can respond without waiting for base-layer settlement.
+The `InputBox` is a base-layer contract outside the Cartesi machine. The scheduler reads the ordered inputs recorded by that contract and executes them inside the machine. The scheduler is the authority. The other two components predict its decisions so the sequencer can respond without waiting for base-layer settlement.
 
-These components share the same protocol definitions, but they are separate implementation paths. The batch acceptance check also performs a narrower task than the scheduler and therefore omits two structural checks that the scheduler applies.
+The components share protocol types and execution helpers, but not every part is one shared implementation. The canonical machine and native recovery drive the same `Scheduler<A>` source. The inclusion lane and batch acceptance check mirror the parts they need for live prediction and reconciliation.
 
-Tests and code review are used to keep all three paths consistent. The implementation does not automatically guarantee that they will always agree.
+The batch acceptance check performs a narrower task than the scheduler and deliberately omits structural checks that the scheduler applies to complete batch contents. Tests and code review keep these paths aligned, but the implementation cannot guarantee agreement merely because the code belongs to one repository.
+
+## What identical results mean
+
+The native host and RISC-V machine do not execute identical machine instructions or maintain identical process memory. Agreement means that, for the same ordered inputs and starting state, both paths produce:
+
+- the same accepted and rejected application operations;
+- the same application state transitions;
+- the same notices and vouchers;
+- the same progress counters and safe-block clock; and
+- byte-identical canonical state when that state is serialized for comparison.
+
+Several shared boundaries reduce the amount of behavior that has to be reproduced independently:
+
+- The same application logic implements `Application` for the host and machine builds.
+- Both paths use `validate_and_execute_user_op` for the protocol fee check, application validation, and accepted-operation execution.
+- `Batch`, `Frame`, `UserOp`, fee conversion, and scheduler types come from `sequencer-core`.
+- The canonical machine and native recovery use the same scheduler implementation.
+- Agreement tests replay the same inputs through the relevant paths and compare outcomes and canonical state bytes.
+- The watchdog can reproduce application state through the Cartesi machine and compare it with the sequencer's promoted state.
 
 ## Rules that determine execution order
 
@@ -1847,27 +1877,48 @@ The order is decided by three things, applied in the same way on both sides.
 
 **The sender decides the kind.** Anything sent by the sequencer's address is a batch. Everything else is a direct input. Classification is by who sent it, never by anything in the payload, so it cannot be spoofed.
 
-**Each frame decides the interleaving.** A frame's safe block means: run every direct input recorded up to this block, then run this frame's transactions in the order they appear. Both sides apply that literally.
+**Each frame combines the two input streams.** Before running a frame's sequenced transactions, the scheduler runs every pending direct input recorded at or before the frame's safe block. It then runs the frame's transactions in their listed order. The sequencer applies the same sequence locally.
 
-The result is that neither side is trusting the other's conclusion. Both are computing the same function over the same input.
+The result is that neither path has to accept an ordering conclusion produced by the other. Both compute an order from the same recorded inputs and protocol rules.
+
+## Why native and RISC-V execution are both used
+
+The host sequencer runs as a native service so it can validate requests, update its local state, and return soft confirmations without waiting for the Cartesi machine or base-layer settlement. Recovery also runs the shared scheduler natively when it must rebuild state from a checkpoint and base-layer history.
+
+The Cartesi machine runs the canonical application as RISC-V code so its execution is reproducible within the Rollups system. This is the authoritative path from recorded inputs to application state and outputs.
+
+The two builds may use different I/O and storage adapters. Those adapters must preserve the same application rules, progress values, and canonical state encoding. Host-specific behavior must not influence an application transition.
 
 ## Why the sequencer can answer early
 
 The sequencer applies these rules to its own view before it answers. When it accepts a transaction, it has already drained the direct inputs that will run ahead of it, so the state it judges the transaction against is the state the application will have.
 
-The immediate answer predicts the machine's decision using the sequencer's current view of the inputs. Agreement depends on the three implementations described above remaining aligned.
+The immediate answer predicts the machine's decision using the sequencer's current view of the inputs. Agreement depends on the shared execution boundaries and the mirrored ordering rules remaining aligned.
 
 ## When a transaction is skipped
 
 Being in an accepted batch does not guarantee that an individual transaction takes effect. A transaction that fails canonical validation is skipped without changing state or preventing later transactions in the batch from being considered. [Scheduler semantics](../advanced/scheduler-semantics.md#transaction-level-outcomes) defines the exact outcomes.
 
-## How the sequencer detects disagreement
+## What can cause the paths to diverge
+
+Divergence can result from:
+
+- an ordering or acceptance rule changed in the scheduler but not in a prediction path;
+- nondeterministic application behavior based on time, randomness, floating point, thread scheduling, or unordered iteration;
+- host and RISC-V adapters decoding, storing, or serializing the same state differently;
+- different application constants or deployment configuration in the two builds;
+- incomplete dump restoration or replay that starts from the wrong state; or
+- base-layer batch content that differs from the sealed batch stored by the sequencer.
+
+These failures do not all appear at the same boundary. A matching batch proves that the recorded batch bytes agree with local history. It does not, by itself, prove that the host and machine computed identical application state.
+
+## How disagreement is detected
 
 Sameness by construction is a strong argument, but the system does not rely on the argument alone.
 
-The sequencer compares accepted base-layer batch content with the local batch stored for the same position. If they differ, it freezes the accepted frontier and stops because later provisional results may depend on the wrong history.
+The sequencer compares accepted base-layer batch content with the local sealed batch stored for the same position. If the batch is missing or the bytes differ, it records canonical divergence, freezes the accepted frontier, and stops because later provisional results may depend on the wrong history.
 
-Detection occurs only after the relevant base-layer observation is safe enough to trust. [Divergence detection and response](../advanced/divergence.md) explains the comparison, timing boundary, and operator response.
+This content check occurs only after the relevant base-layer observation reaches the configured safe view. Separately, the watchdog compares promoted sequencer state with state independently reproduced by the Cartesi machine. [Divergence detection and response](../advanced/divergence.md) explains the content comparison and operator response. [Monitoring and watchdog](../operations/monitoring.md) explains the state comparison.
 
 ## Related concepts
 
@@ -1894,7 +1945,7 @@ The fee is charged in the application's own terms. The sequencer does not define
 
 ## The exponent encoding
 
-The protocol represents every fee as a 16 bit**exponent**. This includes the maximum fee signed by a user and the price assigned to a frame. The corresponding amount is calculated as:
+The protocol represents every fee as a 16-bit exponent. This includes the maximum fee signed by a user and the price assigned to a frame. The corresponding amount is calculated as:
 
 ```text
 fee amount = floor((129 / 128)ⁿ)
@@ -1925,13 +1976,13 @@ This representation provides three protocol benefits:
 
 ## Maximum fee and frame price
 
-**`max_fee`** travels with a transaction. It is the most the sender is willing to pay, set by whoever signs.
+Each signed **sequenced transaction**, or `UserOp`, contains a `max_fee` exponent. It is the highest frame-price exponent the signer authorizes for that transaction. It is a limit, not the amount automatically charged. The fee passed to the application for an accepted transaction is the frame price.
 
-**The frame price** is set by the sequencer for each frame, and is fixed once that frame is closed. The next frame samples a fresh recommended price, so the price can move as conditions change, but never underneath transactions already placed.
+**The frame price** is selected when the sequencer opens a frame and remains fixed for that frame's lifetime. The next frame samples the current recommended price, so later transactions may receive a different price without changing the price of transactions already stored.
 
-**The comparison happens at submission, not later.** When a transaction arrives, the sequencer checks it against the price of the frame currently open, and a transaction that does not meet it is rejected there and then with HTTP `422`. Only transactions that pass are stored and acknowledged.
+**The first comparison happens at submission.** When a transaction arrives, the sequencer compares its `max_fee` with the price of the open frame. A transaction with a lower limit is rejected immediately with HTTP `422`, before it is stored or acknowledged.
 
-An accepted transaction **cannot** later become underpriced. A frame's price remains fixed for that frame's lifetime, and the transaction has already passed the fee check. A higher price in a later frame does not affect it.
+The scheduler repeats the same comparison during canonical execution. This protects the machine from malformed batch contents. A correctly accepted transaction cannot become underpriced merely because the recommended price rises later, because its frame price remains unchanged.
 
 So `max_fee` fails fast, not late. If it is too low you find out in the response.
 
@@ -1944,8 +1995,8 @@ A bid below the current price returns HTTP `422` immediately. The client learns 
 
 The practical approaches are:
 
-- **Start from the deployment's baseline.** The default policy derives a recommended fee exponent of **1060**, so a bid of `1` is rejected. Obtain the deployment's current baseline from its operator.
-- **Bid comfortably above it.** The encoding is exponential, so a modest bump in the exponent is a large bump in the amount.
+- **Start from the deployment's baseline.** With a fixed local gas-price exponent of `0`, the current policy derives a recommended fee exponent of **1356**, so a bid of `1` is rejected. Obtain the deployment's current value from its operator.
+- **Bid above it.** Each exponent step changes the unrounded amount by about 0.78 percent, while larger increases compound and can authorize a much higher amount.
 - **Retry on `422`.** The typed rejection allows a client to raise its bid and resubmit after a failed attempt.
 - **Publish a default.** For an application whose sequencer you run, the policy is yours, and a sensible client default can ship alongside the application.
 
@@ -1957,7 +2008,7 @@ The same policy determines the target batch size and recommended fee, so the two
 
 ## Related concepts
 
-- To set a fee on a transaction, see [Submitting operations](../usage/submitting-operations.md).
+- To set a fee on a transaction, see [Submitting transactions](../usage/submitting-operations.md).
 - For how frames are formed, see [Batches, frames, and the safe block](./batches-frames-safe-block.md).
 
 ---
@@ -1970,77 +2021,72 @@ sidebar_label: "Soft confirmations"
 description: "What a soft confirmation promises, when it can be undone, how long the exposure lasts, and how a frontend should treat it."
 ---
 
-A **soft confirmation** is the sequencer's immediate answer to a user. It notifies the user that a transaction has been validated, executed against current state, and durably placed in the sequencer's current ordering. It arrives as soon as the sequencer has processed the transaction, long before anything reaches the base layer.
+A **soft confirmation** is the sequencer's immediate response after it validates a transaction, executes it against current application state, and durably stores it in the current provisional order. It tells the client that the sequencer accepted the transaction. It does not prove that the transaction has reached the base layer or that the resulting application state has settled.
 
-It is a prediction. A reliable one under normal condition, but a prediction nevertheless.
+## Why the sequencer can make this prediction
 
-## What a Soft Confirmation Means
+The sequencer applies the application's validation and execution logic while following the same ordering rules that the scheduler inside the Cartesi machine will apply later. Under normal operation, this allows it to predict the transaction order and application result before the corresponding batch reaches the base layer.
 
-A soft confirmation says the sequencer has accepted the transaction, executed it, and placed it in the ordering it intends to post.
+The confirmation response identifies the accepted sender and nonce. It does not contain a feed offset, batch number, frame number, or settlement status. A transaction receives an ordering position when it appears in the [sequenced feed](../usage/reading-the-feed.md).
 
-It does **not** hand back a position. The response carries the sender and the nonce it accepted, not an offset, a batch, or a frame. A position exists only once the transaction appears in the feed, and a client that needs one reads it there.
-
-The prediction is trustworthy because the sequencer is not guessing. It applies the same ordering rules the machine will apply later, so under normal running the position it reports is the position the application ends up using. See [Architecture at a glance](../foundations/architecture.md) for how the two sides stay aligned.
+Using matching logic makes the prediction reliable, but it does not make the prediction final. The transaction still depends on its batch being accepted through the canonical path. See [Architecture at a glance](../overview/architecture.md) for how the sequencer and Cartesi machine stay aligned.
 
 ## Transaction lifecycle and settlement timing
 
-While the speed of execution of a transaction via the sequencer is described as "Fast" below is the complete path it takes:
+The soft confirmation is fast, but it is only the beginning of the transaction's path through the system:
 
-![A transaction moves from submission to a soft confirmation, waits in an open batch, is sealed and posted to the base layer, becomes recorded, appears in the safe view, and finally settles. The open batch can remain open for up to two hours.](../images/soft-confirmation-lifecycle.png)
+![A transaction moves from submission to a soft confirmation, waits in an open batch, is sealed and posted to the base layer, is recorded in a block, is observed at the base-layer safe head, and later reaches application settlement. Stages before safe-head observation remain provisional.](../images/soft-confirmation-lifecycle.png)
 
-| Stage                        | What it means                      | Typical time from submission            |
-| ---------------------------- | ---------------------------------- | --------------------------------------- |
-| **Submitted**                | The sequencer has it               | Immediate                               |
-| **Soft confirmed**           | Accepted, ordered, and answered    | Immediate                               |
-| **Sealed into a batch**      | The batch it belongs to has closed | **Anything up to 2 hours**              |
-| **Posted to the base layer** | The batch has been submitted       | Seconds after sealing                   |
-| **Recorded**                 | It is in a block                   | One block, about 12 seconds on Ethereum |
-| **Settled**                  | Deep enough to be irreversible     | About 13 minutes after recording        |
+| Stage                              | What it means                                                                                 | Timing                                                      |
+| ---------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Submitted**                      | The request has reached the sequencer                                                         | Immediate                                                   |
+| **Soft confirmed**                 | The sequencer has validated, executed, and stored the transaction in its provisional order    | Immediate after successful processing                       |
+| **Waiting in an open batch**       | The transaction is stored while the batch continues accepting transactions                    | Up to the configured batch duration, which defaults to 2 hours |
+| **Sealed into a batch**            | The batch has closed and no longer accepts transactions                                       | When its size or time limit is reached                       |
+| **Posted to the base layer**       | The batch submission transaction has been broadcast                                           | Depends on the submitter and network conditions              |
+| **Recorded in a block**            | The base layer has included the batch submission                                              | Depends on base-layer inclusion                              |
+| **Observed at the L1 safe head**   | The sequencer has processed the batch from the safe chain view reported by its RPC provider   | Depends on the base layer, RPC provider, and polling cadence |
+| **Application state settled**      | The resulting Rollups claim has reached the settlement level required by the application      | Depends on the deployment's consensus and claim settings     |
 
-**A batch closes on one of two conditions: it reaches its size target, or it has been open too long.** The second is a wall clock limit, and it defaults to **2 hours**.
+A batch closes when it reaches its size target or its maximum open duration. The duration is a wall clock limit and defaults to **2 hours**.
 
-What that means in practice depends entirely on traffic:
+The waiting time therefore depends on application traffic:
 
-- **A busy application** fills batches by size, so they close often and the sealed row is small.
-- **A quiet application** does not, so a transaction can sit in an open batch for up to 2 hours before it is even posted despite being soft confirmed the whole time.
+- **A busy application** may reach the size target quickly and seal batches frequently.
+- **A quiet application** may keep a soft-confirmed transaction in an open batch for up to 2 hours before posting it.
 
-So a soft confirmation is immediate, and settlement can still be hours away. Both statements are true, and an interface that treats "confirmed" as "nearly settled" will be wrong on a quiet application.
+Recording the batch in a recent block does not complete reconciliation. The sequencer first waits until its RPC provider reports that block through the safe view, then reads and processes it. This is the point where the normal risk of recovery removing the soft-confirmed transaction ends within the sequencer's trust model.
+
+Safe-head observation is not application settlement. Settlement happens through the Rollups claim and consensus process, so its timing depends on the application's deployment configuration. A soft confirmation can therefore be immediate even when safe-head observation and application settlement are much later.
 
 ## Limits of a soft confirmation
 
-A soft confirmation is **not** settlement. It does not mean the transaction has reached the base layer, and it does not mean the result can never change.
+A soft confirmation is **not** settlement. It does not mean the transaction has reached the base layer, and it does not mean the predicted result can no longer change. This distinction matters whenever a user may act on the result before canonical acceptance.
 
-The gap matters because a user acts on it. Someone who is shown a completed trade or a successful move has been told something that is, at that instant, still a prediction.
-
-## When a Soft Confirmation Can Be Invalidated
+### Invalidation and its scope
 
 A soft confirmation is invalidated when its transaction does not become part of canonical execution. The main liveness case is a batch that reaches the base layer after the protocol deadline and is skipped by the scheduler.
 
-[Staleness and the danger zone](./staleness.md) explains the deadline, why stale batches are skipped, and how one missed batch affects the sequence that follows it.
+Because batches use consecutive numbers, one invalid batch can affect a suffix of provisional history. Recovery removes the affected suffix and resumes from the accepted canonical frontier. [Staleness and the danger zone](./staleness.md) explains the deadline and its effect on later batches.
 
-## How Invalidation Affects Later Batches
+### How long the risk remains
 
-Because batches use consecutive numbers, invalidation can affect a suffix of provisional history, not just one batch. Recovery removes that suffix and resumes from the accepted canonical frontier. The staleness page gives a worked example of this numbering effect.
+The sequencing-specific invalidation risk begins when the sequencer issues a soft confirmation. Under the sequencer's base-layer trust model, it ends when the transaction's batch is observed and accepted through the safe view. There is no fixed duration.
 
-## How Long Transactions Remain at Risk
+The transaction may first remain in an open batch for up to the configured duration, which defaults to 2 hours. Batch submission, base-layer inclusion, safe-head advancement, provider availability, and the sequencer's polling cadence add further time. Application settlement can take longer because it follows the deployment's Rollups consensus and claim process.
 
-The risk begins when the sequencer issues a soft confirmation. It ends only after the transaction's batch has reached the base layer and the application can confirm its outcome from a sufficiently settled view of that layer. There is no single fixed duration for this process.
+The sequencer monitors its safe view and stops issuing new confirmations when that view becomes too old or an unresolved batch approaches the staleness deadline. Detection still takes time, so confirmations issued before the problem becomes visible may be affected.
 
-Before submission, a transaction may remain in an open batch for up to the configured batch limit, which defaults to two hours. The batch must then be submitted, recorded, and allowed to settle. On Ethereum, reaching the settled view used by the sequencer typically takes about two epochs, or roughly 13 minutes after the batch is recorded. Submission delays or base-layer disruption can extend the total time.
+### Detecting an invalidated transaction
 
-The sequencer monitors this progress and stops issuing new confirmations when it detects that its current view is no longer safe. Detection is not immediate because the relevant base-layer events must first become settled enough to trust. Transactions confirmed before the problem becomes visible may therefore still be affected.
-
-The 13 minute period is the approximate observation delay after base-layer recording, not the complete lifetime of a soft confirmation. For a quiet application, the full period of risk can include up to two hours of waiting for the batch to close, followed by submission and settlement time.
-
-## How Clients Observe Invalidation
-
-The ordered feed does not send rollback messages. A transaction removed during recovery is absent from a later replay, but a client that already received it gets no live retraction. [Reading the sequenced feed](../usage/reading-the-feed.md) explains cursor storage, replay, and reconciliation.
+The ordered feed does not send rollback messages. A transaction removed during recovery is absent from a later replay, but a client that already received it receives no live retraction. [Reading the sequenced feed](../usage/reading-the-feed.md) explains cursor storage, replay, and reconciliation.
 
 ## How clients should handle soft confirmations
 
-- **Show a soft confirmation as fast, not as final.** Distinguish it in the interface from something that has settled on the base layer. A user should be able to tell the difference between "accepted" and "settled".
+- **Show a soft confirmation as provisional.** A user should be able to distinguish sequencer acceptance from safe-head observation and application settlement.
 - **Treat feed delivery as provisional.** Appearance in the feed means the transaction belongs to the current valid local ordering. It does not prove base-layer acceptance or settlement.
-- **Reconcile outstanding transactions.** The feed does not announce rollbacks. A client must track its outstanding transactions and compare them against later reads or safe application state to detect a lapse.
+- **Use an appropriate source for later status.** The feed does not report safe-head acceptance or Rollups settlement. An application or trusted indexer must expose those states if clients need to display them.
+- **Reconcile outstanding transactions.** Track submitted transactions and compare them with later feed replays and canonical application state to detect invalidation.
 - **Size the caution to the stakes.** Adding ceremony everywhere throws away the point of the sequencer, so scale it instead:
   - *Low value or easily repeated*, such as a move in a game or a post: act on the fast answer.
   - *Meaningful but recoverable*, such as a transfer inside the application: act on it, but mark it as not yet settled.
@@ -2048,8 +2094,8 @@ The ordered feed does not send rollback messages. A transaction removed during r
 
 ## Next steps
 
-- To see how the two sides stay aligned, read [Architecture at a glance](../foundations/architecture.md).
-- To see what the sequencer is and is not trusted for, read [Trust model and guarantees](../foundations/trust-model.md).
+- To see how the two sides stay aligned, read [Architecture at a glance](../overview/architecture.md).
+- To see what the sequencer is and is not trusted for, read [Trust model and guarantees](../overview/trust-model.md).
 
 ---
 
@@ -2109,278 +2155,6 @@ The sequencer exits when it detects this condition. [Preemptive recovery](../rec
 
 - For what a stale batch means to a user, read [Soft confirmations](./soft-confirmations.md).
 - For the recovery that follows, read [Preemptive recovery](../recovery/preemptive.md).
-
----
-
-<!-- source: https://docs.cartesi.io/app-sequencer/foundations/architecture/ -->
-
----
-title: "Architecture at a glance"
-sidebar_label: "Architecture at a glance"
-description: "How sequencer prediction, base-layer recording, and canonical execution work together from transaction submission to settlement."
----
-
-The App Sequencer adds a fast prediction layer to a Cartesi application without replacing its canonical execution path.
-
-- The **sequencer** runs as an ordinary service on the application operator's infrastructure. It validates, orders, and executes transactions against a provisional view of application state.
-- The **scheduler and application** run inside the deterministic Cartesi machine. The scheduler derives the authoritative order from base-layer inputs, and the application computes state from that order.
-- The **base layer** records application inputs and settles commitments to the machine's result.
-
-The sequencer can respond before base-layer processing because it predicts what the scheduler will compute. The prediction remains a soft confirmation until the corresponding transaction is accepted through the canonical path.
-
-## Sequencer prediction and canonical execution
-
-![The App Sequencer runs off-chain with its HTTP API, inclusion lane, batch submitter, input reader, and local database. It exchanges transactions and soft confirmations with users, posts batches to the InputBox, and reads recorded inputs. The Cartesi machine reads the InputBox and runs the scheduler before the application logic. Direct transactions reach the InputBox without passing through the sequencer.](../images/architecture.png)
-
-The diagram has three system boundaries:
-
-1. **Sequencer infrastructure.** The application operator runs the API, transaction-ordering loop, database, base-layer reader, and batch submitter.
-2. **Base-layer contracts.** The `InputBox` records application inputs. The application contract, portals, and other Cartesi Rollups contracts retain their existing roles.
-3. **Cartesi machine.** The scheduler interprets the recorded inputs, and the application executes the resulting order deterministically.
-
-The sequencer cannot change the order that the scheduler derives after inputs are recorded. Its responsibility is to maintain a provisional order that the scheduler is expected to reproduce later.
-
-## System components and responsibilities
-
-### Sequencer service
-
-| Component       | Responsibility                                                                                                                                              |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HTTP API        | Accepts signed user transactions and returns success or a structured rejection                                                                              |
-| Inclusion lane  | Applies protocol and application validation, drains relevant direct inputs, executes accepted transactions, and stores them in a single deterministic order |
-| Ordered feed    | Publishes the sequencer's current valid transaction history to clients and indexers                                                                         |
-| Batch submitter | Posts completed batches to the base-layer `InputBox` using the configured submitter account                                                                 |
-| Input reader    | Reads safe base-layer inputs so the sequencer can account for direct inputs and observe submitted batches                                                   |
-| Local database  | Stores deployment identity, ordered transactions, batches, snapshots, submission state, and recovery metadata                                               |
-
-### Base-layer contracts
-
-| Component            | Responsibility                                                                        |
-| -------------------- | ------------------------------------------------------------------------------------- |
-| `InputBox`           | Records inputs sent to the application, their senders, and their base-layer positions |
-| Application contract | Identifies the application and its data-availability configuration                    |
-| Portals              | Transfer assets and submit the corresponding deposit inputs to the `InputBox`         |
-
-The `InputBox` records arrival order. It does not determine the complete application execution order because batches contain their own ordered transactions and frames govern when direct inputs run.
-
-### Cartesi machine
-
-| Component   | Responsibility                                                                                                                                    |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Scheduler   | Classifies recorded inputs, validates batches, combines direct inputs with sequenced transactions, and produces the authoritative execution order |
-| Application | Validates application-specific behavior and computes state and outputs from that order                                                            |
-
-The Cartesi machine is deterministic and reproducible. Its result can be committed to the base layer and challenged through the fraud-proof system. [Trust model and guarantees](./trust-model.md) explains the assumptions around each boundary.
-
-## Transaction lifecycle from submission to settlement
-
-1. **Submission.** A user signs an EIP-712 transaction and sends it to the sequencer's HTTP API.
-2. **Validation.** The sequencer verifies the request and signature, checks the current fee, and applies the application's validation rules.
-3. **Predicted execution.** The inclusion lane applies any direct inputs that should execute first, then executes and durably stores the accepted transaction.
-4. **Soft confirmation.** The API returns success. This confirms the sequencer's current prediction, not base-layer settlement.
-5. **Batch construction.** The transaction is stored in the open frame and batch. The batch closes according to the configured size or time policy.
-6. **Base-layer submission.** The batch submitter sends the completed batch to the `InputBox`.
-7. **Canonical ordering.** The scheduler reads the base-layer input, validates the batch, drains the direct inputs covered by each frame, and executes the listed transactions.
-8. **Application settlement.** The application computes its result, and the rollup settles a commitment to that state through the base layer.
-
-The first four stages normally complete without waiting for base-layer settlement. The remaining stages depend on batch policy, base-layer inclusion, and the settlement level required by the client.
-
-| Observation                 | Source of the result      | Meaning                                                                     |
-| --------------------------- | ------------------------- | --------------------------------------------------------------------------- |
-| HTTP success                | Sequencer                 | The transaction was accepted, executed, and stored in the provisional order |
-| Feed entry                  | Sequencer                 | The transaction has a provisional ordering position                         |
-| Canonical application state | Scheduler and application | The transaction affected the result derived from base-layer inputs          |
-| Sufficiently settled state  | Rollup and base layer     | The client has reached its required settlement threshold                    |
-
-## How frames align sequenced and direct inputs
-
-A batch can remain open while new direct inputs arrive. Frames let the sequencer record how far it has accounted for those inputs at different points in the batch. The sequencer and scheduler use each frame's safe block to combine direct inputs and sequenced transactions consistently.
-
-[Batches, frames, and the safe block](../concepts/batches-frames-safe-block.md) explains the structure. [Deterministic execution order](../concepts/execution-order.md) explains the complete ordering rules.
-
-## The direct-input path
-
-A user or contract can submit an input to the `InputBox` without using the sequencer. Deposits normally follow this route through portal contracts. The available actions depend on the application.
-
-[Direct and sequenced inputs](../concepts/direct-vs-sequenced.md) explains how the scheduler classifies both paths and compares their behavior.
-
-## Application and client integration responsibilities
-
-An application team integrates and operates three pieces:
-
-- **Application logic.** The application must implement deterministic validation, user-transaction execution, direct-input execution, and snapshot behavior required by the sequencer library.
-- **Application-specific sequencer binary.** A small executable combines the application implementation with the sequencer runtime and selects the deployment-specific configuration.
-- **Client or frontend.** The client signs and submits transactions, consumes the ordered feed, stores its cursor, distinguishes soft confirmations from settlement, and reconciles unsettled activity against canonical application state.
-
-The App Sequencer provides the runtime and Rust client components, but application logic, deployment configuration, operational ownership, and user-facing confirmation behavior remain application responsibilities.
-
-See [Application integration](../usage/integration.md), [Application requirements](../usage/application-requirements.md), and [Consuming the sequenced transaction feed](../usage/reading-the-feed.md).
-
-## Next steps
-
-- To examine the security and operational assumptions, read [Trust model and guarantees](./trust-model.md).
-- To try the complete client flow, follow the [Quickstart](../usage/quickstart.md).
-
----
-
-<!-- source: https://docs.cartesi.io/app-sequencer/foundations/glossary/ -->
-
----
-title: "App Sequencer glossary"
-sidebar_label: "App Sequencer glossary"
-description: "Key terms used throughout the App Sequencer documentation."
----
-
-This glossary provides concise definitions for App Sequencer terminology. Follow the links for the complete behavior, guarantees, and implementation guidance behind each term.
-
-**Anchor.** The batch number at which a deployment's local record begins. It is zero for a new deployment or the resume number for a deployment rebuilt from a checkpoint. See [Understanding the batch tree](../concepts/batch-tree.md).
-
-**App-specific sequencer.** A sequencer dedicated to one application deployment. It uses that application's validation and execution logic to provide a provisional transaction order and soft confirmations. See [App-specific sequencing](../overview/app-specific-sequencing.md).
-
-**Base layer.** The blockchain that records application inputs and supports settlement of the rollup's state commitments, usually Ethereum.
-
-**Batch.** A numbered package of frames that the sequencer submits to the base-layer `InputBox`. See [Batches, frames, and the safe block](../concepts/batches-frames-safe-block.md).
-
-**Batch submitter.** Either the sequencer worker that posts completed batches or the dedicated base-layer account used for those submissions. The surrounding context should identify which meaning applies.
-
-**Batch tree.** The sequencer's record of batches it has built. It forms a straight line during normal operation and branches when recovery abandons an unsettled suffix and creates a replacement sequence. See [Understanding the batch tree](../concepts/batch-tree.md).
-
-**Canonical state.** The application state computed from the execution order derived inside the Cartesi machine from base-layer inputs.
-
-**Checkpoint.** An archived finalized snapshot and its recovery metadata. It provides a trusted starting point for rebuilding a deployment after local state is lost or no longer trusted. See [Snapshots and checkpoints](../recovery/snapshots.md).
-
-**Cockroach recovery.** The procedure for rebuilding a deployment from a checkpoint and base-layer history. See [Cockroach recovery](../recovery/cockroach.md).
-
-**Danger zone.** The configurable safety margin before the staleness deadline. The sequencer stops when an unsettled batch enters this range so recovery can begin before the batch becomes stale. See [Staleness and the danger zone](../concepts/staleness.md).
-
-**Direct input.** An application input recorded through the base-layer `InputBox` without being included in a sequencer batch. The scheduler classifies an input as direct when its sender is not the configured batch-submitter address. See [Direct inputs vs sequenced transactions](../concepts/direct-vs-sequenced.md).
-
-**Divergence.** A fault in which a batch observed in canonical execution differs from the batch the sequencer sealed for the same position. The sequencer records the fault and stops. See [Divergence handling](../advanced/divergence.md).
-
-**Feed.** The ordered stream of the sequencer's current valid transactions. It is provisional, can publish before base-layer acceptance, and does not send rollback messages after recovery. See [Consuming the sequenced transaction feed](../usage/reading-the-feed.md).
-
-**Frame.** An ordered section inside a batch. It carries a safe block, a frame fee, and zero or more sequenced transactions.
-
-**Inclusion lane.** The sequencer's single ordering loop. It drains relevant direct inputs, validates and executes user transactions, stores accepted transactions, and manages open frames and batches.
-
-**InputBox.** The base-layer contract that records inputs for a Cartesi application, including each input's sender and position. The scheduler interprets this record to derive the complete execution order.
-
-**Offset.** An ascending identifier attached to each message in the sequenced feed. Offsets begin at 1 and may contain gaps, so a client resumes from its last processed offset instead of counting messages.
-
-**Preemptive recovery.** The routine recovery path triggered before an unsettled batch reaches the staleness deadline. It stops unsafe confirmation, identifies the canonical frontier, invalidates the affected provisional suffix, and resumes from the expected batch number. See [Preemptive recovery](../recovery/preemptive.md).
-
-**Safe block.** A base-layer block number carried by a frame. Before executing the frame's sequenced transactions, the scheduler executes pending direct inputs recorded at or before this block.
-
-**Scheduler.** The component inside the application's Cartesi machine that derives the authoritative execution order from base-layer inputs. The sequencer predicts its result by following matching protocol rules.
-
-**Sequenced transaction.** A signed user transaction accepted by the sequencer and placed in a batch, as distinct from a direct input.
-
-**Sequencing.** Deciding the order in which application transactions execute.
-
-**Settled.** Accepted through the canonical rollup path and observed at the settlement threshold required by the client. The exact threshold depends on the chain and the risk of the action.
-
-**Snapshot.** A durable copy of application state at a known transaction offset. A pending snapshot depends on unsettled batches; a finalized snapshot has been promoted after the corresponding canonical progress is observed.
-
-**Soft confirmation.** The sequencer's immediate response after it accepts, executes, and durably stores a transaction in its provisional ordering. It is not proof of base-layer acceptance or settlement. See [Soft confirmations](../concepts/soft-confirmations.md).
-
-**Stale batch.** A non-empty batch whose base-layer inclusion block is at least `MAX_WAIT_BLOCKS` after the safe block in its first frame. The scheduler skips it without consuming its batch number. See [Staleness and the danger zone](../concepts/staleness.md).
-
-**Watchdog.** A process that compares sequencer snapshots with independently reproduced canonical application state and reports mismatches. See [Monitoring the sequencer](../operations/monitoring.md).
-
----
-
-<!-- source: https://docs.cartesi.io/app-sequencer/foundations/trust-model/ -->
-
----
-title: "Trust model and guarantees"
-sidebar_label: "Trust model and guarantees"
-description: "Which App Sequencer properties are enforced by the protocol, which depend on the operator, and how failures affect users."
----
-
-The App Sequencer gives one operator control over the application's fast transaction path. The protocol limits that control, but it does not remove the need to trust the operator for availability, transaction selection, and fair provisional ordering.
-
-This page separates protocol-enforced properties from operational assumptions. It also explains what clients must expect when the provisional order and canonical application state do not agree.
-
-## Protocol-enforced limitations
-
-These limits hold regardless of the sequencer operator's conduct:
-
-- **The sequencer cannot forge a valid user transaction.** Each sequenced transaction carries an EIP-712 signature that is checked against its sender and deployment-specific domain.
-- **The sequencer does not determine canonical state.** The scheduler derives execution order inside the Cartesi machine, and the application computes state from that order.
-- **The sequencer cannot rewrite settled canonical history.** Recovery changes the sequencer's unsettled local history. It does not change application state that has already settled through the canonical path.
-- **The sequencing service does not custody user assets.** Assets remain governed by the application's contracts, portals, and application logic.
-- **The sequencer cannot permanently remove the base-layer input route.** Users and contracts can submit directly to the `InputBox`, although the application determines which actions that path supports.
-
-These protections do not make the sequencer economically neutral. Transaction selection and ordering can affect prices, trades, liquidations, games, and other order-sensitive behavior.
-
-## Sequencer powers and trust assumptions
-
-The operator controls the provisional fast path and can:
-
-- **refuse or delay transactions;**
-- **choose the order among accepted transactions,** including placing its own transaction first;
-- **observe submitted transactions before they appear on the base layer;**
-- **change configurable fee and batching policy;**
-- **make the fast path unavailable by stopping or misoperating the service;**
-- **issue a soft confirmation that is later invalidated** if its batch does not become part of canonical execution.
-
-The protocol does not enforce first come, first served ordering. Applications in which ordering carries economic value must therefore treat the operator as trusted for fairness or add application-level protections against harmful ordering.
-
-## Protocol protections and recovery paths
-
-### Signed user transactions
-
-Deployment-bound signatures prevent the sequencer from inventing a user's authorization. They do not prevent it from excluding or reordering authorized transactions. [EIP-712 domain](../api-reference/eip712.md) defines the exact signed fields and deployment binding.
-
-### Canonical recomputation
-
-The scheduler reads the base-layer `InputBox` history and derives the execution order inside the Cartesi machine. The application then computes its own state from that order.
-
-A provisional order announced by the sequencer cannot, by itself, force the machine to accept that order. The batch must pass the scheduler's identity, numbering, structure, timing, and transaction checks.
-
-### Direct-input availability
-
-Users and contracts can reach the application through the base-layer `InputBox` without the sequencer. This protects access, but not speed, cost, or feature equivalence. The application defines which actions the direct route supports. [Direct and sequenced inputs](../concepts/direct-vs-sequenced.md) explains the behavior and scheduler backstop.
-
-### Fraud-proof settlement
-
-Adding the sequencer does not replace the rollup's dispute mechanism. Commitments to application execution remain subject to the same [fraud-proof system](/fraud-proofs) and its underlying assumptions.
-
-## How the system responds to divergence
-
-If accepted base-layer batch content differs from the matching local sealed batch, the sequencer records a terminal divergence and stops. Detection follows the configured safe view, so provisional results issued before detection may already depend on the wrong history. [Divergence detection and response](../advanced/divergence.md) defines the comparison, timing, and operator procedure.
-
-## Trust assumptions by participant
-
-| Participant or component                            | Relied on for                                                                                                             | Not relied on for                                                     |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Application operator                                | Service availability, funding batch submission, transaction selection, and fair provisional ordering                      | Creating valid user signatures or directly defining canonical state   |
-| Application implementation                          | Deterministic validation and execution, correct fee and nonce handling, direct-input behavior, and reproducible snapshots | Base-layer consensus or transaction inclusion                         |
-| Sequencer implementation                            | Predicting scheduler behavior correctly, preserving durable ordering, and stopping safely on detected faults              | Canonical authority over settled application state                    |
-| Base layer                                          | Consensus, ordered transaction recording, and the settlement properties assumed by the rollup                             | Fair inclusion or timely inclusion of the sequencer's submissions     |
-| Cartesi Rollups contracts, including the `InputBox` | Correct contract behavior, sender authentication, and recording application inputs                                        | Deriving the application's complete execution order                   |
-| Base-layer node used by the sequencer               | A consistent and truthful view of the chain, with failures treated as unavailable data                                    | Byzantine fault tolerance at the sequencer's RPC boundary             |
-| Block builders                                      | No cooperative behavior is assumed                                                                                        | They may delay, reorder, or omit batch submissions and direct inputs  |
-| Users submitting transactions                       | No trusted behavior is assumed                                                                                            | Requests are decoded, bounded, signed, and validated before execution |
-
-## Guarantee summary
-
-| Property                                | Classification                                                     |
-| --------------------------------------- | ------------------------------------------------------------------ |
-| User authorization                      | Enforced through signature verification and application validation |
-| Canonical execution order               | Derived by the scheduler from base-layer inputs                    |
-| Canonical application state             | Computed deterministically inside the Cartesi machine              |
-| Fair ordering on the fast path          | Depends on the operator or application-level controls              |
-| Fast API availability                   | Depends on sequencer infrastructure and its dependencies           |
-| Survival of a soft confirmation         | Conditional on its batch becoming part of canonical execution      |
-| Available actions through direct inputs | Defined by the application                                         |
-| Base-layer inclusion time               | Depends on the chain, fee market, and block builders               |
-
-## Next steps
-
-- To see where each trusted component sits, read [Architecture at a glance](./architecture.md).
-- To design client behavior around provisional results, read [Soft confirmations](../concepts/soft-confirmations.md).
-- To understand failure recovery, read [Staleness and the danger zone](../concepts/staleness.md) and [Preemptive recovery](../recovery/preemptive.md).
 
 ---
 
@@ -2930,7 +2704,7 @@ The deployment has no leader election or distributed writer coordination. Enforc
 
 - Configure the runtime using [Configure, set up, and run the sequencer](./setup-and-running.md).
 - Supervise keyed processes with [Process supervision and recovery operations](./orchestration.md).
-- Review the broader assumptions in [Trust model and guarantees](../foundations/trust-model.md).
+- Review the broader assumptions in [Trust model and guarantees](../overview/trust-model.md).
 
 ---
 
@@ -3168,7 +2942,7 @@ Both sources become part of the application's canonical input history. [Direct a
 
 The sequencer maintains a fast, provisional view of order and application state. The scheduler inside the Cartesi machine later derives the authoritative order from base-layer inputs. Both apply matching protocol rules, which allows the sequencer to predict the scheduler's result during normal operation.
 
-[Architecture at a glance](../foundations/architecture.md) follows this path from submission to settlement. [Batches, frames, and the safe block](../concepts/batches-frames-safe-block.md) explains the data structure, and [Deterministic execution order](../concepts/execution-order.md) explains how both input paths are combined.
+[Architecture at a glance](./architecture.md) follows this path from submission to settlement. [Batches, frames, and the safe block](../concepts/batches-frames-safe-block.md) explains the data structure, and [Deterministic execution order](../concepts/execution-order.md) explains how both input paths are combined.
 
 ### When the predicted order can change
 
@@ -3187,14 +2961,282 @@ The protocol limits the sequencer in several important ways:
 
 The operator still has meaningful power over the fast path. It can refuse, delay, or reorder transactions that users submit to it, and it sees those transactions before they reach the base layer. These choices can have financial consequences in an order-sensitive application.
 
-Users can submit direct inputs without the sequencer, but the actions available through that route depend on the application. Direct inputs are also slower and require the sender to pay the base-layer transaction cost.
-
-[Trust model and guarantees](../foundations/trust-model.md) describes these boundaries in detail.
-
 ## Next steps
 
 - To decide whether the operational and trust tradeoffs suit your application, read [When to use the App Sequencer](./when-to-use.md).
-- To see how the system components fit together, read [Architecture at a glance](../foundations/architecture.md).
+- To see how the system components fit together, read [Architecture at a glance](./architecture.md).
+
+---
+
+<!-- source: https://docs.cartesi.io/app-sequencer/overview/architecture/ -->
+
+---
+title: "Architecture at a glance"
+sidebar_label: "Architecture at a glance"
+description: "How sequencer prediction, base-layer recording, and canonical execution work together from transaction submission to settlement."
+---
+
+The App Sequencer adds a fast prediction layer to a Cartesi application without replacing its canonical execution path.
+
+- The **sequencer** runs as an ordinary service on the application operator's infrastructure. It validates, orders, and executes transactions against a provisional view of application state.
+- The **scheduler and application** run inside the deterministic Cartesi machine. The scheduler derives the authoritative order from base-layer inputs, and the application computes state from that order.
+- The **base layer** records application inputs and settles commitments to the machine's result.
+
+The sequencer can respond before base-layer processing because it predicts what the scheduler will compute. The prediction remains a soft confirmation until the corresponding transaction is accepted through the canonical path.
+
+## Sequencer prediction and canonical execution
+
+![The App Sequencer runs off-chain with its HTTP API, inclusion lane, batch submitter, input reader, and local database. It exchanges transactions and soft confirmations with users, posts batches to the InputBox, and reads recorded inputs. The Cartesi machine reads the InputBox and runs the scheduler before the application logic. Direct transactions reach the InputBox without passing through the sequencer.](../images/architecture.png)
+
+The diagram has three system boundaries:
+
+1. **Sequencer infrastructure.** The application operator runs the API, transaction-ordering loop, database, base-layer reader, and batch submitter.
+2. **Base-layer contracts.** The `InputBox` records application inputs. The application contract, portals, and other Cartesi Rollups contracts retain their existing roles.
+3. **Cartesi machine.** The scheduler interprets the recorded inputs, and the application executes the resulting order deterministically.
+
+The sequencer cannot change the order that the scheduler derives after inputs are recorded. Its responsibility is to maintain a provisional order that the scheduler is expected to reproduce later.
+
+## System components and responsibilities
+
+### Sequencer service
+
+| Component       | Responsibility                                                                                                                                              |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HTTP API        | Accepts signed user transactions and returns success or a structured rejection                                                                              |
+| Inclusion lane  | Applies protocol and application validation, drains relevant direct inputs, executes accepted transactions, and stores them in a single deterministic order |
+| Ordered feed    | Publishes the sequencer's current valid transaction history to clients and indexers                                                                         |
+| Batch submitter | Posts completed batches to the base-layer `InputBox` using the configured submitter account                                                                 |
+| Input reader    | Reads safe base-layer inputs so the sequencer can account for direct inputs and observe submitted batches                                                   |
+| Local database  | Stores deployment identity, ordered transactions, batches, snapshots, submission state, and recovery metadata                                               |
+
+### Base-layer contracts
+
+| Component            | Responsibility                                                                        |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| `InputBox`           | Records inputs sent to the application, their senders, and their base-layer positions |
+| Application contract | Identifies the application and its data-availability configuration                    |
+| Portals              | Transfer assets and submit the corresponding deposit inputs to the `InputBox`         |
+
+The `InputBox` records arrival order. It does not determine the complete application execution order because batches contain their own ordered transactions and frames govern when direct inputs run.
+
+### Cartesi machine
+
+| Component   | Responsibility                                                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scheduler   | Classifies recorded inputs, validates batches, combines direct inputs with sequenced transactions, and produces the authoritative execution order |
+| Application | Validates application-specific behavior and computes state and outputs from that order                                                            |
+
+The Cartesi machine produces deterministic, reproducible results. Its result can be committed to the base layer and challenged through the fraud-proof system. [Trust model and guarantees](./trust-model.md) explains the assumptions around each boundary.
+
+## Transaction lifecycle from submission to settlement
+
+1. **Submission.** A user signs an EIP-712 transaction and sends it to the sequencer's HTTP API.
+2. **Validation.** The sequencer verifies the request and signature, checks the current fee, and applies the application's validation rules.
+3. **Predicted execution.** The inclusion lane applies any direct inputs that should execute first, then executes and durably stores the accepted transaction.
+4. **Soft confirmation.** The API returns success. This confirms the sequencer's current prediction, not base-layer settlement.
+5. **Batch construction.** The transaction is stored in the open frame and batch. The batch closes according to the configured size or time policy.
+6. **Base-layer submission.** The batch submitter sends the completed batch to the `InputBox`.
+7. **Canonical ordering.** The scheduler reads the base-layer input, validates the batch, drains the direct inputs covered by each frame, and executes the listed transactions.
+8. **Application settlement.** The application computes its result, and the rollup settles a commitment to that state through the base layer.
+
+The first four stages normally complete without waiting for base-layer settlement. The remaining stages depend on batch policy, base-layer inclusion, and the settlement level required by the client.
+
+| Observation                 | Source of the result      | Meaning                                                                     |
+| --------------------------- | ------------------------- | --------------------------------------------------------------------------- |
+| HTTP success                | Sequencer                 | The transaction was accepted, executed, and stored in the provisional order |
+| Feed entry                  | Sequencer                 | The transaction has a provisional ordering position                         |
+| Canonical application state | Scheduler and application | The transaction affected the result derived from base-layer inputs          |
+| Sufficiently settled state  | Rollup and base layer     | The client has reached its required settlement threshold                    |
+
+## How frames align sequenced and direct inputs
+
+A batch can remain open while new direct inputs arrive. Frames let the sequencer record how far it has accounted for those inputs at different points in the batch. The sequencer and scheduler use each frame's safe block to combine direct inputs and sequenced transactions consistently.
+
+[Batches, frames, and the safe block](../concepts/batches-frames-safe-block.md) explains the structure. [Deterministic execution order](../concepts/execution-order.md) explains the complete ordering rules.
+
+## The direct-input path
+
+A user or contract can submit an input to the `InputBox` without using the sequencer. Deposits normally follow this route through portal contracts. The available actions depend on the application.
+
+[Direct and sequenced inputs](../concepts/direct-vs-sequenced.md) explains how the scheduler classifies both paths and compares their behavior.
+
+## Application and client integration responsibilities
+
+An application team integrates and operates three pieces:
+
+- **Application logic.** The application must implement deterministic validation, user-transaction execution, direct-input execution, and snapshot behavior required by the sequencer library.
+- **Application-specific sequencer binary.** A small executable combines the application implementation with the sequencer runtime and selects the deployment-specific configuration.
+- **Client or frontend.** The client signs and submits transactions, consumes the ordered feed, stores its cursor, distinguishes soft confirmations from settlement, and reconciles unsettled activity against canonical application state.
+
+The App Sequencer provides the runtime and Rust client components, but application logic, deployment configuration, operational ownership, and user-facing confirmation behavior remain application responsibilities.
+
+See [Application integration](../usage/integration.md), the [Application trait reference](../usage/application-trait-reference.md), and [Reading the sequenced feed](../usage/reading-the-feed.md).
+
+## Next steps
+
+- To examine the security and operational assumptions, read [Trust model and guarantees](./trust-model.md).
+- To try the complete client flow, follow the [Quickstart](../usage/quickstart.md).
+
+---
+
+<!-- source: https://docs.cartesi.io/app-sequencer/overview/glossary/ -->
+
+---
+title: "App Sequencer glossary"
+sidebar_label: "App Sequencer glossary"
+description: "Key terms used throughout the App Sequencer documentation."
+---
+
+This glossary provides concise definitions for App Sequencer terminology. Follow the links for the complete behavior, guarantees, and implementation guidance behind each term.
+
+**Anchor.** The batch number at which a deployment's local record begins. It is zero for a new deployment or the resume number for a deployment rebuilt from a checkpoint. See [Understanding the batch tree](../concepts/batch-tree.md).
+
+**App-specific sequencer.** A sequencer dedicated to one application deployment. It uses that application's validation and execution logic to provide a provisional transaction order and soft confirmations. See [App-specific sequencing](./app-specific-sequencing.md).
+
+**Base layer.** The blockchain that records application inputs and supports settlement of the rollup's state commitments, usually Ethereum.
+
+**Batch.** A numbered package of frames that the sequencer submits to the base-layer `InputBox`. See [Batches, frames, and the safe block](../concepts/batches-frames-safe-block.md).
+
+**Batch submitter.** Either the sequencer worker that posts completed batches or the dedicated base-layer account used for those submissions. The surrounding context should identify which meaning applies.
+
+**Batch tree.** The sequencer's record of batches it has built. It forms a straight line during normal operation and branches when recovery abandons an unsettled suffix and creates a replacement sequence. See [Understanding the batch tree](../concepts/batch-tree.md).
+
+**Canonical state.** The application state computed from the execution order derived inside the Cartesi machine from base-layer inputs.
+
+**Checkpoint.** An archived finalized snapshot and its recovery metadata. It provides a trusted starting point for rebuilding a deployment after local state is lost or no longer trusted. See [Snapshots and checkpoints](../recovery/snapshots.md).
+
+**Cockroach recovery.** The procedure for rebuilding a deployment from a checkpoint and base-layer history. See [Cockroach recovery](../recovery/cockroach.md).
+
+**Danger zone.** The configurable safety margin before the staleness deadline. The sequencer stops when an unsettled batch enters this range so recovery can begin before the batch becomes stale. See [Staleness and the danger zone](../concepts/staleness.md).
+
+**Direct input.** An application input recorded through the base-layer `InputBox` without being included in a sequencer batch. The scheduler classifies an input as direct when its sender is not the configured batch-submitter address. See [Direct inputs vs sequenced transactions](../concepts/direct-vs-sequenced.md).
+
+**Divergence.** A fault in which a batch observed in canonical execution differs from the batch the sequencer sealed for the same position. The sequencer records the fault and stops. See [Divergence handling](../advanced/divergence.md).
+
+**Feed.** The ordered stream of the sequencer's current valid transactions. It is provisional, can publish before base-layer acceptance, and does not send rollback messages after recovery. See [Reading the sequenced feed](../usage/reading-the-feed.md).
+
+**Frame.** An ordered section inside a batch. It carries a safe block, a frame fee, and zero or more sequenced transactions.
+
+**Inclusion lane.** The sequencer's single ordering loop. It drains relevant direct inputs, validates and executes user transactions, stores accepted transactions, and manages open frames and batches.
+
+**InputBox.** The base-layer contract that records inputs for a Cartesi application, including each input's sender and position. The scheduler interprets this record to derive the complete execution order.
+
+**Offset.** An ascending identifier attached to each message in the sequenced feed. Offsets begin at 1 and may contain gaps, so a client resumes from its last processed offset instead of counting messages.
+
+**Preemptive recovery.** The routine recovery path triggered before an unsettled batch reaches the staleness deadline. It stops unsafe confirmation, identifies the canonical frontier, invalidates the affected provisional suffix, and resumes from the expected batch number. See [Preemptive recovery](../recovery/preemptive.md).
+
+**Safe block.** A base-layer block number carried by a frame. Before executing the frame's sequenced transactions, the scheduler executes pending direct inputs recorded at or before this block.
+
+**Scheduler.** The component inside the application's Cartesi machine that derives the authoritative execution order from base-layer inputs. The sequencer predicts its result by following matching protocol rules.
+
+**Sequenced transaction.** A signed user transaction accepted by the sequencer and placed in a batch, as distinct from a direct input.
+
+**Sequencing.** Deciding the order in which application transactions execute.
+
+**Settled.** Accepted through the canonical rollup path and observed at the settlement threshold required by the client. The exact threshold depends on the chain and the risk of the action.
+
+**Snapshot.** A durable copy of application state at a known transaction offset. A pending snapshot depends on unsettled batches; a finalized snapshot has been promoted after the corresponding canonical progress is observed.
+
+**Soft confirmation.** The sequencer's immediate response after it accepts, executes, and durably stores a transaction in its provisional ordering. It is not proof of base-layer acceptance or settlement. See [Soft confirmations](../concepts/soft-confirmations.md).
+
+**Stale batch.** A non-empty batch whose base-layer inclusion block is at least `MAX_WAIT_BLOCKS` after the safe block in its first frame. The scheduler skips it without consuming its batch number. See [Staleness and the danger zone](../concepts/staleness.md).
+
+**Watchdog.** A process that compares sequencer snapshots with independently reproduced canonical application state and reports mismatches. See [Monitoring the sequencer](../operations/monitoring.md).
+
+---
+
+<!-- source: https://docs.cartesi.io/app-sequencer/overview/trust-model/ -->
+
+---
+title: "Trust model and guarantees"
+sidebar_label: "Trust model and guarantees"
+description: "Which App Sequencer properties are enforced by the protocol, which depend on the operator, and how failures affect users."
+---
+
+The App Sequencer gives one operator control over the application's fast transaction path. The protocol limits that control, but it does not remove the need to trust the operator for availability, transaction selection, and fair provisional ordering.
+
+This page separates protocol-enforced properties from operational assumptions. It also explains what clients must expect when the provisional order and canonical application state do not agree.
+
+## Protocol-enforced limitations
+
+These limits hold regardless of the sequencer operator's conduct:
+
+- **The sequencer cannot forge a valid user transaction.** Each sequenced transaction carries an EIP-712 signature that is checked against its sender and deployment-specific domain.
+- **The sequencer does not determine canonical state.** The scheduler derives execution order inside the Cartesi machine, and the application computes state from that order.
+- **The sequencer cannot rewrite settled canonical history.** Recovery changes the sequencer's unsettled local history. It does not change application state that has already settled through the canonical path.
+- **The sequencing service does not custody user assets.** Assets remain governed by the application's contracts, portals, and application logic.
+- **The sequencer cannot permanently remove the base-layer input route.** Users and contracts can submit directly to the `InputBox`, although the application determines which actions that path supports.
+
+These protections do not make the sequencer economically neutral. Transaction selection and ordering can affect prices, trades, liquidations, games, and other order-sensitive behavior.
+
+## Sequencer powers and trust assumptions
+
+The operator controls the provisional fast path and can:
+
+- **refuse or delay transactions;**
+- **choose the order among accepted transactions,** including placing its own transaction first;
+- **observe submitted transactions before they appear on the base layer;**
+- **change configurable fee and batching policy;**
+- **make the fast path unavailable by stopping or misoperating the service;**
+- **issue a soft confirmation that is later invalidated** if its batch does not become part of canonical execution.
+
+The protocol does not enforce first come, first served ordering. Applications in which ordering carries economic value must therefore treat the operator as trusted for fairness or add application-level protections against harmful ordering.
+
+## Protocol protections and recovery paths
+
+### Signed user transactions
+
+Deployment-bound signatures prevent the sequencer from inventing a user's authorization. They do not prevent it from excluding or reordering authorized transactions. [EIP-712 domain](../api-reference/eip712.md) defines the exact signed fields and deployment binding.
+
+### Canonical recomputation
+
+The scheduler reads the base-layer `InputBox` history and derives the execution order inside the Cartesi machine. The application then computes its own state from that order.
+
+A provisional order announced by the sequencer cannot, by itself, force the machine to accept that order. The batch must pass the scheduler's identity, numbering, structure, timing, and transaction checks.
+
+### Direct-input availability
+
+Users and contracts can reach the application through the base-layer `InputBox` without the sequencer. This protects access, but not speed, cost, or feature equivalence. The application defines which actions the direct route supports. [Direct and sequenced inputs](../concepts/direct-vs-sequenced.md) explains the behavior and scheduler backstop.
+
+### Fraud-proof settlement
+
+Adding the sequencer does not replace the rollup's dispute mechanism. Commitments to application execution remain subject to the same [fraud-proof system](/fraud-proofs) and its underlying assumptions.
+
+## How the system responds to divergence
+
+If accepted base-layer batch content differs from the matching local sealed batch, the sequencer records a terminal divergence and stops. Detection follows the configured safe view, so provisional results issued before detection may already depend on the wrong history. [Divergence detection and response](../advanced/divergence.md) defines the comparison, timing, and operator procedure.
+
+## Trust assumptions by participant
+
+| Participant or component                            | Relied on for                                                                                                             | Not relied on for                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Application operator                                | Service availability, funding batch submission, transaction selection, and fair provisional ordering                      | Creating valid user signatures or directly defining canonical state   |
+| Application implementation                          | Deterministic validation and execution, correct fee and nonce handling, direct-input behavior, and reproducible snapshots | Base-layer consensus or transaction inclusion                         |
+| Sequencer implementation                            | Predicting scheduler behavior correctly, preserving durable ordering, and stopping safely on detected faults              | Canonical authority over settled application state                    |
+| Base layer                                          | Consensus, ordered transaction recording, and the settlement properties assumed by the rollup                             | Fair inclusion or timely inclusion of the sequencer's submissions     |
+| Cartesi Rollups contracts, including the `InputBox` | Correct contract behavior, sender authentication, and recording application inputs                                        | Deriving the application's complete execution order                   |
+| Base-layer node used by the sequencer               | A consistent and truthful view of the chain, with failures treated as unavailable data                                    | Byzantine fault tolerance at the sequencer's RPC boundary             |
+| Block builders                                      | No cooperative behavior is assumed                                                                                        | They may delay, reorder, or omit batch submissions and direct inputs  |
+| Users submitting transactions                       | No trusted behavior is assumed                                                                                            | Requests are decoded, bounded, signed, and validated before execution |
+
+## Guarantee summary
+
+| Property                                | Classification                                                     |
+| --------------------------------------- | ------------------------------------------------------------------ |
+| User authorization                      | Enforced through signature verification and application validation |
+| Canonical execution order               | Derived by the scheduler from base-layer inputs                    |
+| Canonical application state             | Computed deterministically inside the Cartesi machine              |
+| Fair ordering on the fast path          | Depends on the operator or application-level controls              |
+| Fast API availability                   | Depends on sequencer infrastructure and its dependencies           |
+| Survival of a soft confirmation         | Conditional on its batch becoming part of canonical execution      |
+| Available actions through direct inputs | Defined by the application                                         |
+| Base-layer inclusion time               | Depends on the chain, fee market, and block builders               |
+
+## Next steps
+
+- To locate each trusted component, read [Architecture at a glance](./architecture.md).
+- To design client behavior around provisional results, read [Soft confirmations](../concepts/soft-confirmations.md).
+- To understand failure recovery, read [Staleness and the danger zone](../concepts/staleness.md) and [Preemptive recovery](../recovery/preemptive.md).
 
 ---
 
@@ -3285,8 +3327,8 @@ If one of these conditions is unacceptable, direct base-layer inputs or another 
 
 ## Next steps
 
-- To understand the system boundaries, read [Architecture at a glance](../foundations/architecture.md).
-- To evaluate its guarantees, read [Trust model and guarantees](../foundations/trust-model.md).
+- To understand the system boundaries, read [Architecture at a glance](./architecture.md).
+- To evaluate its guarantees, read [Trust model and guarantees](./trust-model.md).
 - To begin integrating it, follow the [Quickstart](../usage/quickstart.md).
 
 ---
@@ -3739,6 +3781,20 @@ This ordering prevents a committed database row from referring to an incomplete 
 
 As the safe input frontier advances, the sequencer observes accepted batch submissions. It promotes the newest applicable pending snapshot and advances the direct-input drain in the same database transaction. The atomic update prevents a crash from promoting a snapshot without advancing the input position that justified it.
 
+### When the latest snapshot advances
+
+The sequencer closes an open batch when it reaches its derived size target or its maximum open duration. Snapshot creation follows that batch closure, not each accepted transaction.
+
+The default `CARTESI_SEQUENCER_MAX_BATCH_OPEN_SECONDS` value is `7200`, or two hours. A low-traffic local deployment can therefore continue serving the genesis state from `/latest_snapshot` after accepting its first few operations. This does not mean the operations were rejected. They remain in the ordered feed and the current open batch, but no newer snapshot exists yet.
+
+Use a shorter duration when testing snapshot-dependent clients locally:
+
+```bash
+CARTESI_SEQUENCER_MAX_BATCH_OPEN_SECONDS=5 ./app-sequencer run
+```
+
+For production, choose a value that balances state freshness and batch-posting latency against base-layer transaction cost.
+
 ## How startup selects a snapshot
 
 The inclusion lane loads the newest pending snapshot when one exists. Otherwise, it loads the finalized snapshot. The same database record supplies both the dump path and the sequenced-feed offset, preventing application state and replay position from being mixed.
@@ -3776,6 +3832,8 @@ The promotion block is absent while a snapshot is pending. It is stamped into `i
 The HTTP API can stream the latest promoted state for watchdogs, the latest available state for indexers, and a lightweight promoted-position cursor. Streaming responses lease their dump so garbage collection cannot remove it during transfer.
 
 [Operator endpoints](../api-reference/api.md#operator-endpoints) defines the exact routes, headers, and cache behavior. Keep these endpoints internal according to [Production security](../operations/security.md#separate-public-and-internal-routes).
+
+An indexer can start from the genesis snapshot and subscribe from offset `0` while the remaining history fits within the feed's catch-up window. If the history exceeds that limit, the indexer needs a newer snapshot created at a later batch boundary.
 
 :::danger Snapshot responses are not recovery checkpoints
 The streaming endpoints return only the application's state bytes. They do not return `info.toml` or package the complete dump directory.
@@ -3848,7 +3906,7 @@ description: "Common questions and common errors, with what to do about them."
 No. Treat it as a provisional result. See [Soft confirmations](./concepts/soft-confirmations.md).
 
 **Can the sequencer steal funds?**
-Sequencing does not give the service custody of application assets or authority over canonical state. See [Trust model and guarantees](./foundations/trust-model.md).
+Sequencing does not give the service custody of application assets or authority over canonical state. See [Trust model and guarantees](./overview/trust-model.md).
 
 **Can it censor a user?**
 It can refuse the fast path. Users can still submit supported actions through the application's direct-input path. See [Direct and sequenced inputs](./concepts/direct-vs-sequenced.md).
@@ -3877,7 +3935,7 @@ Its batch was invalidated after a recovery. Fee and application checks happen at
 
 ## Errors on the feed
 
-**Closed immediately with code `1008`, `catch-up window exceeded`.** Initialize from a snapshot and subscribe from its offset. See [Recover after a long absence](./usage/reading-the-feed.md#recover-after-a-long-absence).
+**Closed immediately with code `1008` and reason `catch-up window exceeded: live_start_offset=<u64>`.** Initialize from a snapshot and subscribe from its offset. See [Recover after a long absence](./usage/reading-the-feed.md#recover-after-a-long-absence).
 
 **Cannot connect because the server reports overload.** The subscriber limit has been reached. Use a small number of durable indexers instead of connecting every client directly.
 
@@ -3898,7 +3956,7 @@ Its batch was invalidated after a recovery. Fee and application checks happen at
 ## Next steps
 
 - For what can fail and how it is handled, see [Failure modes](./recovery/failure-modes.md).
-- For terms, see the [App Sequencer glossary](./foundations/glossary.md).
+- For terms, see the [App Sequencer glossary](./overview/glossary.md).
 
 ---
 
@@ -3919,6 +3977,7 @@ import WalletSequencer from './snippets/_wallet-sequencer.md';
 import WalletCanonical from './snippets/_wallet-canonical.md';
 import WalletMachine from './snippets/_wallet-machine.md';
 import WalletClient from './snippets/_wallet-client.md';
+import FeedClient from '../snippets/_feed-client.md';
 
 In this tutorial, you will build a Cartesi wallet and its application-specific sequencer from an empty directory. You will write the shared application logic, create the host sequencer and canonical Cartesi Machine programs, package the machine, and submit a deposit, transfer, and withdrawal on a local network.
 
@@ -3973,7 +4032,9 @@ Outside a Cargo project, `cross --version` prints two warning lines about missin
 
 Docker must be running before you build the canonical application or start the local Cartesi environment.
 
-## Step 1: create the project structure
+## Set up the project workspace
+
+### Create the project structure
 
 Create an empty project and the directories for each component:
 
@@ -4021,7 +4082,7 @@ Later steps use `$PROJECT_ROOT` to return here from other terminals. Export it a
 
 The `machine/out` directory will receive the compiled RISC-V binary. The `sequencer-data` directory will be created later when you initialize the sequencer.
 
-## Step 2: configure the Rust workspace
+### Configure the Rust workspace
 
 Create the root `Cargo.toml` and copy this configuration into it:
 
@@ -4031,7 +4092,9 @@ The three `sequencer` dependencies point to the same Git tag. Keeping them on on
 
 The `types` and `trolley` revisions match the versions selected by that sequencer release. They provide the portal payload types and Cartesi Machine I/O used by this application.
 
-## Step 3: define the wallet operations
+## Implement the shared wallet application
+
+### Define the wallet operations
 
 Create `app-core/Cargo.toml`:
 
@@ -4049,7 +4112,7 @@ The `Method` enum uses Simple Serialize, or SSZ. The union selector is `0` for `
 
 The maximum method size is therefore one selector byte, 32 amount bytes, and 20 address bytes.
 
-## Step 4: implement the shared wallet state
+### Implement the shared wallet state
 
 Create `app-core/src/wallet.rs`:
 
@@ -4070,7 +4133,9 @@ The fixed addresses come from the local environment created by the Cartesi CLI. 
 The application validates the nonce and fee balance before inclusion. It still charges the fee and advances the nonce if a method is malformed or if the remaining balance cannot cover the requested transfer or withdrawal. Such an operation produces no method output. Production applications should define and test their failure policy explicitly.
 :::
 
-## Step 5: create the host sequencer
+## Connect the two execution paths
+
+### Create the host sequencer
 
 Create `app-sequencer/Cargo.toml` and `app-sequencer/src/main.rs`:
 
@@ -4088,7 +4153,7 @@ app-sequencer flush-mempool
 
 This tutorial uses `setup` and `run`.
 
-## Step 6: create the canonical application
+### Create the canonical application
 
 Create `canonical-app/Cargo.toml` and `canonical-app/src/main.rs`:
 
@@ -4098,7 +4163,7 @@ Create `canonical-app/Cargo.toml` and `canonical-app/src/main.rs`:
 
 The same `WalletApp` type runs here and in the host sequencer. The shared type is the main protection against different execution rules on the two paths.
 
-## Step 7: configure the Cartesi Machine build
+### Configure the Cartesi Machine build
 
 Create `Cross.toml`, `cartesi.toml`, and `machine/Dockerfile`:
 
@@ -4106,11 +4171,15 @@ Create `Cross.toml`, `cartesi.toml`, and `machine/Dockerfile`:
 
 The `cross` image and runtime image are pinned to the same versions used by the sequencer release. `cross` compiles `wallet-canonical` for RISC-V. The Dockerfile then places that binary and `cartesi-init` in the root file system that the Cartesi CLI turns into a Cartesi Machine.
 
-## Step 8: create the client and feed subscriber
+## Create the wallet client
+
+### Add the signing client and feed subscriber
 
 Create `client/package.json`, `client/wallet-client.mjs`, and `client/feed.mjs`:
 
 <WalletClient />
+
+<FeedClient />
 
 Install the JavaScript dependencies:
 
@@ -4129,7 +4198,9 @@ The wallet client performs four tasks:
 
 The feed subscriber connects to `/ws/subscribe` with offset `0`. It first receives stored events whose offsets are greater than zero, then continues with new events.
 
-## Step 9: build every component
+## Build and run the application
+
+### Build every component
 
 Check the host crates first:
 
@@ -4161,7 +4232,7 @@ cartesi build
 
 The first build downloads the Rust dependencies, cross-compilation image, Cartesi SDK, guest tools, and RISC-V runtime image. Later builds reuse Docker and Cargo caches.
 
-## Step 10: start the local Cartesi environment
+### Start the local Cartesi environment
 
 Run the Cartesi application from the project root:
 
@@ -4186,11 +4257,11 @@ export MAX_FEE=2000
 echo "$APP_ADDRESS"
 ```
 
-Every later terminal reuses `SEQUENCER_URL`, so if you change the sequencer's port in Step 12, change it here and export the same value everywhere.
+Every later terminal reuses `SEQUENCER_URL`. If you change the port when starting the sequencer, change it here and export the same value everywhere.
 
 If you passed a custom port or project name to `cartesi run`, pass the matching values to `cartesi address-book` and update `L1_RPC`.
 
-## Step 11: initialize the sequencer
+### Initialize the sequencer
 
 The sequencer stores deployment identity, application snapshots, batches, and feed offsets in its data directory. Initialize that directory once:
 
@@ -4211,7 +4282,7 @@ A fee is an exponent, not a token amount, so `0` here does not mean transactions
 
 Plain `setup` uses the submitter address but does not require its private key or send a transaction.
 
-## Step 12: start the sequencer
+### Start the sequencer
 
 Run the sequencer with the private key for Anvil account 9:
 
@@ -4238,7 +4309,9 @@ curl --fail "$SEQUENCER_URL/readyz"
 
 The sequencer listens on `127.0.0.1:3000` by default. If that port is already in use, the process exits with `Address already in use`. Add `CARTESI_SEQUENCER_HTTP_ADDR=127.0.0.1:<port>` to the command above and export a matching `SEQUENCER_URL` in every terminal.
 
-## Step 13: watch the ordered feed
+## Submit and observe wallet operations
+
+### Watch the ordered feed
 
 Open another terminal, enter the client directory, and start the subscriber:
 
@@ -4250,7 +4323,7 @@ npm run feed
 
 Leave this process running. It will print the direct input and the two signed operations used in the following steps.
 
-## Step 14: deposit test tokens
+### Deposit test tokens
 
 Return to a terminal at the project root. The local test token is deployed with no supply, so mint some for Anvil account 0 first:
 
@@ -4277,7 +4350,7 @@ The feed subscriber then prints a `direct_input` event. Its `sender` is the ERC-
 
 One token has 18 decimal places in this environment, so the wallet credits account 0 with `1000000000000000000` units.
 
-## Step 15: transfer tokens through the sequencer
+### Transfer tokens through the sequencer
 
 Use Anvil account 0 as Alice and account 1 as Bob:
 
@@ -4313,7 +4386,7 @@ The successful response is a soft confirmation. It means the sequencer validated
 
 `MAX_FEE` is the highest fee exponent the operation will accept. The sequencer rejects a submission with HTTP `422` and code `EXECUTION_REJECTED` when it falls below the frame's price, which is `1356` here, so `2000` leaves room. An accepted operation is charged the frame price, not its own maximum.
 
-## Step 16: request a withdrawal
+### Request a withdrawal
 
 Bob received `0.4` token and has not sent an operation, so his next nonce is also `0`. Select Bob's key and request a withdrawal of `0.1` token:
 
@@ -4331,7 +4404,9 @@ The sequencer returns another soft confirmation. The feed shows a `user_op` whos
 
 During application execution, the wallet deducts the frame fee and withdrawal amount from Bob's wallet balance. The canonical application emits an ERC-20 transfer voucher for the requested amount. Executing that voucher on the base layer is a separate settlement step and is outside this tutorial.
 
-## Step 17: inspect the sequencer state
+## Inspect the resulting state
+
+### Read the latest snapshot
 
 The five-second batch interval closes the open batch shortly after the operations are submitted. Fetch the most recent wallet snapshot:
 
@@ -4344,7 +4419,7 @@ The snapshot contains the sorted balances, per-sender nonces, executed input cou
 
 `/latest_snapshot` is an operator endpoint. It is useful for this local inspection, but it has no authentication and must not be exposed publicly.
 
-## What you built
+### Review what you built
 
 The running system now demonstrates the complete integration path:
 
@@ -4358,27 +4433,40 @@ The shared `app-core` crate made both execution paths use the same wallet rules 
 
 ## Next steps
 
-- Read [Application requirements](../usage/application-requirements.md) before replacing the tutorial wallet with production application logic.
+- Read the [Application trait reference](../usage/application-trait-reference.md) before replacing the tutorial wallet with production application logic.
 - Use [Application integration](../usage/integration.md) to adapt the three-crate structure to an existing project.
-- Follow [Submitting operations](../usage/submitting-operations.md) for client retry, nonce, and fee handling.
+- Follow [Submitting transactions](../usage/submitting-operations.md) for client retry, nonce, and fee handling.
 - Follow [Reading the sequenced feed](../usage/reading-the-feed.md) to add durable cursor storage and reconnection.
 - Review [Soft confirmations](../concepts/soft-confirmations.md) before presenting sequencer responses as application outcomes.
 
 ---
 
-<!-- source: https://docs.cartesi.io/app-sequencer/usage/application-requirements/ -->
+<!-- source: https://docs.cartesi.io/app-sequencer/usage/application-trait-reference/ -->
 
 ---
-title: "Application integration requirements"
-sidebar_label: "Application requirements"
-description: "The execution, progress, persistence, and determinism contracts an application must satisfy to work safely with the app-specific sequencer."
+title: "Application trait reference"
+sidebar_label: "Application trait reference"
+description: "Reference for implementing the sequencer's application interface, deterministic state, progress, and recovery methods."
 ---
 
-An application integrates with the sequencer by implementing `sequencer_core::application::Application`. The off-chain sequencer uses this implementation to predict application state, and the canonical scheduler uses it inside the Cartesi machine to compute the authoritative result.
+An application integrates with the sequencer by implementing [`sequencer_core::application::Application`](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/sequencer-core/src/application/mod.rs#L154). The trait is defined in the `sequencer-core` crate and imported with:
+
+```rust
+use sequencer_core::application::Application;
+```
+
+Add the crate to the shared application library using the same sequencer release or revision as the rest of the workspace:
+
+```toml
+[dependencies]
+sequencer-core = { git = "https://github.com/cartesi/sequencer", rev = "5e3d621e8f04fe93840944421e9625b4a4cc7f34" }
+```
+
+The off-chain sequencer uses this implementation to predict application state, and the canonical scheduler uses it inside the Cartesi machine to compute the authoritative result.
 
 Both execution paths must produce the same state and outputs for the same ordered inputs. The interface therefore defines more than application methods. It also defines progress tracking, recovery dumps, canonical state bytes, and failure behavior.
 
-This page describes the application code shared by the two execution paths. The application-specific sequencer binary is covered in [Integrating the sequencer with a Cartesi application](./integration.md).
+This page is an implementation reference for the application code shared by both execution paths. Use it while implementing or reviewing the trait methods. For the complete setup and build sequence, follow [Application integration](./integration.md).
 
 ## Complete interface overview
 
@@ -4388,18 +4476,16 @@ The required and optional parts of `Application` are grouped below.
 | ------------------------ | -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Payload bound            | `MAX_METHOD_PAYLOAD_BYTES` | Yes         | Limits the encoded application payload accepted in `UserOp.data` and supplies the sequencer's batch-sizing calculation |
 | Validation               | `validate_user_op`         | Yes         | Checks application-level acceptance rules without changing state                                                       |
-| User operation execution | `execute_valid_user_op`    | Yes         | Applies an operation that passed the protocol and application checks                                                   |
-| Direct input execution   | `execute_direct_input`     | Yes         | Applies an input recorded directly on the base layer                                                                   |
-| Progress                 | `last_executed_safe_block` | Yes         | Reports the highest base-layer block covered by executed inputs                                                        |
-| Progress                 | `executed_input_count`     | Yes         | Reports how many user operations and direct inputs have executed                                                       |
+| User operation execution | `apply_valid_user_op`      | Yes         | Applies an operation that passed the protocol and application checks                                                   |
+| Direct input execution   | `apply_direct_input`       | Yes         | Applies an input recorded directly on the base layer                                                                   |
+| Progress                 | `progress`                 | Yes         | Returns the safe-block clock and executed-input count embedded in application state                                    |
 | Persistence              | `create_dump`              | Yes         | Writes a complete and durable recovery dump                                                                            |
 | Persistence              | `from_dump`                | Yes         | Reconstructs equivalent application state from a dump                                                                  |
 | Persistence              | `delete_dump`              | Yes         | Removes a dump that the sequencer no longer needs                                                                      |
 | Persistence              | `state_file_in_dump`       | Yes         | Locates the canonical state file inside a dump                                                                         |
-| State comparison         | `canonical_snapshot_bytes` | Conditional | Returns deterministic state bytes for machine inspection and watchdog comparison                                       |
-| Diagnostics              | `export_state`             | No          | Returns human-readable JSON for debugging                                                                              |
+| State comparison         | `CanonicalState::canonical_snapshot_bytes` | Conditional | Returns deterministic state bytes for machine inspection and watchdog comparison                         |
 
-`canonical_snapshot_bytes` and `export_state` have default implementations that return an error. Implement canonical bytes when the deployment serves machine state through inspect requests or uses the watchdog comparison.
+`canonical_snapshot_bytes` belongs to the separate `CanonicalState` trait. Implement it when the application uses the shared Rust canonical scheduler and serves state for inspection or watchdog comparison.
 
 ## User operation validation and execution
 
@@ -4409,10 +4495,10 @@ Every user operation must pass through `validate_and_execute_user_op`. This shar
 1. Check user_op.max_fee against the current frame fee
 2. Call app.validate_user_op(...)
 3. Build a ValidUserOp with the committed frame fee
-4. Call app.execute_valid_user_op(...)
+4. Call execute_valid_user_op(...), which invokes app.apply_valid_user_op(...)
 ```
 
-Application code should call the shared function in tests and custom execution paths. Calling `execute_valid_user_op` directly bypasses the protocol fee guard and can create behavior that the canonical scheduler will not reproduce.
+Application code should call the shared function in tests and custom live-execution paths. Calling `apply_valid_user_op` directly bypasses the protocol fee guard and progress verification, which can create behavior that the canonical scheduler will not reproduce. Trusted replay uses the shared `execute_valid_user_op` helper because the operation has already passed validation.
 
 ### Keep validation read-only
 
@@ -4436,9 +4522,9 @@ The current rejection vocabulary contains:
 
 A validation rejection changes no state, produces no output, and is not placed in the ordered transaction stream.
 
-### Execute an accepted operation deterministically
+### Apply an accepted operation deterministically
 
-`execute_valid_user_op` receives a `ValidUserOp` containing the sender, the committed frame fee, and the application payload. It also receives the frame's `safe_block`.
+`apply_valid_user_op` receives a `ValidUserOp` containing the sender, the committed frame fee, and the application payload. It also receives the frame's `safe_block`.
 
 The method must:
 
@@ -4451,13 +4537,13 @@ The method must:
 
 The valid operation no longer contains the submitted nonce or offered `max_fee`. Any checks that depend on those fields belong in `validate_user_op`. Execution uses the frame fee selected by the protocol.
 
-An operation may be included while producing no outputs. The CMA wallet uses this behavior when a decoded action cannot be completed after its protocol-level acceptance: it charges the data-availability fee, consumes the nonce, and returns an empty output list. Applications must define this behavior carefully because an included no-op differs from a validation rejection.
+An operation may be included while producing no outputs. The public reference wallet uses this behavior when a decoded action cannot be completed after its protocol-level acceptance: it charges the data-availability fee, consumes the nonce, and returns an empty output list. Applications must define this behavior carefully because an included no-op differs from a validation rejection.
 
 Notices and vouchers computed off-chain are predictions. The corresponding outputs become authoritative when the canonical machine executes the recorded batch.
 
 ## Direct input handling
 
-`execute_direct_input` has no default implementation. Every application must define how inputs that did not enter through `POST /tx` affect its state.
+`apply_direct_input` has no default implementation. Every application must define how inputs that did not enter through `POST /tx` affect its state.
 
 The method receives:
 
@@ -4465,9 +4551,9 @@ The method receives:
 - the base-layer inclusion block;
 - the raw payload.
 
-The canonical scheduler treats every recorded input from an address other than the configured batch submitter as a direct input. The application must then authenticate and decode the input according to its own rules. For example, the CMA wallet credits a deposit only when the sender is its configured ERC-20 portal and the payload names its supported token.
+The canonical scheduler treats every recorded input from an address other than the configured batch submitter as a direct input. The application must then authenticate and decode the input according to its own rules. For example, the public reference wallet credits a deposit only when the sender is its configured ERC-20 portal and the payload names its supported token.
 
-For every executed direct input, the application must increment `executed_input_count` and update its safe-block clock with `input.block_number`. An ignored or unsupported direct input still counts as executed once the application has processed it.
+For every executed direct input, the application must increment its executed-input count and update its safe-block clock with `input.block_number`. An ignored or unsupported direct input still counts as executed once the application has processed it.
 
 The actions supported through this method determine what users can do while the sequencer is unavailable. See [Direct inputs vs sequenced transactions](../concepts/direct-vs-sequenced.md).
 
@@ -4475,7 +4561,7 @@ The actions supported through this method determine what users can do while the 
 
 ### Safe-block clock
 
-`last_executed_safe_block` returns the greatest block covered by any input executed by the current application state:
+`progress().last_executed_safe_block()` returns the greatest block covered by any input executed by the current application state:
 
 ```text
 user operation: max(clock, frame.safe_block)
@@ -4488,17 +4574,17 @@ Recovery uses this clock to determine which base-layer inputs are already reflec
 
 ### Executed input count
 
-`executed_input_count` counts user operations and direct inputs that the application executed. It is primarily a diagnostic agreement check used to compare live and replayed application instances.
+`progress().executed_input_count()` is the canonical history boundary. It counts user operations and direct inputs that the application executed and identifies the next history entry the application is ready to consume.
 
 Persist the count in every dump and restore it exactly. Do not derive it from balances, nonces, or database row numbers because those values can represent different histories.
 
 ## Recovery dump contract
 
-The sequencer creates application dumps at batch boundaries, restores them during startup and recovery, and deletes superseded dumps. A dump may contain several application-specific files.
+The sequencer creates application dumps at batch boundaries, restores them during startup and recovery, and deletes superseded dumps. An application can represent its dump as one file or as a directory containing several files.
 
 ### Creating a dump
 
-`create_dump(prefix)` receives a path that does not yet exist. The implementation creates that directory and writes every value that can influence future execution, including:
+`create_dump(prefix)` receives a path that does not yet exist. The implementation creates a file or directory at that path and writes every value that can influence future execution, including:
 
 - application databases or state bytes;
 - sender nonces and other replay protection;
@@ -4507,7 +4593,7 @@ The sequencer creates application dumps at batch boundaries, restores them durin
 - `executed_input_count`;
 - metadata required to decode or reconstruct the main state.
 
-When the method returns `Ok`, the dump must survive an immediate kernel crash. On POSIX systems, this requires synchronizing each file, the dump directory, and its parent directory before returning. The sequencer writes the SQLite row that references the dump only after `create_dump` succeeds.
+When the method returns `Ok`, the dump must survive an immediate kernel crash. On POSIX systems, this requires synchronizing every dump file and the directory entries that reference the dump, including the parent of `prefix`, before returning. The sequencer writes the SQLite row that references the dump only after `create_dump` succeeds.
 
 ### Restoring and deleting dumps
 
@@ -4517,11 +4603,9 @@ When the method returns `Ok`, the dump must survive an immediate kernel crash. O
 
 ### Identifying canonical state
 
-`state_file_in_dump(prefix)` is a pure path function. It must return one file inside the dump without loading application state. The bytes in that file must match the canonical machine's inspected state for the same logical history.
+`state_file_in_dump(prefix)` is a pure path function. It must return one file inside the dump, or `prefix` itself when the dump is a single file, without loading application state. The bytes in that file must match the canonical machine's inspected state for the same logical history.
 
-`canonical_snapshot_bytes()` returns the in-memory form of that same canonical representation. Keeping both paths byte-identical allows the watchdog to compare predicted and canonical state without application-specific conversion. The CMA wallet uses its ledger records image for both values and stores other recovery data, such as nonces and progress, in a separate metadata file.
-
-`export_state()` can expose convenient JSON for debugging, but the sequencer does not use that JSON to restore state.
+`CanonicalState::canonical_snapshot_bytes()` returns the in-memory form of that same canonical representation. Keeping both paths byte-identical allows the watchdog to compare predicted and canonical state without application-specific conversion. The public wallet example stores its complete recovery state in the dump while exposing deterministic wallet state bytes for canonical comparison.
 
 ## Determinism across execution environments
 
@@ -4537,7 +4621,7 @@ Application behavior must depend only on the ordered input and current applicati
 
 Use the `safe_block`, direct-input block number, and EIP-712 domain supplied by the protocol when execution needs chain context.
 
-Applications with target-specific storage must preserve the same logical and canonical byte representation on the host and in the Cartesi machine. The CMA integration uses a host buffer for sequencer prediction and a machine drive for canonical execution, then verifies that both produce byte-identical records.
+Applications with target-specific storage must preserve the same logical and canonical byte representation on the host and in the Cartesi machine. Test the adapters with the same input history and compare their canonical bytes.
 
 ## Error and replay behavior
 
@@ -4549,13 +4633,13 @@ Any input that succeeds during live execution must succeed with the same result 
 
 ## Runtime type requirements
 
-The `Application` trait requires `Send`. The `sequencer::run_main` entry point adds these bounds:
+The `Application` trait requires `Send` and `Sized`. The `sequencer::run_main` entry point adds the `'static` lifetime bound:
 
 ```rust
-Application + Clone + Sync + 'static
+Application + 'static
 ```
 
-`Clone` must produce an independent instance with equivalent logical state. A shallow clone of a mutable database handle or foreign pointer may violate that requirement. Applications that wrap non-Rust state must provide safe synchronization and ownership across clones.
+The genesis constructor passed to `run_main` must implement `FnOnce() -> A`, `Send`, and `'static`. Application instances are exclusively owned and reconstructed from dumps when another independent instance is needed.
 
 The genesis constructor is intentionally outside the trait. The application-specific binary passes it to `run_main`, and the closure is invoked only by `setup`. Normal `run` startup restores state through `from_dump`.
 
@@ -4568,16 +4652,16 @@ Before deploying an application integration, test that:
 - valid operations and direct inputs update both progress values correctly;
 - application payloads at the declared size limit are accepted and larger payloads are rejected at ingress;
 - dumps restore all logical state and canonical bytes exactly;
-- a cloned application has equivalent state without unsafe shared mutation;
+- independently loading the same dump creates equivalent state without shared mutation;
 - replaying persisted inputs reproduces live state and outputs;
 - the canonical scheduler and off-chain prediction produce byte-identical state;
 - the host build and machine build use compatible encodings and arithmetic.
 
-The CMA integration demonstrates these checks in `cma-app-core/tests/application.rs` and `cma-canonical-app/tests/duality.rs`.
+The public [`app-core` tests](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/app-core/src/application/wallet.rs) cover application validation, execution, progress, and dump behavior. The [`scheduler tests`](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/sequencer-core/src/scheduler/mod.rs) exercise agreement between the canonical scheduler and protocol acceptance rules.
 
 ## Next steps
 
-- Follow the full build sequence in [Integrating the sequencer with a Cartesi application](./integration.md).
+- Follow the full build sequence in [Application integration](./integration.md).
 - Review recovery state in [Snapshots and checkpoints](../recovery/snapshots.md).
 - Study ordering agreement in [Deterministic execution order](../concepts/execution-order.md).
 
@@ -4586,9 +4670,9 @@ The CMA integration demonstrates these checks in `cma-app-core/tests/application
 <!-- source: https://docs.cartesi.io/app-sequencer/usage/integration/ -->
 
 ---
-title: "Integrating the sequencer with a Cartesi application"
+title: "Application integration"
 sidebar_label: "Application integration"
-description: "How to connect application logic to the off-chain sequencer, include the canonical scheduler in the Cartesi machine, and verify that both execution paths agree."
+description: "Connect shared application logic to the host sequencer and the canonical Cartesi machine."
 ---
 
 Adding the app-specific sequencer produces two programs that use the same application logic:
@@ -4600,6 +4684,18 @@ Adding the app-specific sequencer produces two programs that use the same applic
 | Canonical application | Cartesi machine | Reads recorded inputs, applies the authoritative scheduling rules, and emits the application's notices and vouchers |
 
 The sequencer accelerates an existing application. It does not replace the Cartesi machine or change where settlement occurs.
+
+## Before you begin
+
+Prepare the following before changing the application code:
+
+- a Rust toolchain with Cargo for building the shared library and host sequencer;
+- an existing Cartesi application workspace whose domain logic can be moved into a shared Rust crate;
+- the Cartesi machine build environment required to compile and package the canonical application;
+- a selected App Sequencer release or commit that every workspace crate will use;
+- the application contract address, chain ID, `InputBox`, and batch-submitter address for the target deployment.
+
+The host and Cartesi machine builds may use different storage and I/O adapters, but they must share the same application rules, protocol types, and canonical state representation.
 
 ## Recommended project structure
 
@@ -4614,7 +4710,7 @@ my-application/
 
 `app-core` depends on `sequencer-core`, which contains the shared protocol types and the `Application` trait. `app-sequencer` depends on the higher-level `sequencer` crate. `canonical-app` depends on `sequencer-core` and the rollup I/O library used to read inputs and emit outputs inside the machine.
 
-This separation is important when application dependencies need different host and RISC-V implementations. The CMA wallet, for example, uses the same ledger API in both environments, with a host-backed buffer for prediction and a persistent machine drive for canonical execution.
+This separation is important when application dependencies need different host and RISC-V implementations. Keep those storage adapters behind the same application interface so both programs preserve identical logical state and canonical bytes.
 
 ![The shared app-core library supplies the same application logic to the host app-sequencer and the canonical application. Each executable adds the responsibilities of its own execution environment.](../images/integration-duality.png)
 
@@ -4622,7 +4718,20 @@ This separation is important when application dependencies need different host a
 
 Implement `sequencer_core::application::Application` on the state type shared by the host sequencer and canonical machine. The interface covers payload limits, validation and execution, direct inputs, progress tracking, durable dumps, and canonical state bytes.
 
-[Application integration requirements](./application-requirements.md) is the authoritative method contract and verification checklist. Complete that contract before wiring either executable. At this stage, the integration-specific goal is to keep the implementation in a dependency that can compile for both the host and the Cartesi machine, with target-specific storage hidden behind the same logical interface.
+Add `sequencer-core` to the shared crate and pin it to the same release or commit used by the host binary:
+
+```toml
+[dependencies]
+sequencer-core = { git = "https://github.com/cartesi/sequencer", rev = "5e3d621e8f04fe93840944421e9625b4a4cc7f34" }
+```
+
+Import the trait on the application state type:
+
+```rust
+use sequencer_core::application::Application;
+```
+
+The [Application trait reference](./application-trait-reference.md) is the authoritative method contract and verification checklist. Complete that contract before wiring either executable. At this stage, the integration-specific goal is to keep the implementation in a dependency that can compile for both the host and the Cartesi machine, with target-specific storage hidden behind the same logical interface.
 
 ## Step 2: build the application-specific sequencer
 
@@ -4633,12 +4742,12 @@ A typical crate declares these dependencies:
 ```toml
 [dependencies]
 app-core = { path = "../app-core" }
-sequencer = { path = "../sequencer/sequencer" }
-tokio = { version = "1.35", features = ["macros", "rt-multi-thread"] }
+sequencer = { git = "https://github.com/cartesi/sequencer", rev = "5e3d621e8f04fe93840944421e9625b4a4cc7f34" }
+tokio = { version = "1.53", features = ["macros", "rt-multi-thread"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 ```
 
-Adjust the paths or version declarations to match the sequencer release used by your project. The entry point then supplies the application constructor:
+Pin every sequencer dependency in the workspace to the same release or commit. The revision above identifies the implementation used for this page and can be replaced with the release selected by your project. The entry point then supplies the application constructor:
 
 ```rust
 use app_core::{MyApp, MyAppConfig};
@@ -4663,7 +4772,7 @@ async fn main() -> std::process::ExitCode {
 
 The constructor closure runs during `setup`, when the genesis dump is created. A normal `run` restores the application from a dump. Configuration that affects execution must therefore be stored in the dump, or checked against the stored deployment configuration, instead of depending only on the current process environment.
 
-The resulting executable supports `setup`, `run`, and `flush-mempool`. The sequencer repository's `examples/wallet-sequencer` crate is the smallest reference for this composition.
+The resulting executable supports `setup`, `run`, and `flush-mempool`. The public [`examples/wallet-sequencer`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/wallet-sequencer) crate is the smallest reference for this composition.
 
 ## Step 3: include the canonical scheduler in the machine
 
@@ -4676,7 +4785,7 @@ The Cartesi machine must process batches and direct inputs according to the cano
 5. emit every returned notice and voucher through the rollup I/O connection;
 6. serve canonical state bytes for supported inspect requests.
 
-The reference I/O loop is in `examples/canonical-app/src/scheduler/mod.rs` in the sequencer repository. With that loop available to the application, the machine entry point has this shape:
+The reference I/O loop is in [`examples/canonical-app/src/scheduler/mod.rs`](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/canonical-app/src/scheduler/mod.rs). With that loop available to the application, the machine entry point has this shape:
 
 ```rust
 use app_core::{MyApp, MyAppConfig};
@@ -4708,33 +4817,33 @@ The canonical scheduler classifies an input by its base-layer sender:
 
 The address passed to `SchedulerConfig::new` must match both `CARTESI_SEQUENCER_BATCH_SUBMITTER_ADDRESS` used during `setup` and the address derived from the private key used during `run`. A mismatch causes valid batches to be handled as direct inputs.
 
-Do not confuse the batch submitter with an application-level fee recipient. They may use the same address, but they serve different purposes. The CMA wallet keeps them as separate configuration values.
+Do not confuse the batch submitter with an application-level fee recipient. They may use the same address, but they serve different purposes.
 
 ### Flush machine-backed state when required
 
-Applications that keep canonical state on a persistent machine drive must ensure writes reach that drive before the rollup yields and a machine snapshot is taken. The CMA wallet adapts the reference I/O loop to synchronize its accounts drive before each request boundary. An in-memory application does not need this extra step.
+Applications that keep canonical state on a persistent machine drive must ensure writes reach that drive before the rollup yields and a machine snapshot is taken. Synchronize the drive at each request boundary. An in-memory application does not need this extra step.
 
 Compile the canonical program for the machine target, package it with its runtime dependencies, and build a new machine image. Because the scheduler becomes part of that image, its template hash changes. Integrating the sequencer into an existing deployment therefore requires deployment of the new image.
 
 ## Step 4: prove that both paths agree
 
-After the application-level checks in the [requirements checklist](./application-requirements.md#verification-checklist) pass, test the assembled integration at three boundaries:
+After the application-level checks in the [verification checklist](./application-trait-reference.md#verification-checklist) pass, test the assembled integration at three boundaries:
 
 1. **Scheduler agreement:** give direct inputs and batches to `Scheduler<MyApp>`, replay the same operations through the prediction path, and require byte-identical canonical state.
 2. **Machine execution:** boot the built Cartesi machine image, send a direct input followed by a covering batch, and verify the notices and vouchers produced inside the machine.
 3. **End-to-end synchronization:** run the sequencer and rollups node against the same base layer, submit an operation through the sequencer, and compare the predicted state with the machine's finalized state.
 
-The CMA integration contains examples of each important layer:
+The sequencer repository contains public examples for each important layer:
 
-| Path                                                       | What it demonstrates                                                                                   |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `sequencer-integration/cma-app-core`                       | A real application adapter, deterministic execution, target-specific state backing, and complete dumps |
-| `sequencer-integration/cma-sequencer`                      | The thin `run_main` composition                                                                        |
-| `sequencer-integration/cma-canonical-app`                  | The canonical scheduler loop and machine-drive synchronization                                         |
-| `sequencer-integration/cma-canonical-app/tests/duality.rs` | Byte-for-byte agreement between canonical scheduling and off-chain prediction                          |
-| `sequencer-integration/cma-machine-test`                   | Execution of direct inputs and a batch in the built machine image                                      |
+| Public example | What it demonstrates |
+| --- | --- |
+| [`examples/app-core`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/app-core) | Shared application state, deterministic wallet operations, direct inputs, progress, and dumps |
+| [`examples/wallet-sequencer`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/wallet-sequencer) | The thin host executable built around `sequencer::run_main` |
+| [`examples/canonical-app`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/canonical-app) | The canonical scheduler loop and Cartesi Machine entry points |
+| [`sequencer-core` scheduler tests](https://github.com/cartesi/sequencer/blob/5e3d621e8f04fe93840944421e9625b4a4cc7f34/sequencer-core/src/scheduler/mod.rs) | Agreement between canonical scheduling and the protocol acceptance rules |
+| [`examples/canonical-test`](https://github.com/cartesi/sequencer/tree/5e3d621e8f04fe93840944421e9625b4a4cc7f34/examples/canonical-test) | Execution against the built canonical machine image |
 
-Application-specific choices in that demo, including its ERC-20 portal format, SSZ method union, libcma ledger, and `/dev/pmem1` drive, are examples and are not sequencer protocol requirements.
+The ERC-20 wallet behavior in these examples is an application design, not a sequencer protocol requirement.
 
 ## Step 5: set up and run the service
 
@@ -4750,16 +4859,16 @@ Clients that use the sequencer must:
 4. treat the successful response as a soft confirmation;
 5. consume the ordered WebSocket feed and reconcile later status changes.
 
-The original direct-input route remains available. The application decides which actions that route supports through `execute_direct_input`.
+The original direct-input route remains available. The application decides which actions that route supports through `apply_direct_input`.
 
-See [Submitting operations](./submitting-operations.md), [Reading the sequenced feed](./reading-the-feed.md), and [Soft confirmations](../concepts/soft-confirmations.md) before updating production clients.
+See [Submitting transactions](./submitting-operations.md), [Reading the sequenced feed](./reading-the-feed.md), and [Soft confirmations](../concepts/soft-confirmations.md) before updating production clients.
 
 ## Integration checklist
 
 - The same deterministic application logic compiles for the host and the Cartesi machine.
 - The `Application` implementation covers execution, progress, persistence, and canonical state bytes.
 - Dumps restore every value that can affect future execution and are durable when created.
-- The application satisfies the `Clone`, `Send`, `Sync`, and `'static` bounds required by `run_main`.
+- The application satisfies the `Send` and `'static` bounds required by `Application` and `run_main`.
 - The canonical machine runs the scheduler before application execution.
 - The batch submitter address is identical in setup, runtime key configuration, and `SchedulerConfig`.
 - Persistent machine state is synchronized before snapshots when the storage design requires it.
@@ -4770,7 +4879,7 @@ See [Submitting operations](./submitting-operations.md), [Reading the sequenced 
 
 - Run the local transaction flow in the [Quickstart](./quickstart.md).
 - Send a signed transaction with [Submitting transactions](./submitting-operations.md).
-- Re-check any interface rule in [Application requirements](./application-requirements.md).
+- Re-check any interface rule in the [Application trait reference](./application-trait-reference.md).
 
 ---
 
@@ -4779,10 +4888,15 @@ See [Submitting operations](./submitting-operations.md), [Reading the sequenced 
 ---
 title: "Quickstart"
 sidebar_label: "Quickstart"
-description: "Initialize and run an application-specific sequencer, submit a signed transaction, and find it in the ordered feed."
+description: "Run a prepared sequencer, submit a signed transaction, and find it in the ordered feed."
 ---
 
-This guide covers the shortest complete client loop: initialize a sequencer for a deployed application, start it, submit one application transaction, and read that transaction from the ordered feed.
+import FeedClient from '../snippets/_feed-client.md';
+import SubmitClient from '../snippets/_submit-client.md';
+
+This guide covers the client loop for an application that is already deployed and prepared: initialize its sequencer, start the service, submit one application transaction, and read that transaction from the ordered feed.
+
+If you do not yet have a deployed application and a valid application payload, start with [Build an ERC-20 wallet with the App Sequencer](../tutorials/build-wallet-sequencer.md). That tutorial builds every component, funds the wallet, and submits its first transaction.
 
 ## Prerequisites
 
@@ -4792,13 +4906,15 @@ You need:
 - a deployed Cartesi application contract whose data-availability configuration points to an `InputBox`;
 - an application-specific sequencer binary built with that application's `Application` implementation;
 - a funded base-layer account dedicated to submitting batches;
-- a user account that can pass the application's nonce, fee-balance, and method validation;
-- Node.js with `ethers` installed, plus `curl` and `websocat`.
+- a user account with the application state required to pass nonce, fee-balance, and method validation;
+- Node.js and npm, plus `curl`.
+
+If you are building the application-specific sequencer or running the reference binary from source, you also need the Rust toolchain and Cargo. The reference-wallet preparation later in this guide additionally uses the Cartesi CLI, Foundry, and `jq`.
 
 The sequencer is a library that each application builds into its own executable. If your application does not have one yet, follow [Application integration](./integration.md). The sequencer repository's `examples/wallet-sequencer` crate is a reference binary, but its wallet state and method encoding must still match the application deployment you use.
 
-:::note Application-specific values are required
-This guide uses placeholders for the application address, keys, and `METHOD_DATA`. A successful submission requires a payload your application can decode and state that satisfies its validation rules. For a wallet, that usually means the sender has deposited enough application funds to cover the action and its fee.
+:::note Application-specific preparation is required
+The sequencer can sign and transport application payloads, but it cannot create them or fund application accounts. Before submitting, provide bytes your application can decode and prepare any state its validation requires. The reference wallet example below shows both steps for a local deployment.
 :::
 
 ## Step 1: initialize the sequencer data directory
@@ -4815,6 +4931,7 @@ export CARTESI_SEQUENCER_BLOCKCHAIN_ID=31337
 export CARTESI_SEQUENCER_APP_ADDRESS=$APP_ADDRESS
 export CARTESI_SEQUENCER_BATCH_SUBMITTER_ADDRESS=$SUBMITTER_ADDRESS
 export CARTESI_SEQUENCER_DATA_DIR=$SEQUENCER_DATA_DIR
+export CARTESI_SEQUENCER_FEE_ORACLE_FIXED_LOG_GAS_PRICE=0
 
 ./app-sequencer setup
 ```
@@ -4828,6 +4945,8 @@ cargo run -p wallet-sequencer --bin wallet-sequencer-devnet -- setup
 The `wallet-sequencer-devnet` binary selects the reference wallet's local development configuration. The standard `wallet-sequencer` binary uses its non-local configuration.
 
 The application contract must be deployed before this step. During setup, the sequencer verifies the chain identifier and discovers the application's `InputBox` through the contract's data-availability configuration.
+
+The fixed fee-oracle value makes the example work on local chain ID `31337`, which has no public-network fee-source preset. Configure the supported fee source for an operated deployment instead of copying this development value.
 
 `setup` is idempotent for an already prepared data directory. Keep the directory because `run` reads the pinned identity and genesis state from it.
 
@@ -4860,6 +4979,75 @@ A loopback RPC endpoint may use plaintext HTTP. Remote RPC endpoints require HTT
 
 ## Step 3: sign and submit a transaction
 
+Create a small client directory and install its dependencies:
+
+```bash
+mkdir -p sequencer-client
+cd sequencer-client
+npm init --yes
+npm install viem ws
+```
+
+The application defines the bytes placed in `UserOp.data`. For your own application, use its encoder and assign the resulting hexadecimal value to `METHOD_DATA`.
+
+### Prepare a reference wallet transaction
+
+If the deployment uses the reference wallet, its sender must first have a wallet balance. This local path also requires the Cartesi CLI, Foundry, and `jq`. The following commands mint the CLI test token to Anvil account 0 and deposit one token through the ERC-20 portal. Run them from the Cartesi application project directory in another terminal, with the local environment and sequencer running:
+
+```bash
+export L1_RPC=$CARTESI_SEQUENCER_BLOCKCHAIN_HTTP_ENDPOINT
+export TEST_TOKEN=$(cartesi address-book --json | jq -r .TestToken)
+export DEV_USER_PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+
+cast send "$TEST_TOKEN" "mint(uint256)" 1000000000000000000000 \
+  --rpc-url "$L1_RPC" \
+  --private-key "$DEV_USER_PRIVATE_KEY"
+
+cartesi deposit erc20 1 --token "$TEST_TOKEN"
+```
+
+The private key above is a public Anvil development key. Never use it or fund it on a public network. Wait until the safe base-layer head passes the deposit block before submitting the wallet operation.
+
+Return to the `sequencer-client` directory. The reference wallet encodes a transfer as a one-byte selector, a 32-byte little-endian amount, and a 20-byte recipient address. Create `encode-wallet-transfer.mjs` there:
+
+```js
+import { concatHex, getAddress } from "viem";
+
+function required(name) {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} is required`);
+  return value;
+}
+
+function uint256LittleEndian(value) {
+  if (value < 0n || value >= 1n << 256n) {
+    throw new Error("value does not fit in uint256");
+  }
+  const bigEndian = value.toString(16).padStart(64, "0");
+  return `0x${Buffer.from(bigEndian, "hex").reverse().toString("hex")}`;
+}
+
+const payload = concatHex([
+  "0x01",
+  uint256LittleEndian(BigInt(required("TRANSFER_AMOUNT"))),
+  getAddress(required("TRANSFER_RECIPIENT")),
+]);
+
+console.log(payload);
+```
+
+Encode a transfer of `0.4` token to Anvil account 1:
+
+```bash
+export TRANSFER_RECIPIENT=0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+export TRANSFER_AMOUNT=400000000000000000
+export METHOD_DATA=$(node encode-wallet-transfer.mjs)
+```
+
+For another application, replace this encoder and funding procedure with the rules defined by that application.
+
+### Sign and submit the payload
+
 The user signs this EIP-712 type:
 
 ```solidity
@@ -4870,46 +5058,9 @@ struct UserOp {
 }
 ```
 
-Create `sign.mjs`:
+Create `submit.mjs`:
 
-```js
-import { readFileSync } from "node:fs";
-import { Wallet } from "ethers";
-
-function required(name) {
-  const value = process.env[name];
-  if (!value) throw new Error(`${name} is required`);
-  return value;
-}
-
-const wallet = new Wallet(
-  readFileSync(required("USER_PRIVATE_KEY_FILE"), "utf8").trim(),
-);
-
-const domain = {
-  name: "CartesiAppSequencer",
-  version: "1",
-  chainId: Number(required("CHAIN_ID")),
-  verifyingContract: required("APP_ADDRESS"),
-};
-
-const types = {
-  UserOp: [
-    { name: "nonce", type: "uint32" },
-    { name: "max_fee", type: "uint16" },
-    { name: "data", type: "bytes" },
-  ],
-};
-
-const message = {
-  nonce: Number(required("USER_NONCE")),
-  max_fee: Number(required("MAX_FEE")),
-  data: required("METHOD_DATA"),
-};
-
-const signature = await wallet.signTypedData(domain, types, message);
-console.log(JSON.stringify({ message, signature, sender: wallet.address }));
-```
+<SubmitClient />
 
 Store the user's key in another protected file:
 
@@ -4917,25 +5068,22 @@ Store the user's key in another protected file:
 install -m 600 /dev/null /tmp/user.key
 ```
 
-Add the user's private key to the first line of `/tmp/user.key`. Then supply the deployment and application-specific values and post the signed request:
+Add the user's private key to the first line of `/tmp/user.key`. Then supply the deployment and application-specific values and submit the signed request:
 
 ```bash
 CHAIN_ID=31337 \
 APP_ADDRESS=$APP_ADDRESS \
+SEQUENCER_URL=http://127.0.0.1:3000 \
 USER_PRIVATE_KEY_FILE=/tmp/user.key \
 USER_NONCE=0 \
-MAX_FEE=1100 \
-METHOD_DATA=0xYourApplicationPayload \
-  node sign.mjs | \
-  curl --fail-with-body \
-    --request POST http://127.0.0.1:3000/tx \
-    --header 'content-type: application/json' \
-    --data @-
+MAX_FEE=2000 \
+METHOD_DATA=$METHOD_DATA \
+  node submit.mjs
 ```
 
-The nonce starts at `0` for a sender with no accepted user operations. `METHOD_DATA` must be the hexadecimal encoding expected by your application.
+The nonce starts at `0` for a sender with no accepted user operations. Use the same account that received the reference wallet deposit, or provide a funded sender for your own application.
 
-`max_fee` is a fee exponent. The unmodified policy starts at exponent `1060`, so `1100` clears that baseline. A deployment can use a different current price, and there is no public fee-discovery endpoint. Obtain the expected baseline from the operator or handle an `EXECUTION_REJECTED` response by correcting the fee and signing again.
+`max_fee` is a fee exponent. With a fixed local gas-price exponent of `0`, the current policy derives a frame price of `1356`, so `2000` clears that reference configuration. A deployment can use a different current price, and there is no public fee-discovery endpoint. Obtain the expected value from the operator or handle an `EXECUTION_REJECTED` response by correcting the fee and signing again.
 
 A successful request returns:
 
@@ -4951,7 +5099,17 @@ The server sends this response only after it validates, executes, and durably st
 
 ## Step 4: read the transaction from the feed
 
+Create `feed.mjs` in the same client directory:
+
+<FeedClient />
+
 Subscribe from offset `0`:
+
+```bash
+SEQUENCER_URL=http://127.0.0.1:3000 FROM_OFFSET=0 node feed.mjs
+```
+
+For a quick manual inspection, you can use `websocat` instead:
 
 ```bash
 websocat 'ws://127.0.0.1:3000/ws/subscribe?from_offset=0'
@@ -4964,14 +5122,17 @@ The feed replays its current valid ordering and then waits for new messages. Fin
   "kind": "user_op",
   "offset": 1,
   "sender": "0x...",
-  "fee": 1060,
-  "data": "0x..."
+  "nonce": 0,
+  "fee": 1356,
+  "data": "0x...",
+  "safe_block": 123,
+  "batch_nonce": 0
 }
 ```
 
 The displayed `fee` is the committed frame price, so it can be lower than the submitted `max_fee`. The offset may also be greater than `1` if other user operations or direct inputs were ordered first.
 
-The feed message does not include the nonce or signature. Applications that need reliable transaction matching should include their own request identifier in the application payload. See [Consuming the sequenced transaction feed](./reading-the-feed.md) for cursor and reconnection handling.
+Within the current ordering, match a submission by its `sender` and `nonce`. The feed does not include the signature or submitted `max_fee`. Because recovery can invalidate an operation and make its nonce usable again, place a stable request identifier in `data` when the client must track a business action across reconciliation. See [Reading the sequenced feed](./reading-the-feed.md) for the complete schema, cursor handling, and reconnection behavior.
 
 ## Understand the confirmation status
 
@@ -4984,7 +5145,7 @@ For valuable or irreversible actions, verify the outcome from sufficiently settl
 ## Next steps
 
 - Learn the complete request and retry behavior in [Submitting transactions](./submitting-operations.md).
-- Build a reliable feed consumer with [Consuming the sequenced transaction feed](./reading-the-feed.md).
+- Build a reliable feed consumer with [Reading the sequenced feed](./reading-the-feed.md).
 - Prepare a production process using [Configure, set up, and run the sequencer](../operations/setup-and-running.md).
 
 ---
@@ -4992,10 +5153,12 @@ For valuable or irreversible actions, verify the outcome from sufficiently settl
 <!-- source: https://docs.cartesi.io/app-sequencer/usage/reading-the-feed/ -->
 
 ---
-title: "Reading the sequenced transaction feed"
+title: "Reading the sequenced feed"
 sidebar_label: "Reading the sequenced feed"
-description: "How to consume the ordered WebSocket feed, store a reliable resume cursor, recover after disconnection, and account for optimistic delivery."
+description: "Consume the WebSocket feed, store cursors, reconnect, and reconcile provisional transactions."
 ---
+
+import FeedClient from '../snippets/_feed-client.md';
 
 The sequenced transaction feed is a database-backed WebSocket stream of the inputs in the sequencer's current execution order. It includes accepted user operations and direct inputs when they enter that order.
 
@@ -5009,7 +5172,23 @@ Open a WebSocket connection to:
 GET /ws/subscribe?from_offset=<u64>
 ```
 
-For a local sequencer, the full URL is:
+For a local sequencer, create a small Node.js subscriber. Install its WebSocket dependency:
+
+```bash
+npm install ws
+```
+
+Create `feed.mjs`:
+
+<FeedClient />
+
+Then connect from the beginning of the available feed:
+
+```bash
+SEQUENCER_URL=http://127.0.0.1:3000 FROM_OFFSET=0 node feed.mjs
+```
+
+For a quick manual inspection, you can use `websocat`:
 
 ```bash
 websocat 'ws://127.0.0.1:3000/ws/subscribe?from_offset=0'
@@ -5032,22 +5211,28 @@ A transaction accepted through `POST /tx` appears as:
   "kind": "user_op",
   "offset": 10,
   "sender": "0x...",
-  "fee": 1060,
-  "data": "0x..."
+  "nonce": 7,
+  "fee": 1356,
+  "data": "0x...",
+  "safe_block": 123,
+  "batch_nonce": 4
 }
 ```
 
-| Field    | Meaning                                                           |
-| -------- | ----------------------------------------------------------------- |
-| `kind`   | Always `user_op` for an operation submitted through the sequencer |
-| `offset` | Resume cursor assigned by the sequencer's database                |
-| `sender` | Address recovered from the operation's EIP-712 signature          |
-| `fee`    | Fee exponent committed for the frame that contains the operation  |
-| `data`   | Application-specific method payload                               |
+| Field         | Meaning                                                           |
+| ------------- | ----------------------------------------------------------------- |
+| `kind`        | Always `user_op` for an operation submitted through the sequencer |
+| `offset`      | Resume cursor assigned by the sequencer's database                |
+| `sender`      | Address recovered from the operation's EIP-712 signature          |
+| `nonce`       | Signed application nonce supplied with the operation              |
+| `fee`         | Fee exponent committed for the frame that contains the operation  |
+| `data`        | Application-specific method payload                               |
+| `safe_block`  | Safe base-layer block committed by the covering frame              |
+| `batch_nonce` | Nonce of the batch containing the covering frame                   |
 
 `fee` is the price assigned to the operation when it was ordered. The sender's offered `max_fee` is a separate value and is absent from the feed.
 
-The message does not contain the operation's nonce, signature, offered `max_fee`, batch number, frame number, safe block, outputs, or execution result. If a client needs to match a feed message to a submission unambiguously, include an application-level identifier in `data`. Matching only by `sender` and `data` can be ambiguous when a sender submits the same payload more than once.
+Use `sender` and `nonce` together to match the message within the current ordering. The message does not contain the operation's signature, offered `max_fee`, frame number, outputs, or execution result. Recovery can invalidate an operation and make its nonce usable again, so include a stable application-level identifier in `data` when a product must track a business action across reconciliation.
 
 ### Direct input
 
@@ -5059,19 +5244,27 @@ An input that reached the application through the base layer appears as:
   "offset": 11,
   "sender": "0x...",
   "block_number": 123,
-  "payload": "0x..."
+  "payload": "0x...",
+  "input_index": 42,
+  "batch_nonce": 4,
+  "block_timestamp": 1700000000,
+  "transaction_hash": "0x..."
 }
 ```
 
-| Field          | Meaning                                            |
-| -------------- | -------------------------------------------------- |
-| `kind`         | Always `direct_input` for a base-layer input       |
-| `offset`       | Resume cursor assigned by the sequencer's database |
-| `sender`       | Base-layer sender recorded for the input           |
-| `block_number` | Base-layer block that included the input           |
-| `payload`      | Raw input payload passed to the application        |
+| Field              | Meaning                                                               |
+| ------------------ | --------------------------------------------------------------------- |
+| `kind`             | Always `direct_input` for a base-layer input                           |
+| `offset`           | Resume cursor assigned by the sequencer's database                    |
+| `sender`           | Base-layer sender recorded for the input                               |
+| `block_number`     | Base-layer block that included the input                               |
+| `payload`          | Raw input payload passed to the application                            |
+| `input_index`      | InputBox index assigned to this application input                      |
+| `batch_nonce`      | Nonce of the batch whose frame drained and executed the direct input   |
+| `block_timestamp`  | Unix timestamp of the block containing the input, measured in seconds  |
+| `transaction_hash` | Hash of the base-layer transaction that submitted the application input |
 
-A direct input appears when the sequencer places it into the application execution order. Its `block_number` records where it arrived on the base layer.
+A direct input appears when the sequencer places it into the application execution order. Its base-layer fields identify where and when it entered the InputBox. `batch_nonce` identifies the batch that caused the canonical scheduler to drain it before executing that batch's user operations.
 
 Inputs sent by the configured batch submitter are filtered from `direct_input` delivery. Those inputs carry encoded sequencer batches, whose user operations already appear individually as `user_op` messages.
 
@@ -5140,7 +5333,9 @@ One connection can replay at most 50,000 deliverable events by default. If the r
 | Property   | Value                      |
 | ---------- | -------------------------- |
 | Close code | `1008`                     |
-| Reason     | `catch-up window exceeded` |
+| Reason     | `catch-up window exceeded: live_start_offset=<u64>` |
+
+The reason includes the current live-start offset. Reconnecting at that offset resumes from the live head but skips the older events that exceeded the catch-up limit. Do this only when the consumer can intentionally discard that history.
 
 An operator-managed indexer recovers by using a snapshot as its new starting point:
 
@@ -5150,6 +5345,16 @@ An operator-managed indexer recovers by using a snapshot as its new starting poi
 4. subscribe with `from_offset` set to the header value.
 
 The snapshot contains application state through that offset. The exclusive subscription then supplies every later feed message.
+
+Snapshots advance when batches close. On a low-traffic deployment, `/latest_snapshot` can therefore continue returning the genesis state until the first batch reaches its size target or its maximum open duration. The default time limit is two hours.
+
+The genesis snapshot is a valid starting point only when replaying from offset `0` remains within the catch-up window. If more than 50,000 deliverable events follow it, wait for or trigger a batch close before using `/latest_snapshot` for recovery. For local testing, start the sequencer with a shorter duration, for example:
+
+```bash
+CARTESI_SEQUENCER_MAX_BATCH_OPEN_SECONDS=5 ./app-sequencer run
+```
+
+Use a production value that balances snapshot and posting latency against base-layer transaction cost.
 
 The snapshot routes are internal operator endpoints. Apply the access controls described in [Sequencer security](../operations/security.md#separate-public-and-internal-routes).
 
@@ -5179,7 +5384,7 @@ The two interfaces solve different problems:
 | Display a current predicted balance | Application state derived from a snapshot or an indexer |
 | Establish a settled result          | Canonical settled state and the base layer              |
 
-The CMA wallet demo polls `/latest_snapshot` because its interface needs current ledger balances. It does not reconstruct the wallet ledger from WebSocket messages. A production indexer can load the same kind of state snapshot once, then use the feed to keep its materialized view current.
+An application interface that needs current balances can read them from an operator-managed indexer initialized from `/latest_snapshot`. The indexer can load the state snapshot once, then use the feed to keep its materialized view current.
 
 ## Capacity and connection behavior
 
@@ -5199,9 +5404,11 @@ Run a small number of durable indexers against the sequencer and let user-facing
 
 ---
 title: "Submitting transactions"
-sidebar_label: "Submitting operations"
-description: "How to construct, sign, submit, retry, and interpret an application transaction sent to the sequencer."
+sidebar_label: "Submitting transactions"
+description: "Sign and submit transactions, then handle nonces, retries, fees, and errors."
 ---
+
+import SubmitClient from '../snippets/_submit-client.md';
 
 A client sends a user operation to the sequencer as EIP-712 typed data. The sequencer verifies the signature, applies the protocol and application checks, executes the operation against its predicted state, and stores accepted operations in order.
 
@@ -5220,7 +5427,7 @@ The request contains the sender's next nonce, maximum fee, application payload, 
 {
   "message": {
     "nonce": 0,
-    "max_fee": 1100,
+    "max_fee": 2000,
     "data": "0x..."
   },
   "signature": "0x...",
@@ -5230,11 +5437,38 @@ The request contains the sender's next nonce, maximum fee, application payload, 
 
 Use `0x`-prefixed hexadecimal values. The application defines the payload encoding and its maximum decoded size. See [`POST /tx`](../api-reference/api.md#post-tx) for the exact field types, limits, and response schema.
 
+## Encode the application payload
+
+`message.data` is not a generic transaction call. It contains the method bytes defined by the application integrated with the sequencer. A request can be valid JSON and have a valid signature but still fail when the application cannot decode or accept these bytes.
+
+Use the encoder shipped with your application. The reference wallet's complete SSZ transfer encoder is shown in the [Quickstart](./quickstart.md#prepare-a-reference-wallet-transaction). It produces a hexadecimal value that can be passed as `METHOD_DATA`.
+
 ## Sign the transaction with EIP-712
 
 Sign the exact nonce, maximum fee, and payload sent in the request. The domain binds the signature to the deployment's chain and application contract, so a signature for another deployment is rejected.
 
-[EIP-712 domain](../api-reference/eip712.md) defines the exact domain and `UserOp` type. The [Quickstart](./quickstart.md#step-3-sign-and-submit-a-transaction) contains a complete ethers example.
+[EIP-712 domain](../api-reference/eip712.md) defines the exact domain and `UserOp` type. The [Quickstart](./quickstart.md#step-3-sign-and-submit-a-transaction) contains a complete viem example.
+
+For a complete JavaScript request, install `viem`, create `submit.mjs`, and use the following client:
+
+```bash
+npm install viem
+```
+
+<SubmitClient />
+
+Provide a protected private-key file and the deployment values before running it:
+
+```bash
+CHAIN_ID=31337 \
+APP_ADDRESS=0xYourApplicationAddress \
+SEQUENCER_URL=http://127.0.0.1:3000 \
+USER_PRIVATE_KEY_FILE=/path/to/user.key \
+USER_NONCE=0 \
+MAX_FEE=2000 \
+METHOD_DATA=0xYourEncodedApplicationPayload \
+  node submit.mjs
+```
 
 ## Interpret the soft confirmation
 
@@ -5311,12 +5545,12 @@ let stream = client.subscribe(from_offset).await?;
 
 The current client constructor accepts `http://` endpoints. Deployments that terminate TLS at a gateway need to connect through an appropriate internal HTTP endpoint or use another client until HTTPS endpoint support is added.
 
-The Rust client opens the feed but leaves WebSocket message decoding, cursor persistence, reconnection, and catch-up recovery to the caller. See [Consuming the sequenced transaction feed](./reading-the-feed.md).
+The Rust client opens the feed but leaves WebSocket message decoding, cursor persistence, reconnection, and catch-up recovery to the caller. See [Reading the sequenced feed](./reading-the-feed.md).
 
 ## Next steps
 
 - Run the complete local flow in the [Quickstart](./quickstart.md).
-- Consume accepted operations using [Consuming the sequenced transaction feed](./reading-the-feed.md).
+- Consume accepted operations using [Reading the sequenced feed](./reading-the-feed.md).
 - Check all public response shapes in [HTTP and WebSocket API](../api-reference/api.md).
 
 ---

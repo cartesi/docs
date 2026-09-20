@@ -64,7 +64,7 @@ Both sources become part of the application's canonical input history. [Direct a
 
 The sequencer maintains a fast, provisional view of order and application state. The scheduler inside the Cartesi machine later derives the authoritative order from base-layer inputs. Both apply matching protocol rules, which allows the sequencer to predict the scheduler's result during normal operation.
 
-[Architecture at a glance](../foundations/architecture.md) follows this path from submission to settlement. [Batches, frames, and the safe block](../concepts/batches-frames-safe-block.md) explains the data structure, and [Deterministic execution order](../concepts/execution-order.md) explains how both input paths are combined.
+[Architecture at a glance](./architecture.md) follows this path from submission to settlement. [Batches, frames, and the safe block](../concepts/batches-frames-safe-block.md) explains the data structure, and [Deterministic execution order](../concepts/execution-order.md) explains how both input paths are combined.
 
 ### When the predicted order can change
 
@@ -83,11 +83,7 @@ The protocol limits the sequencer in several important ways:
 
 The operator still has meaningful power over the fast path. It can refuse, delay, or reorder transactions that users submit to it, and it sees those transactions before they reach the base layer. These choices can have financial consequences in an order-sensitive application.
 
-Users can submit direct inputs without the sequencer, but the actions available through that route depend on the application. Direct inputs are also slower and require the sender to pay the base-layer transaction cost.
-
-[Trust model and guarantees](../foundations/trust-model.md) describes these boundaries in detail.
-
 ## Next steps
 
 - To decide whether the operational and trust tradeoffs suit your application, read [When to use the App Sequencer](./when-to-use.md).
-- To see how the system components fit together, read [Architecture at a glance](../foundations/architecture.md).
+- To see how the system components fit together, read [Architecture at a glance](./architecture.md).
