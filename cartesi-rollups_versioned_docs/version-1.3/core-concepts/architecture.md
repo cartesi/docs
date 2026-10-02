@@ -2,11 +2,11 @@
 id: architecture
 title: Architecture
 resources:
-  - url: https://cartesi.io/blog/grokking-cartesi-virtual-machine/
+  - url: https://blog.cartesi.io/grokking-cartesi-virtual-machine/
     title: Grokking the Cartesi Virtual Machine
-  - url: https://cartesi.io/blog/understanding-cartesi-rollups-pt2/
+  - url: https://blog.cartesi.io/understanding-cartesi-rollups-pt2/
     title: Understanding Cartesi Rollups
-  - url: https://cartesi.io/blog/grokking-cartesi-nodes/
+  - url: https://blog.cartesi.io/grokking-cartesi-nodes/
     title: Grokking Cartesi Nodes
   - url: https://youtu.be/uUzn_vdWyDM?si=J2or_Nfym5pabkjNz3z8Gw
     title: Cartesi Machine DeepDive

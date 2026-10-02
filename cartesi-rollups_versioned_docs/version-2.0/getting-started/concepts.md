@@ -2,7 +2,7 @@
 id: concepts
 title: Concepts
 resources:
-  - url: https://cartesi.io/blog/understanding-cartesi-rollups-pt2/
+  - url: https://blog.cartesi.io/understanding-cartesi-rollups-pt2/
     title: Understanding Cartesi Rollups
   - url: https://github.com/cartesi/dave
     title: Dave
