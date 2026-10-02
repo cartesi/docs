@@ -6,7 +6,7 @@ resources:
     title: Optimistic Rollups
   - url: https://www.paradigm.xyz/2021/01/almost-everything-you-need-to-know-about-optimistic-rollup
     title: Everything you need to know about Optimistic Rollups
-  - url: https://cartesi.io/blog/grokking-dave/
+  - url: https://blog.cartesi.io/grokking-dave/
     title: Fraud-proof protocols | Grokking Dave
   - url: https://github.com/cartesi/dave
     title: Dave repository
