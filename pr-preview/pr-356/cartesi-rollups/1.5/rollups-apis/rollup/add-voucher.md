@@ -1,0 +1,79 @@
+> For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
+
+---
+id: add-voucher
+title: "Add a new voucher"
+description: "The dApp backend can call this method to add a new voucher when processing an advance-state request."
+sidebar_label: "Add a new voucher"
+hide_title: true
+hide_table_of_contents: true
+api: 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
+sidebar_class_name: "post api-method"
+info_path: cartesi-rollups/_versioned_docs/version-1.5/rollups-apis/rollup/cartesi-rollup-http-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Add a new voucher"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/voucher"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+The dApp backend can call this method to add a new voucher when processing an advance-state request.
+Vouchers are collateral effects actionable in the blockchain.
+Between calls to the finish method, the voucher method can be called up to 32k times.
+
+The returned value is the index of the voucher for the current advance-state request.
+In other words, the index counting restarts at every request.
+
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"destination":{"type":"string","description":"20-byte address of the destination contract for which the payload will be sent.","example":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"},"payload":{"type":"string","description":"String in Ethereum hex binary format describing a method call to be executed by the destination contract.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xcdcd77c0' corresponds to a payload with length 4 and bytes 205, 205, 119, 192.\nTo describe the method call, the payload should consist of a function selector (method identifier) followed\nby its ABI-encoded arguments.\nref: https://docs.soliditylang.org/en/v0.8.19/abi-spec.html\n","example":"0xcdcd77c000000000000000000000000000000000000000000000000000000000000000450000000000000000000000000000000000000000000000000000000000000001"}},"title":"Voucher"}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Created the voucher.","content":{"application/json":{"schema":{"type":"object","properties":{"index":{"type":"integer","format":"uint64","description":"Position in the Merkle tree.","example":123}},"title":"IndexResponse"}}}},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      
