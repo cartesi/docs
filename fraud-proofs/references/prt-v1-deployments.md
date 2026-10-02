@@ -15,7 +15,7 @@ This page covers the PRT and Honeypot v2 deployed contracts and their addresses.
 
 ## Honeypot v2 Deployments
 :::caution
-The Honeypot app has been updated. We recently found a bug in the application that has led to a fail-stop state. This means the current deployment is permanently frozen, and the bounty funds within it are no longer recoverable. Read the [post-mortem](https://cartesi.io/blog/prt_honeypot_postmortem/) for more details.
+The Honeypot app has been updated. We recently found a bug in the application that has led to a fail-stop state. This means the current deployment is permanently frozen, and the bounty funds within it are no longer recoverable. Read the [post-mortem](https://blog.cartesi.io/prt_honeypot_postmortem/) for more details.
 :::
 
 | Component | Mainnet Address |

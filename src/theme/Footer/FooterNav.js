@@ -14,7 +14,7 @@ function FooterNav() {
   const routes = {
     home: "https://cartesi.io",
     about: "https://cartesi.io/about",
-    blog: "https://cartesi.io/blog",
+    blog: "https://blog.cartesi.io",
     governance: "https://cartesi.io/governance",
     docs: "https://docs.cartesi.io/",
     whitepaper: "https://cartesi.io/cartesi_whitepaper.pdf",

@@ -316,7 +316,7 @@ const config = {
               },
               {
                 label: "Blog",
-                to: "https://cartesi.io/blog/",
+                to: "https://blog.cartesi.io/",
               },
               {
                 label: "X",
