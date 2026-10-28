@@ -1,0 +1,93 @@
+> For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
+
+---
+id: finish
+title: "Finish and get next request"
+description: "The dApp backend should call this method to start processing rollup requests."
+sidebar_label: "Finish and get next request"
+hide_title: true
+hide_table_of_contents: true
+api: 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
+sidebar_class_name: "post api-method"
+info_path: cartesi-rollups/_versioned_docs/version-1.5/rollups-apis/rollup/cartesi-rollup-http-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Finish and get next request"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/finish"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+The dApp backend should call this method to start processing rollup requests.
+The Rollup HTTP Server returns the next rollup request in the response body.
+
+The possible values for the request_type field are 'advance_state' and 'inspect_state'.
+The data field contains the rollup request input data.
+For advance-state requests, the input data contains the advance-state metadata and the payload.
+For inspect-state requests, the input data contains only the payload.
+
+After processing a rollup request, the dApp back-end should call again the finish method.
+For advance-state requests, depending on the result of the request processing, it should fill the status field of the request body with 'accept' or 'reject'.
+The Rollup HTTP Server ignores the content of the status field for the first finish request and after an inspect-state request.
+
+If the advance-state request is rejected, the vouchers and notices are discarded.
+In contrast, reports are not discarded in case of rejection.
+When running inside a Cartesi Machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.
+
+During a finish call, the next rollup request might not be immediately available.
+When the dApp backend and the Rollup HTTP Server are running inside a Cartesi Machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.
+When running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.
+When the Rollup HTTP Server returns 202, the dApp backend should retry the call to finish passing the same arguments as before.
+
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"status":{"type":"string","enum":["accept","reject"],"example":"accept"}},"title":"Finish"}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"200":{"description":"Finish accepted and next rollup request returned.","content":{"application/json":{"schema":{"type":"object","properties":{"request_type":{"type":"string","enum":["advance_state","inspect_state"],"example":"advance_state"},"data":{"type":"object","oneOf":[{"type":"object","properties":{"metadata":{"type":"object","properties":{"msg_sender":{"type":"string","description":"20-byte address of the account that submitted the input.","example":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"},"epoch_index":{"type":"integer","format":"uint64","description":"Deprecated. Always receives 0.","example":0},"input_index":{"type":"integer","format":"uint64","description":"Input index starting from genesis.","example":123},"block_number":{"type":"integer","format":"uint64","description":"Block number when input was posted.","example":10000000},"timestamp":{"type":"integer","format":"uint64","description":"Unix timestamp of block in milliseconds.","example":1588598533000}},"title":"Metadata"},"payload":{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Advance"},{"type":"object","properties":{"payload":{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Inspect"}]}},"title":"RollupRequest"}}}},"202":{"description":"Finish accepted but try again to obtain the next request."},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      
