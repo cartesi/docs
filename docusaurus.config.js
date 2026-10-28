@@ -269,10 +269,6 @@ const config = {
                 to: "https://medium.com/cartesi/tagged/tech",
               },
               {
-                label: "Bug Bounty",
-                to: "https://immunefi.com/bounty/cartesi/",
-              },
-              {
                 label: "Run a Node",
                 to: "https://explorer.cartesi.io/staking",
               },

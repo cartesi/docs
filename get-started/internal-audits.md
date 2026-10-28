@@ -15,4 +15,4 @@ These are internal reviews carried out by the Cartesi QA team. They are not audi
 
 ## Reporting a vulnerability
 
-Do not open a public issue for a security problem. Follow the `SECURITY.md` file in the affected repository. Rewards are covered by the [Cartesi Bug Bounty program](https://immunefi.com/bounty/cartesi/).
+Do not open a public issue for a security problem. Follow the `SECURITY.md` file in the affected repository.
