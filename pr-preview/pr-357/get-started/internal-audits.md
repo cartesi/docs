@@ -13,7 +13,7 @@ These are internal reviews carried out by the Cartesi QA team. They are not audi
 
 | Date | Report | Components | Download |
 | --- | --- | --- | --- |
-| August 4, 2026 | Rollups Node v2.0.0-alpha.12 internal security review | rollups-node v2.0.0-alpha.12, rollups-contracts v3.0.0-alpha.6, CLI alpha.34 and alpha.35 | [PDF](/internal-audits/rollups-node-v2.0.0-alpha.12-internal-security-review.pdf) |
+| August 4, 2026 | Rollups Node v2.0.0-alpha.12 internal security review | rollups-node v2.0.0-alpha.12, rollups-contracts v3.0.0-alpha.6, CLI alpha.34 and alpha.35 | [PDF](pathname:///internal-audits/rollups-node-v2.0.0-alpha.12-internal-security-review.pdf) |
 
 ## Reporting a vulnerability
 
