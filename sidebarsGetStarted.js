@@ -58,6 +58,11 @@ module.exports = {
           label: 'Rollup Lab',
           href: 'https://rolluplab.io',
         },
+        {
+          type: 'doc',
+          id: 'internal-audits',
+          label: 'Internal Audits',
+        },
       ],
     }
   ],
