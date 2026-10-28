@@ -22,8 +22,6 @@ function FooterNav() {
     usagePolicy: "https://cdn.sanity.io/files/zg5gx8g4/production/ddd64effd0cbf8ff1b4193fe4ee85c7016e7c168.pdf",
     examples: "https://docs.cartesi.io/",
     showcase: "https://rolluplab.io/",
-    bugBounty:
-      "https://immunefi.com/bounty/cartesi/?_gl:1*10hyf54*_ga*MTAyODg1OTI1LjE2ODY5MDA3NjA.*_ga_HM92STPNFJ*MTY4Nzg2ODk0Ny41LjEuMTY4Nzg2OTU0OC4xOC4wLjA.",
     staking: "https://explorer.cartesi.io/stake",
     grantsProgram: "https://governance.cartesi.io/",
     cgpVoting: "https://snapshot.org/#/cartesi-community-grants-program.eth",
