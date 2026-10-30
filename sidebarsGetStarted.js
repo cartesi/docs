@@ -60,8 +60,8 @@ module.exports = {
         },
         {
           type: 'doc',
-          id: 'internal-audits',
-          label: 'Internal Audits',
+          id: 'audit-reports',
+          label: 'Audit Reports',
         },
       ],
     }
