@@ -14,6 +14,8 @@ resources:
     title: Dave
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The Cartesi Rollups framework is designed to enable complex computations off-chain while maintaining the security guarantees of blockchain technology. It consists of two primary components: **the on-chain base layer** (such as Ethereum), where the dApp contract is deployed, and **the off-chain execution layer**, where the dApp's backend logic operates.
 
 A decentralized application (dApp) built on Cartesi incorporates several key elements:
@@ -76,10 +78,10 @@ The [CartesiDAppFactory](../api-reference/contracts/application-factory.md) cont
 Portal contracts facilitate the secure transfer of assets between the base layer and the Cartesi execution environment. Currently, Cartesi supports the following types of asset transfers:
 
 - [Ether (ETH)](../api-reference/contracts/portals/EtherPortal.md)
-- [ERC-20 (Fungible tokens)](../api-reference/contracts/portals/ERC20Portal.md)
-- [ERC-721 (Non-fungible tokens)](../api-reference/contracts/portals/ERC721Portal.md)
-- [ERC-1155 Single transfers](../api-reference/contracts/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch transfers](../api-reference/contracts/portals/ERC1155BatchPortal.md)
+- [ERC-20 (Fungible tokens)](../api-reference/contracts/portals/Erc20Portal.md)
+- [ERC-721 (Non-fungible tokens)](../api-reference/contracts/portals/Erc721Portal.md)
+- [ERC-1155 Single transfers](../api-reference/contracts/portals/Erc1155SinglePortal.md)
+- [ERC-1155 Batch transfers](../api-reference/contracts/portals/Erc1155BatchPortal.md)
 
 These Portal contracts implement the logic to "teleport" assets safely between layers, maintaining their integrity and ownership throughout the transfer process.
  

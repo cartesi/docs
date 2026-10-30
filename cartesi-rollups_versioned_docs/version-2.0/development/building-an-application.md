@@ -3,6 +3,8 @@ id: building-an-application
 title: Building an application
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 “Building” in this context compiles your application into RISC-V architecture and consequently builds a Cartesi machine containing your application. This architecture enables computation done by your application to be reproducible and verifiable.
 
 Ensure you have Docker engine running, then navigate the directory to your application and build by running:

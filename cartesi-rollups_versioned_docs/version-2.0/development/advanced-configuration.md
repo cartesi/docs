@@ -4,6 +4,8 @@ title: Advanced configuration
 resources:
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 When you build an application with the Cartesi CLI, the CLI needs to know how to set up your Cartesi Machine. Things like how much memory to allocate, what code to run, and what data to include. All of these choices live in a single file at the root of your project called `cartesi.toml`.
 
 If you have worked with configuration files like `docker-compose.yml` or `Cargo.toml`, the idea is the same. You describe what you want, and the CLI takes care of the rest.

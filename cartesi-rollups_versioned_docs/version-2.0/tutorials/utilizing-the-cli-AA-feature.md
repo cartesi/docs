@@ -9,6 +9,8 @@ resources:
     title: Account Abstraction Script demo
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 This tutorial will guide you through utilizing the account abstraction (AA) feature of the CLI to interact with your application while testing locally.
 
 ## Introduction

@@ -6,6 +6,8 @@ resources:
     title: CartesiScan
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Running your application creates a docker container containing all required services, and exposes your application node on port `6751`, then an anvil network specific to your application on port `6751/anvil`. The node also logs all outputs received by your backend.
 
 Here are the prerequisites to run the node:
@@ -83,7 +85,3 @@ Each of these services runs independently and can be activated or deactivated at
 - **Paymaster**: An account abstraction implementation that works hand in hand with the bundler to sponsor gas fees for transactions handled by the bundler, available at `http://localhost:6751/paymaster`.
 
 - **Passkey**: Runs a local passkey server, that enables account generation and interaction with application without a traditional wallet, available at `http://localhost:6751/passkey`
-
-:::note Testing tools
-[NoNodo](https://github.com/Calindra/nonodo) is a Cartesi Rollups testing tool that works with host machine applications, eliminating the need for Docker or RISC-V compilation.
-:::

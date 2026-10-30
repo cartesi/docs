@@ -3,6 +3,8 @@ id: cartesi-machine
 title: Cartesi Machine    
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 The [Cartesi Machine](/cartesi-machine) is a virtual machine that runs an entire Linux OS, in which a dApp's backend is executed. The Cartesi Machine is based on the [RISC-V ISA](https://riscv.org/), a set of instructions for processors. It runs in isolation, meaning it operates independently and is reproducible. 
 
 Central to Cartesi Rollups is the Cartesi Machine, a virtual machine designed to perform off-chain computations for blockchain applications. When examined from a high level of abstraction, the Cartesi Machine can be compared to an AWS Lambda function, with similarities that encompass:

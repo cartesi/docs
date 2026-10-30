@@ -8,6 +8,8 @@ resources:
     title: Application-Specific Rollups
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 Welcome to Cartesi Rollups, where decentralized application development meets unprecedented flexibility. With a foundation built on the Linux operating system, Cartesi Rollups offers modular stacks that allow developers to tailor consensus, data availability, and settlement layers according to their project requirements.
 
 Utilizing the Cartesi Machine for transaction processing, developers can effortlessly implement sophisticated logic using their preferred programming language or tool. Explore the possibilities and streamline your decentralized application development journey with Cartesi Rollups.

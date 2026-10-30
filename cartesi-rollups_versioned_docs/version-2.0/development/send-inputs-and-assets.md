@@ -8,6 +8,8 @@ resources:
     title: Angular template
 ---
 
+<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+
 You can send two requests to an application depending on whether you want to change or read the state.
 
 - **Advance**: In this request, any input data changes the state of the application.
