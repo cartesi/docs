@@ -1,11 +1,15 @@
 ---
+id: EtherPortal
+title: EtherPortal
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/portals/EtherPortal.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/portals/EtherPortal.sol
     title: EtherPortal contract
 ---
 
 The **EtherPortal** allows anyone to perform transfers of
 Ether to a dApp while informing the off-chain machine.
+
+The portal obtains the input-box address from the target Application for every deposit. See the [portal overview](./overview.md) for the shared validation flow and errors.
 
 ## `depositEther()`
 
@@ -17,6 +21,8 @@ Transfer Ether to a dApp and add an input to
 the dApp's input box to signal such operation.
 
 All the value sent through this function is forwarded to the dApp.
+
+If an unfinalized deposit is later refunded to a contract depositor, that contract must accept the returned Ether through a payable message call.
 
 #### Parameters
 

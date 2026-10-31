@@ -19,7 +19,7 @@ In addition to the [standard prerequisites](./standard.md#prerequisites) (Cartes
 
 ## Configure the machine and ledger (`cartesi.toml`)
 
-For an application to support emergency withdrawal, its Cartesi Machine must include a dedicated **accounts drive**: a raw, unmounted flash drive that holds the balance ledger. You declare it in `cartesi.toml` alongside the root drive, size it to fit the account tree, and enable `final_hash` so the machine hash is produced for deployment. The guest then writes balances into that drive using a ledger library, in a layout that matches the application's `WithdrawalConfig`.
+For an application to support emergency withdrawal, its Cartesi Machine must include a dedicated **accounts drive**: a raw, unmounted flash drive that holds the balance ledger. You declare it in `cartesi.toml` alongside the root drive and size it to fit the account tree. `cartesi build` produces the final machine hash automatically. The guest writes balances into the drive using a ledger library, in a layout that matches the application's `WithdrawalConfig`.
 
 Because those choices (the drive declaration, its size and position, and the record layout) belong to the guest application, they are documented once, in full, on the guest-requirements page. Set the drive up as described in [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive) before continuing, and see [Keeping the balances](../../api-reference/backend/emergency-withdrawal.md#keeping-the-balances) for the ledger library.
 
@@ -97,12 +97,13 @@ Create a `withdrawal.json` describing the guardian and the accounts-drive layout
    docker compose --project-name cartesi-rollups-node \
       exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
       --epoch-length 10 \
+      --claim-staging-period <blocks> \
       --withdrawal-config-file /tmp/withdrawal.json \
       --salt <salt> \
       --register
    ```
 
-   Replace `<app-name>` with your application name and `<salt>` with a unique identifier (generate one with `cast keccak256 "your-unique-string"`). The deployment is rejected if the config is invalid, meaning its accounts-drive layout does not fit the machine memory. A zero-valued config would deploy an application without emergency withdrawal, which is the standard case.
+   Replace `<app-name>` with your application name, `<blocks>` with the required claim-staging period, and `<salt>` with a unique identifier. You can generate a salt with `cast keccak256 "your-unique-string"`. The deployment is rejected if the config is invalid, meaning its accounts-drive layout does not fit the machine memory. A zero-valued config deploys an Application without emergency withdrawal.
 
    After this, your application is deployed and registered, and a guardian can foreclose it when needed.
 

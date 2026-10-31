@@ -2,9 +2,9 @@
 id: withdrawal-config
 title: WithdrawalConfig
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/common/WithdrawalConfig.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/common/WithdrawalConfig.sol
     title: WithdrawalConfig struct
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/library/LibWithdrawalConfig.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/library/LibWithdrawalConfig.sol
     title: LibWithdrawalConfig library
 ---
 
@@ -40,7 +40,7 @@ Let `a = log2LeavesPerAccount`, `b = log2MaxNumOfAccounts`, and `c = accountsDri
 - **starts** at machine memory address `c * 2^(a + b + 5)`;
 - holds up to `2^b` accounts, each occupying `2^(a + 5)` bytes.
 
-These same three values are returned on-chain by [`getLog2LeavesPerAccount()`](../application.md#getlog2leavesperaccount), [`getLog2MaxNumOfAccounts()`](../application.md#getlog2maxnumofaccounts), and [`getAccountsDriveStartIndex()`](../application.md#getaccountsdrivestartindex), and must match the layout the guest application actually writes.
+These same three values are returned by the Application's [accounts-drive configuration views](../application.md#accounts-drive-configuration-views) and must match the layout written by the guest application.
 
 ## Validation
 

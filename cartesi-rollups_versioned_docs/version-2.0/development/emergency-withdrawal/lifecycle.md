@@ -62,7 +62,7 @@ Foreclosure has three effects on claims:
 
 ## After foreclosure: prove and withdraw
 
-Once frozen, the accounts drive (the in-app balance ledger inside the machine state) at the last accepted epoch is the source of truth for balances. Turning that into on-chain payouts takes three steps, one off-chain and two on-chain:
+Once frozen, the accounts drive in the last accepted machine state is the source of truth for balances. If no claim was accepted, the initial template state is the source instead. Turning that state into on-chain payouts takes three steps, one off-chain and two on-chain:
 
 1. **Generate the proofs.** Off-chain, anyone runs the **machine tool** (`cartesi-rollups-machine-tool`) to replay the settled machine state and then `prove accounts-drive`. Replay is deterministic, so anyone can reproduce the last accepted state independently, with no running node. This writes two proof files: `drive-root-proof.json` (the accounts-drive root and its proof against the machine state, used once in step 2) and `account-proof.json` (the per-account Merkle proofs, used in step 3).
 2. **Anchor the ledger.** Anyone calls [`proveAccountsDriveMerkleRoot()`](../../api-reference/contracts/application.md#proveaccountsdrivemerkleroot) once, passing the root and proof from `drive-root-proof.json`. The contract checks it against the settled machine state and stores it. This is permissionless and happens once per application.
