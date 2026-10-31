@@ -150,6 +150,17 @@ If a user's code or question references the old GraphQL API, `sunodo`, or v1.x C
 - [Finish](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/finish.md): Complete request processing
 - [Emergency Withdrawal (guest requirements)](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/backend/emergency-withdrawal.md): Creating, sizing, and maintaining the accounts drive so balances stay provable and recoverable after foreclosure
 
+## Cartesi Rollups v2.0 — Asset Management Library (CMA)
+
+- [Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/asset-management/overview.md): What the CMA library is and how its parser and ledger work together
+- [Getting started](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/asset-management/getting-started.md): Install CMA in Python, Rust or C++ and build a first wallet
+- [Parsing inputs](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/asset-management/parsing-inputs.md): Decode deposits, withdrawals, transfers and inspect queries
+- [Managing balances](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/asset-management/managing-balances.md): Track accounts, assets and balances with the ledger
+- [Vouchers and withdrawals](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/asset-management/vouchers.md): Build vouchers that return assets to the base layer
+- [Parser reference](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/asset-management/parser-reference.md): Signatures for decode advance, decode inspect and encode voucher
+- [Ledger reference](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/asset-management/ledger-reference.md): Signatures for ledger lifecycle, retrieval, state changes and queries
+- [Types and selectors](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/asset-management/types-and-selectors.md): Input types, function selectors, portal addresses and error codes
+
 ## Cartesi Rollups v2.0 — Contracts API
 
 - [Contracts Overview](https://docs.cartesi.io/cartesi-rollups/2.0/api-reference/contracts/overview.md): All smart contracts in the framework
