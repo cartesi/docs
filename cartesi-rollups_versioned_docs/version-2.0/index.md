@@ -2,7 +2,7 @@
 id: overview
 title: Overview
 resources:
-  - url: https://cartesi.io/blog/understanding-cartesi-rollups/
+  - url: https://blog.cartesi.io/understanding-cartesi-rollups/
     title: Grokking Cartesi Rollups
   - url: https://medium.com/cartesi/application-specific-rollups-e12ed5d9de01
     title: Application-Specific Rollups
