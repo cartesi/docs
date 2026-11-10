@@ -55,7 +55,7 @@ const openApiDocsConfig = versions.reduce((config, version) => {
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Cartesi Documentation",
-  tagline: "Application-specific rollups with a Linux runtime.",
+  tagline: "Any code. Ethereum's security.",
   // url/baseUrl default to production (AWS Amplify @ docs.cartesi.io). PR-preview
   // builds override them via env vars to publish under a GitHub Pages sub-path
   // (https://<owner>.github.io/<repo>/pr-preview/pr-<N>/). The vars are unset for

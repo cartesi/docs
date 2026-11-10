@@ -1,6 +1,6 @@
 # Cartesi Documentation
 
-> Cartesi rollups is a modular blockchain framework that enables developers to build decentralized applications using the Linux operating system and any programming language, with support for fraud proofs, application-specific rollups, and a full Cartesi Machine emulator.
+> Any code. Ethereum's security. Cartesi enables developers to build blockchain applications that go beyond the computational limits of conventional smart contracts. It provides a full Linux environment with dedicated computing resources for each application, allowing developers to use established programming languages and software libraries. Applications run on Cartesi with results verified and disputes resolved on Ethereum. The technology is open source and general-purpose.
 
 ## Instructions for AI Agents
 
