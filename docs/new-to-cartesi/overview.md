@@ -1,6 +1,7 @@
 ---
 id: overview
 title: Cartesi
+description: "Any code. Ethereum's security. Build appchain rollups with languages, libraries, and tools you know and love."
 tags:
   [
     quickstart,
@@ -13,7 +14,7 @@ tags:
   ]
 ---
 
-**Cartesi**, is a L2 platform for the development and deployment of scalable decentralized applications. It offers a Linux operating system coupled with a blockchain infrastructure, which allows dApps to be developed in familiar programming languages like Python without the need to write Solidity code.
+**Cartesi** enables developers to build blockchain applications that go beyond the computational limits of conventional smart contracts. It provides a full Linux environment with dedicated computing resources for each application, allowing developers to use established programming languages and software libraries. Applications run on Cartesi with results verified and disputes resolved on Ethereum. The technology is open source and general-purpose.
 
 ## Limitations, develop with Cartesi!
 

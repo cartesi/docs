@@ -32,7 +32,7 @@ export const Hello = () => {
             Welcome to Cartesi docs.
           </h1>
           <p className="text-2xl text-center">
-            Cartesi: Application-specific rollups with a Linux runtime.
+            Cartesi: Any code. Ethereum's security.
           </p>
           <p className="text-2xl text-center">
             Cartesi provides your dApp with a dedicated CPU and rollup,

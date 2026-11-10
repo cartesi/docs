@@ -1,6 +1,7 @@
 ---
 id: overview
 title: Overview
+description: "Any code. Ethereum's security. Build appchain rollups with languages, libraries, and tools you know and love."
 resources:
   - url: https://cartesi.io/blog/understanding-cartesi-rollups/
     title: Grokking Cartesi Rollups
@@ -8,9 +9,9 @@ resources:
     title: Application-Specific Rollups
 ---
 
-Welcome to Cartesi Rollups, where decentralized application development meets unprecedented flexibility. With a foundation built on the Linux operating system, Cartesi Rollups offers modular stacks that allow developers to tailor consensus, data availability, and settlement layers according to their project requirements.
+Cartesi enables developers to build blockchain applications that go beyond the computational limits of conventional smart contracts. It provides a full Linux environment with dedicated computing resources for each application, allowing developers to use established programming languages and software libraries. Applications run on Cartesi with results verified and disputes resolved on Ethereum. The technology is open source and general-purpose.
 
-Utilizing the Cartesi Machine for transaction processing, developers can effortlessly implement sophisticated logic using their preferred programming language or tool. Explore the possibilities and streamline your decentralized application development journey with Cartesi Rollups.
+Cartesi Rollups is the framework for building these applications as appchain rollups, with the Cartesi Machine processing every input.
 
 ![img](../../static/img/v1.3/image.png)
 
