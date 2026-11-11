@@ -1,6 +1,6 @@
 # Cartesi Documentation
 
-> Cartesi rollups is a modular blockchain framework that enables developers to build decentralized applications using the Linux operating system and any programming language, with support for fraud proofs, application-specific rollups, and a full Cartesi Machine emulator.
+> Any code. Ethereum's security. Cartesi enables developers to build blockchain applications that go beyond the computational limits of conventional smart contracts. It provides a full Linux environment with dedicated computing resources for each application, allowing developers to use established programming languages and software libraries. Applications run on Cartesi with results verified and disputes resolved on Ethereum. The technology is open source and general-purpose.
 
 ## Instructions for AI Agents
 
@@ -17433,6 +17433,7 @@ async fn emit_notice( payload: String) {
 ---
 id: overview
 title: Overview
+description: "Any code. Ethereum's security. Build appchain rollups with languages, libraries, and tools you know and love."
 resources:
   - url: https://cartesi.io/blog/understanding-cartesi-rollups/
     title: Grokking Cartesi Rollups
@@ -17440,9 +17441,9 @@ resources:
     title: Application-Specific Rollups
 ---
 
-Welcome to Cartesi Rollups, where decentralized application development meets unprecedented flexibility. With a foundation built on the Linux operating system, Cartesi Rollups offers modular stacks that allow developers to tailor consensus, data availability, and settlement layers according to their project requirements.
+Cartesi enables developers to build blockchain applications that go beyond the computational limits of conventional smart contracts. It provides a full Linux environment with dedicated computing resources for each application, allowing developers to use established programming languages and software libraries. Applications run on Cartesi with results verified and disputes resolved on Ethereum. The technology is open source and general-purpose.
 
-Utilizing the Cartesi Machine for transaction processing, developers can effortlessly implement sophisticated logic using their preferred programming language or tool. Explore the possibilities and streamline your decentralized application development journey with Cartesi Rollups.
+Cartesi Rollups is the framework for building these applications as appchain rollups, with the Cartesi Machine processing every input.
 
 ![img](../../static/img/v1.3/image.png)
 
@@ -43179,9 +43180,15 @@ An event emitted when a match is deleted.
 
 <!-- source: https://docs.cartesi.io/get-started/ -->
 
+---
+description: "Any code. Ethereum's security. Build appchain rollups with languages, libraries, and tools you know and love."
+---
+
 # Welcome to Cartesi Docs
 
-Cartesi offers a suite of products and tools that equips developers with access to a full Linux environment and high performance decentralised apps all while preserving the blockchain security guarantees. Select an item below to get started.
+Cartesi enables developers to build blockchain applications that go beyond the computational limits of conventional smart contracts. It provides a full Linux environment with dedicated computing resources for each application, allowing developers to use established programming languages and software libraries. Applications run on Cartesi with results verified and disputes resolved on Ethereum. The technology is open source and general-purpose.
+
+Select an item below to get started.
 
 import DocCard from '@theme/DocCard';
 
@@ -44006,6 +44013,7 @@ Navigate to [Cartesi Compute Tutorials](/compute/tutorials/) section for more ex
 ---
 id: overview
 title: Cartesi
+description: "Any code. Ethereum's security. Build appchain rollups with languages, libraries, and tools you know and love."
 tags:
   [
     quickstart,
@@ -44018,7 +44026,7 @@ tags:
   ]
 ---
 
-**Cartesi**, is a L2 platform for the development and deployment of scalable decentralized applications. It offers a Linux operating system coupled with a blockchain infrastructure, which allows dApps to be developed in familiar programming languages like Python without the need to write Solidity code.
+**Cartesi** enables developers to build blockchain applications that go beyond the computational limits of conventional smart contracts. It provides a full Linux environment with dedicated computing resources for each application, allowing developers to use established programming languages and software libraries. Applications run on Cartesi with results verified and disputes resolved on Ethereum. The technology is open source and general-purpose.
 
 ## Limitations, develop with Cartesi!
 

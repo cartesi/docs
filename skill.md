@@ -5,7 +5,7 @@ description: Navigate and answer questions about building with Cartesi. Use this
 
 ## About Cartesi
 
-Cartesi is a modular blockchain framework that lets developers build decentralised applications using the Linux operating system and any programming language. Key components:
+Cartesi enables developers to build blockchain applications that go beyond the computational limits of conventional smart contracts. It provides a full Linux environment with dedicated computing resources for each application, allowing developers to use established programming languages and software libraries. Applications run on Cartesi with results verified and disputes resolved on Ethereum. The technology is open source and general-purpose. Key components:
 
 - **Cartesi Rollups v2.0** — the current application framework for building on-chain dApps with off-chain computation (RISC-V Linux VM)
 - **Cartesi Machine** — a deterministic RISC-V Linux virtual machine; executes application logic off-chain with a fraud-proof guarantee
