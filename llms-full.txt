@@ -5629,7 +5629,7 @@ Then, the `/dev/rollup` device issues an yield _manual_ command to the `/dev/yie
 id: overview
 title: Overview
 resources:
-  - url: https://cartesi.io/blog/understanding-cartesi-rollups/
+  - url: https://blog.cartesi.io/understanding-cartesi-rollups/
     title: Grokking Cartesi Rollups
   - url: https://medium.com/cartesi/application-specific-rollups-e12ed5d9de01
     title: Application-Specific Rollups
@@ -5724,11 +5724,11 @@ Use the docs in the sidebar to find out how to use the schema:
 id: architecture
 title: Architecture
 resources:
-  - url: https://cartesi.io/blog/grokking-cartesi-virtual-machine/
+  - url: https://blog.cartesi.io/grokking-cartesi-virtual-machine/
     title: Grokking the Cartesi Machine
-  - url: https://cartesi.io/blog/understanding-cartesi-rollups-pt2/
+  - url: https://blog.cartesi.io/understanding-cartesi-rollups-pt2/
     title: Understanding Cartesi Rollups
-  - url: https://cartesi.io/blog/grokking-cartesi-nodes/
+  - url: https://blog.cartesi.io/grokking-cartesi-nodes/
     title: Grokking Cartesi Nodes
   - url: https://youtu.be/uUzn_vdWyDM?si=J2or_Nfym5pabkjNz3z8Gw
     title: Cartesi Machine DeepDive
@@ -5966,7 +5966,7 @@ resources:
     title: Optimistic Rollups
   - url: https://www.paradigm.xyz/2021/01/almost-everything-you-need-to-know-about-optimistic-rollup
     title: Everything you need to know about Optimistic Rollups
-  - url: https://cartesi.io/blog/grokking-dave/
+  - url: https://blog.cartesi.io/grokking-dave/
     title: Fraud-proof protocols | Grokking Dave
 ---
 
@@ -17435,7 +17435,7 @@ id: overview
 title: Overview
 description: "Any code. Ethereum's security. Build appchain rollups with languages, libraries, and tools you know and love."
 resources:
-  - url: https://cartesi.io/blog/understanding-cartesi-rollups/
+  - url: https://blog.cartesi.io/understanding-cartesi-rollups/
     title: Grokking Cartesi Rollups
   - url: https://medium.com/cartesi/application-specific-rollups-e12ed5d9de01
     title: Application-Specific Rollups
@@ -30375,11 +30375,11 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 id: architecture
 title: Architecture
 resources:
-  - url: https://cartesi.io/blog/grokking-cartesi-virtual-machine/
+  - url: https://blog.cartesi.io/grokking-cartesi-virtual-machine/
     title: Grokking the Cartesi Machine
-  - url: https://cartesi.io/blog/understanding-cartesi-rollups-pt2/
+  - url: https://blog.cartesi.io/understanding-cartesi-rollups-pt2/
     title: Understanding Cartesi Rollups
-  - url: https://cartesi.io/blog/grokking-cartesi-nodes/
+  - url: https://blog.cartesi.io/grokking-cartesi-nodes/
     title: Grokking Cartesi Nodes
   - url: https://youtu.be/uUzn_vdWyDM?si=J2or_Nfym5pabkjNz3z8Gw
     title: Cartesi Machine DeepDive
@@ -30541,7 +30541,7 @@ The validation process ensures the integrity of the off-chain computations:
 id: concepts
 title: Concepts
 resources:
-  - url: https://cartesi.io/blog/understanding-cartesi-rollups-pt2/
+  - url: https://blog.cartesi.io/understanding-cartesi-rollups-pt2/
     title: Understanding Cartesi Rollups
   - url: https://github.com/cartesi/dave
     title: Dave
@@ -42615,7 +42615,7 @@ This page covers the PRT and Honeypot v2 deployed contracts and their addresses.
 
 ## Honeypot v2 Deployments
 :::caution
-The Honeypot app has been updated. We recently found a bug in the application that has led to a fail-stop state. This means the current deployment is permanently frozen, and the bounty funds within it are no longer recoverable. Read the [post-mortem](https://cartesi.io/blog/prt_honeypot_postmortem/) for more details.
+The Honeypot app has been updated. We recently found a bug in the application that has led to a fail-stop state. This means the current deployment is permanently frozen, and the bounty funds within it are no longer recoverable. Read the [post-mortem](https://blog.cartesi.io/prt_honeypot_postmortem/) for more details.
 :::
 
 | Component | Mainnet Address |
@@ -43240,7 +43240,7 @@ import DocCard from '@theme/DocCard';
 
 - [Discord](https://discord.gg/cWGbyFkQ2W)
 - [GitHub](https://github.com/cartesi)
-- [Blog](https://cartesi.io/blog/)
+- [Blog](https://blog.cartesi.io/)
 - [X](https://x.com/cartesiproject)
 - [YouTube](https://www.youtube.com/@cartesiproject)
 - [More](https://linktr.ee/cartesi)
