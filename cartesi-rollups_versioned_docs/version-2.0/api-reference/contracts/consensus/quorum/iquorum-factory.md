@@ -2,11 +2,11 @@
 id: iquorum-factory
 title: IQuorumFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/quorum/IQuorumFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/quorum/IQuorumFactory.sol
     title: IQuorumFactory Interface
 ---
 
-The **IQuorumFactory** interface defines the contract for deploying new `IQuorum` contracts.
+The **IQuorumFactory** interface defines the contract for deploying new `IQuorum` contracts. It inherits from `IVersionGetter`, `IConsensusFactoryErrors` and `IQuorumFactoryErrors`.
 
 ## Events
 
@@ -16,7 +16,7 @@ The **IQuorumFactory** interface defines the contract for deploying new `IQuorum
 event QuorumCreated(IQuorum quorum)
 ```
 
-A new quorum was deployed.
+A new quorum was deployed. MUST be triggered on a successful call to `newQuorum`.
 
 **Parameters**
 
@@ -29,10 +29,16 @@ A new quorum was deployed.
 ### `newQuorum()`
 
 ```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength) external returns (IQuorum)
+function newQuorum(
+    address[] calldata validators,
+    uint256 epochLength,
+    uint256 claimStagingPeriod
+) external returns (IQuorum)
 ```
 
 Deploy a new quorum.
+
+*On success, MUST emit a `QuorumCreated` event. Duplicates in the `validators` array are ignored. Reverts if the epoch length is zero.*
 
 **Parameters**
 
@@ -40,6 +46,7 @@ Deploy a new quorum.
 |------|------|-------------|
 | `validators` | `address[]` | The list of validators |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | The claim staging period |
 
 **Return Values**
 
@@ -50,10 +57,17 @@ Deploy a new quorum.
 ### `newQuorum()` (with salt)
 
 ```solidity
-function newQuorum(address[] calldata validators, uint256 epochLength, bytes32 salt) external returns (IQuorum)
+function newQuorum(
+    address[] calldata validators,
+    uint256 epochLength,
+    uint256 claimStagingPeriod,
+    bytes32 salt
+) external returns (IQuorum)
 ```
 
 Deploy a new quorum deterministically.
+
+*On success, MUST emit a `QuorumCreated` event. Duplicates in the `validators` array are ignored. Reverts if the epoch length is zero.*
 
 **Parameters**
 
@@ -61,6 +75,7 @@ Deploy a new quorum deterministically.
 |------|------|-------------|
 | `validators` | `address[]` | The list of validators |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | The claim staging period |
 | `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
 
 **Return Values**
@@ -75,11 +90,14 @@ Deploy a new quorum deterministically.
 function calculateQuorumAddress(
     address[] calldata validators,
     uint256 epochLength,
+    uint256 claimStagingPeriod,
     bytes32 salt
 ) external view returns (address)
 ```
 
 Calculate the address of a quorum to be deployed deterministically.
+
+*Only the `newQuorum` function with the `salt` parameter deploys a quorum deterministically.*
 
 **Parameters**
 
@@ -87,10 +105,37 @@ Calculate the address of a quorum to be deployed deterministically.
 |------|------|-------------|
 | `validators` | `address[]` | The list of validators |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | The claim staging period |
 | `salt` | `bytes32` | The salt used to deterministically generate the quorum address |
 
 **Return Values**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `address` | The deterministic quorum address | 
+| `[0]` | `address` | The deterministic quorum address |
+
+## Errors
+
+### `ZeroEpochLength()`
+
+```solidity
+error ZeroEpochLength()
+```
+
+Raised when a consensus would be deployed with zero as epoch length. This is forbidden because it would lead to a division by zero when calculating the epoch of a block (`block.number / epochLength`).
+
+### `ZeroAddressValidator()`
+
+```solidity
+error ZeroAddressValidator()
+```
+
+Raised when a quorum would be deployed with the zero address as one of the validators. The zero address is reserved as a sentinel value for non-validators (see `validatorById`).
+
+### `EmptyQuorum()`
+
+```solidity
+error EmptyQuorum()
+```
+
+Raised when a quorum would be deployed with an empty array of validators.

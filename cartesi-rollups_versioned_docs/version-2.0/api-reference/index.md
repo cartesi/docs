@@ -2,11 +2,11 @@
 id: http-api
 title: Overview
 resources:
-  - url: https://github.com/cartesi/machine-emulator
+  - url: https://github.com/cartesi/machine-emulator/tree/v0.22.0
     title: Off-chain implementation of the Cartesi Machine
-  - url: https://github.com/cartesi/rollups-node
+  - url: https://github.com/cartesi/rollups-node/tree/v2.0.0-alpha.14
     title: Reference implementation of the Rollups Node
-  - url: https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/contracts
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src
     title: Smart Contracts for Cartesi Rollups
 ---
 
@@ -38,9 +38,9 @@ The figure below illustrates the main use cases for these interactions:
 
 ![img](../../../static/img/v1.3/frontend.jpg)
 
-- [`addInput()`](./contracts/input-box/#addinput) — This function submits input data to the InputBox smart contract on the base layer as a regular JSON-RPC blockchain transaction. When the transaction is mined and executed, it emits an event containing the submitted input's index, which the frontend can later use to query associated outputs.
+- [`addInput()`](./contracts/input-box/#addinput) — This function submits input data to the application's InputBox smart contract (the one returned by the application's `getInputBox()`) on the base layer as a regular JSON-RPC blockchain transaction. When the transaction is mined and executed, it emits an event containing the submitted input's index, which the frontend can later use to query associated outputs.
 
-- [`executeOutput()`](./contracts/application/#executeoutput) — Submits a JSON-RPC blockchain transaction to request the execution of a given voucher or notice by the [`Application`](./contracts/application.md) smart contract on the base layer. Vouchers can only be executed when an epoch is closed.
+- [`executeOutput()`](./contracts/application/#executeoutput) — Submits a JSON-RPC blockchain transaction to request the execution of a given voucher (or DELEGATECALL voucher) by the [`Application`](./contracts/application.md) smart contract on the base layer. Vouchers can only be executed after a claim covering their epoch has been accepted by the consensus, which happens after the claim staging period. Notices are not executable; they can be validated with [`validateOutput()`](./contracts/application/#validateoutput).
 
 - Query outputs — You can submit a query to a Cartesi node to retrieve vouchers, notices, and reports as specified by the Cartesi Rollups JSON-RPC schema.
 

@@ -2,13 +2,33 @@
 id: authority
 title: Authority
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/Authority.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/Authority.sol
     title: Authority Contract
 ---
 
-The **Authority** contract implements a single-owner consensus mechanism where only the contract owner can submit and accept claims.
+The **Authority** contract implements a single-owner consensus mechanism where only the contract owner can submit claims. A claim submitted by the owner is staged immediately. After the claim staging period, **anyone** can accept it through `acceptClaim()`, inherited from [`AbstractConsensus`](../abstract-consensus.md).
+
+At most one claim can be submitted per application and epoch.
+
+This contract inherits from [`IAuthority`](./iauthority.md), [`AbstractConsensus`](../abstract-consensus.md) and OpenZeppelin's `Ownable`.
 
 ## Functions
+
+### `constructor()`
+
+```solidity
+constructor(address initialOwner, uint256 epochLength, uint256 claimStagingPeriod)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|------|------|-------------|
+| `initialOwner` | `address` | The initial contract owner |
+| `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | The claim staging period, in number of blocks |
+
+*Reverts with `ZeroEpochLength()` if the epoch length is zero, and with OpenZeppelin's `OwnableInvalidOwner` if the initial owner is the zero address.*
 
 ### `submitClaim()`
 
@@ -16,11 +36,14 @@ The **Authority** contract implements a single-owner consensus mechanism where o
 function submitClaim(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
-) external onlyOwner
+    bytes32 machineMerkleRoot,
+    MachineValidityProof calldata proof
+) external override onlyOwner
 ```
 
 Submit a claim to the consensus. Only the contract owner can call this function.
+
+The function validates the block number, checks that no claim was submitted for this application and epoch, validates the machine and proves its outputs Merkle root, then emits `ClaimSubmitted` and stages the claim (`ClaimStaged`).
 
 **Parameters**
 
@@ -28,7 +51,19 @@ Submit a claim to the consensus. Only the contract owner can call this function.
 |------|------|-------------|
 | `appContract` | `address` | The application contract address |
 | `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+| `machineMerkleRoot` | `bytes32` | The post-epoch machine Merkle root |
+| `proof` | `MachineValidityProof` | The machine validity proof (see [`IConsensus`](../iconsensus.md#machinevalidityproof)) |
+
+**Errors**
+
+| Error | Condition |
+|-------|-----------|
+| `OwnableUnauthorizedAccount` | The caller is not the owner |
+| `NotEpochFinalBlock` | `lastProcessedBlockNumber` is not the last block of an epoch |
+| `NotPastBlock` | `lastProcessedBlockNumber` is not in the past |
+| `NotFirstClaim` | A claim was already submitted for this application and epoch |
+| [Machine validation errors](../iconsensus.md#machine-validation-errors) | The machine validity proof is invalid |
+| [Application checker errors](../iconsensus.md#application-checker-errors) | The application is not deployed, could not be checked or is foreclosed |
 
 ### `owner()`
 
@@ -50,7 +85,7 @@ Returns the address of the current owner.
 function renounceOwnership() public override(IOwnable, Ownable)
 ```
 
-Leaves the contract without owner. It will not be possible to call onlyOwner functions.
+Leaves the contract without owner. It will not be possible to call onlyOwner functions, so no further claims can be submitted.
 
 ### `transferOwnership()`
 
@@ -72,7 +107,7 @@ Transfers ownership of the contract to a new account.
 function supportsInterface(bytes4 interfaceId) public view override(IERC165, AbstractConsensus) returns (bool)
 ```
 
-Check if the contract supports a specific interface.
+Check if the contract supports a specific interface. Returns true for `IAuthority`, `IConsensus`, `IOutputsMerkleRootValidator` and `IERC165`.
 
 **Parameters**
 
@@ -84,4 +119,8 @@ Check if the contract supports a specific interface.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `bool` | True if the interface is supported | 
+| `[0]` | `bool` | True if the interface is supported |
+
+### Inherited functions
+
+From [`AbstractConsensus`](../abstract-consensus.md): `acceptClaim()`, `getClaim()`, `getEpochLength()`, `getClaimStagingPeriod()`, `getNumberOfSubmittedClaims()`, `getNumberOfStagedClaims()`, `getNumberOfAcceptedClaims()`, `isOutputsMerkleRootValid()`, `getLastFinalizedMachineMerkleRoot()`, `wasInputFinalized()` and `version()`.
