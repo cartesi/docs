@@ -2,27 +2,48 @@
 id: iconsensus
 title: IConsensus
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/IConsensus.sol
-    title: IConsensus Interface
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/consensus/IConsensus.sol
+    title: IConsensus interface
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/common/MachineValidityProof.sol
+    title: MachineValidityProof structure
 ---
 
-The `IConsensus` interface defines the main consensus contract behavior for validating and accepting claims submitted by validators.
+**`IConsensus`** defines how validators submit, stage, and accept claims about an Application's post-epoch state.
 
-## Description
+Each Application has its own input stream, divided into epochs by base-layer block number. After processing an epoch, a validator can submit the resulting machine Merkle root together with a proof that the machine stopped at a valid manual yield. The proof also reveals the cumulative outputs Merkle root stored in the machine's transmit buffer.
 
-Each application has its own stream of inputs. When an input is fed to the application, it may yield several outputs. Since genesis, a Merkle tree of all outputs ever produced is maintained both inside and outside the Cartesi Machine.
+## Claim lifecycle
 
-The claim that validators may submit to the consensus contract is the root of this Merkle tree after processing all base layer blocks until some height.
+1. A validator submits a claim for an epoch.
+2. The consensus model stages the claim when its own criteria are satisfied. Authority stages the owner's claim immediately. Quorum stages a claim after a majority supports it.
+3. The claim remains staged for `getClaimStagingPeriod()` base-layer blocks.
+4. Anyone can call `acceptClaim` after the staging period.
+5. The accepted outputs Merkle root becomes valid for on-chain output execution.
 
-A validator should be able to save transaction fees by not submitting a claim if it was:
-- Already submitted by the validator (see the `ClaimSubmitted` event) or
-- Already accepted by the consensus (see the `ClaimAccepted` event)
+If the Application is foreclosed before acceptance, the consensus cannot submit or accept further claims.
 
-The acceptance criteria for claims may depend on the type of consensus, and is not specified by this interface. For example, a claim may be accepted if it was:
-- Submitted by an authority or
-- Submitted by the majority of a quorum or
-- Submitted and not proven wrong after some period of time or
-- Submitted and proven correct through an on-chain tournament
+## Machine validity proof
+
+```solidity
+struct LeafProof {
+    bytes32 dataBlock;
+    bytes32[] siblings;
+}
+
+struct MachineValidityProof {
+    LeafProof iflagsYProof;
+    LeafProof htifTohostProof;
+    LeafProof txBufferProof;
+}
+```
+
+The three leaf proofs establish that:
+
+- the machine's `iflags_Y` register is set;
+- the HTIF `tohost` register signals a manual yield with the `rx accepted` reason; and
+- the first data block of the CMIO transmit buffer contains the outputs Merkle root.
+
+All three proofs must reconstruct the submitted `machineMerkleRoot`.
 
 ## Functions
 
@@ -32,134 +53,150 @@ The acceptance criteria for claims may depend on the type of consensus, and is n
 function submitClaim(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot,
+    MachineValidityProof calldata proof
 ) external
 ```
 
-Submit a claim to the consensus.
+Submits a claim. The concrete consensus contract decides who may call the function and when the claim becomes staged.
 
-**Parameters**
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `appContract` | `address` | Application whose state was computed |
+| `lastProcessedBlockNumber` | `uint256` | Final base-layer block covered by the claim |
+| `machineMerkleRoot` | `bytes32` | Post-epoch machine state root |
+| `proof` | `MachineValidityProof` | Proof of a valid accepted yield and the outputs root |
 
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+Every successful call emits `ClaimSubmitted`. It may also emit `ClaimStaged` when the staging criteria are met.
 
-**Events:**
-- `ClaimSubmitted`: Must be fired
-- `ClaimAccepted`: MAY be fired, if the acceptance criteria is met
+### `acceptClaim()`
 
-### `getEpochLength()`
+```solidity
+function acceptClaim(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 machineMerkleRoot
+) external
+```
+
+Accepts a staged claim after its staging period. A successful call emits `ClaimAccepted` and makes the claim's outputs root valid.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `appContract` | `address` | Application whose claim will be accepted |
+| `lastProcessedBlockNumber` | `uint256` | Final base-layer block covered by the claim |
+| `machineMerkleRoot` | `bytes32` | Post-epoch machine state root submitted with the claim |
+
+### Configuration and counters
 
 ```solidity
 function getEpochLength() external view returns (uint256)
+function getClaimStagingPeriod() external view returns (uint256)
+function getNumberOfAcceptedClaims(address appContract) external view returns (uint256)
+function getNumberOfStagedClaims(address appContract) external view returns (uint256)
+function getNumberOfSubmittedClaims(address appContract) external view returns (uint256)
 ```
 
-Get the epoch length, in number of base layer blocks.
+The epoch number of a block is its integer division by `getEpochLength()`.
 
-**Return Values**
+| Function | Parameter | Type | Return type | Description |
+| --- | --- | --- | --- | --- |
+| `getEpochLength()` | None | None | `uint256` | Number of base-layer blocks in an epoch |
+| `getClaimStagingPeriod()` | None | None | `uint256` | Number of blocks a staged claim must wait before acceptance |
+| `getNumberOfAcceptedClaims()` | `appContract` | `address` | `uint256` | Number of claims accepted for the Application |
+| `getNumberOfStagedClaims()` | `appContract` | `address` | `uint256` | Number of claims staged for the Application |
+| `getNumberOfSubmittedClaims()` | `appContract` | `address` | `uint256` | Number of claims submitted for the Application |
 
-| Name | Type | Description |
-|------|------|-------------|
-| `[0]` | `uint256` | The epoch length |
+### `getClaim()`
 
-**Note:** The epoch number of a block is defined as the integer division of the block number by the epoch length.
+```solidity
+function getClaim(
+    address appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 machineMerkleRoot
+) external view returns (Claim memory claim)
+```
+
+Returns the status, staging block, and staged outputs Merkle root for one claim.
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `appContract` | `address` | Application associated with the claim |
+| `lastProcessedBlockNumber` | `uint256` | Final base-layer block covered by the claim |
+| `machineMerkleRoot` | `bytes32` | Post-epoch machine state root submitted with the claim |
+
+| Return value | Type | Description |
+| --- | --- | --- |
+| `claim` | `Claim` | Stored claim status and staging data |
+
+```solidity
+enum ClaimStatus { UNSTAGED, STAGED, ACCEPTED }
+
+struct Claim {
+    ClaimStatus status;
+    uint256 stagingBlockNumber;
+    bytes32 stagedOutputsMerkleRoot;
+}
+```
+
+The staging fields are meaningful only for staged or accepted claims.
 
 ## Events
-
-### `ClaimSubmitted()`
 
 ```solidity
 event ClaimSubmitted(
     address indexed submitter,
     address indexed appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot
 )
-```
 
-Must trigger when a claim is submitted.
+event ClaimStaged(
+    address indexed appContract,
+    uint256 lastProcessedBlockNumber,
+    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot
+)
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `submitter` | `address` | The submitter address |
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
-
-### `ClaimAccepted()`
-
-```solidity
 event ClaimAccepted(
     address indexed appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 outputsMerkleRoot,
+    bytes32 machineMerkleRoot
 )
 ```
 
-Must trigger when a claim is accepted.
+At most one claim can be staged for an Application and `lastProcessedBlockNumber` pair.
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
-
-**Note:** For each application and lastProcessedBlockNumber, there can be at most one accepted claim.
+| Event | Parameter | Type | Description |
+| --- | --- | --- | --- |
+| `ClaimSubmitted` | `submitter` | `address` | Validator that submitted the claim |
+| `ClaimSubmitted` | `appContract` | `address` | Application associated with the claim |
+| `ClaimSubmitted` | `lastProcessedBlockNumber` | `uint256` | Final base-layer block covered by the claim |
+| `ClaimSubmitted` | `outputsMerkleRoot` | `bytes32` | Cumulative outputs root extracted from the machine proof |
+| `ClaimSubmitted` | `machineMerkleRoot` | `bytes32` | Post-epoch machine state root |
+| `ClaimStaged` | `appContract` | `address` | Application associated with the staged claim |
+| `ClaimStaged` | `lastProcessedBlockNumber` | `uint256` | Final base-layer block covered by the claim |
+| `ClaimStaged` | `outputsMerkleRoot` | `bytes32` | Cumulative outputs root staged for acceptance |
+| `ClaimStaged` | `machineMerkleRoot` | `bytes32` | Post-epoch machine state root |
+| `ClaimAccepted` | `appContract` | `address` | Application associated with the accepted claim |
+| `ClaimAccepted` | `lastProcessedBlockNumber` | `uint256` | Final base-layer block covered by the claim |
+| `ClaimAccepted` | `outputsMerkleRoot` | `bytes32` | Cumulative outputs root accepted for validation |
+| `ClaimAccepted` | `machineMerkleRoot` | `bytes32` | Post-epoch machine state root |
 
 ## Errors
 
-### `NotEpochFinalBlock()`
+| Error | Meaning |
+| --- | --- |
+| `NotEpochFinalBlock` | The claim does not end at an epoch boundary |
+| `NotPastBlock` | The claimed block is not strictly in the past |
+| `NotFirstClaim` | The validator already submitted a claim for that Application epoch |
+| `ClaimNotStaged` | Acceptance was requested for a claim that is not staged |
+| `ClaimStagingPeriodNotOverYet` | The required number of blocks has not elapsed |
+| `InvalidSiblingsArrayLength` | A machine leaf proof has the wrong number of siblings |
+| `InvalidMachineMerkleProof` | A leaf proof does not reconstruct the submitted machine root |
+| `InvalidPostEpochMachineIflagsYRegister` | The machine did not finish in a finalizable yielded state |
+| `InvalidPostEpochMachineHtifTohostRegister` | The machine did not yield with the `rx accepted` reason |
 
-```solidity
-error NotEpochFinalBlock(uint256 lastProcessedBlockNumber, uint256 epochLength)
-```
-
-The claim contains the number of a block that is not at the end of an epoch (its modulo epoch length is not epoch length - 1).
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `epochLength` | `uint256` | The epoch length |
-
-### `NotPastBlock()`
-
-```solidity
-error NotPastBlock(uint256 lastProcessedBlockNumber, uint256 currentBlockNumber)
-```
-
-The claim contains the number of a block in the future (it is greater or equal to the current block number).
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `currentBlockNumber` | `uint256` | The number of the current block |
-
-### `NotFirstClaim()`
-
-```solidity
-error NotFirstClaim(address appContract, uint256 lastProcessedBlockNumber)
-```
-
-A claim for that application and epoch was already submitted by the validator.
-
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address |
-| `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-
-## Related Contracts
-
-- [`AbstractConsensus`](./abstract-consensus.md): Abstract implementation of this interface
-- [`IOutputsMerkleRootValidator`](./ioutputs-merkle-root-validator.md): Interface for validating outputs Merkle roots 
+Application-check errors can also be raised when the target Application is missing, malformed, reverting, or foreclosed.

@@ -25,7 +25,7 @@ Build a Cartesi Rollups v2 JavaScript app called "order-book".
 
 Use cartesi-scaffold, cartesi-backend-core, cartesi-backend-js-ts, and
 cartesi-contracts. Stack: JS template, Foundry for any L1 contracts, vanilla CSS
-for any harness. Pin Cartesi alpha packages explicitly.
+for any harness. Use the Cartesi package versions documented for this release.
 
 Deliverables:
 - Folder structure: handlers/, validation/, inspect/, assets/.
@@ -79,7 +79,7 @@ What to do instead:
 - Stay on **testnets** with **dev keys** while iterating.
 - Ask the assistant to **print** CLI / `cast` / `forge` commands; you run them.
 - Have it **diff and explain** changes before any commit.
-- Read [Overview → Exercise caution](./overview.md#exercise-caution) before widening the agent's access.
+- Read [Overview: Agent access and sandboxing](./overview.md#agent-access-and-sandboxing) before widening the agent's access.
 
 ## Prompt patterns
 
@@ -131,7 +131,7 @@ Step 4 — Verify (I run locally):
 - Summarize expected outcomes per user story ID after each command group.
 
 Constraints:
-- Cartesi Rollups v2 only. Pin alpha packages explicitly.
+- Cartesi Rollups v2 only. Use the Cartesi package versions documented for this release.
 - Every test and code change must trace to a user story ID in SPEC.md.
 - Print CLI commands for me to run; do not execute them.
 

@@ -2,18 +2,18 @@
 id: overview
 title: Overview
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.9/src/consensus
     title: Consensus Smart Contracts
 ---
 
-The consensus mechanism in Cartesi Rollups is responsible for validating and accepting claims submitted by validators. These contracts ensure the integrity of the rollup by validating outputs Merkle roots.
+The consensus contracts receive claims about an Application's post-epoch machine state. A claim proves both the machine Merkle root and the cumulative outputs Merkle root stored inside that machine. After the claim is staged and accepted, the Application can validate and execute outputs from the accepted outputs root.
 
 ## Consensus Contracts
 
 The framework supports different consensus mechanisms:
 
-- **[Authority](./authority/authority.md)**: Single-owner consensus controlled by one address
-- **[Quorum](./quorum/quorum.md)**: Multi-validator consensus requiring majority approval
+- **[Authority](./authority/authority.md)**: One owner submits claims, which are staged immediately
+- **[Quorum](./quorum/quorum.md)**: An immutable validator set stages a claim after a strict-majority vote
 
 ## Core Interfaces
 
@@ -23,17 +23,14 @@ The framework supports different consensus mechanisms:
 
 ## Consensus Mechanism
 
-A claim consists of:
+A claim submission identifies:
 
-- Application Contract Address: The address of the dApp being validated
-- Last Processed Block Number: The block number up to which inputs have been processed
-- Outputs Merkle Root: The root hash of the Merkle tree containing all outputs produced by the application
+- the Application contract;
+- the final base-layer block processed in the epoch;
+- the post-epoch machine Merkle root; and
+- a machine-validity proof showing a valid `rx accepted` yield and the outputs Merkle root in the transmit buffer.
 
-The consensus contract validates that:
-- The block number is at the end of an epoch (modulo epoch length equals epoch length - 1)
-- The block number is in the past (not future)
-- No duplicate claim has been submitted for the same application and epoch
+The consensus verifies that the processed block is in the past and falls at an epoch boundary. Its concrete staging rule then applies. Staged claims remain pending for the configured claim-staging period, giving the guardian time to foreclose an Application if a bad claim is detected. After that period, anyone can accept the claim.
 
-Once a claim is accepted, the outputs Merkle root becomes valid and can be used to validate individual outputs in the application contract.
-
+Acceptance makes the outputs Merkle root valid, records the latest finalized machine root, and advances the first unprocessed block for that Application. See [`IConsensus`](./iconsensus.md) for the proof, lifecycle, events, and errors.
 

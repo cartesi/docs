@@ -51,6 +51,8 @@ Verify the installation by running `node -v`, which will display the version of 
 
 ## Cartesi CLI
 
+The Rollups 2.0 documentation uses Cartesi CLI `2.0.0`, which includes Cartesi Machine Emulator `0.20.0`.
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -62,14 +64,14 @@ import TabItem from '@theme/TabItem';
     </code></pre>
     <p> Alternatively, you can install Cartesi CLI with NPM:</p>
     <pre><code>
-    npm install -g @cartesi/cli
+    npm install -g @cartesi/cli@2.0.0
     </code></pre>
   </TabItem>
 
   <TabItem value="Linux" label="Linux">
   <p>Install Cartesi CLI with NPM:</p>
     <pre><code>
-    npm install -g @cartesi/cli
+    npm install -g @cartesi/cli@2.0.0
     </code></pre>
   </TabItem>
 
@@ -77,7 +79,7 @@ import TabItem from '@theme/TabItem';
     <p>1. Install <a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL2</a> and Ubuntu from the Microsoft store</p>
     <p>2. Install Cartesi CLI with NPM: </p>
     <pre><code>
-    npm install -g @cartesi/cli
+    npm install -g @cartesi/cli@2.0.0
     </code></pre>
   </TabItem>
 </Tabs>
@@ -88,3 +90,5 @@ Cartesi CLI doctor is a diagnostic tool that declares whether your system is rea
 $ cartesi doctor
 ✔ Your system is ready for cartesi.
 ```
+
+Confirm the installed release with `cartesi --version`. If you use a host-installed Cartesi Machine Emulator instead of the SDK image, use version `0.20.0` or a compatible `0.20.x` release.

@@ -83,11 +83,12 @@ Ensure to follow best practices when handling private keys during local developm
    docker compose --project-name cartesi-rollups-node \
       exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
       --epoch-length 10 \
+      --claim-staging-period <blocks> \
       --salt <salt> \
       --register
    ```
 
-   Replace `<app-name>` with your application name and `<salt>` with a unique identifier. The salt must be unique for each deployment and cannot be repeated. You can generate a unique salt using:
+   Replace `<app-name>` with your application name, `<blocks>` with the required claim-staging period, and `<salt>` with a unique identifier. The salt must be unique for each deployment and cannot be repeated. You can generate a unique salt using:
 
    ```shell
    cast keccak256 "your-unique-string"
@@ -102,12 +103,12 @@ Ensure to follow best practices when handling private keys during local developm
    1. Deploy an authority contract with `cast`. Replace each placeholder with the expected value, and grab the returned address from the command output (the final `sed` call normalizes the address).
 
       ```shell
-      cast send <AuthorityFactory-Address> "newAuthority(address,uint256)" <Application-Owner-Address> \
-      10 --private-key <PRIVATE-KEY> --rpc-url <RPC-URL>\
+      cast send <AuthorityFactory-Address> "newAuthority(address,uint256,uint256)" <Authority-Owner-Address> \
+      10 <claim-staging-period> --private-key <PRIVATE-KEY> --rpc-url <RPC-URL>\
       --json | jq -r '.logs[-1].data' | sed 's/^0x000000000000000000000000/0x/'
       ```
 
-   You can find the AuthorityFactory, portals and inputbox addresses for your target chain in the **Deployed Contracts** section below; Replace `<AuthorityFactory-Address>` with the appropriate address.
+   You can find the AuthorityFactory, portal, and InputBox addresses for your target chain in the **Deployed contracts** section below. Replace `<AuthorityFactory-Address>` with the appropriate address.
 
    2. Use the address you got above as the `<Authority-contract>` in the deploy command below. This command re-runs the snapshot registration using the specified authority and epoch values.
 
@@ -119,17 +120,11 @@ Ensure to follow best practices when handling private keys during local developm
          --json
       ```
 
-      On success this command deploys, registers and returns the address of the deployed application contract, this should be notted for further interaction with your applciation.
+      On success, this command deploys and registers the Application, then returns its contract address. Record the address for later interactions.
 
-## Deployed Contracts:
+## Deployed contracts
 
-Depending on your intended deployment chain, you can find the list of required contracts like the Inputbox, Portals, Authority Factory etc, below:
-
-- [Cannon Devnet](https://usecannon.com/packages/cartesi-rollups/2.2.0/13370-main/deployment/contracts)
-- [Ethereum Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/11155111-main/deployment/contracts)
-- [Arbitrum Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/421614-main/deployment/contracts)
-- [OP Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/11155420-main/deployment/contracts)
-- [Base Sepolia](https://usecannon.com/packages/cartesi-rollups/2.2.0/84532-main/deployment/contracts)
+The commands require addresses for the InputBox, portals, Application factory, and Authority factory from one contract deployment. Use the verified `deployments/<chain-id>` artifact published with the Rollups Contracts release. See [Use published contract addresses](../introduction.md#use-published-contract-addresses).
 
 ## Accessing the node
 

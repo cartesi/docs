@@ -2,7 +2,7 @@
 id: iauthority-factory
 title: IAuthorityFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/IAuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/consensus/authority/IAuthorityFactory.sol
     title: IAuthorityFactory Interface
 ---
 
@@ -29,7 +29,11 @@ A new authority was deployed.
 ### `newAuthority()`
 
 ```solidity
-function newAuthority(address authorityOwner, uint256 epochLength) external returns (IAuthority)
+function newAuthority(
+    address authorityOwner,
+    uint256 epochLength,
+    uint256 claimStagingPeriod
+) external returns (IAuthority)
 ```
 
 Deploy a new authority.
@@ -40,6 +44,7 @@ Deploy a new authority.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | Blocks that must pass between claim staging and acceptance |
 
 **Return Values**
 
@@ -50,7 +55,12 @@ Deploy a new authority.
 ### `newAuthority()` (with salt)
 
 ```solidity
-function newAuthority(address authorityOwner, uint256 epochLength, bytes32 salt) external returns (IAuthority)
+function newAuthority(
+    address authorityOwner,
+    uint256 epochLength,
+    uint256 claimStagingPeriod,
+    bytes32 salt
+) external returns (IAuthority)
 ```
 
 Deploy a new authority deterministically.
@@ -61,6 +71,7 @@ Deploy a new authority deterministically.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | Blocks that must pass between claim staging and acceptance |
 | `salt` | `bytes32` | The salt used to deterministically generate the authority address |
 
 **Return Values**
@@ -75,6 +86,7 @@ Deploy a new authority deterministically.
 function calculateAuthorityAddress(
     address authorityOwner,
     uint256 epochLength,
+    uint256 claimStagingPeriod,
     bytes32 salt
 ) external view returns (address)
 ```
@@ -87,10 +99,11 @@ Calculate the address of an authority to be deployed deterministically.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | Blocks that must pass between claim staging and acceptance |
 | `salt` | `bytes32` | The salt used to deterministically generate the authority address |
 
 **Return Values**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `address` | The deterministic authority address | 
+| `[0]` | `address` | The deterministic authority address |

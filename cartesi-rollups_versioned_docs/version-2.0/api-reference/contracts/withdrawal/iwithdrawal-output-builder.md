@@ -2,21 +2,19 @@
 id: iwithdrawal-output-builder
 title: IWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilder.sol
     title: IWithdrawalOutputBuilder interface
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
-    title: IWithdrawalOutputBuilderErrors
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
+    title: IWithdrawalOutputBuilderErrors interface
 ---
 
-A **withdrawal output builder** turns an account (as encoded in the application's [accounts drive](./withdrawal-config.md#drive-geometry)) into an [output](../../backend/vouchers.md) that, when executed by the [`Application`](../application.md) contract, transfers that account's funds to its owner.
+A **withdrawal output builder** converts one encoded accounts-drive record into an output that transfers the account's funds to its owner.
 
-During [`withdraw()`](../application.md#withdraw), the Application **static-calls** the builder set in its [`WithdrawalConfig`](./withdrawal-config.md) and runs the returned output. Because the call is a `STATICCALL`, `buildWithdrawalOutput` must not change any state (it is `view`/`pure`). Any state change, such as contract creation, log emission, storage write, self-destruct, or Ether transfer, reverts the call and aborts the withdrawal.
+The [`Application`](../application.md#withdraw) calls the builder with `STATICCALL`. Building the output cannot change state, emit events, create contracts, transfer Ether, or self-destruct. The Application executes the returned output separately.
 
-The account encoding is **application-specific**. See [UsdWithdrawalOutputBuilder](./usd-withdrawal-output-builder.md) for the single-ERC-20 implementation.
+Account contents remain application-specific, but every account must end with its owner's 20-byte address. The builder must interpret the complete account exactly as the guest application wrote it.
 
-## Functions
-
-### `buildWithdrawalOutput()`
+## `buildWithdrawalOutput()`
 
 ```solidity
 function buildWithdrawalOutput(address appContract, bytes calldata account)
@@ -25,34 +23,22 @@ function buildWithdrawalOutput(address appContract, bytes calldata account)
     returns (bytes memory output)
 ```
 
-Build an output that, when executed by the application contract, transfers the funds of an account to its owner.
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `appContract` | `address` | Application holding the base-layer assets |
+| `account` | `bytes` | Complete encoded accounts-drive record |
 
-**Parameters**
+Returns an executable output that transfers the encoded funds to the account owner.
 
-| Name | Type | Description |
-|------|------|-------------|
-| `appContract` | `address` | The application contract address. May be needed for outputs that move assets from the application's own account to the account owner (e.g. ERC-721 / ERC-1155 transfers). |
-| `account` | `bytes` | The account, as encoded in the accounts drive |
-
-**Return Values**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `output` | `bytes` | The withdrawal output |
-
-## Errors
-
-### `AccountTooShort()`
+## `InvalidAccountSize`
 
 ```solidity
-error AccountTooShort(uint64 attemptedAccountSize, uint64 minAccountSize)
+error InvalidAccountSize(uint256 attemptedAccountSize, uint64 accountSize)
 ```
 
-Raised when the provided account is too short for the builder to decode on-chain.
+Raised when the supplied record length differs from the exact size expected by the builder.
 
-**Parameters**
-
-| Name | Type | Description |
-|------|------|-------------|
-| `attemptedAccountSize` | `uint64` | The attempted account size, in bytes |
-| `minAccountSize` | `uint64` | The minimum expected account size, in bytes |
+| Parameter | Description |
+| --- | --- |
+| `attemptedAccountSize` | Number of bytes supplied by the caller |
+| `accountSize` | Exact number of bytes required by the builder |

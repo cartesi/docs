@@ -11,12 +11,15 @@ The feature is opt-in: an application only supports it if it was deployed with a
 
 ## The two parts
 
-**Foreclosure** freezes the application. A guardian address, set in the withdrawal config, calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose). From that moment the application is frozen at its last settled state, and it stays frozen forever. See [FOR-005](../../api-reference/contracts/application.md#foreclose) for the guardian-only rule.
+**Foreclosure** freezes the application. A guardian address, set in the withdrawal config, calls [`foreclose()`](../../api-reference/contracts/application.md#foreclose). From that moment the application remains foreclosed permanently. Claims can no longer be submitted or accepted.
 
 **Emergency withdrawal** is the recovery path that foreclosure unlocks, and it is built on the application's **accounts drive**.
 
-The accounts drive is a dedicated [drive](../advanced-configuration.md#drives), a region of the Cartesi Machine's memory, that the application uses as its balance ledger. It records how much each account owns, in a fixed layout described by the [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md). Like every drive, it sits at a known, fixed address in the machine's memory.
-The machine's whole memory is a single Merkle tree whose root, the machine state root hash, is finalized on-chain as part of the settled claim. Because the accounts drive occupies a known address, its own Merkle root is a fixed branch of that tree, so it can be proven up to the machine state root hash with a short list of sibling hashes. After foreclosure, anyone submits that proof once to anchor the accounts-drive root on-chain against the application's last settled machine state. The ledger is then fixed on-chain, and each user withdraws their own balance by proving their account against that anchored drive. Everything happens directly against the contracts, so it keeps working even if the operator and its node are gone.
+The accounts drive is a dedicated [drive](../advanced-configuration.md#drives), a region of Cartesi Machine memory that the application uses as its balance ledger. It records how much each account owns in a fixed layout described by the [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md). Every account record must place its owner address in the final 20 bytes.
+
+The machine's memory forms a Merkle tree whose root is finalized on-chain when a claim is accepted. Because the accounts drive occupies a known address, its root can be proved against that finalized machine root. After foreclosure, anyone anchors the accounts-drive root once, then each user proves and withdraws one account.
+
+If no claim was ever accepted, the Application uses its template hash. Recovery therefore starts from the initial machine state, provided its accounts drive was configured and populated consistently at deployment.
 
 ## When funds are recoverable
 
@@ -25,10 +28,13 @@ All of the following must hold:
 1. the application was deployed with a valid [`WithdrawalConfig`](../../api-reference/contracts/withdrawal/withdrawal-config.md) (a guardian, an accounts-drive layout, and a withdrawal output builder);
 2. the guest application actually maintains the [accounts drive](../../api-reference/backend/emergency-withdrawal.md) in the layout the config describes;
 3. the application has been **foreclosed** by its guardian; and
-4. the account's balance was part of the last settled state.
+4. the account's balance was part of the last accepted state, or the initial template state when no claim was accepted; and
+5. the account record ends with the owner's 20-byte address and can be decoded by the configured withdrawal builder.
+
+Assets from deposit inputs that were not finalized are not part of this accounts-drive balance. Recover those assets through [deposit refunds](../../api-reference/contracts/refund/overview.md).
 
 ## Where to go next
 
 - [Claim & Foreclosure Lifecycle](./lifecycle.md) explains how inputs become settled state, and how foreclosure fits into that lifecycle.
 - [Emergency Withdrawal Recovery Guide](./recovery-guide.md) is the step-by-step procedure for foreclosing and withdrawing.
-- The [Application](../../api-reference/contracts/application.md#guardian--foreclosure) and [Withdrawal](../../api-reference/contracts/withdrawal/overview.md) contract pages are the on-chain reference.
+- The [Application](../../api-reference/contracts/application.md#guardian-and-foreclosure) and [Withdrawal](../../api-reference/contracts/withdrawal/overview.md) pages are the on-chain reference.

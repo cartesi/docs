@@ -2,11 +2,11 @@
 id: authority
 title: Authority
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/Authority.sol
+  - url: https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.9/src/consensus/authority/Authority.sol
     title: Authority Contract
 ---
 
-The **Authority** contract implements a single-owner consensus mechanism where only the contract owner can submit and accept claims.
+The **Authority** contract implements a single-owner consensus mechanism. Only the owner can submit a claim. A valid submission is staged immediately, and anyone can accept it after the claim-staging period through the inherited `acceptClaim()` function.
 
 ## Functions
 
@@ -16,11 +16,12 @@ The **Authority** contract implements a single-owner consensus mechanism where o
 function submitClaim(
     address appContract,
     uint256 lastProcessedBlockNumber,
-    bytes32 outputsMerkleRoot
+    bytes32 machineMerkleRoot,
+    MachineValidityProof calldata proof
 ) external onlyOwner
 ```
 
-Submit a claim to the consensus. Only the contract owner can call this function.
+Submit a claim to the consensus. Only the contract owner can call this function. A valid claim is submitted and staged in the same transaction, then waits for the configured claim staging period before acceptance.
 
 **Parameters**
 
@@ -28,7 +29,8 @@ Submit a claim to the consensus. Only the contract owner can call this function.
 |------|------|-------------|
 | `appContract` | `address` | The application contract address |
 | `lastProcessedBlockNumber` | `uint256` | The number of the last processed block |
-| `outputsMerkleRoot` | `bytes32` | The outputs Merkle root |
+| `machineMerkleRoot` | `bytes32` | The post-epoch machine Merkle root |
+| `proof` | `MachineValidityProof` | Proof of a valid `rx accepted` yield and the outputs Merkle root |
 
 ### `owner()`
 
@@ -84,4 +86,4 @@ Check if the contract supports a specific interface.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `bool` | True if the interface is supported | 
+| `[0]` | `bool` | True if the interface is supported |

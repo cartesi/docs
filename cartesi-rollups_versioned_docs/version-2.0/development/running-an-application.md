@@ -19,6 +19,8 @@ To start the node, run:
 cartesi run
 ```
 
+The commands and options on this page apply to Cartesi CLI `2.0.0`.
+
 Response:
 
 ```shell
@@ -37,6 +39,52 @@ Response:
 ```
 
 This command runs your backend compiled to RISC-V and packages it as a Cartesi machine. It is therefore important that after every code update, the application needs to be rebuilt then the run command executed again, the Cartesi CLI makes this process very easy and all you need do is hit the `<b>` button on your keyboard to trigger a rebuild and run command.
+
+## Configure claim acceptance timing
+
+Authority and Quorum consensus stage a claim before accepting it. Set the number of base-layer blocks in this waiting period with:
+
+```shell
+cartesi run --claim-staging-period 20
+```
+
+The default is `0`, which is convenient for local development. The option does not apply when the application uses PRT consensus.
+
+## Pass supported node variables
+
+The CLI can forward selected `CARTESI_*` variables from the host environment to the local Rollups Node. To see the allow-list for your installed CLI version, run:
+
+```shell
+cartesi run --list-supported-variables
+```
+
+The command prints JSON grouped by service and exits without starting the environment. Set an allowed variable in the same shell before running the application. For example:
+
+```shell
+export CARTESI_LOG_LEVEL=debug
+cartesi run
+```
+
+Variables outside the displayed allow-list are ignored. This prevents host settings that the local environment does not support from being passed into its services.
+
+## Check application status
+
+Run the following command from the application directory while the local environment is active:
+
+```shell
+cartesi status
+```
+
+The first line reports whether the project is running. Each deployed application then appears with four fields:
+
+| Field | Meaning |
+| --- | --- |
+| `Machine` | The application's machine template hash |
+| `Address` | The deployed Application contract address |
+| `Status` | The node's application state, such as `OK`, `FAILED`, `DIVERGED`, or `CORRUPTED` |
+| `Enabled` | Whether the node is actively processing the application |
+
+Use `cartesi status --json` when another tool needs to consume the result. It returns the environment `status` and a `deployments` array containing the same application data.
 
 :::troubleshoot troubleshooting common errors
 
