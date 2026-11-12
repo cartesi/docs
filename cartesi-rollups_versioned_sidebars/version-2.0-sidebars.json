@@ -118,6 +118,7 @@
                             "items": [
                                 "api-reference/jsonrpc/methods/epochs/epochs-list",
                                 "api-reference/jsonrpc/methods/epochs/epochs-get",
+                                "api-reference/jsonrpc/methods/epochs/epochs-get-by-virtual-index",
                                 "api-reference/jsonrpc/methods/epochs/jsonrpc-epochs-last-accepted"
                             ]
                         },
@@ -135,7 +136,9 @@
                             "label": "Outputs",
                             "items": [
                                 "api-reference/jsonrpc/methods/outputs/outputs-list",
-                                "api-reference/jsonrpc/methods/outputs/outputs-get"
+                                "api-reference/jsonrpc/methods/outputs/outputs-get",
+                                "api-reference/jsonrpc/methods/outputs/outputs-executed-count",
+                                "api-reference/jsonrpc/methods/outputs/outputs-pending-executable-count"
                             ]
                         },
                         {
@@ -150,6 +153,7 @@
                             "type": "category",
                             "label": "Node",
                             "items": [
+                                "api-reference/jsonrpc/methods/node/node-info",
                                 "api-reference/jsonrpc/methods/node/node-chain-id",
                                 "api-reference/jsonrpc/methods/node/node-version"
                             ]
