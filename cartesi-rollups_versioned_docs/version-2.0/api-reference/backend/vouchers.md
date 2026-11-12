@@ -298,6 +298,12 @@ This mechanism, where the Application contract maintains the state and funds whi
 The examples below emit a DELEGATECALL voucher by posting to `/delegate-call-voucher`.  
 In these snippets, `destination` is the contract that contains the logic to run, while `payload` is the ABI-encoded function call data (for example, `safeTransfer(address,address,uint256)`).
 
+The Cartesi Rollups contracts include a contract for exactly this call: [`SafeErc20Transfer`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/delegatecall/SafeErc20Transfer.sol) (interface `ISafeErc20Transfer`), whose `safeTransfer(IERC20 token, address to, uint256 value)` transfers ERC-20 tokens held by the application. It is the destination the [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md) uses for emergency withdrawals. Before rollups-contracts v3.0.0-alpha.7, it was named `SafeERC20Transfer` (interface `ISafeERC20Transfer`).
+
+:::note
+Since rollups-contracts v3.0.0-alpha.7, executing a DELEGATECALL voucher whose destination has no code reverts with `TargetHasNoCode(address target)`. Make sure the destination contract is deployed on the network where the voucher will be executed.
+:::
+
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
 <pre><code>
@@ -309,7 +315,7 @@ const abi = [
   "function safeTransfer(address,address,uint256)"
 ];
 
-async function emitSafeERC20Transfer(token, to, amount) {
+async function emitSafeErc20Transfer(token, to, amount) {
   const call = encodeFunctionData({
     abi,
     functionName: "safeTransfer",
@@ -415,6 +421,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"net/http"
 	"strings"
 
@@ -422,7 +429,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
+func emitSafeErc20Transfer(token, to common.Address, amount *big.Int) error {
 	abiJSON := `[{
 		"type":"function",
 		"name":"safeTransfer",
@@ -482,7 +489,7 @@ std::string emit_safe_erc20_transfer(
 )
 {
     // safeTransfer(address,address,uint256)
-    const std::string selector = "eb795549";
+    const std::string selector = "d1660f99";
     const std::string token_word = "000000000000000000000000" + token.substr(2);
     const std::string to_word = "000000000000000000000000" + to.substr(2);
     const std::string payload = "0x" + selector + token_word + to_word + amount_hex_32bytes;
@@ -537,9 +544,9 @@ An epoch refers to a specific period during which a batch of updates is processe
 
 Epoch Length is the number of blocks that make up an epoch. It determines how long each epoch lasts in terms of block counts. For instance, if an epoch length is set to 7200 blocks, the epoch will end once 7200 blocks have been processed. This length directly influences how frequently updates are finalized and recorded on the blockchain.
 
-Vouchers and DELEGATECALL vouchers are executed on the blockchain upon the closure of the corresponding epoch. This ensures that all state changes and logic executions are properly validated and recorded in the blockchain.
+Vouchers and DELEGATECALL vouchers can be executed on the blockchain once the claim for the corresponding epoch has been accepted by the consensus, which is some time after the epoch closes (for example, after the claim staging period). This ensures that all state changes and logic executions are properly validated and recorded in the blockchain.
 
-One common use of vouchers in Cartesi dApps is to withdraw assets. Users initiate asset withdrawals by generating vouchers, which are then executed on the blockchain upon the closure of the corresponding epoch.
+One common use of vouchers in Cartesi dApps is to withdraw assets. Users initiate asset withdrawals by generating vouchers, which can then be executed on the blockchain once the claim for the corresponding epoch has been accepted.
 
 You can manually set the epoch length to facilitate quicker asset deposits and withdrawals.
 
