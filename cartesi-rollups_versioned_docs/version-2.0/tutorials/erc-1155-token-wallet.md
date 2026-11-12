@@ -611,7 +611,7 @@ Non-interactive examples (from project root):
 
 ```bash
 cartesi send --encoding string \
-  '{"operation":"transfer","mode":"single","erc1155":"0xTokenAddress","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","to":"0x70997970C51812dc3A010C7d01b50b0d17e98F2a","tokenId":"1","amount":"5"}' \
+  '{"operation":"transfer","mode":"single","erc1155":"0xTokenAddress","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","to":"0x70997970C51812dc3A010C7d01b50e0d17dc79C8","tokenId":"1","amount":"5"}' \
   --project-name erc-1155-token-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```

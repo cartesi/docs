@@ -306,9 +306,8 @@ You can make a simple inspect call from your frontend client to retrieve reports
 To perform an Inspect call, use an HTTP POST request to `<address of the node>/inspect/<application name or address>` with a body containing the request payload. For example:
 
 ```shell
-curl -X POST http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9 \
-  -H "Content-Type: application/json" \
-  -d '"test"'
+curl -X POST http://127.0.0.1:6751/inspect/demo-application \
+  -d 'test'
 ```
 
 Once the call's response is received, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
@@ -316,12 +315,9 @@ Once the call's response is received, the payload is extracted from the response
 From a frontend client, here is an example of extracting the payload from an inspect request:
 
 ```javascript
-const response = await fetch("http://localhost:8080/inspect/0xb483897a2790a5D1a1C5413690bC5933f269b3A9", {
+const response = await fetch("http://127.0.0.1:6751/inspect/demo-application", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify("test")
+  body: "test"
 });
 
 const result = await response.json();
@@ -334,7 +330,7 @@ for (let i in result.reports) {
 ```
 
 :::note Interacting with Sample application?
-Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and returned in the inspect response. The node does not store inspect reports, so they cannot be queried later through the JSON-RPC API: `cartesi_listReports` and `cartesi_getReport` only return reports emitted while processing advance requests.
+Replacing `demo-application` above with the name or address of the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and returned in the inspect response. The node does not store inspect reports, so they cannot be queried later through the JSON-RPC API: `cartesi_listReports` and `cartesi_getReport` only return reports emitted while processing advance requests.
 :::
 
 ## Depositing Assets

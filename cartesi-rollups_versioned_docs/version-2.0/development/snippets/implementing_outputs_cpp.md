@@ -10,7 +10,7 @@
 namespace voucher_config
 {
 // Sample values used to build the voucher payload.
-const std::string kVoucherTokenAddress = "0x5138f529B77B4e0a7c84B77E79c4335D31938fed";
+const std::string kVoucherTokenAddress = "0x86EA17052C8e335Ad830B54EF566274EAB46B852";
 const std::string kVoucherRecipientAddress = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
 const std::string kVoucherAmountWeiHex = "0de0b6b3a7640000";
 } // namespace voucher_config

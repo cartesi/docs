@@ -52,10 +52,10 @@ static std::string utf8_to_hex(const std::string &text)
 
 struct Marketplace
 {
-    std::string erc721_portal = "0x9E8851dadb2b77103928518846c4678d48b5e371";
-    std::string erc20_portal = "0xACA6586A0Cf05bD831f2501E7B4aea550dA6562D";
-    std::string erc721_token = "0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78";
-    std::string erc20_token = "0x5138f529B77B4e0a7c84B77E79c4335D31938fed";
+    std::string erc721_portal = "0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E";
+    std::string erc20_portal = "0x3332DE61a8BB9aC84893b2f552Fe81C9a6dC5419";
+    std::string erc721_token = "0x0761b8e3aB06F458632974393C48765E6Ddc61bB";
+    std::string erc20_token = "0x86EA17052C8e335Ad830B54EF566274EAB46B852";
     std::string app_address = "0x0000000000000000000000000000000000000000";
 
     std::vector<std::string> listed_tokens;

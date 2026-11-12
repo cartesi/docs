@@ -65,14 +65,14 @@ Congratulations on successfully bootstrapping a new frontend repo; next we’ll 
 import "dotenv/config"
 import { defineChain } from 'viem';
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { mainnet, sepolia, cannon } from 'wagmi/chains'
+import { mainnet, sepolia, anvil } from 'wagmi/chains'
 import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
 
 let APPRPC = "http://127.0.0.1:6751/anvil";
 
 
 export const cartesi = defineChain({
-  ...cannon,
+  ...anvil,
   rpcUrls: { default: { http: [APPRPC] } },
 });
 
@@ -214,8 +214,10 @@ import { useSmartAccountClient } from "./zerodev";
 
 
 export const useInputBoxAddInput = async (args: Hex, walletClient: any) => {
-    let INPUTBOXADDRESS = '0xc70074BDD26d8cF983Ca6A5b89b8db52D5850051' as Address;
-    let APPADDRESS = '0xa083af219355288722234c47d4c8469ca9af6605' as Address;
+    // InputBox entry of `cartesi address-book`
+    let INPUTBOXADDRESS = '0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C' as Address;
+    // Application entry of `cartesi address-book`
+    let APPADDRESS = '0xYOUR_APPLICATION_ADDRESS' as Address;
 
     const smartAccountClient = await useSmartAccountClient(walletClient);
     console.log("printing useSmartAccountClient");
@@ -247,7 +249,7 @@ export const useInputBoxAddInput = async (args: Hex, walletClient: any) => {
 ```
 
 :::note Inputbox and App Address
-The Inputbox and App address contained in the above code snippet are also for a local application instance, therefore if your application address on devnet is different, you should replace the code content as required, while for testnet or mainnet you replace the application address with that of your application. In every environment, use the input box your application was deployed with, which the application contract's `getInputBox()` function returns (in a local environment, it is the `InputBox` entry of `cartesi address-book`); inputs sent to any other input box are not delivered to your application.
+The Inputbox address in the above code snippet is the `InputBox` entry of `cartesi address-book` for a local application instance. Replace `0xYOUR_APPLICATION_ADDRESS` with the `Application` entry that `cartesi address-book` prints while your application is running, while for testnet or mainnet you replace the application address with that of your application. In every environment, use the input box your application was deployed with, which the application contract's `getInputBox()` function returns (in a local environment, it is the `InputBox` entry of `cartesi address-book`); inputs sent to any other input box are not delivered to your application.
 :::
 
 ### Set Up the Frontend UI
@@ -394,7 +396,7 @@ This section of the tutorial is focused on setting up a Cartesi application on a
 - Next, run the below command to start a local anvil node and deploy all necessary servers and contracts.
   
 ```bash
-  cartesi run --services bundler,explorer,graphql,paymaster,passkey
+  cartesi run --services bundler,explorer,paymaster,passkey
 ```
 
 - Finally, in a new terminal, navigate to our frontend repository and start the frontend by running the command.
