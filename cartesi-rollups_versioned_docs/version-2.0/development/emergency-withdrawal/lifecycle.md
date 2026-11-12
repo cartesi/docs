@@ -56,8 +56,6 @@ To foreclose an application, the **guardian**, a single address fixed in the wit
 - [deposit refunds](./recovery-guide.md#step-7-refund-unfinalized-deposits) return portal deposits whose inputs were never finalized, through [`issueRefund()`](../../api-reference/contracts/application.md#issuerefund). Refunds are not automatic: anyone can send them, but someone has to;
 - outputs, such as vouchers, of epochs accepted before the foreclosure can still be executed as usual.
 
-Off-chain components that accept transactions on the application's behalf, such as a sequencer, must stop accepting them once the application is foreclosed: nothing they confirm afterwards can settle. See [Applications with a sequencer](./overview.md#applications-with-a-sequencer).
-
 Foreclosure is a property of the **application contract** and of the **node**. It takes both to make the freeze permanent:
 
 - **The contract** holds the on-chain truth. `foreclose()` can only be called by the guardian, only once (a second call reverts with `Foreclosed()`), and sets `isForeclosed()`, after which the normal `submitClaim` and `acceptClaim` paths revert. Under PRT, `DaveConsensus` likewise rejects staging, acceptance, sentry claims, and sentry rotation. The contract also gates emergency withdrawal and refunds so those paths only open once the application is foreclosed.
