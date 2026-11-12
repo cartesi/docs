@@ -6,13 +6,13 @@ resources:
     title: IQuorum Interface
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
-The `IQuorum` interface defines a consensus model controlled by a small, immutable set of validators.
+The `IQuorum` interface defines a consensus model controlled by a small, immutable set of validators. It inherits from [`IConsensus`](../iconsensus.md).
 
 ## Description
 
-A consensus model controlled by a small, immutable set of `n` validators. You can know the value of `n` by calling the `numOfValidators` function. Upon construction, each validator is assigned a unique number between 1 and `n`. These numbers are used internally instead of addresses for gas optimization reasons. You can list the validators in the quorum by calling the `validatorById` function for each ID from 1 to `n`.
+A consensus model controlled by a small, immutable set of `n` (at least 1) validators. You can know the value of `n` by calling the `numOfValidators` function. Upon construction, each validator is assigned a unique number between 1 and `n`. These numbers are used internally instead of addresses for gas optimization reasons. You can list the validators in the quorum by calling the `validatorById` function for each ID from 1 to `n`.
+
+Votes are tracked per application and epoch (identified by the last processed block number), and per claim (identified by the machine Merkle root).
 
 ## Functions
 
@@ -25,6 +25,8 @@ Get the number of validators.
 
 **Returns:**
 - (uint256): The total number of validators
+
+**Note:** The number of validators is greater than or equal to 1.
 
 ### `validatorId`
 ```solidity
@@ -54,7 +56,7 @@ Get the address of a validator by its ID.
 **Returns:**
 - (address): The validator address
 
-**Note:** Validator IDs range from 1 to `N`, the total number of validators. Invalid IDs map to address zero.
+**Note:** Validator IDs range from 1 to `N`, the total number of validators. Valid IDs do not map to address zero. Invalid IDs map to address zero.
 
 ### `numOfValidatorsInFavorOfAnyClaimInEpoch`
 ```solidity
@@ -136,7 +138,19 @@ Check whether a validator is in favor of a claim.
 
 **Note:** Assumes the provided ID is valid.
 
+## Errors
+
+### `CallerIsNotValidator`
+```solidity
+error CallerIsNotValidator(address caller)
+```
+
+Raised whenever `submitClaim` is called by someone who is not a validator.
+
+**Parameters:**
+- `caller` (address): The caller address
+
 ## Related Contracts
 
 - [`Quorum`](./quorum.md): Implementation of this interface
-- [`IConsensus`](../iconsensus.md): Base consensus interface 
+- [`IConsensus`](../iconsensus.md): Base consensus interface

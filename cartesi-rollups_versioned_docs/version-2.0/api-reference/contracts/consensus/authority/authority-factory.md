@@ -4,13 +4,11 @@ title: AuthorityFactory
 resources:
   - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/AuthorityFactory.sol
     title: AuthorityFactory Contract
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/IAuthorityFactory.sol
-    title: IAuthorityFactory Interface
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
+The **AuthorityFactory** contract allows anyone to reliably deploy new `IAuthority` contracts. It implements [`IAuthorityFactory`](./iauthority-factory.md).
 
-The **AuthorityFactory** contract allows anyone to reliably deploy new `IAuthority` contracts.
+Every deployment takes an epoch length and a claim staging period. See the [claim lifecycle](../overview.md#claim-lifecycle) for how the staging period is used.
 
 ## Functions
 
@@ -26,13 +24,15 @@ function newAuthority(
 
 Deploy a new authority contract.
 
+*On success, emits an `AuthorityCreated` event. Reverts if the authority owner address is zero or if the epoch length is zero (`ZeroEpochLength`).*
+
 **Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
-| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
+| `claimStagingPeriod` | `uint256` | The claim staging period, in number of blocks |
 
 **Return Values**
 
@@ -53,13 +53,15 @@ function newAuthority(
 
 Deploy a new authority contract deterministically using CREATE2.
 
+*On success, emits an `AuthorityCreated` event. Reverts if the authority owner address is zero or if the epoch length is zero (`ZeroEpochLength`).*
+
 **Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
-| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
+| `claimStagingPeriod` | `uint256` | The claim staging period, in number of blocks |
 | `salt` | `bytes32` | The salt used to deterministically generate the authority address |
 
 **Return Values**
@@ -87,7 +89,7 @@ Calculate the address of an authority to be deployed deterministically.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
-| `claimStagingPeriod` | `uint256` | How many base-layer blocks must elapse before a staged claim can be accepted |
+| `claimStagingPeriod` | `uint256` | The claim staging period, in number of blocks |
 | `salt` | `bytes32` | The salt used to deterministically generate the authority address |
 
 **Return Values**
@@ -99,17 +101,7 @@ Calculate the address of an authority to be deployed deterministically.
 ### `version()`
 
 ```solidity
-function version() external view returns (string memory)
+function version() external pure returns (uint64 major, uint64 minor, uint64 patch, string memory preRelease, string memory buildMetadata)
 ```
 
-Return the rollups-contracts package version string.
-
-## Events
-
-### `AuthorityCreated()`
-
-```solidity
-event AuthorityCreated(IAuthority authority)
-```
-
-Emitted when a new authority is deployed.
+Get the version of the contracts project, for example `(3, 0, 0, "alpha.10", "")`.

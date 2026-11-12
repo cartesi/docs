@@ -6,18 +6,17 @@ resources:
     title: IOutputsMerkleRootValidator Interface
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
-The `IOutputsMerkleRootValidator` interface provides valid outputs Merkle roots for validation, last-finalized machine Merkle roots, and input finalization checks.
+The `IOutputsMerkleRootValidator` interface provides valid outputs Merkle roots for validation.
 
 ## Description
 
-This interface provides functionality to check whether an outputs Merkle root is valid. ERC-165 can be used to determine whether this contract also supports any other interface (e.g. for submitting claims).
+This is the interface an [`Application`](../application.md) relies on: it validates outputs against `isOutputsMerkleRootValid`, proves its accounts drive against `getLastFinalizedMachineMerkleRoot` after foreclosure, and decides which deposits can be refunded with `wasInputFinalized`. A custom validator must implement all three functions.
+
+This interface inherits from `IERC165`. ERC-165 can be used to determine whether this contract also supports any other interface (e.g. for submitting claims).
 
 ## Functions
 
 ### `isOutputsMerkleRootValid`
-
 ```solidity
 function isOutputsMerkleRootValid(address appContract, bytes32 outputsMerkleRoot) external view returns (bool)
 ```
@@ -32,18 +31,21 @@ Check whether an outputs Merkle root is valid.
 - (bool): True if the outputs Merkle root is valid
 
 ### `getLastFinalizedMachineMerkleRoot`
-
 ```solidity
 function getLastFinalizedMachineMerkleRoot(address appContract) external view returns (bytes32)
 ```
 
-Get the last finalized machine Merkle root for an application.
+Get the last finalized machine Merkle root.
+
+**Parameters:**
+- `appContract` (address): The application contract address
 
 **Returns:**
-- (bytes32): The last finalized machine Merkle root, or zero if none has been finalized yet
+- (bytes32): The last finalized machine Merkle root
+
+**Note:** Returns zero if no machine Merkle root has been finalized yet for that application. In that case, the `Application` contract uses its template hash instead when proving the accounts drive.
 
 ### `wasInputFinalized`
-
 ```solidity
 function wasInputFinalized(
     address appContract,
@@ -57,14 +59,15 @@ Check whether an input was finalized.
 **Parameters:**
 - `appContract` (address): The application contract address
 - `inputIndex` (uint256): The index of the input in the application's input box
-- `blockNumber` (uint256): The number of the base-layer block in which the input was added
+- `blockNumber` (uint256): The number of the base layer block in which the input was added
 
 **Returns:**
 - (bool): Whether the input was finalized
 
-*Assumes that an input with such an index exists and was added in that block. Foreclosed applications use this when issuing refunds for deposit inputs that were not finalized.*
+**Note:** This function assumes that an input with such an index exists in the input box of the application, and that it was added in such a base layer block. Foreclosed applications use this function to issue refunds for deposit inputs that were not finalized.
 
 ## Related Contracts
 
 - [`IConsensus`](./iconsensus.md): Interface that inherits from this interface
 - [`AbstractConsensus`](./abstract-consensus.md): Abstract implementation that implements this interface
+- [`DaveConsensus`](https://github.com/cartesi/dave/tree/v3.0.0-alpha.6/cartesi-rollups/contracts/src/DaveConsensus.sol): The PRT consensus contract, which implements this interface but not `IConsensus`
