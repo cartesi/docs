@@ -101,6 +101,20 @@ import AssetWithdrawEtherCPP from './snippets/asset_withdraw_ether_cpp.md';
 
 For a full guide, see the Tutorials: [ERC-20 Token Wallet](../tutorials/erc-20-token-wallet.md), [ERC-1155 Token Wallet](../tutorials/erc-1155-token-wallet.md), and [Utilizing test tokens in dev environment](../tutorials/utilizing-the-cli-test-tokens.md).
 
+## Decoding Deposits
+
+Deposit input payloads arrives applications as an abi-encoded hex, this hex input would need to be decoded to obtain the contained deposit parameters. This decode process could either be handled manually by the developers or could be automated using the assets' manager library.
+
+The **parser submodule** of the asset manager library simplifies the decode process for deposit payloads by abstracting an already implemented logic to decode the deposit payload for all major assets (ERC721, ERC20, ERC721), it exposes a method called decode input, which the application logic transfers the deposit payload to then receives a struct containing all the parameters contained in the deposit payload. A more detailed guide on the parser library can be found in this [Asset Management Library (CMA)](../api-reference/asset-management/overview.md)
+
+## Managing and Recording Deposits
+
+Once a deposit occurs on the base layer, the application receives all necessary details pertaining to the deposit. It's important that the application maintain a record of an address to a token and finally the balance of the address for that token, without a proper record, the application is unable to tell the exact token and also the amount of token that each address owns on the dApp.
+
+This record can either be implemented manually by the developer or the application could simply import the Asset manager library then leverage the **ledger submodule** to manage and keep this record.
+
+The ledger submodule can be likened to a plug in wallet for applications, it contains a storage struct which tracks the assets balance for each address as well as the total supply for each token deposited to the wallet, finally it exposes methods to handle deposit, transfer and withdrawal of these assets in the record. For a detailed explanation of the ledger library, check this [Asset Management Library (CMA)](../api-reference/asset-management/overview.md)
+
 ## Withdrawing assets
 
 Users can deposit assets to a Cartesi Application, but only the Application can initiate withdrawals. When a withdrawal request is made, it’s processed and interpreted off-chain by the Cartesi Machine running the application’s code. Subsequently, the Cartesi Machine creates a voucher containing the necessary instructions for withdrawal, which is executable when an epoch has settled.
@@ -206,7 +220,7 @@ Here are the function signatures used by vouchers to withdraw the different type
 
 | Asset    | Destination    | Function signature                                                                                                                          |
 | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../api-reference/json-rpc/application.md/#withdrawether)                            |
+| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../api-reference/json-rpc/application.md/#withdrawether)                                |
 | ERC-20   | Token contract | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
 | ERC-20   | Token contract | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
