@@ -10,7 +10,7 @@ resources:
 
 The **`WithdrawalConfig`** struct is passed to the [`Application`](../application.md#constructor) constructor to enable **foreclosure and emergency withdrawal**. It defines who may foreclose the application (the **guardian**), the geometry of the **accounts drive** (the in-app balance ledger held inside the machine state), and the contract that builds withdrawal outputs.
 
-A **zero-valued** `WithdrawalConfig` is valid and deploys an application **without** the feature.
+A **zero-valued** `WithdrawalConfig` is valid and deploys an application **without** the feature. With the Cartesi Rollups CLI, deploy without the feature by omitting `--withdrawal-config-file` (and `--withdrawal-config`): the CLI rejects a config with a zero guardian or a zero output builder.
 
 ## Struct
 
@@ -52,6 +52,10 @@ The `Application` constructor calls `isValid()` and reverts with `InvalidWithdra
 
 - `log2(driveSize) = 5 + log2MaxNumOfAccounts + log2LeavesPerAccount` must not exceed `64` (the machine memory is `2^64` bytes); and
 - the drive's end address `(accountsDriveStartIndex + 1) << log2(driveSize)` must not overflow and must not exceed `2^64`.
+
+:::warning
+`isValid()` does **not** check that the config points at the template's accounts drive, and neither does the Cartesi Rollups CLI. A config whose start index or sizes are wrong deploys without error, but withdrawals and proofs then read whatever machine memory it selects. Check the drive position against the machine template before deploying; see [Checking the drive position](../../backend/emergency-withdrawal.md#checking-the-drive-position).
+:::
 
 :::note
 `isValid()` checks only the **drive geometry**. It does **not** reject a zero `guardian` or a zero `withdrawalOutputBuilder`. A config with those set to zero still passes the constructor, as long as its geometry is valid. Deployment tools such as the Cartesi Rollups CLI go further and refuse a zero guardian or builder for an *enabled* config, but a direct factory call would not.

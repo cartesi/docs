@@ -10,9 +10,22 @@ resources:
 
 **`UsdWithdrawalOutputBuilder`** is a concrete [`IWithdrawalOutputBuilder`](./iwithdrawal-output-builder.md) for applications whose accounts drive denominates a **single ERC-20 token**. It is a stateless contract fixed to one token at construction; deploy one per token with the [factory](./usd-withdrawal-output-builder-factory.md).
 
-For each account it produces a **`DelegateCallVoucher`** that delegate-calls a shared `SafeErc20Transfer` contract to move `balance` of the token to the account owner.
+For each account it produces a **`DelegateCallVoucher`** that delegate-calls a shared [`SafeErc20Transfer`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/delegatecall/SafeErc20Transfer.sol) contract to move `balance` of the token to the account owner. (Before rollups-contracts v3.0.0-alpha.7, this contract and its interface were named `SafeERC20Transfer` and `ISafeERC20Transfer`.)
 
-USD accounts are **exactly 32 bytes**: a little-endian `uint96` balance in the first 12 bytes, and the owner address in the last 20 bytes (no tail padding). Account encodings must end with the owner address so nodes can serve owner-to-account-index lookups.
+## Account encoding
+
+The builder decodes each account with `LibUsdAccount`. An account is **exactly 32 bytes**, with no padding:
+
+| Bytes | Content |
+|-------|---------|
+| `0` to `11` | The balance, a `uint96` stored **little-endian** (at most `2^96 - 1`) |
+| `12` to `31` | The owner address (20 bytes, big-endian) |
+
+For example, a balance of `1000` (`0x3e8`) owned by `0xbd8eba8bf9e56ad92f4c4fc89d6cb88902535749` is encoded as `0xe80300000000000000000000bd8eba8bf9e56ad92f4c4fc89d6cb88902535749`.
+
+:::caution
+Before rollups-contracts v3.0.0-alpha.7, the balance was a `uint64` in bytes `0` to `7` and the owner was in bytes `8` to `27`. A record written in that older layout still has a valid proof, but this builder decodes it to a different owner and balance. Make sure the guest writes the layout above.
+:::
 
 ## Functions
 
@@ -53,13 +66,13 @@ function buildWithdrawalOutput(address, bytes calldata account)
     returns (bytes memory output)
 ```
 
-Decode `account` as `(address user, uint96 balance)` and return a `DelegateCallVoucher` that, when executed by the application, calls `SafeErc20Transfer.safeTransfer(token, user, balance)`.
+Decode `account` (see [Account encoding](#account-encoding)) into the owner `user` and its `balance`, and return a `DelegateCallVoucher` that, when executed by the application, calls `SafeErc20Transfer.safeTransfer(token, user, balance)`.
 
 **Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `account` | `bytes` | The account, decoded via `LibUsdAccount.decode` into `(user, balance)` |
+| `account` | `bytes` | The account, decoded via `LibUsdAccount.decode` into `(address user, uint96 balance)` |
 
 **Return Values**
 
@@ -67,4 +80,4 @@ Decode `account` as `(address user, uint96 balance)` and return a `DelegateCallV
 |------|------|-------------|
 | `output` | `bytes` | An ABI-encoded `DelegateCallVoucher(destination, payload)` where `destination` is the `SafeErc20Transfer` contract and `payload` is `safeTransfer(token, user, balance)` |
 
-*Raises [`InvalidAccountSize`](./iwithdrawal-output-builder.md#invalidaccountsize) if the account is not exactly 32 bytes.*
+*Raises [`InvalidAccountSize`](./iwithdrawal-output-builder.md#invalidaccountsize) if the account is not exactly 32 bytes long.*

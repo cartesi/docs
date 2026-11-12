@@ -10,7 +10,7 @@ resources:
 
 **`UsdWithdrawalOutputBuilderFactory`** lets anyone deploy a [`UsdWithdrawalOutputBuilder`](./usd-withdrawal-output-builder.md) for a given ERC-20 token at a predictable address. Because these builders are **stateless**, it does not matter whether you deploy one yourself or reuse an existing one for the same token. The address is derived deterministically from the token and salt (using `CREATE2`).
 
-The factory is constructed with a shared `SafeErc20Transfer` contract, which it passes to every builder it deploys (used as the delegate-call voucher destination).
+The factory is constructed with a shared [`SafeErc20Transfer`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/delegatecall/SafeErc20Transfer.sol) contract, which it passes to every builder it deploys (used as the delegate-call voucher destination). Before rollups-contracts v3.0.0-alpha.7, this contract and its interface were named `SafeERC20Transfer` and `ISafeERC20Transfer`.
 
 ## Functions
 

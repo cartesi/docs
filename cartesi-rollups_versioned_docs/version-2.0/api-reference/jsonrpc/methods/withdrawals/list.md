@@ -27,9 +27,10 @@ The `cartesi_listWithdrawals` method returns a paginated list of emergency withd
 | Name          | Type   | Required | Description                                      |
 |---------------|--------|----------|--------------------------------------------------|
 | application   | string | Yes      | The application's name or hex encoded address    |
-| account_index | string | No       | Filter by a specific account index (hex encoded) |
-| limit         | number | No       | Maximum number of withdrawals to return (default: 50, minimum: 1) |
+| account_index | string | No       | Filter by a specific account index, as a `0x`-prefixed hex string (for example `"0x0"`) |
+| limit         | number | No       | Maximum number of withdrawals to return (default: 50). An omitted `limit` or a `limit` of 0 selects the default. Values above 10000 are capped at 10000 without an error. |
 | offset        | number | No       | Starting point for the list (default: 0, minimum: 0)         |
+| descending    | boolean | No      | If `true`, sort by account index in descending order (default: `false`, ascending) |
 
 ## Response
 
@@ -40,7 +41,7 @@ The `cartesi_listWithdrawals` method returns a paginated list of emergency withd
     "data": [
       {
         "account_index": "0x0",
-        "account": "0xe803000000000000bd8eba8bf9e56ad92f4c4fc89d6cb8890253574900000000",
+        "account": "0xe80300000000000000000000bd8eba8bf9e56ad92f4c4fc89d6cb88902535749",
         "output": "0x10321e8b...",
         "block_number": "0xaac079",
         "transaction_hash": "0xfe6c84b741624b237b6d09a9f71a174e81a59e5eedb7893a77f238b45e833656",
@@ -81,13 +82,15 @@ See the [`Withdrawal`](../../types.md#withdrawal) type.
 | Name        | Type   | Description                                      |
 |-------------|--------|--------------------------------------------------|
 | total_count | number | Total number of withdrawals available            |
-| limit       | number | Number of withdrawals returned in this response  |
+| limit       | number | The limit that was applied, after the default and the 10000 cap |
 | offset      | number | Starting point of the returned withdrawals       |
 
 ## Error Codes
 
 | Code    | Message                | Description                                      |
 |---------|------------------------|--------------------------------------------------|
-| -32602  | Invalid params         | Invalid parameter values                         |
-| -32000  | Application not found  | The specified application does not exist         |
-| -32603  | Internal error         | An internal error occurred                       |
+| -32602  | Invalid parameters     | A parameter is missing or malformed, for example an `account_index` that is not a `0x`-prefixed hex string |
+| -31002  | Application not found  | The node does not know the application name or address |
+| -32603  | Internal server error  | A node-side failure occurred                     |
+
+An application that is known but has no withdrawals returns an empty `data` list, not an error. See [Error Handling](../../overview.md#error-handling) for the codes that any method can return, such as a timeout or the response size limit.
