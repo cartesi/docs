@@ -160,8 +160,8 @@ A Python-based wallet implementation for Cartesi dApps designed to handle variou
 	- Withdraw assets from the dApp.
 
 - **Resources**:
-	- [Python-Wallet GitHub Repository](https://github.com/jplgarcia/python-wallet/tree/main)
-	- [Full example](https://github.com/jplgarcia/python-wallet/blob/main/dapp.py)
+	- [Python-Wallet GitHub Repository](https://github.com/jplgarcia/python-wallet/tree/baf392c40d793dd7a36d5946eb116d6b53bde5c0)
+	- [Full example](https://github.com/jplgarcia/python-wallet/blob/baf392c40d793dd7a36d5946eb116d6b53bde5c0/dapp.py)
 ---
 ## CartDevKit
 
@@ -174,7 +174,7 @@ CartDevKit is an all-in-one package for building on Cartesi.
 - **Getting Started**:
 	- Create a new project:
 		```bash
-		npx cartdevkit@latest create mydapp
+		npx cartdevkit@1.0.4 create mydapp
 		```
 
 - **Resources**:

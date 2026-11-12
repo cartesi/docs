@@ -38,7 +38,7 @@ Push protocol is a web3 native communication network, enabling cross-chain notif
 Chronicle is an oracle solution, making tremendous strides in redefining access to cost-efficient and verifiable data. Integrating Cartesi and Chronicle offers Cartesi applications access to onchain and offcahin data like, price feed without developers having to set up additional systems or intermediaries.
 
 - **Resources**:
-  - Integration Guide: [Github](https://github.com/Mugen-Builders/cartesi-chronicle-integration/tree/main)
+  - Integration Guide: [Github](https://github.com/Mugen-Builders/cartesi-chronicle-integration/tree/ac1b7432a6a10eecf768dd300bf05065314a94fb)
   - Demo Video: [x](https://x.com/MichaelAsiedu_/status/1826200037786878012)
 
 ---
