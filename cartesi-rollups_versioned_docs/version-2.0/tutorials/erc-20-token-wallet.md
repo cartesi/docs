@@ -489,7 +489,7 @@ Inspect payloads use the form `userAddress/erc20TokenAddress` as a UTF-8 string.
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/erc-20-token-wallet \
   -H "Content-Type: text/plain" \
-  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0x5FbDB2315678afecb367f032d93F642f64180aa3'
+  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0x86EA17052C8e335Ad830B54EF566274EAB46B852'
 ```
 
 Replace the inspect path if your project name is not `erc-20-token-wallet` (see the URL printed by `cartesi run`). Replace the addresses in the body if you use different ones.

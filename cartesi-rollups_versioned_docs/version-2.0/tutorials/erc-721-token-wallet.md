@@ -434,17 +434,18 @@ To deposit ERC721 tokens interactively:
 cartesi deposit erc721
 ```
 
+The depositing account must own the token. `TestNFT` has a public `mint` function, so mint the token first as shown below.
+
 Non-interactive alternative. Run from your **project root** (with `cartesi run` up). Resolve addresses from [`cartesi address-book`](../development/send-inputs-and-assets.md):
 
 ```bash
-NFT=$(cartesi address-book 2>&1 | grep -i TestNFT | awk '{print $NF}')
-ERC721_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc721Portal | awk '{print $NF}')
+NFT=$(cartesi address-book TestNFT)
+ERC721_PORTAL=$(cartesi address-book Erc721Portal)
 
 cast send "$NFT" \
-  "safeMint(address,uint256,string)" \
+  "mint(address,uint256)" \
   0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
   1 \
-  "https://example.com/metadata/1.json" \
   --rpc-url http://127.0.0.1:6751/anvil \
   --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 
@@ -461,16 +462,16 @@ cartesi deposit erc721 1 \
   --rpc-url http://127.0.0.1:6751/anvil
 ```
 
-Skip `safeMint` if token ID `1` is already minted to your address.
+Skip the `mint` call if token ID `1` already exists; each token ID can be minted only once. On success, the CLI prints `✔ Approved 1 NFT` and `✔ Deposited 1 NFT to <application address>`.
 
 ### Balance checks (used in Inspect requests)
 
-Inspect payloads use the form `userAddress/erc721TokenAddress` as a UTF-8 string. The node passes the request body to your application unchanged as the inspect payload, so send that string as the body. Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and collection `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
+Inspect payloads use the form `userAddress/erc721TokenAddress` as a UTF-8 string. The node passes the request body to your application unchanged as the inspect payload, so send that string as the body. Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and the `TestNFT` collection `0x0761b8e3aB06F458632974393C48765E6Ddc61bB`:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/erc-721-token-wallet \
   -H "Content-Type: text/plain" \
-  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0x5FbDB2315678afecb367f032d93F642f64180aa3'
+  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0x0761b8e3aB06F458632974393C48765E6Ddc61bB'
 ```
 
 Replace the inspect path if your project name is not `erc-721-token-wallet` (see the URL printed by `cartesi run`). Replace the addresses in the body if you use different ones.

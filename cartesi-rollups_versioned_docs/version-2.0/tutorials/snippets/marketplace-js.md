@@ -392,10 +392,10 @@ var handlers = {
   inspect_state: handle_inspect,
 };
 
-let erc721_portal_address = "0x9E8851dadb2b77103928518846c4678d48b5e371";
-let erc20_portal_address = "0xACA6586A0Cf05bD831f2501E7B4aea550dA6562D";
-let erc20_token = "0x5138f529B77B4e0a7c84B77E79c4335D31938fed";
-let erc721_token = "0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78";
+let erc721_portal_address = "0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E";
+let erc20_portal_address = "0x3332DE61a8BB9aC84893b2f552Fe81C9a6dC5419";
+let erc20_token = "0x86EA17052C8e335Ad830B54EF566274EAB46B852";
+let erc721_token = "0x0761b8e3aB06F458632974393C48765E6Ddc61bB";
 let list_price = BigInt("100000000000000000000");
 
 var storage = new Storage(erc721_portal_address, erc20_portal_address, erc721_token, erc20_token, list_price);

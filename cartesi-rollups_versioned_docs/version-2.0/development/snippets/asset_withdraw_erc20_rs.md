@@ -2,7 +2,7 @@
 use json::{object, JsonValue};
 use num_bigint::BigUint;
 
-pub const TOKEN_ADDRESS: &str = "0x5138f529b77b4e0a7c84b77e79c4335d31938fed";
+pub const TOKEN_ADDRESS: &str = "0x86ea17052c8e335ad830b54ef566274eab46b852";
 
 fn payload_hex_to_bytes(payload: &str) -> Result<Vec<u8>, String> {
     let payload = payload.strip_prefix("0x").unwrap_or(payload);

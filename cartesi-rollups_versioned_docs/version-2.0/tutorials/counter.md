@@ -254,7 +254,7 @@ cartesi send random_text
 The above command sends an advance request with the payload "random_text" to our application, which ignores this payload then proceeds to increase out count value by `one (1)`, if this command is successful and our application process this request graciously, we should get a log similar to what's presented below on the terminal running our application:
 
 ```bash
-INFO:__main__:Received advance request data {'metadata': {'chain_id': 13370, 'app_contract': '0x9d40cfc42bb386b531c5d4eb3ade360f4105c4a3', 'msg_sender': '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', 'block_number': 630, 'block_timestamp': 1762711409, 'prev_randao': '0x63a2bb3993d9f9c371624f995a10a6f493e33c2535e62b32fee565f812b4c4ab', 'input_index': 0}, 'payload': '0x72616e646f6d5f74657874'}
+INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9d40cfc42bb386b531c5d4eb3ade360f4105c4a3', 'msg_sender': '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266', 'block_number': 630, 'block_timestamp': 1762711409, 'prev_randao': '0x63a2bb3993d9f9c371624f995a10a6f493e33c2535e62b32fee565f812b4c4ab', 'input_index': 0}, 'payload': '0x72616e646f6d5f74657874'}
 INFO:__main__:Counter increment requested, new count value: 1
 INFO:__main__:Sending finish
 ```

@@ -166,7 +166,7 @@ EOF
 <pre><code>
 
 ```shell
-cargo add hex serde ethers-core 
+cargo add hex@=0.4.3 serde@=1.0.229 ethers-core@=2.0.14
 ```
 
 </code></pre>
@@ -331,33 +331,29 @@ Also, ensure that all CLI commands are executed from the root directory of your 
 
 ### 1. Mint an ERC-721 Token and Grant Approval
 
-:::caution check the contract addresses
-The token and portal addresses used in the commands below and hard-coded in the application code (`erc721_portal_address`, `erc20_portal_address` and their equivalents) may differ from the ones deployed by your version of the Cartesi CLI. Compare them with the output of `cartesi address-book` (entries `TestNFT`, `TestToken`, `Erc721Portal` and `Erc20Portal`) and update them before you build and run the application; otherwise the application ignores your deposits.
-:::
-
 With your Marketplace application now deployed, the first step is to mint the NFT you plan to list and grant approval for it to be transferred via the ERC-721 portal.
-Since our app uses the test ERC-721 and ERC-20 contracts automatically deployed by the CLI, you can use the commands below to mint your token and set the necessary approvals.
+Since our app uses the test ERC-721 and ERC-20 contracts automatically deployed by the CLI, you can use the commands below to mint your token and set the necessary approvals. The commands use the `TestNFT` and `Erc721Portal` addresses printed by `cartesi address-book`, the same addresses hard-coded in the application code.
 
 - Mint token ID 1:
   
 ```bash
-cast send 0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78 \
-  "safeMint(address, uint256, string)" \
-  0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 1 "" \
+cast send 0x0761b8e3aB06F458632974393C48765E6Ddc61bB \
+  "mint(address,uint256)" \
+  0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 1 \
   --rpc-url http://127.0.0.1:6751/anvil \
   --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
-This command calls the `safeMint` function in the `testNFT` contract deployed by the CLI, minting token `ID 1` to the address `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`.
+This command calls the public `mint` function in the `TestNFT` contract deployed by the CLI, minting token `ID 1` to the address `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`.
 
 - Grant approval to the ERC721-Portal:
 
 Before an NFT can be deposited into the application, the portal contract must have permission to transfer it on behalf of the owner. Use the following command to grant that approval:
 
 ```bash
-cast send 0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78 \
+cast send 0x0761b8e3aB06F458632974393C48765E6Ddc61bB \
   "setApprovalForAll(address,bool)" \
-  0x9E8851dadb2b77103928518846c4678d48b5e371 true \
+  0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E true \
   --rpc-url http://127.0.0.1:6751/anvil \
   --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
@@ -380,7 +376,7 @@ Once the deposit succeeds, the terminal running your application should show log
 INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 751 "-" "-" 0.018688
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":13370,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0xc700d52f5290e978e9cae7d1e092935263b60051","block_number":675,"block_timestamp":1762948794,"prev_randao":"0x3d144a3d5bb3125c92a230e7597e04e82eb5d5acbea185db2b1eadda3530d5c7","input_index":0},"payload":"0xba46623ad94ab45850c4ecba9555d26328917c3bf39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":675,"block_timestamp":1762948794,"prev_randao":"0x3d144a3d5bb3125c92a230e7597e04e82eb5d5acbea185db2b1eadda3530d5c7","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bbf39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
 Token deposit and listing processed successfully
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /notice HTTP/1.1" 201 11 "-" "-" 0.001088
 Sending finish
@@ -407,13 +403,13 @@ The payload hex `0x416c6...205b315d` when decoded, returns `All listed tokens ar
 
 ### 4. Deposit ERC20 token for making purchases [advance request]
 
-With the NFT successfully listed for sale, it's time to attempt to purchase this token, but before we do that, we'll need first deposit the required amount of tokens to purchase the listed NFT. Since our marketplace lists all NFT's at the price of `100 testTokens` we'll be transferring 100 tokens to the new address we'll be using to purchase, before proceeding with the purchase.
+With the NFT successfully listed for sale, it's time to attempt to purchase this token, but before we do that, we'll need first deposit the required amount of tokens to purchase the listed NFT. Since our marketplace lists all NFT's at the price of `100` `TestToken` tokens (FUN), we'll be minting 100 tokens to the new address we'll be using to purchase, before proceeding with the purchase. `TestToken` starts with no balance on a new devnet, and its `mint` function is public.
 
-- Transfer required tokens to purchase address.
+- Mint the required tokens to the purchase address.
   
 ```bash
-cast send 0x5138f529B77B4e0a7c84B77E79c4335D31938fed \
-"transfer(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 100000000000000000000 \
+cast send 0x86EA17052C8e335Ad830B54EF566274EAB46B852 \
+"mint(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 100000000000000000000 \
 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
 --rpc-url http://127.0.0.1:6751/anvil
 ```
@@ -421,7 +417,7 @@ cast send 0x5138f529B77B4e0a7c84B77E79c4335D31938fed \
 - Deposit 100 tokens to the marketplace application.
 
 ```bash
-cartesi deposit --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
+cartesi deposit erc20 --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
 ```
 
 The CLI will prompt you for the token address (press Enter to use the default test token), and then the amount of tokens we intend to deposit `(100)`. The CLI would finally proceed to grant the necessary approvals after which it would deposit the tokens to our application.
@@ -432,8 +428,8 @@ On a successful deposit our application should return logs that look like this:
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 496 "-" "-" 0.018176
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":13370,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0xc700d6add016eecd59d989c028214eaa0fcc0051","block_number":2272,"block_timestamp":1762951994,"prev_randao":"0x0992ab8380b23c1c98928a76ae9a79c501ae27625943a53b0fd57455f10e5164","input_index":1},"payload":"0xfbdb734ef6a23ad76863cba6f10d0c5cbbd8342c70997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000"}}
-Deposited token: 0xfbdb734ef6a23ad76863cba6f10d0c5cbbd8342c, Receiver: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8, Amount: 100000000000000000000
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419","block_number":2272,"block_timestamp":1762951994,"prev_randao":"0x0992ab8380b23c1c98928a76ae9a79c501ae27625943a53b0fd57455f10e5164","input_index":1},"payload":"0x86ea17052c8e335ad830b54ef566274eab46b85270997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000"}}
+Deposited token: 0x86ea17052c8e335ad830b54ef566274eab46b852, Receiver: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8, Amount: 100000000000000000000
 Token deposit processed successfully
 Sending finish
 ```
@@ -455,7 +451,7 @@ This sends a purchase request for token ID `1` from the buyer address. The marke
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 426 "-" "-" 0.001792
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":13370,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":3576,"block_timestamp":1762954606,"prev_randao":"0xd29cd42cfd3c9ff4f31b39f497fc2f4d0a7add5a67da98be0d7841c37c7ad25f","input_index":2},"payload":"0x7b6d6574686f643a2070757263686173655f746f6b656e2c20746f6b656e5f69643a20317d"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":3576,"block_timestamp":1762954606,"prev_randao":"0xd29cd42cfd3c9ff4f31b39f497fc2f4d0a7add5a67da98be0d7841c37c7ad25f","input_index":2},"payload":"0x7b6d6574686f643a2070757263686173655f746f6b656e2c20746f6b656e5f69643a20317d"}}
 PURCHASE SUCCESSFUL, STRUCTURING VOUCHERS!!
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /voucher HTTP/1.1" 201 11 "-" "-" 0.015424
 Voucher generation successful
