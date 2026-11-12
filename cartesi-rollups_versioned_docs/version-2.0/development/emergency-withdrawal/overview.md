@@ -39,15 +39,6 @@ Both exits need the application to be foreclosed, so both need a guardian. Some 
 
 Outputs, such as vouchers, of epochs accepted before the foreclosure can still be executed as usual.
 
-## Applications with a sequencer
-
-Emergency withdrawal only sees state that was settled on-chain. If your application receives transactions through a sequencer, take the following into account:
-
-- **Soft confirmations do not count.** A transaction the sequencer has confirmed off-chain is part of the settled state only once the batch that carries it has been added as an input and that input's epoch has been accepted. Balances that exist only in confirmed-but-unsettled transactions cannot be recovered.
-- **The sequencer must stop at foreclosure.** After foreclosure, the `InputBox` rejects every new input for the application, so no further batch can be posted. The sequencer must stop accepting transactions for the application as soon as `isForeclosed()` returns `true`: nothing it confirms afterwards can ever settle.
-- **Deposits follow the rules above.** A deposit whose input was not finalized can be refunded. A finalized deposit that the application had not yet credited to the accounts drive, for example one it was holding until a sequencer batch included it, cannot be recovered.
-- **Voucher-only applications are not covered.** An application that keeps no accounts drive and withdraws only through vouchers does not support emergency withdrawal. After foreclosure, its users can only execute vouchers from epochs accepted before the foreclosure, and refund deposits that were never finalized.
-
 ## Where to go next
 
 - [Claim & Foreclosure Lifecycle](./lifecycle.md) explains how inputs become settled state, and how foreclosure fits into that lifecycle.

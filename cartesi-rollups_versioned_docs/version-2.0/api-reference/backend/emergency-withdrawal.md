@@ -17,7 +17,7 @@ An application supports emergency withdrawal only if:
 
 If the layout the guest writes and the config the contract was given disagree, proofs will not validate and funds cannot be withdrawn.
 
-An application that keeps its balances only in its own state and pays users out only through vouchers has no accounts drive, so it does not support emergency withdrawal, even if it was deployed with a guardian. After such an application is foreclosed, users can still execute vouchers from epochs accepted before the foreclosure, and deposits whose inputs were never finalized can be refunded, but balances held in the application are not recoverable. This includes applications that use a sequencer and withdraw through vouchers; see [Applications with a sequencer](../../development/emergency-withdrawal/overview.md#applications-with-a-sequencer).
+An application that keeps its balances only in its own state and pays users out only through vouchers has no accounts drive, so it does not support emergency withdrawal, even if it was deployed with a guardian. After such an application is foreclosed, users can still execute vouchers from epochs accepted before the foreclosure, and deposits whose inputs were never finalized can be refunded, but balances held in the application are not recoverable.
 
 ## Matching the layout
 
