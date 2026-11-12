@@ -2,8 +2,8 @@
 id: introduction
 title: Introduction
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/deployments
-    title: Supported networks
+  - url: https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.10
+    title: Supported networks (rollups-contracts v3.0.0-alpha.10)
 
 ---
 
@@ -40,7 +40,7 @@ Deployment with a third-party service provider is under development and will be 
 
 As stated above, the first step in deploying a new Cartesi dApp to a blockchain requires creating a smart contract on that network that uses the Cartesi Rollups smart contracts. Cartesi has already deployed the Rollups smart contracts to several networks for convenience.
 
-The table below shows the list of all [networks that are currently supported](https://usecannon.com/packages/cartesi-rollups) in the latest release:
+The table below lists the networks supported by [rollups-contracts v3.0.0-alpha.10](https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.10), the release used by rollups-node v2.0.0-alpha.14:
 
 | Network Name     | Chain ID |
 | ---------------- | -------- |
@@ -52,3 +52,10 @@ The table below shows the list of all [networks that are currently supported](ht
 | Arbitrum Sepolia | 421614   |
 | Base             | 8453     |
 | Base Sepolia     | 84532    |
+
+The contract addresses ship as the `cartesi-rollups-contracts-3.0.0-alpha.10-deployment-addresses.tar.gz` asset of that release, under `deployments/<chain-id>/`, one entry per contract. The addresses are deterministic, so before using one, check that a contract is deployed at it on your chain (for example, `cast code <address> --rpc-url <RPC-URL>` must return non-empty bytecode). Take every address your node uses from the same release as the node.
+
+:::caution Arbitrum and PRT
+- **Authority and Quorum applications on Arbitrum:** the reference node (rollups-node v2.0.0-alpha.14) does not support them. Inside Arbitrum contracts, `block.number` is a parent-chain (Ethereum) block number, while the node counts epochs in Arbitrum block numbers, so the consensus contract rejects the node's claims (`NotPastBlock`) and no epoch is ever accepted.
+- **PRT (Dave) applications:** the PRT contracts used by this node release (v3.0.0-alpha.6) support only Ethereum Mainnet and Sepolia. Their deployments on the other networks are experimental.
+:::

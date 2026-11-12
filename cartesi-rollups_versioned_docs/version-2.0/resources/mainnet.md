@@ -12,7 +12,14 @@ Cartesi Rollups are app-specific execution environments that can be deployed as 
 
 Now that Cartesi has reached a Mainnet Ready stage, developers can build dApps with Cartesi Rollups and deploy on Ethereum, Optimism, and Arbitrum Mainnets!
 
-At this first stage, the validation remains permissive, with no support for disputes; however, progress in implementing this is already underway.
+How an application's results are validated depends on the consensus it is deployed with. As of November 2026 (rollups-node v2.0.0-alpha.14, rollups-contracts v3.0.0-alpha.10 and PRT contracts v3.0.0-alpha.6, all alpha releases):
+
+- **Authority and Quorum** have no dispute game. An Authority's single owner, or a majority of a Quorum's fixed set of validators, decides which claims are accepted. This is the consensus that the [self-hosted deployment guides](../deployment/self-hosted/overview.md) deploy.
+- **PRT (Dave)** settles each epoch through a permissionless dispute tournament. The reference node can deploy PRT applications (`cartesi-rollups-cli deploy application --prt`). The PRT contracts support only Ethereum Mainnet and Sepolia; their deployments on other networks are experimental.
+
+:::caution Arbitrum
+The reference node (rollups-node v2.0.0-alpha.14) does not support Authority or Quorum applications on Arbitrum: inside Arbitrum contracts, `block.number` is a parent-chain (Ethereum) block number, while the node counts epochs in Arbitrum block numbers, so the node's claims are rejected and no epoch is ever accepted. See [Supported networks](../deployment/introduction.md#supported-networks).
+:::
 
 ## Undiscovered Bugs
 
