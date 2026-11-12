@@ -3,8 +3,6 @@ id: erc-20-token-wallet
 title: Integrating ERC20 token wallet functionality
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 This tutorial will guide you through creating a basic ERC20 token wallet for a Cartesi backend application using TypeScript.
 
 ## Setting up the project
@@ -24,7 +22,7 @@ yarn && yarn run codegen
 Now, navigate to the project directory and install [`viem`](https://viem.sh/):
 
 ```bash
-yarn add viem
+yarn add viem@2.57.19
 ```
 
 Deposit payloads from portals are packed ABI-encoded fields; see [asset handling](../development/asset-handling.md#abi-encoding-for-deposits) for the ERC-20 layout (`token`, `sender`, `amount`). Withdrawals use vouchers executed by the on-chain [`Application`](../api-reference/contracts/application.md) contract—see [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
@@ -251,9 +249,9 @@ The `withdrawErc20` method encodes `transferFrom(application, recipient, amount)
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`Erc20Portal`](../api-reference/contracts/portals/Erc20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+The [`Erc20Portal`](../api-reference/contracts/portals/ERC20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
 
-:::note ERC20Portal address
+:::note Erc20Portal address
 Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc20Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
@@ -456,9 +454,7 @@ An approval step is needed for the [**ERC20 token standard**](https://ethereum.o
 
 Without this approval, the `Erc20Portal` cannot deposit your tokens to the Cartesi backend.
 
-You will encounter this error if you don't approve the `Erc20Portal` address before deposits:
-
-`ContractFunctionExecutionError: The contract function "depositErc20Tokens" reverted with the following reason: ERC20: insufficient allowance`
+If you don't approve the `Erc20Portal` address before depositing, the call to `depositErc20Tokens` reverts with the token contract's insufficient-allowance error (for example, `ERC20InsufficientAllowance` in OpenZeppelin 5 tokens).
 :::
 
 To deposit ERC20 tokens interactively:
@@ -471,7 +467,7 @@ Non-interactive alternative. Run from your **project root** (with `cartesi run` 
 
 ```bash
 TOKEN=$(cartesi address-book 2>&1 | grep -i TestToken | awk '{print $NF}')
-ERC20_PORTAL=$(cartesi address-book 2>&1 | grep -i ERC20Portal | awk '{print $NF}')
+ERC20_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc20Portal | awk '{print $NF}')
 
 cast send "$TOKEN" \
   "approve(address,uint256)" \
@@ -488,15 +484,15 @@ cartesi deposit erc20 100000000000000000 \
 
 ### Balance checks (used in Inspect requests)
 
-Inspect payloads use the form `userAddress/erc20TokenAddress` as a UTF-8 string (hex-encoded in the JSON body). Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and token `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
+Inspect payloads use the form `userAddress/erc20TokenAddress` as a UTF-8 string. The node passes the request body to your application unchanged as the inspect payload, so send that string as the body. Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and token `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/erc-20-token-wallet \
-  -H "Content-Type: application/json" \
-  -d '{"payload": "0x3078663339466436653531616164383846364634636536614238383237323739636666466239323236362f307835466244423233313536373861666563623336376630333264393346363432663634313830616133"}'
+  -H "Content-Type: text/plain" \
+  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0x5FbDB2315678afecb367f032d93F642f64180aa3'
 ```
 
-Replace the inspect path if your project name is not `erc-20-token-wallet` (see the URL printed by `cartesi run`). Build the payload with `stringToHex` from viem if you use different addresses.
+Replace the inspect path if your project name is not `erc-20-token-wallet` (see the URL printed by `cartesi run`). Replace the addresses in the body if you use different ones.
 
 ### Transfers and Withdrawals
 
@@ -539,8 +535,8 @@ cartesi run --services explorer
 
 The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
 
-You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
+You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md/#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
 
 :::info Repo Link
-   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/erc-20-token-wallet)!
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/erc-20-token-wallet)!
 :::

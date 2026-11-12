@@ -3,8 +3,6 @@ id: erc-1155-token-wallet
 title: Integrating ERC1155 token wallet functionality
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 This tutorial guides you through building an ERC-1155 token wallet for a Cartesi backend application using TypeScript. It covers **single** and **batch** deposits from the base layer, internal balance tracking, transfers, and withdrawals for both modes.
 
 ## Setting up the project
@@ -15,7 +13,7 @@ First, set up your Cartesi project as described in the [Ether wallet tutorial](.
 cartesi create erc-1155-token-wallet --template typescript
 cd erc-1155-token-wallet
 yarn && yarn run codegen
-yarn add viem
+yarn add viem@2.57.19
 ```
 
 Single deposits use packed fields (`token`, `sender`, `tokenId`, `value`) with an optional standard-ABI tail; batch deposits use packed `token` and `sender` followed by ABI-encoded `tokenIds`, `values`, and optional data fields. See [asset handling](../development/asset-handling.md#abi-encoding-for-deposits). Withdrawals emit vouchers whose `safeTransferFrom` or `safeBatchTransferFrom` sender is your on-chain application address (`metadata.app_contract` on each advance)—see [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
@@ -525,7 +523,7 @@ cartesi run
 ### Deposits
 
 :::caution token approvals
-ERC-1155 uses `setApprovalForAll` on the token contract for each portal operator. Approve **both** [`Erc1155SinglePortal`](../api-reference/contracts/portals/Erc1155SinglePortal.md) and [`Erc1155BatchPortal`](../api-reference/contracts/portals/Erc1155BatchPortal.md) before depositing through the corresponding portal.
+ERC-1155 uses `setApprovalForAll` on the token contract for each portal operator. Approve **both** [`Erc1155SinglePortal`](../api-reference/contracts/portals/ERC1155SinglePortal.md) and [`Erc1155BatchPortal`](../api-reference/contracts/portals/ERC1155BatchPortal.md) before depositing through the corresponding portal.
 :::
 
 **Single deposit** — interactively:
@@ -538,7 +536,7 @@ Non-interactive alternative. Run from your **project root** (with `cartesi run` 
 
 ```bash
 MULTI=$(cartesi address-book 2>&1 | grep -i TestMultiToken | awk '{print $NF}')
-SINGLE_PORTAL=$(cartesi address-book 2>&1 | grep -i ERC1155SinglePortal | awk '{print $NF}')
+SINGLE_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155SinglePortal | awk '{print $NF}')
 
 cast send "$MULTI" \
   "mint(address,uint256,uint256,bytes)" \
@@ -572,7 +570,7 @@ Non-interactive alternative (from project root):
 
 ```bash
 MULTI=$(cartesi address-book 2>&1 | grep -i TestMultiToken | awk '{print $NF}')
-BATCH_PORTAL=$(cartesi address-book 2>&1 | grep -i ERC1155BatchPortal | awk '{print $NF}')
+BATCH_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155BatchPortal | awk '{print $NF}')
 
 cast send "$MULTI" \
   "mint(address,uint256,uint256,bytes)" \
@@ -629,7 +627,7 @@ Replace `0xTokenAddress` with `TestMultiToken` from `cartesi address-book`.
 
 ### Using the explorer
 
-Start the node with the explorer enabled to execute vouchers after an epoch closes:
+Start the node with the explorer enabled to execute vouchers once their epoch has closed and its claim has been accepted:
 
 ```shell
 cartesi run --services explorer

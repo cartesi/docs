@@ -5,8 +5,8 @@
 #include "3rdparty/cpp-httplib/httplib.h"
 #include "3rdparty/picojson/picojson.h"
 
-static const std::string kZeroHash32 =
-    "0x0000000000000000000000000000000000000000000000000000000000000000";
+// Empty payload: a plain Ether transfer must not carry calldata.
+static const std::string kEmptyPayload = "0x";
 
 std::string handle_advance(httplib::Client &cli, picojson::value data)
 {
@@ -14,11 +14,13 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 
     // Sample withdrawal: send 1 ETH (in wei) back to msg_sender.
     const std::string recipient = data.get("metadata").get("msg_sender").get<std::string>();
-    const std::string one_eth_wei_hex = "de0b6b3a7640000";
+    // 1 ETH in wei, as a 0x-prefixed 32-byte hex string.
+    const std::string one_eth_wei_hex =
+        "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000";
 
     picojson::object voucher;
     voucher["destination"] = picojson::value(recipient);
-    voucher["payload"] = picojson::value(kZeroHash32);
+    voucher["payload"] = picojson::value(kEmptyPayload);
     voucher["value"] = picojson::value(one_eth_wei_hex);
 
     auto response = cli.Post(

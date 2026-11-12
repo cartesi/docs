@@ -3,11 +3,11 @@ id: migration-guide
 title: Migration Guide
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 ## Migrating from Cartesi Rollups v1.5.x to v2.0
 
 Rollups node v2.0 changes how the node works internally and how application code interacts with it. Not every breaking change affects every application. Use the checklist below, then follow the matching sections.
+
+This guide describes the current v2.0 release set: rollups-node `v2.0.0-alpha.14`, rollups-contracts `v3.0.0-alpha.10` and Cartesi CLI `2.0.0-alpha.42`.
 
 ### If the application backend
 
@@ -18,16 +18,17 @@ Rollups node v2.0 changes how the node works internally and how application code
 
 ### If the application frontend
 
+- Sends inputs or deposits assets. See [Inputs and portals](#inputs-and-portals).
 - Queries the node GraphQL API. See [JSON-RPC queries](#json-rpc-queries).
 - Validates notices. See [Outputs](#outputs).
 - Executes vouchers. See [Outputs](#outputs).
-- Listens to voucher execution events. See [Outputs](#execution-event).
-- Checks if a voucher was executed. See [Outputs](#execution-check).
+- Listens to voucher execution events. See [Execution event](#execution-event).
+- Checks if a voucher was executed. See [Execution check](#execution-check).
 - Uses inspect `GET /inspect/<payload>`. See [Inspect calls](#inspect-calls).
 - Uses `@cartesi/wagmi`, `@cartesi/viem`, or another TypeScript client. See [TypeScript applications](#typescript-applications).
 
 :::note High-level frameworks
-If you use Deroll, python-cartesi, Cartesapp, or a similar framework, check whether it already implements these changes before rewriting backend or frontend code by hand.
+If you use Deroll, Rollmelette, python-cartesi, Cartesapp, or a similar framework, check whether it already implements these changes before rewriting backend or frontend code by hand.
 :::
 
 ---
@@ -44,7 +45,7 @@ In SDK v1, ERC-20 token deposit inputs start with a 1-byte Boolean field which i
 | `amount`  | `uint256` | 32 bytes | Amount of tokens deposited               |
 | `data`    | `bytes`   | variable | Extra data passed by the depositor       |
 
-In SDK v2, the ERC-20 portal only accepts successful transfers. Because `success` would always be `true`, it was removed. The deposit payload is:
+In SDK v2, the ERC-20 portal only accepts successful transfers: it reverts when the token's `transferFrom` fails. Because `success` would always be `true`, it was removed. The deposit payload is the packed encoding of:
 
 | Field    | Type      | Size     | Description                          |
 | :------- | :-------- | :------- | :----------------------------------- |
@@ -53,15 +54,15 @@ In SDK v2, the ERC-20 portal only accepts successful transfers. Because `success
 | `amount` | `uint256` | 32 bytes | Amount of tokens deposited           |
 | `data`   | `bytes`   | variable | Extra data passed by the depositor   |
 
-Update the back-end to stop reading or checking the leading `success` byte. See [asset handling](../development/asset-handling.md#abi-encoding-for-deposits).
+Update the back-end to stop reading or checking the leading `success` byte: the token address now starts at the first byte of the payload. See [asset handling](../development/asset-handling.md#abi-encoding-for-deposits) for the payloads of all portals.
 
-Sources: [rollups-contracts `InputEncoding`](https://github.com/cartesi/rollups-contracts/blob/main/contracts/common/InputEncoding.sol); [contracts.md](https://github.com/cartesi/rollups-contracts/blob/v2.0.1/docs/contracts.md).
+Source: [`InputEncoding.sol`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/src/common/InputEncoding.sol) in rollups-contracts `v3.0.0-alpha.10`.
 
 ---
 
 ## Application address
 
-In SDK v1, the back-end had no direct way to know its own on-chain address. `DAppAddressRelay` relayed it as an input. The back-end detected inputs from that contract and stored the payload. That address was required to build withdrawal vouchers: for Ether, as the voucher destination (`withdrawEther` on the application), and for ERC-20, ERC-721, and ERC-1155 as the `from` / `sender` in calls such as `transferFrom` or `safeTransferFrom` on the token contract.
+In SDK v1, the back-end had no direct way to know its own on-chain address. `DAppAddressRelay` relayed it as an input. The back-end detected inputs from that contract and stored the payload. That address was required to build withdrawal vouchers: for Ether, as the voucher destination (`withdrawEther` on the application), and for ERC-721 and ERC-1155, as the `from` address in `safeTransferFrom` calls on the token contract. ERC-20 withdrawals call `transfer`, which does not need it.
 
 ```python
 # v1 — detect and store the relayed application address
@@ -69,14 +70,16 @@ if msg_sender.lower() == dapp_relay_address.lower():
     rollup_address = payload
 ```
 
-In SDK v2, `DAppAddressRelay` is removed. Every advance-state input includes the application address in metadata as `app_contract`:
+In SDK v2, `DAppAddressRelay` is removed. Every advance-state input includes the application address in its metadata, as `app_contract`:
 
-```javascript
-// v2 — read the application address from input metadata
-const dAppAddress = data["metadata"]["app_contract"];
+```python
+# v2 — read the application address from the input metadata (rollup HTTP API)
+app_address = data["metadata"]["app_contract"]
 ```
 
-Remove any handling of `DAppAddressRelay` inputs. Use `data.metadata.app_contract` whenever a voucher needs the application contract address.
+The JavaScript and TypeScript templates use [`@cartesi/rollup`](../api-reference/backend/introduction.md), where the same value is the `appContract` field of the advance request.
+
+Remove any handling of `DAppAddressRelay` inputs. Use the `app_contract` metadata whenever a voucher needs the application contract address.
 
 ---
 
@@ -101,48 +104,59 @@ const voucher = {
 };
 ```
 
-In SDK v2, `withdrawEther` is gone. Ether withdrawal vouchers send wei directly: the application contract `safeCall`s `destination` with `value`.
+In SDK v2, `withdrawEther` is gone. A voucher carries a `value`, and the application contract calls `destination` forwarding that amount of Wei. To withdraw Ether:
 
 - Set `destination` to the recipient.
-- Set `payload` to empty (`zeroHash` / `0x`).
-- Set `value` to the Wei amount as a 32-byte big-endian hex string **without** the `0x` prefix.
+- Leave `payload` empty. A voucher with a non-empty payload reverts when its destination has no code, as is the case for a user's wallet.
+- Set `value` to the amount in Wei.
 
 ```javascript
-// v2 — Ether withdrawal voucher
-import { numberToHex, parseEther, zeroHash } from "viem";
+// v2 — Ether withdrawal voucher with @cartesi/rollup
+import { parseEther } from "viem";
 
-const voucher = {
+rollup.emitVoucher({
   destination: receiver,
-  payload: zeroHash,
-  value: numberToHex(BigInt(parseEther("1"))).slice(2),
-};
+  value: parseEther("1"), // Wei, as a bigint
+});
 ```
 
-See [asset handling](../development/asset-handling.md#withdrawing-tokens) and the [ether wallet tutorial](../tutorials/ether-wallet.md).
+Through the rollup HTTP API (`POST /voucher`), send `payload` as `"0x"` and `value` as a `0x`-prefixed, 32-byte hex string.
+
+See [withdrawing Ether](../development/asset-handling.md#withdrawing-ether) for examples in every template language, and the [Ether wallet tutorial](../tutorials/ether-wallet.md).
 
 ---
 
 ## Cartesi Machine image
 
-The application still runs inside a Cartesi Machine. The guest-tools package that provides the rollup HTTP loop was renamed and versioned independently of the node.
+The application still runs inside a Cartesi Machine. The guest-tools package that provides the rollup HTTP server was renamed and is versioned independently of the node.
 
 | | v1.5 | v2.0 |
 | :-- | :-- | :-- |
-| Guest tools | `machine-emulator-tools` (typically `0.14.1`) | `machine-guest-tools` (typically `0.18.0`) |
+| Guest tools | `machine-emulator-tools` (typically `0.14.1`) | `machine-guest-tools` `0.18.0` |
 | Typical base | Ubuntu Jammy RISC-V images | Ubuntu Noble RISC-V images |
-| Node emulator | Emulator SDK 0.17.x | Emulator `v0.21.0` |
+| Node emulator | Emulator SDK 0.17.x | Emulator `0.22.0` (rollups-node `v2.0.0-alpha.14`) |
 
 The machine snapshot (template hash) must match the hash registered with the application contract and the node. Rebuilding against a different emulator or guest-tools version produces a different hash.
 
 ### Building for SDK 2.0
 
-Do not retrofit a v1.5 Dockerfile. Start the application from scratch with **Cartesi CLI 2.0** and the current application templates. Those templates are the source of truth for the v2 image layout.
+Do not retrofit a v1.5 Dockerfile. Create a new project with Cartesi CLI `2.0.0-alpha.42` and the current application templates, which are the source of truth for the v2 image layout:
 
 ```shell
-cartesi create my-dapp --template javascript --branch prerelease/sdk-12
+cartesi create my-dapp --template typescript
 ```
 
-`--branch` selects a branch of [cartesi/application-templates](https://github.com/cartesi/application-templates/tree/prerelease/sdk-12). `prerelease/sdk-12` is the CLI 2.0 default. Then port application logic into the new project and run `cartesi build`.
+Then port the application logic into the new project and run `cartesi build`. See [creating an application](../development/creating-an-application.md).
+
+The JavaScript and TypeScript templates no longer poll the rollup HTTP server: they use the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package, which talks to the Cartesi Machine directly.
+
+---
+
+## Inputs and portals
+
+- **Input box.** Each v2 application is deployed with an input box, which its `getInputBox()` function returns. Send inputs to that input box, not to an address taken from a v1 deployment. Portals read the input box from the application, so deposits reach the right one automatically.
+- **Portal names.** The token portals and their deposit functions were renamed. Use `Erc20Portal.depositErc20Tokens`, `Erc721Portal.depositErc721Token`, `Erc1155SinglePortal.depositSingleErc1155Token` and `Erc1155BatchPortal.depositBatchErc1155Token`. The function selectors changed, so calls encoded with the v1 names (for example `depositERC20Tokens`) revert. `EtherPortal.depositEther` is unchanged.
+- **Addresses.** The portal and input box addresses differ from v1. Take them from the deployment of the contracts version your node uses (`cartesi address-book` in a local environment).
 
 ---
 
@@ -152,20 +166,22 @@ In SDK v1, the only verifiable outputs were notices and vouchers. Each type live
 
 In SDK v2, notices and vouchers share one buffer and one proof tree (**output unification**). An output is an arbitrary byte array encoded as a Solidity function call, so the type is the function selector. Any output can be validated, not only notices. A new executable type, the **DELEGATECALL voucher**, was added.
 
-The `Application` contract API changed accordingly. The following subsections match the [rollups-contracts v1→v2 wiki](https://github.com/cartesi/rollups-contracts/wiki/Migration-Guide-(v1%E2%86%92v2)#outputs).
+The `Application` contract API changed accordingly:
 
-| Action | v1 | v2 |
+| Action | v1 (`CartesiDApp`) | v2 (`Application`) |
 | :----- | :-- | :-- |
-| Validate | `validateNotice(bytes notice, Proof proof)` | `validateOutput(bytes output, OutputValidityProof proof)` |
-| Execute | `executeVoucher(address destination, bytes payload, Proof proof)` | `executeOutput(bytes output, OutputValidityProof proof)` |
-| Execution check | `wasVoucherExecuted(uint256 inputIndex, uint256 outputIndex)` | `wasOutputExecuted(uint256 outputIndex)` |
-| Execution event | `VoucherExecuted(uint256 voucherId)` | `OutputExecuted(uint64 outputIndex, bytes output)` |
+| Validate | `validateNotice(bytes notice, Proof proof)` | [`validateOutput(bytes output, OutputValidityProof proof)`](../api-reference/contracts/application.md#validateoutput) |
+| Execute | `executeVoucher(address destination, bytes payload, Proof proof)` | [`executeOutput(bytes output, OutputValidityProof proof)`](../api-reference/contracts/application.md#executeoutput) |
+| Execution check | `wasVoucherExecuted(uint256 inputIndex, uint256 outputIndex)` | [`wasOutputExecuted(uint256 outputIndex)`](../api-reference/contracts/application.md#wasoutputexecuted) |
+| Execution event | `VoucherExecuted(uint256 voucherId)` | [`OutputExecuted(uint64 indexed outputIndex, bytes output)`](../api-reference/contracts/application.md#outputexecuted) |
 
-On contracts v3, do not treat a voucher as executable until the epoch status is `CLAIM_ACCEPTED`. `CLAIM_SUBMITTED` and `CLAIM_STAGED` are not enough.
+An output can be validated or executed only after the claim for its epoch has been accepted on-chain. v2 consensus contracts first stage a claim and accept it only after a claim staging period, fixed when the consensus is deployed. Do not treat a voucher as executable until the epoch status is `CLAIM_ACCEPTED`: `CLAIM_SUBMITTED` and `CLAIM_STAGED` are not enough.
+
+If the application is foreclosed by its guardian, users can recover the deposits of inputs that were never finalized with the `issueRefund(inputIndex, input)` function of the application contract. See [emergency withdrawal](../development/emergency-withdrawal/overview.md).
 
 ### Encoding
 
-Outputs are ABI-encoded Solidity function calls. Supported signatures are on the [`Outputs` interface](https://github.com/cartesi/rollups-contracts/blob/v2.0.1/src/common/Outputs.sol). Decode them with any Ethereum ABI library (for example viem). Selectors:
+Outputs are ABI-encoded Solidity function calls. Supported signatures are in the [`Outputs` interface](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/src/common/Outputs.sol). Decode them with any Ethereum ABI library (for example viem). Selectors:
 
 | Selector | Kind | Encoded as |
 | :------------ | :---------- | :-- |
@@ -173,7 +189,7 @@ Outputs are ABI-encoded Solidity function calls. Supported signatures are on the
 | `0x237a816f`  | Voucher (`CALL`) | `Voucher(address destination, uint256 value, bytes payload)` |
 | `0x10321e8b`  | DelegateCall voucher | `DelegateCallVoucher(address destination, bytes payload)` |
 
-The JSON-RPC `raw_data` field is this encoded blob. Pass it as `output` to `validateOutput` and `executeOutput`. `decoded_data.type` on the node is the same selector.
+The JSON-RPC `raw_data` field is this encoded blob. Pass the whole of it as `output` to `validateOutput` and `executeOutput`, not just the destination and payload.
 
 The `value` field on a `CALL` voucher is the Wei forwarded with the call. It is also how Ether withdrawals work, and it can fund payable functions.
 
@@ -201,7 +217,7 @@ struct OutputValidityProof {
 }
 ```
 
-SDK v2 uses a single, simpler structure. Outputs are identified by a global, ever-increasing `outputIndex` (they are not keyed by input index):
+SDK v2 uses a single, simpler structure. Outputs are numbered per application by a global, ever-increasing `outputIndex`; they are not keyed by input index:
 
 ```solidity
 struct OutputValidityProof {
@@ -209,6 +225,8 @@ struct OutputValidityProof {
     bytes32[] outputHashesSiblings;
 }
 ```
+
+Build it from the node's output data: `outputIndex` is the output's `index` and `outputHashesSiblings` is its `output_hashes_siblings`.
 
 ### Validation
 
@@ -262,7 +280,7 @@ event VoucherExecuted(uint256 voucherId);
 SDK v2 emits `OutputExecuted` with the global output index and the encoded output bytes:
 
 ```solidity
-event OutputExecuted(uint64 outputIndex, bytes output);
+event OutputExecuted(uint64 indexed outputIndex, bytes output);
 ```
 
 Update event listeners from `VoucherExecuted` to `OutputExecuted`. Index by `outputIndex`, not by `(inputIndex, outputIndexWithinInput)`.
@@ -283,14 +301,14 @@ SDK v2 only needs the output index:
 ```solidity
 function wasOutputExecuted(
     uint256 outputIndex
-) external view returns (bool executed);
+) external view returns (bool);
 ```
 
 ---
 
 ## JSON-RPC queries
 
-In SDK v1, notices, vouchers, and reports were queried through GraphQL at `<node>/graphql`.
+In SDK v1, inputs, notices, vouchers, and reports were queried through GraphQL at `<node>/graphql`.
 
 ```javascript
 // v1 — query notices via GraphQL
@@ -303,10 +321,10 @@ const response = await fetch("http://localhost:8080/graphql", {
 });
 ```
 
-In SDK v2, GraphQL is removed. POST JSON-RPC 2.0 to the node's **`/rpc`** path (not the node root). The host and port depend on how the node is exposed.
+In SDK v2, GraphQL is removed. Send JSON-RPC 2.0 requests with `POST` to the node's **`/rpc`** path (not the node root): `http://127.0.0.1:6751/rpc` with `cartesi run`, or port `10011` on a [self-hosted node](../deployment/self-hosted/standard.md#accessing-the-node). Parameters are named, in an object.
 
 ```javascript
-// v2 — list outputs (notices + vouchers) via JSON-RPC
+// v2 — list outputs (notices and vouchers) via JSON-RPC
 const response = await fetch("http://localhost:10011/rpc", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -334,17 +352,17 @@ await fetch("http://localhost:10011/rpc", {
 });
 ```
 
-Each output has a `decoded_data.type` selector:
+Notices and vouchers are both returned as outputs. The node decodes each one into `decoded_data`, whose `type` field holds the kind of output by name:
 
-| Type selector | Output kind |
+| `decoded_data.type` | Output kind |
 | :------------ | :---------- |
-| `0xc258d6e5`  | Notice |
-| `0x237a816f`  | Voucher |
-| `0x10321e8b`  | DelegateCall Voucher |
+| `Notice`  | Notice |
+| `Voucher`  | Voucher |
+| `DelegateCallVoucher`  | DelegateCall voucher |
 
-`raw_data` is the ABI-encoded bytes for `executeOutput()` / `validateOutput()`.
+`raw_data` is the ABI-encoded output to pass to `executeOutput()` and `validateOutput()`.
 
-Reports **are** on JSON-RPC (`cartesi_listReports`, `cartesi_getReport`). They are also returned inline on inspect responses.
+Reports **are** on JSON-RPC (`cartesi_listReports`, `cartesi_getReport`). Inspect reports are different: they are returned only in the inspect response, and the node does not store them.
 
 GraphQL → JSON-RPC map:
 
@@ -357,26 +375,26 @@ GraphQL → JSON-RPC map:
 | — | `cartesi_listEpochs` / `cartesi_getEpoch` / `cartesi_getLastAcceptedEpochIndex` |
 | — | `cartesi_getChainId` / `cartesi_getNodeVersion` |
 
-On contracts v3, also:
+Contracts v3 add:
 
 | Method | Use |
 | :-- | :-- |
-| `cartesi_listWithdrawals` / `cartesi_getWithdrawal` | Emergency L1 withdrawals after foreclosure — **not** voucher withdrawals |
-| `cartesi_listTournaments`, `cartesi_getTournament`, `cartesi_listMatches`, … | PRT / Dave data |
+| `cartesi_listWithdrawals` / `cartesi_getWithdrawal` | Emergency withdrawals on the base layer after a foreclosure, **not** voucher withdrawals |
+| `cartesi_listTournaments`, `cartesi_getTournament`, `cartesi_listMatches`, … | PRT (Dave) data |
 
-`cartesi_getApplication` on contracts v3 returns `enabled` plus `status` (`OK`, `FAILED`, `INOPERABLE` / `DIVERGED` / `CORRUPTED`, `FORECLOSED`). Do not read a single `state: ENABLED` field from older examples.
+`cartesi_getApplication` returns `enabled` (the operator's intent) and a [`status`](../api-reference/jsonrpc/types.md#application) such as `OK`, `FAILED`, `DIVERGED` or `CORRUPTED`. Foreclosure is not a status: a non-zero `foreclose_block` means the node observed the foreclosure.
 
-Inputs are identified by `transaction_hash` + `log_index` (multiple `InputAdded` logs in one L1 transaction are distinct). `cartesi_listInputs` accepts `transaction_hash`. There is no `transaction_reference`.
+Inputs are identified by `transaction_hash` and `log_index` (several `InputAdded` logs in one transaction are distinct inputs). `cartesi_listInputs` accepts a `transaction_hash` filter.
 
-The node's EVM reader polls HTTP for new blocks. A WebSocket blockchain endpoint is no longer required for the reader.
+The node reads the base layer over HTTP only: it has no WebSocket endpoint setting.
 
-Full method list: [JSON-RPC methods](../api-reference/jsonrpc/methods.md).
+Full method list: [JSON-RPC methods](../api-reference/jsonrpc/methods.md). See also [querying outputs](../development/query-outputs.md).
 
 ---
 
 ## Inspect calls
 
-In SDK v1, inspect was an HTTP GET with the payload in the URL path:
+In SDK v1, inspect was an HTTP `GET` with the payload in the URL path:
 
 ```javascript
 // v1 — inspect via GET
@@ -385,36 +403,33 @@ const response = await fetch(
 );
 ```
 
-In SDK v2, inspect is HTTP POST to `/inspect/<application-address-or-name>` with the payload in the body. The application must be in the path because one node can host several apps.
+In SDK v2, inspect is an HTTP `POST` to `/inspect/<application-address-or-name>`, with the payload as the request body. The application must be in the path because one node can host several applications. Other HTTP methods are rejected with `405 Method Not Allowed`.
 
 ```javascript
-// v2 — inspect via POST
-const response = await fetch(`http://localhost:10012/inspect/0xYourAppAddress`, {
+// v2 — inspect via POST (port 10012 on a self-hosted node; http://127.0.0.1:6751/inspect/<app> with cartesi run)
+const response = await fetch("http://localhost:10012/inspect/0xYourAppAddress", {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload),
+  headers: { "Content-Type": "application/octet-stream" },
+  body: payload, // passed to the application as is
 });
 const result = await response.json();
 ```
 
-The OpenAPI spec also accepts `application/octet-stream` for a binary body ([`api/openapi/inspect.yaml` on `next/2.0`](https://github.com/cartesi/rollups-node/blob/next/2.0/api/openapi/inspect.yaml)).
+The response holds the list of `reports` with hex payloads, a `status`, the `processed_input_count`, and, when the application raised an exception, `exception_data` and `error`. See the [inspect API specification](https://github.com/cartesi/rollups-node/blob/v2.0.0-alpha.14/api/openapi/inspect.yaml) of rollups-node `v2.0.0-alpha.14`.
 
-The response is still a list of reports with hex payloads, plus `status`, `exception_payload`, and `processed_input_count`.
-
-Inspect is served from a temporary machine fork and is synchronous. It returns **503** when the machine is not ready, inspect capacity is exhausted, or the application was **foreclosed** (`Application was foreclosed; machine unavailable`). Request body size is limited.
+Inspect reports are returned only in the response: the node does not store them. Inspect is served from a temporary machine fork and is synchronous. It returns **503** when the machine is not ready, when inspect capacity is exhausted, or when the application was **foreclosed** (`Application was foreclosed; machine unavailable`). The request body is limited to 2 MiB. See [making inspect calls](../development/send-inputs-and-assets.md#make-inspect-calls).
 
 ---
 
 ## TypeScript applications
 
-v1.5 frontends typically called GraphQL directly. v2 TypeScript clients should use the packages in [cartesi/rollups-ts](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha). They wrap the JSON-RPC node API, InputBox, and output execution.
+v1.5 frontends typically called GraphQL directly, or used `@cartesi/viem` and `@cartesi/wagmi`. Those two packages are not updated for the v2.0 release set: their last releases target an earlier contracts release, so inputs and deposits sent with them go to addresses with no code on a current deployment.
 
-| Role | Earlier name | Current package |
+Use the packages from [cartesi/rollups-ts](https://github.com/cartesi/rollups-ts/tree/37b2cb38228e08d4a87d2f1c1f63c91e57743cb4) instead. They wrap the node's JSON-RPC API, the input box, the portals and output execution.
+
+| Role | v1.5 package | v2.0 package |
 | :-- | :-- | :-- |
-| JSON-RPC typed client | `@cartesi/rpc` | [`@cartesi/rpc`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/rpc) |
-| viem L1 / node helpers | `@cartesi/viem` | [`@cartesi/client`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/client) |
-| React / wagmi hooks | `@cartesi/wagmi` | [`@cartesi/react`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/react) |
-| Input/output codec | — | [`@cartesi/codec`](https://github.com/cartesi/rollups-ts/tree/prerelease/v2-alpha/packages/codec) |
+| viem client for the base layer and the node | `@cartesi/viem` | [`@cartesi/client@2.0.0-alpha.41`](https://github.com/cartesi/rollups-ts/tree/37b2cb38228e08d4a87d2f1c1f63c91e57743cb4/packages/client) |
+| React / wagmi hooks | `@cartesi/wagmi` | [`@cartesi/react@2.0.0-alpha.45`](https://github.com/cartesi/rollups-ts/tree/37b2cb38228e08d4a87d2f1c1f63c91e57743cb4/packages/react) |
 
-Replace `@cartesi/viem` imports with `@cartesi/client` and `@cartesi/wagmi` with `@cartesi/react`.
-
+Install them with an explicit version: their `latest` tag on npm points to an empty `0.0.0` release. The [React frontend tutorial](../tutorials/react-frontend-application.md) shows both packages in use.
