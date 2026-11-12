@@ -1,7 +1,7 @@
 ---
 id: inspect-state-http-api-for-cartesi-rollups
 title: "Inspect-state HTTP API for Cartesi Rollups"
-description: "API that allows the dApp frontend to make inspect-state requests to the dApp backend."
+description: "API that allows the application frontend to make inspect-state requests to the application backend"
 sidebar_label: Introduction
 sidebar_position: 0
 hide_title: true
@@ -16,7 +16,7 @@ import Export from "@theme/ApiExplorer/Export";
 
 <span
   className={"theme-doc-version-badge badge badge--secondary"}
-  children={"Version: 0.5.1"}
+  children={"Version: 2.0.0-alpha.14"}
 >
 </span>
 
@@ -29,7 +29,13 @@ import Export from "@theme/ApiExplorer/Export";
 
 
 
-API that allows the dApp frontend to make inspect-state requests to the dApp backend.
+API that allows the application frontend to make inspect-state requests to the application backend
+through a Cartesi Rollups node.
+
+This reference describes the inspect server of rollups-node v2.0.0-alpha.14.
+The node serves it on the address set by `CARTESI_INSPECT_ADDRESS` (default `:10012`).
+CORS is disabled by default; to call the API from a browser, the node operator must list the
+allowed origins in `CARTESI_INSPECT_CORS_ALLOWED_ORIGINS`.
 
 
 <div

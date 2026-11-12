@@ -33,22 +33,41 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
   "jsonrpc": "2.0",
   "result": {
     "data": {
-    "name": "calculator",
+      "name": "calculator",
       "iapplication_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
       "iconsensus_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
       "iinputbox_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
       "template_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
       "epoch_length": "0x100",
-      "data_availability": "0x",
-      "state": "ENABLED",
-      "reason": "",
+      "claim_staging_period": "0x40",
+      "withdrawal_config": {
+        "guardian": "0x0000000000000000000000000000000000000000",
+        "log2_leaves_per_account": "0x0",
+        "log2_max_num_of_accounts": "0x0",
+        "accounts_drive_start_index": "0x0",
+        "withdrawal_output_builder": "0x0000000000000000000000000000000000000000"
+      },
+      "consensus_type": "AUTHORITY",
+      "enabled": true,
+      "status": "OK",
+      "reason": null,
       "iinputbox_block": "0x1",
+      "last_epoch_check_block": "0x1",
       "last_input_check_block": "0x1",
       "last_output_check_block": "0x1",
+      "last_tournament_check_block": "0x0",
+      "last_foreclose_check_block": "0x1",
+      "last_accounts_drive_proved_check_block": "0x0",
+      "last_withdrawal_check_block": "0x0",
       "processed_inputs": "0x1",
-    "created_at": "2024-01-01T00:00:00Z",
-    "updated_at": "2024-01-01T00:00:00Z",
-    "execution_parameters": {
+      "foreclose_block": "0x0",
+      "foreclose_transaction": null,
+      "accounts_drive_proved_block": "0x0",
+      "accounts_drive_proved_transaction": null,
+      "accounts_drive_merkle_root": null,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-01T00:00:00Z",
+      "execution_parameters": {
         "snapshot_policy": "NONE",
         "advance_inc_cycles": "0x1000",
         "advance_max_cycles": "0x10000",
@@ -61,7 +80,7 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
         "load_deadline": "0x1000000",
         "store_deadline": "0x1000000",
         "fast_deadline": "0x1000000",
-        "max_concurrent_inspects": 1,
+        "max_concurrent_inspects": 10,
         "created_at": "2024-01-01T00:00:00Z",
         "updated_at": "2024-01-01T00:00:00Z"
       }
@@ -78,19 +97,34 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
 | name                    | string | The name of the application                      |
 | iapplication_address    | string | The Ethereum address of the application contract |
 | iconsensus_address      | string | The Ethereum address of the consensus contract   |
-| iinputbox_address       | string | The Ethereum address of the input box contract   |
+| iinputbox_address       | string | The Ethereum address of the input box contract the application uses |
 | template_hash           | string | The hash of the application template             |
-| epoch_length            | string | The length of each epoch in blocks               |
-| data_availability       | string | The data availability configuration              |
-| state                   | string | Current state of the application (ENABLED/DISABLED/INOPERABLE) |
-| reason                  | string | Reason for the current state                     |
-| iinputbox_block         | string | The block number of the input box contract       |
+| epoch_length            | string | The length of each epoch in blocks (hex encoded) |
+| claim_staging_period    | string | The claim staging period in blocks (hex encoded) |
+| withdrawal_config       | object | The emergency withdrawal configuration (all zero when not configured). See [WithdrawalConfig](../../types.md#withdrawalconfig) |
+| consensus_type          | string | `AUTHORITY`, `QUORUM` or `PRT`                   |
+| enabled                 | boolean | Operator intent: `true` if the node should keep observing and processing the application |
+| status                  | string | Whether the node can still execute the application: `OK`, `FAILED`, `DIVERGED`, `CORRUPTED`, `GUEST_EXCEPTION`, `MACHINE_HALTED`, `MCYCLE_OVERFLOW`, `UNEXPECTED_YIELD` or `INVALID_OUTPUTS_ROOT`. Only `OK` and `FAILED` are not terminal. See [ApplicationStatus](../../types.md#applicationstatus) |
+| reason                  | string \| null | Description of the failure. Always set when `status` is not `OK`; can be `null` when `status` is `OK` |
+| iinputbox_block         | string | The deployment block of the input box contract; the node reads inputs from this block on |
+| last_epoch_check_block  | string | The last block checked for epochs                |
 | last_input_check_block  | string | The last block checked for inputs                |
-| last_output_check_block | string | The last block checked for outputs               |
+| last_output_check_block | string | The last block checked for output executions     |
+| last_tournament_check_block | string | The last block checked for PRT tournaments   |
+| last_foreclose_check_block | string | The last block checked for a foreclosure      |
+| last_accounts_drive_proved_check_block | string | The last block checked for the accounts drive proof (foreclosed applications only) |
+| last_withdrawal_check_block | string | The last block checked for withdrawals (after the accounts drive is proved) |
 | processed_inputs        | string | The number of processed inputs                   |
+| foreclose_block         | string | The block of the on-chain foreclosure, or `0x0` if the node has not observed one |
+| foreclose_transaction   | string \| null | The foreclosure transaction hash, or `null`      |
+| accounts_drive_proved_block | string | The block in which the accounts drive was proved, or `0x0` |
+| accounts_drive_proved_transaction | string \| null | The transaction that proved the accounts drive, or `null` |
+| accounts_drive_merkle_root | string \| null | The proved accounts drive Merkle root, or `null` |
 | created_at              | string | Timestamp when the application was created       |
 | updated_at              | string | Timestamp when the application was last updated  |
 | execution_parameters    | object | Configuration parameters for application execution |
+
+A running application has `enabled: true` and `status: "OK"`. To tell a recoverable failure from a permanent one, check `status`: `FAILED` can be cleared by the operator, while the other non-`OK` statuses are terminal.
 
 #### Execution Parameters
 
@@ -114,8 +148,10 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
 
 ## Error Codes
 
-| Code    | Message                | Description                                      |
-|---------|------------------------|--------------------------------------------------|
-| -32602  | Invalid params         | Invalid parameter values                         |
-| -32000  | Application not found  | The specified application does not exist         |
-| -32603  | Internal error         | An internal error occurred                       |
+| Code    | Message                      | Description                                      |
+|---------|------------------------------|--------------------------------------------------|
+| -32602  | Invalid parameters           | Invalid parameter values                         |
+| -31002  | Application not found        | The node does not know the application. Retrying does not help |
+| -32603  | Internal server error        | A node-side error occurred                       |
+| -32070  | Request timed out            | The request could not be processed in time       |
+| -31003  | Response size limit exceeded | The response exceeds the response size budget    |

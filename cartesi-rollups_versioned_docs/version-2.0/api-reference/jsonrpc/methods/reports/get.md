@@ -19,7 +19,7 @@ title: Get Report
 }
 ```
 
-The `cartesi_getReport` method retrieves detailed information about a specific report by its application and index.
+The `cartesi_getReport` method retrieves detailed information about a specific report by its application and index. Only reports produced while processing inputs are available; reports from inspect requests are not stored.
 
 ## Parameters
 
@@ -60,9 +60,11 @@ The `cartesi_getReport` method retrieves detailed information about a specific r
 
 ## Error Codes
 
-| Code    | Message                | Description                                      |
-|---------|------------------------|--------------------------------------------------|
-| -32602  | Invalid params         | Invalid parameter values                         |
-| -32000  | Application not found  | The specified application does not exist         |
-| -32004  | Report not found       | The specified report does not exist              |
-| -32603  | Internal error         | An internal error occurred                       |
+| Code    | Message                      | Description                                      |
+|---------|------------------------------|--------------------------------------------------|
+| -32602  | Invalid parameters           | Invalid parameter values                         |
+| -31002  | Application not found        | The node does not know the application. Retrying does not help |
+| -31001  | Report not found             | The application exists but the report does not. For the next report index, this is safe to poll |
+| -32603  | Internal server error        | A node-side error occurred                       |
+| -32070  | Request timed out            | The request could not be processed in time       |
+| -31003  | Response size limit exceeded | The response exceeds the response size budget    |

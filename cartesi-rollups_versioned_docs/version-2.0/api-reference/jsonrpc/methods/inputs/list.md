@@ -29,8 +29,12 @@ The `cartesi_listInputs` method returns a paginated list of inputs for a specifi
 | application | string | Yes      | The application's name or hex encoded address    |
 | epoch_index | string | No       | Filter inputs by a specific epoch index (hex encoded) |
 | sender      | string | No       | Filter inputs by the sender's address (hex encoded) |
-| limit       | number | No       | Maximum number of inputs to return (default: 50, minimum: 1) |
+| transaction_hash | string | No  | Filter inputs by the hash of the L1 transaction that emitted the `InputAdded` event |
+| from        | string | No       | Inclusive lower bound on the input index (hex encoded) |
+| to          | string | No       | Inclusive upper bound on the input index (hex encoded) |
+| limit       | number | No       | Maximum number of inputs to return (default: 50; 0 selects the default; values above 10000 are capped at 10000) |
 | offset      | number | No       | Starting point for the list (default: 0, minimum: 0)         |
+| descending  | boolean | No      | If `true`, sort by input index in descending order (default: `false`) |
 
 ## Response
 
@@ -42,24 +46,26 @@ The `cartesi_listInputs` method returns a paginated list of inputs for a specifi
       {
         "epoch_index": "0x1",
         "index": "0x1",
-        "block_number": "0x1",
-        "raw_data": "0x48656c6c6f",
+        "block_number": "0x105",
+        "raw_data": "0x415bf363000000000000000000000000000000000000000000000000000000000000000100000000000000000000000071c7656ec7ab88b098defb751b7401b5f6d8976f00000000000000000000000071c7656ec7ab88b098defb751b7401b5f6d8976f000000000000000000000000000000000000000000000000000000000000010500000000000000000000000000000000000000000000000000000000659200801234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000548656c6c6f000000000000000000000000000000000000000000000000000000",
+        "status": "ACCEPTED",
+        "exception_data": null,
+        "machine_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+        "tx_buffer_data_block": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+        "transaction_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+        "log_index": "0x0",
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-01T00:00:00Z",
         "decoded_data": {
           "chain_id": "0x1",
           "application_contract": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
           "sender": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-          "block_number": "0x1",
-          "block_timestamp": "0x1234567890",
+          "block_number": "0x105",
+          "block_timestamp": "0x65920080",
           "prev_randao": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
           "index": "0x1",
           "payload": "0x48656c6c6f"
-        },
-        "status": "ACCEPTED",
-        "machine_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        "outputs_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        "transaction_reference": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-        "created_at": "2024-01-01T00:00:00Z",
-        "updated_at": "2024-01-01T00:00:00Z"
+        }
       }
     ],
     "pagination": {
@@ -80,28 +86,34 @@ The `cartesi_listInputs` method returns a paginated list of inputs for a specifi
 |-------------------------|--------|--------------------------------------------------|
 | epoch_index             | string | The epoch index this input belongs to (hex encoded) |
 | index                   | string | The input index (hex encoded)                    |
-| block_number            | string | The block number when the input was created (hex encoded) |
-| raw_data                | string | The raw input data in hexadecimal format         |
-| decoded_data            | object | The decoded input data (null if not decodable)   |
-| status                  | string | Current status of the input                      |
-| machine_hash            | string | The machine hash after processing this input     |
-| outputs_hash            | string | The outputs hash after processing this input     |
-| transaction_reference   | string | The transaction reference                         |
+| block_number            | string | The block number when the input was added (hex encoded) |
+| raw_data                | string | The raw input data (the ABI-encoded `EvmAdvance` call) in hexadecimal format |
+| status                  | string | Current status of the input. See [InputCompletionStatus](../../types.md#inputcompletionstatus) |
+| exception_data          | string \| null | The exception payload provided by the application. Set only when `status` is `EXCEPTION` (`0x` for an empty payload) |
+| machine_hash            | string \| null | The machine state hash after processing this input (null until processed) |
+| tx_buffer_data_block    | string \| null | The CMIO TX buffer data block of the machine state after this input |
+| transaction_hash        | string | The hash of the L1 transaction that added the input |
+| log_index               | string | The log index of the `InputAdded` event in its block (hex encoded) |
 | created_at              | string | Timestamp when the input was created             |
 | updated_at              | string | Timestamp when the input was last updated        |
+| decoded_data            | object | The decoded input data. Omitted when `raw_data` cannot be decoded |
+
+Possible `status` values are `NONE` (not processed yet), `ACCEPTED`, `REJECTED`, `EXCEPTION`, `MACHINE_HALTED`, `OVERFLOW`, `UNEXPECTED_YIELD` and `INVALID_OUTPUTS_ROOT`. Every status other than `NONE`, `ACCEPTED` and `REJECTED` stops the application for good. When processing fails because of a local limit (for example a deadline or a configured cycle limit), the input stays `NONE` and the application status becomes `FAILED`; check the application with [`cartesi_getApplication`](../applications/get.md).
 
 #### Pagination
 
 | Name        | Type   | Description                                      |
 |-------------|--------|--------------------------------------------------|
-| total_count | number | Total number of inputs available                 |
-| limit       | number | Number of inputs returned in this response       |
+| total_count | number | Total number of inputs that match the filters |
+| limit       | number | The page size applied to this request (after the default and the 10000 cap) |
 | offset      | number | Starting point of the returned inputs            |
 
 ## Error Codes
 
-| Code    | Message                | Description                                      |
-|---------|------------------------|--------------------------------------------------|
-| -32602  | Invalid params         | Invalid parameter values                         |
-| -32603  | Internal error         | An internal error occurred                       |
-| -32000  | Application not found  | The specified application does not exist         |
+| Code    | Message                      | Description                                      |
+|---------|------------------------------|--------------------------------------------------|
+| -32602  | Invalid parameters           | Invalid parameter values (including `from` greater than `to`) |
+| -31002  | Application not found        | The node does not know the application. Retrying does not help |
+| -32603  | Internal server error        | A node-side error occurred                       |
+| -32070  | Request timed out            | The request could not be processed in time       |
+| -31003  | Response size limit exceeded | The response exceeds the response size budget. Request fewer items |

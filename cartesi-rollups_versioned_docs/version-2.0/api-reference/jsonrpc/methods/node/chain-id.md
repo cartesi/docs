@@ -5,6 +5,10 @@ title: Get Chain ID
 
 # Get Chain ID
 
+:::caution Deprecated
+`cartesi_getChainId` is deprecated. Use [`cartesi_getNodeInfo`](./node-info.md), which returns the chain ID, the node version and the default block tag in one call.
+:::
+
 ## Example Request
 
 ```json
@@ -42,6 +46,9 @@ No parameters required.
 
 ## Error Codes
 
-| Code    | Message                | Description                                      |
-|---------|------------------------|--------------------------------------------------|
-| -32603  | Internal error         | An internal error occurred                       | 
+| Code    | Message                      | Description                                      |
+|---------|------------------------------|--------------------------------------------------|
+| -31001  | EVM Reader config not found  | The node has not stored its chain configuration (EVM reader configuration) yet |
+| -32603  | Internal server error        | A node-side error occurred                       |
+| -32070  | Request timed out            | The request could not be processed in time       |
+| -31003  | Response size limit exceeded | The response exceeds the response size budget    |

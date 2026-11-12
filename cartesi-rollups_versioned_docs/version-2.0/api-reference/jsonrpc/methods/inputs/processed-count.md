@@ -46,8 +46,10 @@ The `cartesi_getProcessedInputCount` method returns the total number of inputs t
 
 ## Error Codes
 
-| Code    | Message                | Description                                      |
-|---------|------------------------|--------------------------------------------------|
-| -32602  | Invalid params         | Invalid parameter values                         |
-| -32000  | Application not found  | The specified application does not exist         |
-| -32603  | Internal error         | An internal error occurred                       |
+| Code    | Message                      | Description                                      |
+|---------|------------------------------|--------------------------------------------------|
+| -32602  | Invalid parameters           | Invalid parameter values                         |
+| -31002  | Application not found        | The node does not know the application. Retrying does not help |
+| -32603  | Internal server error        | A node-side error occurred                       |
+| -32070  | Request timed out            | The request could not be processed in time       |
+| -31003  | Response size limit exceeded | The response exceeds the response size budget    |
