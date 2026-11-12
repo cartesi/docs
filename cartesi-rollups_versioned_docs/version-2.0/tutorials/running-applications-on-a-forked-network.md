@@ -291,7 +291,7 @@ This command calls the `relayInput(address,address,bytes)` function on the relay
 - the InputBox address
 - the encoded user input
 
-Ensure that you replace the application address and RPC URL with the values returned when you executed `cartesi run`.
+Ensure that you replace the application address and RPC URL with the values returned when you executed `cartesi run`, and the InputBox address with the input box your application was deployed with (returned by the application's `getInputBox()` function, and listed as `InputBox` by `cartesi address-book`).
 
 ### Expected logs
 

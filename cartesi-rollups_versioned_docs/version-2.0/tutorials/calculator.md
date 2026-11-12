@@ -2,7 +2,7 @@
 id: calculator
 title: Build a Calculator Application
 resources:
-  - url: https://github.com/Mugen-Builders/calculator
+  - url: https://github.com/Mugen-Builders/calculator/tree/2f7e0ec2906d82de4b900c6f5f1820538499e7bd
     title: Source code for the Calculator App
 ---
 
@@ -347,5 +347,5 @@ You can also [query a notice based on its input index](../development/query-outp
 Congratulations, you have successfully built a dApp on Cartesi Rollups!
 
 :::info Repo Link
-   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/calculator)!
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/calculator)!
 :::

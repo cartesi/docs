@@ -45,6 +45,10 @@ You can also view these token addresses at any time using the CLI command:
 cartesi address-book
 ```
 
+:::caution check the addresses for your CLI version
+The token and portal addresses hard-coded in the samples and backend code on this page may differ from the ones deployed by your version of the Cartesi CLI. Before you run a sample, compare them with the output of `cartesi address-book` and replace them where they differ; otherwise deposits go to the wrong contract or your backend does not recognize them. Since rollups-contracts 3.0.0-alpha.7, the portals are named `Erc20Portal`, `Erc721Portal`, `Erc1155SinglePortal` and `Erc1155BatchPortal`, and their deposit functions are `depositErc20Tokens`, `depositErc721Token`, `depositSingleErc1155Token` and `depositBatchErc1155Token`.
+:::
+
 ## ERC20 Test Token
 
 The ERC20 `TestToken` is based on the OpenZeppelin ERC20 implementation. It is deployed alongside your application contracts on the anvil devnet, with ownership assigned to the default anvil wallet `0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C`, ensuring that developers can readily access these test tokens without needing to manually deploy or transfer new token contracts. However, you can transfer these tokens to other wallets and also to your applications for the duration of which your anvil network is active as these transactions reset every time you restart your anvil devnet, or stop your application using the Cartesi CLI.
@@ -121,9 +125,9 @@ For a successful deposit process you should show logs similar to this:
 
 #### Using Cast
 
-It's also possible to use cast commands to deposit assets to your application, but this would require a more manual process of granting approval, then calling the deposit function in the ERC20Portal contract. Below is a step-by-step process to achieve this:
+It's also possible to use cast commands to deposit assets to your application, but this would require a more manual process of granting approval, then calling the deposit function in the `Erc20Portal` contract. Below is a step-by-step process to achieve this:
 
-- Call the `testToken` contract to approve the `ERC20Portal` an equivalent of the amount of tokens you intend to deposit, using the below command
+- Call the `testToken` contract to approve the `Erc20Portal` an equivalent of the amount of tokens you intend to deposit, using the below command
 
 <Tabs>
 
@@ -131,7 +135,7 @@ It's also possible to use cast commands to deposit assets to your application, b
 <pre><code>
 
 ```bash
-cast send <testsTokenContract address> "approve(address,uint256)" <ERC20Portal address> <Token amount> --rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <testsTokenContract address> "approve(address,uint256)" <Erc20Portal address> <Token amount> --rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -141,7 +145,8 @@ cast send <testsTokenContract address> "approve(address,uint256)" <ERC20Portal a
 <pre><code>
 
 ```bash
-cast send 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C "approve(address,uint256)" 0xc700D6aDd016eECd59d989C028214Eaa0fCC0051 300000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+ERC20_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc20Portal | awk '{print $NF}')
+cast send 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C "approve(address,uint256)" $ERC20_PORTAL 300000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>
@@ -151,7 +156,7 @@ cast send 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C "approve(address,uint256)" 
 
 The snippet above is an example of how to deposit 300 units of the test tokens, `http://127.0.0.1:6751/anvil` is the anvil_rpc to the local devnet where the application contract is deployed, finally the private_key `0xac0974bec39a17...e784d7bf4f2ff80` is the private key of the default anvil address which is also the owner of the erc20 test contract.
 
-- Call the `depositERC20Tokens` function in the `ERC20Portal` contract, passing in the address of your contract along with the token address and amount of tokens deposited
+- Call the `depositErc20Tokens` function in the `Erc20Portal` contract, passing in the address of your contract along with the token address and amount of tokens deposited
 
 <Tabs>
 
@@ -159,7 +164,7 @@ The snippet above is an example of how to deposit 300 units of the test tokens, 
 <pre><code>
 
 ```bash
-cast send <ERC20Portal address> "depositERC20Tokens(address,address,uint256,bytes)" <testTokenContract address> <Application address> <token_Amount> <execution layer Data> --rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <Erc20Portal address> "depositErc20Tokens(address,address,uint256,bytes)" <testTokenContract address> <Application address> <token_Amount> <execution layer Data> --rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -169,7 +174,7 @@ cast send <ERC20Portal address> "depositERC20Tokens(address,address,uint256,byte
 <pre><code>
 
 ```bash
-cast send 0xc700D6aDd016eECd59d989C028214Eaa0fCC0051 "depositERC20Tokens(address,address,uint256,bytes)" 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C 0xba3347e79665924033beeb7362629ca7992897d9 202 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $ERC20_PORTAL "depositErc20Tokens(address,address,uint256,bytes)" 0xFBdB734EF6a23aD76863CbA6f10d0C5CBBD8342C 0xba3347e79665924033beeb7362629ca7992897d9 202 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>
@@ -177,7 +182,7 @@ cast send 0xc700D6aDd016eECd59d989C028214Eaa0fCC0051 "depositERC20Tokens(address
 
 </Tabs>
 
-The above command interacts with the ERC20Portal which utilizes the allowance issued in the previous function to call the `transferFrom` function in the `testToken` contract. This operation transfers the amount of tokens listed to the application contract, and calls the input box to send an input to your application.
+The above command interacts with the `Erc20Portal`, which utilizes the allowance issued in the previous function to call the `transferFrom` function in the `testToken` contract. This operation transfers the amount of tokens listed to the application contract, and calls the input box to send an input to your application.
 
 The next section covers implementations on your application to handle deposits.
 
@@ -544,7 +549,7 @@ while True:
 <pre><code>
 
 ```bash
-npm install viem ethers
+npm install viem@2.57.19 ethers@6.17.0
 ```
 
 </code></pre>
@@ -686,9 +691,9 @@ For a successful deposit process you should get a log similar to this below:
 
 #### Using Cast
 
-It's also possible to deposit the ERC721 test tokens to your application using Cast, this process, requires a more manual approach and happens in 2 phases, one is granting approval to the ERC721Portal then the second is calling the `depositERC721Token` function in the ERC721Portal contract. Below is a step-by-step process for this:
+It's also possible to deposit the ERC721 test tokens to your application using Cast, this process, requires a more manual approach and happens in 2 phases, one is granting approval to the `Erc721Portal` then the second is calling the `depositErc721Token` function in the `Erc721Portal` contract. Below is a step-by-step process for this:
 
-- Grant the `ERC721Portal` contract approval
+- Grant the `Erc721Portal` contract approval
 
 <Tabs>
 
@@ -696,7 +701,7 @@ It's also possible to deposit the ERC721 test tokens to your application using C
 <pre><code>
 
 ```bash
-cast send <testNFT address> "setApprovalForAll(address,bool)" <ERC721Portal address> <approved status> --rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <testNFT address> "setApprovalForAll(address,bool)" <Erc721Portal address> <approved status> --rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -706,7 +711,8 @@ cast send <testNFT address> "setApprovalForAll(address,bool)" <ERC721Portal addr
 <pre><code>
 
 ```bash
-cast send 0xBa46623aD94AB45850c4ecbA9555D26328917c3B "setApprovalForAll(address,bool)" 0xc700d52F5290e978e9CAe7D1E092935263b60051 true --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+ERC721_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc721Portal | awk '{print $NF}')
+cast send 0xBa46623aD94AB45850c4ecbA9555D26328917c3B "setApprovalForAll(address,bool)" $ERC721_PORTAL true --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>
@@ -714,9 +720,9 @@ cast send 0xBa46623aD94AB45850c4ecbA9555D26328917c3B "setApprovalForAll(address,
 
 </Tabs>
 
-The above command calls the `testNFT` contract `0xBa46...8917c3B` to approve the `ERC721Portal` `0xc700d5...0051` to withdraw tokens to be deposited to your application, the arguments listed above should be the same if you intend to deposit the `testNFT` token, for other ERC721 tokens, then you could change the token address to match the tokens you intend to transfer.
+The above command calls the `testNFT` contract `0xBa46...8917c3B` to approve the `Erc721Portal` (address read from `cartesi address-book`) to withdraw tokens to be deposited to your application, the arguments listed above should be the same if you intend to deposit the `testNFT` token, for other ERC721 tokens, then you could change the token address to match the tokens you intend to transfer.
 
-- Call the `depositERC721Token` function in the ERC721Portal contract
+- Call the `depositErc721Token` function in the `Erc721Portal` contract
 
 <Tabs>
 
@@ -724,7 +730,7 @@ The above command calls the `testNFT` contract `0xBa46...8917c3B` to approve the
 <pre><code>
 
 ```bash
-cast send <ERC721Portal address> "depositERC721Token(address,address,uint256,bytes,bytes)" <testNFT Contract address> <Application address>  <token_Id> <base layer Data>  <execution layer Data> --rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <Erc721Portal address> "depositErc721Token(address,address,uint256,bytes,bytes)" <testNFT Contract address> <Application address>  <token_Id> <base layer Data>  <execution layer Data> --rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -734,7 +740,7 @@ cast send <ERC721Portal address> "depositERC721Token(address,address,uint256,byt
 <pre><code>
 
 ```bash
-cast send 0xc700d52F5290e978e9CAe7D1E092935263b60051 "depositERC721Token(address,address,uint256,bytes,bytes)" 0xBa46623aD94AB45850c4ecbA9555D26328917c3B 0xba3347e79665924033beeb7362629ca7992897d9 8 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $ERC721_PORTAL "depositErc721Token(address,address,uint256,bytes,bytes)" 0xBa46623aD94AB45850c4ecbA9555D26328917c3B 0xba3347e79665924033beeb7362629ca7992897d9 8 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>
@@ -742,7 +748,7 @@ cast send 0xc700d52F5290e978e9CAe7D1E092935263b60051 "depositERC721Token(address
 
 </Tabs>
 
-From the above command we call the `depositERC721Token` function in the `ERC721Portal` contract `0xc700...60051`, passing the `testNFT` contract `0xBa46...8917c3B`, the `Application contract address` `0x23eff...560fc`, the token_id `4` and finally the optional baseLayer and executionLayer data `0x` and `0x`. For this implementation it's expected that the token_id passed to the function should already be minted and owned by the wallet whose private key is used to sign the transaction.
+From the above command we call the `depositErc721Token` function in the `Erc721Portal` contract, passing the `testNFT` contract `0xBa46...8917c3B`, the `Application contract address` `0x23eff...560fc`, the token_id `4` and finally the optional baseLayer and executionLayer data `0x` and `0x`. For this implementation it's expected that the token_id passed to the function should already be minted and owned by the wallet whose private key is used to sign the transaction.
 
 #### Handling Deposited ERC721 tokens
 
@@ -1088,7 +1094,7 @@ while True:
 <pre><code>
 
 ```bash
-npm install viem ethers
+npm install viem@2.57.19 ethers@6.17.0
 ```
 
 </code></pre>
@@ -1232,7 +1238,7 @@ cartesi deposit
 
 #### Using Cast
 
-- Grant the `ERC1155SinglePortal` contract approval
+- Grant the `Erc1155SinglePortal` contract approval
 
 <Tabs>
 
@@ -1240,7 +1246,7 @@ cartesi deposit
 <pre><code>
 
 ```bash
-cast send <TestMultiToken contract address> "setApprovalForAll(address,bool)" <ERC1155SinglePortal address> <approved status> ---rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <TestMultiToken contract address> "setApprovalForAll(address,bool)" <Erc1155SinglePortal address> <approved status> ---rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -1250,7 +1256,8 @@ cast send <TestMultiToken contract address> "setApprovalForAll(address,bool)" <E
 <pre><code>
 
 ```bash
-cast send 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 "setApprovalForAll(address,bool)" 0xc700A261279aFC6F755A3a67D86ae43E2eBD0051 true --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+ERC1155_SINGLE_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155SinglePortal | awk '{print $NF}')
+cast send 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 "setApprovalForAll(address,bool)" $ERC1155_SINGLE_PORTAL true --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>
@@ -1258,7 +1265,7 @@ cast send 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 "setApprovalForAll(address,
 
 </Tabs>
 
-- Call the `depositSingleERC1155Token` function in the ERC1155SinglePortal contract
+- Call the `depositSingleErc1155Token` function in the `Erc1155SinglePortal` contract
 
 <Tabs>
 
@@ -1266,7 +1273,7 @@ cast send 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 "setApprovalForAll(address,
 <pre><code>
 
 ```bash
-cast send <ERC1155SinglePortal Contract address> "depositSingleERC1155Token(address,address,uint256,uint256,bytes,bytes)" <TestMultiToken Contract address> <Application address> <token_id> <Token_amount> <base layer Data>  <execution layer Data>  ---rpc-url <RPC_URL> --private-key <Caller Private key>
+cast send <Erc1155SinglePortal Contract address> "depositSingleErc1155Token(address,address,uint256,uint256,bytes,bytes)" <TestMultiToken Contract address> <Application address> <token_id> <Token_amount> <base layer Data>  <execution layer Data>  ---rpc-url <RPC_URL> --private-key <Caller Private key>
 ```
 
 </code></pre>
@@ -1276,7 +1283,7 @@ cast send <ERC1155SinglePortal Contract address> "depositSingleERC1155Token(addr
 <pre><code>
 
 ```bash
-cast send 0xc700A261279aFC6F755A3a67D86ae43E2eBD0051 "depositSingleERC1155Token(address,address,uint256,uint256,bytes,bytes)" 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 0x0c0fe740dcd46f0a6ddb8498d0bfdca93c5910e6 5 1 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $ERC1155_SINGLE_PORTAL "depositSingleErc1155Token(address,address,uint256,uint256,bytes,bytes)" 0xDC6d64971B77a47fB3E3c6c409D4A05468C398D2 0x0c0fe740dcd46f0a6ddb8498d0bfdca93c5910e6 5 1 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 </code></pre>
@@ -1627,7 +1634,7 @@ while True:
 <pre><code>
 
 ```bash
-npm install viem ethers
+npm install viem@2.57.19 ethers@6.17.0
 ```
 
 </code></pre>

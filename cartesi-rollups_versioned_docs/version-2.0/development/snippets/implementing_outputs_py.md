@@ -47,7 +47,7 @@ def structure_voucher(function_signature, destination, types, values, value=0) -
     return {
         "destination": destination,
         "payload": payload,
-        "value": hex(value)
+        "value": "0x" + value.to_bytes(32, "big").hex()
     }
     
 

@@ -227,10 +227,10 @@ The `withdrawErc721` method encodes `safeTransferFrom(application, recipient, to
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`ERC721Portal`](../api-reference/contracts/portals/ERC721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+The [`Erc721Portal`](../api-reference/contracts/portals/ERC721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
 
-:::note ERC721Portal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `ERC721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+:::note Erc721Portal address
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
@@ -254,7 +254,7 @@ export type Report = components["schemas"]["Report"];
 export type Voucher = components["schemas"]["Voucher"];
 
 const wallet = new Wallet();
-// Replace with the ERC721Portal address from `cartesi address-book`
+// Replace with the Erc721Portal address from `cartesi address-book`
 const ERC721Portal = `0xYOUR_ERC721_PORTAL_ADDRESS`;
 
 const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
@@ -394,7 +394,7 @@ main().catch((e) => {
 
 Here is a breakdown of the wallet functionality:
 
-- We handle deposits when the sender is the `ERC721Portal`.
+- We handle deposits when the sender is the `Erc721Portal`.
 
 - We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
@@ -421,13 +421,11 @@ cartesi run
 ### Deposits
 
 :::caution token approvals
-An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `ERC721Portal` to transfer tokens on your behalf.
+An approval step is needed for the [**ERC721 token standard**](https://ethereum.org/en/developers/docs/standards/tokens/). This ensures you grant explicit permission for `Erc721Portal` to transfer tokens on your behalf.
 
-Without this approval, the `ERC721Portal` cannot deposit your tokens to the Cartesi backend.
+Without this approval, the `Erc721Portal` cannot deposit your tokens to the Cartesi backend.
 
-You will encounter this error if you don't approve the `ERC721Portal` address before deposits:
-
-`ContractFunctionExecutionError: The contract function "depositERC721Tokens" reverted with the following reason: ERC721: insufficient allowance`
+If you don't approve the `Erc721Portal` address before depositing, the call to `depositErc721Token` reverts with the token contract's insufficient-approval error (for example, `ERC721InsufficientApproval` in OpenZeppelin 5 tokens).
 :::
 
 To deposit ERC721 tokens interactively:
@@ -440,7 +438,7 @@ Non-interactive alternative. Run from your **project root** (with `cartesi run` 
 
 ```bash
 NFT=$(cartesi address-book 2>&1 | grep -i TestNFT | awk '{print $NF}')
-ERC721_PORTAL=$(cartesi address-book 2>&1 | grep -i ERC721Portal | awk '{print $NF}')
+ERC721_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc721Portal | awk '{print $NF}')
 
 cast send "$NFT" \
   "safeMint(address,uint256,string)" \
@@ -467,15 +465,15 @@ Skip `safeMint` if token ID `1` is already minted to your address.
 
 ### Balance checks (used in Inspect requests)
 
-Inspect payloads use the form `userAddress/erc721TokenAddress` as a UTF-8 string (hex-encoded in the JSON body). Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and collection `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
+Inspect payloads use the form `userAddress/erc721TokenAddress` as a UTF-8 string. The node passes the request body to your application unchanged as the inspect payload, so send that string as the body. Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and collection `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/erc-721-token-wallet \
-  -H "Content-Type: application/json" \
-  -d '{"payload": "0x3078663339466436653531616164383846364634636536614238383237323739636666466239323236362f307835466244423233313536373861666563623336376630333264393346363432663634313830616133"}'
+  -H "Content-Type: text/plain" \
+  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0x5FbDB2315678afecb367f032d93F642f64180aa3'
 ```
 
-Replace the inspect path if your project name is not `erc-721-token-wallet` (see the URL printed by `cartesi run`). Build the payload with `stringToHex` from viem if you use different addresses.
+Replace the inspect path if your project name is not `erc-721-token-wallet` (see the URL printed by `cartesi run`). Replace the addresses in the body if you use different ones.
 
 ### Transfers and Withdrawals
 
@@ -518,8 +516,8 @@ cartesi run --services explorer
 
 The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
 
-You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
+You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md/#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
 
 :::info Repo Link
-   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/erc-721-token-wallet)!
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/erc-721-token-wallet)!
 :::

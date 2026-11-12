@@ -4,7 +4,7 @@ title: Concepts
 resources:
   - url: https://blog.cartesi.io/understanding-cartesi-rollups-pt2/
     title: Understanding Cartesi Rollups
-  - url: https://github.com/cartesi/dave
+  - url: https://github.com/cartesi/dave/tree/v3.0.0-alpha.6
     title: Dave
 ---
 
@@ -54,11 +54,15 @@ The main disadvantage is that state updates take time to finalize and are not en
 
 ## Introducing Dave — an interactive fraud-proof system
 
-[Dave](https://github.com/cartesi/dave) is Cartesi's dispute resolution algorithm designed to address shortcomings in existing fraud-proof protocols. Traditional fraud-proof systems often face challenges such as delay attacks and vulnerability to Sybil attacks, where malicious nodes can disrupt operations by continuously challenging transactions or overwhelming honest validators.
+[Dave](https://github.com/cartesi/dave/tree/v3.0.0-alpha.6) is Cartesi's dispute resolution algorithm designed to address shortcomings in existing fraud-proof protocols. Traditional fraud-proof systems often face challenges such as delay attacks and vulnerability to Sybil attacks, where malicious nodes can disrupt operations by continuously challenging transactions or overwhelming honest validators.
 
 Dave introduces an approach where the resources required to defend against disputes grow logarithmically with the number of opponents. This means that defending against challenges remains affordable for a single honest node, even in the face of multiple attackers.
 
 With Dave, a single honest participant can effectively defend their claims on-chain, ensuring the integrity of transactions without relying on trust in validators. Based on the [Permissionless Refereed Tournaments algorithm](https://arxiv.org/abs/2212.12439), this protocol empowers anyone to validate rollups and uphold correct states on-chain, enhancing transaction security and reliability.
 
 Similar to how a consensus algorithm is crucial for achieving agreement on a single state of the blockchain among all nodes in a base-layer chain, Dave plays a fundamental role in ensuring the integrity and trustworthiness of state transitions within Cartesi Rollups.
+
+:::note
+Dispute resolution applies only to applications deployed with PRT, the consensus built on Dave. By default, `cartesi run` and the [deployment guides](../deployment/introduction.md) deploy applications with an Authority consensus, where a single owner submits claims and there is no dispute game. Deploying with PRT is not covered by these guides.
+:::
 

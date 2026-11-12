@@ -2,9 +2,9 @@
 id: send-inputs-and-assets
 title: Sending inputs and assets
 resources:
-  - url: https://github.com/prototyp3-dev/frontend-web-cartesi
+  - url: https://github.com/prototyp3-dev/frontend-web-cartesi/tree/c4ec5d34b1d573f14ad47f1ddc17b097d966775e
     title: React.js + Typescript template
-  - url: https://github.com/jplgarcia/cartesi-angular-frontend
+  - url: https://github.com/jplgarcia/cartesi-angular-frontend/tree/55011cb68e7927ee3e5fc5e0e3d593cf3ecfbbdd
     title: Angular template
 ---
 
@@ -332,12 +332,12 @@ for (let i in result.reports) {
 ```
 
 :::note Interacting with Sample application?
-Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and can also be quarried using the JSON RPC server.
+Replacing the above address `0xb48..3A9` with the application address from deploying the sample application in the [creating an application](./creating-an-application.md#implementing-your-application-logic), then executing the inspect command would emit a report which would immediately be logged to the CLI and returned in the inspect response. The node does not store inspect reports, so they cannot be queried later through the JSON-RPC API: `cartesi_listReports` and `cartesi_getReport` only return reports emitted while processing advance requests.
 :::
 
 ## Depositing Assets
 
-The Cartesi CLI also enables sending/depositing assets to your application. There are currently 3 types of supported assets: `Ether`, `erc20` and `erc721`.
+The Cartesi CLI also enables sending/depositing assets to your application. It supports Ether, ERC-20, ERC-721 and ERC-1155 deposits, through the `ether`, `erc20`, `erc721`, `erc1155-single` and `erc1155-batch` subcommands.
 
 To deposit assets, run:
 

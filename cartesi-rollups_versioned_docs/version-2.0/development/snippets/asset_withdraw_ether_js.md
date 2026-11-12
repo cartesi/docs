@@ -1,5 +1,5 @@
 ```javascript
-import { hexToString, numberToHex, parseEther, zeroHash } from "viem";
+import { hexToString, numberToHex, parseEther } from "viem";
 
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollup_server);
@@ -12,8 +12,8 @@ async function handle_advance(data) {
 
   const voucher = {
     destination: sender,
-    payload: zeroHash,
-    value: numberToHex(BigInt(parseEther("1"))).slice(2),
+    payload: "0x", // empty: a wallet has no code to call
+    value: numberToHex(parseEther("1"), { size: 32 }), // 0x-prefixed, 32 bytes
   };
 
   await emitVoucher(voucher);

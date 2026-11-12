@@ -38,30 +38,6 @@ Response:
 
 This command runs your backend compiled to RISC-V and packages it as a Cartesi machine. It is therefore important that after every code update, the application needs to be rebuilt then the run command executed again, the Cartesi CLI makes this process very easy and all you need do is hit the `<b>` button on your keyboard to trigger a rebuild and run command.
 
-:::troubleshoot troubleshooting common errors
-
-#### Error: Depth Too High
-
-```shell
-Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
-2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
-2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
-```
-
-This indicates that the node is reading blocks too far behind the current blockchain state.
-
-#### Solution
-
-Create or modify a `.cartesi.env` file in your project directory and set:
-
-```shell
-TX_DEFAULT_CONFIRMATIONS=1
-```
-
-This adjustment should align the node's block reading with the blockchain's current state.
-
-:::
-
 ### Overview of Node Services
 
 The `cartesi run` command activates several services essential for node operation: some of these services are not activated by default and can be activated by adding them to the `--service` flag when starting your application. The below command starts your application with all available services:
@@ -85,5 +61,5 @@ Each of these services runs independently and can be activated or deactivated at
 - **Passkey**: Runs a local passkey server, that enables account generation and interaction with application without a traditional wallet, available at `http://localhost:6751/passkey`
 
 :::note Testing tools
-[NoNodo](https://github.com/Calindra/nonodo) is a Cartesi Rollups testing tool that works with host machine applications, eliminating the need for Docker or RISC-V compilation.
+[NoNodo](https://github.com/Calindra/nonodo/tree/1400b7f184f9b4293561f73127d9eac91a677098) is a Cartesi Rollups testing tool that works with host machine applications, eliminating the need for Docker or RISC-V compilation.
 :::

@@ -24,7 +24,7 @@ yarn && yarn run codegen
 Now, navigate to the project directory and install [`viem`](https://viem.sh/):
 
 ```bash
-yarn add viem
+yarn add viem@2.57.19
 ```
 
 ## Building the Ether wallet
@@ -73,7 +73,6 @@ import {
   Hex,
   numberToHex,
   sliceHex,
-  zeroHash,
 } from "viem";
 import { Balance } from "./balance";
 import { Voucher } from "..";
@@ -155,8 +154,8 @@ export class Wallet {
   private encodeWithdrawCall(receiver: Address, amount: bigint): Voucher {
     return {
       destination: receiver,
-      payload: zeroHash,
-      value: numberToHex(amount).slice(2),
+      payload: "0x",
+      value: numberToHex(amount, { size: 32 }),
     };
   }
 }
@@ -170,13 +169,13 @@ The `Wallet` class manages multiple accounts and provides methods for everyday w
 
 The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a crucial concept in Cartesi Rollups for executing withdrawal operations on the base layer chain.
 
-In Rollups v2, the on-chain [`Application`](../api-reference/contracts/application.md) contract executes vouchers through [`executeOutput()`](../api-reference/contracts/application.md#executeoutput), which decodes a voucher as `(destination, value, payload)` and performs a [`safeCall`](https://github.com/cartesi/rollups-contracts/blob/v2.0.1/src/library/LibAddress.sol) to `destination` with the specified wei `value`. Ether held by your application (see `metadata.app_contract` on each advance) is sent to the recipient this way.
+In Rollups v2, the on-chain [`Application`](../api-reference/contracts/application.md) contract executes vouchers through [`executeOutput()`](../api-reference/contracts/application.md#executeoutput), which decodes a voucher as `(destination, value, payload)` and performs a [`safeCall`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/src/library/LibAddress.sol) to `destination` with the specified wei `value`. Ether held by your application (see `metadata.app_contract` on each advance) is sent to the recipient this way.
 
-For a plain Ether transfer, leave `payload` as [`zeroHash`](https://viem.sh/docs/glossary/types#zeroHash) (no calldata). The voucher fields are:
+For a plain Ether transfer, leave `payload` empty (`0x`, no calldata). The voucher fields are:
 
 - `destination`: The address that receives the withdrawn Ether.
-- `payload`: `zeroHash` when you are not calling a function on the recipient.
-- `value`: The withdrawal amount in wei, as a hex string **without** the `0x` prefix (see [asset handling](../development/asset-handling.md#withdrawing-ether)).
+- `payload`: `0x` when you are not calling a function on the recipient. A non-empty payload, even 32 zero bytes such as `zeroHash`, makes the voucher revert with `TargetHasNoCode` when the recipient is a wallet with no code (see [asset handling](../development/asset-handling.md#withdrawing-ether)).
+- `value`: The withdrawal amount in wei, as a `0x`-prefixed hex string. `numberToHex(amount, { size: 32 })` pads it to 32 bytes.
 
 ## Using the Ether wallet
 
@@ -391,11 +390,11 @@ To inspect balance, make an HTTP (post) call to:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/ether-wallet \
-  -H "Content-Type: application/json" \
-  -d '{"payload": "0x307866333946643665353161616438384636463463653661423838323732373963666646623932323636"}'
+  -H "Content-Type: text/plain" \
+  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
 ```
 
-The `payload` field must be a hex-encoded string. The example above is the UTF-8 address `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` encoded with `stringToHex` from viem. Replace the inspect path if your project name is not `ether-wallet` (see the URL printed by `cartesi run`).
+The node passes the request body to your application unchanged as the inspect payload, so the body is the address to query as plain text (here `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`). Replace the inspect path if your project name is not `ether-wallet` (see the URL printed by `cartesi run`).
 
 ### Transfer and Withdrawals
 
@@ -444,8 +443,8 @@ cartesi run --services explorer
 
 The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
 
-You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
+You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md/#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
 
 :::info Repo Link
-   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/ether-wallet)!
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/ether-wallet)!
 :::

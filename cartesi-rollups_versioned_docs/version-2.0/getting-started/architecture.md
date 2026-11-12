@@ -10,7 +10,7 @@ resources:
     title: Grokking Cartesi Nodes
   - url: https://youtu.be/uUzn_vdWyDM?si=J2or_Nfym5pabkjNz3z8Gw
     title: Cartesi Machine DeepDive
-  - url: https://github.com/cartesi/dave
+  - url: https://github.com/cartesi/dave/tree/v3.0.0-alpha.6
     title: Dave
 ---
 
@@ -29,6 +29,8 @@ A decentralized application (dApp) built on Cartesi incorporates several key ele
 ## Cartesi Rollups
 
 Cartesi's Optimistic Rollups adopt interactive fraud proofs to handle disputes.
+
+Whether claims can be disputed depends on the consensus an application is deployed with. By default, `cartesi run` and the [deployment guides](../deployment/introduction.md) deploy an **Authority** consensus, where a single owner submits claims and there is no dispute game; PRT, the dispute-capable consensus built on [Dave](https://github.com/cartesi/dave/tree/v3.0.0-alpha.6), is not covered by these guides.
 
 The base layer isn't burdened with executing all computations, allowing for more extensive computational tasks.
 
@@ -63,13 +65,13 @@ The on-chain part of Cartesi Rollups consists of [several smart contracts](../ap
 Here is an overview of the major contracts, with each serving a specific role in the dApp ecosystem:
 
 ### InputBox
-The [InputBox](../api-reference/contracts/input-box.md) contract is the entry point for user interactions with the off-chain layer. All inputs destined for a Cartesi dApp are first submitted to this contract, which then emits events that the off-chain components can process.
+The [InputBox](../api-reference/contracts/input-box.md) contract is the entry point for user interactions with the off-chain layer. All inputs destined for a Cartesi dApp are first submitted to the InputBox the application was deployed with (returned by the application's `getInputBox()` function), which then emits events that the off-chain components can process.
 
-### CartesiDApp
-Each Cartesi dApp is associated with a unique instance of the [CartesiDApp](../api-reference/contracts/application.md) contract. This contract acts as the on-chain representation of the dApp and can hold ownership of digital assets on the base layer, including Ether, ERC-20 tokens, and NFTs.
+### Application
+Each Cartesi dApp is associated with a unique instance of the [Application](../api-reference/contracts/application.md) contract. This contract acts as the on-chain representation of the dApp and can hold ownership of digital assets on the base layer, including Ether, ERC-20 tokens, and NFTs.
 
-### CartesiDAppFactory
-The [CartesiDAppFactory](../api-reference/contracts/application-factory.md) contract simplifies the deployment process for CartesiDApp contracts. It allows developers to deploy new CartesiDApp instances with a single function call, enhancing convenience and security. This factory approach ensures the deployed contract bytecode remains unaltered, assuring users and validators.
+### ApplicationFactory
+The [ApplicationFactory](../api-reference/contracts/application-factory.md) contract simplifies the deployment process for Application contracts. It allows developers to deploy new Application instances with a single function call, enhancing convenience and security. This factory approach ensures the deployed contract bytecode remains unaltered, assuring users and validators.
 
 ### Portals
 
@@ -100,10 +102,10 @@ The Cartesi Rollups Node can operate in two primary modes:
 
 **1. Validator Nodes**: These nodes have full responsibilities, including processing inputs, generating claims, and ensuring the validity of on-chain state updates. They can operate in secure, isolated environments as they don't need to expose endpoints for external state queries.
 
-**2. Reader Nodes (In Development)**: These nodes focus on advancing the off-chain state and making it publicly available. They consume information from the blockchain but do not participate in the validation process.
+**2. Reader Nodes**: These nodes focus on advancing the off-chain state and making it publicly available. They consume information from the blockchain but do not submit claims. To run a node in reader mode, set `CARTESI_FEATURE_CLAIM_SUBMISSION_ENABLED=false`.
 
 :::caution important
-All Cartesi Nodes function as Validator Nodes, with Reader Node functionality under active development.
+Nodes run as Validator Nodes by default. The node saves its mode in its database when it first starts, and changing the mode on an existing database is not supported.
 :::
 
 ## Data Flow and Processes
@@ -141,7 +143,7 @@ The `inspect-state` process allows for querying the application backend without 
 - The node returns this report to the frontend via a [REST API](../api-reference/backend/introduction.md/#advance-and-inspect).
 
 :::note Inspect requests
-It's important to note that `inspect-state` inputs do not produce vouchers or notices, and the current implementation processes inputs sequentially, which may impact scalability for applications heavily reliant on inspect-state functionality.
+It's important to note that `inspect-state` inputs do not produce vouchers or notices. The node handles inspect requests concurrently, each on a separate copy of the application's machine, up to a per-application limit set by the `max_concurrent_inspects` execution parameter (10 by default). Requests above that limit are rejected with HTTP 503 instead of waiting.
 :::
 
 ### Validation
@@ -156,6 +158,6 @@ The validation process ensures the integrity of the off-chain computations:
 
 - The node submits this claim to the Cartesi Rollups smart contracts on the base layer.
 
-- The application frontend can fetch proofs for specific outputs within a closed epoch.
+- The consensus accepts the claim on-chain. With an Authority or Quorum consensus, this happens only after the consensus's claim staging period has passed.
 
-- These proofs can validate outputs on-chain, such as validating notices or executing vouchers.
+- After the claim is accepted (epoch status `CLAIM_ACCEPTED`), the application frontend can use the proofs for the epoch's outputs to validate notices or execute vouchers on-chain. Before that, validation and execution revert.

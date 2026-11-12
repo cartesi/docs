@@ -256,7 +256,7 @@ Think of it as a digital authorization ticket that enables an application to per
 
 - The [`Application`](../api-reference/contracts/application.md) contract executes the voucher using the [`executeOutput()`](../api-reference/contracts/application.md#executeoutput) function.
 
-- The result is recorded on the base layer through claims submitted by a consensus contract.
+- The node submits a claim for each epoch to the application's consensus contract. A voucher can be executed, and a notice validated, only after the claim for its epoch has been accepted on-chain.
 
   :::note create a voucher
   [Refer to the documentation here](./asset-handling.md) for asset handling and creating vouchers in your application.

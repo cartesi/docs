@@ -10,7 +10,8 @@ import (
 	"dapp/rollups"
 )
 
-const zeroHash32 = "0x0000000000000000000000000000000000000000000000000000000000000000"
+// Empty payload: a plain Ether transfer must not carry calldata.
+const emptyPayload = "0x"
 
 type EtherWithdrawCommand struct {
 	AmountWei string `json:"amount_wei"`
@@ -20,8 +21,8 @@ type EtherWithdrawCommand struct {
 func emitEtherVoucher(recipient string, amountWei *big.Int) error {
 	voucher := rollups.VoucherRequest{
 		Destination: strings.ToLower(strings.TrimSpace(recipient)),
-		Payload:     zeroHash32,
-		Value:       fmt.Sprintf("%x", amountWei),
+		Payload:     emptyPayload,
+		Value:       fmt.Sprintf("0x%064x", amountWei), // 0x-prefixed, 32 bytes
 	}
 	_, err := rollups.SendVoucher(&voucher)
 	return err

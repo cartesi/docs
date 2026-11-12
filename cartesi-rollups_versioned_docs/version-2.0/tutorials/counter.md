@@ -2,7 +2,7 @@
 id: counter
 title: Build a Counter Application
 resources:
-  - url: https://github.com/Mugen-Builders/Counter-X-Marketplace-apps
+  - url: https://github.com/Mugen-Builders/Counter-X-Marketplace-apps/tree/3ea44735b2237366208f726e36a4660c55a41f1e
     title: Source code for the Counter Application
 ---
 
@@ -280,4 +280,4 @@ From the latest application logs, it's now clear that the application's count va
 
 Congratulations, you've successfully bootstrapped, implemented, ran and interacted with your first Cartesi Application.
 
-For a more detailed version of this code, you can check the `counter` folder for your selected language in [this repository](https://github.com/Mugen-Builders/Counter-X-Marketplace-apps)
+For a more detailed version of this code, you can check the `counter` folder for your selected language in [this repository](https://github.com/Mugen-Builders/Counter-X-Marketplace-apps/tree/3ea44735b2237366208f726e36a4660c55a41f1e)

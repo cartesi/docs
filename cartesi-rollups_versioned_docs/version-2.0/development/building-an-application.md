@@ -40,14 +40,15 @@ Storing machine: please wait
 
 ## Memory
 
-To change the default memory size for the Cartesi Machine, you can personalize it by adding a specific label in your Dockerfile.
+To change the default memory size for the Cartesi Machine, set `ram_length` in the `[machine]` section of a `cartesi.toml` file in your project's root (see [advanced configuration](./advanced-configuration.md#memory-settings)).
 
-The line below lets you define the memory size in megabytes (MB):
+The lines below set the memory size to 128 mebibytes, which is the default:
 
-```dockerfile
-LABEL io.cartesi.rollups.ram_size=128Mi
+```toml
+[machine]
+ram_length = "128Mi"
 ```
 
 :::note environment variables
-You can create a `.cartesi.env` in the project's root and override any variable controlling the rollups-node.
+To override a variable that controls the rollups-node started by `cartesi run`, export it in your shell before running the command. Only the variables listed by `cartesi run --list-supported-variables` are passed to the node.
 :::

@@ -9,16 +9,17 @@ Rollups node v2.0 introduces some major changes in how the node works internally
 
 ### My back-end...
 - handles ERC-20 token deposit inputs. See the [ERC-20 token deposit inputs](#erc-20-token-deposit-inputs) section.
-- handles application address relay inputs. See the Application address section.
-- generates Ether withdrawal vouchers. See the Ether withdrawal vouchers section.
+- handles application address relay inputs. See the [Application address](#application-address) section.
+- generates Ether withdrawal vouchers. See the [Ether withdrawal vouchers](#ether-withdrawal-vouchers) section.
 
 ### My front-end...
-- validates notices. See the Outputs section.
-- executes vouchers. See the Outputs section.
-- listens to voucher execution events. See the Outputs section.
-- checks if a voucher was executed. See the Outputs section.
-- uses inspect calls. See the Inspect calls section.
-- uses JSON-RPC queries. See the JSON queries section.
+- sends inputs or deposits assets. See the [Inputs and portals](#inputs-and-portals) section.
+- validates notices. See the [Outputs](#outputs) section.
+- executes vouchers. See the [Outputs](#outputs) section.
+- listens to voucher execution events. See the [Outputs](#outputs) section.
+- checks if a voucher was executed. See the [Outputs](#outputs) section.
+- uses inspect calls. See the [Inspect calls](#inspect-calls) section.
+- queries inputs and outputs from the node. See the [Node queries](#node-queries) section.
 
 :::note
 If your application uses a high-level framework(ex. Deroll, Rollmelette etc.) for either backend or frontend, check if the framework has already implemented the changes described in this guide.
@@ -26,71 +27,50 @@ If your application uses a high-level framework(ex. Deroll, Rollmelette etc.) fo
 
 ### ERC-20 token deposit inputs
 
-In SDK v1, ERC-20 token deposit inputs start with a 1-byte Boolean field which indicates whether the transfer was successful or not:
+In SDK v1, ERC-20 token deposit inputs start with a 1-byte Boolean field which indicates whether the transfer was successful or not.
 
-#### 1. Define the environment variables
+In SDK v2, the ERC-20 portal only accepts successful transfers: it reverts when the token's `transferFrom` fails. With this change, the success field would always be true, so it has been removed. The deposit payload is now the packed encoding of:
 
-- `SALT`: A random 32-byte value for the deterministic deployment functions.
-- `RPC_URL`: The RPC endpoint to be used.
-- `MNEMONIC`: The mnemonic phrase for the Authority owner's wallet (other wallet options may be used).
-- `HISTORY_FACTORY_ADDRESS`: The address of a valid HistoryFactory instance.
-- `AUTHORITY_ADDRESS`: The address of the Authority instance used by the application.
+- `address token` (20 bytes)
+- `address sender` (20 bytes)
+- `uint256 amount` (32 bytes)
+- `bytes execLayerData` (the rest of the payload)
 
-  :::note environment variables
-  A `HistoryFactory` is deployed at `0x1f158b5320BBf677FdA89F9a438df99BbE560A26` for all supported networks, including Ethereum, Optimism, Arbitrum, Base, and their respective Sepolia-based testnets.
-  :::
+Update your back-end to read the token address from the first byte of the payload. See [asset handling](../development/asset-handling.md#abi-encoding-for-deposits) for the payloads of all portals.
 
-#### 2. Instantiate a New _History_
+### Application address
 
-This is a two-step process. First calculate the address of the new History. After that, the new instance of History may be created.
+In v1, the back-end learned the address of its application contract from an input sent through the `DAppAddressRelay` contract. v2 has no relay: the address is part of the metadata of every advance request, in the `app_contract` field. Remove the code that handles relay inputs and read `metadata.app_contract` instead.
 
-- To calculate the address of a new _History_ contract call the `calculateHistoryAddress(address,bytes32)(address)` function with the help of Foundry's Cast:
+### Ether withdrawal vouchers
 
-  ```shell
-  cast call \
-    --trace --verbose \
-    $HISTORY_FACTORY_ADDRESS \
-    "calculateHistoryAddress(address,bytes32)(address)" \
-    $AUTHORITY_ADDRESS \
-    $SALT \
-    --rpc-url "$RPC_URL"
-  ```
+In v1, Ether was withdrawn with a voucher to the application contract that called its `withdrawEther(address,uint256)` function. v2 application contracts have no such function. Emit a voucher whose destination is the recipient, whose `value` is the amount in wei, and whose payload is empty (`0x`). A voucher with a non-empty payload reverts when its destination has no code, as is the case for a user's wallet. See [withdrawing Ether](../development/asset-handling.md#withdrawing-ether).
 
-  If the command executes successfully, it will display the address of the new History contract. Store this address in the environment variable `NEW_HISTORY_ADDRESS` for later use.
+### Inputs and portals
 
-- Create a new instance of _History_ may be created by calling function `newHistory(address,bytes32)`:
+- **Input box.** Each v2 application is deployed with an input box, which its `getInputBox()` function returns. Send inputs to that input box, not to an address taken from a v1 deployment. Portals read the input box from the application, so deposits reach the right one automatically.
+- **Portal names.** The token portals and their deposit functions were renamed. Use `Erc20Portal.depositErc20Tokens`, `Erc721Portal.depositErc721Token`, `Erc1155SinglePortal.depositSingleErc1155Token` and `Erc1155BatchPortal.depositBatchErc1155Token`. The function selectors changed, so calls encoded with the v1 names (for example `depositERC20Tokens`) revert. `EtherPortal.depositEther` is unchanged. The portal addresses also differ from v1: take them from the deployment of the contracts version your node uses (`cartesi address-book` in a local environment).
 
-  ```shell
-  cast send \
-  --json \
-  --mnemonic "$MNEMONIC" \
-  $HISTORY_FACTORY_ADDRESS \
-  "newHistory(address,bytes32)(History)" \
-  $AUTHORITY_ADDRESS \
-  $SALT \
-  --rpc-url "$RPC_URL"
-  ```
+### Outputs
 
-  The `cast send` command will fail if Cast does not recognize the _History_ type during execution. In such cases, replace _History_ with `address` as the return type for `newHistory()` and execute the command again.
+The application contract changed how outputs are validated and executed:
 
-The `cast send` command may also fail due to gas estimation issues. To circumvent this, provide gas constraints with the `--gas-limit` parameter (e.g., `--gas-limit 7000000`).
+| v1 (`CartesiDApp`) | v2 (`Application`) |
+| :--- | :--- |
+| `executeVoucher(address,bytes,Proof)` | [`executeOutput(bytes output, OutputValidityProof proof)`](../api-reference/contracts/application.md#executeoutput) |
+| `validateNotice(bytes,Proof)` | [`validateOutput(bytes output, OutputValidityProof proof)`](../api-reference/contracts/application.md#validateoutput) |
+| `wasVoucherExecuted(uint256 inputIndex, uint256 outputIndexWithinInput)` | [`wasOutputExecuted(uint256 outputIndex)`](../api-reference/contracts/application.md#wasoutputexecuted) |
+| event `VoucherExecuted(uint256 voucherId)` | event [`OutputExecuted(uint64 indexed outputIndex, bytes output)`](../api-reference/contracts/application.md#outputexecuted) |
 
-#### 3. Replace the _History_
+- `output` is the whole encoded output (voucher or notice) as returned by the node in the `raw_data` field, not just the destination and payload.
+- Outputs are numbered per application, not per input. Build the proof from the node's output data: `outputIndex` is the output's `index` and `outputHashesSiblings` is its `output_hashes_siblings`.
+- An output can be validated or executed only after the claim for its epoch has been accepted on-chain. v2 consensus contracts first stage a claim and accept it only after a claim staging period, fixed when the consensus is deployed, so check that the epoch status is `CLAIM_ACCEPTED` before you enable voucher execution in your front-end.
+- If the application is foreclosed by its guardian, users can recover the deposits of inputs that were never finalized with the `issueRefund(inputIndex, input)` function of the application contract. See [emergency withdrawal](../development/emergency-withdrawal/overview.md).
 
-Ensure the environment variables from the previous step are set, including `NEW_HISTORY_ADDRESS`, which should have the address of the new History.
+### Inspect calls
 
-To replace the _History_ used by the _Authority_, run this command:
+Send inspect requests as HTTP `POST` requests to `/inspect/<application name or address>` on the node, with the payload as the request body. Other HTTP methods are rejected with `405 Method Not Allowed`. Inspect reports are returned only in the response: the node does not store them. See [making inspect calls](../development/send-inputs-and-assets.md#make-inspect-calls).
 
-```shell
-cast send \
-    --json \
-    --mnemonic "$MNEMONIC" \
-    "$AUTHORITY_ADDRESS" \
-    "setHistory(address)" \
-    "$NEW_HISTORY_ADDRESS" \
-    --rpc-url "$RPC_URL"
-```
+### Node queries
 
-In SDK v2, we modified the ERC-20 portal to only accept successful transactions. With this change, the success field would always be true, so it has been removed:
-
-When the Cartesi Rollups Node restarts, it processes all existing inputs, recalculates the epochs, and sends the claims to the new _History_ based on the updated configuration.
+The v1 node served inputs, notices, vouchers and reports through a GraphQL API. The v2 node serves them through a [JSON-RPC API](../api-reference/jsonrpc/overview.md) with `cartesi_`-prefixed methods such as `cartesi_listInputs`, `cartesi_listOutputs` and `cartesi_getOutput`. Notices and vouchers are both returned as outputs. See [querying outputs](../development/query-outputs.md).

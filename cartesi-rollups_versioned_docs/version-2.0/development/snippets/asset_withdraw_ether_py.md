@@ -9,7 +9,7 @@ logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
 ROLLUP_HTTP_SERVER_URL = os.environ["ROLLUP_HTTP_SERVER_URL"]
-ZERO_HASH = "0x" + ("00" * 32)
+EMPTY_PAYLOAD = "0x"
 
 
 def payload_hex_to_bytes(payload):
@@ -24,15 +24,15 @@ def emit_ether_voucher(recipient, amount_wei):
 
     Per Cartesi docs for Ether transfer:
     - destination: recipient address
-    - payload: zero hash (no function call)
-    - value: Ether amount as hex (without 0x prefix)
+    - payload: empty (no function call)
+    - value: Ether amount in wei, as a 0x-prefixed 32-byte hex string
     """
     recipient = recipient.lower().strip()
-    value_hex = hex(int(amount_wei))[2:]
+    value_hex = "0x" + int(amount_wei).to_bytes(32, "big").hex()
 
     voucher = {
         "destination": recipient,
-        "payload": ZERO_HASH,
+        "payload": EMPTY_PAYLOAD,
         "value": value_hex,
     }
     response = requests.post(ROLLUP_HTTP_SERVER_URL + "/voucher", json=voucher)

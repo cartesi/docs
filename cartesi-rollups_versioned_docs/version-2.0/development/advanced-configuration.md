@@ -40,7 +40,7 @@ format = "ext2"
 
 This means that by default, the CLI will:
 
-1. Use SDK version specified i.e `0.12.0`.
+1. Use the default SDK version of your CLI release (for example, `cartesi/sdk:0.12.0-alpha.44` for Cartesi CLI 2.0.0-alpha.41). To build for rollups-node v2.0.0-alpha.14, set `sdk = "cartesi/sdk:0.12.0-alpha.45"` instead (see [SDK Version](#sdk-version)).
 2. Give your machine 128 megabytes of RAM.
 3. Build your root drive from a `Dockerfile` in your project directory.
 4. Pull environment variables and the working directory from that Docker image.
@@ -51,12 +51,20 @@ If those defaults work for you, all you need is a `Dockerfile` and you are ready
 ## SDK Version
 
 ```toml
-sdk = "cartesi/<version>"
+sdk = "cartesi/sdk:<version>"
 ```
 
 The `sdk` field tells the CLI which version of the Cartesi SDK image to use when building your machine. This is a docker image containing the Linux kernel, the RISC‑V toolchain, Cartesi Node and everything else needed to assemble your Cartesi Machine.
 
 Think of it as pinning a version of your build environment. If you are working on a team, setting this explicitly ensures everyone builds with the same SDK, avoiding the classic "it works on my machine" problem. Each SDK is tied to a Cartesi CLI version, hence it's important you have a compatible CLI installed for the sdk version you specify. When you omit the SDK field the CLI uses its own built in default version.
+
+The SDK image also decides which Cartesi Machine emulator builds your machine, and a node can only load machines built with its own emulator line. These docs target rollups-node v2.0.0-alpha.14 (emulator 0.22.0), so set:
+
+```toml
+sdk = "cartesi/sdk:0.12.0-alpha.45"
+```
+
+The default of Cartesi CLI 2.0.0-alpha.41, `cartesi/sdk:0.12.0-alpha.44`, ships rollups-node v2.0.0-alpha.13 and emulator 0.21.0.
 
 **When to change this:** When there's a new SDK version and you want to adopt it, or when you need to stay on a specific version for compatibility.
 
@@ -116,12 +124,10 @@ A value of `2305843009213693952` is the default machine cycle the Cartesi machin
 ### Rollup Behavior
 
 ```toml
-assert_rolling_update = true
+assert_rolling_template = true
 ```
 
-Set this to `true` when you are building a standalone application that does not need to interact with the blockchain's input/output system. This is useful during early development or for tools that run inside the machine but do not need the rollup lifecycle.
-
-**`assert_rolling_update`** is related to rolling template assertions. When set to `true`, the CLI will verify that your machine is compatible with rolling updates. This is important for production deployments where you want to ensure your application can be updated without breaking the existing state.
+**`assert_rolling_template`** is related to rolling template assertions. When set to `true`, the build fails if the machine is not compatible with Rolling Cartesi Machine templates, that is, if it does not stop at a manual `rx-accepted` yield, the point where a rollups application waits for its first input. Use it to catch, at build time, an application that would not be able to process inputs.
 
 ### Docker Integration
 
@@ -141,13 +147,11 @@ These fields control how the CLI uses information from your Docker image when bu
 
 ### Final Hash
 
-```toml
-final_hash = true
-```
+`cartesi build` always stores the machine together with its final hash. This hash uniquely identifies the exact state of your Cartesi Machine, including all its drives, memory, and configuration.
 
-When `final_hash` is set to `true`, the CLI computes a hash of the machine after it finishes building. This hash uniquely identifies the exact state of your Cartesi Machine, including all its drives, memory, and configuration.
+This is important for on chain verification. The hash is what gets registered on the blockchain as the application's template hash, and it allows anyone to verify that the machine running off chain is exactly the same one that was agreed upon. When you deploy, `cartesi-rollups-cli deploy application` reads the template hash from the stored machine, and by default the node refuses to run a machine whose hash does not match the registered one. This applies to every deployment, whether on a local devnet, a testnet or mainnet.
 
-This is important for on chain verification. The hash is what gets registered on the blockchain, and it allows anyone to verify that the machine running off chain is exactly the same one that was agreed upon. If you are deploying to production, you will want this enabled.
+There is no `final_hash` option to set: it was removed in Cartesi CLI 2.0.0-alpha.16, and since 2.0.0-alpha.41 `cartesi build` fails on unknown keys such as `final_hash`. Remove it from older `cartesi.toml` files.
 
 ## Drives
 
@@ -296,7 +300,8 @@ Here is a realistic `cartesi.toml` for a Python application that processes uploa
 
 ```toml
 # Pin the SDK version for reproducible builds
-sdk = "cartesi/sdk:0.12.0"
+# (0.12.0-alpha.45 ships rollups-node v2.0.0-alpha.14 and emulator 0.22.0)
+sdk = "cartesi/sdk:0.12.0-alpha.45"
 
 [machine]
 # Run the Python application when the machine starts
@@ -311,9 +316,6 @@ use_docker_workdir = true
 
 # Run as the default non root user
 user = "dapp"
-
-# Compute the final hash for on chain verification
-final_hash = true
 
 # The root drive contains the OS, Python runtime, and application code
 [drives.root]
@@ -347,17 +349,16 @@ The reference drive contains a pre built SquashFS image with static reference da
 
 | Field                   | Section      | Type             | Default                         | Description                                                     |
 | ----------------------- | ------------ | ---------------- | ------------------------------- | --------------------------------------------------------------- |
-| `sdk`                   | Top level    | String           | `"cartesi/sdk:0.12.0"`          | SDK image and version used for building                         |
+| `sdk`                   | Top level    | String           | Default SDK of the CLI release  | SDK image and version used for building                         |
 | `entrypoint`            | `[machine]`  | String           | From Docker image               | Path to the application binary                                  |
 | `boot_args`             | `[machine]`  | String array     | CLI defaults                    | Linux kernel boot arguments                                     |
 | `ram_length`            | `[machine]`  | String           | `"128Mi"`                       | Amount of RAM for the machine                                   |
 | `ram_image`             | `[machine]`  | String           | SDK default                     | Path to the Linux kernel binary                                 |
 | `max_mcycle`            | `[machine]`  | Number           | `2305843009213693952` (default) | Maximum machine cycles allowed                                  |
-| `assert_rolling_update` | `[machine]`  | Boolean          | —                               | Assert rolling update compatibility                             |
+| `assert_rolling_template` | `[machine]` | Boolean        | —                               | Fail the build if the machine is not a rolling template         |
 | `use_docker_env`        | `[machine]`  | Boolean          | `true`                          | Inject Docker ENV into the machine                              |
 | `use_docker_workdir`    | `[machine]`  | Boolean          | `true`                          | Use Docker WORKDIR in the machine                               |
 | `user`                  | `[machine]`  | String           | —                               | User to run the application as                                  |
-| `final_hash`            | `[machine]`  | Boolean          | —                               | Compute machine hash after build                                |
 | `builder`               | `[drives.*]` | String           | `"docker"`                      | How to create the drive: docker, empty, directory, tar, or none |
 | `dockerfile`            | `[drives.*]` | String           | `"Dockerfile"`                  | Path to Dockerfile (docker builder)                             |
 | `target`                | `[drives.*]` | String           | Last stage                      | Docker multi stage build target                                 |

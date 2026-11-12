@@ -2,7 +2,7 @@
 id: react-frontend-application
 title: Build a React frontend for Cartesi Apps
 resources:
-  - url: https://github.com/Mugen-Builders/cartesi-frontend-tutorial
+  - url: https://github.com/Mugen-Builders/cartesi-frontend-tutorial/tree/7ee8d848c4bdb5969b70e938426d99a9e1332a04
     title: Source code for the frontend application
 ---
 
@@ -15,7 +15,7 @@ This is a comprehensive guide for building a React frontend that interacts with 
 The fastest way to get started is using `create-wagmi` to bootstrap a new React project in TypeScript with _wagmi_ already configured:
 
 ```bash
-pnpm create wagmi@latest my-cartesi-webapp
+pnpm create wagmi@2.0.19 my-cartesi-webapp
 cd my-cartesi-webapp
 ```
 

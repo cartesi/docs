@@ -24,7 +24,7 @@ Currently, Cartesi Rollups support the following types of assets:
 
 Portals enable the safe transfer of assets from the base layer to the execution layer. Users authorize portals to deduct assets from their accounts and initiate transfers to the Application contract.
 
-When an asset is deposited, it is on the base layer but gains a representation in the execution layer. The corresponding Portal contract sends an input via the `InputBox` contract describing the type of asset, amount, and some data the depositor might want the application to read. The off-chain machine will then interpret and validate the input payload.
+When an asset is deposited, it is on the base layer but gains a representation in the execution layer. The corresponding Portal contract sends an input via the application's `InputBox` contract (the one returned by the application's `getInputBox()` function) describing the type of asset, amount, and some data the depositor might want the application to read. The off-chain machine will then interpret and validate the input payload.
 
 Deposit input payloads are always specified as packed ABI-encoded parameters, as detailed below.
 
@@ -103,7 +103,7 @@ For a full guide, see the Tutorials: [ERC-20 Token Wallet](../tutorials/erc-20-t
 
 ## Withdrawing assets
 
-Users can deposit assets to a Cartesi Application, but only the Application can initiate withdrawals. When a withdrawal request is made, it’s processed and interpreted off-chain by the Cartesi Machine running the application’s code. Subsequently, the Cartesi Machine creates a voucher containing the necessary instructions for withdrawal, which is executable when an epoch has settled.
+Users can deposit assets to a Cartesi Application, but only the Application can initiate withdrawals. When a withdrawal request is made, it’s processed and interpreted off-chain by the Cartesi Machine running the application’s code. Subsequently, the Cartesi Machine creates a voucher containing the necessary instructions for withdrawal, which becomes executable once the claim for the epoch that produced it has been accepted on-chain.
 
 ### Withdrawing Tokens
 
@@ -155,9 +155,13 @@ For a full guide, see the Tutorial: [ERC-20 Token Wallet](../tutorials/erc-20-to
 
 ### Withdrawing Ether
 
-To execute Ether withdrawal it is important to emit a voucher with the necessary details as regarding whom you intend to send the Ether to and also the amount to send, nevertheless since the Application contract Executes vouchers by making a [safeCall](https://github.com/cartesi/rollups-contracts/blob/cb52d00ededd2da9f8bf7757710301dccb7d536d/src/library/LibAddress.sol#L18C14-L18C22) to the destination, passing a value (Ether amount to send along with the call) and a payload (function signature to call), it's acceptable to leave the payload section empty if you do not intend to call any functions in the destination address while sending just the specified value of Ether to the destination address. If you intend to call a payable function and also send Ether along, you can add a function signature matching the payable function you intend to call to the payload field.
+To execute Ether withdrawal it is important to emit a voucher with the necessary details as regarding whom you intend to send the Ether to and also the amount to send, nevertheless since the Application contract Executes vouchers by making a [safeCall](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/src/library/LibAddress.sol#L20) to the destination, passing a value (Ether amount to send along with the call) and a payload (function signature to call), you should leave the payload empty (`0x`) if you do not intend to call any functions in the destination address while sending just the specified value of Ether to the destination address. If you intend to call a payable function and also send Ether along, you can add a function signature matching the payable function you intend to call to the payload field.
 
-Below are multi-language examples for Ether withdrawal. Here, the voucher sends Ether directly to an address instead of calling a token contract function, so there is no encoded function call payload.
+:::caution empty payload for wallets
+A voucher with a non-empty payload reverts with `TargetHasNoCode` when its destination has no code, as is the case for a user's wallet (an externally owned account). Even a payload of zero bytes such as `0x0000...0000` counts as non-empty, so Ether withdrawals to wallets must use an empty payload.
+:::
+
+Below are multi-language examples for Ether withdrawal. Here, the voucher sends Ether directly to an address instead of calling a token contract function, so the payload is empty (`0x`) and the voucher's `value` field carries the amount in wei, as a `0x`-prefixed hex string.
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
@@ -199,17 +203,17 @@ Below are multi-language examples for Ether withdrawal. Here, the voucher sends 
 For a full guide, see the Tutorial: [Ether Wallet](../tutorials/ether-wallet.md).
 
 :::note epoch length
-By default, Cartesi nodes close one epoch every 7200 blocks. You can manually set the epoch length to facilitate quicker asset-handling methods.
+The epoch length (in blocks) and the claim staging period are parameters of the application's consensus contract, fixed when the consensus is deployed; the node has no setting for them. `cartesi-rollups-cli deploy` uses an epoch length of 10 blocks and a claim staging period of 0 unless you pass `--epoch-length` and `--claim-staging-period`, and `cartesi run` accepts the same two options. A withdrawal voucher becomes executable only after its epoch closes and the claim is accepted, so these parameters set how long users wait for withdrawals.
 :::
 
 Here are the function signatures used by vouchers to withdraw the different types of assets:
 
 | Asset    | Destination    | Function signature                                                                                                                          |
 | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| Ether    | dApp contract  | `withdrawEther(address,uint256)` [:page_facing_up:](../api-reference/json-rpc/application.md/#withdrawether)                            |
+| Ether    | Recipient      | None: empty payload (`0x`), with the amount in the voucher's `value` field                                                                 |
 | ERC-20   | Token contract | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
 | ERC-20   | Token contract | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256,bytes)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                  |
-| ERC-1155 | Token contract | `safeTransferFrom(address,address,uint256,uint256,data)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification)          |
-| ERC-1155 | Token contract | `safeBatchTransferFrom(address,address,uint256[],uint256[],data)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification) |
+| ERC-1155 | Token contract | `safeTransferFrom(address,address,uint256,uint256,bytes)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification)         |
+| ERC-1155 | Token contract | `safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification) |

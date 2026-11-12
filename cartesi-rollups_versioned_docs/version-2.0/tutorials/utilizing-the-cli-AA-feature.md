@@ -2,10 +2,10 @@
 id: cli-account-abstraction-feature
 title: Utilizing the account abstraction feature of the CLI for Sponsored Transactions
 resources:
-  - url: https://github.com/Mugen-Builders/docs_examples/tree/main/account-abstraction-frontend-demo
+  - url: https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/account-abstraction-frontend-demo
     title: Account Abstraction frontend demo
 
-  - url: https://github.com/Mugen-Builders/docs_examples/tree/main/account-abstraction-demo
+  - url: https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/account-abstraction-script
     title: Account Abstraction Script demo
 ---
 
@@ -42,7 +42,7 @@ We’ll be using React.js along with Wagmi to build this simple frontend applica
 To bootstrap a React project with Wagmi already configured, we’ll use the CLI command
 
 ```shell
-    npm create wagmi@latest
+    npm create wagmi@2.0.19
 ```
 
 This command would create a new React application with a simple UI and wallet connect by wagmi already integrated.
@@ -245,7 +245,7 @@ export const useInputBoxAddInput = async (args: Hex, walletClient: any) => {
 ```
 
 :::note Inputbox and App Address
-The Inputbox and App address contained in the above code snippet are also for a local application instance, therefore if your application address on devnet is different, you should replace the code content as required, while for testnet or mainnet you replace the application address with that of your application and also update the inputbox address with the Cartesi inputbox address for your deployment chain.
+The Inputbox and App address contained in the above code snippet are also for a local application instance, therefore if your application address on devnet is different, you should replace the code content as required, while for testnet or mainnet you replace the application address with that of your application. In every environment, use the input box your application was deployed with, which the application contract's `getInputBox()` function returns (in a local environment, it is the `InputBox` entry of `cartesi address-book`); inputs sent to any other input box are not delivered to your application.
 :::
 
 ### Set Up the Frontend UI
@@ -409,4 +409,4 @@ To test out the application, we simply visit the page our frontend is running on
 
 We’ve been able to build our first sponsored transaction supporting application on Cartesi and that’s great. But it’s important to note that the above infrastructure we’ve setup is streamlined to localhost but can easily be configured to work with any network of your choice by simply replacing the bundler URL and also the paymaster URL with that provided by zerodev for the chain you intend to support. You can check the [zerodev documentation](https://docs.zerodev.app/) for more information on how to create an account and also obtain a bundler and paymaster URL.
 
-Access a complete codebase with the code blocks from the tutorial [here.](https://github.com/Mugen-Builders/docs_examples/tree/main/account-abstraction-frontend-demo)
+Access a complete codebase with the code blocks from the tutorial [here.](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/account-abstraction-frontend-demo)

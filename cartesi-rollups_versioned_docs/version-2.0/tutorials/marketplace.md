@@ -2,7 +2,7 @@
 id: marketplace
 title: Build a Marketplace Application
 resources:
-  - url: https://github.com/Mugen-Builders/Counter-X-Marketplace-apps
+  - url: https://github.com/Mugen-Builders/Counter-X-Marketplace-apps/tree/3ea44735b2237366208f726e36a4660c55a41f1e
     title: Source code for the Marketplace Application
 ---
 
@@ -138,7 +138,7 @@ Since this project would be covering hex payload encoding and decoding, as well 
 <pre><code>
 
 ```shell
- npm add viem
+ npm add viem@2.57.19
 ```
 
 </code></pre>
@@ -331,6 +331,10 @@ Also, ensure that all CLI commands are executed from the root directory of your 
 
 ### 1. Mint an ERC-721 Token and Grant Approval
 
+:::caution check the contract addresses
+The token and portal addresses used in the commands below and hard-coded in the application code (`erc721_portal_address`, `erc20_portal_address` and their equivalents) may differ from the ones deployed by your version of the Cartesi CLI. Compare them with the output of `cartesi address-book` (entries `TestNFT`, `TestToken`, `Erc721Portal` and `Erc20Portal`) and update them before you build and run the application; otherwise the application ignores your deposits.
+:::
+
 With your Marketplace application now deployed, the first step is to mint the NFT you plan to list and grant approval for it to be transferred via the ERC-721 portal.
 Since our app uses the test ERC-721 and ERC-20 contracts automatically deployed by the CLI, you can use the commands below to mint your token and set the necessary approvals.
 
@@ -484,4 +488,4 @@ You’ve successfully built and interacted with your own Marketplace application
 
 This example covered essential Cartesi concepts such as routing, asset management, voucher generation, and the use of both Inspect and Advance routes.
 
-For a more detailed version of this code, you can check the `marketplace` folder for your selected language in [this repository](https://github.com/Mugen-Builders/Counter-X-Marketplace-apps)
+For a more detailed version of this code, you can check the `marketplace` folder for your selected language in [this repository](https://github.com/Mugen-Builders/Counter-X-Marketplace-apps/tree/3ea44735b2237366208f726e36a4660c55a41f1e)
