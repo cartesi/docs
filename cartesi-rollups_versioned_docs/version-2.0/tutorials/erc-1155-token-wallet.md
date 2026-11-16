@@ -117,7 +117,7 @@ export class Wallet {
       this.parseBatchDeposit(payload);
     const balance = this.getOrCreate(account);
     for (let i = 0; i < tokenIds.length; i++) {
-      balance.increase(erc1155, tokenIds[i], amounts[i]);
+      balance.increase(erc1155, tokenIds[i]!, amounts[i]!);
     }
     return JSON.stringify({
       type: "erc1155BatchDeposit",
@@ -154,7 +154,7 @@ export class Wallet {
       ],
       sliceHex(payload, 40)
     );
-    return [erc1155, account, tokenIds, amounts];
+    return [erc1155, account, [...tokenIds], [...amounts]];
   }
 
   private deposit(
@@ -206,8 +206,8 @@ export class Wallet {
     const fromBal = this.getOrCreate(from);
     const toBal = this.getOrCreate(to);
     for (let i = 0; i < tokenIds.length; i++) {
-      fromBal.decrease(erc1155, tokenIds[i], amounts[i]);
-      toBal.increase(erc1155, tokenIds[i], amounts[i]);
+      fromBal.decrease(erc1155, tokenIds[i]!, amounts[i]!);
+      toBal.increase(erc1155, tokenIds[i]!, amounts[i]!);
     }
     return JSON.stringify({
       type: "erc1155BatchTransfer",
@@ -246,7 +246,7 @@ export class Wallet {
   ): Voucher {
     const balance = this.getOrCreate(account);
     for (let i = 0; i < tokenIds.length; i++) {
-      balance.decrease(erc1155, tokenIds[i], amounts[i]);
+      balance.decrease(erc1155, tokenIds[i]!, amounts[i]!);
     }
     const call = encodeFunctionData({
       abi: erc1155Abi,
@@ -539,9 +539,9 @@ MULTI=$(cartesi address-book 2>&1 | grep -i TestMultiToken | awk '{print $NF}')
 SINGLE_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155SinglePortal | awk '{print $NF}')
 
 cast send "$MULTI" \
-  "mint(address,uint256,uint256,bytes)" \
+  "mint(address,uint256,uint256)" \
   0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f \
-  1 100 0x \
+  1 100 \
   --rpc-url http://127.0.0.1:6751/anvil \
   --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
@@ -573,9 +573,9 @@ MULTI=$(cartesi address-book 2>&1 | grep -i TestMultiToken | awk '{print $NF}')
 BATCH_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155BatchPortal | awk '{print $NF}')
 
 cast send "$MULTI" \
-  "mint(address,uint256,uint256,bytes)" \
+  "mint(address,uint256,uint256)" \
   0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f \
-  2 50 0x \
+  2 50 \
   --rpc-url http://127.0.0.1:6751/anvil \
   --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
@@ -594,10 +594,20 @@ cartesi deposit erc1155-batch 1,2 10,20 \
 
 ### Balance checks (Inspect)
 
-Inspect payloads use UTF-8 strings (hex-encoded in the JSON body):
+Inspect payloads use UTF-8 strings. The node passes the request body to your application unchanged as the inspect payload, so send the string itself as the body:
 
 - Single ID: `erc1155/0xUser/0xContract/1`
 - All IDs for a contract: `erc1155/0xUser/0xContract`
+
+Example for user `0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`, the `TestMultiToken` contract `0xAaE893D28b7645B5E09bc16688dddd451aC89C19` and token ID `1`:
+
+```bash
+curl -X POST http://127.0.0.1:6751/inspect/erc-1155-token-wallet \
+  -H "Content-Type: text/plain" \
+  -d 'erc1155/0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f/0xAaE893D28b7645B5E09bc16688dddd451aC89C19/1'
+```
+
+Replace the inspect path if your project name is not `erc-1155-token-wallet` (see the URL printed by `cartesi run`).
 
 ### Transfers and withdrawals
 

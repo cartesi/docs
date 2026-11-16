@@ -82,7 +82,9 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
         const std::string payload_hex = data.get("payload").get<std::string>();
         const std::string expression = hex_to_string(payload_hex);
         const double output = evaluate_expression(expression);
-        emit_notice(cli, std::to_string(output));
+        std::ostringstream result;
+        result << output;
+        emit_notice(cli, result.str());
         return "accept";
     }
     catch (const std::exception &e)

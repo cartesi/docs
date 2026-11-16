@@ -141,7 +141,7 @@ export class Wallet {
     return erc20Balance;
   };
 
-  processErc20Deposit = (payload: string): string => {
+  processErc20Deposit = (payload: Hex): string => {
     try {
       let [erc20, account, amount] = this.parseErc20Deposit(payload);
       console.log(`${amount} ${erc20} tokens deposited to account ${account}`);
@@ -181,7 +181,6 @@ export class Wallet {
   };
 
   withdrawErc20 = (
-    application: Address,
     account: Address,
     erc20: Address,
     amount: bigint
@@ -191,8 +190,8 @@ export class Wallet {
       balance.decreaseErc20Balance(erc20, amount);
       const call = encodeFunctionData({
         abi: erc20Abi,
-        functionName: "transferFrom",
-        args: [application, account, amount],
+        functionName: "transfer",
+        args: [account, amount],
       });
 
       console.log(`Voucher creation success`, {
@@ -243,7 +242,7 @@ export class Wallet {
 
 ### Voucher creation
 
-The `withdrawErc20` method encodes `transferFrom(application, recipient, amount)` and returns a voucher. Tokens deposited through the portal sit in your on-chain `Application` contract; the application address in the voucher must match `metadata.app_contract` from the advance. Set `value` to [`zeroHash`](https://viem.sh/docs/glossary/types#zeroHash) when no Ether is sent with the call. See [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
+The `withdrawErc20` method encodes `transfer(recipient, amount)` and returns a voucher whose destination is the token contract. Tokens deposited through the portal sit in your on-chain `Application` contract, and the `Application` is the caller when it executes the voucher, so `transfer` moves the tokens out of its own balance. Do not use `transferFrom(application, recipient, amount)` here: the `Application` has no allowance over its own tokens, so the voucher reverts with `ERC20InsufficientAllowance` in OpenZeppelin 5 tokens. Set `value` to [`zeroHash`](https://viem.sh/docs/glossary/types#zeroHash) when no Ether is sent with the call. See [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
 
 ## Using the ERC20 wallet
 
@@ -285,7 +284,6 @@ console.log(`HTTP rollup_server url is ${rollupServer}`);
 const handleAdvance: AdvanceRequestHandler = async (data) => {
   console.log("Received advance request data " + JSON.stringify(data));
 
-  const application = data["metadata"]["app_contract"];
   const sender = data["metadata"]["msg_sender"];
   const payload = data.payload;
 
@@ -311,7 +309,6 @@ const handleAdvance: AdvanceRequestHandler = async (data) => {
         await createNotice({ payload: stringToHex(transfer) });
       } else if (operation === "withdraw") {
         const voucher = wallet.withdrawErc20(
-          getAddress(application as Address),
           getAddress(from as Address),
           getAddress(erc20 as Address),
           BigInt(amount)
@@ -429,7 +426,7 @@ Here is a breakdown of the wallet functionality:
 
 - For `transfers`, we call `wallet.transferErc20` and create a notice with the parsed parameters.
 
-- For `withdrawals`, we call `wallet.withdrawErc20` with the on-chain application address (`metadata.app_contract`) as the `transferFrom` sender, then emit a voucher to the token contract.
+- For `withdrawals`, we call `wallet.withdrawErc20`, which encodes a `transfer` to the user, then emit a voucher to the token contract. The on-chain `Application` (`metadata.app_contract`) executes it and sends the tokens it holds.
 
 - We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks, and `createVoucher` for withdrawals.
 
@@ -463,11 +460,19 @@ To deposit ERC20 tokens interactively:
 cartesi deposit erc20
 ```
 
+The depositing account must hold the tokens. `TestToken` starts with a total supply of zero and has a public `mint` function, so mint the tokens first as shown below.
+
 Non-interactive alternative. Run from your **project root** (with `cartesi run` up). Resolve addresses from [`cartesi address-book`](../development/send-inputs-and-assets.md):
 
 ```bash
 TOKEN=$(cartesi address-book 2>&1 | grep -i TestToken | awk '{print $NF}')
 ERC20_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc20Portal | awk '{print $NF}')
+
+cast send "$TOKEN" \
+  "mint(uint256)" \
+  1000000000000000000 \
+  --rpc-url http://127.0.0.1:6751/anvil \
+  --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
 cast send "$TOKEN" \
   "approve(address,uint256)" \
@@ -476,15 +481,17 @@ cast send "$TOKEN" \
   --rpc-url http://127.0.0.1:6751/anvil \
   --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
-cartesi deposit erc20 100000000000000000 \
+cartesi deposit erc20 1 \
   --token "$TOKEN" \
   --project-name erc-20-token-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```
 
+`cartesi deposit erc20` takes the amount in token units: `1` deposits 1 FUN, which is `1000000000000000000` in the smallest unit (the amount minted and approved above). On success, the CLI prints `✔ Deposited 1 FUN to <application address>`.
+
 ### Balance checks (used in Inspect requests)
 
-Inspect payloads use the form `userAddress/erc20TokenAddress` as a UTF-8 string. The node passes the request body to your application unchanged as the inspect payload, so send that string as the body. Example for user `0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f` and token `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
+Inspect payloads use the form `userAddress/erc20TokenAddress` as a UTF-8 string. The node passes the request body to your application unchanged as the inspect payload, so send that string as the body. Example for user `0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f` and the `TestToken` contract `0x86EA17052C8e335Ad830B54EF566274EAB46B852`:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/erc-20-token-wallet \

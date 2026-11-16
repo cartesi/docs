@@ -122,7 +122,7 @@ export class Wallet {
     return result;
   }
 
-  processErc721Deposit(payload: string): string {
+  processErc721Deposit(payload: Hex): string {
     try {
       const [erc721, account, tokenId] = this.parseErc721Deposit(payload);
       console.info(

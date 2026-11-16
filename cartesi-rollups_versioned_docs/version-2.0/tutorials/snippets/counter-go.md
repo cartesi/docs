@@ -2,9 +2,16 @@
 package main
 
 import (
-	"encoding/json"
-
 	"dapp/rollups"
+	"encoding/json"
+	"io"
+	"log"
+	"os"
+)
+
+var (
+	infolog = log.New(os.Stderr, "[ info ]  ", log.Lshortfile)
+	errlog  = log.New(os.Stderr, "[ error ] ", log.Lshortfile)
 )
 
 type Counter struct {
@@ -50,8 +57,13 @@ func main() {
 			continue
 		}
 
-		response, err := rollups.ParseFinishResponse(res)
+		resBody, err := io.ReadAll(res.Body)
 		if err != nil {
+			errlog.Panicln("Error reading finish response:", err)
+		}
+
+		var response rollups.FinishResponse
+		if err = json.Unmarshal(resBody, &response); err != nil {
 			errlog.Panicln("Error parsing finish response:", err)
 		}
 
