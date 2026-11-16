@@ -238,7 +238,7 @@ For example, sending an input payload of `“2”` to the application using Cast
 
 ```bash
 Received finish status 200
-Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0xef34611773387750985673f94067ea22db406f72","msg_sender":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","block_number":188,"block_timestamp":1741291197,"prev_randao":"0xa8b0097138c68949870aabe7aa4dc62a91b6dd0bc2b4582eac2be9eaee280032","input_index":0},"payload":"0x32"}
+Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0xef34611773387750985673f94067ea22db406f72","msg_sender":"0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f","block_number":188,"block_timestamp":1741291197,"prev_randao":"0xa8b0097138c68949870aabe7aa4dc62a91b6dd0bc2b4582eac2be9eaee280032","input_index":0},"payload":"0x32"}
 Adding notice with values 2, 4, 6, 8, 10
 ```
 

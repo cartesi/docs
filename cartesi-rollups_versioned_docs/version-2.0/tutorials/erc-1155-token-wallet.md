@@ -540,17 +540,17 @@ SINGLE_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155SinglePortal | awk '{
 
 cast send "$MULTI" \
   "mint(address,uint256,uint256,bytes)" \
-  0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f \
   1 100 0x \
   --rpc-url http://127.0.0.1:6751/anvil \
-  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+  --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
 cast send "$MULTI" \
   "setApprovalForAll(address,bool)" \
   "$SINGLE_PORTAL" \
   true \
   --rpc-url http://127.0.0.1:6751/anvil \
-  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+  --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
 cartesi deposit erc1155-single 1 10 \
   --token "$MULTI" \
@@ -574,17 +574,17 @@ BATCH_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155BatchPortal | awk '{pr
 
 cast send "$MULTI" \
   "mint(address,uint256,uint256,bytes)" \
-  0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+  0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f \
   2 50 0x \
   --rpc-url http://127.0.0.1:6751/anvil \
-  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+  --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
 cast send "$MULTI" \
   "setApprovalForAll(address,bool)" \
   "$BATCH_PORTAL" \
   true \
   --rpc-url http://127.0.0.1:6751/anvil \
-  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+  --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
 cartesi deposit erc1155-batch 1,2 10,20 \
   --token "$MULTI" \
@@ -611,14 +611,14 @@ Non-interactive examples (from project root):
 
 ```bash
 cartesi send --encoding string \
-  '{"operation":"transfer","mode":"single","erc1155":"0xTokenAddress","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","to":"0x70997970C51812dc3A010C7d01b50e0d17dc79C8","tokenId":"1","amount":"5"}' \
+  '{"operation":"transfer","mode":"single","erc1155":"0xTokenAddress","from":"0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f","to":"0x70997970C51812dc3A010C7d01b50e0d17dc79C8","tokenId":"1","amount":"5"}' \
   --project-name erc-1155-token-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```
 
 ```bash
 cartesi send --encoding string \
-  '{"operation":"withdraw","mode":"batch","erc1155":"0xTokenAddress","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","tokenIds":["1","2"],"amounts":["5","10"]}' \
+  '{"operation":"withdraw","mode":"batch","erc1155":"0xTokenAddress","from":"0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f","tokenIds":["1","2"],"amounts":["5","10"]}' \
   --project-name erc-1155-token-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```

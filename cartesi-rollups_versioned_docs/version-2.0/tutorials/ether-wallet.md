@@ -391,10 +391,10 @@ To inspect balance, make an HTTP (post) call to:
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/ether-wallet \
   -H "Content-Type: text/plain" \
-  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+  -d '0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f'
 ```
 
-The node passes the request body to your application unchanged as the inspect payload, so the body is the address to query as plain text (here `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`). Replace the inspect path if your project name is not `ether-wallet` (see the URL printed by `cartesi run`).
+The node passes the request body to your application unchanged as the inspect payload, so the body is the address to query as plain text (here `0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`). Replace the inspect path if your project name is not `ether-wallet` (see the URL printed by `cartesi run`).
 
 ### Transfer and Withdrawals
 
@@ -410,7 +410,7 @@ Non-interactive alternative (from your project root):
 
 ```bash
 cartesi send --encoding string \
-  '{"operation":"transfer","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}' \
+  '{"operation":"transfer","from":"0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}' \
   --project-name ether-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```
@@ -420,13 +420,13 @@ Here are the sample payloads as one-liners, ready to be used in your code:
 1. For transfers:
 
    ```js
-   {"operation":"transfer","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}
+   {"operation":"transfer","from":"0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}
    ```
 
 2. For withdrawals:
 
    ```js
-   {"operation":"withdraw","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","amount":"1000000000000000000"}
+   {"operation":"withdraw","from":"0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f","amount":"1000000000000000000"}
    ```
 
 ### Using the explorer

@@ -277,7 +277,7 @@ cast send <InputRelayer address> "relayInput(address,address,bytes)" <applicatio
 <pre><code>
 
 ```bash
-cast send 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057 "relayInput(address,address,bytes)" 0xa831a9883abc2ae26c643b3cab57498b8c6fcb52 0x1b51e2992A2755Ba4D6F7094032DF91991a0Cfac "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057 "relayInput(address,address,bytes)" 0xa831a9883abc2ae26c643b3cab57498b8c6fcb52 0x1b51e2992A2755Ba4D6F7094032DF91991a0Cfac "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
