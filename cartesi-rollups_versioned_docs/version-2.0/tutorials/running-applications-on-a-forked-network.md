@@ -170,12 +170,12 @@ import InputReaderSolidity from './snippets/inputRelayer-sol.md';
 </TabItem>
 </Tabs>
 
-#### Deploy contract to Base Sepolia
+#### Deploy contract to Sepolia
 
-Deploy the contract to Base Sepolia using the following command:
+Deploy the contract to Sepolia using the following command:
 
 ```bash
-forge create contracts/InputRelayer.sol:InputRelayer --rpc-url <RPC-Url> --private-key <Deployment Private Key with Eth token> --broadcast -v
+forge create contracts/InputRelayer.sol:InputRelayer --rpc-url <Sepolia RPC URL> --private-key <Deployment Private Key with Eth token> --broadcast -v
 ```
 
 This returns an output similar to:
@@ -183,9 +183,9 @@ This returns an output similar to:
 ```bash
 [⠊] Compiling...
 No files changed, compilation skipped
-Deployer: 0xbD8Eba8Bf9e56ad92F4C4Fc89D6CB88902535749
-Deployed to: 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057
-Transaction hash: 0xa5c073210568d1d8b11b2ff6bed0d7bd0d8058cfcf0ec561f51b5de9c8e21644
+Deployer: <your deployer address>
+Deployed to: 0x070dC307580c1e3E8eE23836419A0c49780d358D
+Transaction hash: <deployment transaction hash>
 ```
 
 After deployment, inspect the transaction using a block explorer. Take note of the block number in which the transaction was included, as this will be used later when configuring the fork.
@@ -235,10 +235,10 @@ cartesi build
 
 This command compiles your application and produces a Cartesi Machine image that includes your code.
 
-Next, run the application using a forked network. Provide the RPC endpoint for Base Sepolia and the block number where the `InputRelayer` contract was deployed:
+Next, run the application using a forked network. Provide a Sepolia RPC endpoint that serves historical state (see [Best practices](#best-practices)) and the block number where the `InputRelayer` contract was deployed, for example `12148080`:
 
 ```bash
-cartesi run --fork-url <Valid RPC URL> --fork-block-number 39988953
+cartesi run --fork-url <Sepolia RPC URL> --fork-block-number <InputRelayer deployment block>
 ```
 
 ### Expected logs
@@ -250,11 +250,11 @@ WARNING: default block is set to 'latest', production configuration will likely 
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
 ✔ inspect service ready at http://127.0.0.1:6751/inspect/fork-sepolia-r
 ✔ fork-sepolia-r machine hash is 0xa5b369b0d19766005d12369d0fa588925093ffe24c44c64c76155734270b7ac7
-✔ fork-sepolia-r contract deployed at 0xa831a9883abc2ae26c643b3cab57498b8c6fcb52
+✔ fork-sepolia-r contract deployed at 0xebdd61633d7767beaf16c86b08ec7ab542719e14
 (l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
-At this point, your application is running on a local network that mirrors the state of Base Sepolia at the specified block.
+At this point, your application is running on a local network that mirrors the state of Sepolia at the specified block.
 
 ## Interacting with the Cartesi application through the forked contract
 
@@ -278,7 +278,7 @@ cast send <InputRelayer address> "relayInput(address,address,bytes)" <applicatio
 <pre><code>
 
 ```bash
-cast send 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057 "relayInput(address,address,bytes)" 0xa831a9883abc2ae26c643b3cab57498b8c6fcb52 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
+cast send 0x070dC307580c1e3E8eE23836419A0c49780d358D "relayInput(address,address,bytes)" 0xeBDd61633D7767BEAF16c86b08eC7AB542719E14 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -292,7 +292,7 @@ This command calls the `relayInput(address,address,bytes)` function on the relay
 - the InputBox address
 - the encoded user input
 
-Ensure that you replace the application address and RPC URL with the values returned when you executed `cartesi run`, and the InputBox address with the input box your application was deployed with (returned by the application's `getInputBox()` function, and listed as `InputBox` by `cartesi address-book`).
+Ensure that you replace the `InputRelayer` address with the address printed by `forge create`, the application address and RPC URL with the values returned when you executed `cartesi run`, and the InputBox address with the input box your application was deployed with (returned by the application's `getInputBox()` function, and listed as `InputBox` by `cartesi address-book`).
 
 ### Expected logs
 
@@ -300,8 +300,8 @@ Ensure that you replace the application address and RPC URL with the values retu
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 434 "-" "-" 0.018560
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xa831a9883abc2ae26c643b3cab57498b8c6fcb52","msg_sender":"0x06ebaf6d44b65d76c8bdcb1701e68f44c22b1057","block_number":39989157,"block_timestamp":1775746604,"prev_randao":"0x50244e200a55ed7d32e48e6f0c32710fe89c537345036bf55a02608736d25cc2","input_index":1},"payload":"0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"}}
-[InputRelayer] input_index=1 relayer=0x06ebaf6d44b65d76c8bdcb1701e68f44c22b1057 original_sender=0xd8da6bf26964af9d7eed9e03e53415d37aa96045 message="Hello from Cartesi!"
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xebdd61633d7767beaf16c86b08ec7ab542719e14","msg_sender":"0x070dc307580c1e3e8ee23836419a0c49780d358d","block_number":12148163,"block_timestamp":1794842144,"prev_randao":"0xec08afe391faa075a0d4b94bef4b21dbb166885b87f98c56100bb446a1ea532e","input_index":0},"payload":"0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"}}
+[InputRelayer] input_index=0 relayer=0x070dc307580c1e3e8ee23836419a0c49780d358d original_sender=0xd8da6bf26964af9d7eed9e03e53415d37aa96045 message="Hello from Cartesi!"
 Sending finish
 ```
 
