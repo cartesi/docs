@@ -1,70 +1,141 @@
 ---
 id: react-frontend-application
 title: Build a React frontend for Cartesi Apps
-resources:
-  - url: https://github.com/Mugen-Builders/cartesi-frontend-tutorial/tree/7ee8d848c4bdb5969b70e938426d99a9e1332a04
-    title: Source code for the frontend application
 ---
 
 # Building a React Frontend for Cartesi Apps
 
-This is a comprehensive guide for building a React frontend that interacts with the deployed Cartesi applications using Cartesi TypeScript packages, wagmi hooks and viem library.
+This guide builds a React frontend that talks to a Cartesi application with the Cartesi TypeScript packages, [wagmi](https://wagmi.sh) and [viem](https://viem.sh):
+
+- `@cartesi/react` provides the `CartesiProvider` and the React hooks that read the node's JSON-RPC API (`useOutputs`, `useReports`, `useWaitForInput`, `useApplications`, and more). It was previously published as `@cartesi/wagmi`.
+- `@cartesi/client` provides the node client, the contract ABIs and addresses (`@cartesi/client/abi`), and helpers such as `getInputsAdded` and `toOutputArgs`. It was previously published as `@cartesi/viem`.
+
+Sending inputs, depositing assets and executing vouchers are plain contract calls: you make them with wagmi's `useWriteContract` and the ABIs and addresses exported by `@cartesi/client/abi`. The packages no longer ship `walletActionsL1` / `addInput` / `depositEther` helpers.
+
+:::note
+This guide has been tested with Cartesi CLI 2.0.0-alpha.42 (rollups-node v2.0.0-alpha.14, rollups-contracts v3.0.0-alpha.10), `@cartesi/react` 2.0.0-alpha.45 and `@cartesi/client` 2.0.0-alpha.41.
+
+Both Cartesi packages are published under the `alpha` tag, and their `latest` tag points to `0.0.0`. Always install the exact versions shown below.
+:::
+
+## Prerequisites
+
+- Node.js and pnpm.
+- A Cartesi application running locally with the Cartesi CLI. Start it with a short epoch so that vouchers become executable within seconds (the default epoch is 720 blocks, about 24 minutes):
+
+  ```bash
+  cartesi build
+  cartesi run --epoch-length 10
+  ```
+
+  `cartesi run` prints the local endpoints and the application address. With the default port (6751):
+
+  | Service | URL |
+  | --- | --- |
+  | Local chain (anvil, chain id 31337) | `http://127.0.0.1:6751/anvil` |
+  | Cartesi node JSON-RPC | `http://127.0.0.1:6751/rpc` |
+  | Inspect | `http://127.0.0.1:6751/inspect/<app-name-or-address>` |
+
+  The application address is the one in the line `<app-name> contract deployed at 0x...`.
 
 ## Installation
 
-The fastest way to get started is using `create-wagmi` to bootstrap a new React project in TypeScript with _wagmi_ already configured:
+Bootstrap a React + TypeScript project with `create-wagmi`:
 
 ```bash
-pnpm create wagmi@2.0.19 my-cartesi-webapp
+pnpm create wagmi@2.0.19 my-cartesi-webapp --template vite-react
 cd my-cartesi-webapp
 ```
 
-Install the required Cartesi packages and dependencies:
+The template lists every dependency as `latest`. Install the Cartesi packages and pin all dependencies to the versions this guide was tested with:
 
 ```bash
-# Core Cartesi packages
-pnpm add @cartesi/wagmi@2.0.0-alpha.10 @cartesi/viem@2.0.0-alpha.10
+pnpm add --save-exact react@19.3.1 react-dom@19.3.1 wagmi@3.7.11 viem@2.57.20 @tanstack/react-query@5.107.1 @cartesi/react@2.0.0-alpha.45 @cartesi/client@2.0.0-alpha.41
+pnpm add --save-dev --save-exact typescript@7.0.2 vite@8.3.8 @vitejs/plugin-react@6.3.0 @types/react@19.3.0 @types/react-dom@19.3.0 @wagmi/cli@2.10.1
 ```
-:::note
-This guide has been tested with Cartesi CLI 2.0.0-alpha.11 pre-release.
-:::
+
+`@cartesi/client` is installed directly (and not only as a dependency of `@cartesi/react`) because the components import its ABIs and helpers.
 
 ## Project Structure
 
 ```plaintext
-src/
-├── components/
-│ ├── CartesiInput.tsx        # To send inputs
-│ ├── CartesiOutputs.tsx      # To read outputs
-│ └── CartesiApps.tsx         # To list all applications
-├── providers/
-│ └── Web3Provider.tsx        # Wagmi and Cartesi providers setup
-├── wagmi.ts                  # Wagmi configuration file
-├── App.tsx                   # Main application component
-└── .env.local                # Environment variables
+my-cartesi-webapp/
+├── .env.local                  # Environment variables (project root, next to package.json)
+└── src/
+    ├── components/
+    │   ├── CartesiApps.tsx     # To list all applications
+    │   ├── CartesiInput.tsx    # To send inputs
+    │   ├── CartesiInspect.tsx  # To inspect the application state
+    │   ├── CartesiOutputs.tsx  # To read outputs and reports
+    │   ├── CartesiStatus.tsx   # Application, epochs and inputs
+    │   ├── DepositERC20.tsx    # To deposit ERC-20 tokens
+    │   ├── DepositEther.tsx    # To deposit Ether
+    │   ├── ExecuteVoucher.tsx  # To execute a voucher on the base layer
+    │   └── InputTracker.tsx    # To wait for an input to be processed
+    ├── providers/
+    │   └── Web3Provider.tsx    # Wagmi, React Query and Cartesi providers
+    ├── App.tsx                 # Main application component
+    ├── main.tsx                # Entry point
+    ├── vite-env.d.ts           # Types of the environment variables
+    └── wagmi.ts                # Wagmi configuration file
 ```
 
 ## Core Components
 
-Before we begin writing the core components, make sure to configure _Cannon_ as your local chain in `wagmi.ts` file at the root of the project. This will make sure our web app is ready to interact with locally deployed Cartesi app. 
+### 1. Configure the local environment
 
-### 1. Configure the local environment 
-Modify the existing `wagmi.ts` file with the code below. We add support for locally running with `cannon` network.
-```tsx
-import { http, createConfig } from 'wagmi'
-import { cannon, mainnet, sepolia } from 'wagmi/chains'
-import { coinbaseWallet, injected } from 'wagmi/connectors'
+Vite loads environment files from the project root, so create `.env.local` next to `package.json` (not inside `src/`). Replace the application address with the one printed by `cartesi run`, and change the port if you started the node with `--port`:
+
+```bash title=".env.local"
+VITE_ANVIL_RPC_URL=http://127.0.0.1:6751/anvil
+VITE_CARTESI_RPC_URL=http://127.0.0.1:6751/rpc
+VITE_CARTESI_INSPECT_URL=http://127.0.0.1:6751/inspect
+VITE_CARTESI_APP_ADDRESS=<0x_your_app_address>
+VITE_DEVNET_ACCOUNT=0xa0Ee7A142d267C1f36714E4a8F75612F20a79720
+```
+
+`VITE_DEVNET_ACCOUNT` is one of the accounts the devnet funds from the default `test test ... junk` mnemonic (index 9). Do not use the first account (index 0): the local node signs its claims with it.
+
+Restart `pnpm dev` whenever you change `.env.local`. Declare the variables in `src/vite-env.d.ts` so that TypeScript knows them:
+
+```ts title="src/vite-env.d.ts"
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_ANVIL_RPC_URL: string
+  readonly VITE_CARTESI_RPC_URL: string
+  readonly VITE_CARTESI_INSPECT_URL: string
+  readonly VITE_CARTESI_APP_ADDRESS: `0x${string}`
+  readonly VITE_DEVNET_ACCOUNT: `0x${string}`
+}
+```
+
+Replace `src/wagmi.ts` with a configuration for the local devnet (chain id 31337):
+
+```ts title="src/wagmi.ts"
+import { defineChain } from 'viem'
+import { createConfig, http, injected, mock } from 'wagmi'
+
+// The local chain started by `cartesi run`
+export const cartesiDevnet = defineChain({
+  id: 31337,
+  name: 'Cartesi Devnet',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: { default: { http: [import.meta.env.VITE_ANVIL_RPC_URL] } },
+  testnet: true,
+})
 
 export const config = createConfig({
-  chains: [cannon, mainnet, sepolia],
+  chains: [cartesiDevnet],
   connectors: [
+    // Browser wallets such as MetaMask
     injected(),
-    coinbaseWallet(),
+    // Local devnet only: acts as VITE_DEVNET_ACCOUNT, which the devnet keeps
+    // unlocked, so no browser wallet is needed. Remove it for real networks.
+    mock({ accounts: [import.meta.env.VITE_DEVNET_ACCOUNT] }),
   ],
   transports: {
-    [cannon.id]: http(),
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [cartesiDevnet.id]: http(),
   },
 })
 
@@ -75,365 +146,444 @@ declare module 'wagmi' {
 }
 ```
 
-:::note 
-WalletConnect is removed from the default wagmi setup. You can add it as per your project requirements. For this guide, we're using only Metamask wallet.
+:::note
+To use MetaMask instead of the devnet connector, add a network with chain id `31337` and RPC URL `http://127.0.0.1:6751/anvil`, import the private key of a devnet account other than account 0, and connect with the **Injected** button.
 :::
-
-Add the deployed Cartesi app address and Cartesi RPC URL to the `.env.local` file.
-```
-VITE_CARTESI_APP_ADDRESS=<0x_your_app_address>
-VITE_CARTESI_RPC_URL=http://localhost:8080/rpc
-```
-
 
 ### 2. Setting up Providers
 
-Create `src/providers/Web3Provider.tsx`:
+Create `src/providers/Web3Provider.tsx`. `CartesiProvider` creates the Cartesi node client that every Cartesi hook uses, and it must be inside the `QueryClientProvider`:
 
-```tsx
-import { CartesiProvider } from '@cartesi/wagmi';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider } from 'wagmi';
-import { config } from '../wagmi'; 
+```tsx title="src/providers/Web3Provider.tsx"
+import type { ReactNode } from 'react'
+import { CartesiProvider } from '@cartesi/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { WagmiProvider } from 'wagmi'
+import { config } from '../wagmi'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
-// Local Cartesi node RPC endpoint
-const CARTESI_RPC_URL = import.meta.env.VITE_CARTESI_RPC_URL || 'http://localhost:8080/rpc';
-
-export function Web3Provider({ children }: { children: React.ReactNode }) {
+export function Web3Provider({ children }: { children: ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <CartesiProvider rpcUrl={CARTESI_RPC_URL}>
+        <CartesiProvider rpcUrl={import.meta.env.VITE_CARTESI_RPC_URL}>
           {children}
         </CartesiProvider>
       </QueryClientProvider>
     </WagmiProvider>
-  );
+  )
 }
 ```
 
+Replace `src/main.tsx` so that the whole app is wrapped by `Web3Provider` (the template's own `WagmiProvider` and `QueryClientProvider` move into it):
+
+```tsx title="src/main.tsx"
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+
+import App from './App.tsx'
+import { Web3Provider } from './providers/Web3Provider.tsx'
+
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Web3Provider>
+      <App />
+    </Web3Provider>
+  </React.StrictMode>,
+)
+```
+
 ### 3. Sending Inputs to Cartesi Application
-The `InputBox` contract is a trustless and permissionless contract that receives arbitrary blobs (called "inputs") from anyone. It is deployed on all supported chains. We will use `@cartesi/viem` library to send an input to the backend via the InputBox contract.
+
+The `InputBox` contract receives arbitrary blobs (called "inputs") from anyone and is deployed at the same address on all supported chains. Call its `addInput` function with wagmi's `useWriteContract`, using the ABI and address exported by `@cartesi/client/abi`. The `InputAdded` event of the transaction carries the index of the new input, which `getInputsAdded` extracts from the receipt.
+
+Create `src/components/InputTracker.tsx`. `useWaitForInput` polls the node until the input is processed and returns it with its status (`ACCEPTED`, `REJECTED`, `EXCEPTION`, ...). Input indexes are `bigint`s:
+
+```tsx title="src/components/InputTracker.tsx"
+import { useWaitForInput } from '@cartesi/react'
+import type { Address } from 'viem'
+
+interface InputTrackerProps {
+  applicationAddress: Address
+  inputIndex: bigint
+}
+
+export function InputTracker({ applicationAddress, inputIndex }: InputTrackerProps) {
+  const { data: input, isLoading, error } = useWaitForInput({
+    application: applicationAddress,
+    inputIndex,
+  })
+
+  if (error) return <p>Failed to wait for input #{inputIndex.toString()}: {error.message}</p>
+  if (isLoading) return <p>Waiting for input #{inputIndex.toString()} to be processed...</p>
+
+  return (
+    <p>
+      Input #{inputIndex.toString()} processed with status: <strong>{input?.status}</strong>
+    </p>
+  )
+}
+```
 
 Create `src/components/CartesiInput.tsx`:
 
-```tsx
-import { useState } from 'react';
-import { useAccount, useWalletClient } from 'wagmi';
-import { stringToHex, type Address } from 'viem';
-import { walletActionsL1 } from '@cartesi/viem';
+```tsx title="src/components/CartesiInput.tsx"
+import { useState } from 'react'
+import { stringToHex, type Address } from 'viem'
+import { useConnection, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
+import { getInputsAdded } from '@cartesi/client'
+import { inputBoxAbi, inputBoxAddress } from '@cartesi/client/abi'
+import { InputTracker } from './InputTracker'
 
 interface CartesiInputProps {
-    applicationAddress: Address;
-  }
+  applicationAddress: Address
+}
 
 export function CartesiInput({ applicationAddress }: CartesiInputProps) {
-const [input, setInput] = useState('');
-const [isLoading, setIsLoading] = useState(false);
-const [txHash, setTxHash] = useState<string>('');
+  const [input, setInput] = useState('')
+  const { address } = useConnection()
+  const { mutate: writeContract, data: hash, isPending, error } = useWriteContract()
+  const { data: receipt, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash })
 
-const { address } = useAccount();
-const { data: walletClient } = useWalletClient();
+  // index of the input added by the transaction
+  const inputIndex = receipt ? getInputsAdded(receipt)[0]?.index : undefined
 
-const sendInput = async () => {
-    if (!walletClient || !address || !input.trim()) return;
-    
-    setIsLoading(true);
-    setTxHash('');
-    
-    try {
-    // Extend wallet client with Cartesi L1 actions
-    const extendedClient = walletClient.extend(walletActionsL1());
-    
-    // Convert input string to hex
-    const payload = stringToHex(input);
-    
-    // Send input to Cartesi application
-    const hash = await extendedClient.addInput({
-        account: address,
-        application: applicationAddress,
-        payload,
-        chain: walletClient.chain,
-    });
-    
-    setTxHash(hash);
-    setInput('');
-    
-    console.log('Input sent with transaction hash:', hash);
-    } catch (error) {
-    console.error('Failed to send input:', error);
-    } finally {
-    setIsLoading(false);
-    }
-};
+  const sendInput = () => {
+    writeContract(
+      {
+        address: inputBoxAddress,
+        abi: inputBoxAbi,
+        functionName: 'addInput',
+        args: [applicationAddress, stringToHex(input)],
+      },
+      { onSuccess: () => setInput('') },
+    )
+  }
 
-return (
+  return (
     <div>
-    <h3>Send Input</h3>
-    
-    <div>
-        <textarea
+      <h3>Send Input</h3>
+      <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Enter your input message..."
         rows={4}
-        disabled={isLoading}
-        />
-        
-        <button 
-        onClick={sendInput}
-        disabled={!address || isLoading || !input.trim()}
-        >
-        {isLoading ? 'Sending...' : 'Send Input'}
-        </button>
+        disabled={isPending}
+      />
+      <button onClick={sendInput} disabled={!address || isPending || !input.trim()}>
+        {isPending ? 'Sending...' : 'Send Input'}
+      </button>
+
+      {error && <p>Failed to send input: {error.message}</p>}
+      {hash && <p>Transaction: <code>{hash}</code>{isConfirming && ' (confirming...)'}</p>}
+      {inputIndex !== undefined && (
+        <InputTracker applicationAddress={applicationAddress} inputIndex={inputIndex} />
+      )}
     </div>
-    
-    {txHash && (
-        <div>
-        <p>✅ Input sent successfully!</p>
-        <p>Transaction: <code>{txHash}</code></p>
-        </div>
-    )}
-    </div>
-);
+  )
 }
 ```
 
-### 3. Reading Outputs from Cartesi Application
-Cartesi rollups node provides an RPC endpoint to fetch the outputs generated by an app. The component `CartesiOutputs` as shown below will list `Notices`, `Vouchers`, `Delegated Vouchers` and `Reports` on the UI. 
+:::tip
+`@cartesi/react` also exports hooks generated for every Cartesi contract, with the ABI and address already set. For example, `useWriteInputBoxAddInput()` returns a `mutate` that only needs `{ args: [applicationAddress, payload] }`, and `useWriteEtherPortalDepositEther()` does the same for Ether deposits.
+:::
 
-Create `src/components/CartesiOutputs.tsx`:
+### 4. Reading Outputs from Cartesi Application
 
-```tsx
-import { useOutputs, useReports } from '@cartesi/wagmi';
-import { hexToString, type Address } from 'viem';
+The Cartesi node exposes a JSON-RPC API to fetch the outputs (notices, vouchers and DELEGATECALL vouchers) and reports generated by an application. `useOutputs` and `useReports` return `{ data, pagination }`; each output has a `decodedData` field whose `type` is `Notice`, `Voucher` or `DelegateCallVoucher`. Indexes are `bigint`s and `createdAt` is a `Date`.
 
-interface CartesiOutputsProps {
-  applicationAddress: Address;
-  inputIndex?: number;
+A voucher can only be executed after the claim of its epoch is accepted on the base layer. From then on, the node returns its proof (`outputHashesSiblings`), and `toOutputArgs` turns the output into the arguments of the application contract's `executeOutput` function. Create `src/components/ExecuteVoucher.tsx`:
+
+```tsx title="src/components/ExecuteVoucher.tsx"
+import { useEffect } from 'react'
+import type { Address } from 'viem'
+import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
+import { useOutput } from '@cartesi/react'
+import { toOutputArgs } from '@cartesi/client'
+import { iApplicationAbi } from '@cartesi/client/abi'
+
+interface ExecuteVoucherProps {
+  applicationAddress: Address
+  outputIndex: bigint
 }
 
-export function CartesiOutputs({ applicationAddress, inputIndex }: CartesiOutputsProps) {
-  const { 
-    data: outputsData, 
-    isLoading: outputsLoading, 
-    error: outputsError, 
-    refetch: refetchOutputs 
-  } = useOutputs({
+export function ExecuteVoucher({ applicationAddress, outputIndex }: ExecuteVoucherProps) {
+  const { data: output, refetch } = useOutput({
     application: applicationAddress,
-    inputIndex: inputIndex ? BigInt(inputIndex) : undefined,
-    enabled: !!applicationAddress,
-  });
-
+    outputIndex,
+    refetchInterval: 5000,
+  })
+  const { mutate: writeContract, data: hash, isPending, error: writeError } = useWriteContract()
   const {
-    data: reportsData,
-    isLoading: reportsLoading,
-    error: reportsError,
-    refetch: refetchReports
-  } = useReports({
-    application: applicationAddress,
-    inputIndex: inputIndex ? BigInt(inputIndex) : undefined,
-    enabled: !!applicationAddress,
-  });
+    isLoading: isConfirming,
+    isSuccess,
+    error: receiptError, // set when the transaction reverts
+  } = useWaitForTransactionReceipt({ hash })
+  const error = writeError ?? receiptError
 
-  // Add logging for debugging
-  console.log('Reports Data:', reportsData);
-  console.log('Outputs Data:', outputsData);
+  useEffect(() => {
+    if (isSuccess) refetch()
+  }, [isSuccess, refetch])
 
-  const formatOutput = (output: any) => {
-    const { decodedData, index, inputIndex: outputInputIndex } = output;
-    
-    // Convert BigInt to number for consistent handling
-    const indexNumber = typeof index === 'bigint' ? Number(index) : index;
-    const inputIndexNumber = typeof outputInputIndex === 'bigint' ? Number(outputInputIndex) : outputInputIndex;
-    
-    if (!decodedData) {
+  if (!output) return null
+  if (output.executionTransactionHash) {
+    return <span>Executed in {output.executionTransactionHash.slice(0, 10)}...</span>
+  }
+  if (isSuccess) return <span>Executed, waiting for the node...</span>
+  if (!output.outputHashesSiblings) return <span>Waiting for the epoch to be settled...</span>
+
+  const execute = () => {
+    writeContract({
+      address: applicationAddress,
+      abi: iApplicationAbi,
+      functionName: 'executeOutput',
+      args: toOutputArgs(output),
+    })
+  }
+
+  return (
+    <span>
+      <button onClick={execute} disabled={isPending || isConfirming}>
+        {isPending || isConfirming ? 'Executing...' : 'Execute'}
+      </button>
+      {error && <span> Failed: {error.message.split('\n')[0]}</span>}
+    </span>
+  )
+}
+```
+
+Create `src/components/CartesiOutputs.tsx`. It lists notices, vouchers, DELEGATECALL vouchers and reports, newest first, and refreshes every five seconds:
+
+```tsx title="src/components/CartesiOutputs.tsx"
+import { useOutputs, useReports } from '@cartesi/react'
+import type { Output, Report } from '@cartesi/client'
+import { formatEther, hexToString, type Address } from 'viem'
+import { ExecuteVoucher } from './ExecuteVoucher'
+
+interface CartesiOutputsProps {
+  applicationAddress: Address
+  inputIndex?: bigint
+}
+
+interface Row {
+  key: string
+  type: string
+  inputIndex: bigint
+  index: bigint
+  content: string
+  voucherIndex?: bigint
+}
+
+const outputRow = (output: Output): Row => {
+  const row = { key: `output-${output.index}`, inputIndex: output.inputIndex, index: output.index }
+  const decoded = output.decodedData
+  switch (decoded?.type) {
+    case 'Notice':
+      return { ...row, type: 'Notice', content: hexToString(decoded.payload) }
+    case 'Voucher':
       return {
-        type: 'Unknown',
-        content: output.rawData || 'No data available',
-        index: indexNumber,
-        inputIndex: inputIndexNumber
-      };
-    }
-    
-    switch (decodedData.type) {
-      case 'Notice':
-        return {
-          type: 'Notice',
-          content: decodedData.payload ? hexToString(decodedData.payload) : 'Empty payload',
-          index: indexNumber,
-          inputIndex: inputIndexNumber
-        };
-        
-      case 'Voucher':
-        return {
-          type: 'Voucher',
-          content: `To: ${decodedData.destination} | Value: ${decodedData.value?.toString() || 'N/A'} | Payload: ${decodedData.payload || 'Empty'}`,
-          index: indexNumber,
-          inputIndex: inputIndexNumber
-        };
-        
-      case 'DelegateCallVoucher':
-        return {
-          type: 'Delegate Call',
-          content: `To: ${decodedData.destination} | Payload: ${decodedData.payload || 'Empty'}`,
-          index: indexNumber,
-          inputIndex: inputIndexNumber
-        };
-        
-      default:
-        return {
-          type: decodedData.type,
-          content: 'Unknown format',
-          index: indexNumber,
-          inputIndex: inputIndexNumber
-        };
-    }
-  };
-
-  const formatReport = (report: any) => {
-    console.log('Processing report:', report);
-    
-    const { index, rawData, inputIndex, createdAt } = report;
-    
-    // Convert BigInt to number for consistent handling
-    const indexNumber = typeof index === 'bigint' ? Number(index) : index;
-    const inputIndexNumber = typeof inputIndex === 'bigint' ? Number(inputIndex) : inputIndex;
-    
-    let content = 'Empty report';
-    
-    if (rawData) {
-      try {
-        console.log('Attempting to convert rawData:', rawData);
-        content = hexToString(rawData);
-        console.log('Converted content:', content);
-      } catch (error) {
-        console.log('Error converting rawData:', error);
-        content = `Raw: ${rawData}`;
+        ...row,
+        type: 'Voucher',
+        content: `To: ${decoded.destination} | Value: ${formatEther(decoded.value)} ETH | Payload: ${decoded.payload}`,
+        voucherIndex: output.index,
       }
-    } else {
-      console.log('No rawData found in report');
-    }
-    
-    const formattedReport = {
-      type: 'Report',
-      content,
-      index: indexNumber,
-      inputIndex: inputIndexNumber,
-      createdAt: createdAt ? new Date(createdAt).toLocaleString() : 'Unknown'
-    };
-    
-    return formattedReport;
-  };
+    case 'DelegateCallVoucher':
+      return {
+        ...row,
+        type: 'Delegate Call Voucher',
+        content: `To: ${decoded.destination} | Payload: ${decoded.payload}`,
+        voucherIndex: output.index,
+      }
+    default:
+      return { ...row, type: 'Unknown', content: output.rawData }
+  }
+}
 
-  if (outputsLoading || reportsLoading) return <div>Loading...</div>;
-  if (outputsError) return <div>Error loading outputs: {outputsError.message}</div>;
-  if (reportsError) return <div>Error loading reports: {reportsError.message}</div>;
+const reportRow = (report: Report): Row => ({
+  key: `report-${report.index}`,
+  type: 'Report',
+  inputIndex: report.inputIndex,
+  index: report.index,
+  content: `${hexToString(report.rawData)} (${report.createdAt.toLocaleString()})`,
+})
 
-  // Combine and sort all outputs and reports
-  const allOutputs = [
-    ...(outputsData?.data?.map(formatOutput) || []),
-    ...(reportsData?.data?.map(formatReport) || [])
-  ].sort((a, b) => {
-    // Primary sort: by inputIndex (descending - latest input first)
-    const aInputIndex = Number(a.inputIndex);
-    const bInputIndex = Number(b.inputIndex);
-    
-    if (aInputIndex !== bInputIndex) {
-      return bInputIndex - aInputIndex;
-    }
-    
-    // Secondary sort: by output index (descending - latest output first within same input)
-    const aIndex = Number(a.index);
-    const bIndex = Number(b.index);
-    return bIndex - aIndex;
-  });
+export function CartesiOutputs({ applicationAddress, inputIndex }: CartesiOutputsProps) {
+  const outputs = useOutputs({
+    application: applicationAddress,
+    inputIndex,
+    descending: true,
+    refetchInterval: 5000,
+  })
+  const reports = useReports({
+    application: applicationAddress,
+    inputIndex,
+    descending: true,
+    refetchInterval: 5000,
+  })
 
-  console.log('All combined outputs:', allOutputs);
+  if (outputs.isLoading || reports.isLoading) return <div>Loading...</div>
+  if (outputs.error) return <div>Error loading outputs: {outputs.error.message}</div>
+  if (reports.error) return <div>Error loading reports: {reports.error.message}</div>
+
+  // newest input first, then newest output/report first
+  const rows = [
+    ...(outputs.data?.data.map(outputRow) ?? []),
+    ...(reports.data?.data.map(reportRow) ?? []),
+  ].sort((a, b) =>
+    a.inputIndex !== b.inputIndex
+      ? Number(b.inputIndex - a.inputIndex)
+      : Number(b.index - a.index),
+  )
+
+  const cell = { padding: '8px', borderBottom: '1px solid #ddd' }
 
   return (
     <div>
-      <div>
-        <h2>Application Outputs</h2>
-        <button onClick={() => {
-          refetchOutputs();
-          refetchReports();
-        }}>🔄 Refresh</button>
-      </div>
-      
-      {allOutputs.length === 0 ? (
+      <h2>Application Outputs</h2>
+      <button onClick={() => { outputs.refetch(); reports.refetch() }}>Refresh</button>
+
+      {rows.length === 0 ? (
         <p>No outputs found for this application.</p>
       ) : (
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
-              <th style={{ padding: '8px', borderBottom: '2px solid #ddd' }}>Input Index</th>
-              <th style={{ padding: '8px', borderBottom: '2px solid #ddd' }}>Index</th>
-              <th style={{ padding: '8px', borderBottom: '2px solid #ddd' }}>Type</th>
-              <th style={{ padding: '8px', borderBottom: '2px solid #ddd' }}>Content</th>
+              <th style={cell}>Input Index</th>
+              <th style={cell}>Index</th>
+              <th style={cell}>Type</th>
+              <th style={cell}>Content</th>
+              <th style={cell}>Action</th>
             </tr>
           </thead>
           <tbody>
-            {allOutputs.map((output, idx) => (
-              <tr key={`${output.type}-${output.index}-${idx}`}>
-                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
-                  {output.inputIndex !== undefined ? `#${output.inputIndex}` : 'N/A'}
+            {rows.map((row) => (
+              <tr key={row.key}>
+                <td style={cell}>#{row.inputIndex.toString()}</td>
+                <td style={cell}>#{row.index.toString()}</td>
+                <td style={cell}>{row.type}</td>
+                <td style={cell}>
+                  <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{row.content}</pre>
                 </td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>#{output.index}</td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
-                  {output.type === 'Notice' && '📢 Notice'}
-                  {output.type === 'Voucher' && '🎫 Voucher'}
-                  {output.type === 'Delegate Call' && '🎫 Delegate Call'}
-                  {output.type === 'Report' && '📊 Report'}
-                  {output.type === 'Unknown' && '❓ Unknown'}
-                </td>
-                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
-                  <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{output.content}</pre>
+                <td style={cell}>
+                  {row.voucherIndex !== undefined && (
+                    <ExecuteVoucher applicationAddress={applicationAddress} outputIndex={row.voucherIndex} />
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
-      
-      <div style={{ marginTop: '16px' }}>
-        <p>
-          Showing {allOutputs.length} outputs
-        </p>
-      </div>
+
+      <p>
+        Showing {outputs.data?.data.length ?? 0} of {outputs.data?.pagination.totalCount ?? 0} outputs
+        and {reports.data?.data.length ?? 0} of {reports.data?.pagination.totalCount ?? 0} reports
+      </p>
     </div>
-  );
+  )
+}
+```
+
+The `Execute` button uses the connected wallet to send the transaction. A voucher can be executed only once; executing it again reverts.
+
+### 5. Application status
+
+Create `src/components/CartesiStatus.tsx`. It shows the application (`useApplication`), the number of processed inputs (`useProcessedInputCount`), and the latest epochs (`useEpochs`) and inputs (`useInputs`):
+
+```tsx title="src/components/CartesiStatus.tsx"
+import { useApplication, useEpochs, useInputs, useProcessedInputCount } from '@cartesi/react'
+import type { Address } from 'viem'
+
+interface CartesiStatusProps {
+  applicationAddress: Address
+}
+
+export function CartesiStatus({ applicationAddress }: CartesiStatusProps) {
+  const { data: application, error } = useApplication({ application: applicationAddress })
+  const { data: processedInputs } = useProcessedInputCount({
+    application: applicationAddress,
+    refetchInterval: 5000,
+  })
+  const { data: epochs } = useEpochs({
+    application: applicationAddress,
+    descending: true,
+    limit: 5,
+    refetchInterval: 5000,
+  })
+  const { data: inputs } = useInputs({
+    application: applicationAddress,
+    descending: true,
+    limit: 5,
+    refetchInterval: 5000,
+  })
+
+  if (error) return <p>Error loading application: {error.message}</p>
+  if (!application) return <p>Loading application...</p>
+
+  return (
+    <div>
+      <h2>Application {application.name}</h2>
+      <p>
+        Status: {application.status} | Consensus: {application.consensusType} | Epoch length:{' '}
+        {application.epochLength.toString()} blocks | Processed inputs: {processedInputs?.toString()}
+      </p>
+      <h3>Latest epochs</h3>
+      <ul>
+        {epochs?.data.map((epoch) => (
+          <li key={epoch.index.toString()}>
+            Epoch {epoch.index.toString()} (blocks {epoch.firstBlock.toString()}-{epoch.lastBlock.toString()}): {epoch.status}
+          </li>
+        ))}
+      </ul>
+      <h3>Latest inputs</h3>
+      <ul>
+        {inputs?.data.map((input) => (
+          <li key={input.index.toString()}>
+            Input #{input.index.toString()} from {input.decodedData?.sender}: {input.status}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 ```
 
 ## Complete Example
 
-Stitch the components together inside the App.
+Stitch the components together inside the App. The deposit, inspect and application list components are created in the next sections; create them before running the app.
 
-Create `src/App.tsx`:
+Replace `src/App.tsx`:
 
-```tsx
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { Web3Provider } from './providers/Web3Provider';
-import { CartesiInput } from './components/CartesiInput';
-import { CartesiOutputs } from './components/CartesiOutputs';
-import { type Address } from 'viem';
+```tsx title="src/App.tsx"
+import { useState } from 'react'
+import { useConnect, useConnection, useConnectors, useDisconnect } from 'wagmi'
+import { getAddress, type Address } from 'viem'
+import { CartesiApps } from './components/CartesiApps'
+import { CartesiInput } from './components/CartesiInput'
+import { CartesiInspect } from './components/CartesiInspect'
+import { CartesiOutputs } from './components/CartesiOutputs'
+import { CartesiStatus } from './components/CartesiStatus'
+import { DepositERC20 } from './components/DepositERC20'
+import { DepositEther } from './components/DepositEther'
 
-// Get application address from environment variable
-const CARTESI_APP_ADDRESS = import.meta.env.VITE_CARTESI_APP_ADDRESS as Address;
-
-function CartesiApp() {
-  const { isConnected, address } = useAccount();
-  const { connectors, connect } = useConnect();
-  const { disconnect } = useDisconnect();
+function App() {
+  // checksummed, as the node returns it, so that the selector below matches it
+  const [applicationAddress, setApplicationAddress] = useState<Address>(
+    getAddress(import.meta.env.VITE_CARTESI_APP_ADDRESS),
+  )
+  const { isConnected, address } = useConnection()
+  const connectors = useConnectors()
+  const { mutate: connect } = useConnect()
+  const { mutate: disconnect } = useDisconnect()
 
   return (
     <div>
       <header>
-        <h1>🐧 Cartesi App Frontend</h1>
-        
+        <h1>Cartesi App Frontend</h1>
+
         {isConnected ? (
           <div>
             <span>{address?.slice(0, 6)}...{address?.slice(-4)}</span>
@@ -442,10 +592,7 @@ function CartesiApp() {
         ) : (
           <div>
             {connectors.map((connector) => (
-              <button
-                key={connector.uid}
-                onClick={() => connect({ connector })}
-              >
+              <button key={connector.uid} onClick={() => connect({ connector })}>
                 {connector.name}
               </button>
             ))}
@@ -453,239 +600,346 @@ function CartesiApp() {
         )}
       </header>
 
+      <CartesiApps selected={applicationAddress} onAppSelect={setApplicationAddress} />
+
       {isConnected ? (
         <main>
           <section>
-            <p>App Address: {CARTESI_APP_ADDRESS}</p>
-            <CartesiInput applicationAddress={CARTESI_APP_ADDRESS} />
+            <p>App Address: {applicationAddress}</p>
+            <CartesiInput applicationAddress={applicationAddress} />
+            <DepositEther applicationAddress={applicationAddress} />
+            <DepositERC20 applicationAddress={applicationAddress} />
+            <CartesiInspect applicationAddress={applicationAddress} />
           </section>
-          {/* Outputs Section */}
           <section>
-            <CartesiOutputs applicationAddress={CARTESI_APP_ADDRESS} />
+            <CartesiStatus applicationAddress={applicationAddress} />
+          </section>
+          <section>
+            <CartesiOutputs applicationAddress={applicationAddress} />
           </section>
         </main>
       ) : (
-        <div>
-          <p>Connect your wallet to interact with Cartesi application.</p>
-        </div>
+        <p>Connect your wallet to interact with the Cartesi application.</p>
       )}
     </div>
-  );
-}
-
-function App() {
-  return (
-    <Web3Provider>
-      <CartesiApp />
-    </Web3Provider>
-  );
+  )
 }
 
 export default App
 ```
-You're good to run the application and test sending inputs and list the corresponding outputs on the web UI.
-
-Run the web application locally: 
-```
-pnpm dev
-```
-
 
 ## Bridging of Assets
-This section has other relevant components that can be plugged to the App as per the requirements.
+
+Assets enter a Cartesi application through the portal contracts, which add an input with the deposit details to the application. The portal ABIs and addresses are exported by `@cartesi/client/abi`: `etherPortalAbi`, `erc20PortalAbi`, `erc721PortalAbi`, `erc1155SinglePortalAbi` and `erc1155BatchPortalAbi`, each with its `...Address`. In rollups-contracts v3 the deposit functions are `depositEther`, `depositErc20Tokens`, `depositErc721Token`, `depositSingleErc1155Token` and `depositBatchErc1155Token`.
 
 ### Depositing Ether
-In this component, we use `depositEther()` function to bridge Ether from the base layer to the Cartesi rollups application.
 
-Create a `DepositEther.tsx` file in `src/components/` folder.
+Create `src/components/DepositEther.tsx`. It calls `depositEther` on the Ether portal, sending the amount as the transaction value:
 
-```tsx
-import { useState } from 'react';
-import { useAccount, useWalletClient } from 'wagmi';
-import { parseEther, toHex, type Address } from 'viem';
-import { walletActionsL1 } from '@cartesi/viem';
+```tsx title="src/components/DepositEther.tsx"
+import { useState } from 'react'
+import { parseEther, stringToHex, type Address } from 'viem'
+import { useConnection, useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
+import { etherPortalAbi, etherPortalAddress } from '@cartesi/client/abi'
 
 interface DepositEtherProps {
-  applicationAddress: Address;
+  applicationAddress: Address
 }
 
 export function DepositEther({ applicationAddress }: DepositEtherProps) {
-  const [amount, setAmount] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [txHash, setTxHash] = useState<string>('');
+  const [amount, setAmount] = useState('')
+  const { address } = useConnection()
+  const { mutate: writeContract, data: hash, isPending, error } = useWriteContract()
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash })
 
-  const { address } = useAccount();
-  const { data: walletClient } = useWalletClient();
+  const handleDeposit = () => {
+    writeContract(
+      {
+        address: etherPortalAddress,
+        abi: etherPortalAbi,
+        functionName: 'depositEther',
+        args: [applicationAddress, stringToHex(`Deposited ${amount} ether`)],
+        value: parseEther(amount),
+      },
+      { onSuccess: () => setAmount('') },
+    )
+  }
 
-  const handleDeposit = async () => {
-    if (!walletClient || !address || !amount || parseFloat(amount) <= 0) return;
-
-    setIsLoading(true);
-    setTxHash('');
-
-    try {
-      const valueInWei = parseEther(amount);
-      const data = toHex(`Deposited ${amount} ether`);
-
-      // Extend wallet client with Cartesi L1 actions
-      const cartesiWalletClient = walletClient.extend(walletActionsL1());
-
-      const hash = await cartesiWalletClient.depositEther({
-        application: applicationAddress,
-        value: valueInWei,
-        account: address,
-        execLayerData: data,
-        chain: walletClient.chain,
-      });
-
-      setTxHash(hash);
-      setAmount('');
-
-      console.log('Deposit sent with transaction hash:', hash);
-    } catch (error) {
-      console.error('Failed to deposit:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const invalid = !amount || Number(amount) <= 0
 
   return (
     <div>
       <h3>Deposit Ether</h3>
-      
-      <div>
-        <label>Amount (ETH):</label>
-        <input
-          type="number"
-          step="0.01"
-          placeholder="0.1"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          disabled={isLoading}
-        />
-      </div>
-
-      <button
-        onClick={handleDeposit}
-        disabled={!address || isLoading || !amount || parseFloat(amount) <= 0}
-      >
-        {isLoading ? 'Depositing...' : 'Deposit'}
+      <label>Amount (ETH): </label>
+      <input
+        type="number"
+        step="0.01"
+        placeholder="0.1"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        disabled={isPending}
+      />
+      <button onClick={handleDeposit} disabled={!address || isPending || invalid}>
+        {isPending ? 'Depositing...' : 'Deposit'}
       </button>
-
-      {txHash && (
-        <div>
-          <p>✅ Deposit sent successfully!</p>
-          <p>Transaction: <code>{txHash}</code></p>
-        </div>
+      {error && <p>Failed to deposit: {error.message.split('\n')[0]}</p>}
+      {hash && (
+        <p>
+          Transaction: <code>{hash}</code> {isConfirming ? '(confirming...)' : isSuccess ? '(confirmed)' : ''}
+        </p>
       )}
     </div>
-  );
+  )
+}
+```
+
+### Depositing ERC-20 tokens
+
+An ERC-20 deposit takes two transactions: the owner first approves the ERC-20 portal to move the tokens, then calls `depositErc20Tokens`. The CLI devnet deploys a test token (`testFungibleTokenAddress` in `@cartesi/client/abi`, `TestToken` in `cartesi address-book`) whose `mint` function anyone can call, so the component also offers a mint button for local testing.
+
+Create `src/components/DepositERC20.tsx`:
+
+```tsx title="src/components/DepositERC20.tsx"
+import { useState } from 'react'
+import { erc20Abi, formatUnits, isAddress, parseUnits, type Address } from 'viem'
+import { useConfig, useConnection, useReadContracts, useWriteContract } from 'wagmi'
+import { waitForTransactionReceipt } from 'wagmi/actions'
+import {
+  erc20PortalAbi,
+  erc20PortalAddress,
+  testFungibleTokenAbi,
+  testFungibleTokenAddress,
+} from '@cartesi/client/abi'
+
+interface DepositERC20Props {
+  applicationAddress: Address
+}
+
+export function DepositERC20({ applicationAddress }: DepositERC20Props) {
+  const [token, setToken] = useState<string>(testFungibleTokenAddress)
+  const [amount, setAmount] = useState('')
+  const [status, setStatus] = useState('')
+  const config = useConfig()
+  const { address } = useConnection()
+  const { mutateAsync: writeContractAsync, isPending } = useWriteContract()
+
+  const tokenAddress = isAddress(token) ? token : undefined
+  const { data, refetch } = useReadContracts({
+    contracts: [
+      { address: tokenAddress, abi: erc20Abi, functionName: 'decimals' },
+      { address: tokenAddress, abi: erc20Abi, functionName: 'symbol' },
+      { address: tokenAddress, abi: erc20Abi, functionName: 'balanceOf', args: [address!] },
+    ],
+    allowFailure: false,
+    query: { enabled: !!tokenAddress && !!address },
+  })
+  const [decimals, symbol, balance] = data ?? []
+
+  const run = async (label: string, action: () => Promise<void>) => {
+    try {
+      setStatus(`${label}...`)
+      await action()
+      setStatus(`${label}: done`)
+    } catch (error) {
+      setStatus(`${label} failed: ${(error as Error).message.split('\n')[0]}`)
+    } finally {
+      refetch()
+    }
+  }
+
+  // devnet only: the CLI's test token lets anyone mint
+  const mint = () =>
+    run('Mint', async () => {
+      const hash = await writeContractAsync({
+        address: testFungibleTokenAddress,
+        abi: testFungibleTokenAbi,
+        functionName: 'mint',
+        args: [address!, parseUnits('100', 18)],
+      })
+      await waitForTransactionReceipt(config, { hash })
+    })
+
+  const deposit = () =>
+    run('Deposit', async () => {
+      if (!tokenAddress || decimals === undefined) throw new Error('invalid token')
+      const value = parseUnits(amount, decimals)
+      // 1. allow the ERC-20 portal to transfer the tokens
+      const approveHash = await writeContractAsync({
+        address: tokenAddress,
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [erc20PortalAddress, value],
+      })
+      await waitForTransactionReceipt(config, { hash: approveHash })
+      // 2. deposit them into the application
+      const depositHash = await writeContractAsync({
+        address: erc20PortalAddress,
+        abi: erc20PortalAbi,
+        functionName: 'depositErc20Tokens',
+        args: [tokenAddress, applicationAddress, value, '0x'],
+      })
+      await waitForTransactionReceipt(config, { hash: depositHash })
+      setAmount('')
+    })
+
+  return (
+    <div>
+      <h3>Deposit ERC-20</h3>
+      <label>Token: </label>
+      <input value={token} onChange={(e) => setToken(e.target.value)} size={44} />
+      <p>
+        Balance: {balance !== undefined && decimals !== undefined ? `${formatUnits(balance, decimals)} ${symbol}` : '-'}
+        {token === testFungibleTokenAddress && (
+          <button onClick={mint} disabled={!address || isPending}>Mint 100 test tokens</button>
+        )}
+      </p>
+      <label>Amount: </label>
+      <input type="number" placeholder="10" value={amount} onChange={(e) => setAmount(e.target.value)} />
+      <button onClick={deposit} disabled={!address || isPending || !tokenAddress || !amount}>
+        Approve and deposit
+      </button>
+      {status && <p>{status}</p>}
+    </div>
+  )
 }
 ```
 
 ## Advanced Usage
+
 ### Waiting for Input Processing
 
-```tsx
-import { useWaitForInput } from '@cartesi/wagmi';
+`InputTracker` above uses `useWaitForInput`. Pass `rejectErrors: true` to make the query fail when the input ends with any status other than `ACCEPTED`, and `pollingInterval`, `retryCount` or `timeout` (milliseconds) to tune the polling. The defaults poll every four seconds, ten times, after which React Query retries the whole wait.
 
-function InputTracker({ applicationAddress, inputIndex }: { 
-  applicationAddress: string; 
-  inputIndex: number; 
-}) {
-  const { data: input, isLoading } = useWaitForInput({
-    application: applicationAddress,
-    inputIndex,
-    enabled: !!applicationAddress && inputIndex !== undefined,
-  });
+### Inspecting the application state
 
-  if (isLoading) return <div>⏳ Waiting for input to be processed...</div>;
-  
+Inspect requests are plain HTTP calls to the node and have no hook. Create `src/components/CartesiInspect.tsx`:
+
+```tsx title="src/components/CartesiInspect.tsx"
+import { useState } from 'react'
+import { hexToString, type Address, type Hex } from 'viem'
+
+interface InspectResponse {
+  status: string
+  reports: { payload: Hex }[]
+  processed_input_count: number
+  exception_payload?: Hex
+}
+
+export function CartesiInspect({ applicationAddress }: { applicationAddress: Address }) {
+  const [payload, setPayload] = useState('')
+  const [result, setResult] = useState<InspectResponse>()
+  const [error, setError] = useState('')
+
+  const inspect = async () => {
+    setError('')
+    try {
+      const response = await fetch(`${import.meta.env.VITE_CARTESI_INSPECT_URL}/${applicationAddress}`, {
+        method: 'POST',
+        body: payload,
+      })
+      if (!response.ok) throw new Error(`${response.status} ${await response.text()}`)
+      setResult(await response.json())
+    } catch (e) {
+      setError((e as Error).message)
+    }
+  }
+
   return (
     <div>
-      ✅ Input #{inputIndex} processed with status: {input?.status}
+      <h3>Inspect</h3>
+      <input value={payload} onChange={(e) => setPayload(e.target.value)} placeholder="Inspect payload" />
+      <button onClick={inspect}>Inspect</button>
+      {error && <p>Inspect failed: {error}</p>}
+      {result && (
+        <div>
+          <p>Status: {result.status} (processed inputs: {result.processed_input_count})</p>
+          <ul>
+            {result.reports.map((report, i) => (
+              <li key={i}>{hexToString(report.payload)}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
-  );
+  )
 }
 ```
 
-### Using Low-level RPC Client
+### Using the Cartesi client directly
 
-```tsx
-import { createClient } from '@cartesi/rpc';
+Outside React, or for calls without a hook, create the node client with `createCartesiPublicClient` (inside components, `useCartesiClient()` returns the client of the nearest `CartesiProvider`):
 
-const rpcClient = createClient({
-  uri: 'http://localhost:8080/rpc',
-});
+```ts
+import { http } from 'viem'
+import { createCartesiPublicClient } from '@cartesi/client'
 
-// Use RPC client directly
-const outputs = await rpcClient.request('cartesi_listOutputs', {
+const client = createCartesiPublicClient({
+  transport: http('http://127.0.0.1:6751/rpc'),
+})
+
+const { data: outputs, pagination } = await client.listOutputs({
   application: '0x...',
   limit: 10,
   offset: 0,
-});
+})
+const nodeInfo = await client.getNodeInfo() // { chainId, version, defaultBlock }
 ```
 
 ### Listing all available applications
+
 Create `src/components/CartesiApps.tsx`:
 
-```tsx
-import { useApplications } from '@cartesi/wagmi';
-import { useState, useEffect } from 'react';
-import { type Address } from 'viem';
+```tsx title="src/components/CartesiApps.tsx"
+import { useApplications } from '@cartesi/react'
+import type { Address } from 'viem'
 
 interface CartesiAppsProps {
-  onAppSelect?: (appAddress: Address) => void;
+  selected?: Address
+  onAppSelect?: (appAddress: Address) => void
 }
 
-export function CartesiApps({ onAppSelect }: CartesiAppsProps) {
-  const [selectedApp, setSelectedApp] = useState<string>('');
-  
-  const { 
-    data: applicationsData, 
-    isLoading: isLoadingApps,
-    error: appsError 
-  } = useApplications({});
+export function CartesiApps({ selected, onAppSelect }: CartesiAppsProps) {
+  const { data: applications, isLoading, error } = useApplications()
 
-  // Auto-select first application if available
-  useEffect(() => {
-    if (applicationsData?.data?.length && !selectedApp) {
-      const firstApp = applicationsData.data[0].applicationAddress;
-      setSelectedApp(firstApp);
-      onAppSelect?.(firstApp as Address);
-    }
-  }, [applicationsData, selectedApp, onAppSelect]);
-
-  const handleAppChange = (appAddress: string) => {
-    setSelectedApp(appAddress);
-    onAppSelect?.(appAddress as Address);
-  };
-
-  if (isLoadingApps) return <div>Loading applications...</div>;
-  if (appsError) return <div>Error loading applications: {appsError.message}</div>;
+  if (isLoading) return <div>Loading applications...</div>
+  if (error) return <div>Error loading applications: {error.message}</div>
 
   return (
     <div>
       <h2>Cartesi Applications</h2>
-      {applicationsData?.data?.length === 0 ? (
+      {applications?.data.length === 0 ? (
         <p>No applications found.</p>
       ) : (
         <div>
-          <label>Select Application:</label>
-          <select 
-            value={selectedApp} 
-            onChange={(e) => handleAppChange(e.target.value)}
-          >
-            {applicationsData?.data?.map((app) => (
+          <label>Select Application: </label>
+          <select value={selected} onChange={(e) => onAppSelect?.(e.target.value as Address)}>
+            {applications?.data.map((app) => (
               <option key={app.applicationAddress} value={app.applicationAddress}>
-                {app.applicationAddress}
+                {app.name} ({app.applicationAddress})
               </option>
             ))}
           </select>
         </div>
       )}
     </div>
-  );
+  )
 }
 ```
 
+## Run the application
+
+```bash
+pnpm dev
+```
+
+Open the URL printed by Vite, connect with **Mock Connector** (or **Injected** for MetaMask), and:
+
+1. Send an input and watch `InputTracker` report its status; the notices and reports it produced appear under **Application Outputs**.
+2. Deposit Ether or ERC-20 tokens. A deposit is an input sent by the portal, so it also shows up in the inputs and outputs.
+3. If your application emits vouchers, wait for the epoch of the voucher to be settled (the epoch status in **Latest epochs** becomes `CLAIM_ACCEPTED`) and click **Execute**.
+
+To type-check and build the application for production:
+
+```bash
+pnpm build
+```
