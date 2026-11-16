@@ -88,7 +88,7 @@ The workflow follows a practical sequence:
 
 - set up your development environment
 - create a new Cartesi application
-- deploy a contract to Sepolia
+- deploy a contract to Sepolia or Base Sepolia
 - run your application on a forked network
 - interact with the deployed contract through the fork
 
@@ -141,9 +141,9 @@ cartesi create fork-seploia --template rust
 
 This command creates a new directory named `fork-seploia`. Depending on the selected language, the directory includes a basic project structure and an entry point for your application logic.
 
-### Create and deploy a Solidity contract to Sepolia
+### Create and deploy a Solidity contract to Sepolia or Base Sepolia
 
-Next, you will create and deploy a Solidity contract named `InputRelayer` to Sepolia.
+Next, you will create and deploy a Solidity contract named `InputRelayer` to Sepolia or Base Sepolia. The steps that differ between the two networks are shown in tabs.
 
 This contract acts as a simple relay layer. It receives a user request and forwards it to the Cartesi InputBox contract. Your Cartesi application will later receive this input, decode it, and process the message.
 
@@ -172,7 +172,10 @@ import InputReaderSolidity from './snippets/inputRelayer-sol.md';
 </TabItem>
 </Tabs>
 
-#### Deploy contract to Sepolia
+#### Deploy the contract
+
+<Tabs groupId="network">
+<TabItem value="sepolia" label="Sepolia" default>
 
 Deploy the contract to Sepolia using the following command:
 
@@ -191,6 +194,34 @@ Transaction hash: <deployment transaction hash>
 ```
 
 After deployment, inspect the transaction using a block explorer. Take note of the block number in which the transaction was included, as this will be used later when configuring the fork.
+
+</TabItem>
+<TabItem value="base-sepolia" label="Base Sepolia">
+
+Deploy the contract to Base Sepolia using the following command:
+
+```bash
+forge create contracts/InputRelayer.sol:InputRelayer --rpc-url <Base Sepolia RPC URL> --private-key <Deployment Private Key with Base Sepolia ETH> --broadcast -v
+```
+
+This returns an output similar to:
+
+```bash
+[⠊] Compiling...
+No files changed, compilation skipped
+Deployer: 0xbD8Eba8Bf9e56ad92F4C4Fc89D6CB88902535749
+Deployed to: 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057
+Transaction hash: 0xa5c073210568d1d8b11b2ff6bed0d7bd0d8058cfcf0ec561f51b5de9c8e21644
+```
+
+After deployment, inspect the transaction using a Base Sepolia block explorer. Take note of the block number in which the transaction was included, as you will need it to choose the fork block. The sample transaction above was included in block `39988953`.
+
+:::note
+An `InputRelayer` compiled from this source is already deployed on Base Sepolia at `0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057`. You can use it instead of deploying your own. The Base Sepolia samples in this tutorial use it.
+:::
+
+</TabItem>
+</Tabs>
 
 ### Implementing the Cartesi application logic
 
@@ -237,13 +268,56 @@ cartesi build
 
 This command compiles your application and produces a Cartesi Machine image that includes your code.
 
+<Tabs groupId="network">
+<TabItem value="sepolia" label="Sepolia" default>
+
 Next, run the application using a forked network. Provide a Sepolia RPC endpoint that serves historical state (see [Best practices](#best-practices)) and the block number where the `InputRelayer` contract was deployed, for example `12148080`:
 
 ```bash
 cartesi run --fork-url <Sepolia RPC URL> --fork-block-number <InputRelayer deployment block>
 ```
 
+</TabItem>
+<TabItem value="base-sepolia" label="Base Sepolia">
+
+Next, run the application using a forked network. Provide a Base Sepolia RPC endpoint that serves historical state (see [Best practices](#best-practices)), such as `https://base-sepolia.gateway.tenderly.co`, and a fork block number that is at or after both of these blocks:
+
+- the block where your `InputRelayer` contract was deployed
+- block `46217246`, where the Cartesi `InputBox` was deployed on Base Sepolia
+
+The sample `InputRelayer` was deployed in block `39988953`, before the `InputBox` existed, so the sample forks at block `46217246`:
+
+```bash
+cartesi run --fork-url <Base Sepolia RPC URL> --fork-block-number <block at or after both deployments>
+```
+
+For example:
+
+```bash
+cartesi run --fork-url https://base-sepolia.gateway.tenderly.co --fork-block-number 46217246
+```
+
+If the fork block is earlier than block `46217246`, the Cartesi contracts do not exist yet at that block, and `cartesi run` stops with:
+
+```shell
+Unsupported fork chain 84532:
+No deployment found at address 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C for contract InputBox on chain 84532 at block 39988953
+No deployment found at address 0x035b11Be55656c6cfC822D1CaE568C1Af2e497b0 for contract EtherPortal on chain 84532 at block 39988953
+No deployment found at address 0x3332DE61a8BB9aC84893b2f552Fe81C9a6dC5419 for contract ERC20Portal on chain 84532 at block 39988953
+No deployment found at address 0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E for contract ERC721Portal on chain 84532 at block 39988953
+No deployment found at address 0x585F56351A66f131E176a345662215C772f80451 for contract ERC1155SinglePortal on chain 84532 at block 39988953
+No deployment found at address 0xee33550a22e3Cf6Cc265524dC9bcfD99D2307EBe for contract ERC1155BatchPortal on chain 84532 at block 39988953
+```
+
+The public endpoint `https://base-sepolia-rpc.publicnode.com` does not serve this history: for block `46217246` it returns `pruned history unavailable`.
+
+</TabItem>
+</Tabs>
+
 ### Expected logs
+
+<Tabs groupId="network">
+<TabItem value="sepolia" label="Sepolia" default>
 
 ```shell
 WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
@@ -258,15 +332,34 @@ WARNING: default block is set to 'latest', production configuration will likely 
 
 At this point, your application is running on a local network that mirrors the state of Sepolia at the specified block.
 
+</TabItem>
+<TabItem value="base-sepolia" label="Base Sepolia">
+
+```shell
+WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
+✔ fork-base-sepolia starting at http://127.0.0.1:6751
+✔ anvil service ready at http://127.0.0.1:6751/anvil
+✔ rpc service ready at http://127.0.0.1:6751/rpc
+✔ inspect service ready at http://127.0.0.1:6751/inspect/fork-base-sepolia
+✔ fork-base-sepolia machine hash is 0xf091ca929ce2f7a37099b07c64ede5f18bfe95b31ba8660b2d2450b90089d381
+✔ fork-base-sepolia contract deployed at 0xebdd61633d7767beaf16c86b08ec7ab542719e14
+(l) View logs   (b) Build and redeploy  (q) Quit
+```
+
+At this point, your application is running on a local network that mirrors the state of Base Sepolia at the specified block.
+
+</TabItem>
+</Tabs>
+
 ## Interacting with the Cartesi application through the forked contract
 
 Because the network was forked at a block where the `InputRelayer` contract already exists, you can interact with your application through this contract as if you were on the original network.
 
 Use the following command to send an input through the relayer:
 
-<Tabs>
+<Tabs groupId="network">
 
-<TabItem value="Structure" label="Structure" default>
+<TabItem value="structure" label="Structure" default>
 <pre><code>
 
 ```bash
@@ -276,11 +369,21 @@ cast send <InputRelayer address> "relayInput(address,address,bytes)" <applicatio
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="sepolia" label="Sepolia sample">
 <pre><code>
 
 ```bash
 cast send 0x070dC307580c1e3E8eE23836419A0c49780d358D "relayInput(address,address,bytes)" 0xeBDd61633D7767BEAF16c86b08eC7AB542719E14 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
+```
+
+</code></pre>
+</TabItem>
+
+<TabItem value="base-sepolia" label="Base Sepolia sample">
+<pre><code>
+
+```bash
+cast send 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057 "relayInput(address,address,bytes)" 0xeBDd61633D7767BEAF16c86b08eC7AB542719E14 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921" --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -296,7 +399,20 @@ This command calls the `relayInput(address,address,bytes)` function on the relay
 
 Ensure that you replace the `InputRelayer` address with the address printed by `forge create`, the application address and RPC URL with the values returned when you executed `cartesi run`, and the InputBox address with the input box your application was deployed with (returned by the application's `getInputBox()` function, and listed as `InputBox` by `cartesi address-book`).
 
+:::note
+On a Base Sepolia fork, `cartesi address-book` exits with `Unsupported fork chain 84532`. Read the InputBox address from the application instead:
+
+```bash
+cast call <application address> "getInputBox()(address)" --rpc-url http://127.0.0.1:6751/anvil
+```
+
+For the sample application, this returns `0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C`.
+:::
+
 ### Expected logs
+
+<Tabs groupId="network">
+<TabItem value="sepolia" label="Sepolia" default>
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
@@ -307,11 +423,26 @@ Received advance request data {"request_type":"advance_state","data":{"metadata"
 Sending finish
 ```
 
+</TabItem>
+<TabItem value="base-sepolia" label="Base Sepolia">
+
+```bash
+[INFO  rollup_http_server::http_service] received new request of type ADVANCE
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 434 "-" "-" 0.020416
+Received finish status 200 OK
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xebdd61633d7767beaf16c86b08ec7ab542719e14","msg_sender":"0x06ebaf6d44b65d76c8bdcb1701e68f44c22b1057","block_number":46217276,"block_timestamp":1788202842,"prev_randao":"0x6cddda3b61bb23e3642c17f2ad5230db7b93393d115570aa89710feebee10bc4","input_index":0},"payload":"0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"}}
+[InputRelayer] input_index=0 relayer=0x06ebaf6d44b65d76c8bdcb1701e68f44c22b1057 original_sender=0xd8da6bf26964af9d7eed9e03e53415d37aa96045 message="Hello from Cartesi!"
+Sending finish
+```
+
+</TabItem>
+</Tabs>
+
 ## Summary
 
 In this section, you successfully:
 
-- deployed a contract to Sepolia
+- deployed a contract to Sepolia or Base Sepolia
 - forked the network locally at a specific block
 - ran a Cartesi application on top of that fork
 - interacted with the application through an already deployed contract
