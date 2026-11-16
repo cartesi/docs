@@ -243,7 +243,7 @@ export function CartesiOutputs({ applicationAddress, inputIndex }: CartesiOutput
   console.log('Outputs Data:', outputsData);
 
   const formatOutput = (output: any) => {
-    const { decodedData, index, inputIndex: outputInputIndex, epochIndex } = output;
+    const { decodedData, index, inputIndex: outputInputIndex } = output;
     
     // Convert BigInt to number for consistent handling
     const indexNumber = typeof index === 'bigint' ? Number(index) : index;
@@ -627,7 +627,7 @@ const outputs = await rpcClient.request('cartesi_listOutputs', {
 ```
 
 ### Listing all available applications
-Create `src/components/CartesiApps.ts`:
+Create `src/components/CartesiApps.tsx`:
 
 ```tsx
 import { useApplications } from '@cartesi/wagmi';

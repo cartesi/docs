@@ -73,6 +73,7 @@ Running your application on a forked network provides several advantages:
 ## Best practices
 
 - Prefer stable and reliable HTTPS RPC endpoints
+- Use an RPC endpoint that serves historical state (an archive node) when the Cartesi contracts already exist on the source network: the node reads inputs from the block where the `InputBox` was deployed, and an endpoint that has pruned that state returns an error such as `pruned history unavailable`, so your application receives no inputs
 - Use a fixed block number during debugging to ensure consistent results
 - Update the block number when you need access to more recent state
 - Validate that the RPC endpoint is reachable if the command fails to start
@@ -267,7 +268,7 @@ Use the following command to send an input through the relayer:
 <pre><code>
 
 ```bash
-cast send <InputRelayer address> "relayInput(address,address,bytes)" <application address> <input-box address> --rpc-url <application local rpc_url> --private-key <private key>
+cast send <InputRelayer address> "relayInput(address,address,bytes)" <application address> <input-box address> <input payload> --rpc-url <application local rpc_url> --private-key <private key>
 ```
 
 </code></pre>
@@ -277,7 +278,7 @@ cast send <InputRelayer address> "relayInput(address,address,bytes)" <applicatio
 <pre><code>
 
 ```bash
-cast send 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057 "relayInput(address,address,bytes)" 0xa831a9883abc2ae26c643b3cab57498b8c6fcb52 0x1b51e2992A2755Ba4D6F7094032DF91991a0Cfac "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
+cast send 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057 "relayInput(address,address,bytes)" 0xa831a9883abc2ae26c643b3cab57498b8c6fcb52 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>

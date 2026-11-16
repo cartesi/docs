@@ -197,7 +197,7 @@ cargo add hex@=0.4.3 serde@=1.0.229 ethers-core@=2.0.14
 
 ## Implement the Application Logic
 
-Based on the programming language you selected earlier, copy the appropriate code snippet, then paste in your local entry point file (`dapp.py`, `src/main.rs`, `src/index.js`, `main.go`, or `src/main.cpp`) created in the setup step:
+Based on the programming language you selected earlier, copy the appropriate code snippet, then paste in your local entry point file (`dapp.py`, `src/main.rs`, `src/index.js`, `src/dapp.go`, or `dapp.cpp`) created in the setup step:
 
 import MarketplaceJS from './snippets/marketplace-js.md';
 import MarketplacePY from './snippets/marketplace-py.md';
@@ -399,7 +399,7 @@ This call returns a hex payload containing a list of all listed tokens on the ma
 {"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a205b315d"}],"processed_input_count":6}
 ```
 
-The payload hex `0x416c6...205b315d` when decoded, returns `All listed tokens are: [1]`. Thereby confirming that the token with `Id 1` has successfully been listed.
+The payload hex `0x416c6...205b315d` when decoded, returns `All listed tokens are: [1]`. Thereby confirming that the token with `Id 1` has successfully been listed. The Python, JavaScript and Go versions print the list without brackets, `All listed tokens are: 1`.
 
 ### 4. Deposit ERC20 token for making purchases [advance request]
 
@@ -441,18 +441,17 @@ Now that the buyer has deposited funds, we can proceed to purchase the NFT. Use 
 ```bash
 cartesi send --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
 ✔ Input String encoding
-✔ Input (as string) {"method": "purchase_token", "token_id": 1}
+✔ Input (as string) {"method": "purchase_token", "token_id": "1"}
 ✔ Input sent: 0x61dad3fb284470ab9e049fd45197062704376c797bdf020a5550f66d0dcec884
 ```
 
-This sends a purchase request for token ID `1` from the buyer address. The marketplace validates the request (token listed and sufficient balance), executes the purchase, and emits the voucher to transfer the NFT to the buyer.
+This sends a purchase request for token ID `1` from the buyer address. Pass `token_id` as a string, as above: the Python, Rust and JavaScript versions read it as a string and reject the purchase when it is a number. The marketplace validates the request (token listed and sufficient balance), executes the purchase, and emits the voucher to transfer the NFT to the buyer.
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 426 "-" "-" 0.001792
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":3576,"block_timestamp":1762954606,"prev_randao":"0xd29cd42cfd3c9ff4f31b39f497fc2f4d0a7add5a67da98be0d7841c37c7ad25f","input_index":2},"payload":"0x7b6d6574686f643a2070757263686173655f746f6b656e2c20746f6b656e5f69643a20317d"}}
-PURCHASE SUCCESSFUL, STRUCTURING VOUCHERS!!
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":3576,"block_timestamp":1762954606,"prev_randao":"0xd29cd42cfd3c9ff4f31b39f497fc2f4d0a7add5a67da98be0d7841c37c7ad25f","input_index":2},"payload":"0x7b226d6574686f64223a202270757263686173655f746f6b656e222c2022746f6b656e5f6964223a202231227d"}}
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /voucher HTTP/1.1" 201 11 "-" "-" 0.015424
 Voucher generation successful
 Token purchased and Withdrawn successfully
@@ -474,7 +473,7 @@ This call returns a hex payload like below:
 {"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a205b5d"}],"processed_input_count":7}
 ```
 
-The payload hex `0x416c6...653a205b5d` when decoded, returns `All listed tokens are: []`. Thereby verifying that the token with `Id 1` has successfully been sold and no longer listed for sale in the marketplace.
+The payload hex `0x416c6...653a205b5d` when decoded, returns `All listed tokens are: []` (`All listed tokens are: ` in the Python, JavaScript and Go versions). Thereby verifying that the token with `Id 1` has successfully been sold and no longer listed for sale in the marketplace.
 
 ## Conclusion
 

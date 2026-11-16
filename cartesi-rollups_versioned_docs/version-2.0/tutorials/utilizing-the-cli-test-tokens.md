@@ -1187,7 +1187,7 @@ Sample Log
 Received finish status 200
 Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0x9ec96ddfacdb3144d729ae433c05f1ef774aafab","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":24284,"block_timestamp":1757089398,"prev_randao":"0x1b76a6830d8a66d5908c517264984bde0ae7ecb9827d8ab4530066ce2a8f1ad0","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
 Handling portal deposit
-Token: 0x0761b8e3aB06F458632974393C48765E6Ddc61bB, Depositor: 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f, Token_id: 11
+Token: 0x0761b8e3aB06F458632974393C48765E6Ddc61bB, Depositor: 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f, Amount: 11
 ```
 
 ## ERC1155 Tokens
@@ -1225,7 +1225,7 @@ cast send $TEST_MULTI_TOKEN "mint(address,uint256,uint256)" 0x23618e81E3f5cdF7f5
 
 </Tabs>
 
-In the above example we call the `mint` function in the `TestMultiToken` contract `0xAaE8...9C19`, to mint `10` units of the token with id `5` to the receivers address `0xf39F...92266`. The function arguments passed to this function can be modified to match your test case, and any funded account can sign the transaction.
+In the above example we call the `mint` function in the `TestMultiToken` contract `0xAaE8...9C19`, to mint `10` units of the token with id `5` to the receivers address `0x23618e...1E8f`. The function arguments passed to this function can be modified to match your test case, and any funded account can sign the transaction.
 
 ### Transferring ERC1155 Test Tokens
 
@@ -1256,7 +1256,7 @@ cast send $TEST_MULTI_TOKEN "safeTransferFrom(address,address,uint256,uint256,by
 
 </Tabs>
 
-The above command interacts with the `safeTransferFrom` function of the `TestMultiToken` contract `0xAaE8...9C19`. The command transfers `1` unit of the token with id `5` from the sender address `0xf39F...92266` to the receiver address `0x7099...dc79C8`, this transaction is signed using the private key for the sender address specified.
+The above command interacts with the `safeTransferFrom` function of the `TestMultiToken` contract `0xAaE8...9C19`. The command transfers `1` unit of the token with id `5` from the sender address `0x23618e...1E8f` to the receiver address `0x7099...dc79C8`, this transaction is signed using the private key for the sender address specified.
 
 ### Depositing ERC1155 Tokens
 

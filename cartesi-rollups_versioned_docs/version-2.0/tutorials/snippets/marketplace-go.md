@@ -42,7 +42,7 @@ func newMarketplace() *Marketplace {
 		ERC721Token:  "0x0761b8e3aB06F458632974393C48765E6Ddc61bB",
 		ERC20Token:   "0x86EA17052C8e335Ad830B54EF566274EAB46B852",
 		AppAddress:   zeroAddress,
-		ListPriceWei: big.NewInt(0).SetUint64(100_000_000_000_000_000), // 100 tokens (18 decimals)
+		ListPriceWei: new(big.Int).Mul(big.NewInt(100), new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)), // 100 tokens (18 decimals)
 
 		ListedTokens:            map[string]bool{},
 		Erc721OwnerByTokenID:    map[string]string{},
@@ -242,8 +242,8 @@ func main() {
 			continue
 		}
 
-		response, err := rollups.ParseFinishResponse(res)
-		if err != nil {
+		var response rollups.FinishResponse
+		if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 			errlog.Panicln("Error parsing finish response:", err)
 		}
 
