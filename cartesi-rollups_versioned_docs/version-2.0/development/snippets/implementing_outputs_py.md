@@ -1,4 +1,10 @@
 ```python
+# Requirements (requirements.txt):
+#   eth-abi==5.2.0
+#   eth-utils==5.3.1
+#   pycryptodome==3.23.0  # keccak backend used by eth-utils
+# pycryptodome has no prebuilt riscv64 wheel, so `cartesi build` compiles it:
+# add build-essential to the apt-get install command in the template's Dockerfile.
 from os import environ
 import logging
 import requests
