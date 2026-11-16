@@ -1,0 +1,49 @@
+> For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
+
+---
+id: http-api
+title: Overview
+resources:
+  - url: https://github.com/cartesi/machine-emulator/tree/v0.22.0
+    title: Off-chain implementation of the Cartesi Machine
+  - url: https://github.com/cartesi/rollups-node/tree/v2.0.0-alpha.14
+    title: Reference implementation of the Rollups Node
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src
+    title: Smart Contracts for Cartesi Rollups
+---
+
+In a Cartesi dApp, the frontend and backend components communicate through the Rollups framework using HTTP and JSON-RPC APIs.
+
+When designing the APIs for this communication framework, we aimed to ensure that developers could create their applications without excessive concern about the low-level components of Cartesi Rollups. 
+
+## Backend APIs
+
+In a typical Cartesi dApp, the backend contains the application's state and verifiable logic. The backend runs inside the Cartesi Machine as a regular Linux application. 
+
+The dApp's backend interacts with the Cartesi Rollups framework by retrieving processing requests and submitting corresponding outputs.
+
+This interaction occurs through a set of HTTP endpoints, as illustrated in the figure below:
+
+![img](../../../static/img/v1.3/backend.jpg)
+
+You can send two types of requests to an application depending on whether you want to change or read the state:
+
+- **Advance**: With this request, input data changes the state of the dApp.
+
+- **Inspect**: This involves making an external HTTP API call to the Cartesi Node to read the dApp state without modifying it.
+
+## Base Layer Contracts
+
+The frontend component of the dApp needs to access the Cartesi Rollups framework to submit user requests and retrieve the corresponding outputs produced by the backend.
+
+The figure below illustrates the main use cases for these interactions:
+
+![img](../../../static/img/v1.3/frontend.jpg)
+
+- [`addInput()`](./contracts/input-box/#addinput) — This function submits input data to the application's InputBox smart contract (the one returned by the application's `getInputBox()`) on the base layer as a regular JSON-RPC blockchain transaction. When the transaction is mined and executed, it emits an event containing the submitted input's index, which the frontend can later use to query associated outputs.
+
+- [`executeOutput()`](./contracts/application/#executeoutput) — Submits a JSON-RPC blockchain transaction to request the execution of a given voucher (or DELEGATECALL voucher) by the [`Application`](./contracts/application.md) smart contract on the base layer. Vouchers can only be executed after a claim covering their epoch has been accepted by the consensus, which happens after the claim staging period. Notices are not executable; they can be validated with [`validateOutput()`](./contracts/application/#validateoutput).
+
+- Query outputs — You can submit a query to a Cartesi node to retrieve vouchers, notices, and reports as specified by the Cartesi Rollups JSON-RPC schema.
+
+- Inspect state — You can make an HTTP call to the Cartesi node to retrieve arbitrary dApp-specific application state.

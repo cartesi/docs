@@ -1,0 +1,56 @@
+> For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
+
+---
+id: inspect-state-http-api-for-cartesi-rollups
+title: "Inspect-state HTTP API for Cartesi Rollups"
+description: "API that allows the application frontend to make inspect-state requests to the application backend"
+sidebar_label: Introduction
+sidebar_position: 0
+hide_title: true
+custom_edit_url: null
+---
+
+import ApiLogo from "@theme/ApiLogo";
+import Heading from "@theme/Heading";
+import SchemaTabs from "@theme/SchemaTabs";
+import TabItem from "@theme/TabItem";
+import Export from "@theme/ApiExplorer/Export";
+
+<span
+  className={"theme-doc-version-badge badge badge--secondary"}
+  children={"Version: 2.0.0-alpha.14"}
+>
+</span>
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Inspect-state HTTP API for Cartesi Rollups"}
+>
+</Heading>
+
+
+
+API that allows the application frontend to make inspect-state requests to the application backend
+through a Cartesi Rollups node.
+
+This reference describes the inspect server of rollups-node v2.0.0-alpha.14.
+The node serves it on the address set by `CARTESI_INSPECT_ADDRESS` (default `:10012`).
+CORS is disabled by default; to call the API from a browser, the node operator must list the
+allowed origins in `CARTESI_INSPECT_CORS_ALLOWED_ORIGINS`.
+
+
+<div
+  style={{"marginBottom":"var(--ifm-paragraph-margin-bottom)"}}
+>
+  <h3
+    style={{"marginBottom":"0.25rem"}}
+  >
+    License
+  </h3><a
+    href={"https://www.apache.org/licenses/LICENSE-2.0.html"}
+  >
+    Apache-2.0
+  </a>
+</div>
+      
