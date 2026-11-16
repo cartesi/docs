@@ -166,7 +166,6 @@ export default defineConfig({
 
 ```shell
 cat > requirements.txt << 'EOF'
---find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
 requests==2.32.5
 eth-abi==5.2.0
 eth-utils==5.3.1
@@ -177,6 +176,24 @@ EOF
 ```
 
 </code></pre>
+
+`pycryptodome` (the keccak backend of `eth-utils`) and `regex` have no prebuilt riscv64 wheels on PyPI, so `cartesi build` compiles them. The Python template has no C compiler: in the template's `Dockerfile`, add `build-essential` to the `apt-get install` command:
+
+<pre><code>
+
+```dockerfile
+apt-get install -y --no-install-recommends --snapshot=${APT_UPDATE_SNAPSHOT} \
+  busybox-static \
+  build-essential \
+  /tmp/machine-guest-tools_riscv64.deb
+```
+
+</code></pre>
+
+:::note Prebuilt riscv64 wheels
+Instead of compiling, you can install prebuilt riscv64 wheels from the community-maintained index at `https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/`: add `--find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/` as the first line of `requirements.txt` and leave the `Dockerfile` unchanged. The build is faster, but it depends on that third-party index.
+:::
+
 </TabItem>
 
 <TabItem value="Rust" label="Rust" default>
