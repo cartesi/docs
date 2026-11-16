@@ -250,7 +250,7 @@ async function handle_advance(data) {
   console.log("Received advance request data " + JSON.stringify(data));
 
   const sender = data["metadata"]["msg_sender"];
-  app_contract = normAddr(data["metadata"]["app_contract"])
+  const app_contract = normAddr(data["metadata"]["app_contract"]);
 
   if (normAddr(storage.application_address) == normAddr(ZERO_ADDRESS)) {
     storage.setAppAddress(app_contract);
