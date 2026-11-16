@@ -17,7 +17,7 @@ For advance-state requests, the input data contains:
 
 For inspect-state requests, the input data contains only the payload.
 
-After processing a rollup request, the dApp backend should call the `/finish` endpoint again. For advance-state requests, depending on the processing result, it should set the `status` field to either `'accept'` or `'reject'`. The status field is ignored for inspect-state requests.
+After processing a rollup request, the dApp backend should call the `/finish` endpoint again. For advance-state requests, depending on the processing result, it should set the `status` field to either `'accept'` or `'reject'`. For inspect-state requests, the status does not change the application state; the node returns it to the caller in the `status` field of the inspect response (`Accepted` or `Rejected`).
 
 If an advance-state request is rejected:
 - Any vouchers and notices generated during processing are discarded
@@ -237,8 +237,12 @@ func main() {
 		}
 
 		// Parse next request and dispatch to the correct handler.
-		response, err := rollups.ParseFinishResponse(res)
+		resBody, err := io.ReadAll(res.Body)
 		if err != nil {
+			errlog.Panicln("Error reading finish response:", err)
+		}
+		var response rollups.FinishResponse
+		if err = json.Unmarshal(resBody, &response); err != nil {
 			errlog.Panicln("Error parsing finish response:", err)
 		}
 
@@ -324,7 +328,7 @@ int main(int argc, char **argv)
 
 - The `/finish` endpoint must be called after processing each request to indicate readiness for the next one
 - For advance state requests, the status field determines whether the request is accepted or rejected
-- For inspect state requests, the status field is ignored
+- For inspect state requests, the status does not change the application state; it is returned in the `status` field of the inspect response
 - If an advance state request is rejected:
   - Any vouchers and notices generated during processing are discarded
   - Reports are not discarded

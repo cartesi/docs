@@ -301,7 +301,7 @@ interface Epoch {
 }
 ```
 
-- `machine_hash` is the machine state hash at the end of the epoch. The `*_data_block` fields and the matching `*_proof` sibling lists prove parts of that machine state (the CMIO TX buffer, the `iflags.Y` register and the HTIF `tohost` register) against `machine_hash`.
+- `machine_hash` is the machine state hash at the end of the epoch. While the epoch is `OPEN` or `CLOSED`, `machine_hash` and the `*_data_block` fields hold the state after the last of its inputs processed so far and change as more inputs are processed; they are final from `INPUTS_PROCESSED` on. The `*_data_block` fields and the matching `*_proof` sibling lists prove parts of that machine state (the CMIO TX buffer, the `iflags.Y` register and the HTIF `tohost` register) against `machine_hash`.
 - The `*_proof` lists are returned by [`cartesi_getEpoch`](./methods/epochs/get.md) and [`cartesi_getEpochByVirtualIndex`](./methods/epochs/get-by-virtual-index.md). [`cartesi_listEpochs`](./methods/epochs/list.md) omits them.
 - `staged_at_block` is the block in which the claim was staged on chain, or `null` before that.
 - `virtual_index` is the epoch's dense insertion rank (0, 1, 2, … without gaps).

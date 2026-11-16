@@ -26,7 +26,7 @@ def handle_advance(data):
     emitReport(payload);
     
     voucher = structure_voucher(
-        "transferFrom(address,uint256)",
+        "transfer(address,uint256)",
         erc20Token,
         ["address", "uint256"],
         [sender, 10],

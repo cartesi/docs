@@ -77,12 +77,14 @@ The `[machine]` section controls how your Cartesi Machine is set up and how it b
 ### Entrypoint
 
 ```toml
-entrypoint = "/usr/local/bin/python3 /mnt/app/main.py"
+entrypoint = "rollup-init /usr/local/bin/python3 /mnt/app/main.py"
 ```
 
 The `entrypoint` tells the machine which program to run when it starts up. This is the path to your application binary inside the machine's file system.
 
-If you are building your root drive from a Docker image (which is the default), you may not need to set this at all. The CLI can pick up the entrypoint from your Dockerfile's `ENTRYPOINT` or `CMD` instruction. You would set this explicitly when you want to override whatever the Docker image defines, or when your setup does not use Docker.
+If you are building your root drive from a Docker image (which is the default), you may not need to set this at all. The CLI can pick up the entrypoint from your Dockerfile's `ENTRYPOINT` and `CMD` instructions. You would set this explicitly when you want to override whatever the Docker image defines, or when your setup does not use Docker.
+
+The `entrypoint` replaces the image's `ENTRYPOINT` and `CMD`. An application that talks to the rollup HTTP server (`ROLLUP_HTTP_SERVER_URL`), as the C++, Go, Python and Rust templates do, must be started through `rollup-init`, which starts the server and then runs your program, as the templates' Dockerfiles do with `ENTRYPOINT ["rollup-init"]`. Without it, the server is not running and the build fails when the application calls `/finish`.
 
 ### Boot Arguments
 
@@ -90,7 +92,7 @@ If you are building your root drive from a Docker image (which is the default), 
 boot_args = ["no4lvl", "quiet", "earlycon=sbi", "console=hvc0", "rootfstype=ext2", "root=/dev/pmem0", "rw", "init=/usr/sbin/cartesi-init"]
 ```
 
-These are the Linux kernel boot arguments passed to the machine when it starts. They control low level behavior like which console to use, what file system type the root drive is, and where to find the init process.
+These are Linux kernel boot arguments passed to the machine when it starts. They control low level behavior like which console to use, what file system type the root drive is, and where to find the init process. The CLI appends them to the default kernel command line of the machine; it does not replace it.
 
 For most applications, you will never need to touch this. The defaults work well for typical setups. This field exists for advanced use cases where you need fine grained control over the kernel's boot process, such as changing the root file system type or adjusting console output behavior.
 
@@ -112,12 +114,12 @@ Exact RAM requirements are unique for each application. A lightweight app that p
 ### Execution Limits
 
 ```toml
-max_mcycle = 2305843009213693952
+max_mcycle = 10000000000
 ```
 
-The `max_mcycle` field sets the maximum number of machine cycles the Cartesi Machine is allowed to execute. This acts as a computational budget. Once the machine reaches this limit, it stops.
+The `max_mcycle` field sets the maximum machine cycle of the run that `cartesi build` performs to boot the machine until it waits for its first input (the manual `rx-accepted` yield). Once the machine reaches this limit, it stops, and the build stores the machine in that state. Such a machine cannot process inputs, so combine `max_mcycle` with `assert_rolling_template = true` to make the build fail instead. The limit is not stored in the machine and does not bound the processing of inputs, which the node limits with its own execution parameters.
 
-A value of `2305843009213693952` is the default machine cycle the Cartesi machine operates. Setting a specific number is useful when you want to guarantee that computation stays within a certain bound, which can be important for on chain verification where predictable execution costs matter.
+When `max_mcycle` is omitted, the CLI sets no limit. The value must be an integer of at most `9007199254740991` (2^53 - 1): the CLI rejects larger TOML integers with `integer value cannot be represented losslessly`.
 
 ### Rollup Behavior
 
@@ -153,7 +155,7 @@ There is no `final_hash` option to set: it was removed in Cartesi CLI 2.0.0-alph
 
 ## Drives
 
-Drives are the file systems attached to your Cartesi Machine. Since the machine is a virtual computer, drives are its hard disks. Every machine has at least one drive (the root drive), and you can attach upto 6 different drives.
+Drives are the file systems attached to your Cartesi Machine. Since the machine is a virtual computer, drives are its hard disks. Every machine has at least one drive (the root drive), and it can have up to 8 drives in total, the root drive included.
 
 Each drive has a name and is defined under `[drives.<name>]`. The name is used as an identifier and, by default, determines where the drive is mounted inside the machine at `/mnt/<name>`.
 
@@ -235,7 +237,7 @@ The directory builder takes a folder from your local machine and packages it int
 
 **`directory`** is required and points to the local folder you want to package. The path is relative to your project root.
 
-**`extra_size`** adds breathing room beyond the actual size of the directory's contents. Optional, defaults to zero.
+**`extra_size`** adds breathing room beyond the actual size of the directory's contents. Optional, defaults to zero. With the `ext2` format, a drive built with no extra space can fail with `xgenext2fs: too few blocks`; set a small `extra_size` in that case.
 
 **`format`** works the same as with the Docker builder: `"ext2"` for read/write, `"sqfs"` for read only compressed.
 
@@ -302,8 +304,9 @@ Here is a realistic `cartesi.toml` for a Python application that processes uploa
 sdk = "cartesi/sdk:0.12.0-alpha.45"
 
 [machine]
-# Run the Python application when the machine starts
-entrypoint = "/usr/local/bin/python3 /mnt/app/main.py"
+# Run the Python application when the machine starts, through rollup-init,
+# which starts the rollup HTTP server first
+entrypoint = "rollup-init /usr/local/bin/python3 /mnt/app/main.py"
 
 # Give the machine 256 megabytes of RAM for document processing
 ram_length = "256Mi"
@@ -352,11 +355,11 @@ The reference drive contains a pre built SquashFS image with static reference da
 | `boot_args`             | `[machine]`  | String array     | CLI defaults                    | Linux kernel boot arguments                                     |
 | `ram_length`            | `[machine]`  | String           | `"128Mi"`                       | Amount of RAM for the machine                                   |
 | `ram_image`             | `[machine]`  | String           | SDK default                     | Path to the Linux kernel binary                                 |
-| `max_mcycle`            | `[machine]`  | Number           | `2305843009213693952` (default) | Maximum machine cycles allowed                                  |
+| `max_mcycle`            | `[machine]`  | Number           | No limit                        | Maximum machine cycle of the boot run of `cartesi build`        |
 | `assert_rolling_template` | `[machine]` | Boolean        | —                               | Fail the build if the machine is not a rolling template         |
 | `use_docker_env`        | `[machine]`  | Boolean          | `true`                          | Inject Docker ENV into the machine                              |
 | `use_docker_workdir`    | `[machine]`  | Boolean          | `true`                          | Use Docker WORKDIR in the machine                               |
-| `user`                  | `[machine]`  | String           | —                               | User to run the application as                                  |
+| `user`                  | `[machine]`  | String           | `"dapp"`                        | User to run the application as                                  |
 | `builder`               | `[drives.*]` | String           | `"docker"`                      | How to create the drive: docker, empty, directory, tar, or none |
 | `dockerfile`            | `[drives.*]` | String           | `"Dockerfile"`                  | Path to Dockerfile (docker builder)                             |
 | `target`                | `[drives.*]` | String           | Last stage                      | Docker multi stage build target                                 |

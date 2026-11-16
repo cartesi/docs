@@ -262,7 +262,7 @@ You can obtain the relevant addresses by running `cartesi address-book`.
 
 #### 2. Send inputs with Cartesi CLI
 
-Cartesi CLI provides a convenient way of sending inputs to an application. Inputs to be sent to application could in either `Hex`, `String encoding` or `ABI encoding` format.
+Cartesi CLI provides a convenient way of sending inputs to an application. Inputs to be sent to application can be in `Hex`, `String encoding`, `ABI encoding` or `ABI packed encoding` format.
 
 To send an input, you could use the interactive or the direct option, for the interactive option run:
 
@@ -274,10 +274,11 @@ Response:
 
 ```shell
 $ cartesi send
-? Input (Use arrow keys)
+? Input
 ❯ String encoding
   Hex string encoding
   ABI encoding
+  ABI packed encoding
 ```
 
 From the response menu you proceed to select the input format then enter the input. While for the more direct option run:
@@ -286,7 +287,7 @@ From the response menu you proceed to select the input format then enter the inp
 cartesi send --encoding <encoding> <Input> 
 ```
 
-For the above command, you replace `<encoding>` with your input format choice (either `hex`, `string` or `abi`), then replace `<Input>` with your actual input text.
+For the above command, you replace `<encoding>` with your input format choice (`hex`, `string`, `abi` or `abi-packed`), then replace `<Input>` with your actual input text.
 
 :::note Sending Input from the Cartesi CLI?
 Ensure you're calling the send command from the rood directory of your project else, you would need to provide the project RPC_URL and application address to interact with the application from any random terminal.
@@ -353,11 +354,12 @@ cartesi deposit
 Response:
 
 ```shell
-? Input (Use arrow keys)
-❯ String encoding
-  Hex string encoding
-  ABI encoding
-Convert UTF-8 string to bytes
+? Select type of asset to deposit
+❯ ether
+  erc20
+  erc721
+  erc1155-single
+  erc1155-batch
 ```
 
 The `cartesi deposit` command by default sends from devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`; pass `--from` to choose another account, but not account 0, which the local node uses, see [Initiate an advance request](#initiate-an-advance-request)), and uses the default test erc20 and erc721 contract to interact with your application, but this can all be modified to fit your purpose better.

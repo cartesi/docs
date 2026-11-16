@@ -9,7 +9,7 @@ Notices provide a mechanism to communicate essential off-chain events from the e
 
 Consider a scenario within a gaming dApp where players engage in battles. Upon the conclusion of a match, the dApp's backend generates a notice proclaiming the victorious player. This notice contains pertinent off-chain data regarding the match outcome. Once created, the notice is submitted to the rollup server as evidence of the off-chain event.
 
-Crucially, the base layer conducts on-chain validation of these notices through the [`executeOutput()`](../contracts/application.md/#executeoutput) function of the `Application` contract.
+Crucially, the base layer conducts on-chain validation of these notices through the [`validateOutput()`](../contracts/application.md#validateoutput) function of the `Application` contract. Notices cannot be executed: `executeOutput()` reverts with `OutputNotExecutable` for a notice.
 
 This validation process ensures the integrity and authenticity of the submitted notices, enabling the blockchain to verify and authenticate the declared off-chain events or conditions.
 
@@ -71,6 +71,7 @@ def handle_advance(data):
        )
    except Exception as e:
        # Emit report with error message here
+       pass
    return status
 ```
 
@@ -92,7 +93,7 @@ pub async fn handle_advance(
         .ok_or("Missing payload")?;
 
 
-    emit_notice(payload).await;
+    emit_notice(payload.to_string()).await;
     Ok("accept")
 }
 

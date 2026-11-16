@@ -56,7 +56,7 @@ mapping(address => bytes32[]) private _inputBoxes;
 ### `addInput()`
 
 ```solidity
-function addInput(address appContract, bytes calldata payload) external override notForeclosed(appContract) returns (bytes32)
+function addInput(address appContract, bytes calldata payload) external override notForeclosed(appContract) returns (bytes32 inputHash)
 ```
 
 Send an input to an application.
@@ -78,7 +78,7 @@ The encoded `EvmAdvance` input, not only the payload, must fit in `CanonicalMach
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `bytes32` | The hash of the encoded input (`keccak256` of the `EvmAdvance` envelope) |
+| `inputHash` | `bytes32` | The hash of the encoded input (`keccak256` of the `EvmAdvance` envelope) |
 
 **Errors**
 

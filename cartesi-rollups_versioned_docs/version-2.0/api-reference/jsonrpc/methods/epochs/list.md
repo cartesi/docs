@@ -82,7 +82,7 @@ The `cartesi_listEpochs` method returns a paginated list of epochs for a specifi
 | last_block              | string | The last block number of the epoch (hex encoded)  |
 | input_index_lower_bound | string | Index of the first input of the epoch (inclusive, hex encoded) |
 | input_index_upper_bound | string | Index after the last input of the epoch (exclusive, hex encoded) |
-| machine_hash            | string \| null | The machine state hash at the end of the epoch (null until the inputs are processed) |
+| machine_hash            | string \| null | The machine state hash at the end of the epoch. Until the epoch reaches `INPUTS_PROCESSED`, the state after the last of its inputs processed so far (null until one is processed) |
 | tx_buffer_data_block    | string \| null | The CMIO TX buffer data block of the machine state |
 | iflags_y_data_block     | string \| null | The memory block that holds the machine `iflags.Y` register |
 | htif_tohost_data_block  | string \| null | The memory block that holds the machine HTIF `tohost` register |

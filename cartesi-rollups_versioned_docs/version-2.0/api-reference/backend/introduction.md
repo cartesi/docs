@@ -7,7 +7,7 @@ The backend of a Cartesi dApp processes requests in the following manner:
 
   - **Finish** — Called via [`/finish`](./finish.md), indicates that any previous processing has been completed and the backend is ready to handle the next request. The subsequent request is returned as the call's response and can be of the following types:
 
-    - **Advance** — Provides input to be processed by the backend to advance the Cartesi Machine state. When processing an Advance request, the backend can call the [`/voucher`](./vouchers.md), and [`/report`](./reports.md) endpoints. For such requests, the input data contains both the payload and metadata, including the account address that submitted the input.
+    - **Advance** — Provides input to be processed by the backend to advance the Cartesi Machine state. When processing an Advance request, the backend can call the [`/notice`](./notices.md), [`/voucher`](./vouchers.md), [`/delegate-call-voucher`](./vouchers.md#delegatecall-vouchers) and [`/report`](./reports.md) endpoints. For such requests, the input data contains both the payload and metadata, including the account address that submitted the input.
 
     - **Inspect** — Submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged, as the machine reverts to its exact previous condition after processing. For Inspect requests, the input data contains only a payload, and the backend can only call the [`/report`](./reports.md) endpoint.
 
@@ -86,15 +86,14 @@ An **Inspect** request involves making an external HTTP API call to the rollups 
 
 You can make a simple inspect call from your frontend client to retrieve reports.
 
-To perform an Inspect call, make a HTTP POST request to `<address of the node>/inspect/<application name>` with a payload in the request body. For example:
+To perform an Inspect call, make a HTTP POST request to `<address of the node>/inspect/<application name>` with the payload as the request body. For example, with the local node started by `cartesi run`:
 
 ```shell
-curl -X POST http://localhost:8080/inspect/<application name> \
-    -H "Content-Type: application/json" \
-    -d '{"payload": "0xdeadbeef"}'
+curl -X POST http://127.0.0.1:6751/inspect/<application name> \
+    -d 'test'
 ```
 
-The payload should be a hex-encoded string starting with '0x' followed by pairs of hexadecimal numbers.
+The node passes the raw bytes of the request body to the backend, which receives them hex-encoded in the `payload` field of the inspect request (`0x74657374` for the body `test`). The node does not interpret the body or its content type, so do not wrap the payload in JSON.
 
 After receiving the call's response, the payload is extracted from the response data, allowing the backend code to examine it and produce outputs as **reports**.
 
