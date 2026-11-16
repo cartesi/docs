@@ -192,7 +192,8 @@
                         "development/emergency-withdrawal/overview",
                         "development/emergency-withdrawal/lifecycle",
                         "development/emergency-withdrawal/installation-Guide",
-                        "development/emergency-withdrawal/recovery-guide"
+                        "development/emergency-withdrawal/recovery-guide",
+                        "development/emergency-withdrawal/local-testing"
                     ]
                 }
             ]

@@ -75,6 +75,8 @@ Two properties of the drive must agree with the [`WithdrawalConfig`](../contract
 - **Size.** The drive must be large enough to hold the entire account tree, which spans `2^(5 + log2MaxNumOfAccounts + log2LeavesPerAccount)` bytes. A single-token ledger with `log2LeavesPerAccount = 0` and `log2MaxNumOfAccounts = 12`, for example, occupies `2^17` bytes (128 KiB), well within the drive declared above.
 - **Position.** `accountsDriveStartIndex` records where the drive begins in machine memory, expressed as its start address divided by that account-tree size (so the start address must be a multiple of that size). You do not choose the address: `cartesi build` places the drive, and you read the assigned start address from `.cartesi/image/config.json`. Dividing it by the account-tree size gives the `accountsDriveStartIndex` you supply in the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md#drive-geometry) at deploy time.
 
+
+With `accounts_drive = true` on the drive (and `accounts_drive_size` when the records use only the beginning of it), `cartesi build` derives these values and prints the resulting withdrawal config, and `cartesi run` deploys with it. See [Testing emergency withdrawal locally with cartesi run](../../development/emergency-withdrawal/local-testing.md#configure-the-accounts-drive).
 ### Checking the drive position
 
 :::warning
