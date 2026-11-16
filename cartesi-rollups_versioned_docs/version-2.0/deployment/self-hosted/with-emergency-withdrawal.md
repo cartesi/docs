@@ -90,7 +90,7 @@ The recovery tool, `cartesi-rollups-machine-tool`, locates the accounts drive th
    curl -L https://raw.githubusercontent.com/Mugen-Builders/deployment-setup-v2.0/98847c19660b46cd9f1b1c8ff9f8cf7f88039f98/compose.local.yaml -o compose.local.yaml
    ```
 
-   This is the same compose file used by the standard flow. Update its image tags as described in the standard flow ([Setting up the local node](./standard.md#setting-up-the-local-node)) before you start it. The compose file has no separate service for the recovery tools: `cartesi-rollups-machine-tool` and `cartesi-rollups-cli` ship inside the `cartesi/rollups-runtime` image and run with `docker compose -f compose.local.yaml exec advancer`. See the [Emergency Withdrawal Recovery Guide](../../development/emergency-withdrawal/recovery-guide.md) for what recovery needs.
+   This is the same compose file used by the standard flow. Update its image tags as described in the standard flow ([Setting up the local node](./standard.md#setting-up-the-local-node)) before you start it. The compose file has no separate service for the recovery tools: `cartesi-rollups-machine-tool` and `cartesi-rollups-cli` ship inside the `cartesi/rollups-runtime` image. Run them with `docker compose -f compose.local.yaml exec -w /tmp advancer`: the container's default directory is not writable, and the recovery steps write files to the current directory. See the [Emergency Withdrawal Recovery Guide](../../development/emergency-withdrawal/recovery-guide.md) for what recovery needs.
 
 2. **Build the application with the Cartesi CLI:**
 

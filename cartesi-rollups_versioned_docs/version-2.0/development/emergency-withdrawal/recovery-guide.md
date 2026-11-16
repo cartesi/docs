@@ -33,6 +33,7 @@ In the Cartesi CLI tabs, `cartesi-rollups-cli` sends to the RPC endpoint in `CAR
 - The default signer is a mnemonic: `CARTESI_AUTH_MNEMONIC`, with `CARTESI_AUTH_MNEMONIC_ACCOUNT_INDEX` to choose the account. To sign with a private key, set `CARTESI_AUTH_KIND=private_key` and `CARTESI_AUTH_PRIVATE_KEY`.
 - An application name, instead of an address, also needs `CARTESI_DATABASE_CONNECTION`.
 - Inside the node's containers these variables are already set to the node's signer. Override the signer there with the guardian's key for step 1, and with your own key for the other steps.
+- Inside the node's containers, run the tools from a writable directory, for example `docker compose -f compose.local.yaml exec -w /tmp advancer ...`. The default directory (`/`) is not writable by the user the tools run as, and `replay` writes the application's report files, the snapshot and the proof files relative to the current directory.
 - Each transaction command asks for confirmation before it sends. Without a terminal to answer it, the transaction is not sent, so add `--yes` when you run the command from a script.
 
 ## Step 1: Foreclose the application
