@@ -382,10 +382,10 @@ This section of the tutorial is focused on setting up a Cartesi application on a
 - Create a new project using the command:
   
 ```bash
-    cartesi create AA-on-CLI --template javascript
+    cartesi create aa-on-cli --template javascript
 ```
 
-- Cd into `AA-on-CLI`, then build the application by running the command
+- Cd into `aa-on-cli`, then build the application by running the command
   
 ```bash
   cartesi build

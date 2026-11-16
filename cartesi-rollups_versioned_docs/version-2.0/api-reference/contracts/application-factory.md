@@ -167,7 +167,7 @@ A new Application contract was deployed. `outputsMerkleRootValidator` is an inde
 | `appOwner` | `address` | The owner of the application |
 | `templateHash` | `bytes32` | The template hash |
 | `inputBox` | `IInputBox` | The input box contract |
-| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)). Pass a zero-valued config to deploy without emergency withdrawal |
+| `withdrawalConfig` | `WithdrawalConfig` | The withdrawal configuration (see [WithdrawalConfig](./withdrawal/withdrawal-config.md)); all zero when the application was deployed without emergency withdrawal |
 | `appContract` | `IApplication` | The deployed Application contract |
 
 ## Errors

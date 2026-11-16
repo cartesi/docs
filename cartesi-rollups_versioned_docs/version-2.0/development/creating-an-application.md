@@ -49,7 +49,7 @@ After creating your application, you can begin building your application by addi
 
 It’s important not to modify or remove existing code in index.js unless you fully understand its purpose, as doing so may prevent your application from functioning correctly. Instead, you are encouraged to extend the file by adding your own logic and implementations alongside the default code.
 
-The default application templates include two primary handlers, one for each type of request. In most templates, they are the `handle_advance` and `handle_inspect` functions. In the JavaScript and TypeScript templates, they are the `advance` and `inspect` handlers passed to `rollup.run()` from the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package, which talks directly to the Cartesi Machine instead of going through the rollup HTTP server: each handler receives the request, with its `payload` as a Node.js `Buffer`, and emits outputs with `rollup.emitNotice()`, `rollup.emitVoucher()` and `rollup.emitReport()`.
+The default application templates include two primary handlers, one for each type of request. In most templates, they are the `handle_advance` and `handle_inspect` functions. In the JavaScript and TypeScript templates, they are the `advance` and `inspect` handlers passed to `rollup.run()` from the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) package, which talks directly to the Cartesi Machine instead of going through the rollup HTTP server: each handler receives the request, with its `payload` as a Node.js `Buffer`, and emits outputs with `rollup.emitNotice()`, `rollup.emitVoucher()` and `rollup.emitReport()`.
 
 ### handle_advance function
 
@@ -79,7 +79,7 @@ Then, in `rolldown.config.js` (`rolldown.config.ts` in the TypeScript template),
 
 If your application needs to emit Outputs like; notices, vouchers, or reports, make sure to implement the corresponding logic within your codebase to properly handle these outputs. You can check out the respective pages for [Notice](../api-reference/backend/notices.md), [Vouchers](../api-reference/backend/vouchers.md) or [Report](../api-reference/backend/reports.md) for better understanding of what they are and how to implement them.
 
-Below is a sample application that has been modified to include the logic to simply receive an input from a user in both inspect and advance route then, emits a notice, voucher and a report. For your application you'll need to include your personal logic and also emit outputs when necessary. The JavaScript version encodes the voucher with `viem`, so add it as described in [Adding dependencies in JavaScript and TypeScript](#adding-dependencies-in-javascript-and-typescript):
+Below is a sample application that has been modified so that, for each advance request, it emits a notice and a report with the input payload, and a voucher that transfers 10 units of the devnet test ERC-20 token (`0x86EA17052C8e335Ad830B54EF566274EAB46B852`) to the sender. For your application you'll need to include your personal logic and also emit outputs when necessary. The JavaScript version encodes the voucher with `viem`, so add it as described in [Adding dependencies in JavaScript and TypeScript](#adding-dependencies-in-javascript-and-typescript):
 
 
 import Tabs from '@theme/Tabs';
@@ -100,7 +100,7 @@ import ImplementingOutputsCPP from './snippets/implementing_outputs_cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 <ImplementingOutputsPY />
@@ -108,7 +108,7 @@ import ImplementingOutputsCPP from './snippets/implementing_outputs_cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 <ImplementingOutputsRS />
@@ -116,7 +116,7 @@ import ImplementingOutputsCPP from './snippets/implementing_outputs_cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <ImplementingOutputsGO />
@@ -124,7 +124,7 @@ import ImplementingOutputsCPP from './snippets/implementing_outputs_cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <ImplementingOutputsCPP />

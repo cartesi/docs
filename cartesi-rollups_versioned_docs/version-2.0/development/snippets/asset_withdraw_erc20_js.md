@@ -4,7 +4,7 @@ import { encodeFunctionData, erc20Abi } from "viem";
 
 const rollup = new Rollup();
 
-const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+const erc20Token = "0x86EA17052C8e335Ad830B54EF566274EAB46B852"; // devnet test ERC-20 token (TestToken)
 
 await rollup.run({
   advance(request) {

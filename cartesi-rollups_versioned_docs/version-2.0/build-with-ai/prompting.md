@@ -164,7 +164,7 @@ Show me what to check in my /finish loop and handler validation.
 ```text
 Add a React frontend to my Cartesi Rollups v2 app using cartesi-frontend.
 Wire wallet connect, send inputs via InputBox, and read state via JSON-RPC.
-Use @cartesi/wagmi and @cartesi/viem.
+Use @cartesi/react@2.0.0-alpha.45 and @cartesi/client@2.0.0-alpha.41.
 ```
 
 ### Deploy

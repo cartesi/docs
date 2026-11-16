@@ -104,7 +104,7 @@ The proof lists are shortened in this example.
 | `INPUTS_PROCESSED` | The epoch inputs have been processed | No |
 | `CLAIM_COMPUTED`   | The node computed the claim and the output proofs | No |
 | `CLAIM_SUBMITTED`  | The node submitted the claim on chain | No |
-| `CLAIM_STAGED`     | The claim is staged on chain and waits for the claim staging period (for PRT, or for all sentries to agree) | No |
+| `CLAIM_STAGED`     | The claim (for PRT, the tournament result) is staged on chain and waits for the claim staging period to end; for PRT, it can also be accepted earlier, when all sentries agree | No |
 | `CLAIM_ACCEPTED`   | The claim was accepted on chain. The epoch's outputs can now be executed | Yes |
 | `CLAIM_REJECTED`   | Another claim for this epoch was staged or accepted on chain (Quorum) | Yes |
 | `CLAIM_FORECLOSED` | The application was foreclosed before the claim was accepted. The claim will never be accepted | Yes |

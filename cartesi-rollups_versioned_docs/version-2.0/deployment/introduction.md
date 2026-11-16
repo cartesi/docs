@@ -11,7 +11,7 @@ Applications built on Cartesi Rollups are intended to be deployed to public bloc
 
 Deploying a Cartesi dApp involves two steps: deploying a smart contract that defines your dApp on-chain and then instantiating a node that runs the application's intended backend logic.
 
-To facilitate the instantiation of such nodes, Cartesi provides an infrastructure for quickly getting them running in the cloud so the node can be run 24/7. This server will expose a single port to the internet so client applications can communicate with the node.
+You run these nodes yourself, for example on a cloud server, so that the node runs 24/7 (see [self-hosted deployment](./self-hosted/overview.md)). Client applications communicate with the node through its HTTP endpoints: the JSON-RPC API and the inspect endpoint.
 
 ## Public snapshots
 

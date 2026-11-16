@@ -69,19 +69,19 @@ import AssetWithdrawEtherCPP from './snippets/asset_withdraw_ether_cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 <AssetDecodeErc20PY />
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 <AssetDecodeErc20RS />
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <AssetDecodeErc20GO />
@@ -89,7 +89,7 @@ import AssetWithdrawEtherCPP from './snippets/asset_withdraw_ether_cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <AssetDecodeErc20CPP />
@@ -103,7 +103,7 @@ For a full guide, see the Tutorials: [ERC-20 Token Wallet](../tutorials/erc-20-t
 
 ## Withdrawing assets
 
-Users can deposit assets to a Cartesi Application, but only the Application can initiate withdrawals. When a withdrawal request is made, it’s processed and interpreted off-chain by the Cartesi Machine running the application’s code. Subsequently, the Cartesi Machine creates a voucher containing the necessary instructions for withdrawal, which becomes executable once the claim for the epoch that produced it has been accepted on-chain.
+Users can deposit assets to a Cartesi Application, but only the Application can initiate withdrawals (the exception is [emergency withdrawal](./emergency-withdrawal/overview.md): after a foreclosure, users withdraw their balances directly on the base layer). When a withdrawal request is made, it’s processed and interpreted off-chain by the Cartesi Machine running the application’s code. Subsequently, the Cartesi Machine creates a voucher containing the necessary instructions for withdrawal, which becomes executable once the claim for the epoch that produced it has been accepted on-chain.
 
 ### Withdrawing Tokens
 
@@ -111,9 +111,9 @@ Vouchers are crucial in allowing applications in the execution layer to interact
 
 The application’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals. To withdraw ERC-20 tokens that the application holds, the voucher calls `transfer(recipient, amount)` on the token contract: the Application contract makes the call, so the tokens leave its balance. Do not use `transferFrom(application, recipient, amount)` for this: the application has no allowance over its own tokens, so the call reverts with `ERC20InsufficientAllowance`.
 
-Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the executeOutput() function of the Application contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
+Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the executeOutput() function of the Application contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic to fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
-Below are multi-language examples showing how to transfer tokens to whoever calls the application. In each case, the encoded call data contains the token contract function and arguments (for example, recipient and amount). The voucher then includes a destination (the ERC-20 token contract), a payload (the encoded call data), and a value set to zero to indicate no Ether is sent with this transfer request.
+Below are multi-language examples showing how to transfer tokens to whoever calls the application. The JavaScript example encodes the call with `viem`; add it as described in [adding dependencies](./creating-an-application.md#adding-dependencies-in-javascript-and-typescript). In each case, the encoded call data contains the token contract function and arguments (for example, recipient and amount). The voucher then includes a destination (the ERC-20 token contract), a payload (the encoded call data), and a value set to zero to indicate no Ether is sent with this transfer request.
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
@@ -122,19 +122,19 @@ Below are multi-language examples showing how to transfer tokens to whoever call
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 <AssetWithdrawErc20PY />
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 <AssetWithdrawErc20RS />
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <AssetWithdrawErc20GO />
@@ -142,7 +142,7 @@ Below are multi-language examples showing how to transfer tokens to whoever call
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <AssetWithdrawErc20CPP />
@@ -170,19 +170,19 @@ Below are multi-language examples for Ether withdrawal. Here, the voucher sends 
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 <AssetWithdrawEtherPY />
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 <AssetWithdrawEtherRS />
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <AssetWithdrawEtherGO />
@@ -190,7 +190,7 @@ Below are multi-language examples for Ether withdrawal. Here, the voucher sends 
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <AssetWithdrawEtherCPP />

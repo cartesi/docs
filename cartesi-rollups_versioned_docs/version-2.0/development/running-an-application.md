@@ -40,7 +40,7 @@ This command runs your backend compiled to RISC-V and packages it as a Cartesi m
 
 ### Overview of Node Services
 
-The `cartesi run` command activates several services essential for node operation: some of these services are not activated by default and can be activated by adding them to the `--service` flag when starting your application. The below command starts your application with all available services:
+The `cartesi run` command activates several services essential for node operation: some of these services are not activated by default and can be activated by adding them to the `--services` flag when starting your application. The below command starts your application with all available services:
 
 ```shell
 cartesi run --services explorer,bundler,paymaster,passkey

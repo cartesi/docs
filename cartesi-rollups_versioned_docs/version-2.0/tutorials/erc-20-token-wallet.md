@@ -237,7 +237,7 @@ Now, let's create a simple application at the entry point `src/index.ts` to test
 The [`Erc20Portal`](../api-reference/contracts/portals/Erc20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advance requests whose `msgSender` is the portal address.
 
 :::note Erc20Portal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc20Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc20Portal` address for your network into `index.ts`. For a given rollups-contracts release, each portal has the same address on every supported network and on the devnet, but the address changes between releases: take it from `cartesi address-book` rather than from an older sample.
 :::
 
 ```typescript
@@ -331,7 +331,7 @@ const handleInspect = (request: InspectRequest): void => {
 await rollup.run({ advance: handleAdvance, inspect: handleInspect });
 ```
 
-This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), which the template already depends on: `rollup.run()` passes each request to `handleAdvance` or `handleInspect`, with the payload as a Node.js `Buffer`, and an advance handler rejects the input when it returns `false`.
+This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3), which the template already depends on: `rollup.run()` passes each request to `handleAdvance` or `handleInspect`, with the payload as a Node.js `Buffer`, and an advance handler rejects the input when it returns `false`.
 
 Here is a breakdown of the wallet functionality:
 
@@ -382,8 +382,8 @@ The depositing account must hold the tokens. `TestToken` starts with a total sup
 Non-interactive alternative. Run from your **project root** (with `cartesi run` up). Resolve addresses from [`cartesi address-book`](../development/send-inputs-and-assets.md):
 
 ```bash
-TOKEN=$(cartesi address-book 2>&1 | grep -i TestToken | awk '{print $NF}')
-ERC20_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc20Portal | awk '{print $NF}')
+TOKEN=$(cartesi address-book TestToken)
+ERC20_PORTAL=$(cartesi address-book Erc20Portal)
 
 cast send "$TOKEN" \
   "mint(uint256)" \

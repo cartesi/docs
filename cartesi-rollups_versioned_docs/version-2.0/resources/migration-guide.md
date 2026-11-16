@@ -28,7 +28,7 @@ This guide describes the current v2.0 release set: rollups-node `v2.0.0-alpha.14
 - Uses `@cartesi/wagmi`, `@cartesi/viem`, or another TypeScript client. See [TypeScript applications](#typescript-applications).
 
 :::note High-level frameworks
-If you use Deroll, Rollmelette, python-cartesi, Cartesapp, or a similar framework, check whether it already implements these changes before rewriting backend or frontend code by hand.
+If you use a framework such as Deroll, Python-Cartesi or Cartesapp (see [community tools](./community-tools.md)), check whether the version you use already implements these changes before rewriting backend or frontend code by hand. Deroll, for example, targets Rollups 2.0 in its `2.0.0-alpha` releases, while its 1.0.0 release targets Rollups 1.x.
 :::
 
 ---
@@ -148,7 +148,7 @@ cartesi create my-dapp --template typescript
 
 Then port the application logic into the new project and run `cartesi build`. See [creating an application](../development/creating-an-application.md).
 
-The JavaScript and TypeScript templates no longer poll the rollup HTTP server: they use the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package, which talks to the Cartesi Machine directly.
+The JavaScript and TypeScript templates no longer poll the rollup HTTP server: they use the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) package, which talks to the Cartesi Machine directly.
 
 ---
 

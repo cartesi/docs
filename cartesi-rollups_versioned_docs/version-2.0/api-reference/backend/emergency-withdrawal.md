@@ -12,9 +12,9 @@ The application keeps a dedicated region of machine memory called the **accounts
 
 An application supports emergency withdrawal only if:
 
-1. It maintains an accounts drive, and
-2. The drive's layout matches the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) the application was deployed with.
-3. The WithdrawalOutputBuilder contract configured in the application can decode the account and build a valid output to withdraw the assets
+1. It maintains an accounts drive;
+2. The drive's layout matches the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md) the application was deployed with; and
+3. The withdrawal output builder contract configured in the application can decode each account and build a valid output that withdraws its assets.
 
 If the layout the guest writes and the config the contract was given disagree, proofs will not validate and funds cannot be withdrawn.
 
@@ -64,20 +64,23 @@ format = "ext2"
 [drives.accounts]
 builder = "empty"
 format = "raw"
-size = 4194304   # size in bytes
+size = 4194304                 # 4 MiB, the whole file the ledger library manages
 mount = false
 user = "dapp"
+accounts_drive = true          # derive the withdrawal config from this drive
+accounts_drive_size = "128Ki"  # only the balance records: 4096 accounts x 32 bytes
 ```
 
 Leaving the drive raw and unmounted is deliberate. Rather than layering a filesystem on top, the guest opens the block device directly (for example `/dev/pmem1`) and writes fixed-size records at deterministic offsets. That predictable layout is precisely what allows the drive to be Merkle-proven against the machine state after foreclosure. The [Common drive options](../../development/advanced-configuration.md#common-drive-options) reference explains each field used above.
 
 Two properties of the drive must agree with the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md):
 
-- **Size.** The drive must be large enough to hold the entire account tree, which spans `2^(5 + log2MaxNumOfAccounts + log2LeavesPerAccount)` bytes. A single-token ledger with `log2LeavesPerAccount = 0` and `log2MaxNumOfAccounts = 12`, for example, occupies `2^17` bytes (128 KiB), well within the drive declared above.
+- **Size.** The drive must be large enough to hold the entire account tree, which spans `2^(5 + log2MaxNumOfAccounts + log2LeavesPerAccount)` bytes. A single-token ledger with `log2LeavesPerAccount = 0` and `log2MaxNumOfAccounts = 12`, for example, occupies `2^17` bytes (128 KiB): the `accounts_drive_size` declared above.
 - **Position.** `accountsDriveStartIndex` records where the drive begins in machine memory, expressed as its start address divided by that account-tree size (so the start address must be a multiple of that size). You do not choose the address: `cartesi build` places the drive, and you read the assigned start address from `.cartesi/image/config.json`. Dividing it by the account-tree size gives the `accountsDriveStartIndex` you supply in the [`WithdrawalConfig`](../contracts/withdrawal/withdrawal-config.md#drive-geometry) at deploy time.
 
 
-With `accounts_drive = true` on the drive (and `accounts_drive_size` when the records use only the beginning of it), `cartesi build` derives these values and prints the resulting withdrawal config, and `cartesi run` deploys with it. See [Testing emergency withdrawal locally with cartesi run](../../development/emergency-withdrawal/local-testing.md#configure-the-accounts-drive).
+With `accounts_drive = true` on the drive, `cartesi build` derives these values and prints the resulting withdrawal config, and `cartesi run` deploys with it. Without that line, `cartesi run` deploys the application with no guardian, and it can never be foreclosed. `accounts_drive_size` sets the size of the account tree. Without it, the CLI sizes the tree to the whole drive (`log2MaxNumOfAccounts` 17 for the 4 MiB drive above), which is wrong for a ledger that stores other data after its balance records, as the machine-asset-tools ledger does. See [Testing emergency withdrawal locally with cartesi run](../../development/emergency-withdrawal/local-testing.md#configure-the-accounts-drive).
+
 ### Checking the drive position
 
 :::warning

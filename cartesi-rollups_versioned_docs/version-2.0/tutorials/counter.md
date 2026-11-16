@@ -36,7 +36,7 @@ cartesi create counter --template javascript
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```shell
@@ -46,7 +46,7 @@ cartesi create counter --template python
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```shell
@@ -56,7 +56,7 @@ cartesi create counter --template rust
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```shell
@@ -66,7 +66,7 @@ cartesi create counter --template go
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```shell
@@ -79,7 +79,7 @@ cartesi create counter --template cpp
 
 This command creates a directory called `counter` and, depending on your selected language, this directory contains the entry point file to start your application (for example: `dapp.py` for Python, `src/main.rs` for Rust, `src/index.js` for JavaScript, `src/dapp.go` for Go, and `dapp.cpp` for C++).
 
-This entry point file contains the default template for interacting with the Cartesi Rollups HTTP Server, it also makes available, two function namely `handle_advance()` and `handle_inspect()` which process "advance / write" and "inspect / read" requests to the application. In the JavaScript template, the entry point uses the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package instead of the HTTP server, and the two functions are the `advance` and `inspect` handlers passed to `rollup.run()`. In the next section we would be updating these functions with the implementation for your application.
+This entry point file contains the default template for interacting with the Cartesi Rollups HTTP Server, it also makes available, two functions, namely `handle_advance()` and `handle_inspect()` which process "advance / write" and "inspect / read" requests to the application. In the JavaScript template, the entry point uses the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) package instead of the HTTP server, and the two functions are the `advance` and `inspect` handlers passed to `rollup.run()`. In the next section we would be updating these functions with the implementation for your application.
 
 ## Implement the Application Logic
 
@@ -106,7 +106,7 @@ import CounterCPP from './snippets/counter-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 <CounterPY />
@@ -114,7 +114,7 @@ import CounterCPP from './snippets/counter-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 <CounterRS />
@@ -122,7 +122,7 @@ import CounterCPP from './snippets/counter-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <CounterGO />
@@ -130,7 +130,7 @@ import CounterCPP from './snippets/counter-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <CounterCPP />
@@ -181,7 +181,7 @@ Storing machine: please wait
 
 The build command compiles your application then builds a Cartesi machine that contains your application.
 
-This recently built machine alongside other necessary service, like an Anvil network, inspect service, etc. would next be started by running the command:
+This recently built machine alongside other necessary services, like an Anvil network, inspect service, etc. would next be started by running the command:
 
 ```bash
 cartesi run
@@ -249,7 +249,7 @@ Now that we've confirmed our count value to be zero (0), we would be sending an 
 cartesi send random_text
 ```
 
-The above command sends an advance request with the payload "random_text" to our application, which ignores this payload then proceeds to increase out count value by `one (1)`, if this command is successful and our application process this request graciously, we should get a log similar to what's presented below on the terminal running our application:
+The above command sends an advance request with the payload "random_text" to our application, which ignores this payload then proceeds to increase our count value by `one (1)`, if this command is successful and our application processes this request successfully, we should get a log similar to what's presented below on the terminal running our application:
 
 ```bash
 INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9d40cfc42bb386b531c5d4eb3ade360f4105c4a3', 'msg_sender': '0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f', 'block_number': 630, 'block_timestamp': 1762711409, 'prev_randao': '0x63a2bb3993d9f9c371624f995a10a6f493e33c2535e62b32fee565f812b4c4ab', 'input_index': 0}, 'payload': '0x72616e646f6d5f74657874'}
@@ -264,7 +264,7 @@ Received advance request from 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f with in
 Counter increment requested, new count value: 1
 ```
 
-The above logs prove that out application received the advance request, increased our count value, logs the updated count value then finishes that request successfully.
+The above logs prove that our application received the advance request, increased our count value, logs the updated count value then finishes that request successfully.
 
 As seen in the second to last line of the log, our count value has been increased from 0 to 1. To confirm this increase, we can run an inspect request once more to verify the current count value, and on running the same inspect command as last time, we obtain the updated logs below.
 

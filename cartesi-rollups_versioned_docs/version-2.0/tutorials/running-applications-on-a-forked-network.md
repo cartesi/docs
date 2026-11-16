@@ -15,7 +15,7 @@ This is enabled through two flags available in the `cartesi run` command:
 - `--fork-url`
 - `--fork-block-number`
 
-Using these flags, the CLI forks a network from a given RPC endpoint at a specific block height, load that state into your local Anvil environment, then runs your Cartesi application on top of it.
+Using these flags, the CLI forks a network from a given RPC endpoint at a specific block height, loads that state into your local Anvil environment, then runs your Cartesi application on top of it.
 
 This approach makes it possible to develop and test locally while interacting with real on chain data from networks such as testnets or mainnets.
 
@@ -40,8 +40,10 @@ This flag defines the exact block height used as the snapshot point for the fork
 Example:
 
 ```bash
---fork-block-number 32768
+--fork-block-number <block number>
 ```
+
+The block must be at or after the block where the Cartesi contracts (InputBox and portals) were deployed on the source network: before it, `cartesi run` stops with `Unsupported fork chain`.
 
 Using a fixed block number ensures deterministic behavior, which is especially useful when debugging or running repeatable tests.
 
@@ -50,7 +52,7 @@ Using a fixed block number ensures deterministic behavior, which is especially u
 To run your application on a forked network, execute:
 
 ```bash
-cartesi run --fork-url https://sample-rpc.sepolia.com --fork-block-number 32768
+cartesi run --fork-url <RPC URL> --fork-block-number <block number>
 ```
 
 When this command is executed, the Cartesi CLI performs the following steps:
@@ -58,7 +60,7 @@ When this command is executed, the Cartesi CLI performs the following steps:
 1. Connects to the specified RPC endpoint
 2. Fetches blockchain state at the given block number
 3. Initializes a local network using the forked state
-4. Deploys required Cartesi infrastructure contracts, including portals, InputBox, and test tokens
+4. Checks that the Cartesi contracts (InputBox and portals) already exist on the source network at the fork block. It does not deploy them, and the devnet test tokens are not available on a fork
 5. Starts the Cartesi node stack, allowing your application to run in this environment
 
 ## Why use a forked network
@@ -110,34 +112,24 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```shell
-cartesi create fork-seploia --template javascript
+cartesi create fork-sepolia --template javascript
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```shell
-cartesi create fork-seploia --template python
-```
-
-</code></pre>
-</TabItem>
-
-<TabItem value="Rust" label="Rust" default>
-<pre><code>
-
-```shell
-cartesi create fork-seploia --template rust
+cartesi create fork-sepolia --template rust
 ```
 
 </code></pre>
 </TabItem>
 </Tabs>
 
-This command creates a new directory named `fork-seploia`. Depending on the selected language, the directory includes a basic project structure and an entry point for your application logic.
+This command creates a new directory named `fork-sepolia`. Depending on the selected language, the directory includes a basic project structure and an entry point for your application logic.
 
 ### Create and deploy a Solidity contract to Sepolia or Base Sepolia
 
@@ -149,14 +141,14 @@ In a real world scenario, this contract could represent an existing protocol suc
 
 #### Create and implement contract logic
 
-Inside the `fork-seploia` directory, create a `contracts` folder and add the `InputRelayer.sol` file:
+Inside the `fork-sepolia` directory, create a `contracts` folder and add the `InputRelayer.sol` file:
 
 ```bash
 mkdir contracts
 touch contracts/InputRelayer.sol
 ```
 
-Then copy the Solidity implementation into the file. This contract accepts a destination, an InputBox address, and user input. It encodes the request and forwards it to the specified InputBox.
+Then copy the Solidity implementation into the file. This contract accepts a destination, an InputBox address, and user input. It forwards the input unchanged to the specified InputBox, so the application sees the relayer contract as the input's sender (`msg_sender`). The relayer does not add the address of its own caller: the sender address that the application below reads from the payload is whatever the caller writes there, and cannot be trusted.
 
 import InputReaderSolidity from './snippets/inputRelayer-sol.md';
 
@@ -233,7 +225,7 @@ This application will:
 - store the data in memory
 - log a structured summary of the received input
 
-To set this up, replace the contents of the `src/` directory inside `fork-seploia` with the appropriate snippet for your chosen language.
+To set this up, replace the application's entry point inside `fork-sepolia` (`src/index.js` for JavaScript, `src/main.rs` for Rust) with the snippet for your chosen language.
 
 import ForkSepoliaRs from './snippets/fork-sepolia-rs.md';
 import ForkSepoliaJs from './snippets/fork-sepolia-js.md';
@@ -247,7 +239,7 @@ import ForkSepoliaJs from './snippets/fork-sepolia-js.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 <ForkSepoliaRs />
@@ -269,7 +261,7 @@ This command compiles your application and produces a Cartesi Machine image that
 <Tabs groupId="network">
 <TabItem value="sepolia" label="Sepolia" default>
 
-Next, run the application using a forked network. Provide a Sepolia RPC endpoint that serves historical state (see [Best practices](#best-practices)) and the block number where the `InputRelayer` contract was deployed, for example `12148080`:
+Next, run the application using a forked network. Provide a Sepolia RPC endpoint that serves historical state (see [Best practices](#best-practices)) and a fork block number at or after both the block where the `InputRelayer` contract was deployed and the block where the Cartesi `InputBox` was deployed on Sepolia. The sample `InputRelayer` was deployed in block `12148080`, after the `InputBox`, so the sample forks at that block:
 
 ```bash
 cartesi run --fork-url <Sepolia RPC URL> --fork-block-number <InputRelayer deployment block>
@@ -319,12 +311,12 @@ The public endpoint `https://base-sepolia-rpc.publicnode.com` does not serve thi
 
 ```shell
 WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
-✔ fork-sepolia-r starting at http://127.0.0.1:6751
+✔ fork-sepolia starting at http://127.0.0.1:6751
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
-✔ inspect service ready at http://127.0.0.1:6751/inspect/fork-sepolia-r
-✔ fork-sepolia-r machine hash is 0xa5b369b0d19766005d12369d0fa588925093ffe24c44c64c76155734270b7ac7
-✔ fork-sepolia-r contract deployed at 0xebdd61633d7767beaf16c86b08ec7ab542719e14
+✔ inspect service ready at http://127.0.0.1:6751/inspect/fork-sepolia
+✔ fork-sepolia machine hash is 0xa5b369b0d19766005d12369d0fa588925093ffe24c44c64c76155734270b7ac7
+✔ fork-sepolia contract deployed at 0xebdd61633d7767beaf16c86b08ec7ab542719e14
 (l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
@@ -335,12 +327,12 @@ At this point, your application is running on a local network that mirrors the s
 
 ```shell
 WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
-✔ fork-base-sepolia starting at http://127.0.0.1:6751
+✔ fork-sepolia starting at http://127.0.0.1:6751
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
-✔ inspect service ready at http://127.0.0.1:6751/inspect/fork-base-sepolia
-✔ fork-base-sepolia machine hash is 0xf091ca929ce2f7a37099b07c64ede5f18bfe95b31ba8660b2d2450b90089d381
-✔ fork-base-sepolia contract deployed at 0xebdd61633d7767beaf16c86b08ec7ab542719e14
+✔ inspect service ready at http://127.0.0.1:6751/inspect/fork-sepolia
+✔ fork-sepolia machine hash is 0xf091ca929ce2f7a37099b07c64ede5f18bfe95b31ba8660b2d2450b90089d381
+✔ fork-sepolia contract deployed at 0xebdd61633d7767beaf16c86b08ec7ab542719e14
 (l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
@@ -371,7 +363,7 @@ cast send <InputRelayer address> "relayInput(address,address,bytes)" <applicatio
 <pre><code>
 
 ```bash
-cast send 0x070dC307580c1e3E8eE23836419A0c49780d358D "relayInput(address,address,bytes)" 0xeBDd61633D7767BEAF16c86b08eC7AB542719E14 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
+cast send 0x070dC307580c1e3E8eE23836419A0c49780d358D "relayInput(address,address,bytes)" <application address> 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -381,7 +373,7 @@ cast send 0x070dC307580c1e3E8eE23836419A0c49780d358D "relayInput(address,address
 <pre><code>
 
 ```bash
-cast send 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057 "relayInput(address,address,bytes)" 0xeBDd61633D7767BEAF16c86b08eC7AB542719E14 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921" --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
+cast send 0x06eBAF6d44B65d76C8BDcB1701E68f44C22B1057 "relayInput(address,address,bytes)" <application address> 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921" --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -408,6 +400,8 @@ For the sample application, this returns `0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94
 :::
 
 ### Expected logs
+
+The logs below come from the Rust implementation, which runs the rollup HTTP server. The JavaScript implementation prints only its own `[InputRelayer] …` line for each input.
 
 <Tabs groupId="network">
 <TabItem value="sepolia" label="Sepolia" default>

@@ -24,7 +24,7 @@ The exception payload should be a hex-encoded string starting with '0x' followed
 Let's see how a Cartesi dApp's backend handles exceptions:
 
 :::note JavaScript and TypeScript
-In JavaScript and TypeScript, call `rollup.emitException(payload)` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), with the payload as a `Buffer`, a `Uint8Array` or a `0x`-prefixed hex string. An error thrown inside a handler passed to `rollup.run()` does not register an exception: `rollup.run()` rejects the input and emits the error as a report.
+In JavaScript and TypeScript, call `rollup.emitException(payload)` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3), with the payload as a `Buffer`, a `Uint8Array` or a `0x`-prefixed hex string. An error thrown inside a handler passed to `rollup.run()` does not register an exception: `rollup.run()` rejects the input and emits the error as a report.
 :::
 
 import Tabs from '@theme/Tabs';
@@ -61,7 +61,7 @@ await rollup.run({
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -89,7 +89,7 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -114,16 +114,16 @@ pub async fn handle_advance(
 
     match payload_string {
       Ok(payload_extract) => {
-        // DO SOMETHING HERE!!
+        // Handle the decoded payload here.
       }
       Err(e) => {
-        throw_execption(e.to_string()).await;
+        throw_exception(e.to_string()).await;
       }
     }
     Ok("accept")
 }
 
-async fn throw_execption( payload: String) -> Option<bool> {
+async fn throw_exception( payload: String) -> Option<bool> {
     let hex_string = {
         let s = payload.strip_prefix("0x").unwrap_or(payload.as_str());
         hex::encode(s.as_bytes())
@@ -159,7 +159,7 @@ async fn throw_execption( payload: String) -> Option<bool> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```go
@@ -185,7 +185,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```cpp
@@ -195,6 +195,9 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 
     try
     {
+        // hex_to_string() and string_to_hex() are helpers you define (the C++ template
+        // has none): hex_to_string("0x32") -> "2", string_to_hex("2") -> "0x32".
+        // The rollup server requires the 0x prefix on payloads.
         // Process request. Replace with your app logic.
         const std::string payload_hex = data.get("payload").get<std::string>();
         (void)hex_to_string(payload_hex);

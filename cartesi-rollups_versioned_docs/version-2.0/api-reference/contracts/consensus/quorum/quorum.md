@@ -177,7 +177,7 @@ Check whether a validator is in favor of any claim in a given epoch.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `bool` | Whether validator is in favor of any claim in the epoch |
+| `[0]` | `bool` | Whether the validator is in favor of any claim in the epoch |
 
 ### `numOfValidatorsInFavorOf()`
 
@@ -231,7 +231,7 @@ Check whether a validator is in favor of a claim.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `bool` | Whether validator is in favor of claim |
+| `[0]` | `bool` | Whether the validator is in favor of claim |
 
 ### `supportsInterface()`
 

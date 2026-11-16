@@ -63,7 +63,7 @@ The `cartesi_listOutputs` method returns a paginated list of outputs for a speci
     ],
     "pagination": {
       "total_count": 1,
-      "limit": 50,
+      "limit": 10,
       "offset": 0
     }
   },

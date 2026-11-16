@@ -122,7 +122,7 @@ docker compose -f compose.local.yaml exec advancer \
 Replace `<app-name>` with your application name and `<salt>` with a random 32-byte value. The salt seeds the deterministic contract addresses, so it must not be reused: a second deployment with the same salt and arguments reverts. Generate one with:
 
 ```shell
-cast keccak256 "your-unique-string"
+cast keccak "your-unique-string"
 ```
 
 The Authority is owned by the node's signer, and the Application is deployed without an owner (`--application-owner` is not supported for this method). Both values below are fixed in the consensus contract at deployment:
@@ -196,27 +196,29 @@ For a full emergency-withdrawal config, see [Deployment with emergency withdrawa
 
 Deploy the Authority and the Application in **two transactions**. Use this route when you need separate broadcasts (for example a multisig that signs the Authority and the Application independently) or when the Authority already exists and you only deploy the Application.
 
-Predict each address, then deploy with the same salt and arguments. Set `AUTHORITY` to the address returned by `calculateAuthorityAddress` before the application calls.
+Predict each address, then deploy with the same salt and arguments. The application calls use the predicted Authority address, stored in `AUTHORITY`.
 
 ```shell
 AUTHORITY_FACTORY=0xB4d29c86e36385b5321a453C34D288AEB0ad11f9
 APPLICATION_FACTORY=0x35Cd91f13141Bb6A6FC69E1eeDD241bbA1Ddd45F
 
-cast call "$AUTHORITY_FACTORY" \
+AUTHORITY=$(cast call "$AUTHORITY_FACTORY" \
   "calculateAuthorityAddress(address,uint256,uint256,bytes32)(address)" \
   "$AUTHORITY_OWNER" "$EPOCH_LENGTH" "$CLAIM_STAGING_PERIOD" "$SALT" \
-  --rpc-url "$RPC_URL"
+  --rpc-url "$RPC_URL")
+echo "$AUTHORITY"
 
 cast send "$AUTHORITY_FACTORY" \
   "newAuthority(address,uint256,uint256,bytes32)" \
   "$AUTHORITY_OWNER" "$EPOCH_LENGTH" "$CLAIM_STAGING_PERIOD" "$SALT" \
   --private-key "$PRIVATE_KEY" --rpc-url "$RPC_URL"
 
-cast call "$APPLICATION_FACTORY" \
+APPLICATION=$(cast call "$APPLICATION_FACTORY" \
   "calculateApplicationAddress(address,address,bytes32,address,(address,uint8,uint8,uint64,address),bytes32)(address)" \
   "$AUTHORITY" "$APP_OWNER" "$TEMPLATE_HASH" "$INPUT_BOX" \
   "$WITHDRAWAL_CONFIG" "$SALT" \
-  --rpc-url "$RPC_URL"
+  --rpc-url "$RPC_URL")
+echo "$APPLICATION"
 
 cast send "$APPLICATION_FACTORY" \
   "newApplication(address,address,bytes32,address,(address,uint8,uint8,uint64,address),bytes32)" \
@@ -288,6 +290,7 @@ This node release uses **rollups-contracts v3.0.0-alpha.10**. The addresses are 
 | Erc1155BatchPortal | `0xee33550a22e3Cf6Cc265524dC9bcfD99D2307EBe` |
 | RefundOutputBuilder | `0xff50b237b3e61cD810Bd1236644a887ec78762CF` |
 | UsdWithdrawalOutputBuilderFactory | `0x60b8b3c0AecEb193755038fa9372FfE910E63e39` |
+| SafeErc20Transfer | `0xBB7c5367B74544542F5cE553Ed0DF4B3efAfEEdD` |
 
 The same addresses ship as the `cartesi-rollups-contracts-3.0.0-alpha.10-deployment-addresses.tar.gz` asset of the [v3.0.0-alpha.10 release](https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.10), where the `deployments/<chain-id>/` directory holds the address of each contract.
 
@@ -333,7 +336,7 @@ Run the `cartesi-rollups-cli` commands below inside the node, through `docker co
 
   If the node cannot load the snapshot, for example because it was built with another emulator version, the application becomes `FAILED`. `cartesi-rollups-cli app status <app-name>` prints its status and the reason.
 
-- **Keep the signer funded, and use it only for the node.** The node's signer (`CARTESI_AUTH_PRIVATE_KEY`) pays for every claim. If it runs out of funds, claims wait, the node logs that claim publication is waiting for funding, and outputs stop becoming executable. Fund the account and the node continues. Avoid sending other transactions from this account while the node is submitting claims; if you do (for example, to deploy another application with the CLI), the node detects the nonce change and retries.
+- **Keep the signer funded, and use it only for the node.** The node's signer (`CARTESI_AUTH_PRIVATE_KEY`) pays for every claim. If it runs out of funds, claims wait, the node logs that claim publication is waiting for funding, and outputs stop becoming executable. Fund the account and the node continues. The node expects to be the only process that sends from its signer, so do not send other transactions from this account while the node runs. The deploy commands in this guide sign with the same key: run them while the node has no claims to submit (for example, for the first application), or sign them with another funded key and pass the node signer's address as `--authority-owner`, so that the node still owns the Authority. If another transaction does take one of the signer's nonces, the node detects the change and retries.
 
 - **Recover a `FAILED` application.** `FAILED` stops processing for that application. Read the reason with `cartesi-rollups-cli app status <app-name>`, fix the cause, then re-enable the application with `cartesi-rollups-cli app status <app-name> enabled`. Re-enabling restarts processing from the last snapshot; it does not repair state. A `CORRUPTED` application cannot be re-enabled: fix the cause and start over with a fresh database.
 
@@ -355,7 +358,7 @@ Do not collapse the reader, advancer, validator, claimer and JSON-RPC services i
 
 ### Scope the signing key
 
-The sample compose puts `CARTESI_AUTH_PRIVATE_KEY` in the shared environment, so every service receives the funded key. Only `claimer` and the one-off `cartesi-rollups-cli deploy` commands need to sign. Give the key to those processes only, preferably as a file-backed Docker secret (`CARTESI_AUTH_PRIVATE_KEY_FILE`), not an environment variable. Environment variables are readable through `docker inspect` and often appear in crash dumps.
+The sample compose puts `CARTESI_AUTH_PRIVATE_KEY` in the shared environment, so every service receives the funded key. Only `claimer` and the one-off `cartesi-rollups-cli deploy` commands need to sign. Give the key to those processes only (this guide runs the deploy commands in the `advancer` container; if you remove the key from it, run them where the key is available), preferably as a file-backed Docker secret (`CARTESI_AUTH_PRIVATE_KEY_FILE`), not an environment variable. Environment variables are readable through `docker inspect` and often appear in crash dumps.
 
 The Authority deployed by `deploy` is owned by the signer unless you pass `--authority-owner`. Keep in mind that the node only submits claims to an Authority owned by its signer.
 

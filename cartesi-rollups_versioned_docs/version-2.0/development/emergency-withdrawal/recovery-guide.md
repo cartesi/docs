@@ -6,7 +6,7 @@ title: Emergency Withdrawal Recovery Guide
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide walks through foreclosing an application, withdrawing an account's funds directly from the base-layer contracts, and refunding deposits that were never finalized. For the concepts behind each step, see [Foreclosure & Emergency Withdrawal](./overview.md) and the [Claim & Foreclosure Lifecycle](./lifecycle.md). To try the whole flow on a local devnet first, with the Cartesi CLI's own `foreclose`, `withdraw` and `refund` commands, see [Testing emergency withdrawal locally with cartesi run](./local-testing.md).
+This guide walks through foreclosing an application, withdrawing an account's funds directly from the base-layer contracts, and refunding deposits that were never finalized. For the concepts behind each step, see the [emergency withdrawal overview](./overview.md) and the [Claim & Foreclosure Lifecycle](./lifecycle.md). To try the whole flow on a local devnet first, with the Cartesi CLI's own `foreclose`, `withdraw` and `refund` commands, see [Testing emergency withdrawal locally with cartesi run](./local-testing.md).
 
 ## Before you start
 

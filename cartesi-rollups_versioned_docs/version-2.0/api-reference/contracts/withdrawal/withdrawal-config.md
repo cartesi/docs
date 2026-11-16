@@ -48,7 +48,7 @@ These same three values are returned on-chain by [`getLog2LeavesPerAccount()`](.
 function isValid(WithdrawalConfig memory withdrawalConfig) internal pure returns (bool)
 ```
 
-The `Application` constructor calls `isValid()` and reverts with `InvalidWithdrawalConfig` (see [ApplicationFactory](../application-factory.md)) if it returns `false`. `isValid()` enforces that the accounts drive fits inside the machine memory:
+The `Application` constructor calls `isValid()` and reverts with `InvalidWithdrawalConfig` (see [ApplicationFactory](../application-factory.md#invalidwithdrawalconfig)) if it returns `false`. `isValid()` enforces that the accounts drive fits inside the machine memory:
 
 - `log2(driveSize) = 5 + log2MaxNumOfAccounts + log2LeavesPerAccount` must not exceed `64` (the machine memory is `2^64` bytes); and
 - the drive's end address `(accountsDriveStartIndex + 1) << log2(driveSize)` must not overflow and must not exceed `2^64`.

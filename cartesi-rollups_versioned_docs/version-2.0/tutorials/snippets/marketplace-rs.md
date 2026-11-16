@@ -5,6 +5,8 @@ use ethers_core::abi::{encode, Token};
 use ethers_core::utils::id;
 use hex;
 
+const ZERO_ADDRESS: &str = "0x0000000000000000000000000000000000000000";
+
 #[derive(Debug, Clone, Default)]
 pub struct Storage {
     pub erc721_portal_address: String,
@@ -29,12 +31,12 @@ impl Storage {
         list_price: u128
     ) -> Self {
         Storage{
-            erc20_portal_address,
-            erc721_portal_address,
-            erc20_token,
-            erc721_token,
+            erc20_portal_address: erc20_portal_address.to_lowercase(),
+            erc721_portal_address: erc721_portal_address.to_lowercase(),
+            erc20_token: erc20_token.to_lowercase(),
+            erc721_token: erc721_token.to_lowercase(),
             list_price,
-            app_address: "0x0000000000000000000000000000000000000000".to_string(),
+            app_address: ZERO_ADDRESS.to_string(),
             listed_tokens: Vec::new(),
             user_erc721_token_balance: std::collections::HashMap::new(),
             users_erc20_token_balance: std::collections::HashMap::new(),
@@ -50,17 +52,18 @@ impl Storage {
         self.erc721_id_to_owner_address.get(&token_id)
     }
 
-    fn get_user_erc20_token_balance(&self, user_address: &str) -> Option<&u128> {
-        self.users_erc20_token_balance.get(user_address)
+    fn get_user_erc20_token_balance(&self, user_address: &str) -> u128 {
+        *self.users_erc20_token_balance.get(&user_address.to_lowercase()).unwrap_or(&0)
     }
 
-    fn increase_user_balance(&mut self, user_address: String, amount: u128) {
-        let balance = self.users_erc20_token_balance.entry(user_address).or_insert(0);
-        *balance += amount;
+    fn increase_user_balance(&mut self, user_address: String, amount: u128) -> Result<(), String> {
+        let balance = self.users_erc20_token_balance.entry(user_address.to_lowercase()).or_insert(0);
+        *balance = balance.checked_add(amount).ok_or("Balance does not fit in u128")?;
+        Ok(())
     }
 
     fn deposit_erc721_token(&mut self, user_address: String, token_id: u128) {
-        let zero_address = "0x0000000000000000000000000000000000000000".to_string();
+        let zero_address = ZERO_ADDRESS.to_string();
         if self.get_erc721_token_owner(token_id) == Some(&zero_address) {
             self.change_erc721_token_owner(token_id, user_address, zero_address);
         } else {
@@ -78,19 +81,13 @@ impl Storage {
         }
     }
 
-    async fn reduce_user_balance(&mut self, user_address: &str, amount: u128) -> Result<(), String> {
-        if let Some(balance) = self.users_erc20_token_balance.get_mut(user_address){
-            if *balance >= amount {
-                *balance -= amount;
-                Ok(())
-            } else {
-                emit_report(format!("User {} has insufficient balance to purchase token", user_address)).await;
-                Err(String::from("User has insufficient balance"))
-            }
-        } else {
-            emit_report(format!("User {} Record, not found", user_address)).await;
-            Err(String::from("User balance record not found"))
+    fn reduce_user_balance(&mut self, user_address: &str, amount: u128) -> Result<(), String> {
+        let balance = self.get_user_erc20_token_balance(user_address);
+        if balance < amount {
+            return Err(format!("User {} has insufficient balance", user_address));
         }
+        self.users_erc20_token_balance.insert(user_address.to_lowercase(), balance - amount);
+        Ok(())
     }
 
     fn change_erc721_token_owner(&mut self, token_id: u128, new_owner: String, old_owner: String) {
@@ -107,78 +104,113 @@ impl Storage {
         }
     }
 
-    async fn purchase_erc721_token(&mut self, buyer_address: &str, token_id: u128) -> Result<(), String> {
-        self.reduce_user_balance( buyer_address, self.list_price).await?;
-        if let Some(owner) = self.get_erc721_token_owner( token_id) {
-            self.increase_user_balance(owner.clone(), self.list_price);
-        } else {
-            emit_report(format!("Token owner for token with id {} not found", token_id)).await;
-            return Err("Token owner not found".to_string());
+    fn purchase_erc721_token(&mut self, buyer_address: &str, token_id: u128) -> Result<(), String> {
+        if !self.listed_tokens.contains(&token_id) {
+            return Err(format!("Token {} with id {} is not for sale", self.erc721_token, token_id));
         }
-        self.listed_tokens.retain(|token| (*token != token_id));
-        let zero_address = "0x0000000000000000000000000000000000000000";
-        self.change_erc721_token_owner( token_id,  zero_address.to_string(), self.get_erc721_token_owner( token_id).unwrap().to_string());
+        let owner = match self.get_erc721_token_owner(token_id) {
+            Some(owner) => owner.clone(),
+            None => return Err(format!("Token owner for token {} with id {} not found", self.erc721_token, token_id)),
+        };
+        self.reduce_user_balance(buyer_address, self.list_price)?;
+        self.increase_user_balance(owner.clone(), self.list_price)?;
+        // the NFT leaves the marketplace with the voucher below
+        self.change_erc721_token_owner(token_id, ZERO_ADDRESS.to_string(), owner);
+        self.listed_tokens.retain(|token| *token != token_id);
         Ok(())
     }
 }
 
-async fn handle_erc20_deposit(depositor_address: String, amount_deposited: u128, token_address: String, storage: &mut Storage) {
-    if token_address.to_lowercase() == storage.erc20_token.to_lowercase() {
-        storage.increase_user_balance(depositor_address, amount_deposited);
-        println!("Token deposit processed successfully");
-    } else {
-        println!("Unsupported token deposited");
-        emit_report("Unsupported token deposited".into()).await;
+fn handle_erc20_deposit(depositor_address: String, amount_deposited: u128, token_address: String, storage: &mut Storage) -> Result<(), String> {
+    if token_address.to_lowercase() != storage.erc20_token {
+        return Err("Unsupported token deposited".into());
+    }
+    storage.increase_user_balance(depositor_address, amount_deposited)?;
+    println!("Token deposit processed successfully");
+    Ok(())
+}
+
+async fn handle_erc721_deposit(depositor_address: String, token_id: u128, token_address: String, storage: &mut Storage) -> Result<(), String> {
+    if token_address.to_lowercase() != storage.erc721_token {
+        return Err("Unsupported token deposited".into());
+    }
+    storage.deposit_erc721_token(depositor_address.clone(), token_id);
+    storage.list_token_for_sale(token_id);
+    println!("Token deposit and listing processed successfully");
+    emit_notice(format!("Token ID: {} Deposited by User: {}", token_id, depositor_address)).await
+}
+
+fn extract_field<'a>(user_input: &'a JsonValue, field: &str) -> Result<&'a str, String> {
+    match user_input[field].as_str() {
+        Some(value) if !value.trim().is_empty() => Ok(value),
+        _ => Err(format!("Missing or invalid {} field in payload", field)),
     }
 }
 
-async fn handle_erc721_deposit(depositor_address: String, token_id: u128, token_address: String, storage: &mut Storage) {
-    if token_address.to_lowercase() == storage.erc721_token.to_lowercase() {
-        storage.deposit_erc721_token(depositor_address.clone(), token_id);
-        storage.list_token_for_sale(token_id);
-        println!("Token deposit and listing processed successfully");
-        emit_notice(format!("Token Id: {}, Deposited by User: {}", token_id, depositor_address)).await;
-    } else {
-        println!("Unsupported token deposited");
-        emit_report("Unsupported token deposited".into()).await;
-    }
+// Parses a decimal string, or a 0x-prefixed hex string (as BigInt() does in JavaScript)
+fn parse_token_id(value: &str) -> Result<u128, String> {
+    let parsed = match value.strip_prefix("0x") {
+        Some(hex_digits) => u128::from_str_radix(hex_digits, 16),
+        None => value.parse::<u128>(),
+    };
+    parsed.map_err(|_| format!("Cannot convert {} to an integer", value))
 }
 
-async fn handle_purchase_token(sender: String, user_input: JsonValue, storage: &mut Storage) {
-    let token_id: u128 = user_input["token_id"].as_str().unwrap_or("0").parse().unwrap_or(0);
-    if storage.listed_tokens.contains(&token_id) != true {
-        emit_report("TOKEN NOT LISTED FOR SALE!!".to_string()).await;
-        return;
-    }
-    match storage.purchase_erc721_token(&sender, token_id).await {
-        Ok(_) => {
-            let args = vec![
-                Token::Address(storage.app_address.parse().unwrap()),
-                Token::Address(sender.parse().unwrap()),
-                Token::Uint(token_id.into()),
-            ];
-            let function_sig = "transferFrom(address,address,uint256)";
-            let value: u128 = 0;
-            let selector = &id(function_sig)[..4];
-            let encoded_args = encode(&args);
-            
-            let mut payload_bytes = Vec::new();
-            payload_bytes.extend_from_slice(selector);
-            payload_bytes.extend_from_slice(&encoded_args);
+async fn handle_purchase_token(sender: &str, user_input: JsonValue, storage: &mut Storage) -> Result<(), String> {
+    let token_id = parse_token_id(extract_field(&user_input, "token_id")?)?;
+    storage.purchase_erc721_token(sender, token_id)?;
+    println!("Token purchased successfully");
 
-            let payload = format!("0x{}", hex::encode(payload_bytes));
+    // The application contract holds the deposited NFTs and executes the
+    // voucher, so it is the `from` address of the transfer
+    let args = vec![
+        Token::Address(storage.app_address.parse().map_err(|_| "Invalid application address")?),
+        Token::Address(sender.parse().map_err(|_| "Invalid buyer address")?),
+        Token::Uint(token_id.into()),
+    ];
+    let function_sig = "transferFrom(address,address,uint256)";
+    let value: u128 = 0;
+    let selector = &id(function_sig)[..4];
+    let encoded_args = encode(&args);
 
-            let voucher = object! {
-                "destination" => format!("{}", storage.erc721_token),
-                "payload" => format!("{}", payload),
-                "value" => format!("0x{}", hex::encode(value.to_be_bytes())),
-            };
+    let mut payload_bytes = Vec::new();
+    payload_bytes.extend_from_slice(selector);
+    payload_bytes.extend_from_slice(&encoded_args);
 
-            emit_voucher(voucher).await;
-            println!("Token purchased and Withdrawn successfully");
-            
+    let voucher = object! {
+        "destination" => storage.erc721_token.clone(),
+        "payload" => format!("0x{}", hex::encode(payload_bytes)),
+        // 32-byte hex string: no Ether sent with the call
+        "value" => format!("0x{:064x}", value),
+    };
+
+    emit_voucher(voucher).await?;
+    println!("Token purchased and Withdrawn successfully");
+    Ok(())
+}
+
+async fn process_advance(sender: &str, payload: &str, storage: &mut Storage) -> Result<(), String> {
+    match sender {
+        s if s == storage.erc20_portal_address => {
+            let (deposited_token, receiver_address, amount) = token_deposit_parse(payload)?;
+            println!("Deposited token: {}, Receiver: {}, Amount: {}", deposited_token, receiver_address, amount);
+            handle_erc20_deposit(receiver_address, amount, deposited_token, storage)
         },
-        Err(e) => {emit_report("Failed to purchase token".into()).await; println!("Failed to purchase token: {}", e);}
+        s if s == storage.erc721_portal_address => {
+            let (deposited_token, receiver_address, token_id) = token_deposit_parse(payload)?;
+            println!("Deposited and listed token: {}, Receiver: {}, Token ID: {}", deposited_token, receiver_address, token_id);
+            handle_erc721_deposit(receiver_address, token_id, deposited_token, storage).await
+        },
+        _ => {
+            let payload_json = hex_to_string(payload)
+                .ok()
+                .and_then(|payload_str| json::parse(&payload_str).ok())
+                .ok_or("Invalid payload JSON")?;
+            match payload_json["method"].as_str() {
+                Some("purchase_token") => handle_purchase_token(sender, payload_json.clone(), storage).await,
+                _ => Err("Unsupported method called!!".into()),
+            }
+        }
     }
 }
 
@@ -192,59 +224,27 @@ pub async fn handle_advance(
     let _payload = request["data"]["payload"]
     .as_str()
     .ok_or("Missing payload")?;
-    let zero_address = "0x0000000000000000000000000000000000000000".to_string();
     let app_addr = request["data"]["metadata"]["app_contract"]
     .as_str()
-    .ok_or("Missing payload")?;
+    .ok_or("Missing app_contract in metadata")?;
 
-    if storage.app_address == zero_address {
+    if storage.app_address == ZERO_ADDRESS {
         storage.app_address = app_addr.to_string();
     }
     let sender = request["data"]["metadata"]["msg_sender"]
         .as_str()
         .ok_or("Missing msg_sender in metadata")?
-        .to_string();
+        .to_lowercase();
 
-    match sender.as_str() {
-       s if s.to_lowercase() == storage.erc20_portal_address.as_str().to_lowercase() => {
-            let (deposited_token, receiver_address, amount) = token_deposit_parse(&_payload)?;
-            println!("Deposited token: {}, Receiver: {}, Amount: {}", deposited_token, receiver_address, amount);
-            handle_erc20_deposit(receiver_address.to_lowercase(), amount, deposited_token.to_lowercase(), storage).await;
-        },
-        s if s.to_lowercase() == storage.erc721_portal_address.as_str().to_lowercase() => {
-            let (deposited_token, receiver_address, token_id) = token_deposit_parse(&_payload)?;
-            println!("Deposited and listed token: {}, Receiver: {}, Token ID: {}", deposited_token, receiver_address, token_id);
-            handle_erc721_deposit(receiver_address.to_lowercase(), token_id, deposited_token.to_lowercase(), storage).await;
-        },
-        _ => {
-            let payload_str = hex_to_string(_payload)?;
-            let payload_json ;
-            match json::parse(&payload_str) {
-                Err(_) => {
-                    let fixed_payload = try_fix_json_like(&payload_str);
-                    match json::parse(&fixed_payload) {
-                        Err(_) =>  panic!("Failed to parse decoded payload as JSON even after attempting to fix it"),
-                        Ok(val) => payload_json = val,
-                    };
-                }
-                Ok(val) => payload_json = val
-            };
-            if !payload_json.is_object() {
-                emit_report("Decoded payload is not a JSON object".into()).await;
-                println!("Decoded payload is not a JSON object");
-            }
-            if let Some(method_str) = payload_json["method"].as_str() {
-                match method_str {
-                    "purchase_token" => {handle_purchase_token(sender.to_lowercase(), payload_json.clone(), storage).await; },
-                    _ => {emit_report("Unknown method in payload".into()).await; println!("Unknown method in payload")},
-                }
-            } else {
-                emit_report("Missing or invalid method field in payload".into()).await;
-                println!("Missing or invalid method field in payload");
-            }
+    // invalid requests are rejected with a report: they never stop the application
+    match process_advance(&sender, _payload, storage).await {
+        Ok(()) => Ok("accept"),
+        Err(error) => {
+            println!("Error processing advance request: {}", error);
+            emit_report(error).await;
+            Ok("reject")
         }
     }
-    Ok("accept")
 }
 
 pub async fn handle_inspect(
@@ -254,52 +254,54 @@ pub async fn handle_inspect(
     storage: &mut Storage
 ) -> Result<&'static str, Box<dyn std::error::Error>> {
     println!("Received inspect request data {}", &request);
-    let zero_address = "0x0000000000000000000000000000000000000000".to_string();
     let _payload = request["data"]["payload"]
         .as_str()
         .ok_or("Missing payload")?;
-    let payload_str = hex_to_string(_payload)?;
-    println!("Decoded payload: {}", payload_str);
 
-    let payload_json ;
-
-    match json::parse(&payload_str) {
-        Err(_) => {
-            let fixed_payload = try_fix_json_like(&payload_str);
-            match json::parse(&fixed_payload) {
-                Err(_) =>  panic!("Failed to parse decoded payload as JSON even after attempting to fix it"),
-                Ok(val) => payload_json = val,
-            };
+    let payload_json = match hex_to_string(_payload).ok().and_then(|payload_str| json::parse(&payload_str).ok()) {
+        Some(value) => value,
+        None => {
+            emit_report("Invalid payload JSON".into()).await;
+            return Ok("accept");
         }
-        Ok(val) => payload_json = val
     };
 
-    if let Some(method_str) = payload_json["method"].as_str() {
-        match method_str {
-            "get_user_erc20_balance" => {  
-                let user_address = payload_json["user_address"].as_str().unwrap_or(&zero_address).to_lowercase(); 
-                let user_balance = storage.get_user_erc20_token_balance(user_address.as_str()).unwrap_or(&0);
-                emit_report(format!("User: {}, balance: {}", user_address, user_balance)).await;
-            },
-            "get_token_owner" => {  
-                let token_id: u128  = payload_json["token_id"].as_u64().unwrap_or(0).into();
-                let token_owner = storage.get_erc721_token_owner(token_id).unwrap_or(&zero_address);
-                emit_report(format!("Token id: {}, owner: {}", token_id, token_owner)).await;
-            },
-            "get_all_listed_tokens" => {  
-                let listed_tokens = storage.get_listed_tokens();
-                emit_report(format!("All listed tokens are: {:?}", listed_tokens)).await;
-            },
-            _ => {emit_report("Unknown method in payload".into()).await; println!("Unknown method in payload")},
-        }
-    } else {
-        emit_report("Missing or invalid method field in payload".into()).await;
-        println!("Missing or invalid method field in payload");
+    match payload_json["method"].as_str() {
+        Some("get_user_erc20_balance") => {
+            let user_address = payload_json["user_address"].as_str().unwrap_or("");
+            let user_balance = storage.get_user_erc20_token_balance(user_address);
+            emit_report(format!("User: {} Balance: {}", user_address, user_balance)).await;
+        },
+        Some("get_token_owner") => {
+            // the token ID can be a JSON number or a string
+            let token_id = match payload_json["token_id"].as_u64() {
+                Some(number) => u128::from(number),
+                None => match parse_token_id(payload_json["token_id"].as_str().unwrap_or("")) {
+                    Ok(token_id) => token_id,
+                    Err(error) => {
+                        emit_report(error).await;
+                        return Ok("reject");
+                    }
+                },
+            };
+            let token_owner = storage.get_erc721_token_owner(token_id).map(String::as_str).unwrap_or("None");
+            emit_report(format!("Token_id: {} owner: {}", token_id, token_owner)).await;
+        },
+        Some("get_all_listed_tokens") => {
+            let listed_tokens: Vec<String> = storage.get_listed_tokens().iter().map(|token| token.to_string()).collect();
+            emit_report(format!("All listed tokens are: {}", listed_tokens.join(","))).await;
+        },
+        _ => {
+            println!("Unsupported method called!!");
+            emit_report("Unsupported inspect method".into()).await;
+        },
     }
     Ok("accept")
 }
 
 pub fn token_deposit_parse(payload: &str) -> Result<(String, String, u128), String> {
+    // ERC-20 and ERC-721 deposits start with the same packed fields:
+    // token (20 bytes), sender (20 bytes), amount or token ID (32 bytes)
     let hexstr = payload.strip_prefix("0x").unwrap_or(payload);
     let bytes = hex::decode(hexstr).map_err(|e| format!("hex decode error: {}", e))?;
     if bytes.len() < 20 + 20 + 32 {
@@ -376,94 +378,43 @@ fn hex_to_string(hex: &str) -> Result<String, Box<dyn std::error::Error>> {
     Ok(s)
 }
 
-fn try_fix_json_like(s: &str) -> String {
-    let mut fixed = s.to_string();
-
-    // Add quotes around keys (rudimentary repair)
-    fixed = fixed.replace("{", "{\"");
-    fixed = fixed.replace(": ", "\":\"");
-    fixed = fixed.replace(", ", "\", \"");
-    fixed = fixed.replace("}", "\"}");
-
-    fixed
-}
-
-async fn emit_report( payload: String) -> Option<bool> {
-    // convert the provided string payload to hex (strip optional "0x" prefix if present)
-    let hex_string = {
-        let s = payload.strip_prefix("0x").unwrap_or(payload.as_str());
-        hex::encode(s.as_bytes())
-    };
-
-    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
+async fn post_output(route: &str, body: JsonValue) -> Result<(), String> {
+    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").map_err(|e| e.to_string())?;
     let client = hyper::Client::new();
 
-    let response = object! {
-        "payload" => format!("0x{}", hex_string),
-    };
     let request = hyper::Request::builder()
     .method(hyper::Method::POST)
     .header(hyper::header::CONTENT_TYPE, "application/json")
-    .uri(format!("{}/report", server_addr))
-    .body(hyper::Body::from(response.dump()))
-    .ok()?;
+    .uri(format!("{}/{}", server_addr, route))
+    .body(hyper::Body::from(body.dump()))
+    .map_err(|e| e.to_string())?;
 
-    let response = client.request(request).await;
-    match response {
-        Ok(_) => {
-            println!("Report generation successful");
-            return Some(true);
-        }
-        Err(e) => {
-            println!("Report request failed {}", e);
-            None
-        }
+    let response = client.request(request).await.map_err(|e| e.to_string())?;
+    if !response.status().is_success() {
+        return Err(format!("Failed to generate {}: HTTP {}", route, response.status()));
+    }
+    Ok(())
+}
+
+async fn emit_report(text: String) {
+    // the rollup HTTP server expects the payload as a 0x-prefixed hex string
+    let report = object! { "payload" => format!("0x{}", hex::encode(text)) };
+    match post_output("report", report).await {
+        Ok(()) => println!("Report generation successful"),
+        Err(e) => println!("Report request failed {}", e),
     }
 }
 
-async fn emit_voucher( voucher: JsonValue) -> Option<bool> {
-    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
-    let client = hyper::Client::new();
-
-    let request = hyper::Request::builder()
-    .method(hyper::Method::POST)
-    .header(hyper::header::CONTENT_TYPE, "application/json")
-    .uri(format!("{}/voucher", server_addr))
-    .body(hyper::Body::from(voucher.dump()))
-    .ok()?;
-
-    let response = client.request(request).await;
-
-    match response {
-        Ok(_) => {
-            println!("Voucher generation successful");
-            return Some(true);
-        }
-        Err(e) => {
-            println!("Voucher request failed {}", e);
-            None
-        }
-    }
+async fn emit_notice(text: String) -> Result<(), String> {
+    let notice = object! { "payload" => format!("0x{}", hex::encode(text)) };
+    post_output("notice", notice).await?;
+    println!("Notice generation successful");
+    Ok(())
 }
 
-async fn emit_notice( payload: String) {
-    let hex_string = {
-        let s = payload.strip_prefix("0x").unwrap_or(payload.as_str());
-        hex::encode(s.as_bytes())
-    };
-
-    let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
-    let client = hyper::Client::new();
-
-    let response = object! {
-        "payload" => format!("0x{}", hex_string),
-    };
-    let request = hyper::Request::builder()
-    .method(hyper::Method::POST)
-    .header(hyper::header::CONTENT_TYPE, "application/json")
-    .uri(format!("{}/notice", server_addr))
-    .body(hyper::Body::from(response.dump()))
-    .ok();
-    let _response = client.request(request.unwrap()).await;
+async fn emit_voucher(voucher: JsonValue) -> Result<(), String> {
+    post_output("voucher", voucher).await?;
+    println!("Voucher generation successful");
+    Ok(())
 }
 ```

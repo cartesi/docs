@@ -28,6 +28,8 @@ An epoch moves through these statuses:
 
 ![Epoch status flow: OPEN to INPUTS_PROCESSED to CLAIM_COMPUTED to CLAIM_STAGED to CLAIM_ACCEPTED, with a foreclosure branch diverting an unfinalized claim to CLAIM_FORECLOSED](../../epoch-flow.png)
 
+The diagram leaves out the transient `CLOSED` and `CLAIM_SUBMITTED` statuses, which the list below includes.
+
 - **OPEN**: the epoch's block range is still current and collecting inputs.
 - **CLOSED**: the epoch has closed (its block range ended or, under PRT, it was sealed on-chain), but the machine has not yet processed all of its inputs.
 - **INPUTS_PROCESSED**: the epoch has closed and the machine has processed all of its inputs.
@@ -42,9 +44,9 @@ An epoch moves through these statuses:
 
 Everything above assumes the operator keeps running the node and the application operates in optimum condition. Foreclosure is what happens when you can no longer depend on that. 
 
-**Foreclosure** is the act of permanently freezing a Cartesi Rollups application at its last accepted state, this process can be triggered in situations where; the operator abandons the application, a bug is discovered in the application code, a compromised authority, a dishonest quorum majority, a false claim is left unchallenged in a PRT dispute tournament, or a PRT epoch cannot be settled at all (see [Epochs that PRT cannot settle](#epochs-that-prt-cannot-settle)). 
+**Foreclosure** is the act of permanently freezing a Cartesi Rollups application at its last accepted state, this process can be triggered in situations where the operator abandons the application, a bug is discovered in the application code, a compromised authority, a dishonest quorum majority, a false claim is left unchallenged in a PRT dispute tournament, or a PRT epoch cannot be settled at all (see [Epochs that PRT cannot settle](#epochs-that-prt-cannot-settle)). 
 
-The claim staging period is the guardian's window to act: foreclosing before such a claim is accepted terminalizes it as `CLAIM_FORECLOSED` and freezes the application on the last state it still trusts, so users withdraw against that state and not the bad one. It's important to note that, Foreclosure does not reverse a claim that has already been accepted; once a state is accepted it is what emergency withdrawals pay out from, which is why the guardian's protection depends on acting within the staging window.
+The claim staging period is the guardian's window to act: foreclosing before such a claim is accepted terminalizes it as `CLAIM_FORECLOSED` and freezes the application on the last state it still trusts, so users withdraw against that state and not the bad one. Note that foreclosure does not reverse a claim that has already been accepted; once a state is accepted it is what emergency withdrawals pay out from, which is why the guardian's protection depends on acting within the staging window.
 
 Choose the staging period with this in mind: it must cover the guardian's reaction time, in blocks, from noticing a bad claim to getting `foreclose()` included on-chain. A staging period of `0` gives the guardian no window at all, because a claim can be staged and accepted in the same block. `cartesi-rollups-cli deploy` uses `0` unless you pass `--claim-staging-period` (see [Deploying with emergency withdrawal](../../deployment/self-hosted/with-emergency-withdrawal.md)). Under PRT, a staged result can also be accepted before the staging period ends once every sentry has submitted a matching claim, so with sentries the guardian's window can be shorter, down to zero blocks.
 

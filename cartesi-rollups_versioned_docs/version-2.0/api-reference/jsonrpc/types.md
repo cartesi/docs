@@ -72,7 +72,7 @@ Example:
 ### ApplicationName
 A string representing an application name.
 
-Pattern: `^[a-z0-9_-]+$`
+Pattern: `^[a-z0-9_-]{3,}$`. The node accepts application names of one or two characters, but the JSON-RPC API looks applications up by name only when the name has at least three characters; query a shorter-named application by its address.
 
 Example:
 ```json
@@ -232,7 +232,7 @@ interface Application {
 
 - `enabled` is the operator's intent: `true` means the node keeps observing the application on chain and runs the work it is eligible for. It is set with `cartesi-rollups-cli app status <app> enabled|disabled`.
 - `status` tells whether the node can still execute the application. See [ApplicationStatus](#applicationstatus) for the values and which ones are terminal. A healthy, running application has `enabled: true` and `status: "OK"`.
-- `reason` describes the failure or terminal status. It is always set when `status` is not `OK`, and can be `null` when `status` is `OK`.
+- `reason` describes the failure or terminal status. It is always set when `status` is not `OK`, and is `null` when `status` is `OK`.
 - Foreclosure is not a status. A non-zero `foreclose_block` means the node observed the on-chain foreclosure of the application, and `foreclose_transaction` holds the transaction hash. After the accounts drive is proved on chain, `accounts_drive_proved_block`, `accounts_drive_proved_transaction` and `accounts_drive_merkle_root` are set. The transaction hash fields are `null` while the matching block field is `"0x0"`.
 - The `last_*_check_block` fields are the last blocks the node scanned for each kind of on-chain event.
 

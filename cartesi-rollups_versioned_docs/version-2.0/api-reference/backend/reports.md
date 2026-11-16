@@ -9,7 +9,7 @@ Unlike notices, reports lack any association with proof and are therefore unsuit
 
 Consider a scenario within a financial dApp where users conduct transactions. In the event of a processing error, such as a failed transaction or insufficient funds, the dApp may generate a report detailing the encountered issue. This report, encapsulating relevant diagnostic data, aids developers in identifying and resolving underlying problems promptly.
 
-Here is how you can write your application to send reports to the rollup server (in JavaScript, `rollup.emitReport()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) sends them directly to the Cartesi Machine):
+Here is how you can write your application to send reports to the rollup server (in JavaScript, `rollup.emitReport()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) sends them directly to the Cartesi Machine):
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -47,7 +47,7 @@ await rollup.run({
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -77,7 +77,7 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -120,7 +120,7 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```go
@@ -147,7 +147,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```cpp
@@ -157,6 +157,9 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 
     try
     {
+        // hex_to_string() and string_to_hex() are helpers you define (the C++ template
+        // has none): hex_to_string("0x32") -> "2", string_to_hex("2") -> "0x32".
+        // The rollup server requires the 0x prefix on payloads.
         // Example operation that may fail (replace with your app logic).
         const std::string payload_hex = data.get("payload").get<std::string>();
         (void)hex_to_string(payload_hex);

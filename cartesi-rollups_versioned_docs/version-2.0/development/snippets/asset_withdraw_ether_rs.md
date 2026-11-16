@@ -1,4 +1,5 @@
 ```rust 
+// Cargo.toml: num-bigint = "=0.4.8" (json comes with the Rust template)
 use json::{object, JsonValue};
 use num_bigint::BigUint;
 

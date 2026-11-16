@@ -1,11 +1,6 @@
 ---
 id: send-inputs-and-assets
 title: Sending inputs and assets
-resources:
-  - url: https://github.com/prototyp3-dev/frontend-web-cartesi/tree/c4ec5d34b1d573f14ad47f1ddc17b097d966775e
-    title: React.js + Typescript template
-  - url: https://github.com/jplgarcia/cartesi-angular-frontend/tree/55011cb68e7927ee3e5fc5e0e3d593cf3ecfbbdd
-    title: Angular template
 ---
 
 You can send two requests to an application depending on whether you want to change or read the state.
@@ -33,7 +28,7 @@ import RequestHandlingCPP from './snippets/request_handling_cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -80,7 +75,7 @@ while True:
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```Rust
@@ -156,7 +151,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <RequestHandlingGO />
@@ -164,7 +159,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <RequestHandlingCPP />
@@ -174,7 +169,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 </Tabs>
 
-As stated in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), a typical Cartesi backend application has two primary functions, `handle_advance` and `handle_inspect,` these are defined to handle the two different types of requests. In the JavaScript and TypeScript templates, they are the `advance` and `inspect` handlers passed to `rollup.run()` from the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package.
+As stated in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), a typical Cartesi backend application has two primary functions, `handle_advance` and `handle_inspect,` these are defined to handle the two different types of requests. In the JavaScript and TypeScript templates, they are the `advance` and `inspect` handlers passed to `rollup.run()` from the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) package.
 
 Your application listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status to the rollup server (in JavaScript and TypeScript, `@cartesi/rollup` reports it to the Cartesi Machine directly, from the value the handler returns).
 
@@ -184,7 +179,7 @@ Every starter project you create has this base code as a template, ready to rece
 
 You can initiate an advance request by sending input from the CLI using Cast, Cartesi CLI, or a custom frontend client.
 
-Advance requests involve sending input data to the L1 through a JSON-RPC call, allowing the information to reach the applciation backend and trigger a change in the application's state.
+Advance requests involve sending input data to the base layer in a transaction to the InputBox contract, allowing the information to reach the application backend and trigger a change in the application's state.
 
 ![img](../../../static/img/v1.3/advance.jpg)
 
@@ -210,12 +205,12 @@ Transactions from account 0 compete with the node's own transactions for the sam
 #### 1. Send inputs with Cast
 
 ```shell
-cast send <InputBoxAddress> "addInput(address,bytes)" <ApplicationAddress> <EncodedPayload> --mnemonic <MNEMONIC> --mnemonic-index <INDEX>
+cast send <InputBoxAddress> "addInput(address,bytes)" <ApplicationAddress> <EncodedPayload> --mnemonic <MNEMONIC> --mnemonic-index <INDEX> --rpc-url <RPC_URL>
 ```
 
 This command sends the payload to the InputBox smart contract, initiating the advance request.
 
-Replace placeholders like `<InputBoxAddress>`, `<ApplicationAddress>`, `<EncodedPayload>`, `<MNEMONIC>` and `<INDEX>` with the actual addresses, payload, mnemonic and account index for your specific use case. On the local devnet, use an index other than 0 (see the tip above).
+Replace placeholders like `<InputBoxAddress>`, `<ApplicationAddress>`, `<EncodedPayload>`, `<MNEMONIC>`, `<INDEX>` and `<RPC_URL>` with the actual addresses, payload, mnemonic, account index and RPC endpoint for your specific use case. On the local devnet, the RPC endpoint is `http://127.0.0.1:6751/anvil`, and you should use an index other than 0 (see the caution above).
 
 You can obtain the relevant addresses by running `cartesi address-book`.
 
@@ -249,7 +244,7 @@ cartesi send --encoding <encoding> <Input>
 For the above command, you replace `<encoding>` with your input format choice (`hex`, `string`, `abi` or `abi-packed`), then replace `<Input>` with your actual input text.
 
 :::note Sending Input from the Cartesi CLI?
-Ensure you're calling the send command from the rood directory of your project else, you would need to provide the project RPC_URL and application address to interact with the application from any random terminal.
+Ensure you're calling the send command from the root directory of your project else, you would need to provide the project RPC_URL and application address to interact with the application from any random terminal.
 :::
 
 #### 3. Send inputs via a custom web app
@@ -260,7 +255,7 @@ Follow [the React.js tutorial to build a frontend for your application](../tutor
 
 ### Make Inspect calls
 
-Inspect requests are directly made to the rollup server, and the Cartesi Machine is activated without modifying its state.
+Inspect requests are HTTP `POST` requests to the node's `/inspect/<application>` endpoint. The node runs them on a temporary copy of the Cartesi Machine, so they never modify its state.
 
 :::caution Inspect requests
 Inspect requests are best suited for non-production use, such as debugging and testing. They may not function reliably in production environments, potentially leading to errors or disruptions.

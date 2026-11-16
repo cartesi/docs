@@ -35,8 +35,8 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
     "data": {
       "name": "calculator",
       "iapplication_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-      "iconsensus_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
-      "iinputbox_address": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      "iconsensus_address": "0x16b4EAC5F8bea9B614674C6f5E007ac0BEEfAAE4",
+      "iinputbox_address": "0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C",
       "template_hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
       "epoch_length": "0x100",
       "claim_staging_period": "0x40",
@@ -105,7 +105,7 @@ The `cartesi_getApplication` method retrieves detailed information about a speci
 | consensus_type          | string | `AUTHORITY`, `QUORUM` or `PRT`                   |
 | enabled                 | boolean | Operator intent: `true` if the node should keep observing and processing the application |
 | status                  | string | Whether the node can still execute the application: `OK`, `FAILED`, `DIVERGED`, `CORRUPTED`, `GUEST_EXCEPTION`, `MACHINE_HALTED`, `MCYCLE_OVERFLOW`, `UNEXPECTED_YIELD` or `INVALID_OUTPUTS_ROOT`. Only `OK` and `FAILED` are not terminal. See [ApplicationStatus](../../types.md#applicationstatus) |
-| reason                  | string \| null | Description of the failure. Always set when `status` is not `OK`; can be `null` when `status` is `OK` |
+| reason                  | string \| null | Description of the failure. Always set when `status` is not `OK`; `null` when `status` is `OK` |
 | iinputbox_block         | string | The deployment block of the input box contract; the node reads inputs from this block on |
 | last_epoch_check_block  | string | The last block checked for epochs                |
 | last_input_check_block  | string | The last block checked for inputs                |

@@ -10,7 +10,7 @@ Cartesi Rollups are app-specific execution environments that can be deployed as 
 
 ## About Mainnet 
 
-Now that Cartesi has reached a Mainnet Ready stage, developers can build dApps with Cartesi Rollups and deploy on Ethereum, Optimism, and Arbitrum Mainnets!
+Developers can build dApps with Cartesi Rollups and deploy them on the mainnets of the [supported networks](../deployment/introduction.md#supported-networks). The Rollups 2.0 releases these docs describe are alpha releases, so check the limits below before an application holds real value.
 
 How an application's results are validated depends on the consensus it is deployed with. As of November 2026 (rollups-node v2.0.0-alpha.14, rollups-contracts v3.0.0-alpha.10 and PRT contracts v3.0.0-alpha.6, all alpha releases):
 

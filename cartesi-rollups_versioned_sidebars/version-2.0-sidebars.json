@@ -94,7 +94,37 @@
                         "api-reference/backend/vouchers",
                         "api-reference/backend/exception",
                         "api-reference/backend/finish",
-                        "api-reference/backend/emergency-withdrawal"
+                        "api-reference/backend/emergency-withdrawal",
+                        {
+                            "type": "category",
+                            "label": "Rollup HTTP API reference",
+                            "collapsed": true,
+                            "link": {
+                                "type": "doc",
+                                "id": "api-reference/rollup/cartesi-rollup-http-api"
+                            },
+                            "items": [
+                                "api-reference/rollup/finish",
+                                "api-reference/rollup/add-notice",
+                                "api-reference/rollup/add-voucher",
+                                "api-reference/rollup/add-delegate-call-voucher",
+                                "api-reference/rollup/add-report",
+                                "api-reference/rollup/register-exception",
+                                "api-reference/rollup/gio"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "category",
+                    "label": "Inspect HTTP API",
+                    "collapsed": true,
+                    "link": {
+                        "type": "doc",
+                        "id": "api-reference/inspect/inspect-state-http-api-for-cartesi-rollups"
+                    },
+                    "items": [
+                        "api-reference/inspect/inspect"
                     ]
                 },
                 {
@@ -303,12 +333,12 @@
                         {
                             "type": "link",
                             "label": "Rollups Node",
-                            "href": "https://github.com/cartesi/rollups-node/blob/main/CHANGELOG.md"
+                            "href": "https://github.com/cartesi/rollups-node/releases/tag/v2.0.0-alpha.14"
                         },
                         {
                             "type": "link",
                             "label": "Rollups Contracts",
-                            "href": "https://github.com/cartesi/rollups-contracts/blob/main/CHANGELOG.md"
+                            "href": "https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/CHANGELOG.md"
                         }
                     ]
                 }

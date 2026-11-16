@@ -28,7 +28,7 @@ They serve as a means for application to notify the blockchain about particular 
 
 Let's examine how an Application has its Advance request **calculating and returning the first five multiples of a given number**.
 
-We will send the output to the rollup server as a notice (in JavaScript, with `rollup.emitNotice()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup)).
+We will send the output to the rollup server as a notice (in JavaScript, with `rollup.emitNotice()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3)).
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -77,7 +77,7 @@ await rollup.run({
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -132,7 +132,7 @@ def handle_advance(data):
 </TabItem>
 
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -148,6 +148,7 @@ fn calculate_multiples(num: i64) -> String {
 
     multiples
 }
+// Cargo.toml: hex = "=0.4.3"
 fn hex_to_string(hex: &str) -> Result<String, Box<dyn std::error::Error>> {
     let hexstr = hex.strip_prefix("0x").unwrap_or(hex);
     let bytes = hex::decode(hexstr).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
@@ -212,7 +213,7 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <SendingNoticeGO />
@@ -220,7 +221,7 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <SendingNoticeCPP />
@@ -389,7 +390,7 @@ curl -X POST http://127.0.0.1:6751/rpc \
 
 Reports serve as stateless logs, providing read-only information without affecting the state. They are commonly used for logging and diagnostics within the application.
 
-Here is how you can write your application to send reports to the rollup server (in JavaScript, `rollup.emitReport()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) sends them directly to the Cartesi Machine):
+Here is how you can write your application to send reports to the rollup server (in JavaScript, `rollup.emitReport()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) sends them directly to the Cartesi Machine):
 
 import SendingReportGO from './snippets/sending_report_go.md';
 import SendingReportCPP from './snippets/sending_report_cpp.md';
@@ -427,7 +428,7 @@ await rollup.run({
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -457,7 +458,7 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -520,7 +521,7 @@ async fn emit_report( payload: String) -> Option<bool> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <SendingReportGO />
@@ -528,7 +529,7 @@ async fn emit_report( payload: String) -> Option<bool> {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <SendingReportCPP />

@@ -116,10 +116,12 @@ Without `accounts_drive = true`, `cartesi build` prints no withdrawal section, a
 
 ## Run the devnet
 
+The `cartesi` commands on this page find the devnet and the application by the project name, which defaults to the name of the current directory. The output and the JSON-RPC calls below assume the project directory is named `ewapp`: run every command from that directory, or replace `ewapp` with your directory's name.
+
 Start the devnet and keep it running in its own terminal:
 
 ```sh
-cartesi run --epoch-length 10 --claim-staging-period 30 --port 6791 --project-name ewapp
+cartesi run --epoch-length 10 --claim-staging-period 30 --port 6791
 ```
 
 ```text
@@ -137,7 +139,7 @@ WARNING: default block is set to 'latest', production configuration will likely 
 
 - `--epoch-length 10` closes an epoch every 10 blocks (20 seconds at the default 2-second block time), instead of every 720 blocks.
 - `--claim-staging-period 30` keeps each claim staged for 30 blocks (about 60 seconds) before it can be accepted. This is the guardian's window: a deposit whose epoch is still open or staged when you foreclose is never finalized, and is returned by a refund. With the default of `0`, a claim is accepted as soon as it is staged, so only deposits whose epoch has not been claimed yet stay unfinalized.
-- `--port 6791` fixes the devnet's address for the `cast` and `curl` commands below. `--project-name ewapp` names the Docker Compose project; it defaults to the directory name, which the other `cartesi` commands also use, so run them from the same directory (or pass them the same `--project-name`). They find the application in the node.
+- `--port 6791` fixes the devnet's address for the `cast` and `curl` commands below.
 
 `cartesi run` derives the same withdrawal config from the built machine and deploys with it, but does not print it. Check what was deployed on-chain, with the address printed above:
 

@@ -130,7 +130,7 @@ Clients can dispatch on the error code. The node uses the following codes:
 | Code    | Message                          | Meaning | What the client should do |
 |---------|----------------------------------|---------|---------------------------|
 | -32700  | Parse error                      | The request body is not valid JSON. | Fix the request. |
-| -32600  | Invalid Request                  | The request is not a valid JSON-RPC 2.0 request (for example a wrong `jsonrpc` version or an invalid `id`). | Fix the request. |
+| -32600  | Invalid Request, Invalid request ID, or Unsupported JSON-RPC version | The request is not a valid JSON-RPC 2.0 request (for example a wrong `jsonrpc` version or an invalid `id`). | Fix the request. |
 | -32601  | Method not found                 | The method does not exist. | Fix the request. |
 | -32602  | Invalid parameters               | A parameter is missing or malformed. The message may name the parameter. | Fix the request. |
 | -32603  | Internal server error            | Node-side failure. Never used for missing resources. | Treat it as a node failure: alert or back off. Do not poll. |
@@ -164,7 +164,8 @@ The API accepts JSON-RPC batches (a JSON array of requests) with 1 to 100 entrie
 ## Data Types
 
 The API uses several data types:
-- `HexString`: Hexadecimal values prefixed with "0x"
+- [`ByteArray`](./types.md#bytearray), [`Hash`](./types.md#hash) and [`EthereumAddress`](./types.md#ethereumaddress): `0x`-prefixed hexadecimal strings
+- [`UnsignedInteger`](./types.md#unsignedinteger): `0x`-prefixed hexadecimal numbers, such as indexes and block numbers
 - `Timestamp`: ISO 8601 formatted timestamps
 - Various enums for states and statuses
 - Complex objects for applications, epochs, inputs, outputs, and reports

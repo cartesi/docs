@@ -1,4 +1,5 @@
 ```rust
+// Cargo.toml: num-bigint = "=0.4.8"
 use num_bigint::BigUint;
 
 #[derive(Debug)]

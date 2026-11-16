@@ -291,7 +291,7 @@ Tokens deposited through the portals are held by your on-chain `Application` con
 Create `src/index.ts` to wire deposits from both portals and user operations sent as JSON inputs.
 
 :::note Portal addresses
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc1155SinglePortal` and `Erc1155BatchPortal` addresses into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc1155SinglePortal` and `Erc1155BatchPortal` addresses into `index.ts`. For a given rollups-contracts release, each portal has the same address on every supported network and on the devnet, but the address changes between releases: take it from `cartesi address-book` rather than from an older sample.
 :::
 
 ```typescript
@@ -429,7 +429,7 @@ const handleInspect = (request: InspectRequest): void => {
 await rollup.run({ advance: handleAdvance, inspect: handleInspect });
 ```
 
-This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), which the template already depends on: `rollup.run()` passes each request to `handleAdvance` or `handleInspect`, with the payload as a Node.js `Buffer`, and an advance handler rejects the input when it returns `false`. When an operation fails, for example because of an insufficient balance, the application emits the error as a report and rejects the input.
+This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3), which the template already depends on: `rollup.run()` passes each request to `handleAdvance` or `handleInspect`, with the payload as a Node.js `Buffer`, and an advance handler rejects the input when it returns `false`. When an operation fails, for example because of an insufficient balance, the application emits the error as a report and rejects the input.
 
 The account that sends the input is the owner of every transfer and withdrawal: the wallet always debits `request.msgSender`, and the payloads have no `from` field. Anyone can write any address in a JSON payload, but nobody can send an input on behalf of another account, so reading the owner from the payload would let anyone move anyone's tokens.
 
@@ -507,8 +507,8 @@ cartesi deposit erc1155-single
 Non-interactive alternative. Run from your **project root** (with `cartesi run` up):
 
 ```bash
-MULTI=$(cartesi address-book 2>&1 | grep -i TestMultiToken | awk '{print $NF}')
-SINGLE_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155SinglePortal | awk '{print $NF}')
+MULTI=$(cartesi address-book TestMultiToken)
+SINGLE_PORTAL=$(cartesi address-book Erc1155SinglePortal)
 
 cast send "$MULTI" \
   "mint(address,uint256,uint256)" \
@@ -541,8 +541,8 @@ cartesi deposit erc1155-batch
 Non-interactive alternative (from project root):
 
 ```bash
-MULTI=$(cartesi address-book 2>&1 | grep -i TestMultiToken | awk '{print $NF}')
-BATCH_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc1155BatchPortal | awk '{print $NF}')
+MULTI=$(cartesi address-book TestMultiToken)
+BATCH_PORTAL=$(cartesi address-book Erc1155BatchPortal)
 
 cast send "$MULTI" \
   "mint(address,uint256,uint256)" \

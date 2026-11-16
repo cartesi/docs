@@ -14,11 +14,13 @@ TypeScript framework for Cartesi dApps.
 - Router for application methods
 
 ```bash
-npm init @deroll/app
+npm init @deroll/app@2.0.0-alpha.16
 ```
 
+Use the `2.0.0-alpha` line for Rollups 2.0. Without a version, npm installs Deroll 1.0.0 (the `latest` tag), which targets Rollups 1.x: it expects the `DAppAddressRelay` input and the v1 deposit and voucher formats.
+
 - [Documentation](https://deroll.dev)
-- [GitHub](https://github.com/tuler/deroll/tree/c7b10f7ef42d8968174deb89936b9679ceb71051)
+- [GitHub](https://github.com/tuler/deroll/tree/acbb3630f0c916bd0fe8ddb440afa7b0829e720a)
 
 ---
 
@@ -40,15 +42,15 @@ Related: [libcmt bindings](https://github.com/Mugen-Builders/libcmt-bindings/tre
 Python framework with local testing helpers and control over inputs and outputs. Install it with one of the following, depending on the extras you need (`machine` and `machine-asset`). `--find-links` supplies pre-built RISC-V wheels.
 
 ```bash
-pip3 install cartesi@git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1 --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+pip3 install "cartesi @ git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1" --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
 ```
 
 ```bash
-pip3 install cartesi[machine]@git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1 --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+pip3 install "cartesi[machine] @ git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1" --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
 ```
 
 ```bash
-pip3 install cartesi[machine-asset]@git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1 --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+pip3 install "cartesi[machine-asset] @ git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1" --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
 ```
 
 - [GitHub](https://github.com/prototyp3-dev/python-cartesi/tree/v0.2.1)
@@ -60,7 +62,7 @@ pip3 install cartesi[machine-asset]@git+https://github.com/prototyp3-dev/python-
 Opinionated Python library and CLI for Cartesi Rollups apps: routed endpoints, host and machine tests, build/run/deploy, and auto-generated frontend libraries.
 
 ```bash
-pip3 install cartesapp[dev]@git+https://github.com/prototyp3-dev/cartesapp@v1.5.0a0
+pip3 install "cartesapp[dev] @ git+https://github.com/prototyp3-dev/cartesapp@v1.5.0a0"
 cartesapp create NAME
 ```
 

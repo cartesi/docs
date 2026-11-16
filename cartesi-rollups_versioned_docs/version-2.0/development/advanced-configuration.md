@@ -16,7 +16,7 @@ Here is what the file controls at a high level:
 - **Machine settings**: How the machine boots, how much RAM it has, what program it runs, and how it behaves.
 - **Drives**: The file systems attached to your machine, including your application code and any additional data.
 
-It is important to note that `cartesi.toml` is only read when you run `cartesi build` or `cartesi shell`. By default, the CLI looks for a `cartesi.toml` in the project root, unless you point it to a different path using the `-c` or `--config` flag with a relative path to the configuration file. If no config file is found, the CLI applies sensible defaults, most of which are covered in the sections below. The default Cartesi templates do not include a `cartesi.toml` in the project root hence you manually create a configuration file when you have an explicit need for it.
+`cartesi build`, `cartesi shell` and `cartesi run` read `cartesi.toml` (`cartesi run` reads the `sdk` key and the `[withdrawal]` and `[prt]` tables, and rejects invalid keys); other commands, such as `cartesi hash`, `cartesi send` and `cartesi deposit`, read only the `sdk` key. By default, the CLI looks for a `cartesi.toml` in the project root, unless you point it to a different path using the `-c` or `--config` flag with a relative path to the configuration file. If no config file is found, the CLI applies sensible defaults, most of which are covered in the sections below. The default Cartesi templates do not include a `cartesi.toml` in the project root hence you manually create a configuration file when you have an explicit need for it.
 
 ## Getting Started with Minimal Configuration
 
@@ -77,7 +77,7 @@ The `[machine]` section controls how your Cartesi Machine is set up and how it b
 ### Entrypoint
 
 ```toml
-entrypoint = "rollup-init /usr/local/bin/python3 /mnt/app/main.py"
+entrypoint = "rollup-init /usr/local/bin/python3 /opt/cartesi/dapp/dapp.py"
 ```
 
 The `entrypoint` tells the machine which program to run when it starts up. This is the path to your application binary inside the machine's file system.
@@ -286,7 +286,7 @@ A few options are shared across all builder types:
 
 **`mount`** controls where the drive is mounted inside the machine. It defaults to `/mnt/<name>`. You can set it to any absolute path. For example, `mount = "/var/lib/app"` makes the drive accessible at that path inside the machine.
 
-**`shared`** when set to `true`, maps the drive as a shared memory region, meaning the host and the machine access the same underlying memory rather than the data being copied in. This avoids the overhead of loading large drives into the machine's address space and is useful when you need to pass large amounts of data in and out of the machine efficiently. Defaults to `false`.
+**`shared`** when set to `true`, writes the changes the guest makes to the drive back to the drive's image file on the host, so they persist after the machine stops. When `false`, guest writes stay in the machine and the image file is left unchanged. Defaults to `false`.
 
 **`user`** sets the Linux user that owns the files inside the drive. This matters when your application runs as a non-root user and needs read or write access to the drive's contents. Defaults to the user defined in the Docker image, or root if unset.
 
@@ -305,8 +305,9 @@ sdk = "cartesi/sdk:0.12.0-alpha.45"
 
 [machine]
 # Run the Python application when the machine starts, through rollup-init,
-# which starts the rollup HTTP server first
-entrypoint = "rollup-init /usr/local/bin/python3 /mnt/app/main.py"
+# which starts the rollup HTTP server first. The Dockerfile copies the code
+# into the root drive, at /opt/cartesi/dapp as in the Python template.
+entrypoint = "rollup-init /usr/local/bin/python3 /opt/cartesi/dapp/dapp.py"
 
 # Give the machine 256 megabytes of RAM for document processing
 ram_length = "256Mi"
@@ -363,9 +364,15 @@ The reference drive contains a pre built SquashFS image with static reference da
 | `builder`               | `[drives.*]` | String           | `"docker"`                      | How to create the drive: docker, empty, directory, tar, or none |
 | `dockerfile`            | `[drives.*]` | String           | `"Dockerfile"`                  | Path to Dockerfile (docker builder)                             |
 | `target`                | `[drives.*]` | String           | Last stage                      | Docker multi stage build target                                 |
-| `format`                | `[drives.*]` | String           | `"ext2"`                        | File system format: ext2 or sqfs                                |
+| `format`                | `[drives.*]` | String           | `"ext2"`                        | File system format: ext2 or sqfs (raw for the empty builder)    |
 | `extra_size`            | `[drives.*]` | String           | `0`                             | Extra free space added to the drive                             |
 | `size`                  | `[drives.*]` | String or Number | —                               | Total drive size (empty builder only)                           |
 | `directory`             | `[drives.*]` | String           | —                               | Local directory to package (directory builder)                  |
 | `filename`              | `[drives.*]` | String           | —                               | Path to tar or existing image file                              |
 | `mount`                 | `[drives.*]` | String           | `/mnt/<name>`                   | Where the drive is mounted in the machine                       |
+| `shared`                | `[drives.*]` | Boolean          | `false`                         | Write guest changes back to the drive's image file              |
+| `user`                  | `[drives.*]` | String           | Docker image user               | Owner of the files inside the drive                             |
+| `accounts_drive`        | `[drives.*]` | Boolean          | `false`                         | Mark the drive as the emergency-withdrawal accounts drive       |
+| `accounts_drive_size`   | `[drives.*]` | String or Number | Whole drive                     | Size of the account tree inside the accounts drive              |
+
+The CLI also accepts keys that this page does not cover: `env` and `env_file` in `[machine]`; `build_args`, `context`, `image` and `tags` for the docker builder; `format = "raw"` for the empty builder; and the `[nvrams]`, `[withdrawal]` and `[prt]` tables. For `accounts_drive`, `accounts_drive_size`, `mount = false` and `[withdrawal]`, see [Testing emergency withdrawal locally](./emergency-withdrawal/local-testing.md#configure-the-accounts-drive).

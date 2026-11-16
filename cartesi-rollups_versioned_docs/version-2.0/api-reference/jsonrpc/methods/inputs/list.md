@@ -70,7 +70,7 @@ The `cartesi_listInputs` method returns a paginated list of inputs for a specifi
     ],
     "pagination": {
       "total_count": 1,
-      "limit": 50,
+      "limit": 10,
       "offset": 0
     }
   },

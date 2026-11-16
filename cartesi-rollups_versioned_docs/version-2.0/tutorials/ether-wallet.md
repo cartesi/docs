@@ -186,12 +186,12 @@ For a plain Ether transfer, leave `payload` empty (`0x`, no calldata). The vouch
 
 ## Using the Ether wallet
 
-Now, let's create a simple application at the entry point, `src/index.ts,` to test the wallet functionality.
+Now, let's create a simple application at the entry point, `src/index.ts`, to test the wallet functionality.
 
 The [`EtherPortal`](../api-reference/contracts/portals/EtherPortal.md) contract allows anyone to transfer Ether into your application. All deposits are made via the `EtherPortal` contract.
 
 :::note EtherPortal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `EtherPortal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `EtherPortal` address for your network into `index.ts`. For a given rollups-contracts release, each portal has the same address on every supported network and on the devnet, but the address changes between releases: take it from `cartesi address-book` rather than from an older sample.
 :::
 
 ```typescript
@@ -268,7 +268,7 @@ const handleInspect = (request: InspectRequest): void => {
 await rollup.run({ advance: handleAdvance, inspect: handleInspect });
 ```
 
-This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), which the template already depends on and which talks directly to the Cartesi Machine. `rollup.run()` waits for each request and passes it to `handleAdvance` or `handleInspect`, with the request payload as a Node.js `Buffer`. An advance handler accepts the input when it returns `true` and rejects it when it returns `false`: the node then discards the notices and vouchers of that input and reverts the application state, but keeps its reports.
+This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3), which the template already depends on and which talks directly to the Cartesi Machine. `rollup.run()` waits for each request and passes it to `handleAdvance` or `handleInspect`, with the request payload as a Node.js `Buffer`. An advance handler accepts the input when it returns `true` and rejects it when it returns `false`: the node then discards the notices and vouchers of that input and reverts the application state, but keeps its reports.
 
 Here is a breakdown of the wallet functionality:
 
@@ -318,7 +318,7 @@ cartesi deposit ether 1 \
 
 Change the amount (`1` = 1 ETH) as needed. Use your project name in `--project-name` if it differs from `ether-wallet`.
 
-### Balance checks(used in Inspect requests)
+### Balance checks (used in Inspect requests)
 
 To inspect balance, make an HTTP (post) call to:
 
