@@ -7,23 +7,44 @@ This tutorial will guide you through creating a basic ERC20 token wallet for a C
 
 ## Setting up the project
 
-First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
+First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli) and move into its directory:
 
 ```bash
 cartesi create erc-20-token-wallet --template typescript
+cd erc-20-token-wallet
 ```
 
-Run the following to generate the types for your project:
+The template manages its packages with [pnpm](https://pnpm.io), through [corepack](https://nodejs.org/api/corepack.html). If the `pnpm` command is not available, enable it with:
 
 ```bash
-yarn && yarn run codegen
+corepack enable pnpm
 ```
 
-Now, navigate to the project directory and install [`viem`](https://viem.sh/):
+Now, install [`viem`](https://viem.sh/) as a development dependency:
 
 ```bash
-yarn add viem@2.57.19
+pnpm add -D viem@2.57.19
 ```
+
+Then replace the contents of `rolldown.config.ts` with the following, so that rolldown bundles viem into your application and only leaves out the `@cartesi/rollup` native addon:
+
+```typescript
+import { defineConfig } from "rolldown";
+
+export default defineConfig({
+  input: "src/index.ts",
+  platform: "node",
+  // only the @cartesi/rollup native addon stays out of the bundle: viem and
+  // any other pure JavaScript dependency are bundled into dist/index.mjs
+  external: ["@cartesi/rollup"],
+  output: {
+    file: "dist/index.mjs",
+    format: "esm",
+  },
+});
+```
+
+`cartesi build` installs the packages listed under `dependencies` inside an emulated RISC-V container, where pnpm can crash with a segmentation fault while it installs viem. A bundled development dependency is not installed there. See [adding dependencies](../development/creating-an-application.md#adding-dependencies-in-javascript-and-typescript).
 
 Deposit payloads from portals are packed ABI-encoded fields; see [asset handling](../development/asset-handling.md#abi-encoding-for-deposits) for the ERC-20 layout (`token`, `sender`, `amount`). Withdrawals use vouchers executed by the on-chain [`Application`](../api-reference/contracts/application.md) contract—see [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
 
@@ -32,7 +53,7 @@ Deposit payloads from portals are packed ABI-encoded fields; see [asset handling
 Create a file named `balance.ts` in `src/wallet` directory and add the following code:
 
 ```typescript
-import { Address } from "viem";
+import type { Address } from "viem";
 
 export class Balance {
   private account: string;
@@ -54,41 +75,31 @@ export class Balance {
   increaseErc20Balance(erc20: Address, amount: bigint): void {
     if (amount < 0n) {
       throw new Error(
-        `Failed to increase balance of ${erc20} for ${this.account}`
+        `Failed to increase balance of ${erc20} for ${this.account}: invalid amount specified`,
       );
     }
-    try {
-      if (this.erc20Balances.get(erc20) === undefined) {
-        this.erc20Balances.set(erc20, 0n);
-      }
-      this.erc20Balances.set(
-        erc20,
-        (this.erc20Balances.get(erc20) || 0n) + amount
-      );
-      console.log("ERC20 balance is", this.erc20Balances);
-    } catch (e) {
-      throw new Error(
-        `Failed to increase balance of ${erc20} for ${this.account}: ${e}`
-      );
-    }
+    this.erc20Balances.set(
+      erc20,
+      (this.erc20Balances.get(erc20) ?? 0n) + amount,
+    );
+    console.log("ERC20 balance is", this.erc20Balances);
   }
 
   decreaseErc20Balance(erc20: Address, amount: bigint): void {
     if (amount < 0n) {
       throw new Error(
-        `Failed to decrease balance of ${erc20} for ${this.account}: invalid amount specified`
+        `Failed to decrease balance of ${erc20} for ${this.account}: invalid amount specified`,
       );
     }
-    if (this.erc20Balances.get(erc20) === undefined) {
-      this.erc20Balances.set(erc20, 0n);
+    const erc20Balance = this.erc20Balances.get(erc20);
+    if (erc20Balance === undefined) {
       throw new Error(
-        `Failed to decrease balance of ${erc20} for ${this.account}: not found with ERC20 balance`
+        `Failed to decrease balance of ${erc20} for ${this.account}: not found with ERC20 balance`,
       );
     }
-    let erc20Balance = this.erc20Balances.get(erc20) || 0n;
     if (erc20Balance < amount) {
       throw new Error(
-        `Failed to decrease balance of ${erc20} for ${this.account}: insufficient ERC20 balance`
+        `Failed to decrease balance of ${erc20} for ${this.account}: insufficient ERC20 balance`,
       );
     }
     this.erc20Balances.set(erc20, erc20Balance - amount);
@@ -101,75 +112,60 @@ The `Balance` class represents an individual account's balance. It includes meth
 Now, create a file named `wallet.ts` in the `src/wallet` directory and add the following code:
 
 ```typescript
+import type { Voucher } from "@cartesi/rollup";
 import {
-  Address,
-  getAddress,
+  type Address,
   encodeFunctionData,
-  sliceHex,
-  zeroHash,
+  erc20Abi,
+  getAddress,
   type Hex,
+  sliceHex,
 } from "viem";
 import { Balance } from "./balance";
-import { erc20Abi } from "viem";
-import { Voucher } from "..";
 
 export class Wallet {
-  static accounts: Map<Address, Balance>;
-
-  constructor() {
-    Wallet.accounts = new Map<Address, Balance>();
-  }
+  private accounts: Map<Address, Balance> = new Map();
 
   private getBalance = (account: Address): Balance => {
-    let balance = Wallet.accounts.get(account);
+    const key = getAddress(account);
+    let balance = this.accounts.get(key);
     if (!balance) {
-      balance = new Balance(account, new Map());
-      Wallet.accounts.set(account, balance);
+      balance = new Balance(key, new Map());
+      this.accounts.set(key, balance);
     }
     return balance;
   };
 
-  getAccountBalance = (
-    account: Address,
-    erc20: Address
-  ): bigint | undefined => {
+  getAccountBalance = (account: Address, erc20: Address): bigint => {
     const balance = this.getBalance(account);
-    const erc20Balance = balance.getErc20Balance(erc20);
+    const erc20Balance = balance.getErc20Balance(getAddress(erc20)) ?? 0n;
     console.info(
-      `Balance for ${account} and token ${erc20} retrieved as ${erc20Balance}`
+      `Balance for ${account} and token ${erc20} retrieved as ${erc20Balance}`,
     );
     return erc20Balance;
   };
 
   processErc20Deposit = (payload: Hex): string => {
-    try {
-      let [erc20, account, amount] = this.parseErc20Deposit(payload);
-      console.log(`${amount} ${erc20} tokens deposited to account ${account}`);
-      return this.depositErc20(account, erc20, amount);
-    } catch (e) {
-      return `Error depositing ERC20 tokens: ${e}`;
-    }
+    const [erc20, account, amount] = this.parseErc20Deposit(payload);
+    console.log(`${amount} ${erc20} tokens deposited to account ${account}`);
+    return this.depositErc20(account, erc20, amount);
   };
 
   private parseErc20Deposit = (payload: Hex): [Address, Address, bigint] => {
-    try {
-      const erc20 = getAddress(sliceHex(payload, 0, 20));
-      const account = getAddress(sliceHex(payload, 20, 40));
-      const amount = BigInt(sliceHex(payload, 40, 72));
-      return [erc20, account, amount];
-    } catch (e) {
-      throw new Error(`Error parsing ERC20 deposit: ${e}`);
-    }
+    const erc20 = getAddress(sliceHex(payload, 0, 20));
+    const account = getAddress(sliceHex(payload, 20, 40));
+    const amount = BigInt(sliceHex(payload, 40, 72));
+    return [erc20, account, amount];
   };
 
   private depositErc20 = (
     account: Address,
     erc20: Address,
-    amount: bigint
+    amount: bigint,
   ): string => {
-    let balance = this.getBalance(account);
+    const balance = this.getBalance(account);
     balance.increaseErc20Balance(erc20, amount);
-    let noticePayload = {
+    const noticePayload = {
       type: "erc20deposit",
       content: {
         address: account,
@@ -183,252 +179,173 @@ export class Wallet {
   withdrawErc20 = (
     account: Address,
     erc20: Address,
-    amount: bigint
+    amount: bigint,
   ): Voucher => {
-    try {
-      let balance = this.getBalance(account);
-      balance.decreaseErc20Balance(erc20, amount);
-      const call = encodeFunctionData({
-        abi: erc20Abi,
-        functionName: "transfer",
-        args: [account, amount],
-      });
+    const balance = this.getBalance(account);
+    balance.decreaseErc20Balance(erc20, amount);
+    const call = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "transfer",
+      args: [account, amount],
+    });
 
-      console.log(`Voucher creation success`, {
-        destination: erc20,
-        payload: call,
-      });
+    console.log("Voucher creation success", {
+      destination: erc20,
+      payload: call,
+    });
 
-      return {
-        destination: erc20,
-        payload: call,
-        value: zeroHash,
-      };
-    } catch (e) {
-      throw Error(`Error withdrawing ERC20 tokens: ${e}`);
-    }
+    return {
+      destination: erc20,
+      value: 0n,
+      payload: call,
+    };
   };
 
   transferErc20 = (
     from: Address,
     to: Address,
     erc20: Address,
-    amount: bigint
+    amount: bigint,
   ): string => {
-    try {
-      let balanceFrom = this.getBalance(from);
-      let balanceTo = this.getBalance(to);
-      balanceFrom.decreaseErc20Balance(erc20, amount);
-      balanceTo.increaseErc20Balance(erc20, amount);
-      let noticePayload = {
-        type: "erc20transfer",
-        content: {
-          from: from,
-          to: to,
-          erc20: erc20,
-          amount: amount.toString(),
-        },
-      };
-      console.info(
-        `${amount} ${erc20} tokens transferred from ${from} to ${to}`
-      );
-      return JSON.stringify(noticePayload);
-    } catch (e) {
-      throw Error(`Error transferring ERC20 tokens: ${e}`);
-    }
+    const balanceFrom = this.getBalance(from);
+    const balanceTo = this.getBalance(to);
+    balanceFrom.decreaseErc20Balance(erc20, amount);
+    balanceTo.increaseErc20Balance(erc20, amount);
+    const noticePayload = {
+      type: "erc20transfer",
+      content: {
+        from: from,
+        to: to,
+        erc20: erc20,
+        amount: amount.toString(),
+      },
+    };
+    console.info(`${amount} ${erc20} tokens transferred from ${from} to ${to}`);
+    return JSON.stringify(noticePayload);
   };
 }
 ```
 
 ### Voucher creation
 
-The `withdrawErc20` method encodes `transfer(recipient, amount)` and returns a voucher whose destination is the token contract. Tokens deposited through the portal sit in your on-chain `Application` contract, and the `Application` is the caller when it executes the voucher, so `transfer` moves the tokens out of its own balance. Do not use `transferFrom(application, recipient, amount)` here: the `Application` has no allowance over its own tokens, so the voucher reverts with `ERC20InsufficientAllowance` in OpenZeppelin 5 tokens. Set `value` to [`zeroHash`](https://viem.sh/docs/glossary/types#zeroHash) when no Ether is sent with the call. See [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
+The `withdrawErc20` method encodes `transfer(recipient, amount)` and returns a voucher whose destination is the token contract. Tokens deposited through the portal sit in your on-chain `Application` contract, and the `Application` is the caller when it executes the voucher, so `transfer` moves the tokens out of its own balance. Do not use `transferFrom(application, recipient, amount)` here: the `Application` has no allowance over its own tokens, so the voucher reverts with `ERC20InsufficientAllowance` in OpenZeppelin 5 tokens. The voucher's `value` is `0n` because no Ether is sent with the call. See [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
 
 ## Using the ERC20 wallet
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`Erc20Portal`](../api-reference/contracts/portals/ERC20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advances whose `metadata.msg_sender` is the portal address.
+The [`Erc20Portal`](../api-reference/contracts/portals/ERC20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advance requests whose `msgSender` is the portal address.
 
 :::note Erc20Portal address
 Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc20Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
 :::
 
 ```typescript
-import createClient from "openapi-fetch";
-import type { components, paths } from "./schema";
+import {
+  type AdvanceRequest,
+  type InspectRequest,
+  Rollup,
+} from "@cartesi/rollup";
+import {
+  type Address,
+  bytesToHex,
+  getAddress,
+  isAddressEqual,
+  stringToHex,
+} from "viem";
 import { Wallet } from "./wallet/wallet";
-import { stringToHex, getAddress, Address, hexToString } from "viem";
 
-type AdvanceRequestData = components["schemas"]["Advance"];
-type InspectRequestData = components["schemas"]["Inspect"];
-type RequestHandlerResult = components["schemas"]["Finish"]["status"];
-type RollupRequest = components["schemas"]["RollupRequest"];
-type InspectRequestHandler = (data: InspectRequestData) => Promise<void>;
-type AdvanceRequestHandler = (
-  data: AdvanceRequestData
-) => Promise<RequestHandlerResult>;
-
-export type Notice = components["schemas"]["Notice"];
-export type Payload = components["schemas"]["Payload"];
-export type Report = components["schemas"]["Report"];
-export type Voucher = components["schemas"]["Voucher"];
-
-const wallet = new Wallet();
 // Replace with the Erc20Portal address from `cartesi address-book`
-const ERC20Portal = `0xYOUR_ERC20_PORTAL_ADDRESS`;
+const ERC20_PORTAL: Address = "0xYOUR_ERC20_PORTAL_ADDRESS";
 
-const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log(`HTTP rollup_server url is ${rollupServer}`);
+const rollup = new Rollup();
+const wallet = new Wallet();
 
-const handleAdvance: AdvanceRequestHandler = async (data) => {
-  console.log("Received advance request data " + JSON.stringify(data));
+const handleAdvance = (request: AdvanceRequest): boolean => {
+  console.log(
+    `Received advance request from ${request.msgSender} with index ${request.index}`,
+  );
 
-  const sender = data["metadata"]["msg_sender"];
-  const payload = data.payload;
-
-  if (sender.toLowerCase() === ERC20Portal.toLowerCase()) {
-    // Handle deposit
-    const deposit = wallet.processErc20Deposit(payload);
-    await createNotice({ payload: stringToHex(deposit) });
-  } else {
-    // Handle transfer or withdrawal
-    try {
-      const { operation, erc20, from, to, amount } = JSON.parse(
-        hexToString(payload)
-      );
-
-      if (operation === "transfer") {
-        const transfer = wallet.transferErc20(
-          getAddress(from as Address),
-          getAddress(to as Address),
-          getAddress(erc20 as Address),
-          BigInt(amount)
-        );
-
-        await createNotice({ payload: stringToHex(transfer) });
-      } else if (operation === "withdraw") {
-        const voucher = wallet.withdrawErc20(
-          getAddress(from as Address),
-          getAddress(erc20 as Address),
-          BigInt(amount)
-        );
-
-        await createVoucher(voucher);
-      } else {
-        console.log("Unknown operation");
-      }
-    } catch (error) {
-      console.error("Error processing payload:", error);
-    }
+  if (isAddressEqual(request.msgSender, ERC20_PORTAL)) {
+    // Deposit: the portal names the token and the depositor in the payload
+    const deposit = wallet.processErc20Deposit(bytesToHex(request.payload));
+    rollup.emitNotice(stringToHex(deposit));
+    return true;
   }
 
-  return "accept";
-};
-
-const handleInspect: InspectRequestHandler = async (data) => {
-  console.log("Received inspect request data " + JSON.stringify(data));
-
+  // Transfer or withdrawal: always on behalf of the account that sent the input
+  const owner = getAddress(request.msgSender);
   try {
-    const payloadString = hexToString(data.payload);
-
-    const [address, erc20] = payloadString.split("/");
-
-    const balance = wallet.getAccountBalance(
-      address as Address,
-      erc20 as Address
+    const { operation, erc20, to, amount } = JSON.parse(
+      request.payload.toString("utf8"),
     );
 
-    if (balance === undefined) {
-      throw new Error("ERC20 balance is undefined");
+    if (operation === "transfer") {
+      const transfer = wallet.transferErc20(
+        owner,
+        getAddress(to),
+        getAddress(erc20),
+        BigInt(amount),
+      );
+      rollup.emitNotice(stringToHex(transfer));
+    } else if (operation === "withdraw") {
+      const voucher = wallet.withdrawErc20(
+        owner,
+        getAddress(erc20),
+        BigInt(amount),
+      );
+      rollup.emitVoucher(voucher);
+    } else {
+      throw new Error(`Unknown operation: ${operation}`);
     }
-
-    const balmsg = `Balance of token ${erc20} for user address ${address} is ${balance}`;
-
-    await createReport({ payload: stringToHex(balmsg) });
+    return true;
   } catch (error) {
-    const error_message = `Error processing inspect payload: ${error}`;
-
-    await createReport({ payload: stringToHex(error_message) });
+    console.error("Error processing payload:", error);
+    rollup.emitReport(stringToHex(`Error processing payload: ${error}`));
+    return false;
   }
 };
 
-const createNotice = async (payload: Notice) => {
-  console.log("creating notice with payload", payload);
-
-  await fetch(`${rollupServer}/notice`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-};
-
-const createVoucher = async (payload: Voucher) => {
-  await fetch(`${rollupServer}/voucher`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-};
-
-const createReport = async (payload: Report) => {
-  await fetch(`${rollupServer}/report`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-};
-
-const main = async () => {
-  const { POST } = createClient<paths>({ baseUrl: rollupServer });
-  let status: RequestHandlerResult = "accept";
-  while (true) {
-    const { data, response } = await POST("/finish", {
-      body: { status },
-      parseAs: "text",
-    });
-
-    if (response.status === 200 && data) {
-      const request = JSON.parse(data) as RollupRequest;
-      switch (request.request_type) {
-        case "advance_state":
-          status = await handleAdvance(request.data as AdvanceRequestData);
-          break;
-        case "inspect_state":
-          await handleInspect(request.data as InspectRequestData);
-          break;
-      }
-    } else if (response.status === 202) {
-      // no rollup request available
-      console.log(await response.text());
+const handleInspect = (request: InspectRequest): void => {
+  try {
+    const [address, erc20] = request.payload.toString("utf8").split("/");
+    if (address === undefined || erc20 === undefined) {
+      throw new Error("expected userAddress/erc20TokenAddress");
     }
+    const balance = wallet.getAccountBalance(
+      getAddress(address),
+      getAddress(erc20),
+    );
+    rollup.emitReport(
+      stringToHex(
+        `Balance of token ${erc20} for user address ${address} is ${balance}`,
+      ),
+    );
+  } catch (error) {
+    rollup.emitReport(
+      stringToHex(`Error processing inspect payload: ${error}`),
+    );
   }
 };
 
-main().catch((e) => {
-  console.log(e);
-  process.exit(1);
-});
-
+await rollup.run({ advance: handleAdvance, inspect: handleInspect });
 ```
+
+This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), which the template already depends on: `rollup.run()` passes each request to `handleAdvance` or `handleInspect`, with the payload as a Node.js `Buffer`, and an advance handler rejects the input when it returns `false`.
 
 Here is a breakdown of the wallet functionality:
 
-- We handle deposits when the sender is the `Erc20Portal`.
+- We handle deposits when the sender is the `Erc20Portal`. The portal writes the token, the depositor's address and the amount in the payload, and the wallet credits the depositor.
 
 - We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
+- The account that sends the input is the owner of the operation: transfers and withdrawals always debit `request.msgSender`, and the payload has no `from` field. Anyone can write any address in a JSON payload, but nobody can send an input on behalf of another account, so reading the owner from the payload would let anyone move anyone's tokens.
+
 - For `transfers`, we call `wallet.transferErc20` and create a notice with the parsed parameters.
 
-- For `withdrawals`, we call `wallet.withdrawErc20`, which encodes a `transfer` to the user, then emit a voucher to the token contract. The on-chain `Application` (`metadata.app_contract`) executes it and sends the tokens it holds.
+- For `withdrawals`, we call `wallet.withdrawErc20`, which encodes a `transfer` to the owner, then emit a voucher to the token contract with `rollup.emitVoucher`. The on-chain `Application` (`request.appContract`) executes it and sends the tokens it holds.
 
-- We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks, and `createVoucher` for withdrawals.
+- When an operation fails, for example because of an insufficient balance, we emit the error as a report with `rollup.emitReport` and reject the input. Inspect requests answer balance checks with a report as well.
 
 ## Build and run the application
 
@@ -513,7 +430,7 @@ Non-interactive alternative (from your project root):
 
 ```bash
 cartesi send --encoding string \
-  '{"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}' \
+  '{"operation":"withdraw","erc20":"0x86EA17052C8e335Ad830B54EF566274EAB46B852","amount":"1000000000000000000"}' \
   --project-name erc-20-token-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```
@@ -521,14 +438,16 @@ cartesi send --encoding string \
 1. For transfers:
 
    ```js
-   {"operation":"transfer","erc20":"0xTokenAddress","from":"0xFromAddress","to":"0xToAddress","amount":"1000000000000000000"}
+   {"operation":"transfer","erc20":"0xTokenAddress","to":"0xToAddress","amount":"1000000000000000000"}
    ```
 
 2. For withdrawals:
 
    ```js
-   {"operation":"withdraw","erc20":"0xTokenAddress","from":"0xFromAddress","amount":"1000000000000000000"}
+   {"operation":"withdraw","erc20":"0xTokenAddress","amount":"1000000000000000000"}
    ```
+
+Replace `0xTokenAddress` with the token address (`TestToken` in the samples above, `0x86EA17052C8e335Ad830B54EF566274EAB46B852`). The wallet debits the account that sends the input: `cartesi send` sends from devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`), the account that made the deposit above. If you pass `--from` to send from another account, the application debits that account instead, and rejects the input with a report when that account has no balance in the wallet.
 
 ### Using the explorer
 

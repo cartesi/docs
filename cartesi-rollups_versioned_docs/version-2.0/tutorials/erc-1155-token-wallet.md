@@ -7,23 +7,24 @@ This tutorial guides you through building an ERC-1155 token wallet for a Cartesi
 
 ## Setting up the project
 
-First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md#setting-up-the-project). Create a new project (for example `erc-1155-token-wallet`) and install [`viem`](https://viem.sh/):
+First, set up your Cartesi project as described in the [Ether wallet tutorial](./ether-wallet.md#setting-up-the-project): create a new TypeScript project, install [`viem`](https://viem.sh/) as a development dependency and let rolldown bundle it:
 
 ```bash
 cartesi create erc-1155-token-wallet --template typescript
 cd erc-1155-token-wallet
-yarn && yarn run codegen
-yarn add viem@2.57.19
+pnpm add -D viem@2.57.19
 ```
 
-Single deposits use packed fields (`token`, `sender`, `tokenId`, `value`) with an optional standard-ABI tail; batch deposits use packed `token` and `sender` followed by ABI-encoded `tokenIds`, `values`, and optional data fields. See [asset handling](../development/asset-handling.md#abi-encoding-for-deposits). Withdrawals emit vouchers whose `safeTransferFrom` or `safeBatchTransferFrom` sender is your on-chain application address (`metadata.app_contract` on each advance)—see [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
+Then replace the contents of `rolldown.config.ts` with the configuration shown in the [Ether wallet tutorial](./ether-wallet.md#setting-up-the-project), which sets `external: ["@cartesi/rollup"]`.
+
+Single deposits use packed fields (`token`, `sender`, `tokenId`, `value`) with an optional standard-ABI tail; batch deposits use packed `token` and `sender` followed by ABI-encoded `tokenIds`, `values`, and optional data fields. See [asset handling](../development/asset-handling.md#abi-encoding-for-deposits). Withdrawals emit vouchers whose `safeTransferFrom` or `safeBatchTransferFrom` sender is your on-chain application address (`request.appContract` on each advance request)—see [withdrawing tokens](../development/asset-handling.md#withdrawing-tokens).
 
 ## Building the ERC1155 wallet
 
 Create `src/wallet/balance.ts`:
 
 ```typescript
-import { Address } from "viem";
+import type { Address } from "viem";
 
 /** Per-account balances: ERC-1155 contract → tokenId → amount */
 export class Balance {
@@ -47,13 +48,16 @@ export class Balance {
   }
 
   decrease(erc1155: Address, tokenId: bigint, amount: bigint): void {
+    if (amount < 0n) {
+      throw new Error(`Invalid amount for ${erc1155} id ${tokenId}`);
+    }
     const current = this.getAmount(erc1155, tokenId);
     if (current < amount) {
       throw new Error(
-        `Insufficient balance for ${erc1155} id ${tokenId} on ${this.account}`
+        `Insufficient balance for ${erc1155} id ${tokenId} on ${this.account}`,
       );
     }
-    this.holdings.get(erc1155)!.set(tokenId, current - amount);
+    this.holdings.get(erc1155)?.set(tokenId, current - amount);
   }
 
   listIds(erc1155: Address): { tokenId: string; amount: string }[] {
@@ -70,27 +74,27 @@ export class Balance {
 Create `src/wallet/wallet.ts`:
 
 ```typescript
+import type { Voucher } from "@cartesi/rollup";
 import {
-  Address,
-  getAddress,
-  encodeFunctionData,
+  type Address,
   decodeAbiParameters,
-  sliceHex,
-  zeroHash,
+  encodeFunctionData,
+  erc1155Abi,
+  getAddress,
   type Hex,
+  sliceHex,
 } from "viem";
-import { erc1155Abi } from "viem";
 import { Balance } from "./balance";
-import { Voucher } from "..";
 
 export class Wallet {
   private accounts: Map<Address, Balance> = new Map();
 
   private getOrCreate(account: Address): Balance {
-    let balance = this.accounts.get(account);
+    const key = getAddress(account);
+    let balance = this.accounts.get(key);
     if (!balance) {
-      balance = new Balance(account);
-      this.accounts.set(account, balance);
+      balance = new Balance(key);
+      this.accounts.set(key, balance);
     }
     return balance;
   }
@@ -108,17 +112,24 @@ export class Wallet {
   }
 
   processSingleDeposit(payload: Hex): string {
-    const [erc1155, account, tokenId, amount] = this.parseSingleDeposit(payload);
-    return this.deposit(account, erc1155, tokenId, amount, "erc1155SingleDeposit");
+    const [erc1155, account, tokenId, amount] =
+      this.parseSingleDeposit(payload);
+    return this.deposit(
+      account,
+      erc1155,
+      tokenId,
+      amount,
+      "erc1155SingleDeposit",
+    );
   }
 
   processBatchDeposit(payload: Hex): string {
     const [erc1155, account, tokenIds, amounts] =
       this.parseBatchDeposit(payload);
     const balance = this.getOrCreate(account);
-    for (let i = 0; i < tokenIds.length; i++) {
-      balance.increase(erc1155, tokenIds[i]!, amounts[i]!);
-    }
+    tokenIds.forEach((tokenId, i) => {
+      balance.increase(erc1155, tokenId, amounts[i] ?? 0n);
+    });
     return JSON.stringify({
       type: "erc1155BatchDeposit",
       content: {
@@ -131,7 +142,7 @@ export class Wallet {
   }
 
   private parseSingleDeposit(
-    payload: Hex
+    payload: Hex,
   ): [Address, Address, bigint, bigint] {
     const erc1155 = getAddress(sliceHex(payload, 0, 20));
     const account = getAddress(sliceHex(payload, 20, 40));
@@ -141,7 +152,7 @@ export class Wallet {
   }
 
   private parseBatchDeposit(
-    payload: Hex
+    payload: Hex,
   ): [Address, Address, bigint[], bigint[]] {
     const erc1155 = getAddress(sliceHex(payload, 0, 20));
     const account = getAddress(sliceHex(payload, 20, 40));
@@ -152,7 +163,7 @@ export class Wallet {
         { type: "bytes" },
         { type: "bytes" },
       ],
-      sliceHex(payload, 40)
+      sliceHex(payload, 40),
     );
     return [erc1155, account, [...tokenIds], [...amounts]];
   }
@@ -162,7 +173,7 @@ export class Wallet {
     erc1155: Address,
     tokenId: bigint,
     amount: bigint,
-    noticeType: string
+    noticeType: string,
   ): string {
     this.getOrCreate(account).increase(erc1155, tokenId, amount);
     return JSON.stringify({
@@ -181,7 +192,7 @@ export class Wallet {
     to: Address,
     erc1155: Address,
     tokenId: bigint,
-    amount: bigint
+    amount: bigint,
   ): string {
     const fromBal = this.getOrCreate(from);
     const toBal = this.getOrCreate(to);
@@ -189,7 +200,13 @@ export class Wallet {
     toBal.increase(erc1155, tokenId, amount);
     return JSON.stringify({
       type: "erc1155SingleTransfer",
-      content: { from, to, erc1155, tokenId: tokenId.toString(), amount: amount.toString() },
+      content: {
+        from,
+        to,
+        erc1155,
+        tokenId: tokenId.toString(),
+        amount: amount.toString(),
+      },
     });
   }
 
@@ -198,17 +215,18 @@ export class Wallet {
     to: Address,
     erc1155: Address,
     tokenIds: bigint[],
-    amounts: bigint[]
+    amounts: bigint[],
   ): string {
     if (tokenIds.length !== amounts.length) {
       throw new Error("tokenIds and amounts length mismatch");
     }
     const fromBal = this.getOrCreate(from);
     const toBal = this.getOrCreate(to);
-    for (let i = 0; i < tokenIds.length; i++) {
-      fromBal.decrease(erc1155, tokenIds[i]!, amounts[i]!);
-      toBal.increase(erc1155, tokenIds[i]!, amounts[i]!);
-    }
+    tokenIds.forEach((tokenId, i) => {
+      const amount = amounts[i] ?? 0n;
+      fromBal.decrease(erc1155, tokenId, amount);
+      toBal.increase(erc1155, tokenId, amount);
+    });
     return JSON.stringify({
       type: "erc1155BatchTransfer",
       content: {
@@ -226,7 +244,7 @@ export class Wallet {
     account: Address,
     erc1155: Address,
     tokenId: bigint,
-    amount: bigint
+    amount: bigint,
   ): Voucher {
     this.getOrCreate(account).decrease(erc1155, tokenId, amount);
     const call = encodeFunctionData({
@@ -234,7 +252,7 @@ export class Wallet {
       functionName: "safeTransferFrom",
       args: [application, account, tokenId, amount, "0x"],
     });
-    return { destination: erc1155, payload: call, value: zeroHash };
+    return { destination: erc1155, value: 0n, payload: call };
   }
 
   withdrawBatch(
@@ -242,18 +260,21 @@ export class Wallet {
     account: Address,
     erc1155: Address,
     tokenIds: bigint[],
-    amounts: bigint[]
+    amounts: bigint[],
   ): Voucher {
-    const balance = this.getOrCreate(account);
-    for (let i = 0; i < tokenIds.length; i++) {
-      balance.decrease(erc1155, tokenIds[i]!, amounts[i]!);
+    if (tokenIds.length !== amounts.length) {
+      throw new Error("tokenIds and amounts length mismatch");
     }
+    const balance = this.getOrCreate(account);
+    tokenIds.forEach((tokenId, i) => {
+      balance.decrease(erc1155, tokenId, amounts[i] ?? 0n);
+    });
     const call = encodeFunctionData({
       abi: erc1155Abi,
       functionName: "safeBatchTransferFrom",
       args: [application, account, tokenIds, amounts, "0x"],
     });
-    return { destination: erc1155, payload: call, value: zeroHash };
+    return { destination: erc1155, value: 0n, payload: call };
   }
 }
 ```
@@ -263,7 +284,7 @@ export class Wallet {
 - **Single withdraw** encodes `safeTransferFrom(application, recipient, tokenId, amount, "0x")`.
 - **Batch withdraw** encodes `safeBatchTransferFrom(application, recipient, ids[], amounts[], "0x")`.
 
-Tokens deposited through the portals are held by your on-chain `Application` contract; the `from` address in the voucher must match `metadata.app_contract` from the advance. Set `value` to [`zeroHash`](https://viem.sh/docs/glossary/types#zeroHash) when no Ether is sent with the call.
+Tokens deposited through the portals are held by your on-chain `Application` contract; the `from` address in the voucher must match `request.appContract` from the advance request. The voucher's `value` is `0n` because no Ether is sent with the call.
 
 ## Using the wallet
 
@@ -274,188 +295,143 @@ Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy 
 :::
 
 ```typescript
-import createClient from "openapi-fetch";
-import type { components, paths } from "./schema";
+import {
+  type AdvanceRequest,
+  type InspectRequest,
+  Rollup,
+} from "@cartesi/rollup";
+import {
+  type Address,
+  bytesToHex,
+  getAddress,
+  isAddressEqual,
+  stringToHex,
+} from "viem";
 import { Wallet } from "./wallet/wallet";
-import { stringToHex, getAddress, Address, hexToString, toHex } from "viem";
 
-type AdvanceRequestData = components["schemas"]["Advance"];
-type InspectRequestData = components["schemas"]["Inspect"];
-type RequestHandlerResult = components["schemas"]["Finish"]["status"];
-type RollupRequest = components["schemas"]["RollupRequest"];
-type InspectRequestHandler = (data: InspectRequestData) => Promise<void>;
-type AdvanceRequestHandler = (
-  data: AdvanceRequestData
-) => Promise<RequestHandlerResult>;
+// Replace with the addresses from `cartesi address-book`
+const ERC1155_SINGLE_PORTAL: Address = "0xYOUR_ERC1155_SINGLE_PORTAL_ADDRESS";
+const ERC1155_BATCH_PORTAL: Address = "0xYOUR_ERC1155_BATCH_PORTAL_ADDRESS";
 
-export type Notice = components["schemas"]["Notice"];
-export type Report = components["schemas"]["Report"];
-export type Voucher = components["schemas"]["Voucher"];
-
+const rollup = new Rollup();
 const wallet = new Wallet();
-const ERC1155_SINGLE_PORTAL = `0xYOUR_ERC1155_SINGLE_PORTAL_ADDRESS`;
-const ERC1155_BATCH_PORTAL = `0xYOUR_ERC1155_BATCH_PORTAL_ADDRESS`;
-
-const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
 
 const parseBigIntArray = (values: string[] | string): bigint[] => {
   const list = Array.isArray(values) ? values : [values];
   return list.map((v) => BigInt(v));
 };
 
-const handleAdvance: AdvanceRequestHandler = async (data) => {
-  const application = data.metadata.app_contract;
-  const sender = data.metadata.msg_sender.toLowerCase();
-  const payload = data.payload;
+const handleAdvance = (request: AdvanceRequest): boolean => {
+  console.log(
+    `Received advance request from ${request.msgSender} with index ${request.index}`,
+  );
 
-  if (sender === ERC1155_SINGLE_PORTAL.toLowerCase()) {
-    const deposit = wallet.processSingleDeposit(payload);
-    await createNotice({ payload: stringToHex(deposit) });
-    return "accept";
+  if (isAddressEqual(request.msgSender, ERC1155_SINGLE_PORTAL)) {
+    const deposit = wallet.processSingleDeposit(bytesToHex(request.payload));
+    rollup.emitNotice(stringToHex(deposit));
+    return true;
   }
 
-  if (sender === ERC1155_BATCH_PORTAL.toLowerCase()) {
-    const deposit = wallet.processBatchDeposit(payload);
-    await createNotice({ payload: stringToHex(deposit) });
-    return "accept";
+  if (isAddressEqual(request.msgSender, ERC1155_BATCH_PORTAL)) {
+    const deposit = wallet.processBatchDeposit(bytesToHex(request.payload));
+    rollup.emitNotice(stringToHex(deposit));
+    return true;
   }
 
+  // Transfer or withdrawal: always on behalf of the account that sent the input
+  const owner = getAddress(request.msgSender);
   try {
-    const body = JSON.parse(hexToString(payload)) as Record<string, unknown>;
+    const body = JSON.parse(request.payload.toString("utf8"));
     const { operation, mode } = body;
-    const from = getAddress(body.from as Address);
-    const erc1155 = getAddress(body.erc1155 as Address);
-    const app = getAddress(application as Address);
+    const erc1155 = getAddress(body.erc1155);
 
     if (operation === "transfer" && mode === "single") {
       const notice = wallet.transferSingle(
-        from,
-        getAddress(body.to as Address),
+        owner,
+        getAddress(body.to),
         erc1155,
-        BigInt(body.tokenId as string),
-        BigInt(body.amount as string)
+        BigInt(body.tokenId),
+        BigInt(body.amount),
       );
-      await createNotice({ payload: stringToHex(notice) });
+      rollup.emitNotice(stringToHex(notice));
     } else if (operation === "transfer" && mode === "batch") {
       const notice = wallet.transferBatch(
-        from,
-        getAddress(body.to as Address),
+        owner,
+        getAddress(body.to),
         erc1155,
-        parseBigIntArray(body.tokenIds as string[]),
-        parseBigIntArray(body.amounts as string[])
+        parseBigIntArray(body.tokenIds),
+        parseBigIntArray(body.amounts),
       );
-      await createNotice({ payload: stringToHex(notice) });
+      rollup.emitNotice(stringToHex(notice));
     } else if (operation === "withdraw" && mode === "single") {
+      // The application contract holds the deposited tokens, so it is the
+      // `from` address of the transfer call in the voucher
       const voucher = wallet.withdrawSingle(
-        app,
-        from,
+        request.appContract,
+        owner,
         erc1155,
-        BigInt(body.tokenId as string),
-        BigInt(body.amount as string)
+        BigInt(body.tokenId),
+        BigInt(body.amount),
       );
-      await createVoucher(voucher);
+      rollup.emitVoucher(voucher);
     } else if (operation === "withdraw" && mode === "batch") {
       const voucher = wallet.withdrawBatch(
-        app,
-        from,
+        request.appContract,
+        owner,
         erc1155,
-        parseBigIntArray(body.tokenIds as string[]),
-        parseBigIntArray(body.amounts as string[])
+        parseBigIntArray(body.tokenIds),
+        parseBigIntArray(body.amounts),
       );
-      await createVoucher(voucher);
+      rollup.emitVoucher(voucher);
+    } else {
+      throw new Error(`Unknown operation ${operation} with mode ${mode}`);
     }
+    return true;
   } catch (error) {
     console.error("Error processing payload:", error);
+    rollup.emitReport(stringToHex(`Error processing payload: ${error}`));
+    return false;
   }
-
-  return "accept";
 };
 
-const handleInspect: InspectRequestHandler = async (data) => {
+const handleInspect = (request: InspectRequest): void => {
   try {
-    const query = hexToString(data.payload);
+    const query = request.payload.toString("utf8");
     const [kind, address, erc1155, tokenId] = query.split("/");
-    if (kind !== "erc1155") {
-      throw new Error(`Expected inspect kind erc1155, got ${kind}`);
+    if (kind !== "erc1155" || address === undefined || erc1155 === undefined) {
+      throw new Error("expected erc1155/userAddress/contractAddress[/tokenId]");
     }
     if (tokenId !== undefined) {
       const amount = wallet.getBalance(
-        getAddress(address as Address),
-        getAddress(erc1155 as Address),
-        BigInt(tokenId)
+        getAddress(address),
+        getAddress(erc1155),
+        BigInt(tokenId),
       );
-      await createReport({
-        payload: stringToHex(
-          `Balance of ${erc1155} id ${tokenId} for ${address} is ${amount}`
+      rollup.emitReport(
+        stringToHex(
+          `Balance of ${erc1155} id ${tokenId} for ${address} is ${amount}`,
         ),
-      });
+      );
     } else {
       const summary = wallet.listBalances(
-        getAddress(address as Address),
-        getAddress(erc1155 as Address)
+        getAddress(address),
+        getAddress(erc1155),
       );
-      await createReport({ payload: toHex(JSON.stringify(summary)) });
+      rollup.emitReport(stringToHex(JSON.stringify(summary)));
     }
   } catch (error) {
-    await createReport({
-      payload: stringToHex(`Error processing inspect payload: ${error}`),
-    });
+    rollup.emitReport(
+      stringToHex(`Error processing inspect payload: ${error}`),
+    );
   }
 };
 
-const createNotice = async (payload: Notice) => {
-  await fetch(`${rollupServer}/notice`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-};
-
-const createVoucher = async (payload: Voucher) => {
-  await fetch(`${rollupServer}/voucher`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-};
-
-const createReport = async (payload: Report) => {
-  await fetch(`${rollupServer}/report`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-};
-
-const main = async () => {
-  const { POST } = createClient<paths>({ baseUrl: rollupServer });
-  let status: RequestHandlerResult = "accept";
-  while (true) {
-    const { data, response } = await POST("/finish", {
-      body: { status },
-      parseAs: "text",
-    });
-    if (response.status === 200 && data) {
-      const request = JSON.parse(data) as RollupRequest;
-      switch (request.request_type) {
-        case "advance_state":
-          status = await handleAdvance(request.data as AdvanceRequestData);
-          break;
-        case "inspect_state":
-          await handleInspect(request.data as InspectRequestData);
-          break;
-      }
-    } else if (response.status === 202) {
-      console.log(await response.text());
-    }
-  }
-};
-
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+await rollup.run({ advance: handleAdvance, inspect: handleInspect });
 ```
+
+This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), which the template already depends on: `rollup.run()` passes each request to `handleAdvance` or `handleInspect`, with the payload as a Node.js `Buffer`, and an advance handler rejects the input when it returns `false`. When an operation fails, for example because of an insufficient balance, the application emits the error as a report and rejects the input.
+
+The account that sends the input is the owner of every transfer and withdrawal: the wallet always debits `request.msgSender`, and the payloads have no `from` field. Anyone can write any address in a JSON payload, but nobody can send an input on behalf of another account, so reading the owner from the payload would let anyone move anyone's tokens.
 
 User input payloads use `mode`: `"single"` or `"batch"`, plus `operation`: `"transfer"` or `"withdraw"`.
 
@@ -466,7 +442,6 @@ User input payloads use `mode`: `"single"` or `"batch"`, plus `operation`: `"tra
   "operation": "transfer",
   "mode": "single",
   "erc1155": "0xTokenAddress",
-  "from": "0xFromAddress",
   "to": "0xToAddress",
   "tokenId": "1",
   "amount": "10"
@@ -480,7 +455,6 @@ User input payloads use `mode`: `"single"` or `"batch"`, plus `operation`: `"tra
   "operation": "transfer",
   "mode": "batch",
   "erc1155": "0xTokenAddress",
-  "from": "0xFromAddress",
   "to": "0xToAddress",
   "tokenIds": ["1", "2"],
   "amounts": ["10", "20"]
@@ -494,7 +468,6 @@ User input payloads use `mode`: `"single"` or `"batch"`, plus `operation`: `"tra
   "operation": "withdraw",
   "mode": "single",
   "erc1155": "0xTokenAddress",
-  "from": "0xFromAddress",
   "tokenId": "1",
   "amount": "10"
 }
@@ -507,7 +480,6 @@ User input payloads use `mode`: `"single"` or `"batch"`, plus `operation`: `"tra
   "operation": "withdraw",
   "mode": "batch",
   "erc1155": "0xTokenAddress",
-  "from": "0xFromAddress",
   "tokenIds": ["1", "2"],
   "amounts": ["10", "20"]
 }
@@ -621,19 +593,19 @@ Non-interactive examples (from project root):
 
 ```bash
 cartesi send --encoding string \
-  '{"operation":"transfer","mode":"single","erc1155":"0xTokenAddress","from":"0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f","to":"0x70997970C51812dc3A010C7d01b50e0d17dc79C8","tokenId":"1","amount":"5"}' \
+  '{"operation":"transfer","mode":"single","erc1155":"0xTokenAddress","to":"0x70997970C51812dc3A010C7d01b50e0d17dc79C8","tokenId":"1","amount":"5"}' \
   --project-name erc-1155-token-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```
 
 ```bash
 cartesi send --encoding string \
-  '{"operation":"withdraw","mode":"batch","erc1155":"0xTokenAddress","from":"0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f","tokenIds":["1","2"],"amounts":["5","10"]}' \
+  '{"operation":"withdraw","mode":"batch","erc1155":"0xTokenAddress","tokenIds":["1","2"],"amounts":["5","10"]}' \
   --project-name erc-1155-token-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```
 
-Replace `0xTokenAddress` with `TestMultiToken` from `cartesi address-book`.
+Replace `0xTokenAddress` with `TestMultiToken` from `cartesi address-book`. Both commands send from devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`), the account that made the deposits above, so the wallet debits that account. If you pass `--from` to send from another account, the application debits that account instead, and rejects the input with a report when it does not hold the tokens in the wallet.
 
 ### Using the explorer
 
