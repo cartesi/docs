@@ -44,7 +44,7 @@ Whatever builder you use, each record must end with the owner's address as its l
 
 The accounts drive is a standard Cartesi Machine drive, declared in your project's `cartesi.toml` alongside every other drive. The [Advanced configuration](../../development/advanced-configuration.md#drives) guide covers how drives are defined and built in general; the accounts drive is distinctive only in that it is left raw, so the guest can write balance records into it directly.
 
-Declare it next to the root drive as an empty, raw, unmounted flash drive. `cartesi build` always stores the machine with its final hash, which on-chain deployment requires, so there is no setting to enable for it (older `cartesi.toml` files may still have a `final_hash` key; remove it, since Cartesi CLI 2.0.0-alpha.41 rejects unknown keys):
+Declare it next to the root drive as an empty, raw, unmounted flash drive. `cartesi build` always stores the machine with its final hash, which on-chain deployment requires, so there is no setting to enable for it (older `cartesi.toml` files may still have a `final_hash` key; remove it, since `cartesi build` rejects unknown keys from Cartesi CLI 2.0.0-alpha.41 on):
 
 ```toml
 # SDK image for rollups-node v2.0.0-alpha.14 (Cartesi Machine emulator 0.22.0).

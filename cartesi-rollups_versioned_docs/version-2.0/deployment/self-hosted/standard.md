@@ -93,7 +93,7 @@ Ensure to follow best practices when handling private keys during local developm
 
    This command compiles your application into RISC-V architecture and creates a Cartesi machine snapshot locally.
 
-   The node can load the snapshot only if it was built with the emulator line of the node release: 0.22.x for rollups-node v2.0.0-alpha.14. The SDK image that `cartesi build` runs sets the emulator version. You can choose it with the top-level `sdk` key of `cartesi.toml`; the `cartesi/sdk:0.12.0-alpha.45` image ships emulator 0.22.0. If the node cannot load the snapshot, it marks the application `FAILED` (see [Operating the node](#operating-the-node)).
+   The node can load the snapshot only if it was built with the emulator line of the node release: 0.22.x for rollups-node v2.0.0-alpha.14. The SDK image that `cartesi build` runs sets the emulator version: Cartesi CLI 2.0.0-alpha.42 uses `cartesi/sdk:0.12.0-alpha.45`, which ships emulator 0.22.0, by default. You can pin it with the top-level `sdk` key of `cartesi.toml`. If the node cannot load the snapshot, it marks the application `FAILED` (see [Operating the node](#operating-the-node)).
 
 3. **Run the Cartesi Rollups Node with the application's initial snapshot attached:**
 

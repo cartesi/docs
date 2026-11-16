@@ -102,7 +102,7 @@ jobs:
           node-version: 24.14.0
 
       - name: Install Cartesi CLI
-        run: npm install -g @cartesi/cli@2.0.0-alpha.41
+        run: npm install -g @cartesi/cli@2.0.0-alpha.42
 
       - name: Log in to GHCR
         if: startsWith(github.ref, 'refs/tags/')
@@ -176,7 +176,7 @@ The workflow is triggered by:
 
 The build job sets up the environment with Docker Buildx, QEMU, and Node.js, installs the Cartesi CLI globally, and uses `cartesi build` to create the Cartesi machine snapshot. It then compresses the snapshot as `snapshot.tar.gz`, generates a SHA256 checksum for verification, and uploads the artifacts for the release job.
 
-Pin the Cartesi CLI version, and the SDK image through the `sdk` key of `cartesi.toml`, to versions that build with the emulator line of the node release that will run the application (see [Snapshot requirements](#snapshot-requirements)). For rollups-node v2.0.0-alpha.14, the workflow above installs Cartesi CLI 2.0.0-alpha.41, and the project's `cartesi.toml` must set `sdk = "cartesi/sdk:0.12.0-alpha.45"`: the CLI's default SDK builds with emulator 0.21.0, which that node cannot load. The SHA256 checksum only protects the download; validators still need to compare the machine's root hash with the application's template hash.
+Pin the Cartesi CLI version, and the SDK image through the `sdk` key of `cartesi.toml`, to versions that build with the emulator line of the node release that will run the application (see [Snapshot requirements](#snapshot-requirements)). For rollups-node v2.0.0-alpha.14, the workflow above installs Cartesi CLI 2.0.0-alpha.42, whose default SDK image, `cartesi/sdk:0.12.0-alpha.45`, builds with emulator 0.22.0. Pin `sdk = "cartesi/sdk:0.12.0-alpha.45"` in the project's `cartesi.toml` to keep the snapshot reproducible if the CLI is upgraded. The SHA256 checksum only protects the download; validators still need to compare the machine's root hash with the application's template hash.
 
 ### Release Job
 
