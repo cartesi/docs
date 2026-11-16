@@ -42,7 +42,7 @@ format = "ext2"
 
 This means that by default, the CLI will:
 
-1. Use the default SDK version of your CLI release (for example, `cartesi/sdk:0.12.0-alpha.44` for Cartesi CLI 2.0.0-alpha.41). To build for rollups-node v2.0.0-alpha.14, set `sdk = "cartesi/sdk:0.12.0-alpha.45"` instead (see [SDK Version](#sdk-version)).
+1. Use the default SDK version of your CLI release (for example, `cartesi/sdk:0.12.0-alpha.45` for Cartesi CLI 2.0.0-alpha.42, which ships rollups-node v2.0.0-alpha.14 and Cartesi Machine emulator 0.22.0).
 2. Give your machine 128 megabytes of RAM.
 3. Build your root drive from a `Dockerfile` in your project directory.
 4. Pull environment variables and the working directory from that Docker image.
@@ -60,13 +60,11 @@ The `sdk` field tells the CLI which version of the Cartesi SDK image to use when
 
 Think of it as pinning a version of your build environment. If you are working on a team, setting this explicitly ensures everyone builds with the same SDK, avoiding the classic "it works on my machine" problem. Each SDK is tied to a Cartesi CLI version, hence it's important you have a compatible CLI installed for the sdk version you specify. When you omit the SDK field the CLI uses its own built in default version.
 
-The SDK image also decides which Cartesi Machine emulator builds your machine, and a node can only load machines built with its own emulator line. These docs target rollups-node v2.0.0-alpha.14 (emulator 0.22.0), so set:
+The SDK image also decides which Cartesi Machine emulator builds your machine, and a node can only load machines built with its own emulator line. These docs target rollups-node v2.0.0-alpha.14 (emulator 0.22.0), which is what the default SDK of Cartesi CLI 2.0.0-alpha.42 builds for. To keep the build reproducible when the CLI is upgraded, pin it:
 
 ```toml
 sdk = "cartesi/sdk:0.12.0-alpha.45"
 ```
-
-The default of Cartesi CLI 2.0.0-alpha.41, `cartesi/sdk:0.12.0-alpha.44`, ships rollups-node v2.0.0-alpha.13 and emulator 0.21.0.
 
 **When to change this:** When there's a new SDK version and you want to adopt it, or when you need to stay on a specific version for compatibility.
 
