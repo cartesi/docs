@@ -17,7 +17,7 @@ In addition, the CLI also deploys **test token contracts** by default:
 - ERC1155 (`TestMultiToken`)
 - ERC20 with 6 decimals, similar to USDC (`TestUsdc`)
 
-These contracts have no owner, and their mint functions are public: any account can mint test tokens for itself or for another account, without the need for manual deployments. The CLI uses the first anvil account, `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`, as its default account, and the samples on this page sign transactions with its private key. More details about the different addresses provided by anvil can be found on the [Anvil official Docs](https://getfoundry.sh/anvil/overview#getting-started).
+These contracts have no owner, and their mint functions are public: any account can mint test tokens for itself or for another account, without the need for manual deployments. `cartesi send` and `cartesi deposit` send from devnet account 8, `0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`, by default, and the samples on this page sign transactions with its private key. Do not use the first anvil account (`0xf39F...2266`) for your own transactions: the local node signs its claims with it, and transactions that compete with the node's for the same nonce can be dropped. More details about the different addresses provided by anvil can be found on the [Anvil official Docs](https://getfoundry.sh/anvil/overview#getting-started).
 
 This tutorial will guide you through **using these default tokens** effectively while developing in a local devnet environment.
 
@@ -45,7 +45,7 @@ The following table lists the default test tokens deployed by the CLI:
 |               | Token Decimal                             | 6                                             |
 |               | Token Address                             | 0x7a051EDffC0884cd88d4a377F4C87BE074CF6c81    |
 
-These are the addresses deployed by Cartesi CLI 2.0.0-alpha.41. You can view the token and portal addresses of your CLI version at any time by running the following command from your project directory:
+These are the addresses deployed by Cartesi CLI 2.0.0-alpha.42. You can view the token and portal addresses of your CLI version at any time by running the following command from your project directory:
 
 ```bash
 cartesi address-book
@@ -85,7 +85,7 @@ cast send <testTokenContract address> "mint(uint256)" <token amount> --rpc-url <
 
 ```bash
 TEST_TOKEN=$(cartesi address-book TestToken)
-cast send $TEST_TOKEN "mint(uint256)" 1000000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_TOKEN "mint(uint256)" 1000000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -93,7 +93,7 @@ cast send $TEST_TOKEN "mint(uint256)" 1000000000000000000000 --rpc-url http://12
 
 </Tabs>
 
-The above command mints 1000 FUN to the default anvil address `0xf39Fd6...92266`, the address of the private key that signs the transaction. To mint tokens to another wallet, call `mint(address,uint256)` with the receiver's address instead, for example `cast send $TEST_TOKEN "mint(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 1000000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`.
+The above command mints 1000 FUN to devnet account 8, `0x23618e...21E8f`, the address of the private key that signs the transaction. To mint tokens to another wallet, call `mint(address,uint256)` with the receiver's address instead, for example `cast send $TEST_TOKEN "mint(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 1000000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97`.
 
 ### Transferring the ERC20 Test Token to other wallets
 
@@ -120,7 +120,7 @@ cast send <testTokenContract address> "transfer(address,uint256)" <receivers add
 
 ```bash
 TEST_TOKEN=$(cartesi address-book TestToken)
-cast send $TEST_TOKEN "transfer(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 202000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_TOKEN "transfer(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 202000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -128,7 +128,7 @@ cast send $TEST_TOKEN "transfer(address,uint256)" 0x70997970C51812dc3A010C7d01b5
 
 </Tabs>
 
-The above command calls the `transfer(address,uint256)` in the `TestToken` contract `0x86EA...B852`. The command passes the following argument to the function: `receivers address= 0x709979...c79C8`and `amount= 202000000000000000000` (202 FUN). While you can always change the amount argument to match what you intend to deposit to your application, the private key `0xac0974b...f2ff80` must belong to the wallet that holds the tokens, here the default anvil address that minted them in the previous step.
+The above command calls the `transfer(address,uint256)` in the `TestToken` contract `0x86EA...B852`. The command passes the following argument to the function: `receivers address= 0x709979...c79C8`and `amount= 202000000000000000000` (202 FUN). While you can always change the amount argument to match what you intend to deposit to your application, the private key `0xdbda182...a67b97` must belong to the wallet that holds the tokens, here devnet account 8, which minted them in the previous step.
 
 ### Depositing the ERC20 Test Token to your application
 
@@ -162,7 +162,7 @@ For a successful deposit process you should show logs similar to this:
 ✔ Deposited 202 FUN to 0x9ec96ddfacdb3144d729ae433c05f1ef774aafab
 ```
 
-The last address is the address of your application. You can also pass the amount and the token as arguments and skip the prompts, for example `cartesi deposit erc20 202 --token $(cartesi address-book TestToken)`. The CLI deposits from the default anvil address; use the `--from <address>` option to deposit from another anvil address. If that address does not hold enough tokens, the command stops with `✖ Insufficient balance`, so mint tokens first as shown above.
+The last address is the address of your application. You can also pass the amount and the token as arguments and skip the prompts, for example `cartesi deposit erc20 202 --token $(cartesi address-book TestToken)`. The CLI deposits from devnet account 8 by default; use the `--from <address>` option to deposit from another devnet account. If that address does not hold enough tokens, the command stops with `✖ Insufficient balance`, so mint tokens first as shown above.
 
 #### Using Cast
 
@@ -188,7 +188,7 @@ cast send <testsTokenContract address> "approve(address,uint256)" <Erc20Portal a
 ```bash
 TEST_TOKEN=$(cartesi address-book TestToken)
 ERC20_PORTAL=$(cartesi address-book Erc20Portal)
-cast send $TEST_TOKEN "approve(address,uint256)" $ERC20_PORTAL 300000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_TOKEN "approve(address,uint256)" $ERC20_PORTAL 300000000000000000000 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -196,7 +196,7 @@ cast send $TEST_TOKEN "approve(address,uint256)" $ERC20_PORTAL 30000000000000000
 
 </Tabs>
 
-The snippet above is an example of how to approve the deposit of 300 test tokens (`300000000000000000000` in the smallest unit), `http://127.0.0.1:6751/anvil` is the anvil_rpc to the local devnet where the application contract is deployed, finally the private_key `0xac0974bec39a17...e784d7bf4f2ff80` is the private key of the default anvil address, which holds the tokens minted earlier.
+The snippet above is an example of how to approve the deposit of 300 test tokens (`300000000000000000000` in the smallest unit), `http://127.0.0.1:6751/anvil` is the anvil_rpc to the local devnet where the application contract is deployed, finally the private_key `0xdbda1821b805...5d620ea67b97` is the private key of devnet account 8, which holds the tokens minted earlier.
 
 - Call the `depositErc20Tokens` function in the `Erc20Portal` contract, passing in the address of your contract along with the token address and amount of tokens deposited
 
@@ -217,7 +217,7 @@ cast send <Erc20Portal address> "depositErc20Tokens(address,address,uint256,byte
 
 ```bash
 APP_ADDRESS=$(cartesi address-book Application)
-cast send $ERC20_PORTAL "depositErc20Tokens(address,address,uint256,bytes)" $TEST_TOKEN $APP_ADDRESS 300000000000000000000 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $ERC20_PORTAL "depositErc20Tokens(address,address,uint256,bytes)" $TEST_TOKEN $APP_ADDRESS 300000000000000000000 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -633,9 +633,9 @@ Sample Log
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 495 "-" "node" 0.032192
 Received finish status 200
-Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0x9ec96ddfacdb3144d729ae433c05f1ef774aafab","msg_sender":"0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419","block_number":823,"block_timestamp":1757042397,"prev_randao":"0xf1db9cff537dd607f721ef4aee7d2b516d4adb7fbb0d1c707b72344527e6893e","input_index":0},"payload":"0x86ea17052c8e335ad830b54ef566274eab46b852f39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000c93a592cfb2a00000"}
+Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0x9ec96ddfacdb3144d729ae433c05f1ef774aafab","msg_sender":"0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419","block_number":823,"block_timestamp":1757042397,"prev_randao":"0xf1db9cff537dd607f721ef4aee7d2b516d4adb7fbb0d1c707b72344527e6893e","input_index":0},"payload":"0x86ea17052c8e335ad830b54ef566274eab46b85223618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000c93a592cfb2a00000"}
 Handling portal deposit
-Token: 0x86EA17052C8e335Ad830B54EF566274EAB46B852, Depositor: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, Amount: 232000000000000000000
+Token: 0x86EA17052C8e335Ad830B54EF566274EAB46B852, Depositor: 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f, Amount: 232000000000000000000
 ```
 
 ## ERC721 Test Tokens
@@ -665,7 +665,7 @@ cast send <testNFT address> "mint(address,uint256)" <receivers address> <token i
 
 ```bash
 TEST_NFT=$(cartesi address-book TestNFT)
-cast send $TEST_NFT "mint(address,uint256)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 1 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_NFT "mint(address,uint256)" 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f 1 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -673,7 +673,7 @@ cast send $TEST_NFT "mint(address,uint256)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffF
 
 </Tabs>
 
-The above example calls the `mint` function in the `TestNFT` contract `0x0761b8...Ddc61bB` specifying the receivers address `0xf39Fd6...2266` and the token id `1`. The receivers address and token ID specified above can be changed to match your test case, and any funded account can sign the transaction. The next sections also use the token IDs `2` and `3`; mint them the same way before you follow along.
+The above example calls the `mint` function in the `TestNFT` contract `0x0761b8...Ddc61bB` specifying the receivers address `0x23618e...1E8f` and the token id `1`. The receivers address and token ID specified above can be changed to match your test case, and any funded account can sign the transaction. The next sections also use the token IDs `2` and `3`; mint them the same way before you follow along.
 
 ### Transferring The ERC721 Test Tokens
 
@@ -696,7 +696,7 @@ cast send <testNFT address> "transferFrom(address,address,uint256)" <senders add
 
 ```bash
 TEST_NFT=$(cartesi address-book TestNFT)
-cast send $TEST_NFT "transferFrom(address,address,uint256)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 1 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_NFT "transferFrom(address,address,uint256)" 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 1 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -704,7 +704,7 @@ cast send $TEST_NFT "transferFrom(address,address,uint256)" 0xf39Fd6e51aad88F6F4
 
 </Tabs>
 
-This command utilizes cast to call the `transferFrom` function in the `TestNFT` contract `0x0761b8...Ddc61bB`. The function takes the following arguments: senders `address=0xf39Fd6...92266`, `receivers address = 0x709979...dc79C8` and `token_id = 1`. While the function arguments passed can be modified, it's important that the senders address is the address of the wallet which owns the token with the token ID specified, and also that the private key passed is correct private key for the senders' wallet address
+This command utilizes cast to call the `transferFrom` function in the `TestNFT` contract `0x0761b8...Ddc61bB`. The function takes the following arguments: senders `address=0x23618e...21E8f`, `receivers address = 0x709979...dc79C8` and `token_id = 1`. While the function arguments passed can be modified, it's important that the senders address is the address of the wallet which owns the token with the token ID specified, and also that the private key passed is correct private key for the senders' wallet address
 
 ### Depositing the ERC721 Test Tokens
 
@@ -762,7 +762,7 @@ cast send <testNFT address> "setApprovalForAll(address,bool)" <Erc721Portal addr
 ```bash
 TEST_NFT=$(cartesi address-book TestNFT)
 ERC721_PORTAL=$(cartesi address-book Erc721Portal)
-cast send $TEST_NFT "setApprovalForAll(address,bool)" $ERC721_PORTAL true --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_NFT "setApprovalForAll(address,bool)" $ERC721_PORTAL true --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -791,7 +791,7 @@ cast send <Erc721Portal address> "depositErc721Token(address,address,uint256,byt
 
 ```bash
 APP_ADDRESS=$(cartesi address-book Application)
-cast send $ERC721_PORTAL "depositErc721Token(address,address,uint256,bytes,bytes)" $TEST_NFT $APP_ADDRESS 3 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $ERC721_PORTAL "depositErc721Token(address,address,uint256,bytes,bytes)" $TEST_NFT $APP_ADDRESS 3 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -1185,9 +1185,9 @@ Sample Log
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 753 "-" "node" 0.032320
 Received finish status 200
-Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0x9ec96ddfacdb3144d729ae433c05f1ef774aafab","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":24284,"block_timestamp":1757089398,"prev_randao":"0x1b76a6830d8a66d5908c517264984bde0ae7ecb9827d8ab4530066ce2a8f1ad0","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bbf39fd6e51aad88f6f4ce6ab8827279cfffb92266000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0x9ec96ddfacdb3144d729ae433c05f1ef774aafab","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":24284,"block_timestamp":1757089398,"prev_randao":"0x1b76a6830d8a66d5908c517264984bde0ae7ecb9827d8ab4530066ce2a8f1ad0","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
 Handling portal deposit
-Token: 0x0761b8e3aB06F458632974393C48765E6Ddc61bB, Depositor: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266, Token_id: 11
+Token: 0x0761b8e3aB06F458632974393C48765E6Ddc61bB, Depositor: 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f, Token_id: 11
 ```
 
 ## ERC1155 Tokens
@@ -1217,7 +1217,7 @@ cast send <TestMultiToken contract address> "mint(address,uint256,uint256)" <rec
 
 ```bash
 TEST_MULTI_TOKEN=$(cartesi address-book TestMultiToken)
-cast send $TEST_MULTI_TOKEN "mint(address,uint256,uint256)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 5 10 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_MULTI_TOKEN "mint(address,uint256,uint256)" 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f 5 10 --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -1248,7 +1248,7 @@ cast send <TestMultiToken contract address> "safeTransferFrom(address,address,ui
 
 ```bash
 TEST_MULTI_TOKEN=$(cartesi address-book TestMultiToken)
-cast send $TEST_MULTI_TOKEN "safeTransferFrom(address,address,uint256,uint256,bytes)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 5 1 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_MULTI_TOKEN "safeTransferFrom(address,address,uint256,uint256,bytes)" 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 5 1 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -1311,7 +1311,7 @@ cast send <TestMultiToken contract address> "setApprovalForAll(address,bool)" <E
 ```bash
 TEST_MULTI_TOKEN=$(cartesi address-book TestMultiToken)
 ERC1155_SINGLE_PORTAL=$(cartesi address-book Erc1155SinglePortal)
-cast send $TEST_MULTI_TOKEN "setApprovalForAll(address,bool)" $ERC1155_SINGLE_PORTAL true --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $TEST_MULTI_TOKEN "setApprovalForAll(address,bool)" $ERC1155_SINGLE_PORTAL true --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -1338,7 +1338,7 @@ cast send <Erc1155SinglePortal Contract address> "depositSingleErc1155Token(addr
 
 ```bash
 APP_ADDRESS=$(cartesi address-book Application)
-cast send $ERC1155_SINGLE_PORTAL "depositSingleErc1155Token(address,address,uint256,uint256,bytes,bytes)" $TEST_MULTI_TOKEN $APP_ADDRESS 5 1 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+cast send $ERC1155_SINGLE_PORTAL "depositSingleErc1155Token(address,address,uint256,uint256,bytes,bytes)" $TEST_MULTI_TOKEN $APP_ADDRESS 5 1 0x 0x --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -1730,7 +1730,7 @@ Sample Log
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 814 "-" "python-requests/2.31.0" 0.020416
 INFO:__main__:Received finish status 200
-INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9ec96ddfacdb3144d729ae433c05f1ef774aafab', 'msg_sender': '0x585f56351a66f131e176a345662215c772f80451', 'block_number': 21, 'block_timestamp': 1757624870, 'prev_randao': '0x45c3ecf672b0c35d25c822ccb22f145f633feec5451438436f57fd310366df44', 'input_index': 0}, 'payload': '0xaae893d28b7645b5e09bc16688dddd451ac89c19f39fd6e51aad88f6f4ce6ab8827279cfffb92266000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'}
-INFO:__main__:Token: 0xaae893d28b7645b5e09bc16688dddd451ac89c19, Depositor: 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266, token ID: 1 token_amount: 1
+INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9ec96ddfacdb3144d729ae433c05f1ef774aafab', 'msg_sender': '0x585f56351a66f131e176a345662215c772f80451', 'block_number': 21, 'block_timestamp': 1757624870, 'prev_randao': '0x45c3ecf672b0c35d25c822ccb22f145f633feec5451438436f57fd310366df44', 'input_index': 0}, 'payload': '0xaae893d28b7645b5e09bc16688dddd451ac89c1923618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'}
+INFO:__main__:Token: 0xaae893d28b7645b5e09bc16688dddd451ac89c19, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, token ID: 1 token_amount: 1
 INFO:__main__:Sending finish
 ```

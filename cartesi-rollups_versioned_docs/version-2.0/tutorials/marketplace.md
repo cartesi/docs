@@ -341,12 +341,12 @@ Since our app uses the test ERC-721 and ERC-20 contracts automatically deployed 
 ```bash
 cast send 0x0761b8e3aB06F458632974393C48765E6Ddc61bB \
   "mint(address,uint256)" \
-  0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 1 \
+  0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f 1 \
   --rpc-url http://127.0.0.1:6751/anvil \
-  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+  --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
-This command calls the public `mint` function in the `TestNFT` contract deployed by the CLI, minting token `ID 1` to the address `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`.
+This command calls the public `mint` function in the `TestNFT` contract deployed by the CLI, minting token `ID 1` to the address `0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`.
 
 - Grant approval to the ERC721-Portal:
 
@@ -357,7 +357,7 @@ cast send 0x0761b8e3aB06F458632974393C48765E6Ddc61bB \
   "setApprovalForAll(address,bool)" \
   0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E true \
   --rpc-url http://127.0.0.1:6751/anvil \
-  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+  --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 ### 2. Deposit NFT with ID 1 to the Marketplace [advance request]
@@ -378,7 +378,7 @@ Once the deposit succeeds, the terminal running your application should show log
 INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 751 "-" "-" 0.018688
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":675,"block_timestamp":1762948794,"prev_randao":"0x3d144a3d5bb3125c92a230e7597e04e82eb5d5acbea185db2b1eadda3530d5c7","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bbf39fd6e51aad88f6f4ce6ab8827279cfffb9226600000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":675,"block_timestamp":1762948794,"prev_randao":"0x3d144a3d5bb3125c92a230e7597e04e82eb5d5acbea185db2b1eadda3530d5c7","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
 Token deposit and listing processed successfully
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /notice HTTP/1.1" 201 11 "-" "-" 0.001088
 Sending finish
@@ -412,7 +412,7 @@ With the NFT successfully listed for sale, it's time to attempt to purchase this
 ```bash
 cast send 0x86EA17052C8e335Ad830B54EF566274EAB46B852 \
 "mint(address,uint256)" 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 100000000000000000000 \
---private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
+--private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97 \
 --rpc-url http://127.0.0.1:6751/anvil
 ```
 

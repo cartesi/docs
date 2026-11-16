@@ -474,7 +474,7 @@ cast send "$TOKEN" \
   "$ERC20_PORTAL" \
   1000000000000000000 \
   --rpc-url http://127.0.0.1:6751/anvil \
-  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+  --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 
 cartesi deposit erc20 100000000000000000 \
   --token "$TOKEN" \
@@ -484,12 +484,12 @@ cartesi deposit erc20 100000000000000000 \
 
 ### Balance checks (used in Inspect requests)
 
-Inspect payloads use the form `userAddress/erc20TokenAddress` as a UTF-8 string. The node passes the request body to your application unchanged as the inspect payload, so send that string as the body. Example for user `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` and token `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
+Inspect payloads use the form `userAddress/erc20TokenAddress` as a UTF-8 string. The node passes the request body to your application unchanged as the inspect payload, so send that string as the body. Example for user `0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f` and token `0x5FbDB2315678afecb367f032d93F642f64180aa3`:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/erc-20-token-wallet \
   -H "Content-Type: text/plain" \
-  -d '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/0x86EA17052C8e335Ad830B54EF566274EAB46B852'
+  -d '0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f/0x86EA17052C8e335Ad830B54EF566274EAB46B852'
 ```
 
 Replace the inspect path if your project name is not `erc-20-token-wallet` (see the URL printed by `cartesi run`). Replace the addresses in the body if you use different ones.

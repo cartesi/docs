@@ -353,4 +353,4 @@ Response:
 Convert UTF-8 string to bytes
 ```
 
-The `cartesi deposit` command by default uses the default anvil account, and also the default test erc20 and erc721 contract to interact with your application, but this can all be modified to fit your purpose better.
+The `cartesi deposit` command by default sends from devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`; pass `--from` to choose another account), and uses the default test erc20 and erc721 contract to interact with your application, but this can all be modified to fit your purpose better.
