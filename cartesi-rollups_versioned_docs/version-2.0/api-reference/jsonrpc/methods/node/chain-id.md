@@ -3,8 +3,6 @@ id: node-chain-id
 title: Get Chain ID
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # Get Chain ID
 
 :::caution Deprecated

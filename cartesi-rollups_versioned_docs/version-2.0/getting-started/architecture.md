@@ -14,8 +14,6 @@ resources:
     title: Dave
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 The Cartesi Rollups framework is designed to enable complex computations off-chain while maintaining the security guarantees of blockchain technology. It consists of two primary components: **the on-chain base layer** (such as Ethereum), where the dApp contract is deployed, and **the off-chain execution layer**, where the dApp's backend logic operates.
 
 A decentralized application (dApp) built on Cartesi incorporates several key elements:
@@ -142,7 +140,7 @@ The `inspect-state` process allows for querying the application backend without 
 
 - The Cartesi Machine processes the input and generates a [report](../api-reference/backend/reports.md).
 
-- The node returns this report to the frontend via a [REST API](../api-reference/backend/introduction.md/#advance-and-inspect).
+- The node returns this report to the frontend via a [REST API](../api-reference/backend/introduction.md#advance-and-inspect).
 
 :::note Inspect requests
 It's important to note that `inspect-state` inputs do not produce vouchers or notices. The node handles inspect requests concurrently, each on a separate copy of the application's machine, up to a per-application limit set by the `max_concurrent_inspects` execution parameter (10 by default). Requests above that limit are rejected with HTTP 503 instead of waiting.

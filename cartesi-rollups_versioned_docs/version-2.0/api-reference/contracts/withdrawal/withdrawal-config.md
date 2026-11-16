@@ -40,7 +40,7 @@ Let `a = log2LeavesPerAccount`, `b = log2MaxNumOfAccounts`, and `c = accountsDri
 - **starts** at machine memory address `c * 2^(a + b + 5)`;
 - holds up to `2^b` accounts, each occupying `2^(a + 5)` bytes.
 
-These same three values are returned on-chain by [`getLog2LeavesPerAccount()`](../application.md#getlog2leavesperaccount--getlog2maxnumofaccounts--getaccountsdrivestartindex), [`getLog2MaxNumOfAccounts()`](../application.md#getlog2leavesperaccount--getlog2maxnumofaccounts--getaccountsdrivestartindex), and [`getAccountsDriveStartIndex()`](../application.md#getlog2leavesperaccount--getlog2maxnumofaccounts--getaccountsdrivestartindex), and must match the layout the guest application actually writes.
+These same three values are returned on-chain by [`getLog2LeavesPerAccount()`](../application.md#getlog2leavesperaccount), [`getLog2MaxNumOfAccounts()`](../application.md#getlog2maxnumofaccounts), and [`getAccountsDriveStartIndex()`](../application.md#getaccountsdrivestartindex), and must match the layout the guest application actually writes.
 
 ## Validation
 

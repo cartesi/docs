@@ -3,8 +3,6 @@ id: react-frontend-application
 title: Build a React frontend for Cartesi Apps
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # Building a React Frontend for Cartesi Apps
 
 This guide builds a React frontend that talks to a Cartesi application with the Cartesi TypeScript packages, [wagmi](https://wagmi.sh) and [viem](https://viem.sh):

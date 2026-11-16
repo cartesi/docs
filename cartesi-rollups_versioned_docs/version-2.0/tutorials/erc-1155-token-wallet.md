@@ -495,7 +495,7 @@ cartesi run
 ### Deposits
 
 :::caution token approvals
-ERC-1155 uses `setApprovalForAll` on the token contract for each portal operator. Approve **both** [`Erc1155SinglePortal`](../api-reference/contracts/portals/ERC1155SinglePortal.md) and [`Erc1155BatchPortal`](../api-reference/contracts/portals/ERC1155BatchPortal.md) before depositing through the corresponding portal.
+ERC-1155 uses `setApprovalForAll` on the token contract for each portal operator. Approve **both** [`Erc1155SinglePortal`](../api-reference/contracts/portals/Erc1155SinglePortal.md) and [`Erc1155BatchPortal`](../api-reference/contracts/portals/Erc1155BatchPortal.md) before depositing through the corresponding portal.
 :::
 
 **Single deposit** — interactively:

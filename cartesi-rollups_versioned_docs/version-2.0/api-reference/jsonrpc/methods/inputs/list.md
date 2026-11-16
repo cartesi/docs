@@ -3,8 +3,6 @@ id: inputs-list
 title: List Inputs
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # List Inputs
 
 ## Example Request

@@ -3,8 +3,6 @@ id: reports-get
 title: Get Report
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # Get Report
 
 ## Example Request

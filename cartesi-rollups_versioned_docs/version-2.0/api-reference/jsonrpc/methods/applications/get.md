@@ -3,8 +3,6 @@ id: applications-get
 title: Get Application
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # Get Application
 
 ## Example Request

@@ -3,8 +3,6 @@ id: epochs-list
 title: List Epochs
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # List Epochs
 
 ## Example Request

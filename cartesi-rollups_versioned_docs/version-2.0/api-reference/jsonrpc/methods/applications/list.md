@@ -3,8 +3,6 @@ id: applications-list
 title: List Applications
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # List Applications
 
 ## Example Request

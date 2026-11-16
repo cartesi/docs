@@ -3,15 +3,13 @@ id: ether-wallet
 title: Integrating Ether wallet functionality
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 This tutorial will build a basic Ether wallet inside a Cartesi backend application using TypeScript.
 
 The goal is to have a backend application to track balances and receive, transfer, and withdraw Ether.
 
 ## Setting up the project
 
-First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli) and move into its directory:
+First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md#cartesi-cli) and move into its directory:
 
 ```bash
 cartesi create ether-wallet --template typescript
@@ -381,7 +379,7 @@ cartesi run --services explorer
 
 The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
 
-You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md/#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
+You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
 
 :::info Repo Link
    You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/ether-wallet)!

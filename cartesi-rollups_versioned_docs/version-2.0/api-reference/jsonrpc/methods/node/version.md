@@ -3,8 +3,6 @@ id: node-version
 title: Get Node Version
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # Get Node Version
 
 :::caution Deprecated

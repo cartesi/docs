@@ -2,8 +2,6 @@
 title: Overview
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 

@@ -219,7 +219,7 @@ The `withdrawErc721` method encodes `safeTransferFrom(application, recipient, to
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`Erc721Portal`](../api-reference/contracts/portals/ERC721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advance requests whose `msgSender` is the portal address.
+The [`Erc721Portal`](../api-reference/contracts/portals/Erc721Portal.md) contract moves ERC-721 tokens from the base layer into your application. Deposits arrive as advance requests whose `msgSender` is the portal address.
 
 :::note Erc721Portal address
 Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc721Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
@@ -446,7 +446,7 @@ cartesi run --services explorer
 
 The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
 
-You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md/#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
+You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
 
 :::info Repo Link
    You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/erc-721-token-wallet)!

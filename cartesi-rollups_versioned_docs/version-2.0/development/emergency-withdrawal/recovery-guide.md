@@ -61,7 +61,13 @@ After this, `isForeclosed()` returns `true` and the application is frozen at its
 
 ## Step 2: Reproduce the settled machine state
 
-Find the last accepted epoch, then replay the inputs from the node database into a machine snapshot up to that epoch:
+Find the last accepted epoch:
+
+```sh
+cartesi-rollups-cli read epochs <app-name-or-address> --status CLAIM_ACCEPTED --limit 1 --descending
+```
+
+Then replay the inputs from the node database into a machine snapshot up to that epoch. `--to-epoch` takes the epoch's `index` as printed (`0x`-prefixed hex) or its decimal value:
 
 ```sh
 cartesi-rollups-machine-tool replay \

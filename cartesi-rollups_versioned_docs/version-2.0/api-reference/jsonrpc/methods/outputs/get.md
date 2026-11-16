@@ -3,8 +3,6 @@ id: outputs-get
 title: Get Output
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # Get Output
 
 ## Example Request

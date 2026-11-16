@@ -3,8 +3,6 @@ id: epochs-get
 title: Get Epoch
 ---
 
-<!-- Reviewed for Cartesi Rollups v2.0 documentation. -->
-
 # Get Epoch
 
 ## Example Request
