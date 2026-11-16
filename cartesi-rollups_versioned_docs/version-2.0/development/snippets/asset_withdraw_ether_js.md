@@ -1,36 +1,18 @@
 ```javascript
-import { hexToString, numberToHex, parseEther } from "viem";
+import { Rollup } from "@cartesi/rollup";
 
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
+const rollup = new Rollup();
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+const ONE_ETHER = 10n ** 18n; // amount in wei
 
-  const sender = data["metadata"]["msg_sender"];
-  const payload = hexToString(data.payload);
-
-  const voucher = {
-    destination: sender,
-    payload: "0x", // empty: a wallet has no code to call
-    value: numberToHex(parseEther("1"), { size: 32 }), // 0x-prefixed, 32 bytes
-  };
-
-  await emitVoucher(voucher);
-  return "accept";
-}
-
-const emitVoucher = async (voucher) => {
-  try {
-    await fetch(rollup_server + "/voucher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(voucher),
+await rollup.run({
+  advance(request) {
+    rollup.emitVoucher({
+      destination: request.msgSender,
+      value: ONE_ETHER, // @cartesi/rollup takes the amount in wei as a bigint
+      // no payload: a wallet has no code to call, so the payload stays empty
     });
-  } catch (error) {
-    // Do something when there is an error.
-  }
-};
+    return true;
+  },
+});
 ```

@@ -142,7 +142,24 @@ Install the minimal dependencies for your language:
 <pre><code>
 
 ```shell
-pnpm add expr-eval
+pnpm add -D expr-eval-fork@3.0.3
+```
+
+```javascript
+// rolldown.config.js
+import { defineConfig } from "rolldown";
+
+export default defineConfig({
+  input: "src/index.js",
+  platform: "node",
+  // only the @cartesi/rollup native addon stays out of the bundle: expr-eval-fork
+  // and any other pure JavaScript dependency are bundled into dist/index.mjs
+  external: ["@cartesi/rollup"],
+  output: {
+    file: "dist/index.mjs",
+    format: "esm",
+  },
+});
 ```
 
 </code></pre>
@@ -194,6 +211,8 @@ cd ..
 </code></pre>
 </TabItem>
 </Tabs>
+
+In JavaScript, the calculator uses [`expr-eval-fork`](https://www.npmjs.com/package/expr-eval-fork), a maintained fork of `expr-eval` with the same API: the original `expr-eval` package has unpatched security advisories, including code execution through crafted expressions. Install it as a development dependency and replace the contents of `rolldown.config.js` with the configuration above, so that rolldown bundles it into the application. `cartesi build` installs the packages listed under `dependencies` inside an emulated RISC-V container, where pnpm can crash with a segmentation fault on large packages; a bundled development dependency is not installed there (see [adding dependencies](../development/creating-an-application.md#adding-dependencies-in-javascript-and-typescript)). If the `pnpm` command is not available, enable it with `corepack enable pnpm`.
 
 For example, an advance request to the backend with payload `“1+2”` should emit a notice with the response `“3”`.
 
@@ -289,7 +308,7 @@ Example: Send `1+2` as an input to the application.
 
 ## Retrieving outputs from the application
 
-The `cartesi send` command sends a request to the calculator application to process the computation `(1 + 2)`, this is computed and a payload (notice) containing the result is sent to the Rollup Server's `/notice` endpoint.
+The `cartesi send` command sends a request to the calculator application to process the computation `(1 + 2)`, this is computed and a payload (notice) containing the result is sent to the Rollup Server's `/notice` endpoint (in JavaScript, emitted with `rollup.emitNotice()`).
 
 :::note querying notices
 Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.

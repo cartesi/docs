@@ -30,6 +30,10 @@ During a finish call, the next rollup request might not be immediately available
 
 Let's see how a Cartesi dApp's backend processes requests using the finish endpoint:
 
+:::note JavaScript and TypeScript
+In JavaScript and TypeScript, `rollup.finish({ accept })` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) accepts or rejects the previous request and returns the next one, with `type` set to `"advance"` or `"inspect"`. It talks directly to the Cartesi Machine and blocks until a request is available, so there is no `202` status to retry. The templates call `rollup.run()`, which runs this loop for you and accepts each request unless its handler returns `false`.
+:::
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -38,47 +42,33 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
+import { Rollup } from "@cartesi/rollup";
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  return "accept";
+const rollup = new Rollup();
+
+function handleAdvance(request) {
+  console.log(
+    `Received advance request from ${request.msgSender} with payload 0x${request.payload.toString("hex")}`,
+  );
+  return true; // accept the input, or return false to reject it
 }
 
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
+function handleInspect(request) {
+  console.log(
+    `Received inspect request with payload 0x${request.payload.toString("hex")}`,
+  );
+  return true;
 }
 
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
-
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(finish),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
-    } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
-    }
-  }
-})();
+let accept = true;
+for (;;) {
+  // accept or reject the previous request, then wait for the next one
+  const request = rollup.finish({ accept });
+  accept =
+    request.type === "advance"
+      ? handleAdvance(request)
+      : handleInspect(request);
+}
 ```
 
 </code></pre>

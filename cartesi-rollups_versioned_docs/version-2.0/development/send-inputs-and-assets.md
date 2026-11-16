@@ -20,6 +20,7 @@ Here is a simple boilerplate application that shows the default implementation o
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import RequestHandlingJS from './snippets/request_handling_js.md';
 import RequestHandlingGO from './snippets/request_handling_go.md';
 import RequestHandlingCPP from './snippets/request_handling_cpp.md';
 
@@ -27,49 +28,7 @@ import RequestHandlingCPP from './snippets/request_handling_cpp.md';
   <TabItem value="JavaScript" label="JavaScript" default>
 <pre><code>
 
-```javascript
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
-
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  return "accept";
-}
-
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
-}
-
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
-
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "accept" }),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
-    } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
-    }
-  }
-})();
-```
+<RequestHandlingJS />
 
 </code></pre>
 </TabItem>
@@ -215,9 +174,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 </Tabs>
 
-As stated in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), a typical Cartesi backend application has two primary functions, `handle_advance` and `handle_inspect,` these are defined to handle the two different types of requests.
+As stated in the [creating an application section](./creating-an-application.md#implementing-your-application-logic), a typical Cartesi backend application has two primary functions, `handle_advance` and `handle_inspect,` these are defined to handle the two different types of requests. In the JavaScript and TypeScript templates, they are the `advance` and `inspect` handlers passed to `rollup.run()` from the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package.
 
-Your application listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status to the rollup server.
+Your application listens to rollup requests, handles them asynchronously using defined handler functions, and communicates the completion status to the rollup server (in JavaScript and TypeScript, `@cartesi/rollup` reports it to the Cartesi Machine directly, from the value the handler returns).
 
 Every starter project you create has this base code as a template, ready to receive inputs!
 

@@ -12,7 +12,11 @@ The backend of a Cartesi dApp processes requests in the following manner:
     - **Inspect** — Submits a query about the application's current state. When running inside a Cartesi Machine, this operation is guaranteed to leave the state unchanged, as the machine reverts to its exact previous condition after processing. For Inspect requests, the input data contains only a payload, and the backend can only call the [`/report`](./reports.md) endpoint.
 
   - **Exception** — Called by the backend when it encounters an unrecoverable error during request processing. This signals to the Rollup HTTP Server that the current request processing failed and should be terminated. See [`/exception`](./exception.md) for more details.
-  
+
+:::note JavaScript and TypeScript
+The JavaScript and TypeScript templates do not use the Rollup HTTP Server. They use the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package, which makes the same calls directly to the Cartesi Machine: `rollup.finish()`, `rollup.emitNotice()`, `rollup.emitVoucher()`, `rollup.emitDelegateCallVoucher()`, `rollup.emitReport()` and `rollup.emitException()`. Request payloads arrive as Node.js `Buffer` objects, and advance requests carry their metadata as fields such as `msgSender`, `appContract` and `index`.
+:::
+
 ## Advance and Inspect
 
 Here is a simple boilerplate application that handles Advance and Inspect requests:

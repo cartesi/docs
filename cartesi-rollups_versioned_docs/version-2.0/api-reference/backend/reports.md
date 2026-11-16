@@ -9,7 +9,7 @@ Unlike notices, reports lack any association with proof and are therefore unsuit
 
 Consider a scenario within a financial dApp where users conduct transactions. In the event of a processing error, such as a failed transaction or insufficient funds, the dApp may generate a report detailing the encountered issue. This report, encapsulating relevant diagnostic data, aids developers in identifying and resolving underlying problems promptly.
 
-Here is how you can write your application to send reports to the rollup server:
+Here is how you can write your application to send reports to the rollup server (in JavaScript, `rollup.emitReport()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) sends them directly to the Cartesi Machine):
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -19,27 +19,29 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+import { Rollup } from "@cartesi/rollup";
 
-  try {
-    // something here
-  } catch (e) {
-    //Send a report when there is an error
-    const error = viem.stringToHex(`Error:${e}`);
+const rollup = new Rollup();
 
-    await fetch(rollup_server + "/report", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: error }),
-    });
-    return "reject";
-  }
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request with payload ${request.payload.toString("utf8")}`,
+    );
 
-  return "accept";
-}
+    try {
+      // something here, for example parsing the payload as JSON
+      const data = JSON.parse(request.payload.toString("utf8"));
+      console.log("Parsed input", data);
+    } catch (e) {
+      // Send a report when there is an error
+      rollup.emitReport(Buffer.from(`Error:${e}`, "utf8"));
+      return false;
+    }
+
+    return true;
+  },
+});
 ```
 
 </code></pre>
