@@ -70,6 +70,8 @@ await rollup.run({
 #   pycryptodome==3.23.0  # keccak backend used by eth-utils
 # pycryptodome has no prebuilt riscv64 wheel, so `cartesi build` compiles it:
 # add build-essential to the apt-get install command in the template's Dockerfile.
+# Alternatively, add --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+# as the first line of requirements.txt to use prebuilt riscv64 wheels instead.
 # Voucher creation process
 import requests
 import json
@@ -340,6 +342,8 @@ function emitSafeErc20Transfer(rollup, token, to, amount) {
 #   pycryptodome==3.23.0  # keccak backend used by eth-utils
 # pycryptodome has no prebuilt riscv64 wheel, so `cartesi build` compiles it:
 # add build-essential to the apt-get install command in the template's Dockerfile.
+# Alternatively, add --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+# as the first line of requirements.txt to use prebuilt riscv64 wheels instead.
 from eth_utils import function_signature_to_4byte_selector, to_checksum_address
 from eth_abi import encode
 import requests
