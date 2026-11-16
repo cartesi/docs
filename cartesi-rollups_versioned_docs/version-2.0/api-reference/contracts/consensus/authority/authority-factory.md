@@ -19,7 +19,7 @@ function newAuthority(
     address authorityOwner,
     uint256 epochLength,
     uint256 claimStagingPeriod
-) external override returns (IAuthority)
+) external override returns (IAuthority authority)
 ```
 
 Deploy a new authority contract.
@@ -38,7 +38,7 @@ Deploy a new authority contract.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `IAuthority` | The deployed authority contract |
+| `authority` | `IAuthority` | The deployed authority contract |
 
 ### `newAuthority()` (with salt)
 
@@ -48,7 +48,7 @@ function newAuthority(
     uint256 epochLength,
     uint256 claimStagingPeriod,
     bytes32 salt
-) external override returns (IAuthority)
+) external override returns (IAuthority authority)
 ```
 
 Deploy a new authority contract deterministically using CREATE2.
@@ -68,7 +68,7 @@ Deploy a new authority contract deterministically using CREATE2.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `IAuthority` | The deployed authority contract |
+| `authority` | `IAuthority` | The deployed authority contract |
 
 ### `calculateAuthorityAddress()`
 

@@ -55,3 +55,11 @@ If the application is foreclosed before the deposit input is finalized, anyone c
 | `InputTooLarge(address appContract, uint256 inputLength, uint256 maxInputLength)` | The encoded input exceeds the maximum input size (raised by the `InputBox`) |
 
 Errors raised by the token contract during `safeBatchTransferFrom` (for example, a missing approval or arrays of different lengths) are propagated.
+
+## `version()`
+
+```solidity
+function version() external pure returns (uint64 major, uint64 minor, uint64 patch, string memory preRelease, string memory buildMetadata)
+```
+
+Get the version of the contracts project, for example `(3, 0, 0, "alpha.10", "")`. Inherited from `RollupsContract` through `Portal`.

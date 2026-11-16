@@ -57,7 +57,7 @@ def handle_advance(data):
    status = "accept"
    try:
        # Do something here to emit a notice
-
+       pass
    except Exception as e:
 
        #  Emits report with error message here
@@ -65,7 +65,7 @@ def handle_advance(data):
        msg = f"Error processing data {data}\n{traceback.format_exc()}"
        logger.error(msg)
        response = requests.post(
-           rollup_server + "/report", json={"payload": msg}
+           rollup_server + "/report", json={"payload": "0x" + msg.encode("utf-8").hex()}
        )
        logger.info(
            f"Received report status {response.status_code} body {response.content}"
@@ -101,8 +101,7 @@ pub async fn handle_advance(
     .method(hyper::Method::POST)
     .header(hyper::header::CONTENT_TYPE, "application/json")
     .uri(format!("{}/report", server_addr))
-    .body(hyper::Body::from(response.dump()))
-    .ok()?;
+    .body(hyper::Body::from(response.dump()))?;
 
     let response = client.request(request).await;
     match response {
@@ -112,7 +111,7 @@ pub async fn handle_advance(
         }
         Err(e) => {
             println!("Report request failed {}", e);
-            Err("Report request failed {}")
+            Err(format!("Report request failed {}", e).into())
         }
     }
 }
@@ -189,5 +188,5 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 </Tabs>
 
 :::note querying reports
-Frontend clients can query reports using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation to query reports](../../development/query-outputs.md#query-all-reports) from your dApp.
+Frontend clients can query reports using the JSON-RPC API exposed by the Cartesi Nodes. [Refer to the documentation to query reports](../../development/query-outputs.md#query-all-reports) from your dApp.
 :::

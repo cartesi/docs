@@ -130,6 +130,7 @@ def handle_advance(data):
        )
    except Exception as e:
        #  Emits report with error message here
+       pass
    return status
 
 ```
@@ -236,7 +237,7 @@ pub async fn handle_advance(
 
 </Tabs>
 
-For example, sending an input payload of `“2”` to the application using Cast or `cartesi send generic` will log:
+For example, sending an input payload of `“2”` to the application using Cast or `cartesi send 2` will log:
 
 ```bash
 Received finish status 200
@@ -442,7 +443,7 @@ def handle_advance(data):
    status = "accept"
    try:
        # Do something here to emit a notice
-
+       pass
    except Exception as e:
 
        #  Emits report with error message here
@@ -450,7 +451,7 @@ def handle_advance(data):
        msg = f"Error processing data {data}\n{traceback.format_exc()}"
        logger.error(msg)
        response = requests.post(
-           rollup_server + "/report", json={"payload": msg}
+           rollup_server + "/report", json={"payload": "0x" + msg.encode("utf-8").hex()}
        )
        logger.info(
            f"Received report status {response.status_code} body {response.content}"

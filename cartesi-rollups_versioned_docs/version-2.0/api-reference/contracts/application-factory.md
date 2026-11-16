@@ -43,7 +43,7 @@ function newApplication(
     bytes32 templateHash,
     IInputBox inputBox,
     WithdrawalConfig calldata withdrawalConfig
-) external override returns (IApplication)
+) external override returns (IApplication appContract)
 ```
 
 Deploys a new Application contract without a salt value for address derivation.
@@ -64,7 +64,7 @@ Deploys a new Application contract without a salt value for address derivation.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `IApplication` | The deployed Application contract |
+| `appContract` | `IApplication` | The deployed Application contract |
 
 ### `newApplication()` (with salt)
 
@@ -76,7 +76,7 @@ function newApplication(
     IInputBox inputBox,
     WithdrawalConfig calldata withdrawalConfig,
     bytes32 salt
-) external override returns (IApplication)
+) external override returns (IApplication appContract)
 ```
 
 Deploys a new `Application` contract with a specified salt value for address derivation.
@@ -98,7 +98,7 @@ Deploys a new `Application` contract with a specified salt value for address der
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `IApplication` | The deployed Application contract |
+| `appContract` | `IApplication` | The deployed Application contract |
 
 ### `calculateApplicationAddress()`
 

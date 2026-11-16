@@ -55,9 +55,10 @@ pub async fn handle_advance(
     server_addr: &str,
     request: JsonValue,
 ) -> Result<&'static str, Box<dyn std::error::Error>> {
-    let command_raw = std::str::from_utf8(&payload_hex_to_bytes(
+    let payload_bytes = payload_hex_to_bytes(
         request["data"]["payload"].as_str().ok_or("Missing payload")?,
-    )?)?;
+    )?;
+    let command_raw = std::str::from_utf8(&payload_bytes)?;
     let command = json::parse(command_raw)?;
 
     let amount = if let Some(v) = command["amount"].as_str() {

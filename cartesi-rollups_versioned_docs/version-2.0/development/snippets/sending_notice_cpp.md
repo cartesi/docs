@@ -26,8 +26,8 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 
     try
     {
-        // Use your template helper to decode hex payload into UTF-8 text.
-        // Example helper in Cartesi templates: hex_to_string("0x32") -> "2"
+        // Decode the hex payload into UTF-8 text with a helper you define
+        // (the C++ template has none), for example hex_to_string("0x32") -> "2".
         const std::string payload_hex = data.get("payload").get<std::string>();
         const std::string input = hex_to_string(payload_hex);
 
@@ -39,8 +39,8 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 
         // 3) Build and emit notice to the rollup server.
         picojson::object notice;
-        // Use your template helper to encode UTF-8 text into hex.
-        // Example helper: string_to_hex("2, 4, 6, 8, 10")
+        // Encode UTF-8 text into hex with a helper you define,
+        // for example string_to_hex("2, 4, 6, 8, 10").
         notice["payload"] = picojson::value(string_to_hex(multiples));
         const std::string body = picojson::value(notice).serialize();
 

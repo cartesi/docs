@@ -311,11 +311,11 @@ Since rollups-contracts v3.0.0-alpha.7, executing a DELEGATECALL voucher whose d
 <pre><code>
 
 ```javascript
-import { encodeFunctionData } from "viem";
+import { encodeFunctionData, parseAbi } from "viem";
 
-const abi = [
+const abi = parseAbi([
   "function safeTransfer(address,address,uint256)"
-];
+]);
 
 async function emitSafeErc20Transfer(token, to, amount) {
   const call = encodeFunctionData({
@@ -420,12 +420,12 @@ pub async fn emit_safe_erc20_transfer(
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"math/big"
-	"net/http"
 	"strings"
+
+	"dapp/rollups"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
@@ -454,7 +454,7 @@ func emitSafeErc20Transfer(token, to common.Address, amount *big.Int) error {
 	
 	voucher := map[string]interface{}{
 		"destination": "0xfafafafafafafafafafafafafafafafafafafafa", // address of the contract containing the logic
-		"payload":     common.Bytes2Hex(payload),
+		"payload":     "0x" + common.Bytes2Hex(payload), // the rollup server expects a 0x prefix
 	}
 	
 	voucherJSON, err := json.Marshal(voucher)
@@ -462,7 +462,7 @@ func emitSafeErc20Transfer(token, to common.Address, amount *big.Int) error {
 		return fmt.Errorf("failed to marshal voucher: %w", err)
 	}
 	
-	_, err = http.Post(rollupServer+"/delegate-call-voucher", "application/json", bytes.NewBuffer(voucherJSON))
+	_, err = rollups.SendPost("delegate-call-voucher", voucherJSON)
 	if err != nil {
 		return fmt.Errorf("failed to send voucher: %w", err)
 	}

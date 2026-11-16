@@ -19,7 +19,7 @@ function newQuorum(
     address[] calldata validators,
     uint256 epochLength,
     uint256 claimStagingPeriod
-) external override returns (IQuorum)
+) external override returns (IQuorum quorum)
 ```
 
 Deploy a new quorum contract.
@@ -38,7 +38,7 @@ Deploy a new quorum contract.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `IQuorum` | The deployed quorum contract |
+| `quorum` | `IQuorum` | The deployed quorum contract |
 
 ### `newQuorum()` (with salt)
 
@@ -48,7 +48,7 @@ function newQuorum(
     uint256 epochLength,
     uint256 claimStagingPeriod,
     bytes32 salt
-) external override returns (IQuorum)
+) external override returns (IQuorum quorum)
 ```
 
 Deploy a new quorum contract deterministically using CREATE2.
@@ -68,7 +68,7 @@ Deploy a new quorum contract deterministically using CREATE2.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `IQuorum` | The deployed quorum contract |
+| `quorum` | `IQuorum` | The deployed quorum contract |
 
 ### `calculateQuorumAddress()`
 

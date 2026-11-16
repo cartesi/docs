@@ -111,7 +111,7 @@ Users can deposit assets to a Cartesi Application, but only the Application can 
 
 Vouchers are crucial in allowing applications in the execution layer to interact with contracts in the base layer through message calls. They are emitted by the off-chain machine and executed by any participant in the base layer. Each voucher includes a destination address and a payload, typically encoding a function call for Solidity contracts.
 
-The application’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals, for example: `transferFrom(sender, recipient, amount)`. In this case, the sender is the application itself.
+The application’s off-chain layer often requires knowledge of its address to facilitate on-chain interactions for withdrawals. To withdraw ERC-20 tokens that the application holds, the voucher calls `transfer(recipient, amount)` on the token contract: the Application contract makes the call, so the tokens leave its balance. Do not use `transferFrom(application, recipient, amount)` for this: the application has no allowance over its own tokens, so the call reverts with `ERC20InsufficientAllowance`.
 
 Next, the off-chain machine uses the address of the application on the base layer to generate a voucher for execution at the executeOutput() function of the Application contract. This address is known to the offchain machine because it is embedded in the metadata of every input sent to the application, though the developer will need to implement extra logic fetch this address from the metadata then properly store and retrieve it when needed in situations like generating the above Voucher.
 
@@ -205,7 +205,7 @@ Below are multi-language examples for Ether withdrawal. Here, the voucher sends 
 For a full guide, see the Tutorial: [Ether Wallet](../tutorials/ether-wallet.md).
 
 :::note epoch length
-The epoch length (in blocks) and the claim staging period are parameters of the application's consensus contract, fixed when the consensus is deployed; the node has no setting for them. `cartesi-rollups-cli deploy` uses an epoch length of 10 blocks and a claim staging period of 0 unless you pass `--epoch-length` and `--claim-staging-period`, and `cartesi run` accepts the same two options. A withdrawal voucher becomes executable only after its epoch closes and the claim is accepted, so these parameters set how long users wait for withdrawals.
+The epoch length (in blocks) and the claim staging period are parameters of the application's consensus contract, fixed when the consensus is deployed; the node has no setting for them. `cartesi-rollups-cli deploy` uses an epoch length of 10 blocks and a claim staging period of 0 unless you pass `--epoch-length` and `--claim-staging-period`. `cartesi run` accepts the same two options, with defaults of 720 blocks and 0 (with the devnet's 2-second blocks, an epoch lasts about 24 minutes). A withdrawal voucher becomes executable only after its epoch closes and the claim is accepted, so these parameters set how long users wait for withdrawals.
 :::
 
 Here are the function signatures used by vouchers to withdraw the different types of assets:
@@ -214,7 +214,6 @@ Here are the function signatures used by vouchers to withdraw the different type
 | :------- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
 | Ether    | Recipient      | None: empty payload (`0x`), with the amount in the voucher's `value` field                                                                 |
 | ERC-20   | Token contract | `transfer(address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                               |
-| ERC-20   | Token contract | `transferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-20#methods)                                   |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                        |
 | ERC-721  | Token contract | `safeTransferFrom(address,address,uint256,bytes)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-721#specification)                  |
 | ERC-1155 | Token contract | `safeTransferFrom(address,address,uint256,uint256,bytes)` [:page_facing_up:](https://eips.ethereum.org/EIPS/eip-1155#specification)         |

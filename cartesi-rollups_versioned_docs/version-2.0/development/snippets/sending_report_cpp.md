@@ -9,7 +9,8 @@
 static bool emit_report(httplib::Client &cli, const std::string &message)
 {
     picojson::object report;
-    // Keep report payload hex-encoded using your template helper.
+    // Keep report payload hex-encoded, with a string_to_hex helper you define
+    // (the C++ template has none).
     report["payload"] = picojson::value(string_to_hex(message));
     const std::string body = picojson::value(report).serialize();
 

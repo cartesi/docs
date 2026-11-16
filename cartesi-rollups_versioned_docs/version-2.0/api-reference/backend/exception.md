@@ -12,10 +12,14 @@ When an exception occurs during request processing, the dApp backend should:
 2. Not make any further API calls after registering the exception
 3. Exit the processing loop
 
-The Rollup HTTP Server will:
-- Skip the input with the reason [`EXCEPTION`](../jsonrpc/types.md#inputcompletionstatus)
-- Forward the exception message
-- Return status code 200
+For an advance-state request, the node then:
+- Records the input with the status [`EXCEPTION`](../jsonrpc/types.md#inputcompletionstatus) and keeps the exception payload in the input's `exception_data` field
+- Discards the notices and vouchers emitted while processing the input, and keeps its reports
+- Stops the application for good: the application status becomes [`GUEST_EXCEPTION`](../jsonrpc/types.md#applicationstatus), no further inputs are processed, and inspect requests are rejected with HTTP 503
+
+The call to `/exception` does not return to the backend: the machine stops processing the request at that point.
+
+For an inspect-state request, the inspect response has the status `Exception` and carries the payload in its `exception_data` field. The application keeps running.
 
 The exception payload should be a hex-encoded string starting with '0x' followed by pairs of hexadecimal numbers.
 
@@ -66,11 +70,12 @@ def handle_advance(data):
    try:
        # Process the request
        # ...
+       pass
    except Exception as e:
        # Register exception and exit
        response = requests.post(
            rollup_server + "/exception",
-           json={"payload": "0x" + e.message.encode("utf-8").hex()},
+           json={"payload": "0x" + str(e).encode("utf-8").hex()},
        )
        logger.info(
            f"Received exception status {response.status_code} body {response.content}"
