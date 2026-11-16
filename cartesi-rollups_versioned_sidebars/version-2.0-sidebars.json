@@ -241,7 +241,6 @@
                 "tutorials/erc-721-token-wallet",
                 "tutorials/erc-1155-token-wallet",
                 "tutorials/react-frontend-application",
-                "tutorials/cli-account-abstraction-feature",
                 "tutorials/utilizing-the-cli-test-tokens",
                 "tutorials/running-applications-on-a-forked-network"
             ]
