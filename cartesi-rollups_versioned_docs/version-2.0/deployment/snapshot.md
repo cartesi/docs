@@ -29,13 +29,22 @@ This process ensures that the application behaves exactly as intended and hasn't
 :::
 
 :::warning What a validator must check
-The checksum published next to the tarball comes from the publisher, so on its own it proves nothing about the machine. A validator must compute the machine's root hash independently, either by loading the snapshot in the Cartesi Machine emulator or by rebuilding the application reproducibly from source, and compare it with the template hash stored in the application contract:
+The checksum published next to the tarball comes from the publisher, so on its own it proves nothing about the machine. A validator must compute the machine's root hash independently, either from the snapshot's data with the Cartesi Machine emulator or by rebuilding the application reproducibly from source, and compare it with the template hash stored in the application contract:
 
 ```shell
 cast call <application-address> "getTemplateHash()(bytes32)" --rpc-url <RPC-URL>
 ```
 
-A hash read from the snapshot's own files, such as the root hash stored in `hash_tree.sht`, is not recomputed from the machine data, so it does not show that the data is unmodified.
+A hash read from the snapshot's own files, such as the root hash stored in `hash_tree.sht`, is not recomputed from the machine data, so it does not show that the data is unmodified. Loading the snapshot as published does not recompute it either: the emulator (0.22) reuses the hash trees stored next to the data (the `.dht` and `.dpt` files and `hash_tree.sht`), so a snapshot whose data files were changed still loads with the original root hash. To make the emulator hash the data itself, mark every page dirty in the snapshot's `config.json` before loading it:
+
+```shell
+mkdir snapshot && tar -xzf snapshot.tar.gz -C snapshot
+jq '(.. | objects | select(has("mark_pages_dirty")) | .mark_pages_dirty) |= true' \
+  snapshot/config.json > config.json.tmp && mv config.json.tmp snapshot/config.json
+cartesi-machine --load=snapshot --initial-hash
+```
+
+The root hash is printed on the line `<mcycle>: <root hash>`. Use a `cartesi-machine` of the emulator line the snapshot was built with (0.22.x for rollups-node v2.0.0-alpha.14).
 :::
 
 ### Snapshot requirements

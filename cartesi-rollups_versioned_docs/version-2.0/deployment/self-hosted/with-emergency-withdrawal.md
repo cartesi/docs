@@ -62,17 +62,19 @@ Create a `withdrawal.json` describing the guardian and the accounts-drive layout
   "guardian": "<guardian-address>",
   "log2_leaves_per_account": 0,
   "log2_max_num_of_accounts": 12,
-  "accounts_drive_start_index": 309237645312,
+  "accounts_drive_start_index": 20480,
   "withdrawal_output_builder": "<withdrawal-output-builder-address>"
 }
 ```
 
+The example start index is the one `cartesi build` (emulator 0.22) gives the accounts drive declared in [Creating the accounts drive](../../api-reference/backend/emergency-withdrawal.md#creating-the-accounts-drive): it places that drive, the second flash drive after the root drive, at `0xa0000000`. Compute yours from your own build, as described below.
+
 :::warning Check the config against your machine
-Nothing on chain or in the node CLI checks that this config points at your template's accounts drive: deployment only checks that the drive fits in the machine's memory. A wrong value can make every withdrawal and refund fail, or make withdrawals pay out balances that are not your application's ledger.
+Nothing on chain or in the node CLI checks that this config points at your template's accounts drive: deployment only checks that the drive fits in the machine's memory. A wrong value can make every withdrawal fail, or make withdrawals pay out balances that are not your application's ledger.
 
 After `cartesi build` (step 2 below), check the config against the stored machine configuration in `.cartesi/image/config.json`. One of the drives listed under `config.flash_drive` must have:
 
-- `start` equal to `accounts_drive_start_index × 2^(5 + log2_max_num_of_accounts + log2_leaves_per_account)`. For the example above, that is `0x90000000000000` (`40532396646334464`).
+- `start` equal to `accounts_drive_start_index × 2^(5 + log2_max_num_of_accounts + log2_leaves_per_account)`. For the example above, that is `0xa0000000` (`2684354560`).
 - `length` of at least `2^(5 + log2_max_num_of_accounts + log2_leaves_per_account)`. For the example above, that is `131072` bytes.
 
 The recovery tool, `cartesi-rollups-machine-tool`, locates the accounts drive the same way.

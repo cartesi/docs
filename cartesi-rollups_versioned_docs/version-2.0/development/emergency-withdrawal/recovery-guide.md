@@ -28,6 +28,13 @@ This guide assumes the application already maintains its accounts drive in the l
 
 The on-chain steps (1, 4, 5, 6, and 7) can be run with either tool. Choose a tab in each step, and it applies to the others. Steps 2 and 3 use the machine tool either way. In the `cast` tabs, `<app-address>` is the application contract address, `<rpc-url>` is your base-layer RPC endpoint, and the private key is the guardian's (step 1) or your own (steps 4, 5, and 7).
 
+In the Cartesi CLI tabs, `cartesi-rollups-cli` sends to the RPC endpoint in `CARTESI_BLOCKCHAIN_HTTP_ENDPOINT` (or `--blockchain-http-endpoint`) and signs with the wallet set by the `CARTESI_AUTH_*` variables, the same way for every step:
+
+- The default signer is a mnemonic: `CARTESI_AUTH_MNEMONIC`, with `CARTESI_AUTH_MNEMONIC_ACCOUNT_INDEX` to choose the account. To sign with a private key, set `CARTESI_AUTH_KIND=private_key` and `CARTESI_AUTH_PRIVATE_KEY`.
+- An application name, instead of an address, also needs `CARTESI_DATABASE_CONNECTION`.
+- Inside the node's containers these variables are already set to the node's signer. Override the signer there with the guardian's key for step 1, and with your own key for the other steps.
+- Each transaction command asks for confirmation before it sends. Without a terminal to answer it, the transaction is not sent, so add `--yes` when you run the command from a script.
+
 ## Step 1: Foreclose the application
 
 Signed by the guardian, freeze the application:
@@ -201,6 +208,8 @@ Refunds are not automatic: someone has to send one transaction per deposit. Anyo
 cartesi-rollups-cli read inputs <app-name-or-address> <input-index> --jsonrpc \
   | jq -er '.data.raw_data' > deposit-input.hex
 ```
+
+With `--jsonrpc`, the CLI reads from the node's JSON-RPC API at `http://localhost:10011/rpc`; pass `--jsonrpc-api-url` for another address. Inside the containers of the [self-hosted node](../../deployment/self-hosted/standard.md), the API runs in a separate container, so there use `--jsonrpc-api-url http://jsonrpc-api:10011/rpc`, or leave out `--jsonrpc` to read the same `raw_data` from the node database.
 
 Then send the refund:
 
