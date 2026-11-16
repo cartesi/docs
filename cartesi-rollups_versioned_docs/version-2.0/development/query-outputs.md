@@ -30,7 +30,7 @@ They serve as a means for application to notify the blockchain about particular 
 
 Let's examine how an Application has its Advance request **calculating and returning the first five multiples of a given number**.
 
-We will send the output to the rollup server as a notice.
+We will send the output to the rollup server as a notice (in JavaScript, with `rollup.emitNotice()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup)).
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -42,6 +42,10 @@ import SendingNoticeCPP from './snippets/sending_notice_cpp.md';
 <pre><code>
 
 ```javascript
+import { Rollup } from "@cartesi/rollup";
+
+const rollup = new Rollup();
+
 function calculateMultiples(num) {
   let multiples = "";
   for (let i = 1; i <= 5; i++) {
@@ -53,32 +57,23 @@ function calculateMultiples(num) {
   return multiples;
 }
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+await rollup.run({
+  advance(request) {
+    const input = request.payload.toString("utf8");
+    console.log(`Received advance request with payload ${input}`);
 
-  const numberHex = data["payload"];
-  const number = parseInt(viem.hexToString(numberHex));
+    const number = parseInt(input);
+    if (Number.isNaN(number)) {
+      rollup.emitReport(Buffer.from(`Not a number: ${input}`, "utf8"));
+      return false;
+    }
 
-  try {
     const multiples = calculateMultiples(number);
-
-    console.log(`Adding notice with  value ${multiples}`);
-
-    const hexresult = viem.stringToHex(multiples);
-
-    await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexresult }),
-    });
-  } catch (error) {
-    //Do something when there is an error
-  }
-
-  return "accept";
-}
+    console.log(`Adding notice with values ${multiples}`);
+    rollup.emitNotice(Buffer.from(multiples, "utf8"));
+    return true;
+  },
+});
 ```
 
 </code></pre>
@@ -237,11 +232,10 @@ pub async fn handle_advance(
 
 </Tabs>
 
-For example, sending an input payload of `“2”` to the application using Cast or `cartesi send 2` will log:
+For example, sending an input payload of `“2”` to the application using Cast or `cartesi send 2` will log (JavaScript version):
 
 ```bash
-Received finish status 200
-Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0xef34611773387750985673f94067ea22db406f72","msg_sender":"0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f","block_number":188,"block_timestamp":1741291197,"prev_randao":"0xa8b0097138c68949870aabe7aa4dc62a91b6dd0bc2b4582eac2be9eaee280032","input_index":0},"payload":"0x32"}
+Received advance request with payload 2
 Adding notice with values 2, 4, 6, 8, 10
 ```
 
@@ -397,7 +391,7 @@ curl -X POST http://127.0.0.1:6751/rpc \
 
 Reports serve as stateless logs, providing read-only information without affecting the state. They are commonly used for logging and diagnostics within the application.
 
-Here is how you can write your application to send reports to the rollup server:
+Here is how you can write your application to send reports to the rollup server (in JavaScript, `rollup.emitReport()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) sends them directly to the Cartesi Machine):
 
 import SendingReportGO from './snippets/sending_report_go.md';
 import SendingReportCPP from './snippets/sending_report_cpp.md';
@@ -407,27 +401,29 @@ import SendingReportCPP from './snippets/sending_report_cpp.md';
 <pre><code>
 
 ```javascript
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+import { Rollup } from "@cartesi/rollup";
 
-  try {
-    // something here
-  } catch (e) {
-    //Send a report when there is an error
-    const error = viem.stringToHex(`Error:${e}`);
+const rollup = new Rollup();
 
-    await fetch(rollup_server + "/report", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: error }),
-    });
-    return "reject";
-  }
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request with payload ${request.payload.toString("utf8")}`,
+    );
 
-  return "accept";
-}
+    try {
+      // something here, for example parsing the payload as JSON
+      const data = JSON.parse(request.payload.toString("utf8"));
+      console.log("Parsed input", data);
+    } catch (e) {
+      // Send a report when there is an error
+      rollup.emitReport(Buffer.from(`Error:${e}`, "utf8"));
+      return false;
+    }
+
+    return true;
+  },
+});
 ```
 
 </code></pre>

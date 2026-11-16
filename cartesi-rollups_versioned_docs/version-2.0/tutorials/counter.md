@@ -81,7 +81,7 @@ cartesi create counter --template cpp
 
 This command creates a directory called `counter` and, depending on your selected language, this directory contains the entry point file to start your application (for example: `dapp.py` for Python, `src/main.rs` for Rust, `src/index.js` for JavaScript, `src/dapp.go` for Go, and `dapp.cpp` for C++).
 
-This entry point file contains the default template for interacting with the Cartesi Rollups HTTP Server, it also makes available, two function namely `handle_advance()` and `handle_inspect()` which process "advance / write" and "inspect / read" requests to the application. In the next section we would be updating these functions with the implementation for your application.
+This entry point file contains the default template for interacting with the Cartesi Rollups HTTP Server, it also makes available, two function namely `handle_advance()` and `handle_inspect()` which process "advance / write" and "inspect / read" requests to the application. In the JavaScript template, the entry point uses the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package instead of the HTTP server, and the two functions are the `advance` and `inspect` handlers passed to `rollup.run()`. In the next section we would be updating these functions with the implementation for your application.
 
 ## Implement the Application Logic
 
@@ -236,6 +236,13 @@ INFO:__main__:Sending finish
 
 As seen in the third to last line of our received log, we can see the `count value` returned to be `0`
 
+The JavaScript version prints the same information without the `rollup_http_server` lines, since it talks to the Cartesi Machine directly through `@cartesi/rollup`:
+
+```bash
+Received inspect request with payload 0x7b22227d
+Current counter value: 0
+```
+
 ### 2. Increase count value
 
 Now that we've confirmed our count value to be zero (0), we would be sending an advance request using the CLI to increase the value of our counter by running the below command:
@@ -250,6 +257,13 @@ The above command sends an advance request with the payload "random_text" to our
 INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9d40cfc42bb386b531c5d4eb3ade360f4105c4a3', 'msg_sender': '0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f', 'block_number': 630, 'block_timestamp': 1762711409, 'prev_randao': '0x63a2bb3993d9f9c371624f995a10a6f493e33c2535e62b32fee565f812b4c4ab', 'input_index': 0}, 'payload': '0x72616e646f6d5f74657874'}
 INFO:__main__:Counter increment requested, new count value: 1
 INFO:__main__:Sending finish
+```
+
+In the JavaScript version, the logs for this request are:
+
+```bash
+Received advance request from 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f with index 0 and payload 0x72616e646f6d5f74657874
+Counter increment requested, new count value: 1
 ```
 
 The above logs prove that out application received the advance request, increased our count value, logs the updated count value then finishes that request successfully.

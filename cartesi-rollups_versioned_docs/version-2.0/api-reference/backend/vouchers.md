@@ -20,6 +20,8 @@ The [`Application`](../contracts/application.md) contract is crucial in validati
 
 The result of the voucher execution is recorded on the base layer. This recording typically involves submitting claims by a consensus contract, ensuring the integrity and transparency of the executed on-chain action.
 
+In JavaScript, the application emits a voucher with `rollup.emitVoucher()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), passing the `destination`, the `value` in wei as a `bigint` and the `payload` (the encoded call). The example below encodes the call with [`viem`](https://viem.sh/); add it as described in [adding dependencies](../../development/creating-an-application.md#adding-dependencies-in-javascript-and-typescript).
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -28,44 +30,31 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-import { stringToHex, encodeFunctionData, erc20Abi, zeroHash } from "viem";
+import { Rollup } from "@cartesi/rollup";
+import { encodeFunctionData, erc20Abi } from "viem";
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  const sender = data["metadata"]["msg_sender"];
-  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+const rollup = new Rollup();
+
+const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+
+await rollup.run({
+  advance(request) {
+    console.log(`Received advance request from ${request.msgSender}`);
 
     const call = encodeFunctionData({
-    abi: erc20Abi,
-    functionName: "transfer",
-    args: [sender, BigInt(10)],
-  });
-
-  let voucher = {
-    destination: erc20Token,
-    payload: call,
-    value: zeroHash,
-  };
-
-  await emitVoucher(voucher);
-  return "accept";
-}
-
-
-const emitVoucher = async (voucher) => {
-  try {
-    await fetch(rollup_server + "/voucher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(voucher),
+      abi: erc20Abi,
+      functionName: "transfer",
+      args: [request.msgSender, 10n],
     });
-  } catch (error) {
-    //Do something when there is an error
-  }
-};
 
+    rollup.emitVoucher({
+      destination: erc20Token,
+      value: 0n,
+      payload: call,
+    });
+    return true;
+  },
+});
 ```
 
 </code></pre>
@@ -303,7 +292,7 @@ This mechanism, where the Application contract maintains the state and funds whi
 
 - **Ordered Vouchers**: Vouchers that must be executed in a specific sequence. For example, voucher A can only be executed after voucher B has been executed.
 
-The examples below emit a DELEGATECALL voucher by posting to `/delegate-call-voucher`.  
+The examples below emit a DELEGATECALL voucher by posting to `/delegate-call-voucher` (in JavaScript, with `rollup.emitDelegateCallVoucher()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup)).  
 In these snippets, `destination` is the contract that contains the logic to run, while `payload` is the ABI-encoded function call data (for example, `safeTransfer(address,address,uint256)`).
 
 The Cartesi Rollups contracts include a contract for exactly this call: [`SafeErc20Transfer`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/delegatecall/SafeErc20Transfer.sol) (interface `ISafeErc20Transfer`), whose `safeTransfer(IERC20 token, address to, uint256 value)` transfers ERC-20 tokens held by the application. It is the destination the [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md) uses for emergency withdrawals. Before rollups-contracts v3.0.0-alpha.7, it was named `SafeERC20Transfer` (interface `ISafeERC20Transfer`).
@@ -320,25 +309,20 @@ Since rollups-contracts v3.0.0-alpha.7, executing a DELEGATECALL voucher whose d
 import { encodeFunctionData, parseAbi } from "viem";
 
 const abi = parseAbi([
-  "function safeTransfer(address,address,uint256)"
+  "function safeTransfer(address,address,uint256)",
 ]);
 
-async function emitSafeErc20Transfer(token, to, amount) {
+// `rollup` is the Rollup instance of your application
+function emitSafeErc20Transfer(rollup, token, to, amount) {
   const call = encodeFunctionData({
     abi,
     functionName: "safeTransfer",
     args: [token, to, amount],
   });
 
-  const voucher = {
+  rollup.emitDelegateCallVoucher({
     destination: "0xfafafafafafafafafafafafafafafafafafafafa", // address of the contract containing the logic
     payload: call,
-  };
-
-  await fetch(rollup_server + "/delegate-call-voucher", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(voucher),
   });
 }
 ```

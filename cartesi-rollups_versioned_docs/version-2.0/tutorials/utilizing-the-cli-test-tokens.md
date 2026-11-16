@@ -273,79 +273,48 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```JavaScript
-import { ethers } from "ethers";
-import {
-  getAddress,
-} from "viem";
+import { Rollup } from "@cartesi/rollup";
 
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
-
+// Erc20Portal address printed by `cartesi address-book`
 const PORTAL_ADDRESS = "0x3332DE61a8BB9aC84893b2f552Fe81C9a6dC5419";
 
+const rollup = new Rollup();
 
 function parseDepositPayload(payload) {
-    const tokenData = ethers.dataSlice(payload, 0, 20);
-    const senderData = ethers.dataSlice(payload, 20, 40);
-    const amountData = ethers.dataSlice(payload, 40, 72);
-
-    if (!tokenData) {
-      throw new Error("Invalid deposit payload");
-    }
-    return [getAddress(tokenData), getAddress(senderData), BigInt(amountData)];
+  // token (20 bytes), sender (20 bytes), amount (32 bytes), execLayerData
+  if (payload.length < 72) {
+    throw new Error("Invalid deposit payload");
   }
-
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  let payload = data.payload;
-  const sender = data["metadata"]["msg_sender"];
-
-  if (sender.toLowerCase() === PORTAL_ADDRESS.toLowerCase()) {
-    console.log("Handling portal deposit");
-    const [token, depositor, amount] = parseDepositPayload(payload);
-    console.log(`Token: ${token}, Depositor: ${depositor}, Amount: ${amount}`);
-
-    // Handle deposit logic here
-  } else {
-      // Handle Transaction request like a regular transaction
-  }
-
-  return "accept";
+  const token = `0x${payload.subarray(0, 20).toString("hex")}`;
+  const depositor = `0x${payload.subarray(20, 40).toString("hex")}`;
+  const amount = BigInt(`0x${payload.subarray(40, 72).toString("hex")}`);
+  return [token, depositor, amount];
 }
 
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
-}
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request from ${request.msgSender} with payload 0x${request.payload.toString("hex")}`,
+    );
 
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
+    if (request.msgSender.toLowerCase() === PORTAL_ADDRESS.toLowerCase()) {
+      console.log("Handling portal deposit");
+      const [token, depositor, amount] = parseDepositPayload(request.payload);
+      console.log(`Token: ${token}, Depositor: ${depositor}, Amount: ${amount}`);
 
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "accept" }),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
+      // Handle deposit logic here
     } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
+      // Handle transaction request like a regular transaction
     }
-  }
-})();
+
+    return true;
+  },
+  inspect(request) {
+    console.log(
+      `Received inspect request with payload 0x${request.payload.toString("hex")}`,
+    );
+  },
+});
 ```
 
 </code></pre>
@@ -592,7 +561,8 @@ while True:
 <pre><code>
 
 ```bash
-npm install viem@2.57.19 ethers@6.17.0
+# No extra package needed: the JavaScript handler decodes the
+# payload with Node.js Buffer methods.
 ```
 
 </code></pre>
@@ -630,12 +600,9 @@ On successful deposit your application should log an object containing the depos
 Sample Log
 
 ```bash
-[INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 495 "-" "node" 0.032192
-Received finish status 200
-Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0x9ec96ddfacdb3144d729ae433c05f1ef774aafab","msg_sender":"0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419","block_number":823,"block_timestamp":1757042397,"prev_randao":"0xf1db9cff537dd607f721ef4aee7d2b516d4adb7fbb0d1c707b72344527e6893e","input_index":0},"payload":"0x86ea17052c8e335ad830b54ef566274eab46b85223618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000c93a592cfb2a00000"}
+Received advance request from 0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419 with payload 0x86ea17052c8e335ad830b54ef566274eab46b85223618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000c93a592cfb2a00000
 Handling portal deposit
-Token: 0x86EA17052C8e335Ad830B54EF566274EAB46B852, Depositor: 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f, Amount: 232000000000000000000
+Token: 0x86ea17052c8e335ad830b54ef566274eab46b852, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Amount: 232000000000000000000
 ```
 
 ## ERC721 Test Tokens
@@ -840,80 +807,52 @@ cartesi create deposit-erc721 --template python
 <pre><code>
 
 ```javascript
-import { ethers } from "ethers";
-import {
-  getAddress,
-} from "viem";
+import { Rollup } from "@cartesi/rollup";
 
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
-
+// Erc721Portal address printed by `cartesi address-book`
 const ERC721_PORTAL_ADDRESS = "0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E";
 
+const rollup = new Rollup();
 
 function parseDepositPayload(payload) {
-    const tokenData = ethers.dataSlice(payload, 0, 20);
-    const senderData = ethers.dataSlice(payload, 20, 40);
-    const tokenIdData = ethers.dataSlice(payload, 40, 72);
-
-    if (!tokenData) {
-      throw new Error("Invalid deposit payload");
-    }
-    return [getAddress(tokenData), getAddress(senderData), BigInt(tokenIdData)];
+  // token (20 bytes), sender (20 bytes), tokenId (32 bytes), ABI-encoded data
+  if (payload.length < 72) {
+    throw new Error("Invalid deposit payload");
   }
-
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  let payload = data.payload;
-  const sender = data["metadata"]["msg_sender"];
-
-  if (sender.toLowerCase() === ERC721_PORTAL_ADDRESS.toLowerCase()) {
-    console.log("Handling portal deposit");
-    const [token, depositor, amount] = parseDepositPayload(payload);
-    console.log(`Token: ${token}, Depositor: ${depositor}, Amount: ${amount}`);
-
-    // Handle deposit logic here
-  } else {
-      // Handle Transaction request like a regular transaction
-  }
-
-  return "accept";
+  const token = `0x${payload.subarray(0, 20).toString("hex")}`;
+  const depositor = `0x${payload.subarray(20, 40).toString("hex")}`;
+  const tokenId = BigInt(`0x${payload.subarray(40, 72).toString("hex")}`);
+  return [token, depositor, tokenId];
 }
 
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
-}
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request from ${request.msgSender} with payload 0x${request.payload.toString("hex")}`,
+    );
 
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
+    if (
+      request.msgSender.toLowerCase() === ERC721_PORTAL_ADDRESS.toLowerCase()
+    ) {
+      console.log("Handling portal deposit");
+      const [token, depositor, tokenId] = parseDepositPayload(request.payload);
+      console.log(
+        `Token: ${token}, Depositor: ${depositor}, Token ID: ${tokenId}`,
+      );
 
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "accept" }),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
+      // Handle deposit logic here
     } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
+      // Handle transaction request like a regular transaction
     }
-  }
-})();
 
+    return true;
+  },
+  inspect(request) {
+    console.log(
+      `Received inspect request with payload 0x${request.payload.toString("hex")}`,
+    );
+  },
+});
 ```
 
 </code></pre>
@@ -1145,7 +1084,8 @@ while True:
 <pre><code>
 
 ```bash
-npm install viem@2.57.19 ethers@6.17.0
+# No extra package needed: the JavaScript handler decodes the
+# payload with Node.js Buffer methods.
 ```
 
 </code></pre>
@@ -1182,12 +1122,9 @@ On successful deposit your application should log an object containing the depos
 Sample Log
 
 ```bash
-[INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 753 "-" "node" 0.032320
-Received finish status 200
-Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0x9ec96ddfacdb3144d729ae433c05f1ef774aafab","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":24284,"block_timestamp":1757089398,"prev_randao":"0x1b76a6830d8a66d5908c517264984bde0ae7ecb9827d8ab4530066ce2a8f1ad0","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+Received advance request from 0x397c352d18dff47cc8a6143403142cf7afd5ff7e with payload 0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 Handling portal deposit
-Token: 0x0761b8e3aB06F458632974393C48765E6Ddc61bB, Depositor: 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f, Amount: 11
+Token: 0x0761b8e3ab06f458632974393c48765e6ddc61bb, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Token ID: 11
 ```
 
 ## ERC1155 Tokens
@@ -1385,80 +1322,58 @@ cartesi create deposit-erc1155 --template python
 <pre><code>
 
 ```Javascript
-import { ethers } from "ethers";
-import {
-  getAddress,
-} from "viem";
+import { Rollup } from "@cartesi/rollup";
 
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
+// Erc1155SinglePortal address printed by `cartesi address-book`
+const ERC1155_SINGLE_PORTAL_ADDRESS =
+  "0x585F56351A66f131E176a345662215C772f80451";
 
-const ERC1155_SINGLE_PORTAL_ADDRESS = "0x585F56351A66f131E176a345662215C772f80451";
-
+const rollup = new Rollup();
 
 function parseDepositPayload(payload) {
-    const tokenData = ethers.dataSlice(payload, 0, 20);
-    const senderData = ethers.dataSlice(payload, 20, 40);
-    const tokenIdData = ethers.dataSlice(payload, 40, 72);
-    const amountData = ethers.dataSlice(payload, 72, 104);
-
-    if (!tokenData) {
-      throw new Error("Invalid deposit payload");
-    }
-    return [getAddress(tokenData), getAddress(senderData), BigInt(tokenIdData), BigInt(amountData)];
+  // token (20 bytes), sender (20 bytes), tokenId (32 bytes), amount (32 bytes),
+  // ABI-encoded data
+  if (payload.length < 104) {
+    throw new Error("Invalid deposit payload");
   }
-
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  let payload = data.payload;
-  const sender = data["metadata"]["msg_sender"];
-
-  if (sender.toLowerCase() === ERC1155_SINGLE_PORTAL_ADDRESS.toLowerCase()) {
-    console.log("Handling portal deposit");
-    const [token, depositor, tokenId, amount] = parseDepositPayload(payload);
-    console.log(`Token: ${token}, Depositor: ${depositor}, Token ID: ${tokenId}, Amount: ${amount}`);
-
-    // Handle deposit logic here
-  } else {
-      // Handle Transaction request like a regular transaction
-  }
-
-  return "accept";
+  const token = `0x${payload.subarray(0, 20).toString("hex")}`;
+  const depositor = `0x${payload.subarray(20, 40).toString("hex")}`;
+  const tokenId = BigInt(`0x${payload.subarray(40, 72).toString("hex")}`);
+  const amount = BigInt(`0x${payload.subarray(72, 104).toString("hex")}`);
+  return [token, depositor, tokenId, amount];
 }
 
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
-}
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request from ${request.msgSender} with payload 0x${request.payload.toString("hex")}`,
+    );
 
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
+    if (
+      request.msgSender.toLowerCase() ===
+      ERC1155_SINGLE_PORTAL_ADDRESS.toLowerCase()
+    ) {
+      console.log("Handling portal deposit");
+      const [token, depositor, tokenId, amount] = parseDepositPayload(
+        request.payload,
+      );
+      console.log(
+        `Token: ${token}, Depositor: ${depositor}, Token ID: ${tokenId}, Amount: ${amount}`,
+      );
 
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "accept" }),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
+      // Handle deposit logic here
     } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
+      // Handle transaction request like a regular transaction
     }
-  }
-})();
+
+    return true;
+  },
+  inspect(request) {
+    console.log(
+      `Received inspect request with payload 0x${request.payload.toString("hex")}`,
+    );
+  },
+});
 ```
 
 </code></pre>
@@ -1689,7 +1604,8 @@ while True:
 <pre><code>
 
 ```bash
-npm install viem@2.57.19 ethers@6.17.0
+# No extra package needed: the JavaScript handler decodes the
+# payload with Node.js Buffer methods.
 ```
 
 </code></pre>
@@ -1733,4 +1649,12 @@ INFO:__main__:Received finish status 200
 INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9ec96ddfacdb3144d729ae433c05f1ef774aafab', 'msg_sender': '0x585f56351a66f131e176a345662215c772f80451', 'block_number': 21, 'block_timestamp': 1757624870, 'prev_randao': '0x45c3ecf672b0c35d25c822ccb22f145f633feec5451438436f57fd310366df44', 'input_index': 0}, 'payload': '0xaae893d28b7645b5e09bc16688dddd451ac89c1923618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'}
 INFO:__main__:Token: 0xaae893d28b7645b5e09bc16688dddd451ac89c19, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, token ID: 1 token_amount: 1
 INFO:__main__:Sending finish
+```
+
+The JavaScript version logs the following for a deposit of one unit of token ID `5`:
+
+```bash
+Received advance request from 0x585f56351a66f131e176a345662215c772f80451 with payload 0xaae893d28b7645b5e09bc16688dddd451ac89c1923618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+Handling portal deposit
+Token: 0xaae893d28b7645b5e09bc16688dddd451ac89c19, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Token ID: 5, Amount: 1
 ```

@@ -140,7 +140,24 @@ Since this project would be covering hex payload encoding and decoding, as well 
 <pre><code>
 
 ```shell
- npm add viem@2.57.19
+pnpm add -D viem@2.57.19
+```
+
+```javascript
+// rolldown.config.js
+import { defineConfig } from "rolldown";
+
+export default defineConfig({
+  input: "src/index.js",
+  platform: "node",
+  // only the @cartesi/rollup native addon stays out of the bundle: viem and
+  // any other pure JavaScript dependency are bundled into dist/index.mjs
+  external: ["@cartesi/rollup"],
+  output: {
+    file: "dist/index.mjs",
+    format: "esm",
+  },
+});
 ```
 
 </code></pre>
@@ -196,6 +213,8 @@ cargo add hex@=0.4.3 serde@=1.0.229 ethers-core@=2.0.14
 </code></pre>
 </TabItem>
 </Tabs>
+
+In JavaScript, install `viem` as a development dependency and replace the contents of `rolldown.config.js` with the configuration above, so that rolldown bundles viem into the application. `cartesi build` installs the packages listed under `dependencies` inside an emulated RISC-V container, where pnpm can crash with a segmentation fault while it installs viem; a bundled development dependency is not installed there (see [adding dependencies](../development/creating-an-application.md#adding-dependencies-in-javascript-and-typescript)). If the `pnpm` command is not available, enable it with `corepack enable pnpm`.
 
 ## Implement the Application Logic
 

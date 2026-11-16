@@ -1,43 +1,25 @@
 ```javascript
-import { encodeFunctionData, erc20Abi, hexToString, zeroHash } from "viem";
+import { Rollup } from "@cartesi/rollup";
+import { encodeFunctionData, erc20Abi } from "viem";
 
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
+const rollup = new Rollup();
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
 
-  const sender = data["metadata"]["msg_sender"];
-  const payload = hexToString(data.payload);
-  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
-
-  const call = encodeFunctionData({
-    abi: erc20Abi,
-    functionName: "transfer",
-    args: [sender, BigInt(10)],
-  });
-
-  const voucher = {
-    destination: erc20Token,
-    payload: call,
-    value: zeroHash,
-  };
-
-  await emitVoucher(voucher);
-  return "accept";
-}
-
-const emitVoucher = async (voucher) => {
-  try {
-    await fetch(rollup_server + "/voucher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(voucher),
+await rollup.run({
+  advance(request) {
+    const call = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "transfer",
+      args: [request.msgSender, 10n],
     });
-  } catch (error) {
-    // Do something when there is an error.
-  }
-};
+
+    rollup.emitVoucher({
+      destination: erc20Token, // the token contract
+      value: 0n, // no Ether sent with the call
+      payload: call,
+    });
+    return true;
+  },
+});
 ```

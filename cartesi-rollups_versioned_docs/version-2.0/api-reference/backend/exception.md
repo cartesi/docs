@@ -25,6 +25,10 @@ The exception payload should be a hex-encoded string starting with '0x' followed
 
 Let's see how a Cartesi dApp's backend handles exceptions:
 
+:::note JavaScript and TypeScript
+In JavaScript and TypeScript, call `rollup.emitException(payload)` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), with the payload as a `Buffer`, a `Uint8Array` or a `0x`-prefixed hex string. An error thrown inside a handler passed to `rollup.run()` does not register an exception: `rollup.run()` rejects the input and emits the error as a report.
+:::
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -33,28 +37,27 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+import { Rollup } from "@cartesi/rollup";
 
-  try {
-    // Process the request
-    // ...
-  } catch (error) {
-    // Register exception and exit
-    await fetch(rollup_server + "/exception", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        payload: "0x" + Buffer.from(error.message).toString("hex"),
-      }),
-    });
-    process.exit(1);
-  }
+const rollup = new Rollup();
 
-  return "accept";
-}
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request with payload ${request.payload.toString("utf8")}`,
+    );
+
+    try {
+      // Process the request, for example by parsing the payload as JSON
+      JSON.parse(request.payload.toString("utf8"));
+    } catch (error) {
+      // Register the exception: the machine stops processing the request here
+      rollup.emitException(Buffer.from(error.message, "utf8"));
+    }
+
+    return true;
+  },
+});
 ```
 
 </code></pre>

@@ -15,7 +15,7 @@ Crucially, the base layer conducts on-chain validation of these notices through 
 
 This validation process ensures the integrity and authenticity of the submitted notices, enabling the blockchain to verify and authenticate the declared off-chain events or conditions.
 
-Here are sample functions you can add to your application, then call to send a notice to the rollup server:
+Here are sample functions you can add to your application, then call to send a notice to the rollup server (in JavaScript, `rollup.emitNotice()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) sends it directly to the Cartesi Machine):
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -25,30 +25,18 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-import { stringToHex, hexToString } from "viem";
+import { Rollup } from "@cartesi/rollup";
 
-const emitNotice = async (inputPayload) => {
-  let hexPayload = stringToHex(inputPayload); // convert payload from string to hex 
-  try {
-    await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexPayload }),
-    });
-  } catch (error) {
-    // Handle error here
-  }
-}
+const rollup = new Rollup();
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  const payload = hexToString(data.payload); // convert input from hex to string for processing
-  await emitNotice(payload);
-  return "accept";
-}
-
+await rollup.run({
+  advance(request) {
+    const payload = request.payload.toString("utf8"); // input as a string for processing
+    console.log(`Received advance request with payload ${payload}`);
+    rollup.emitNotice(Buffer.from(payload, "utf8")); // notice payload as raw bytes
+    return true;
+  },
+});
 ```
 
 </code></pre>
