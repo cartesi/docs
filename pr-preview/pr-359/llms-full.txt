@@ -17554,6 +17554,7 @@ The figure below illustrates the main use cases for these interactions:
 ---
 id: emergency-withdrawal
 title: Emergency Withdrawal (guest requirements)
+sidebar_label: Emergency Withdrawal
 ---
 
 [Emergency withdrawal](../../development/emergency-withdrawal/overview.md) lets users recover their in-app balances directly from the base layer after an application is foreclosed. For that to work, the on-chain contracts need a way to read each account's balance from the settled machine state. This page describes what the **guest application** (the code running inside the Cartesi Machine) must do to support it.
@@ -45939,7 +45940,7 @@ import DocCard from '@theme/DocCard';
     <DocCard item={{
       type: "link",
       label: "Cartesi Rollups",
-      href: "/cartesi-rollups/1.5/",
+      href: "/cartesi-rollups/2.0/",
       description: "Deploy scalable Appchains as L2/L3"
     }} />
   </div>
