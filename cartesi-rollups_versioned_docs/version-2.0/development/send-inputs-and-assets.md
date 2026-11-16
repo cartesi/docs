@@ -241,15 +241,24 @@ In the application architecture, here is how an advance request plays out.
 
 You can send inputs to your application with [Cast](https://book.getfoundry.sh/cast/), Cartesi CLI, or a custom web interface.
 
+:::tip Use an account other than the node's while developing
+When you run your application with `cartesi run`, the local node signs its claims with devnet account 0 (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`), the first account of the anvil mnemonic. Send your own transactions from any other devnet account:
+
+- `cartesi send` and `cartesi deposit` already use devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`) by default. If you pass `--from`, choose any account except account 0.
+- When you sign transactions yourself, with `cast` or a wallet, do not use account 0. With the anvil mnemonic, pass a non-zero `--mnemonic-index` to `cast`.
+
+Transactions from account 0 compete with the node's own transactions for the same nonce and can be dropped, even when the command that sent them reports success. If an input or a deposit does not reach your application, check that its transaction was mined, for example with `cast receipt <transaction hash>`.
+:::
+
 #### 1. Send inputs with Cast
 
 ```shell
-cast send <InputBoxAddress> "addInput(address,bytes)" <ApplicationAddress> <EncodedPayload> --mnemonic <MNEMONIC>
+cast send <InputBoxAddress> "addInput(address,bytes)" <ApplicationAddress> <EncodedPayload> --mnemonic <MNEMONIC> --mnemonic-index <INDEX>
 ```
 
 This command sends the payload to the InputBox smart contract, initiating the advance request.
 
-Replace placeholders like `<InputBoxAddress>`, `<ApplicationAddress>`, `<EncodedPayload>`, and `<MNEMONIC>` with the actual addresses, payload, and mnemonic for your specific use case.
+Replace placeholders like `<InputBoxAddress>`, `<ApplicationAddress>`, `<EncodedPayload>`, `<MNEMONIC>` and `<INDEX>` with the actual addresses, payload, mnemonic and account index for your specific use case. On the local devnet, use an index other than 0 (see the tip above).
 
 You can obtain the relevant addresses by running `cartesi address-book`.
 
@@ -353,4 +362,4 @@ Response:
 Convert UTF-8 string to bytes
 ```
 
-The `cartesi deposit` command by default sends from devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`; pass `--from` to choose another account), and uses the default test erc20 and erc721 contract to interact with your application, but this can all be modified to fit your purpose better.
+The `cartesi deposit` command by default sends from devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`; pass `--from` to choose another account, but not account 0, which the local node uses, see [Initiate an advance request](#initiate-an-advance-request)), and uses the default test erc20 and erc721 contract to interact with your application, but this can all be modified to fit your purpose better.
