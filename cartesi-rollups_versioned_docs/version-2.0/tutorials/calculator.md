@@ -80,7 +80,7 @@ cartesi create calculator --template cpp
 </Tabs>
 
 This creates a `calculator/` directory with all required files.
-Your backend entry point depends on language (`src/index.js`, `dapp.py`, `src/main.rs`, `main.go`, or `src/main.cpp`).
+Your backend entry point depends on language (`src/index.js`, `dapp.py`, `src/main.rs`, `src/dapp.go`, or `dapp.cpp`).
 
 ## Review the default backend template
 
@@ -144,7 +144,7 @@ Install the minimal dependencies for your language:
 <pre><code>
 
 ```shell
-npm add expr-eval
+pnpm add expr-eval
 ```
 
 </code></pre>
@@ -177,7 +177,9 @@ cargo add meval hex
 <pre><code>
 
 ```shell
+cd src
 go get github.com/Knetic/govaluate
+cd ..
 ```
 
 </code></pre>
@@ -279,8 +281,6 @@ Example: Send `1+2` as an input to the application.
 
 ```shell
 (base) user@user-MacBook-Pro calculator % cartesi send "1 + 2"
-(node:64729) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
 ✔ Input sent: 0x1866ab903f8fa5bd712fc2d322b8c0ba119bb31d30885a06e0fe6005ff079ff2
 ```
 
@@ -291,7 +291,7 @@ Example: Send `1+2` as an input to the application.
 
 ## Retrieving outputs from the application
 
-The `cartesi send generic` sends a request to the calculator application to process the computation `(1 + 2)`, this is computed and a payload (notice) containing the result is sent to the Rollup Server's `/notice` endpoint.
+The `cartesi send` command sends a request to the calculator application to process the computation `(1 + 2)`, this is computed and a payload (notice) containing the result is sent to the Rollup Server's `/notice` endpoint.
 
 :::note querying notices
 Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.

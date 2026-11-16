@@ -94,7 +94,7 @@ export class Wallet {
     return this.getOrCreateBalance(address).getEther();
   }
 
-  depositEther(payload: string): string {
+  depositEther(payload: Hex): string {
     const [address, amount] = this.parseDepositPayload(payload);
     const balance = this.getOrCreateBalance(address);
     balance.increaseEther(amount);

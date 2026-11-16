@@ -79,7 +79,7 @@ cartesi create counter --template cpp
 </TabItem>
 </Tabs>
 
-This command creates a directory called `counter` and, depending on your selected language, this directory contains the entry point file to start your application (for example: `dapp.py` for Python, `src/main.rs` for Rust, `src/index.js` for JavaScript, `main.go` for Go, and `src/main.cpp` for C++).
+This command creates a directory called `counter` and, depending on your selected language, this directory contains the entry point file to start your application (for example: `dapp.py` for Python, `src/main.rs` for Rust, `src/index.js` for JavaScript, `src/dapp.go` for Go, and `dapp.cpp` for C++).
 
 This entry point file contains the default template for interacting with the Cartesi Rollups HTTP Server, it also makes available, two function namely `handle_advance()` and `handle_inspect()` which process "advance / write" and "inspect / read" requests to the application. In the next section we would be updating these functions with the implementation for your application.
 
@@ -153,8 +153,6 @@ cartesi build
 
 ```shell
 user@user-MacBook-Pro counter % cartesi build
-(node:4460) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
 ✔ Build drives
   ✔ Build drive root
 
@@ -195,14 +193,7 @@ If the `run` command is successful, you should see logs similar to this:
 
 ```bash
 user@user-MacBook-Pro counter % cartesi run
-(node:5404) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
 WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
-[+] Pulling 4/0
- ✔ database Skipped - Image is already present locally
- ✔ rollups-node Skipped - Image is already present locally
- ✔ anvil Skipped - Image is already present locally
- ✔ proxy Skipped - Image is already present locally
 ✔ counter starting at http://127.0.0.1:6751
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
@@ -230,7 +221,7 @@ curl -X POST http://127.0.0.1:6751/inspect/counter \
 Please note that if your application is running on a different port or your application is not named `counter` as in the guide, then you'll need to replace the inspect endpoint `http://127.0.0.1:6751/inspect/counter` with the endpoint provided after running the `cartesi run` command.
 :::
 
-On success, we receive a confirmation response from the HTTP server, something similar to `{"status":"Accepted","reports":null,"processed_input_count":0}`, then on the terminal running our application when we press the `l` key to access our application logs we should get a log confirming that our application received the inspect call and should also contain a log of the current count value.
+On success, we receive a confirmation response from the HTTP server, something similar to `{"status":"Accepted","reports":[],"processed_input_count":0}`, then on the terminal running our application when we press the `l` key to access our application logs we should get a log confirming that our application received the inspect call and should also contain a log of the current count value.
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type INSPECT

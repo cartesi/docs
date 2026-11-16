@@ -2,11 +2,13 @@
 package main
 
 import (
+	"dapp/rollups"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
-	"dapp/rollups"
+
 	"github.com/Knetic/govaluate"
 )
 
@@ -66,8 +68,13 @@ func main() {
 			continue
 		}
 
-		response, err := rollups.ParseFinishResponse(res)
+		resBody, err := io.ReadAll(res.Body)
 		if err != nil {
+			errlog.Panicln("Error reading finish response:", err)
+		}
+
+		var response rollups.FinishResponse
+		if err = json.Unmarshal(resBody, &response); err != nil {
 			errlog.Panicln("Error parsing finish response:", err)
 		}
 
