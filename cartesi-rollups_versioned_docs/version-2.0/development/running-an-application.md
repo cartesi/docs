@@ -50,6 +50,10 @@ Each of these services runs independently and can be activated or deactivated at
 
 - **Anvil Chain**: Runs a local blockchain available at `http://localhost:6751/anvil`.
 
+  :::caution Be careful with devnet account 0
+  The local node signs its claims with devnet account 0 (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`), the first account of the anvil mnemonic. Do not send your own transactions from it: they compete with the node's transactions for the same nonce and can be dropped, even when the command that sent them reports success. `cartesi send` and `cartesi deposit` use devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`) by default; with `--from`, `cast` or a wallet, use any account except account 0. See [Send inputs](./send-inputs-and-assets.md#initiate-an-advance-request).
+  :::
+
 - **Explorer**: Monitors Rollups application activity and manages transactions via `http://localhost:6751/explorer`.
 
 - **Inspect**: A diagnostic tool accessible at `http://localhost:6751/inspect/<app_name>` to inspect the node’s state.

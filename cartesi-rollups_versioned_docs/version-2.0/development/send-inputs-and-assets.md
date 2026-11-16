@@ -241,7 +241,7 @@ In the application architecture, here is how an advance request plays out.
 
 You can send inputs to your application with [Cast](https://book.getfoundry.sh/cast/), Cartesi CLI, or a custom web interface.
 
-:::tip Use an account other than the node's while developing
+:::caution Be careful with devnet account 0
 When you run your application with `cartesi run`, the local node signs its claims with devnet account 0 (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`), the first account of the anvil mnemonic. Send your own transactions from any other devnet account:
 
 - `cartesi send` and `cartesi deposit` already use devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`) by default. If you pass `--from`, choose any account except account 0.
