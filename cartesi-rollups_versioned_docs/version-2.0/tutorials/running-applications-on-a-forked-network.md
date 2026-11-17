@@ -179,11 +179,13 @@ This returns an output similar to:
 [⠊] Compiling...
 No files changed, compilation skipped
 Deployer: <your deployer address>
-Deployed to: 0x070dC307580c1e3E8eE23836419A0c49780d358D
+Deployed to: <your InputRelayer address>
 Transaction hash: <deployment transaction hash>
 ```
 
 After deployment, inspect the transaction using a block explorer. Take note of the block number in which the transaction was included, as this will be used later when configuring the fork.
+
+Unlike on Base Sepolia, no sample `InputRelayer` is deployed on Sepolia: use the address of the contract you deployed in the commands below.
 
 </TabItem>
 <TabItem value="base-sepolia" label="Base Sepolia">
@@ -261,7 +263,7 @@ This command compiles your application and produces a Cartesi Machine image that
 <Tabs groupId="network">
 <TabItem value="sepolia" label="Sepolia" default>
 
-Next, run the application using a forked network. Provide a Sepolia RPC endpoint that serves historical state (see [Best practices](#best-practices)) and a fork block number at or after both the block where the `InputRelayer` contract was deployed and the block where the Cartesi `InputBox` was deployed on Sepolia. The sample `InputRelayer` was deployed in block `12148080`, after the `InputBox`, so the sample forks at that block:
+Next, run the application using a forked network. Provide a Sepolia RPC endpoint that serves historical state (see [Best practices](#best-practices)) and a fork block number at or after both the block where your `InputRelayer` contract was deployed and the block where the Cartesi `InputBox` was deployed on Sepolia:
 
 ```bash
 cartesi run --fork-url <Sepolia RPC URL> --fork-block-number <InputRelayer deployment block>
@@ -315,8 +317,8 @@ WARNING: default block is set to 'latest', production configuration will likely 
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
 ✔ inspect service ready at http://127.0.0.1:6751/inspect/fork-sepolia
-✔ fork-sepolia machine hash is 0xa5b369b0d19766005d12369d0fa588925093ffe24c44c64c76155734270b7ac7
-✔ fork-sepolia contract deployed at 0xebdd61633d7767beaf16c86b08ec7ab542719e14
+✔ fork-sepolia machine hash is 0x39692c2d0999bdc0ff83b4c0b25ab1cb50a4aeb2bdce2fcfcc445ab372d9af52
+✔ fork-sepolia contract deployed at 0xb9afc4e19916ca52571fc327fe185a43c155e337
 (l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
@@ -331,8 +333,8 @@ WARNING: default block is set to 'latest', production configuration will likely 
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
 ✔ inspect service ready at http://127.0.0.1:6751/inspect/fork-sepolia
-✔ fork-sepolia machine hash is 0xf091ca929ce2f7a37099b07c64ede5f18bfe95b31ba8660b2d2450b90089d381
-✔ fork-sepolia contract deployed at 0xebdd61633d7767beaf16c86b08ec7ab542719e14
+✔ fork-sepolia machine hash is 0x39692c2d0999bdc0ff83b4c0b25ab1cb50a4aeb2bdce2fcfcc445ab372d9af52
+✔ fork-sepolia contract deployed at 0xb9afc4e19916ca52571fc327fe185a43c155e337
 (l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
@@ -363,7 +365,7 @@ cast send <InputRelayer address> "relayInput(address,address,bytes)" <applicatio
 <pre><code>
 
 ```bash
-cast send 0x070dC307580c1e3E8eE23836419A0c49780d358D "relayInput(address,address,bytes)" <application address> 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
+cast send <your InputRelayer address> "relayInput(address,address,bytes)" <application address> 0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C "0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"  --rpc-url http://127.0.0.1:6751/anvil --private-key 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
 ```
 
 </code></pre>
@@ -401,16 +403,16 @@ For the sample application, this returns `0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94
 
 ### Expected logs
 
-The logs below come from the Rust implementation, which runs the rollup HTTP server. The JavaScript implementation prints only its own `[InputRelayer] …` line for each input.
+The logs below come from the Rust implementation, which runs the rollup HTTP server. The JavaScript implementation prints only its own `[InputRelayer] …` line for each input. `msg_sender` and `relayer` show the address of the `InputRelayer` that sent the input; on Sepolia it is the address of your own contract.
 
 <Tabs groupId="network">
 <TabItem value="sepolia" label="Sepolia" default>
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 434 "-" "-" 0.018560
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 434 "-" "-" 0.020416
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xebdd61633d7767beaf16c86b08ec7ab542719e14","msg_sender":"0x070dc307580c1e3e8ee23836419a0c49780d358d","block_number":12148163,"block_timestamp":1794842144,"prev_randao":"0xec08afe391faa075a0d4b94bef4b21dbb166885b87f98c56100bb446a1ea532e","input_index":0},"payload":"0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb9afc4e19916ca52571fc327fe185a43c155e337","msg_sender":"0x070dc307580c1e3e8ee23836419a0c49780d358d","block_number":12148095,"block_timestamp":1794841314,"prev_randao":"0xabe8804288e768e6db534184ef2acdb00a4b45a0a5627aa58158ab0592ab4bbc","input_index":0},"payload":"0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"}}
 [InputRelayer] input_index=0 relayer=0x070dc307580c1e3e8ee23836419a0c49780d358d original_sender=0xd8da6bf26964af9d7eed9e03e53415d37aa96045 message="Hello from Cartesi!"
 Sending finish
 ```
@@ -422,13 +424,23 @@ Sending finish
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 434 "-" "-" 0.020416
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xebdd61633d7767beaf16c86b08ec7ab542719e14","msg_sender":"0x06ebaf6d44b65d76c8bdcb1701e68f44c22b1057","block_number":46217276,"block_timestamp":1788202842,"prev_randao":"0x6cddda3b61bb23e3642c17f2ad5230db7b93393d115570aa89710feebee10bc4","input_index":0},"payload":"0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb9afc4e19916ca52571fc327fe185a43c155e337","msg_sender":"0x06ebaf6d44b65d76c8bdcb1701e68f44c22b1057","block_number":46217256,"block_timestamp":1788202801,"prev_randao":"0x5318f5933fbe4542e50cf578330f9e03816c377a3c47b0e74068b2b95ac8fae2","input_index":0},"payload":"0xd8da6bf26964af9d7eed9e03e53415d37aa9604548656c6c6f2066726f6d204361727465736921"}}
 [InputRelayer] input_index=0 relayer=0x06ebaf6d44b65d76c8bdcb1701e68f44c22b1057 original_sender=0xd8da6bf26964af9d7eed9e03e53415d37aa96045 message="Hello from Cartesi!"
 Sending finish
 ```
 
 </TabItem>
 </Tabs>
+
+:::note Claims on Sepolia and Base Sepolia forks
+The node signs its claims with devnet account 0 (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`). On Sepolia and Base Sepolia this account has code (an EIP-7702 delegation), so on a fork of these networks the node logs `Claim publication deferred … signer code or delegation is outside the supported EOA profile` and submits no claims: inputs are processed, but epochs never reach `CLAIM_ACCEPTED`, so outputs cannot be validated or executed on the fork. To let the node submit claims, clear the account's code on the local fork once `cartesi run` has deployed the application:
+
+```bash
+cast rpc anvil_setCode 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 0x --rpc-url http://127.0.0.1:6751/anvil
+```
+
+This changes only your local fork. The node retries the pending claims on its own, and each epoch is accepted shortly after it closes. Do not send transactions from this account yourself.
+:::
 
 ## Summary
 

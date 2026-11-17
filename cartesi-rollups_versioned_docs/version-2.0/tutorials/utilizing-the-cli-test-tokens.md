@@ -159,7 +159,7 @@ For a successful deposit process you should see logs similar to this:
 ✔ Token address 0x86EA17052C8e335Ad830B54EF566274EAB46B852
 ✔ Amount (FUN) 202
 ✔ Approved 202 FUN
-✔ Deposited 202 FUN to 0x9ec96ddfacdb3144d729ae433c05f1ef774aafab
+✔ Deposited 202 FUN to 0x0ccbebba6996745ac60d9cd1c91eb3f8b2f62458
 ```
 
 The last address is the address of your application. You can also pass the amount and the token as arguments and skip the prompts, for example `cartesi deposit erc20 202 --token $(cartesi address-book TestToken)`. The CLI deposits from devnet account 8 by default; use the `--from <address>` option to deposit from another devnet account. If that address does not hold enough tokens, the command stops with `✖ Insufficient balance`, so mint tokens first as shown above.
@@ -600,9 +600,9 @@ On successful deposit your application should log an object containing the depos
 Sample Log
 
 ```bash
-Received advance request from 0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419 with payload 0x86ea17052c8e335ad830b54ef566274eab46b85223618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000c93a592cfb2a00000
+Received advance request from 0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419 with payload 0x86ea17052c8e335ad830b54ef566274eab46b85223618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000af35029c214e80000
 Handling portal deposit
-Token: 0x86ea17052c8e335ad830b54ef566274eab46b852, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Amount: 232000000000000000000
+Token: 0x86ea17052c8e335ad830b54ef566274eab46b852, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Amount: 202000000000000000000
 ```
 
 ## ERC721 Test Tokens
@@ -700,7 +700,7 @@ For a successful deposit process you should get a log similar to this below:
 ✔ Token ID 2
 ✔ Token address 0x0761b8e3aB06F458632974393C48765E6Ddc61bB
 ✔ Approved undefined NFT
-✔ Deposited undefined NFT to 0x9ec96ddfacdb3144d729ae433c05f1ef774aafab
+✔ Deposited undefined NFT to 0x02926b7cc26ed3c3682aa63a6623c6ce39406b2e
 ```
 
 When you enter the token ID at the prompt, the CLI prints `undefined` in place of the token ID in the last two lines; the deposit itself is not affected. To get the full message and skip the prompts, pass the token ID and address as arguments, for example `cartesi deposit erc721 2 --token $(cartesi address-book TestNFT)`, which prints `✔ Approved 2 NFT` and `✔ Deposited 2 NFT to <application address>`.
@@ -1122,9 +1122,9 @@ On successful deposit your application should log an object containing the depos
 Sample Log
 
 ```bash
-Received advance request from 0x397c352d18dff47cc8a6143403142cf7afd5ff7e with payload 0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+Received advance request from 0x397c352d18dff47cc8a6143403142cf7afd5ff7e with payload 0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 Handling portal deposit
-Token: 0x0761b8e3ab06f458632974393c48765e6ddc61bb, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Token ID: 11
+Token: 0x0761b8e3ab06f458632974393c48765e6ddc61bb, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Token ID: 2
 ```
 
 ## ERC1155 Tokens
@@ -1223,7 +1223,7 @@ cartesi deposit
 ✔ Token ID 5
 ✔ Amount of token ID 5 1
 ✔ Approved ERC1155Portal
-✔ Deposited 1 units of token id 5 to 0x9ec96ddfacdb3144d729ae433c05f1ef774aafab
+✔ Deposited 1 units of token id 5 to 0x3f38c4cf712b94bb733f5de123563f326234b255
 ```
 
 #### Using Cast
@@ -1644,10 +1644,10 @@ Sample Log
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 814 "-" "python-requests/2.31.0" 0.020416
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 814 "-" "python-requests/2.31.0" 0.020800
 INFO:__main__:Received finish status 200
-INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9ec96ddfacdb3144d729ae433c05f1ef774aafab', 'msg_sender': '0x585f56351a66f131e176a345662215c772f80451', 'block_number': 21, 'block_timestamp': 1757624870, 'prev_randao': '0x45c3ecf672b0c35d25c822ccb22f145f633feec5451438436f57fd310366df44', 'input_index': 0}, 'payload': '0xaae893d28b7645b5e09bc16688dddd451ac89c1923618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'}
-INFO:__main__:Token: 0xaae893d28b7645b5e09bc16688dddd451ac89c19, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, token ID: 1 token_amount: 1
+INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x200e95c47ffa2fb8664c2ad4c80803fafdc84c41', 'msg_sender': '0x585f56351a66f131e176a345662215c772f80451', 'block_number': 31, 'block_timestamp': 1794920660, 'prev_randao': '0x313e855ed1d0895637f277934760bb75954184218aa2d3810196671d807765ec', 'input_index': 0}, 'payload': '0xaae893d28b7645b5e09bc16688dddd451ac89c1923618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'}
+INFO:__main__:Token: 0xaae893d28b7645b5e09bc16688dddd451ac89c19, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, token ID: 5 token_amount: 1
 INFO:__main__:Sending finish
 ```
 

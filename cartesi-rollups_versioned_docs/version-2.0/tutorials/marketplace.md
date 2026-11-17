@@ -299,8 +299,6 @@ cartesi build
   
 ```shell
 user@user-MacBook-Pro marketplace % cartesi build
-(node:4460) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
 ✔ Build drives
   ✔ Build drive root
 
@@ -319,13 +317,12 @@ user@user-MacBook-Pro marketplace % cartesi build
 [INFO  actix_server::builder] starting 1 workers
 [INFO  actix_server::server] Actix runtime found; starting in Actix runtime
 [INFO  actix_server::server] starting service: "actix-web-service-127.0.0.1:5004", workers: 1, listening on: 127.0.0.1:5004
-[INFO  rollup_http_server::dapp_process] starting dapp: python3 dapp.py
-INFO:__main__:HTTP rollup_server url is http://127.0.0.1:5004
-INFO:__main__:Sending finish
+[INFO  rollup_http_server::dapp_process] starting dapp: dapp
+Sending finish
 
 Manual yield rx-accepted (1) (0x000020 data)
-Cycles: 8108719633
-8108719633: 107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
+Cycles: 76215164
+76215164: 0x6ba590729f9c35be09f4d005bc2838969fc4ec0b40bd80421c0167527119bce4
 Storing machine: please wait
 ```
 
@@ -341,20 +338,13 @@ If the `run` command is successful, you should see logs similar to this:
 
 ```bash
 user@user-MacBook-Pro marketplace % cartesi run
-(node:5404) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
 WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
-[+] Pulling 4/0
- ✔ database Skipped - Image is already present locally  
- ✔ rollups-node Skipped - Image is already present locally 
- ✔ anvil Skipped - Image is already present locally  
- ✔ proxy Skipped - Image is already present locally                                                                                                                                                                                                                   
 ✔ marketplace starting at http://127.0.0.1:6751
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
 ✔ inspect service ready at http://127.0.0.1:6751/inspect/marketplace
-✔ marketplace machine hash is 0x107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
-✔ marketplace contract deployed at 0x94b32605a405d690934eb4ecc91856febfa747cc
+✔ marketplace machine hash is 0x6ba590729f9c35be09f4d005bc2838969fc4ec0b40bd80421c0167527119bce4
+✔ marketplace contract deployed at 0x1173736abe1b9fd5af86604089c8264826c94fcd
 (l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
@@ -413,12 +403,14 @@ Under the hood, the CLI approves the portal for the token and calls `depositErc7
 Once the deposit succeeds, the terminal running your application should show logs similar to the following. The sample logs on this page come from the Rust implementation, which runs the rollup HTTP server; the other languages print their own messages:
 
 ```bash
-INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 751 "-" "-" 0.018688
+[INFO  rollup_http_server::http_service] received new request of type ADVANCE
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 750 "-" "-" 0.020416
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":675,"block_timestamp":1762948794,"prev_randao":"0x3d144a3d5bb3125c92a230e7597e04e82eb5d5acbea185db2b1eadda3530d5c7","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0x1173736abe1b9fd5af86604089c8264826c94fcd","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":38,"block_timestamp":1794920122,"prev_randao":"0xed9592734017a764b86b7e50541f4db382e676771985cce5ab423a7afb0aa486","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
+Deposited and listed token: 0x0761b8e3ab06f458632974393c48765e6ddc61bb, Receiver: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Token ID: 1
 Token deposit and listing processed successfully
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /notice HTTP/1.1" 201 11 "-" "-" 0.001088
+Notice generation successful
 Sending finish
 ```
 
@@ -466,9 +458,9 @@ On a successful deposit our application should return logs that look like this:
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 496 "-" "-" 0.018176
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 494 "-" "-" 0.019008
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419","block_number":2272,"block_timestamp":1762951994,"prev_randao":"0x0992ab8380b23c1c98928a76ae9a79c501ae27625943a53b0fd57455f10e5164","input_index":1},"payload":"0x86ea17052c8e335ad830b54ef566274eab46b85270997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0x1173736abe1b9fd5af86604089c8264826c94fcd","msg_sender":"0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419","block_number":81,"block_timestamp":1794920208,"prev_randao":"0x4b9d05d49847fa57352b6fa9b22496e7dd0c7a74bb8ce84534d7c9084d448a2d","input_index":1},"payload":"0x86ea17052c8e335ad830b54ef566274eab46b85270997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000"}}
 Deposited token: 0x86ea17052c8e335ad830b54ef566274eab46b852, Receiver: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8, Amount: 100000000000000000000
 Token deposit processed successfully
 Sending finish
@@ -482,20 +474,21 @@ Now that the buyer has deposited funds, we can proceed to purchase the NFT. Use 
 cartesi send --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
 ✔ Input String encoding
 ✔ Input (as string) {"method": "purchase_token", "token_id": "1"}
-✔ Input sent: 0x61dad3fb284470ab9e049fd45197062704376c797bdf020a5550f66d0dcec884
+✔ Input sent: 0x209f81a43a03ac57aa22a80ce87978c02fe7d02ec298714186f692af59af4cf9
 ```
 
 This sends a purchase request for token ID `1` from the buyer address. Pass `token_id` as a string, as above: the application reads it as a string and rejects the purchase, with the report `Missing or invalid token_id field in payload`, when it is a number. The marketplace validates the request (token listed and sufficient balance), executes the purchase, and emits the voucher to transfer the NFT to the buyer.
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 426 "-" "-" 0.001792
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 440 "-" "-" 0.002624
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":3576,"block_timestamp":1762954606,"prev_randao":"0xd29cd42cfd3c9ff4f31b39f497fc2f4d0a7add5a67da98be0d7841c37c7ad25f","input_index":2},"payload":"0x7b226d6574686f64223a202270757263686173655f746f6b656e222c2022746f6b656e5f6964223a202231227d"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0x1173736abe1b9fd5af86604089c8264826c94fcd","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":88,"block_timestamp":1794920222,"prev_randao":"0x6566eb1f4a1fee4e613e0b3e112fdde41187675bbdf6c90dfbdfa3403763fa21","input_index":2},"payload":"0x7b226d6574686f64223a202270757263686173655f746f6b656e222c2022746f6b656e5f6964223a202231227d"}}
 Token purchased successfully
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /voucher HTTP/1.1" 201 11 "-" "-" 0.015424
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /voucher HTTP/1.1" 201 11 "-" "-" 0.016704
 Voucher generation successful
 Token purchased and Withdrawn successfully
+Sending finish
 ```
 
 ### 6. Recheck NFTs Listed on the Marketplace [inspect request]
