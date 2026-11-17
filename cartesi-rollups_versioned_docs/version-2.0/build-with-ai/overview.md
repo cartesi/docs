@@ -7,13 +7,13 @@ import TabItem from '@theme/TabItem';
 
 AI coding assistants can scaffold, implement, and debug Cartesi applications quickly, but without Cartesi-specific context they often guess CLI flags, mix up v1 and v2 APIs, or invent workflows.
 
-Using the right tools, you get faster iteration-handlers, contracts, and frontends from natural-language prompts-and less context switching, with version-aware CLI commands and doc links inline instead of hunting through tabs. This section gives your assistant structured knowledge and tools to build and ship applications quickly and reliably.
+Using the right tools, you get faster iteration (handlers, contracts, and frontends from natural-language prompts) and less context switching, with version-aware CLI commands and doc links inline instead of hunting through tabs. This section gives your assistant structured knowledge and tools to build and ship applications quickly and reliably.
 
 ## How it works
 
 Multiple pieces work together to learn and build with AIs:
 
-1. **[Documentaion](#documentation-indexing-and-usage)**: Usage of [llms.txt](https://docs.cartesi.io/llms.txt) gives your assistant a machine-readable index of all Cartesi docs.
+1. **[Documentation](#documentation-indexing-and-usage)**: Usage of [llms.txt](https://docs.cartesi.io/llms.txt) gives your assistant a machine-readable index of all Cartesi docs.
 2. **[MCP server](./mcp-server.mdx)**: Connects your editor to curated Cartesi docs, repos, articles, and skills.
 3. **[Skills](./skills.md)**: Loads focused instructions (scaffold, backend, frontend, deploy, debug)
 4. **[Prompting](./prompting.md)**: Interactive way to put the knowledge and skills of the AI assistant in practice.
@@ -71,7 +71,7 @@ For live Cartesi-specific tools (CLI commands, skills, repo search), also connec
 
 1. Download the static documentation file from [https://docs.cartesi.io/llms-full.txt](https://docs.cartesi.io/llms-full.txt), or fetch the index at [https://docs.cartesi.io/llms.txt](https://docs.cartesi.io/llms.txt) and pull individual `.md` pages as needed.
 2. Save the file in your project directory or another known location.
-3. Reference it in chat with `/read` or by attaching the file path so Claude Code has Cartesi documentation for that session.
+3. Reference it in chat by its path (for example `@docs/cartesi-llms-full.txt`) so Claude Code has Cartesi documentation for that session.
 
 For ongoing work, add the Cartesi MCP server to your project's `.mcp.json` (see [MCP server](./mcp-server.mdx)) so lookups stay current without re-downloading `llms-full.txt`.
 
@@ -84,7 +84,7 @@ For ongoing work, add the Cartesi MCP server to your project's `.mcp.json` (see 
 1. Download the static documentation file to your project:
 
    ```shell
-   curl -fSL https://docs.cartesi.io/llms-full.txt -o docs/cartesi-llms-full.txt
+   curl -fSL --create-dirs https://docs.cartesi.io/llms-full.txt -o docs/cartesi-llms-full.txt
    ```
 
 2. Add a pointer in `AGENTS.md` at the repo root so Codex grounds answers in Cartesi docs:
@@ -120,7 +120,7 @@ For live tooling, also connect the [MCP server](./mcp-server.mdx).
 
 5. Start a new chat inside the project; Claude will ground answers in the uploaded docs.
 
-For live tools (CLI commands, skills, repo search), connect the [MCP server](./mcp-server.mdx) in Claude Desktop's MCP config.
+For live tools (CLI commands, skills, repo search), add the [MCP server](./mcp-server.mdx) to Claude Desktop as a custom connector.
 
 </TabItem>
 
@@ -131,7 +131,7 @@ For live tools (CLI commands, skills, repo search), connect the [MCP server](./m
 1. Download the static documentation file into your repo:
 
    ```shell
-   curl -fSL https://docs.cartesi.io/llms-full.txt -o docs/cartesi-llms-full.txt
+   curl -fSL --create-dirs https://docs.cartesi.io/llms-full.txt -o docs/cartesi-llms-full.txt
    ```
 
 2. Create `.github/copilot-instructions.md` (or extend the existing one) with a Cartesi grounding block:

@@ -9,7 +9,7 @@ logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 
 ROLLUP_HTTP_SERVER_URL = os.environ["ROLLUP_HTTP_SERVER_URL"]
-TOKEN_ADDRESS = "0x5138f529b77b4e0a7c84b77e79c4335d31938fed"
+TOKEN_ADDRESS = "0x86ea17052c8e335ad830b54ef566274eab46b852"
 
 
 def payload_hex_to_bytes(payload):

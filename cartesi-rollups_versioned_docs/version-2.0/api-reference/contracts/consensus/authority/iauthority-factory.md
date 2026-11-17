@@ -2,11 +2,11 @@
 id: iauthority-factory
 title: IAuthorityFactory
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/consensus/authority/IAuthorityFactory.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/consensus/authority/IAuthorityFactory.sol
     title: IAuthorityFactory Interface
 ---
 
-The **IAuthorityFactory** interface defines the contract for deploying new `IAuthority` contracts.
+The **IAuthorityFactory** interface defines the contract for deploying new `IAuthority` contracts. It inherits from `IVersionGetter` and `IConsensusFactoryErrors`.
 
 ## Events
 
@@ -16,7 +16,7 @@ The **IAuthorityFactory** interface defines the contract for deploying new `IAut
 event AuthorityCreated(IAuthority authority)
 ```
 
-A new authority was deployed.
+A new authority was deployed. MUST be triggered on a successful call to `newAuthority`.
 
 **Parameters**
 
@@ -29,10 +29,16 @@ A new authority was deployed.
 ### `newAuthority()`
 
 ```solidity
-function newAuthority(address authorityOwner, uint256 epochLength) external returns (IAuthority)
+function newAuthority(
+    address authorityOwner,
+    uint256 epochLength,
+    uint256 claimStagingPeriod
+) external returns (IAuthority)
 ```
 
 Deploy a new authority.
+
+*On success, MUST emit an `AuthorityCreated` event. Reverts if the authority owner address is zero. Reverts if the epoch length is zero.*
 
 **Parameters**
 
@@ -40,6 +46,7 @@ Deploy a new authority.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | The claim staging period |
 
 **Return Values**
 
@@ -50,10 +57,17 @@ Deploy a new authority.
 ### `newAuthority()` (with salt)
 
 ```solidity
-function newAuthority(address authorityOwner, uint256 epochLength, bytes32 salt) external returns (IAuthority)
+function newAuthority(
+    address authorityOwner,
+    uint256 epochLength,
+    uint256 claimStagingPeriod,
+    bytes32 salt
+) external returns (IAuthority)
 ```
 
 Deploy a new authority deterministically.
+
+*On success, MUST emit an `AuthorityCreated` event. Reverts if the authority owner address is zero. Reverts if the epoch length is zero.*
 
 **Parameters**
 
@@ -61,6 +75,7 @@ Deploy a new authority deterministically.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | The claim staging period |
 | `salt` | `bytes32` | The salt used to deterministically generate the authority address |
 
 **Return Values**
@@ -75,11 +90,14 @@ Deploy a new authority deterministically.
 function calculateAuthorityAddress(
     address authorityOwner,
     uint256 epochLength,
+    uint256 claimStagingPeriod,
     bytes32 salt
 ) external view returns (address)
 ```
 
 Calculate the address of an authority to be deployed deterministically.
+
+*Only the `newAuthority` function with the `salt` parameter deploys an authority deterministically.*
 
 **Parameters**
 
@@ -87,10 +105,21 @@ Calculate the address of an authority to be deployed deterministically.
 |------|------|-------------|
 | `authorityOwner` | `address` | The initial authority owner |
 | `epochLength` | `uint256` | The epoch length |
+| `claimStagingPeriod` | `uint256` | The claim staging period |
 | `salt` | `bytes32` | The salt used to deterministically generate the authority address |
 
 **Return Values**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `[0]` | `address` | The deterministic authority address | 
+| `[0]` | `address` | The deterministic authority address |
+
+## Errors
+
+### `ZeroEpochLength()`
+
+```solidity
+error ZeroEpochLength()
+```
+
+Raised when a consensus would be deployed with zero as epoch length. This is forbidden because it would lead to a division by zero when calculating the epoch of a block (`block.number / epochLength`).

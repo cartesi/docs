@@ -24,6 +24,12 @@ const sidebar: SidebarsConfig = {
         },
         {
           type: "doc",
+          id: "_versioned_docs/version-2.0/api-reference/rollup/add-delegate-call-voucher",
+          label: "Add a new DELEGATECALL voucher",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
           id: "_versioned_docs/version-2.0/api-reference/rollup/add-notice",
           label: "Add a new notice",
           className: "api-method post",
@@ -38,6 +44,12 @@ const sidebar: SidebarsConfig = {
           type: "doc",
           id: "_versioned_docs/version-2.0/api-reference/rollup/register-exception",
           label: "Register an exception",
+          className: "api-method post",
+        },
+        {
+          type: "doc",
+          id: "_versioned_docs/version-2.0/api-reference/rollup/gio",
+          label: "Generic I/O request",
           className: "api-method post",
         },
       ],

@@ -10,7 +10,7 @@ resources:
     title: Grokking Cartesi Nodes
   - url: https://youtu.be/uUzn_vdWyDM?si=J2or_Nfym5pabkjNz3z8Gw
     title: Cartesi Machine DeepDive
-  - url: https://github.com/cartesi/dave
+  - url: https://github.com/cartesi/dave/tree/v3.0.0-alpha.6
     title: Dave
 ---
 
@@ -18,7 +18,7 @@ The Cartesi Rollups framework is designed to enable complex computations off-cha
 
 A decentralized application (dApp) built on Cartesi incorporates several key elements:
 
-- Cartesi Rollups: A set of _on-chain(rollups contracts)_ and _off-chain(rollups node)_ components that implement an Optimistic Rollup solution, providing the general framework for building dApps.
+- Cartesi Rollups: A set of _on-chain (rollups contracts)_ and _off-chain (rollups node)_ components that implement an Optimistic Rollup solution, providing the general framework for building dApps.
 
 - Cartesi Machine: A virtual machine (VM) that runs a complete Linux operating system, serving as the environment for executing the dApp's backend.
 
@@ -30,11 +30,13 @@ A decentralized application (dApp) built on Cartesi incorporates several key ele
 
 Cartesi's Optimistic Rollups adopt interactive fraud proofs to handle disputes.
 
+Whether claims can be disputed depends on the consensus an application is deployed with. By default, `cartesi run` and the [deployment guides](../deployment/introduction.md) deploy an **Authority** consensus, where a single owner submits claims and there is no dispute game; PRT, the dispute-capable consensus built on [Dave](https://github.com/cartesi/dave/tree/v3.0.0-alpha.6), is not covered by these guides.
+
 The base layer isn't burdened with executing all computations, allowing for more extensive computational tasks.
 
 Transactions and computations occur off-chain, leading to more intricate logic within transactions; hence, applications leverage powerful virtual machines (VMs) on the execution layer for complex computations.
 
-Cartesi's architecture specializes in app-specific rollups(appchains). Each dApp has its dedicated rollup for off-chain computation, enhancing scalability and performance. 
+Cartesi's architecture specializes in app-specific rollups (appchains). Each dApp has its dedicated rollup for off-chain computation, enhancing scalability and performance. 
 
 
 ![img](../../../static/img/v1.5/architecture-overview.jpg)
@@ -63,23 +65,23 @@ The on-chain part of Cartesi Rollups consists of [several smart contracts](../ap
 Here is an overview of the major contracts, with each serving a specific role in the dApp ecosystem:
 
 ### InputBox
-The [InputBox](../api-reference/contracts/input-box.md) contract is the entry point for user interactions with the off-chain layer. All inputs destined for a Cartesi dApp are first submitted to this contract, which then emits events that the off-chain components can process.
+The [InputBox](../api-reference/contracts/input-box.md) contract is the entry point for user interactions with the off-chain layer. All inputs destined for a Cartesi dApp are first submitted to the InputBox the application was deployed with (returned by the application's `getInputBox()` function), which then emits events that the off-chain components can process.
 
-### CartesiDApp
-Each Cartesi dApp is associated with a unique instance of the [CartesiDApp](../api-reference/contracts/application.md) contract. This contract acts as the on-chain representation of the dApp and can hold ownership of digital assets on the base layer, including Ether, ERC-20 tokens, and NFTs.
+### Application
+Each Cartesi dApp is associated with a unique instance of the [Application](../api-reference/contracts/application.md) contract. This contract acts as the on-chain representation of the dApp and can hold ownership of digital assets on the base layer, including Ether, ERC-20 tokens, and NFTs.
 
-### CartesiDAppFactory
-The [CartesiDAppFactory](../api-reference/contracts/application-factory.md) contract simplifies the deployment process for CartesiDApp contracts. It allows developers to deploy new CartesiDApp instances with a single function call, enhancing convenience and security. This factory approach ensures the deployed contract bytecode remains unaltered, assuring users and validators.
+### ApplicationFactory
+The [ApplicationFactory](../api-reference/contracts/application-factory.md) contract simplifies the deployment process for Application contracts. It allows developers to deploy new Application instances with a single function call, enhancing convenience and security. This factory approach ensures the deployed contract bytecode remains unaltered, assuring users and validators.
 
 ### Portals
 
 Portal contracts facilitate the secure transfer of assets between the base layer and the Cartesi execution environment. Currently, Cartesi supports the following types of asset transfers:
 
 - [Ether (ETH)](../api-reference/contracts/portals/EtherPortal.md)
-- [ERC-20 (Fungible tokens)](../api-reference/contracts/portals/ERC20Portal.md)
-- [ERC-721 (Non-fungible tokens)](../api-reference/contracts/portals/ERC721Portal.md)
-- [ERC-1155 Single transfers](../api-reference/contracts/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch transfers](../api-reference/contracts/portals/ERC1155BatchPortal.md)
+- [ERC-20 (Fungible tokens)](../api-reference/contracts/portals/Erc20Portal.md)
+- [ERC-721 (Non-fungible tokens)](../api-reference/contracts/portals/Erc721Portal.md)
+- [ERC-1155 Single transfers](../api-reference/contracts/portals/Erc1155SinglePortal.md)
+- [ERC-1155 Batch transfers](../api-reference/contracts/portals/Erc1155BatchPortal.md)
 
 These Portal contracts implement the logic to "teleport" assets safely between layers, maintaining their integrity and ownership throughout the transfer process.
  
@@ -100,10 +102,10 @@ The Cartesi Rollups Node can operate in two primary modes:
 
 **1. Validator Nodes**: These nodes have full responsibilities, including processing inputs, generating claims, and ensuring the validity of on-chain state updates. They can operate in secure, isolated environments as they don't need to expose endpoints for external state queries.
 
-**2. Reader Nodes (In Development)**: These nodes focus on advancing the off-chain state and making it publicly available. They consume information from the blockchain but do not participate in the validation process.
+**2. Reader Nodes**: These nodes focus on advancing the off-chain state and making it publicly available. They consume information from the blockchain but do not submit claims. To run a node in reader mode, set `CARTESI_FEATURE_CLAIM_SUBMISSION_ENABLED=false`.
 
 :::caution important
-All Cartesi Nodes function as Validator Nodes, with Reader Node functionality under active development.
+Nodes run as Validator Nodes by default. The node saves its mode in its database when it first starts, and changing the mode on an existing database is not supported.
 :::
 
 ## Data Flow and Processes
@@ -124,7 +126,7 @@ The `advance-state` process changes the application state, and it involves the f
 
 - The Cartesi Machine processes the input and generates verifiable outputs ([vouchers](../api-reference/backend/vouchers.md), [notices](../api-reference/backend/notices.md), and [reports](../api-reference/backend/reports.md)).
 
-- The application frontend can query these outputs using the node's [JSON API](../api-reference/jsonrpc/overview.md).
+- The application frontend can query these outputs using the node's [JSON-RPC API](../api-reference/jsonrpc/overview.md).
 
 ### Inspect state
 
@@ -138,10 +140,10 @@ The `inspect-state` process allows for querying the application backend without 
 
 - The Cartesi Machine processes the input and generates a [report](../api-reference/backend/reports.md).
 
-- The node returns this report to the frontend via a [REST API](../api-reference/backend/introduction.md/#advance-and-inspect).
+- The node returns this report to the frontend via a [REST API](../api-reference/backend/introduction.md#advance-and-inspect).
 
 :::note Inspect requests
-It's important to note that `inspect-state` inputs do not produce vouchers or notices, and the current implementation processes inputs sequentially, which may impact scalability for applications heavily reliant on inspect-state functionality.
+It's important to note that `inspect-state` inputs do not produce vouchers or notices. The node handles inspect requests concurrently, each on a separate copy of the application's machine, up to a per-application limit set by the `max_concurrent_inspects` execution parameter (10 by default). Requests above that limit are rejected with HTTP 503 instead of waiting.
 :::
 
 ### Validation
@@ -156,6 +158,6 @@ The validation process ensures the integrity of the off-chain computations:
 
 - The node submits this claim to the Cartesi Rollups smart contracts on the base layer.
 
-- The application frontend can fetch proofs for specific outputs within a closed epoch.
+- The consensus accepts the claim on-chain. With an Authority or Quorum consensus, this happens only after the consensus's claim staging period has passed.
 
-- These proofs can validate outputs on-chain, such as validating notices or executing vouchers.
+- After the claim is accepted (epoch status `CLAIM_ACCEPTED`), the application frontend can use the proofs for the epoch's outputs to validate notices or execute vouchers on-chain. Before that, validation and execution revert.

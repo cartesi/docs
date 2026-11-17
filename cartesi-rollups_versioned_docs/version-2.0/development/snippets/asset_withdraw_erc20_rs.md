@@ -1,8 +1,9 @@
 ```rust
+// Cargo.toml: num-bigint = "=0.4.8" (json comes with the Rust template)
 use json::{object, JsonValue};
 use num_bigint::BigUint;
 
-pub const TOKEN_ADDRESS: &str = "0x5138f529b77b4e0a7c84b77e79c4335d31938fed";
+pub const TOKEN_ADDRESS: &str = "0x86ea17052c8e335ad830b54ef566274eab46b852";
 
 fn payload_hex_to_bytes(payload: &str) -> Result<Vec<u8>, String> {
     let payload = payload.strip_prefix("0x").unwrap_or(payload);
@@ -69,9 +70,10 @@ pub async fn handle_advance(
     server_addr: &str,
     request: JsonValue,
 ) -> Result<&'static str, Box<dyn std::error::Error>> {
-    let command_raw = std::str::from_utf8(&payload_hex_to_bytes(
+    let payload_bytes = payload_hex_to_bytes(
         request["data"]["payload"].as_str().ok_or("Missing payload")?,
-    )?)?;
+    )?;
+    let command_raw = std::str::from_utf8(&payload_bytes)?;
     let command = json::parse(command_raw)?;
 
     let amount = if let Some(v) = command["amount"].as_str() {

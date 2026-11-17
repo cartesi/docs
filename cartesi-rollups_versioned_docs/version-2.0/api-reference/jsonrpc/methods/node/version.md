@@ -5,6 +5,10 @@ title: Get Node Version
 
 # Get Node Version
 
+:::caution Deprecated
+`cartesi_getNodeVersion` is deprecated. Use [`cartesi_getNodeInfo`](./node-info.md), which returns the chain ID, the node version and the default block tag in one call.
+:::
+
 ## Example Request
 
 ```json
@@ -28,7 +32,7 @@ No parameters required.
 {
   "jsonrpc": "2.0",
   "result": {
-    "data": "2.0.0"
+    "data": "2.0.0-alpha.14"
   },
   "id": 1
 }
@@ -42,6 +46,8 @@ No parameters required.
 
 ## Error Codes
 
-| Code    | Message                | Description                                      |
-|---------|------------------------|--------------------------------------------------|
-| -32603  | Internal error         | An internal error occurred                       | 
+| Code    | Message                      | Description                                      |
+|---------|------------------------------|--------------------------------------------------|
+| -32603  | Internal server error        | A node-side error occurred                       |
+| -32070  | Request timed out            | The request could not be processed in time       |
+| -31003  | Response size limit exceeded | The response exceeds the response size budget    |

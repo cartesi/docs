@@ -2,7 +2,7 @@
 id: calculator
 title: Build a Calculator Application
 resources:
-  - url: https://github.com/Mugen-Builders/calculator
+  - url: https://github.com/Mugen-Builders/calculator/tree/2f7e0ec2906d82de4b900c6f5f1820538499e7bd
     title: Source code for the Calculator App
 ---
 
@@ -17,6 +17,8 @@ Install these to set up your environment for quick building:
 - Cartesi CLI: A simple tool for building applications on Cartesi. [Install Cartesi CLI for your OS of choice](../development/installation.md).
 
 - Docker Desktop 4.x: The tool you need to run the Cartesi Machine and its dependencies. [Install Docker for your OS of choice](https://www.docker.com/products/docker-desktop/).
+
+- For the Rust or Go version only: the Rust toolchain (`cargo`) or Go, to add the dependencies on your machine before the build.
 
 ## Create the backend application
 
@@ -36,7 +38,7 @@ cartesi create calculator --template javascript
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```shell
@@ -46,7 +48,7 @@ cartesi create calculator --template python
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```shell
@@ -56,7 +58,7 @@ cartesi create calculator --template rust
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```shell
@@ -66,7 +68,7 @@ cartesi create calculator --template go
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```shell
@@ -78,7 +80,7 @@ cartesi create calculator --template cpp
 </Tabs>
 
 This creates a `calculator/` directory with all required files.
-Your backend entry point depends on language (`src/index.js`, `dapp.py`, `src/main.rs`, `main.go`, or `src/main.cpp`).
+Your backend entry point depends on language (`src/index.js`, `dapp.py`, `src/main.rs`, `src/dapp.go`, or `dapp.cpp`).
 
 ## Review the default backend template
 
@@ -99,7 +101,7 @@ import RequestHandlingCPP from '../development/snippets/request_handling_cpp.md'
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 <RequestHandlingPY />
@@ -107,7 +109,7 @@ import RequestHandlingCPP from '../development/snippets/request_handling_cpp.md'
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 <RequestHandlingRS />
@@ -115,7 +117,7 @@ import RequestHandlingCPP from '../development/snippets/request_handling_cpp.md'
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <RequestHandlingGO />
@@ -123,7 +125,7 @@ import RequestHandlingCPP from '../development/snippets/request_handling_cpp.md'
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <RequestHandlingCPP />
@@ -142,13 +144,30 @@ Install the minimal dependencies for your language:
 <pre><code>
 
 ```shell
-npm add expr-eval
+pnpm add -D expr-eval-fork@3.0.3
+```
+
+```javascript
+// rolldown.config.js
+import { defineConfig } from "rolldown";
+
+export default defineConfig({
+  input: "src/index.js",
+  platform: "node",
+  // only the @cartesi/rollup native addon stays out of the bundle: expr-eval-fork
+  // and any other pure JavaScript dependency are bundled into dist/index.mjs
+  external: ["@cartesi/rollup"],
+  output: {
+    file: "dist/index.mjs",
+    format: "esm",
+  },
+});
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```shell
@@ -161,27 +180,29 @@ EOF
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```shell
-cargo add meval hex
+cargo add meval@=0.2.0 hex@=0.4.3
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```shell
-go get github.com/Knetic/govaluate
+cd src
+go get github.com/Knetic/govaluate@v3.0.0+incompatible
+cd ..
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```shell
@@ -193,7 +214,9 @@ go get github.com/Knetic/govaluate
 </TabItem>
 </Tabs>
 
-For example, an advance request to the backend with payload `“1+2”` should emit a notice with the response `“3”`.
+In JavaScript, the calculator uses [`expr-eval-fork`](https://www.npmjs.com/package/expr-eval-fork/v/3.0.3), a maintained fork of `expr-eval` with the same API: the original `expr-eval` package has unpatched security advisories, including code execution through crafted expressions. Install it as a development dependency and replace the contents of `rolldown.config.js` with the configuration above, so that rolldown bundles it into the application. `cartesi build` installs the packages listed under `dependencies` inside an emulated RISC-V container, where pnpm can crash with a segmentation fault on large packages; a bundled development dependency is not installed there (see [adding dependencies](../development/creating-an-application.md#adding-dependencies-in-javascript-and-typescript)). If the `pnpm` command is not available, enable it with `corepack enable pnpm`.
+
+For example, an advance request to the backend with payload `1+2` should emit a notice with the response `3`.
 
 ## Implement the application logic
 
@@ -214,7 +237,7 @@ import CalculatorCPP from './snippets/calculator-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 <CalculatorPY />
@@ -222,7 +245,7 @@ import CalculatorCPP from './snippets/calculator-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 <CalculatorRS />
@@ -230,7 +253,7 @@ import CalculatorCPP from './snippets/calculator-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <CalculatorGO />
@@ -238,7 +261,7 @@ import CalculatorCPP from './snippets/calculator-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <CalculatorCPP />
@@ -247,17 +270,15 @@ import CalculatorCPP from './snippets/calculator-cpp.md';
 </TabItem>
 </Tabs>
 
-With Docker running, “build your backend” application by running:
+With Docker running, build your backend application by running:
 
 ```shell
 cartesi build
 ```
 
-“Building” in this context installs the libraries in the `requirements.txt`, compiles your application into RISC-V architecture, and consequently builds a Cartesi machine that contains your backend application.
+“Building” in this context installs your application's dependencies (for example the libraries in `requirements.txt` for Python), compiles your application into RISC-V architecture, and consequently builds a Cartesi machine that contains your backend application.
 
-The anvil node can now run your application.
-
-To run your application, enter the command:
+To run your application on the local devnet, enter the command:
 
 ```shell
 cartesi run
@@ -276,9 +297,7 @@ cartesi send "1+2"
 Example: Send `1+2` as an input to the application.
 
 ```shell
-(base) user@user-MacBook-Pro calculator % cartesi send "1 + 2"
-(node:64729) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
+(base) user@user-MacBook-Pro calculator % cartesi send "1+2"
 ✔ Input sent: 0x1866ab903f8fa5bd712fc2d322b8c0ba119bb31d30885a06e0fe6005ff079ff2
 ```
 
@@ -289,7 +308,7 @@ Example: Send `1+2` as an input to the application.
 
 ## Retrieving outputs from the application
 
-The `cartesi send generic` sends a request to the calculator application to process the computation `(1 + 2)`, this is computed and a payload (notice) containing the result is sent to the Rollup Server's `/notice` endpoint.
+The `cartesi send` command sends a request to the calculator application to process the computation `(1 + 2)`, this is computed and a payload (notice) containing the result is sent to the Rollup Server's `/notice` endpoint (in JavaScript, emitted with `rollup.emitNotice()`).
 
 :::note querying notices
 Notice payloads will be returned in hexadecimal format; developers will need to decode these to convert them into plain text.
@@ -342,10 +361,10 @@ for (const output of outputs) {
 }
 ```
 
-You can also [query a notice based on its input index](../development/query-outputs.md#query-a-single-notice-or-voucher).
+You can also [query a single notice or voucher by its output index](../development/query-outputs.md#query-a-single-notice-or-voucher).
 
 Congratulations, you have successfully built a dApp on Cartesi Rollups!
 
 :::info Repo Link
-   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/calculator)!
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/calculator)!
 :::

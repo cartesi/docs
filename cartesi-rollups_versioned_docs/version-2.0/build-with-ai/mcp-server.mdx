@@ -81,14 +81,16 @@ codex mcp list
 
 <TabItem value="claude-desktop">
 
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+Claude Desktop connects to remote MCP servers as connectors. Open **Settings → Connectors**, choose **Add custom connector**, and enter `https://server.mcp.mugen.builders/mcp` as the server URL.
+
+`claude_desktop_config.json` configures local servers only. To use it instead, run the server through the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote/v/0.16.6) bridge (requires Node.js), in `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
 ```json
 {
   "mcpServers": {
     "cartesi-mcp": {
-      "type": "streamable-http",
-      "url": "https://server.mcp.mugen.builders/mcp"
+      "command": "npx",
+      "args": ["-y", "mcp-remote@0.16.6", "https://server.mcp.mugen.builders/mcp"]
     }
   }
 }

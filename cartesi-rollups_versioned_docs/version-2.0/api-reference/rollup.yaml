@@ -1,76 +1,46 @@
 openapi: 3.0.0
 servers:
-  - url: https://<dapp_rollup_url>
-  - url: http://localhost:5005/rollup
+  - url: http://127.0.0.1:5004
 
 info:
   title: Cartesi Rollup HTTP API
-  version: 0.5.1
+  version: 0.18.0
   license:
     name: Apache-2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 
   description: |
-    API that the Cartesi Rollup HTTP Server implements.
+    API of the Rollup HTTP Server of [machine-guest-tools 0.18.0](https://github.com/cartesi/machine-guest-tools/tree/v0.18.0/rollup-http/rollup-http-server).
+    The server runs inside the Cartesi Machine, next to the application backend, and listens on `http://127.0.0.1:5004`; the templates pass this address to the backend in the `ROLLUP_HTTP_SERVER_URL` environment variable.
 
-    In the box below, there is an example of a dApp backend that uses the Rollup HTTP API.
+    The Python, Rust, Go and C++ templates use this API. The JavaScript and TypeScript templates do not: they use the `@cartesi/rollup` package, which makes the same calls directly to the machine.
 
-    ```
+    All request and response bodies are JSON (up to 5 MiB). Binary data, such as payloads, is a string in Ethereum hex format: `0x` followed by two hexadecimal digits per byte. The `0x` prefix is required.
+
+    The example below is a backend that echoes every advance input as a notice and a report, and every inspect payload as a report.
+
+    ```python
+    import os
     import requests
-    import sys
 
-    rollup = sys.argv[1]
+    rollup = os.environ["ROLLUP_HTTP_SERVER_URL"]
 
-    def check_status_code(response):
-        if response.status_code not in range(200, 300):
-            print(f'Error: invalid status code {response.status_code}')
-            sys.exit(1)
-        return response
-
-    finish = {'status': 'accept'}
+    finish = {"status": "accept"}
     while True:
-        print('Sending finish')
-        r = check_status_code(requests.post(rollup + '/finish', json=finish))
-        if r.status_code == 202:
-            print('No pending rollup request, trying again')
-            continue
+        response = requests.post(rollup + "/finish", json=finish)
+        response.raise_for_status()
+        request = response.json()
+        payload = request["data"]["payload"]
 
-        rollup_request = r.json()
-        if rollup_request['request_type'] == 'advance_state':
-            print('Sending voucher')
-            voucher = {
-                'destination': rollup_request['data']['metadata']['msg_sender'],
-                'payload': rollup_request['data']['payload']
-            }
-            check_status_code(requests.post(rollup + '/voucher', json=voucher))
-
-            print('Sending notice')
-            notice = {'payload': rollup_request['data']['payload']}
-            check_status_code(requests.post(rollup + '/notice', json=notice))
-
-            print('Sending report')
-            report = {'payload': rollup_request['data']['payload']}
-            check_status_code(requests.post(rollup + '/report', json=report))
-
-            finish['status'] = 'accept'
-
-        elif rollup_request['request_type'] == 'inspect_state':
-            print('Sending report per inspect request')
-            report = {'payload': rollup_request['data']['payload']}
-            check_status_code(requests.post(rollup + '/report', json=report))
-
+        if request["request_type"] == "advance_state":
+            requests.post(rollup + "/notice", json={"payload": payload}).raise_for_status()
+            requests.post(rollup + "/report", json={"payload": payload}).raise_for_status()
         else:
-            print('Throwing rollup exception')
-            exception = {'payload': rollup_request['data']['payload']}
-            requests.post(rollup + '/exception', json=exception)
-            break
+            requests.post(rollup + "/report", json={"payload": payload}).raise_for_status()
+        finish["status"] = "accept"
     ```
 
-    In production mode, if the dApp exits the Rollups initialization script will register a Rollup Exception.
-    See [/exception](#api-Default-registerException).
-
-    In host mode, the Cartesi Rollups infrastructure is not able to detect that the dApp exited.
-    It is up to the dApp developer to re-launch the dApp.
+    If the backend process exits, the application stops for good: `rollup-init` reports an exception (see [/exception](./register-exception.api.mdx)), or the machine halts.
 
 paths:
   /finish:
@@ -78,26 +48,16 @@ paths:
       operationId: finish
       summary: Finish and get next request
       description: |
-        The dApp backend should call this method to start processing rollup requests.
-        The Rollup HTTP Server returns the next rollup request in the response body.
+        The backend calls this method to finish the current request and receive the next one.
+        The response body holds the next request: `request_type` is `advance_state` or `inspect_state`, and `data` holds the request.
+        For advance-state requests, `data` contains the input metadata and the payload; for inspect-state requests, only the payload.
 
-        The possible values for the request_type field are 'advance_state' and 'inspect_state'.
-        The data field contains the rollup request input data.
-        For advance-state requests, the input data contains the advance-state metadata and the payload.
-        For inspect-state requests, the input data contains only the payload.
+        Set `status` to `accept` or `reject` for the request that was just processed. The status of the first call, made before any request was received, has no effect.
 
-        After processing a rollup request, the dApp back-end should call again the finish method.
-        For advance-state requests, depending on the result of the request processing, it should fill the status field of the request body with 'accept' or 'reject'.
-        The Rollup HTTP Server ignores the content of the status field for the first finish request and after an inspect-state request.
+        If an advance-state request is rejected, its notices and vouchers are discarded and the machine returns to the state it had before the input. Reports are kept.
+        For an inspect-state request, the status is returned to the caller in the inspect response (`Accepted` or `Rejected`); an inspect never changes the machine state.
 
-        If the advance-state request is rejected, the vouchers and notices are discarded.
-        In contrast, reports are not discarded in case of rejection.
-        When running inside a Cartesi Machine, the Cartesi Server Manager reverts the entire state of the machine to what it was before receiving the request.
-
-        During a finish call, the next rollup request might not be immediately available.
-        When the dApp backend and the Rollup HTTP Server are running inside a Cartesi Machine, the Cartesi Server Manager pauses the whole machine execution until the next request is ready.
-        When running in host mode, the Rollup HTTP Server returns the status code 202 after 10 seconds to avoid the connection timing out.
-        When the Rollup HTTP Server returns 202, the dApp backend should retry the call to finish passing the same arguments as before.
+        The call blocks until the node sends the next request.
 
       requestBody:
         content:
@@ -113,11 +73,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/RollupRequest"
 
-        "202":
-          description: Finish accepted but try again to obtain the next request.
-
-        default:
-          description: Error response.
+        "400":
+          description: Invalid status, or the next request could not be read.
           content:
             text/plain:
               schema:
@@ -128,12 +85,13 @@ paths:
       operationId: addVoucher
       summary: Add a new voucher
       description: |
-        The dApp backend can call this method to add a new voucher when processing an advance-state request.
-        Vouchers are collateral effects actionable in the blockchain.
-        Between calls to the finish method, the voucher method can be called up to 32k times.
+        The backend calls this method to emit a voucher while processing an advance-state request.
+        A voucher is a call that anyone can execute on the base layer, through the application contract's `executeOutput()` function, once the claim of its epoch has been accepted.
+        The application contract calls `destination` with `payload` as calldata, forwarding `value` Wei.
 
-        The returned value is the index of the voucher for the current advance-state request.
-        In other words, the index counting restarts at every request.
+        To send Ether to a wallet, leave the payload empty (`0x`) and set `value`: a call with a non-empty payload reverts when the destination has no code.
+
+        The response holds the index of the new output among all the outputs the application has emitted, which is the index the node uses for it.
 
       requestBody:
         content:
@@ -142,15 +100,47 @@ paths:
               $ref: "#/components/schemas/Voucher"
 
       responses:
-        "200":
+        "201":
           description: Created the voucher.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/IndexResponse"
 
-        default:
-          description: Error response.
+        "400":
+          description: Invalid voucher.
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /delegate-call-voucher:
+    post:
+      operationId: addDelegateCallVoucher
+      summary: Add a new DELEGATECALL voucher
+      description: |
+        The backend calls this method to emit a DELEGATECALL voucher while processing an advance-state request.
+        When the voucher is executed, the application contract makes a `DELEGATECALL` to `destination` with `payload` as calldata: the code at `destination` runs in the context of the application contract, with its storage and balance.
+        Only use destination contracts you trust, such as the `SafeErc20Transfer` contract of the Cartesi Rollups contracts.
+
+        The response holds the index of the new output among all the outputs the application has emitted.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DelegateCallVoucher"
+
+      responses:
+        "201":
+          description: Created the DELEGATECALL voucher.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IndexResponse"
+
+        "400":
+          description: Invalid voucher.
           content:
             text/plain:
               schema:
@@ -161,12 +151,10 @@ paths:
       operationId: addNotice
       summary: Add a new notice
       description: |
-        The dApp backend can call this method to add a new notice when processing the advance-state request.
-        A notice describes any changes to the internal state of the dApp that may be relevant to the blockchain.
-        Between calls to the finish method, the notice method can be called up to 32k times.
+        The backend calls this method to emit a notice while processing an advance-state request.
+        A notice is a statement about the application state that anyone can validate on the base layer, through the application contract's `validateOutput()` function, once the claim of its epoch has been accepted.
 
-        The returned value is the index of the notice for the current advance request.
-        In other words, the index counting restarts at every request.
+        The response holds the index of the new output among all the outputs the application has emitted.
 
       requestBody:
         content:
@@ -175,15 +163,15 @@ paths:
               $ref: "#/components/schemas/Notice"
 
       responses:
-        "200":
+        "201":
           description: Created the notice.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/IndexResponse"
 
-        default:
-          description: Error response.
+        "400":
+          description: Invalid notice.
           content:
             text/plain:
               schema:
@@ -194,9 +182,9 @@ paths:
       operationId: addReport
       summary: Add a new report
       description: |
-        The dApp can call this method to add a new report for the given rollup request.
-        A report can be a diagnostic or a log; reports are not discarded when a request is rejected.
-        Between calls to the finish method, the report method can be called any number of times.
+        The backend calls this method to emit a report while processing an advance-state or inspect-state request.
+        A report is information for the client, such as a log, an error or the result of an inspect. It cannot be validated on the base layer.
+        Reports of advance-state requests are kept even when the input is rejected, and the node serves them through its JSON-RPC API. Reports of inspect-state requests are returned in the inspect response only.
 
       requestBody:
         content:
@@ -205,11 +193,11 @@ paths:
               $ref: "#/components/schemas/Report"
 
       responses:
-        "200":
-          description: Created the report.
+        "202":
+          description: Accepted the report.
 
-        default:
-          description: Error response.
+        "400":
+          description: Invalid report.
           content:
             text/plain:
               schema:
@@ -220,14 +208,12 @@ paths:
       operationId: registerException
       summary: Register an exception
       description: |
-        The dApp should call this method when it cannot proceed with the request processing after an exception happens.
-        This method should be the last method ever called by the dApp backend while processing a request.
+        The backend calls this method when it cannot go on processing the current request. It must be the last call the backend makes: the call does not return.
 
-        When running in production mode, the Cartesi Server Manager pauses the Cartesi Machine and reverts the entire state of the machine to what it was before receiving the request.
-        No HTTP status code will be sent or received.
+        During an advance-state request, rollups-node v2.0.0-alpha.14 records the input with status `EXCEPTION` and sets the application status to `GUEST_EXCEPTION`. This status is terminal: the node processes no further inputs for the application, and inspect requests return HTTP 503.
+        During an inspect-state request, the inspect response has status `Exception` and carries the payload in `exception_data`.
 
-        When running in host mode, the Rollup HTTP Server returns the status code 200.
-        In both cases, the input will be skipped with the reason EXCEPTION and the exception message will be forwarded.
+        To refuse a single input and keep the application running, finish the request with status `reject` instead.
 
       requestBody:
         content:
@@ -236,11 +222,41 @@ paths:
               $ref: "#/components/schemas/Exception"
 
       responses:
-        "200":
-          description: Accepted the exception throw.
+        "202":
+          description: Accepted the exception.
 
-        default:
-          description: Error response.
+        "400":
+          description: Invalid exception.
+          content:
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /gio:
+    post:
+      operationId: gio
+      summary: Generic I/O request
+      description: |
+        Sends a generic I/O (GIO) request to the host that runs the machine and returns its response. `domain` selects the kind of request; values below `0x10` are reserved.
+
+        rollups-node v2.0.0-alpha.14 does not answer GIO requests: it treats one as an unexpected yield, records the input with status `UNEXPECTED_YIELD` and stops the application for good (application status `UNEXPECTED_YIELD`). Do not call this method in applications that run on this node.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GioRequest"
+
+      responses:
+        "202":
+          description: The host answered the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GioResponse"
+
+        "400":
+          description: Invalid request.
           content:
             text/plain:
               schema:
@@ -250,6 +266,7 @@ components:
   schemas:
     Finish:
       type: object
+      required: [status]
       properties:
         status:
           type: string
@@ -280,38 +297,45 @@ components:
     Metadata:
       type: object
       properties:
+        chain_id:
+          type: integer
+          format: uint64
+          description: Chain ID of the base layer.
+          example: 31337
+        app_contract:
+          type: string
+          description: Address of the application contract.
+          example: "0xc1AAAC74d96e0508FfB6042493d9101776BfcdeF"
         msg_sender:
           type: string
-          description: 20-byte address of the account that submitted the input.
-          example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
-        epoch_index:
-          type: integer
-          format: uint64
-          description: Deprecated. Always receives 0.
-          example: 0
-        input_index:
-          type: integer
-          format: uint64
-          description: Input index starting from genesis.
-          example: 123
+          description: Address of the account that sent the input to the InputBox. For deposits, this is the portal contract.
+          example: "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f"
         block_number:
           type: integer
           format: uint64
-          description: Block number when input was posted.
-          example: 10000000
-        timestamp:
+          description: Number of the block in which the input was added.
+          example: 132
+        block_timestamp:
           type: integer
           format: uint64
-          description: Unix timestamp of block in milliseconds.
-          example: 1588598533000
+          description: Timestamp of that block, in seconds since the Unix epoch.
+          example: 1794857790
+        prev_randao:
+          type: string
+          description: The `prevrandao` value of that block, as a 32-byte hex string.
+          example: "0x1f2a4c0a2b9c9e7f6b4b1a3d5e7f90a1b2c3d4e5f60718293a4b5c6d7e8f9012"
+        input_index:
+          type: integer
+          format: uint64
+          description: Index of the input among all inputs of the application, starting from 0.
+          example: 0
 
     Payload:
       type: string
       description: |
-        The payload is in the Ethereum hex binary format.
-        The first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.
-        For instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.
-        An empty payload is represented by the string '0x'.
+        Binary data in Ethereum hex format: `0x` followed by two hexadecimal digits per byte.
+        For instance, `0xdeadbeef` is a payload of 4 bytes: 222, 173, 190 and 239.
+        An empty payload is `0x`. The `0x` prefix is required.
       example: "0xdeadbeef"
 
     Inspect:
@@ -322,39 +346,85 @@ components:
 
     Voucher:
       type: object
+      required: [destination, payload]
       properties:
         destination:
           type: string
-          description: 20-byte address of the destination contract for which the payload will be sent.
-          example: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+          description: Address the application contract calls when the voucher is executed.
+          example: "0x86EA17052C8e335Ad830B54EF566274EAB46B852"
+        value:
+          type: string
+          description: |
+            Amount of Wei sent with the call, as a `0x`-prefixed hex string of up to 32 bytes, with an even number of hex digits (for example 64). Defaults to zero when omitted.
+          example: "0x0000000000000000000000000000000000000000000000000000000000000000"
         payload:
           type: string
           description: |
-            String in Ethereum hex binary format describing a method call to be executed by the destination contract.
-            The first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.
-            For instance, '0xcdcd77c0' corresponds to a payload with length 4 and bytes 205, 205, 119, 192.
-            To describe the method call, the payload should consist of a function selector (method identifier) followed
-            by its ABI-encoded arguments.
-            ref: https://docs.soliditylang.org/en/v0.8.19/abi-spec.html
-          example: "0xcdcd77c000000000000000000000000000000000000000000000000000000000000000450000000000000000000000000000000000000000000000000000000000000001"
+            Calldata of the call: a function selector followed by its ABI-encoded arguments, in Ethereum hex format.
+            Use `0x` (no calldata) to send Ether to an account that has no code.
+          example: "0xa9059cbb00000000000000000000000023618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000a"
+
+    DelegateCallVoucher:
+      type: object
+      required: [destination, payload]
+      properties:
+        destination:
+          type: string
+          description: Address of the contract whose code runs in the context of the application contract.
+          example: "0xBB7c5367B74544542F5cE553Ed0DF4B3efAfEEdD"
+        payload:
+          type: string
+          description: Calldata of the call, in Ethereum hex format.
+          example: "0xd1660f9900000000000000000000000086ea17052c8e335ad830b54ef566274eab46b85200000000000000000000000023618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000a"
 
     Notice:
       type: object
+      required: [payload]
       properties:
         payload:
           $ref: "#/components/schemas/Payload"
 
     Report:
       type: object
+      required: [payload]
       properties:
         payload:
           $ref: "#/components/schemas/Payload"
 
     Exception:
       type: object
+      required: [payload]
       properties:
         payload:
           $ref: "#/components/schemas/Payload"
+
+    GioRequest:
+      type: object
+      required: [domain, id]
+      properties:
+        domain:
+          type: integer
+          format: uint16
+          minimum: 16
+          description: Kind of request. Values below `0x10` are reserved.
+          example: 16
+        id:
+          type: string
+          description: Request data, in Ethereum hex format.
+          example: "0xdeadbeef"
+
+    GioResponse:
+      type: object
+      properties:
+        response_code:
+          type: integer
+          format: uint16
+          description: Response code set by the host.
+          example: 0
+        response:
+          type: string
+          description: Response data, in Ethereum hex format.
+          example: "0x"
 
     IndexResponse:
       type: object
@@ -362,10 +432,10 @@ components:
         index:
           type: integer
           format: uint64
-          description: Position in the Merkle tree.
-          example: 123
+          description: Index of the output among all the outputs the application has emitted.
+          example: 0
 
     Error:
       type: string
-      description: Detailed error message.
-      example: "The request could not be understood by the server due to malformed syntax"
+      description: Error message.
+      example: "address not valid"

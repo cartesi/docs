@@ -28,7 +28,7 @@ They serve as a means for application to notify the blockchain about particular 
 
 Let's examine how an Application has its Advance request **calculating and returning the first five multiples of a given number**.
 
-We will send the output to the rollup server as a notice.
+We will send the output to the rollup server as a notice (in JavaScript, with `rollup.emitNotice()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3)).
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -40,6 +40,10 @@ import SendingNoticeCPP from './snippets/sending_notice_cpp.md';
 <pre><code>
 
 ```javascript
+import { Rollup } from "@cartesi/rollup";
+
+const rollup = new Rollup();
+
 function calculateMultiples(num) {
   let multiples = "";
   for (let i = 1; i <= 5; i++) {
@@ -51,38 +55,29 @@ function calculateMultiples(num) {
   return multiples;
 }
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+await rollup.run({
+  advance(request) {
+    const input = request.payload.toString("utf8");
+    console.log(`Received advance request with payload ${input}`);
 
-  const numberHex = data["payload"];
-  const number = parseInt(viem.hexToString(numberHex));
+    const number = parseInt(input);
+    if (Number.isNaN(number)) {
+      rollup.emitReport(Buffer.from(`Not a number: ${input}`, "utf8"));
+      return false;
+    }
 
-  try {
     const multiples = calculateMultiples(number);
-
-    console.log(`Adding notice with  value ${multiples}`);
-
-    const hexresult = viem.stringToHex(multiples);
-
-    await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexresult }),
-    });
-  } catch (error) {
-    //Do something when there is an error
-  }
-
-  return "accept";
-}
+    console.log(`Adding notice with values ${multiples}`);
+    rollup.emitNotice(Buffer.from(multiples, "utf8"));
+    return true;
+  },
+});
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -128,6 +123,7 @@ def handle_advance(data):
        )
    except Exception as e:
        #  Emits report with error message here
+       pass
    return status
 
 ```
@@ -136,7 +132,7 @@ def handle_advance(data):
 </TabItem>
 
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -152,6 +148,7 @@ fn calculate_multiples(num: i64) -> String {
 
     multiples
 }
+// Cargo.toml: hex = "=0.4.3"
 fn hex_to_string(hex: &str) -> Result<String, Box<dyn std::error::Error>> {
     let hexstr = hex.strip_prefix("0x").unwrap_or(hex);
     let bytes = hex::decode(hexstr).map_err(|e| Box::new(e) as Box<dyn std::error::Error>)?;
@@ -216,7 +213,7 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <SendingNoticeGO />
@@ -224,7 +221,7 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <SendingNoticeCPP />
@@ -234,11 +231,10 @@ pub async fn handle_advance(
 
 </Tabs>
 
-For example, sending an input payload of `“2”` to the application using Cast or `cartesi send generic` will log:
+For example, sending an input payload of `“2”` to the application using Cast or `cartesi send 2` will log (JavaScript version):
 
 ```bash
-Received finish status 200
-Received advance request data {"metadata":{"chain_id":31337,"app_contract":"0xef34611773387750985673f94067ea22db406f72","msg_sender":"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","block_number":188,"block_timestamp":1741291197,"prev_randao":"0xa8b0097138c68949870aabe7aa4dc62a91b6dd0bc2b4582eac2be9eaee280032","input_index":0},"payload":"0x32"}
+Received advance request with payload 2
 Adding notice with values 2, 4, 6, 8, 10
 ```
 
@@ -256,7 +252,7 @@ Think of it as a digital authorization ticket that enables an application to per
 
 - The [`Application`](../api-reference/contracts/application.md) contract executes the voucher using the [`executeOutput()`](../api-reference/contracts/application.md#executeoutput) function.
 
-- The result is recorded on the base layer through claims submitted by a consensus contract.
+- The node submits a claim for each epoch to the application's consensus contract. A voucher can be executed, and a notice validated, only after the claim for its epoch has been accepted on-chain.
 
   :::note create a voucher
   [Refer to the documentation here](./asset-handling.md) for asset handling and creating vouchers in your application.
@@ -394,7 +390,7 @@ curl -X POST http://127.0.0.1:6751/rpc \
 
 Reports serve as stateless logs, providing read-only information without affecting the state. They are commonly used for logging and diagnostics within the application.
 
-Here is how you can write your application to send reports to the rollup server:
+Here is how you can write your application to send reports to the rollup server (in JavaScript, `rollup.emitReport()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) sends them directly to the Cartesi Machine):
 
 import SendingReportGO from './snippets/sending_report_go.md';
 import SendingReportCPP from './snippets/sending_report_cpp.md';
@@ -404,33 +400,35 @@ import SendingReportCPP from './snippets/sending_report_cpp.md';
 <pre><code>
 
 ```javascript
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+import { Rollup } from "@cartesi/rollup";
 
-  try {
-    // something here
-  } catch (e) {
-    //Send a report when there is an error
-    const error = viem.stringToHex(`Error:${e}`);
+const rollup = new Rollup();
 
-    await fetch(rollup_server + "/report", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: error }),
-    });
-    return "reject";
-  }
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request with payload ${request.payload.toString("utf8")}`,
+    );
 
-  return "accept";
-}
+    try {
+      // something here, for example parsing the payload as JSON
+      const data = JSON.parse(request.payload.toString("utf8"));
+      console.log("Parsed input", data);
+    } catch (e) {
+      // Send a report when there is an error
+      rollup.emitReport(Buffer.from(`Error:${e}`, "utf8"));
+      return false;
+    }
+
+    return true;
+  },
+});
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -440,7 +438,7 @@ def handle_advance(data):
    status = "accept"
    try:
        # Do something here to emit a notice
-
+       pass
    except Exception as e:
 
        #  Emits report with error message here
@@ -448,7 +446,7 @@ def handle_advance(data):
        msg = f"Error processing data {data}\n{traceback.format_exc()}"
        logger.error(msg)
        response = requests.post(
-           rollup_server + "/report", json={"payload": msg}
+           rollup_server + "/report", json={"payload": "0x" + msg.encode("utf-8").hex()}
        )
        logger.info(
            f"Received report status {response.status_code} body {response.content}"
@@ -460,7 +458,7 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -523,7 +521,7 @@ async fn emit_report( payload: String) -> Option<bool> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <SendingReportGO />
@@ -531,7 +529,7 @@ async fn emit_report( payload: String) -> Option<bool> {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <SendingReportCPP />

@@ -3,7 +3,7 @@ id: snapshot
 title: Public snapshot
 ---
 
-A Cartesi snapshot is a compressed representation of your application's machine state that can be deployed to rollups nodes. This process involves:
+A Cartesi snapshot is a stored copy of your application's machine state that can be deployed to rollups nodes. This process involves:
 
 1. Building your application with the Cartesi CLI
 2. Creating a compressed snapshot archive
@@ -17,16 +17,40 @@ Public snapshots are crucial for applications developed with the Cartesi Rollups
 When a snapshot is public, validators can:
 
 1. Download the snapshot from the release
-2. Verify the checksum to ensure integrity
+2. Verify the checksum, which only shows that the download matches what the publisher uploaded
 3. Extract and inspect the machine state
 4. Reproduce the build process locally
-5. Compare results to ensure consistency
+5. Compute the machine's root hash themselves and compare it with the application's template hash
 
 This process ensures that the application behaves exactly as intended and hasn't been tampered with during deployment.
 
 :::danger
 **Note**: Always download snapshots from verified public GitHub releases, never from local builds or private sources.
 :::
+
+:::warning What a validator must check
+The checksum published next to the tarball comes from the publisher, so on its own it proves nothing about the machine. A validator must compute the machine's root hash independently, either from the snapshot's data with the Cartesi Machine emulator or by rebuilding the application reproducibly from source, and compare it with the template hash stored in the application contract:
+
+```shell
+cast call <application-address> "getTemplateHash()(bytes32)" --rpc-url <RPC-URL>
+```
+
+A hash read from the snapshot's own files, such as the root hash stored in `hash_tree.sht`, is not recomputed from the machine data, so it does not show that the data is unmodified. Loading the snapshot as published does not recompute it either: the emulator (0.22) reuses the hash trees stored next to the data (the `.dht` and `.dpt` files and `hash_tree.sht`), so a snapshot whose data files were changed still loads with the original root hash. To make the emulator hash the data itself, mark every page dirty in the snapshot's `config.json` before loading it:
+
+```shell
+mkdir snapshot && tar -xzf snapshot.tar.gz -C snapshot
+jq '(.. | objects | select(has("mark_pages_dirty")) | .mark_pages_dirty) |= true' \
+  snapshot/config.json > config.json.tmp && mv config.json.tmp snapshot/config.json
+cartesi-machine --load=snapshot --initial-hash
+```
+
+The root hash is printed on the line `<mcycle>: <root hash>`. Use a `cartesi-machine` of the emulator line the snapshot was built with (0.22.x for rollups-node v2.0.0-alpha.14).
+:::
+
+### Snapshot requirements
+
+- **Emulator version.** Build the snapshot with the Cartesi Machine emulator line of the node release that will run it: 0.22.x for rollups-node v2.0.0-alpha.14. A node cannot load a snapshot built with another emulator line. The SDK image that `cartesi build` runs, which you can set with the top-level `sdk` key of `cartesi.toml`, determines the emulator version.
+- **Final hash.** The snapshot must be stored with its final hash, which `cartesi build` does. The node CLI reads the template hash from it when deploying, and a node cannot run an application whose snapshot lacks it.
 
 ## Prerequisites
 
@@ -38,7 +62,7 @@ Before building snapshots, ensure you have:
 
 - Node and NPM: A JavaScript runtime needed to install Cartesi CLI and run various scripts. We recommend installing the LTS version to ensure best compatibility.
 
-For more details about the installation process for each of these tools, please refer to the [this section](../development/installation.md).
+For more details about the installation process for each of these tools, please refer to [this section](../development/installation.md).
 
 ## GitHub Actions Workflow
 
@@ -58,44 +82,30 @@ on:
 jobs:
   build:
     name: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read
-      packages: write
-      attestations: write
-      id-token: write
-
-    env:
-      REGISTRY: ghcr.io
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
         with:
           submodules: recursive
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3.12.0
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v3.7.0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.4.0
         with:
-          node-version: current
+          node-version: 24.14.0
 
       - name: Install Cartesi CLI
-        run: npm install -g @cartesi/cli@2.0.0-alpha.16
-
-      - name: Log in to GHCR
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+        run: npm install -g @cartesi/cli@2.0.0-alpha.42
 
       - name: Build Docker image and Cartesi snapshot
         run: cartesi build
@@ -111,7 +121,7 @@ jobs:
 
       - name: Upload snapshot artifacts
         if: startsWith(github.ref, 'refs/tags/')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: snapshot
           path: |
@@ -122,14 +132,14 @@ jobs:
     name: release
     if: startsWith(github.ref, 'refs/tags/v')
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: write
 
     steps:
       - name: Download snapshot artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.3.0
         with:
           path: artifacts
 
@@ -140,7 +150,7 @@ jobs:
           find artifacts -name "*.sha256" -exec cp {} release-assets/ \;
 
       - name: Publish GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.6.2
         with:
           files: release-assets/*
           prerelease: ${{ contains(github.ref, '-rc') }}
@@ -160,6 +170,8 @@ The workflow is triggered by:
 ### Build Job
 
 The build job sets up the environment with Docker Buildx, QEMU, and Node.js, installs the Cartesi CLI globally, and uses `cartesi build` to create the Cartesi machine snapshot. It then compresses the snapshot as `snapshot.tar.gz`, generates a SHA256 checksum for verification, and uploads the artifacts for the release job.
+
+Pin the Cartesi CLI version, and the SDK image through the `sdk` key of `cartesi.toml`, to versions that build with the emulator line of the node release that will run the application (see [Snapshot requirements](#snapshot-requirements)). For rollups-node v2.0.0-alpha.14, the workflow above installs Cartesi CLI 2.0.0-alpha.42, whose default SDK image, `cartesi/sdk:0.12.0-alpha.45`, builds with emulator 0.22.0. Pin `sdk = "cartesi/sdk:0.12.0-alpha.45"` in the project's `cartesi.toml` to keep the snapshot reproducible if the CLI is upgraded. The SHA256 checksum only protects the download; validators still need to compare the machine's root hash with the application's template hash.
 
 ### Release Job
 

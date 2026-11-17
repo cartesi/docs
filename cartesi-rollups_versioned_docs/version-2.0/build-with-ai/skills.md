@@ -38,7 +38,7 @@ The recommended way to use Cartesi Skills is to install them into your project s
 From your project root, add the Cartesi skills package:
 
 ```shell
-npx skills add Mugen-Builders/cartesi-skills
+npx skills@1.8.1 add Mugen-Builders/cartesi-skills@v0.1.0
 ```
 
 Confirm the skills appear under `.agents/skills/` (one folder per skill, each with a `SKILL.md`). Restart your editor or start a new agent session so the client picks up the new files. In your next prompt, name the skill you need (for example `cartesi-scaffold` or `cartesi-backend-js-ts`); see [Prompting](./prompting.md) for examples.
@@ -58,7 +58,7 @@ If you prefer to inspect or copy a single skill without installing the full set,
 
 ### Source and contributions
 
-The canonical source lives in the [cartesi-skills](https://github.com/Mugen-Builders/cartesi-skills) repository on GitHub. Open an issue or pull request there if you spot gaps, want a new skill, or have fixes to existing instructions. Contributions are welcome.
+The canonical source lives in the [cartesi-skills](https://github.com/Mugen-Builders/cartesi-skills/tree/v0.1.0) repository on GitHub. Open an issue or pull request there if you spot gaps, want a new skill, or have fixes to existing instructions. Contributions are welcome.
 
 :::caution Early release
 Cartesi Skills v0.1.0 is an early release for testing and feedback. Be cautious when using private keys or mainnet credentials with AI-assisted workflows.

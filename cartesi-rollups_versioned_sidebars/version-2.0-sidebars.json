@@ -30,10 +30,10 @@
                             "collapsed": true,
                             "items": [
                                 "api-reference/contracts/portals/EtherPortal",
-                                "api-reference/contracts/portals/ERC20Portal",
-                                "api-reference/contracts/portals/ERC721Portal",
-                                "api-reference/contracts/portals/ERC1155SinglePortal",
-                                "api-reference/contracts/portals/ERC1155BatchPortal"
+                                "api-reference/contracts/portals/Erc20Portal",
+                                "api-reference/contracts/portals/Erc721Portal",
+                                "api-reference/contracts/portals/Erc1155SinglePortal",
+                                "api-reference/contracts/portals/Erc1155BatchPortal"
                             ]
                         },
                         {
@@ -94,7 +94,37 @@
                         "api-reference/backend/vouchers",
                         "api-reference/backend/exception",
                         "api-reference/backend/finish",
-                        "api-reference/backend/emergency-withdrawal"
+                        "api-reference/backend/emergency-withdrawal",
+                        {
+                            "type": "category",
+                            "label": "Rollup HTTP API reference",
+                            "collapsed": true,
+                            "link": {
+                                "type": "doc",
+                                "id": "api-reference/rollup/cartesi-rollup-http-api"
+                            },
+                            "items": [
+                                "api-reference/rollup/finish",
+                                "api-reference/rollup/add-notice",
+                                "api-reference/rollup/add-voucher",
+                                "api-reference/rollup/add-delegate-call-voucher",
+                                "api-reference/rollup/add-report",
+                                "api-reference/rollup/register-exception",
+                                "api-reference/rollup/gio"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "category",
+                    "label": "Inspect HTTP API",
+                    "collapsed": true,
+                    "link": {
+                        "type": "doc",
+                        "id": "api-reference/inspect/inspect-state-http-api-for-cartesi-rollups"
+                    },
+                    "items": [
+                        "api-reference/inspect/inspect"
                     ]
                 },
                 {
@@ -118,6 +148,7 @@
                             "items": [
                                 "api-reference/jsonrpc/methods/epochs/epochs-list",
                                 "api-reference/jsonrpc/methods/epochs/epochs-get",
+                                "api-reference/jsonrpc/methods/epochs/epochs-get-by-virtual-index",
                                 "api-reference/jsonrpc/methods/epochs/jsonrpc-epochs-last-accepted"
                             ]
                         },
@@ -135,7 +166,9 @@
                             "label": "Outputs",
                             "items": [
                                 "api-reference/jsonrpc/methods/outputs/outputs-list",
-                                "api-reference/jsonrpc/methods/outputs/outputs-get"
+                                "api-reference/jsonrpc/methods/outputs/outputs-get",
+                                "api-reference/jsonrpc/methods/outputs/outputs-executed-count",
+                                "api-reference/jsonrpc/methods/outputs/outputs-pending-executable-count"
                             ]
                         },
                         {
@@ -150,6 +183,7 @@
                             "type": "category",
                             "label": "Node",
                             "items": [
+                                "api-reference/jsonrpc/methods/node/node-info",
                                 "api-reference/jsonrpc/methods/node/node-chain-id",
                                 "api-reference/jsonrpc/methods/node/node-version"
                             ]
@@ -188,7 +222,8 @@
                         "development/emergency-withdrawal/overview",
                         "development/emergency-withdrawal/lifecycle",
                         "development/emergency-withdrawal/installation-Guide",
-                        "development/emergency-withdrawal/recovery-guide"
+                        "development/emergency-withdrawal/recovery-guide",
+                        "development/emergency-withdrawal/local-testing"
                     ]
                 }
             ]
@@ -236,7 +271,6 @@
                 "tutorials/erc-721-token-wallet",
                 "tutorials/erc-1155-token-wallet",
                 "tutorials/react-frontend-application",
-                "tutorials/cli-account-abstraction-feature",
                 "tutorials/utilizing-the-cli-test-tokens",
                 "tutorials/running-applications-on-a-forked-network"
             ]
@@ -249,7 +283,21 @@
                 "resources/community-tools",
                 "resources/mainnet-considerations",
                 "resources/migration-guide",
-                "resources/integration-guides"
+                {
+                    "type": "link",
+                    "label": "Cartesi Whitepaper",
+                    "href": "https://cartesi.io/cartesi_whitepaper.pdf"
+                },
+                {
+                    "type": "link",
+                    "label": "Dave",
+                    "href": "https://arxiv.org/abs/2411.05463"
+                },
+                {
+                    "type": "link",
+                    "label": "PRT",
+                    "href": "https://arxiv.org/abs/2212.12439"
+                }
             ]
         },
         {
@@ -285,12 +333,12 @@
                         {
                             "type": "link",
                             "label": "Rollups Node",
-                            "href": "https://github.com/cartesi/rollups-node/blob/main/CHANGELOG.md"
+                            "href": "https://github.com/cartesi/rollups-node/releases/tag/v2.0.0-alpha.14"
                         },
                         {
                             "type": "link",
                             "label": "Rollups Contracts",
-                            "href": "https://github.com/cartesi/rollups-contracts/blob/main/CHANGELOG.md"
+                            "href": "https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/CHANGELOG.md"
                         }
                     ]
                 }

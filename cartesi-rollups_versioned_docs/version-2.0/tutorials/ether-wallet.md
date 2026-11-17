@@ -9,23 +9,44 @@ The goal is to have a backend application to track balances and receive, transfe
 
 ## Setting up the project
 
-First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli).
+First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md#cartesi-cli) and move into its directory:
 
 ```bash
 cartesi create ether-wallet --template typescript
+cd ether-wallet
 ```
 
-Run the following to generate the types for your project:
+The template manages its packages with [pnpm](https://pnpm.io), through [corepack](https://nodejs.org/api/corepack.html). If the `pnpm` command is not available, enable it with:
 
 ```bash
-yarn && yarn run codegen
+corepack enable pnpm
 ```
 
-Now, navigate to the project directory and install [`viem`](https://viem.sh/):
+Now, install [`viem`](https://viem.sh/) as a development dependency:
 
 ```bash
-yarn add viem
+pnpm add -D viem@2.57.19
 ```
+
+Then replace the contents of `rolldown.config.ts` with the following, so that rolldown bundles viem into your application and only leaves out the `@cartesi/rollup` native addon:
+
+```typescript
+import { defineConfig } from "rolldown";
+
+export default defineConfig({
+  input: "src/index.ts",
+  platform: "node",
+  // only the @cartesi/rollup native addon stays out of the bundle: viem and
+  // any other pure JavaScript dependency are bundled into dist/index.mjs
+  external: ["@cartesi/rollup"],
+  output: {
+    file: "dist/index.mjs",
+    format: "esm",
+  },
+});
+```
+
+`cartesi build` installs the packages listed under `dependencies` inside an emulated RISC-V container, where pnpm can crash with a segmentation fault while it installs viem. A bundled development dependency is not installed there. See [adding dependencies](../development/creating-an-application.md#adding-dependencies-in-javascript-and-typescript).
 
 ## Building the Ether wallet
 
@@ -34,12 +55,12 @@ Our wallet will have two main classes: `Balance` and `Wallet`. Let's implement e
 Create a file named `balance.ts` in the `src/wallet` directory and add the following code:
 
 ```typescript
-import { Address } from "viem";
+import type { Address } from "viem";
 
 export class Balance {
   constructor(
     private readonly address: Address,
-    private ether: bigint = 0n
+    private ether: bigint = 0n,
   ) {}
 
   getEther(): bigint {
@@ -54,8 +75,11 @@ export class Balance {
   }
 
   decreaseEther(amount: bigint): void {
-    if (amount < 0n || this.ether < amount) {
+    if (amount < 0n) {
       throw new Error(`Invalid amount: ${amount}`);
+    }
+    if (this.ether < amount) {
+      throw new Error(`Insufficient balance for ${this.address}`);
     }
     this.ether -= amount;
   }
@@ -67,38 +91,33 @@ The `Balance` class represents an individual account's balance. It includes meth
 Now, create a file named `wallet.ts` in the `src/wallet` directory and add the following code:
 
 ```typescript
-import {
-  Address,
-  getAddress,
-  Hex,
-  numberToHex,
-  sliceHex,
-  zeroHash,
-} from "viem";
+import type { Voucher } from "@cartesi/rollup";
+import { type Address, getAddress, type Hex, sliceHex } from "viem";
 import { Balance } from "./balance";
-import { Voucher } from "..";
 
 export class Wallet {
-  private accounts: Map<string, Balance> = new Map();
+  private accounts: Map<Address, Balance> = new Map();
 
   private getOrCreateBalance(address: Address): Balance {
-    const key = address.toLowerCase();
-    if (!this.accounts.has(key)) {
-      this.accounts.set(key, new Balance(address));
+    const key = getAddress(address);
+    let balance = this.accounts.get(key);
+    if (!balance) {
+      balance = new Balance(key);
+      this.accounts.set(key, balance);
     }
-    return this.accounts.get(key)!;
+    return balance;
   }
 
   getBalance(address: Address): bigint {
     return this.getOrCreateBalance(address).getEther();
   }
 
-  depositEther(payload: string): string {
+  depositEther(payload: Hex): string {
     const [address, amount] = this.parseDepositPayload(payload);
     const balance = this.getOrCreateBalance(address);
     balance.increaseEther(amount);
     console.log(
-      `After deposit, balance for ${address} is ${balance.getEther()}`
+      `After deposit, balance for ${address} is ${balance.getEther()}`,
     );
     return JSON.stringify({
       type: "etherDeposit",
@@ -109,41 +128,28 @@ export class Wallet {
 
   withdrawEther(address: Address, amount: bigint): Voucher {
     const balance = this.getOrCreateBalance(address);
-
-    if (balance.getEther() >= amount) {
-      balance.decreaseEther(amount);
-      const voucher = this.encodeWithdrawCall(address, amount);
-
-      console.log("Voucher created successfully", voucher);
-
-      return voucher;
-    } else {
-      throw Error("Insufficient balance");
-    }
+    balance.decreaseEther(amount);
+    console.log(
+      `After withdrawal, balance for ${address} is ${balance.getEther()}`,
+    );
+    return this.encodeWithdrawCall(address, amount);
   }
 
   transferEther(from: Address, to: Address, amount: bigint): string {
     const fromBalance = this.getOrCreateBalance(from);
     const toBalance = this.getOrCreateBalance(to);
-
-    if (fromBalance.getEther() >= amount) {
-      fromBalance.decreaseEther(amount);
-      toBalance.increaseEther(amount);
-      console.log(
-        `After transfer, balance for ${from} is ${fromBalance.getEther()}`
-      );
-      console.log(
-        `After transfer, balance for ${to} is ${toBalance.getEther()}`
-      );
-      return JSON.stringify({
-        type: "etherTransfer",
-        from,
-        to,
-        amount: amount.toString(),
-      });
-    } else {
-      throw Error("Insufficient amount");
-    }
+    fromBalance.decreaseEther(amount);
+    toBalance.increaseEther(amount);
+    console.log(
+      `After transfer, balance for ${from} is ${fromBalance.getEther()}`,
+    );
+    console.log(`After transfer, balance for ${to} is ${toBalance.getEther()}`);
+    return JSON.stringify({
+      type: "etherTransfer",
+      from,
+      to,
+      amount: amount.toString(),
+    });
   }
 
   private parseDepositPayload(payload: Hex): [Address, bigint] {
@@ -155,8 +161,8 @@ export class Wallet {
   private encodeWithdrawCall(receiver: Address, amount: bigint): Voucher {
     return {
       destination: receiver,
-      payload: zeroHash,
-      value: numberToHex(amount).slice(2),
+      value: amount,
+      payload: "0x",
     };
   }
 }
@@ -168,190 +174,117 @@ The `Wallet` class manages multiple accounts and provides methods for everyday w
 
 ### Voucher creation
 
-The `encodeWithdrawCall` method returns a voucher. Creating vouchers is a crucial concept in Cartesi Rollups for executing withdrawal operations on the base layer chain.
+The `encodeWithdrawCall` method returns a voucher, typed with the `Voucher` interface of `@cartesi/rollup`. Creating vouchers is a crucial concept in Cartesi Rollups for executing withdrawal operations on the base layer chain.
 
-In Rollups v2, the on-chain [`Application`](../api-reference/contracts/application.md) contract executes vouchers through [`executeOutput()`](../api-reference/contracts/application.md#executeoutput), which decodes a voucher as `(destination, value, payload)` and performs a [`safeCall`](https://github.com/cartesi/rollups-contracts/blob/v2.0.1/src/library/LibAddress.sol) to `destination` with the specified wei `value`. Ether held by your application (see `metadata.app_contract` on each advance) is sent to the recipient this way.
+In Rollups v2, the on-chain [`Application`](../api-reference/contracts/application.md) contract executes vouchers through [`executeOutput()`](../api-reference/contracts/application.md#executeoutput), which decodes a voucher as `(destination, value, payload)` and performs a [`safeCall`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/src/library/LibAddress.sol) to `destination` with the specified wei `value`. Ether held by your application (`request.appContract` on each advance request) is sent to the recipient this way.
 
-For a plain Ether transfer, leave `payload` as [`zeroHash`](https://viem.sh/docs/glossary/types#zeroHash) (no calldata). The voucher fields are:
+For a plain Ether transfer, leave `payload` empty (`0x`, no calldata). The voucher fields are:
 
 - `destination`: The address that receives the withdrawn Ether.
-- `payload`: `zeroHash` when you are not calling a function on the recipient.
-- `value`: The withdrawal amount in wei, as a hex string **without** the `0x` prefix (see [asset handling](../development/asset-handling.md#withdrawing-ether)).
+- `value`: The withdrawal amount in wei, as a `bigint`. `@cartesi/rollup` encodes it as the voucher's 32-byte `uint256`.
+- `payload`: `0x` when you are not calling a function on the recipient. A non-empty payload, even 32 zero bytes such as `zeroHash`, makes the voucher revert with `TargetHasNoCode` when the recipient is a wallet with no code (see [asset handling](../development/asset-handling.md#withdrawing-ether)).
 
 ## Using the Ether wallet
 
-Now, let's create a simple application at the entry point, `src/index.ts,` to test the wallet functionality.
+Now, let's create a simple application at the entry point, `src/index.ts`, to test the wallet functionality.
 
 The [`EtherPortal`](../api-reference/contracts/portals/EtherPortal.md) contract allows anyone to transfer Ether into your application. All deposits are made via the `EtherPortal` contract.
 
 :::note EtherPortal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `EtherPortal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `EtherPortal` address for your network into `index.ts`. For a given rollups-contracts release, each portal has the same address on every supported network and on the devnet, but the address changes between releases: take it from `cartesi address-book` rather than from an older sample.
 :::
 
 ```typescript
-import createClient from "openapi-fetch";
-import type { components, paths } from "./schema";
+import {
+  type AdvanceRequest,
+  type InspectRequest,
+  Rollup,
+} from "@cartesi/rollup";
+import {
+  type Address,
+  bytesToHex,
+  getAddress,
+  isAddressEqual,
+  stringToHex,
+} from "viem";
 import { Wallet } from "./wallet/wallet";
-import { stringToHex, getAddress, Address, hexToString } from "viem";
 
-type AdvanceRequestData = components["schemas"]["Advance"];
-type InspectRequestData = components["schemas"]["Inspect"];
-type RequestHandlerResult = components["schemas"]["Finish"]["status"];
-type RollupRequest = components["schemas"]["RollupRequest"];
-type InspectRequestHandler = (data: InspectRequestData) => Promise<void>;
-type AdvanceRequestHandler = (
-  data: AdvanceRequestData
-) => Promise<RequestHandlerResult>;
-
-export type Notice = components["schemas"]["Notice"];
-export type Payload = components["schemas"]["Payload"];
-export type Report = components["schemas"]["Report"];
-export type Voucher = components["schemas"]["Voucher"];
-
-const wallet = new Wallet();
 // Replace with the EtherPortal address from `cartesi address-book`
-const EtherPortal = `0xYOUR_ETHER_PORTAL_ADDRESS`;
+const ETHER_PORTAL: Address = "0xYOUR_ETHER_PORTAL_ADDRESS";
 
-const rollupServer = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log(`HTTP rollup_server url is ${rollupServer}`);
+const rollup = new Rollup();
+const wallet = new Wallet();
 
-const handleAdvance: AdvanceRequestHandler = async (data) => {
-  console.log(`Received advance request data ${JSON.stringify(data)}`);
+const handleAdvance = (request: AdvanceRequest): boolean => {
+  console.log(
+    `Received advance request from ${request.msgSender} with index ${request.index}`,
+  );
 
-  const application = data["metadata"]["app_contract"];
-  const sender = data["metadata"]["msg_sender"];
-  const payload = data.payload;
-
-  if (sender.toLowerCase() === EtherPortal.toLowerCase()) {
-    // Handle deposit
-    const deposit = wallet.depositEther(payload);
-    await createNotice({ payload: stringToHex(deposit) });
-  } else {
-    // Handle transfer or withdrawal
-    try {
-      const { operation, from, to, amount } = JSON.parse(hexToString(payload));
-
-      if (operation === "transfer") {
-        const transfer = wallet.transferEther(
-          getAddress(from as Address),
-          getAddress(to as Address),
-          BigInt(amount)
-        );
-        await createNotice({ payload: stringToHex(transfer) });
-      } else if (operation === "withdraw") {
-        // `application` is the on-chain Application that holds deposited ETH
-        console.log(`Withdrawing from application ${application}`);
-        const voucher = wallet.withdrawEther(
-          getAddress(from as Address),
-          BigInt(amount)
-        );
-
-        await createVoucher(voucher);
-      } else {
-        console.log("Unknown operation");
-      }
-    } catch (error) {
-      console.error("Error processing payload:", error);
-    }
+  if (isAddressEqual(request.msgSender, ETHER_PORTAL)) {
+    // Deposit: the portal names the depositor in the payload
+    const deposit = wallet.depositEther(bytesToHex(request.payload));
+    rollup.emitNotice(stringToHex(deposit));
+    return true;
   }
 
-  return "accept";
-};
+  // Transfer or withdrawal: always on behalf of the account that sent the input
+  const owner = getAddress(request.msgSender);
+  try {
+    const { operation, to, amount } = JSON.parse(
+      request.payload.toString("utf8"),
+    );
 
-const handleInspect: InspectRequestHandler = async (data) => {
-  console.log(`Received inspect request data ${JSON.stringify(data)}`);
-
-    try {
-    const address = hexToString(data.payload);
-    console.log(address);
-    const balance = wallet.getBalance(address as Address);
-
-    const reportPayload = `Balance for ${address} is ${balance} wei`;
-    await createReport({ payload: stringToHex(reportPayload) });
+    if (operation === "transfer") {
+      const transfer = wallet.transferEther(owner, getAddress(to), BigInt(amount));
+      rollup.emitNotice(stringToHex(transfer));
+    } else if (operation === "withdraw") {
+      // The application contract (request.appContract) holds the deposited
+      // Ether and sends it to the owner when the voucher is executed
+      const voucher = wallet.withdrawEther(owner, BigInt(amount));
+      rollup.emitVoucher(voucher);
+    } else {
+      throw new Error(`Unknown operation: ${operation}`);
+    }
+    return true;
   } catch (error) {
-    console.error("Error processing inspect payload:", error);
+    console.error("Error processing payload:", error);
+    rollup.emitReport(stringToHex(`Error processing payload: ${error}`));
+    return false;
   }
 };
 
-const createNotice = async (payload: Notice) => {
-  console.log("creating notice with payload", payload);
-
-  await fetch(`${rollupServer}/notice`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-};
-
-const createVoucher = async (payload: Voucher) => {
-  await fetch(`${rollupServer}/voucher`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-};
-
-const createReport = async (payload: Report) => {
-  await fetch(`${rollupServer}/report`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-};
-
-const main = async () => {
-  const { POST } = createClient<paths>({ baseUrl: rollupServer });
-  let status: RequestHandlerResult = "accept";
-  while (true) {
-    const { data, response } = await POST("/finish", {
-      body: { status },
-      parseAs: "text",
-    });
-
-    if (response.status === 200 && data) {
-      const request = JSON.parse(data) as RollupRequest;
-      switch (request.request_type) {
-        case "advance_state":
-          status = await handleAdvance(request.data as AdvanceRequestData);
-          break;
-        case "inspect_state":
-          await handleInspect(request.data as InspectRequestData);
-          break;
-      }
-    } else if (response.status === 202) {
-      // no rollup request available
-      console.log(await response.text());
-    }
+const handleInspect = (request: InspectRequest): void => {
+  try {
+    const address = getAddress(request.payload.toString("utf8"));
+    const balance = wallet.getBalance(address);
+    rollup.emitReport(stringToHex(`Balance for ${address} is ${balance} wei`));
+  } catch (error) {
+    rollup.emitReport(
+      stringToHex(`Error processing inspect payload: ${error}`),
+    );
   }
 };
 
-main().catch((e) => {
-  console.log(e);
-  process.exit(1);
-});
+await rollup.run({ advance: handleAdvance, inspect: handleInspect });
 ```
 
-This code sets up a simple application that listens for requests from the Cartesi rollup server. It processes the requests and sends responses back to the server.
+This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3), which the template already depends on and which talks directly to the Cartesi Machine. `rollup.run()` waits for each request and passes it to `handleAdvance` or `handleInspect`, with the request payload as a Node.js `Buffer`. An advance handler accepts the input when it returns `true` and rejects it when it returns `false`: the node then discards the notices and vouchers of that input and reverts the application state, but keeps its reports.
 
 Here is a breakdown of the wallet functionality:
 
 - `handleAdvance` handles Ether deposits (from `EtherPortal`) and user operations (transfers/withdrawals).
 
-- We handle deposits and create a notice when the sender is the `EtherPortal`.
+- We handle deposits and create a notice when the sender is the `EtherPortal`. The portal writes the depositor's address and the amount in the payload, and the wallet credits that address.
 
 - We parse the payload for other senders to determine the operation (`transfer` or `withdraw`).
 
+- The account that sends the input is the owner of the operation: transfers and withdrawals always debit `request.msgSender`, and the payload has no `from` field. Anyone can write any address in a JSON payload, but nobody can send an input on behalf of another account, so reading the owner from the payload would let anyone move anyone's balance.
+
 - For `transfers`, we call `wallet.transferEther` and create a notice with the parsed parameters.
 
-For withdrawals, we call `wallet.withdrawEther` and create a voucher that sends wei from the on-chain Application (`metadata.app_contract`) to the user.
+- For withdrawals, we call `wallet.withdrawEther` and emit a voucher with `rollup.emitVoucher`. When it is executed, the voucher sends wei from the on-chain Application (`request.appContract`) to the owner.
 
-- We created helper functions to `createNotice` for deposits and transfers, `createReport` for balance checks, and `createVoucher` for withdrawals.
+- When an operation fails, for example because of an insufficient balance or an unknown operation, we emit the error as a report with `rollup.emitReport` and reject the input. Inspect requests answer balance checks with a report as well.
 
 ## Build and run the application
 
@@ -385,17 +318,17 @@ cartesi deposit ether 1 \
 
 Change the amount (`1` = 1 ETH) as needed. Use your project name in `--project-name` if it differs from `ether-wallet`.
 
-### Balance checks(used in Inspect requests)
+### Balance checks (used in Inspect requests)
 
 To inspect balance, make an HTTP (post) call to:
 
 ```bash
 curl -X POST http://127.0.0.1:6751/inspect/ether-wallet \
-  -H "Content-Type: application/json" \
-  -d '{"payload": "0x307866333946643665353161616438384636463463653661423838323732373963666646623932323636"}'
+  -H "Content-Type: text/plain" \
+  -d '0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f'
 ```
 
-The `payload` field must be a hex-encoded string. The example above is the UTF-8 address `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266` encoded with `stringToHex` from viem. Replace the inspect path if your project name is not `ether-wallet` (see the URL printed by `cartesi run`).
+The node passes the request body to your application unchanged as the inspect payload, so the body is the address to query as plain text (here `0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`). Replace the inspect path if your project name is not `ether-wallet` (see the URL printed by `cartesi run`).
 
 ### Transfer and Withdrawals
 
@@ -411,7 +344,7 @@ Non-interactive alternative (from your project root):
 
 ```bash
 cartesi send --encoding string \
-  '{"operation":"transfer","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}' \
+  '{"operation":"transfer","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}' \
   --project-name ether-wallet \
   --rpc-url http://127.0.0.1:6751/anvil
 ```
@@ -421,14 +354,16 @@ Here are the sample payloads as one-liners, ready to be used in your code:
 1. For transfers:
 
    ```js
-   {"operation":"transfer","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}
+   {"operation":"transfer","to":"0x3f2bd12ea0b8604c2af5bf241f6a606e892a403a","amount":"1000000000000000000"}
    ```
 
 2. For withdrawals:
 
    ```js
-   {"operation":"withdraw","from":"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266","amount":"1000000000000000000"}
+   {"operation":"withdraw","amount":"1000000000000000000"}
    ```
+
+The wallet debits the account that sends the input: `cartesi send` sends from devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`), the account that made the deposit above. Pass `--from` to send from another account; the application then debits that account, and rejects the input with a report such as `Error processing payload: Error: Insufficient balance for 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720` when it has no balance in the wallet.
 
 ### Using the explorer
 
@@ -444,8 +379,8 @@ cartesi run --services explorer
 
 The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
 
-You can execute your vouchers via the explorer, which completes the withdrawal process at the end of [an epoch](../api-reference/backend/vouchers.md/#epoch-configuration).
+You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
 
 :::info Repo Link
-   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/main/ether-wallet)!
+   You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/ether-wallet)!
 :::

@@ -1,6 +1,7 @@
 ---
 id: integration-guides
 title: Integrations guide
+unlisted: true
 ---
 
 Guides for integrating external protocols into your Cartesi application. Each integration offers a unique functionality to your application.
@@ -28,7 +29,7 @@ Espresso is the protocol for coordinated block building: enabling & incentivizin
 Push protocol is a web3 native communication network, enabling cross-chain notifications, messaging, and more for apps, wallets, and services. This integration is an application level integration that requires developers to run a specialized server for picking up and routing messages and notifications to the push network.
 
 - **Resources**:
-  - Integration Guide: [Github](https://github.com/Mugen-Builders/push-cartesi)
+  - Integration Guide: [Github](https://github.com/Mugen-Builders/push-cartesi/tree/2207a90012b8957c34c9cfd2b8b1cee96bbe45e3)
   - Demo Video: [Youtube](https://www.youtube.com/watch?v=SO-xhHT85Bk)
 
 ---
@@ -38,7 +39,7 @@ Push protocol is a web3 native communication network, enabling cross-chain notif
 Chronicle is an oracle solution, making tremendous strides in redefining access to cost-efficient and verifiable data. Integrating Cartesi and Chronicle offers Cartesi applications access to onchain and offcahin data like, price feed without developers having to set up additional systems or intermediaries.
 
 - **Resources**:
-  - Integration Guide: [Github](https://github.com/Mugen-Builders/cartesi-chronicle-integration/tree/main)
+  - Integration Guide: [Github](https://github.com/Mugen-Builders/cartesi-chronicle-integration/tree/ac1b7432a6a10eecf768dd300bf05065314a94fb)
   - Demo Video: [x](https://x.com/MichaelAsiedu_/status/1826200037786878012)
 
 ---
@@ -57,7 +58,7 @@ Prevado ID is a set of tools that enable secure identity verification they also 
 XMTP is an open protocol, network, and standards for secure, private web3 messaging. Integrating Cartesi and XMTP will allow Cartesi applications to access this network for decentralized and private messaging, thereby allowing Cartesi applications communicate and also send messages/ notifications to users. At the moment this is an application level integration and would require the developer to set up and run a server dedicated to this integration.
 
 - **Resources**:
-  - Integration Guide: [Github](https://github.com/Mugen-Builders/xmtp-cartesi)
+  - Integration Guide: [Github](https://github.com/Mugen-Builders/xmtp-cartesi/tree/c74a5da9dd99ac7e2eecc1c30a6516760756fdc0)
   - Demo Video: [x](https://x.com/shanemac/status/1828174660133101661?s=46)
   - Article Guide: [Medium](https://medium.com/@idogwuchi/integrating-cartesi-dapps-with-xmtp-bridging-decentralised-computation-and-secured-communication-360fa7bdb1d1)
 

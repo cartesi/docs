@@ -199,7 +199,7 @@ const config = {
           },
           {
             label: "Rollups",
-            to: "/cartesi-rollups/1.5",
+            to: "/cartesi-rollups/2.0",
             activeBaseRegex: "^/cartesi-rollups",
             position: "left",
           },
@@ -364,7 +364,7 @@ const config = {
         // docRootComponent: "@theme/DocPage",
         docItemComponent: "@theme/ApiItem",
         includeCurrentVersion: false,
-        lastVersion: "1.5",
+        lastVersion: "2.0",
         admonitions: {
           keywords: [
             "note",
@@ -377,6 +377,11 @@ const config = {
           ],
         },
         versions: {
+          "2.0": {
+            label: "2.0 alpha",
+            path: "2.0",
+            banner: "unreleased",
+          },
           "1.5": {
             label: "1.5",
             path: "1.5",
@@ -391,7 +396,7 @@ const config = {
         redirects: [
           {
             from: '/cartesi-rollups',      // the old/base route
-            to:   '/cartesi-rollups/1.5/', // the new route to redirect to
+            to:   '/cartesi-rollups/2.0/', // the new route to redirect to
           },
         ],
       },

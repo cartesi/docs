@@ -17,7 +17,7 @@ For advance-state requests, the input data contains:
 
 For inspect-state requests, the input data contains only the payload.
 
-After processing a rollup request, the dApp backend should call the `/finish` endpoint again. For advance-state requests, depending on the processing result, it should set the `status` field to either `'accept'` or `'reject'`. The status field is ignored for inspect-state requests.
+After processing a rollup request, the dApp backend should call the `/finish` endpoint again. For advance-state requests, depending on the processing result, it should set the `status` field to either `'accept'` or `'reject'`. For inspect-state requests, the status does not change the application state; the node returns it to the caller in the `status` field of the inspect response (`Accepted` or `Rejected`).
 
 If an advance-state request is rejected:
 - Any vouchers and notices generated during processing are discarded
@@ -30,6 +30,10 @@ During a finish call, the next rollup request might not be immediately available
 
 Let's see how a Cartesi dApp's backend processes requests using the finish endpoint:
 
+:::note JavaScript and TypeScript
+In JavaScript and TypeScript, `rollup.finish({ accept })` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) accepts or rejects the previous request and returns the next one, with `type` set to `"advance"` or `"inspect"`. It talks directly to the Cartesi Machine and blocks until a request is available, so there is no `202` status to retry. The templates call `rollup.run()`, which runs this loop for you and accepts each request unless its handler returns `false`.
+:::
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -38,53 +42,39 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
+import { Rollup } from "@cartesi/rollup";
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  return "accept";
+const rollup = new Rollup();
+
+function handleAdvance(request) {
+  console.log(
+    `Received advance request from ${request.msgSender} with payload 0x${request.payload.toString("hex")}`,
+  );
+  return true; // accept the input, or return false to reject it
 }
 
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
+function handleInspect(request) {
+  console.log(
+    `Received inspect request with payload 0x${request.payload.toString("hex")}`,
+  );
+  return true;
 }
 
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
-
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(finish),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
-    } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
-    }
-  }
-})();
+let accept = true;
+for (;;) {
+  // accept or reject the previous request, then wait for the next one
+  const request = rollup.finish({ accept });
+  accept =
+    request.type === "advance"
+      ? handleAdvance(request)
+      : handleInspect(request);
+}
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -129,7 +119,7 @@ while True:
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -205,7 +195,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```go
@@ -237,8 +227,12 @@ func main() {
 		}
 
 		// Parse next request and dispatch to the correct handler.
-		response, err := rollups.ParseFinishResponse(res)
+		resBody, err := io.ReadAll(res.Body)
 		if err != nil {
+			errlog.Panicln("Error reading finish response:", err)
+		}
+		var response rollups.FinishResponse
+		if err = json.Unmarshal(resBody, &response); err != nil {
 			errlog.Panicln("Error parsing finish response:", err)
 		}
 
@@ -261,7 +255,7 @@ func main() {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```cpp
@@ -324,7 +318,7 @@ int main(int argc, char **argv)
 
 - The `/finish` endpoint must be called after processing each request to indicate readiness for the next one
 - For advance state requests, the status field determines whether the request is accepted or rejected
-- For inspect state requests, the status field is ignored
+- For inspect state requests, the status does not change the application state; it is returned in the `status` field of the inspect response
 - If an advance state request is rejected:
   - Any vouchers and notices generated during processing are discarded
   - Reports are not discarded

@@ -9,11 +9,11 @@ Notices provide a mechanism to communicate essential off-chain events from the e
 
 Consider a scenario within a gaming dApp where players engage in battles. Upon the conclusion of a match, the dApp's backend generates a notice proclaiming the victorious player. This notice contains pertinent off-chain data regarding the match outcome. Once created, the notice is submitted to the rollup server as evidence of the off-chain event.
 
-Crucially, the base layer conducts on-chain validation of these notices through the [`executeOutput()`](../contracts/application.md/#executeoutput) function of the `Application` contract.
+Crucially, the base layer conducts on-chain validation of these notices through the [`validateOutput()`](../contracts/application.md#validateoutput) function of the `Application` contract. Notices cannot be executed: `executeOutput()` reverts with `OutputNotExecutable` for a notice.
 
 This validation process ensures the integrity and authenticity of the submitted notices, enabling the blockchain to verify and authenticate the declared off-chain events or conditions.
 
-Here are sample functions you can add to your application, then call to send a notice to the rollup server:
+Here are sample functions you can add to your application, then call to send a notice to the rollup server (in JavaScript, `rollup.emitNotice()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) sends it directly to the Cartesi Machine):
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -23,36 +23,24 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-import { stringToHex, hexToString } from "viem";
+import { Rollup } from "@cartesi/rollup";
 
-const emitNotice = async (inputPayload) => {
-  let hexPayload = stringToHex(inputPayload); // convert payload from string to hex 
-  try {
-    await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexPayload }),
-    });
-  } catch (error) {
-    // Handle error here
-  }
-}
+const rollup = new Rollup();
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  const payload = hexToString(data.payload); // convert input from hex to string for processing
-  await emitNotice(payload);
-  return "accept";
-}
-
+await rollup.run({
+  advance(request) {
+    const payload = request.payload.toString("utf8"); // input as a string for processing
+    console.log(`Received advance request with payload ${payload}`);
+    rollup.emitNotice(Buffer.from(payload, "utf8")); // notice payload as raw bytes
+    return true;
+  },
+});
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -71,13 +59,14 @@ def handle_advance(data):
        )
    except Exception as e:
        # Emit report with error message here
+       pass
    return status
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -92,7 +81,7 @@ pub async fn handle_advance(
         .ok_or("Missing payload")?;
 
 
-    emit_notice(payload).await;
+    emit_notice(payload.to_string()).await;
     Ok("accept")
 }
 
@@ -127,7 +116,7 @@ async fn emit_notice(payload: String) -> Option<bool> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```go
@@ -151,7 +140,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```cpp
@@ -186,5 +175,5 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 </Tabs>
 
 :::note querying notices
-Frontend clients can query notices using a JSON RPC API exposed by Cartesi Nodes. [Refer to the documentation here](../../development/query-outputs.md#query-all-notices-and-vouchers) to query notices from the rollup server.
+Frontend clients query notices through the node's JSON-RPC API, not the rollup server. See [querying outputs](../../development/query-outputs.md#query-all-notices-and-vouchers).
 :::

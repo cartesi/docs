@@ -1,7 +1,7 @@
 ---
 id: cartesi-rollup-http-api
 title: "Cartesi Rollup HTTP API"
-description: "API that the Cartesi Rollup HTTP Server implements."
+description: "API of the Rollup HTTP Server of [machine-guest-tools 0.18.0](https://github.com/cartesi/machine-guest-tools/tree/v0.18.0/rollup-http/rollup-http-server)."
 sidebar_label: Introduction
 sidebar_position: 0
 hide_title: true
@@ -16,7 +16,7 @@ import Export from "@theme/ApiExplorer/Export";
 
 <span
   className={"theme-doc-version-badge badge badge--secondary"}
-  children={"Version: 0.5.1"}
+  children={"Version: 0.18.0"}
 >
 </span>
 
@@ -29,66 +29,37 @@ import Export from "@theme/ApiExplorer/Export";
 
 
 
-API that the Cartesi Rollup HTTP Server implements.
+API of the Rollup HTTP Server of [machine-guest-tools 0.18.0](https://github.com/cartesi/machine-guest-tools/tree/v0.18.0/rollup-http/rollup-http-server).
+The server runs inside the Cartesi Machine, next to the application backend, and listens on `http://127.0.0.1:5004`; the templates pass this address to the backend in the `ROLLUP_HTTP_SERVER_URL` environment variable.
 
-In the box below, there is an example of a dApp backend that uses the Rollup HTTP API.
+The Python, Rust, Go and C++ templates use this API. The JavaScript and TypeScript templates do not: they use the `@cartesi/rollup` package, which makes the same calls directly to the machine.
 
-```
+All request and response bodies are JSON (up to 5 MiB). Binary data, such as payloads, is a string in Ethereum hex format: `0x` followed by two hexadecimal digits per byte. The `0x` prefix is required.
+
+The example below is a backend that echoes every advance input as a notice and a report, and every inspect payload as a report.
+
+```python
+import os
 import requests
-import sys
 
-rollup = sys.argv[1]
+rollup = os.environ["ROLLUP_HTTP_SERVER_URL"]
 
-def check_status_code(response):
-    if response.status_code not in range(200, 300):
-        print(f'Error: invalid status code {response.status_code}')
-        sys.exit(1)
-    return response
-
-finish = {'status': 'accept'}
+finish = {"status": "accept"}
 while True:
-    print('Sending finish')
-    r = check_status_code(requests.post(rollup + '/finish', json=finish))
-    if r.status_code == 202:
-        print('No pending rollup request, trying again')
-        continue
+    response = requests.post(rollup + "/finish", json=finish)
+    response.raise_for_status()
+    request = response.json()
+    payload = request["data"]["payload"]
 
-    rollup_request = r.json()
-    if rollup_request['request_type'] == 'advance_state':
-        print('Sending voucher')
-        voucher = {
-            'destination': rollup_request['data']['metadata']['msg_sender'],
-            'payload': rollup_request['data']['payload']
-        }
-        check_status_code(requests.post(rollup + '/voucher', json=voucher))
-
-        print('Sending notice')
-        notice = {'payload': rollup_request['data']['payload']}
-        check_status_code(requests.post(rollup + '/notice', json=notice))
-
-        print('Sending report')
-        report = {'payload': rollup_request['data']['payload']}
-        check_status_code(requests.post(rollup + '/report', json=report))
-
-        finish['status'] = 'accept'
-
-    elif rollup_request['request_type'] == 'inspect_state':
-        print('Sending report per inspect request')
-        report = {'payload': rollup_request['data']['payload']}
-        check_status_code(requests.post(rollup + '/report', json=report))
-
+    if request["request_type"] == "advance_state":
+        requests.post(rollup + "/notice", json={"payload": payload}).raise_for_status()
+        requests.post(rollup + "/report", json={"payload": payload}).raise_for_status()
     else:
-        print('Throwing rollup exception')
-        exception = {'payload': rollup_request['data']['payload']}
-        requests.post(rollup + '/exception', json=exception)
-        break
+        requests.post(rollup + "/report", json={"payload": payload}).raise_for_status()
+    finish["status"] = "accept"
 ```
 
-In production mode, if the dApp exits the Rollups initialization script will register a Rollup Exception.
-See [/exception](./register-exception).
-
-In host mode, the Cartesi Rollups infrastructure is not able to detect that the dApp exited.
-It is up to the dApp developer to re-launch the dApp.
+If the backend process exits, the application stops for good: `rollup-init` reports an exception (see [/exception](./register-exception.api.mdx)), or the machine halts.
 
 
 <div

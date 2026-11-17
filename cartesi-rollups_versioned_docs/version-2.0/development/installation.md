@@ -28,7 +28,7 @@ The primary requirements for building on Cartesi are:
 
 ## Docker Desktop
 
-Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building dApps Cartesi:
+Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building Cartesi dApps:
 
 - Docker Buildx
 - Docker Compose
@@ -38,7 +38,7 @@ Docker Desktop is a must-have requirement that comes pre-configured with two nec
 To install Docker RISC-V support without using Docker Desktop, run the following command:
 
 ```shell
-docker run --privileged --rm tonistiigi/binfmt --install all
+docker run --privileged --rm tonistiigi/binfmt:qemu-v10.2.3 --install all
 ```
 
 ## Node and NPM
@@ -54,22 +54,20 @@ Verify the installation by running `node -v`, which will display the version of 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+These docs are written for Cartesi CLI **2.0.0-alpha.42**. Install that exact version: `npm install -g @cartesi/cli` without a version installs the `latest` tag, which is the 1.5 CLI.
+
 <Tabs>
   <TabItem value="macOS" label="macOS" default>
-  <p>Install Cartesi CLI with <a href="https://brew.sh/" target="_blank"> Homebrew</a>:</p>
+  <p>Install Cartesi CLI with NPM:</p>
     <pre><code>
-    brew install cartesi/tap/cartesi
-    </code></pre>
-    <p> Alternatively, you can install Cartesi CLI with NPM:</p>
-    <pre><code>
-    npm install -g @cartesi/cli
+    npm install -g @cartesi/cli@2.0.0-alpha.42
     </code></pre>
   </TabItem>
 
   <TabItem value="Linux" label="Linux">
   <p>Install Cartesi CLI with NPM:</p>
     <pre><code>
-    npm install -g @cartesi/cli
+    npm install -g @cartesi/cli@2.0.0-alpha.42
     </code></pre>
   </TabItem>
 
@@ -77,14 +75,27 @@ import TabItem from '@theme/TabItem';
     <p>1. Install <a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL2</a> and Ubuntu from the Microsoft store</p>
     <p>2. Install Cartesi CLI with NPM: </p>
     <pre><code>
-    npm install -g @cartesi/cli
+    npm install -g @cartesi/cli@2.0.0-alpha.42
     </code></pre>
   </TabItem>
 </Tabs>
+
+Check the installed version with `cartesi --version`.
+
+:::note SDK image and emulator version
+Cartesi CLI 2.0.0-alpha.42 builds machines with the `cartesi/sdk:0.12.0-alpha.45` image by default, which ships rollups-node v2.0.0-alpha.14, Cartesi Machine emulator 0.22.0 and PRT 3.0.0-alpha.6. Machines built with an earlier CLI release (emulator 0.21) cannot be loaded by this node: rebuild and redeploy them. See [SDK Version](./advanced-configuration.md#sdk-version) to pin the SDK image in `cartesi.toml`.
+:::
 
 Cartesi CLI doctor is a diagnostic tool that declares whether your system is ready and set up for development.
 
 ```shell
 $ cartesi doctor
-✔ Your system is ready for cartesi.
+✔ Docker Engine 27.5.1
+✔ Docker Compose 2.32.4-desktop.1
+✔ Docker Buildx 0.20.1
+✔ Docker RISC-V support linux/riscv64
+✔ Cartesi Machine 0.22.0
+✔ Your system is ready.
 ```
+
+The versions shown depend on your installation.

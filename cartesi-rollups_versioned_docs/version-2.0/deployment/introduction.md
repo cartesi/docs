@@ -2,8 +2,8 @@
 id: introduction
 title: Introduction
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v1.4.0/onchain/rollups/deployments
-    title: Supported networks
+  - url: https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.10
+    title: Supported networks (rollups-contracts v3.0.0-alpha.10)
 
 ---
 
@@ -11,7 +11,7 @@ Applications built on Cartesi Rollups are intended to be deployed to public bloc
 
 Deploying a Cartesi dApp involves two steps: deploying a smart contract that defines your dApp on-chain and then instantiating a node that runs the application's intended backend logic.
 
-To facilitate the instantiation of such nodes, Cartesi provides an infrastructure for quickly getting them running in the cloud so the node can be run 24/7. This server will expose a single port to the internet so client applications can communicate with the node.
+You run these nodes yourself, for example on a cloud server, so that the node runs 24/7 (see [self-hosted deployment](./self-hosted/overview.md)). Client applications communicate with the node through its HTTP endpoints: the JSON-RPC API and the inspect endpoint.
 
 ## Public snapshots
 
@@ -32,6 +32,8 @@ There are two methods to deploy an application:
 1. [Self-hosted deployment](./self-hosted/overview.md): Deploy the application node using your infrastructure
 2. Third-party service provider: Outsource running the application node to a service provider
 
+Applications that custody assets should follow [Deployment with emergency withdrawal](./self-hosted/with-emergency-withdrawal.md) so a guardian can foreclose and users can recover funds without a live operator.
+
 :::caution important
 Deployment with a third-party service provider is under development and will be available soon.
 :::
@@ -40,7 +42,7 @@ Deployment with a third-party service provider is under development and will be 
 
 As stated above, the first step in deploying a new Cartesi dApp to a blockchain requires creating a smart contract on that network that uses the Cartesi Rollups smart contracts. Cartesi has already deployed the Rollups smart contracts to several networks for convenience.
 
-The table below shows the list of all [networks that are currently supported](https://usecannon.com/packages/cartesi-rollups) in the latest release:
+The table below lists the networks supported by [rollups-contracts v3.0.0-alpha.10](https://github.com/cartesi/rollups-contracts/releases/tag/v3.0.0-alpha.10), the release used by rollups-node v2.0.0-alpha.14:
 
 | Network Name     | Chain ID |
 | ---------------- | -------- |
@@ -52,3 +54,10 @@ The table below shows the list of all [networks that are currently supported](ht
 | Arbitrum Sepolia | 421614   |
 | Base             | 8453     |
 | Base Sepolia     | 84532    |
+
+The contract addresses ship as the `cartesi-rollups-contracts-3.0.0-alpha.10-deployment-addresses.tar.gz` asset of that release, under `deployments/<chain-id>/`, one entry per contract. The addresses are deterministic, so before using one, check that a contract is deployed at it on your chain (for example, `cast code <address> --rpc-url <RPC-URL>` must return non-empty bytecode). Take every address your node uses from the same release as the node.
+
+:::caution Arbitrum and PRT
+- **Authority and Quorum applications on Arbitrum:** the reference node (rollups-node v2.0.0-alpha.14) does not support them. Inside Arbitrum contracts, `block.number` is a parent-chain (Ethereum) block number, while the node counts epochs in Arbitrum block numbers, so the consensus contract rejects the node's claims (`NotPastBlock`) and no epoch is ever accepted.
+- **PRT (Dave) applications:** the PRT contracts used by this node release (v3.0.0-alpha.6) support only Ethereum Mainnet and Sepolia. Their deployments on the other networks are experimental.
+:::

@@ -1,4 +1,7 @@
 ```cpp
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <map>
@@ -32,32 +35,188 @@ static std::string string_to_hex(const std::string &text)
     return oss.str();
 }
 
+// Recursive-descent parser for + - * / with the usual precedence, unary + and -,
+// and parentheses (e.g. 1+2*3 = 7, (1+2)*3 = 9):
+//   expression = term { ("+" | "-") term }
+//   term       = factor { ("*" | "/") factor }
+//   factor     = ("+" | "-") factor | "(" expression ")" | number
+class ExpressionParser
+{
+public:
+    explicit ExpressionParser(const std::string &text) : text_(text), pos_(0), depth_(0) {}
+
+    double parse()
+    {
+        const double value = expression();
+        skip_spaces();
+        if (pos_ != text_.size())
+        {
+            throw std::runtime_error(unexpected()); // trailing input, e.g. "1 2"
+        }
+        return value;
+    }
+
+private:
+    static const int kMaxDepth = 256; // bounds the recursion on inputs like "((((..."
+    const std::string text_;
+    size_t pos_;
+    int depth_;
+
+    void skip_spaces()
+    {
+        while (pos_ < text_.size() && std::isspace(static_cast<unsigned char>(text_[pos_])))
+        {
+            ++pos_;
+        }
+    }
+
+    bool accept(char c)
+    {
+        skip_spaces();
+        if (pos_ < text_.size() && text_[pos_] == c)
+        {
+            ++pos_;
+            return true;
+        }
+        return false;
+    }
+
+    std::string unexpected() const
+    {
+        if (pos_ >= text_.size())
+        {
+            return "unexpected end of expression";
+        }
+        return "unexpected character '" + text_.substr(pos_, 1) + "' at position " + std::to_string(pos_);
+    }
+
+    double expression()
+    {
+        double value = term();
+        while (true)
+        {
+            if (accept('+'))
+            {
+                value += term();
+            }
+            else if (accept('-'))
+            {
+                value -= term();
+            }
+            else
+            {
+                return value;
+            }
+        }
+    }
+
+    double term()
+    {
+        double value = factor();
+        while (true)
+        {
+            if (accept('*'))
+            {
+                value *= factor();
+            }
+            else if (accept('/'))
+            {
+                const double divisor = factor();
+                if (divisor == 0.0)
+                {
+                    throw std::runtime_error("division by zero");
+                }
+                value /= divisor;
+            }
+            else
+            {
+                return value;
+            }
+        }
+    }
+
+    double factor()
+    {
+        if (++depth_ > kMaxDepth)
+        {
+            throw std::runtime_error("expression is nested too deeply");
+        }
+        double value;
+        if (accept('+'))
+        {
+            value = factor();
+        }
+        else if (accept('-'))
+        {
+            value = -factor();
+        }
+        else if (accept('('))
+        {
+            value = expression();
+            if (!accept(')'))
+            {
+                throw std::runtime_error(unexpected());
+            }
+        }
+        else
+        {
+            value = number();
+        }
+        --depth_;
+        return value;
+    }
+
+    double number()
+    {
+        skip_spaces();
+        const size_t start = pos_;
+        size_t digits = 0;
+        while (pos_ < text_.size() && std::isdigit(static_cast<unsigned char>(text_[pos_])))
+        {
+            ++pos_;
+            ++digits;
+        }
+        if (pos_ < text_.size() && text_[pos_] == '.')
+        {
+            ++pos_;
+            while (pos_ < text_.size() && std::isdigit(static_cast<unsigned char>(text_[pos_])))
+            {
+                ++pos_;
+                ++digits;
+            }
+        }
+        if (digits == 0)
+        {
+            pos_ = start;
+            throw std::runtime_error(unexpected());
+        }
+        return std::strtod(text_.substr(start, pos_ - start).c_str(), nullptr);
+    }
+};
+
 static double evaluate_expression(const std::string &expr)
 {
-    // Minimal parser for "number op number" expressions (e.g. 1+2, 7*3).
-    std::stringstream ss(expr);
-    double lhs = 0.0;
-    double rhs = 0.0;
-    char op = 0;
-    ss >> lhs >> op >> rhs;
-    if (ss.fail())
+    return ExpressionParser(expr).parse();
+}
+
+// Shortest decimal form that reads back as the same number ("7", "-10", "0.3333333333333333")
+static std::string format_number(double value)
+{
+    char buffer[32];
+    if (value > -1e18 && value < 1e18 && value == static_cast<double>(static_cast<long long>(value)))
     {
-        throw std::runtime_error("invalid expression format");
+        std::snprintf(buffer, sizeof(buffer), "%lld", static_cast<long long>(value));
+        return buffer;
     }
-    switch (op)
+    for (int precision = 1; precision <= 17; ++precision)
     {
-    case '+': return lhs + rhs;
-    case '-': return lhs - rhs;
-    case '*': return lhs * rhs;
-    case '/':
-        if (rhs == 0.0)
+        std::snprintf(buffer, sizeof(buffer), "%.*g", precision, value);
+        if (std::strtod(buffer, nullptr) == value)
         {
-            throw std::runtime_error("division by zero");
+            break;
         }
-        return lhs / rhs;
-    default:
-        throw std::runtime_error("unsupported operator");
     }
+    return buffer;
 }
 
 static void emit_notice(httplib::Client &cli, const std::string &text)
@@ -82,7 +241,7 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
         const std::string payload_hex = data.get("payload").get<std::string>();
         const std::string expression = hex_to_string(payload_hex);
         const double output = evaluate_expression(expression);
-        emit_notice(cli, std::to_string(output));
+        emit_notice(cli, format_number(output));
         return "accept";
     }
     catch (const std::exception &e)

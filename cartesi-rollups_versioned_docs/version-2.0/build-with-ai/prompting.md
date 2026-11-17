@@ -79,7 +79,7 @@ What to do instead:
 - Stay on **testnets** with **dev keys** while iterating.
 - Ask the assistant to **print** CLI / `cast` / `forge` commands; you run them.
 - Have it **diff and explain** changes before any commit.
-- Read [Overview → Exercise caution](./overview.md#exercise-caution) before widening the agent's access.
+- Read [Overview → Best Practices](./overview.md#best-practices) before widening the agent's access.
 
 ## Prompt patterns
 
@@ -164,7 +164,7 @@ Show me what to check in my /finish loop and handler validation.
 ```text
 Add a React frontend to my Cartesi Rollups v2 app using cartesi-frontend.
 Wire wallet connect, send inputs via InputBox, and read state via JSON-RPC.
-Use @cartesi/wagmi and @cartesi/viem.
+Use @cartesi/react@2.0.0-alpha.45 and @cartesi/client@2.0.0-alpha.41.
 ```
 
 ### Deploy

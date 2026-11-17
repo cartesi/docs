@@ -9,7 +9,7 @@ Unlike notices, reports lack any association with proof and are therefore unsuit
 
 Consider a scenario within a financial dApp where users conduct transactions. In the event of a processing error, such as a failed transaction or insufficient funds, the dApp may generate a report detailing the encountered issue. This report, encapsulating relevant diagnostic data, aids developers in identifying and resolving underlying problems promptly.
 
-Here is how you can write your application to send reports to the rollup server:
+Here is how you can write your application to send reports to the rollup server (in JavaScript, `rollup.emitReport()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) sends them directly to the Cartesi Machine):
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -19,33 +19,35 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
+import { Rollup } from "@cartesi/rollup";
 
-  try {
-    // something here
-  } catch (e) {
-    //Send a report when there is an error
-    const error = viem.stringToHex(`Error:${e}`);
+const rollup = new Rollup();
 
-    await fetch(rollup_server + "/report", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: error }),
-    });
-    return "reject";
-  }
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request with payload ${request.payload.toString("utf8")}`,
+    );
 
-  return "accept";
-}
+    try {
+      // something here, for example parsing the payload as JSON
+      const data = JSON.parse(request.payload.toString("utf8"));
+      console.log("Parsed input", data);
+    } catch (e) {
+      // Send a report when there is an error
+      rollup.emitReport(Buffer.from(`Error:${e}`, "utf8"));
+      return false;
+    }
+
+    return true;
+  },
+});
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -55,7 +57,7 @@ def handle_advance(data):
    status = "accept"
    try:
        # Do something here to emit a notice
-
+       pass
    except Exception as e:
 
        #  Emits report with error message here
@@ -63,7 +65,7 @@ def handle_advance(data):
        msg = f"Error processing data {data}\n{traceback.format_exc()}"
        logger.error(msg)
        response = requests.post(
-           rollup_server + "/report", json={"payload": msg}
+           rollup_server + "/report", json={"payload": "0x" + msg.encode("utf-8").hex()}
        )
        logger.info(
            f"Received report status {response.status_code} body {response.content}"
@@ -75,7 +77,7 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -99,8 +101,7 @@ pub async fn handle_advance(
     .method(hyper::Method::POST)
     .header(hyper::header::CONTENT_TYPE, "application/json")
     .uri(format!("{}/report", server_addr))
-    .body(hyper::Body::from(response.dump()))
-    .ok()?;
+    .body(hyper::Body::from(response.dump()))?;
 
     let response = client.request(request).await;
     match response {
@@ -110,7 +111,7 @@ pub async fn handle_advance(
         }
         Err(e) => {
             println!("Report request failed {}", e);
-            Err("Report request failed {}")
+            Err(format!("Report request failed {}", e).into())
         }
     }
 }
@@ -119,7 +120,7 @@ pub async fn handle_advance(
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```go
@@ -146,7 +147,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```cpp
@@ -156,6 +157,9 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 
     try
     {
+        // hex_to_string() and string_to_hex() are helpers you define (the C++ template
+        // has none): hex_to_string("0x32") -> "2", string_to_hex("2") -> "0x32".
+        // The rollup server requires the 0x prefix on payloads.
         // Example operation that may fail (replace with your app logic).
         const std::string payload_hex = data.get("payload").get<std::string>();
         (void)hex_to_string(payload_hex);
@@ -187,5 +191,5 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 </Tabs>
 
 :::note querying reports
-Frontend clients can query reports using a GraphQL API exposed by the Cartesi Nodes. [Refer to the documentation to query reports](../../development/query-outputs.md#query-all-reports) from your dApp.
+Frontend clients can query reports using the JSON-RPC API exposed by the Cartesi Nodes. [Refer to the documentation to query reports](../../development/query-outputs.md#query-all-reports) from your dApp.
 :::

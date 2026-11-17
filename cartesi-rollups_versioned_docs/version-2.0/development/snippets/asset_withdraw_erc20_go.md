@@ -8,7 +8,7 @@ import (
 	"dapp/rollups"
 )
 
-const erc20TokenAddress = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"
+const erc20TokenAddress = "0x86EA17052C8e335Ad830B54EF566274EAB46B852"
 
 func encodeErc20Transfer(recipient string, amount uint64) string {
 	recipientHex := strings.TrimPrefix(strings.ToLower(strings.TrimSpace(recipient)), "0x")
@@ -26,7 +26,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 	voucher := rollups.VoucherRequest{
 		Destination: erc20TokenAddress,
 		Payload:     callData,
-		Value:       "0x00",
+		Value:       "0x" + strings.Repeat("0", 64), // 32-byte hex string: no Ether sent
 	}
 
 	if _, err := rollups.SendVoucher(&voucher); err != nil {

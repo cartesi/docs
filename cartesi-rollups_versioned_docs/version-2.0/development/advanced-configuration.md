@@ -16,7 +16,7 @@ Here is what the file controls at a high level:
 - **Machine settings**: How the machine boots, how much RAM it has, what program it runs, and how it behaves.
 - **Drives**: The file systems attached to your machine, including your application code and any additional data.
 
-It is important to note that `cartesi.toml` is only read when you run `cartesi build` or `cartesi shell`. By default, the CLI looks for a `cartesi.toml` in the project root, unless you point it to a different path using the `-c` or `--config` flag with a relative path to the configuration file. If no config file is found, the CLI applies sensible defaults, most of which are covered in the sections below. The default Cartesi templates do not include a `cartesi.toml` in the project root hence you manually create a configuration file when you have an explicit need for it.
+`cartesi build`, `cartesi shell` and `cartesi run` read `cartesi.toml` (`cartesi run` reads the `sdk` key and the `[withdrawal]` and `[prt]` tables, and rejects invalid keys); other commands, such as `cartesi hash`, `cartesi send` and `cartesi deposit`, read only the `sdk` key. By default, the CLI looks for a `cartesi.toml` in the project root, unless you point it to a different path using the `-c` or `--config` flag with a relative path to the configuration file. If no config file is found, the CLI applies sensible defaults, most of which are covered in the sections below. The default Cartesi templates do not include a `cartesi.toml` in the project root hence you manually create a configuration file when you have an explicit need for it.
 
 ## Getting Started with Minimal Configuration
 
@@ -40,7 +40,7 @@ format = "ext2"
 
 This means that by default, the CLI will:
 
-1. Use SDK version specified i.e `0.12.0`.
+1. Use the default SDK version of your CLI release (for example, `cartesi/sdk:0.12.0-alpha.45` for Cartesi CLI 2.0.0-alpha.42, which ships rollups-node v2.0.0-alpha.14 and Cartesi Machine emulator 0.22.0).
 2. Give your machine 128 megabytes of RAM.
 3. Build your root drive from a `Dockerfile` in your project directory.
 4. Pull environment variables and the working directory from that Docker image.
@@ -51,12 +51,18 @@ If those defaults work for you, all you need is a `Dockerfile` and you are ready
 ## SDK Version
 
 ```toml
-sdk = "cartesi/<version>"
+sdk = "cartesi/sdk:<version>"
 ```
 
 The `sdk` field tells the CLI which version of the Cartesi SDK image to use when building your machine. This is a docker image containing the Linux kernel, the RISC‑V toolchain, Cartesi Node and everything else needed to assemble your Cartesi Machine.
 
 Think of it as pinning a version of your build environment. If you are working on a team, setting this explicitly ensures everyone builds with the same SDK, avoiding the classic "it works on my machine" problem. Each SDK is tied to a Cartesi CLI version, hence it's important you have a compatible CLI installed for the sdk version you specify. When you omit the SDK field the CLI uses its own built in default version.
+
+The SDK image also decides which Cartesi Machine emulator builds your machine, and a node can only load machines built with its own emulator line. These docs target rollups-node v2.0.0-alpha.14 (emulator 0.22.0), which is what the default SDK of Cartesi CLI 2.0.0-alpha.42 builds for. To keep the build reproducible when the CLI is upgraded, pin it:
+
+```toml
+sdk = "cartesi/sdk:0.12.0-alpha.45"
+```
 
 **When to change this:** When there's a new SDK version and you want to adopt it, or when you need to stay on a specific version for compatibility.
 
@@ -71,12 +77,14 @@ The `[machine]` section controls how your Cartesi Machine is set up and how it b
 ### Entrypoint
 
 ```toml
-entrypoint = "/usr/local/bin/python3 /mnt/app/main.py"
+entrypoint = "rollup-init /usr/local/bin/python3 /opt/cartesi/dapp/dapp.py"
 ```
 
 The `entrypoint` tells the machine which program to run when it starts up. This is the path to your application binary inside the machine's file system.
 
-If you are building your root drive from a Docker image (which is the default), you may not need to set this at all. The CLI can pick up the entrypoint from your Dockerfile's `ENTRYPOINT` or `CMD` instruction. You would set this explicitly when you want to override whatever the Docker image defines, or when your setup does not use Docker.
+If you are building your root drive from a Docker image (which is the default), you may not need to set this at all. The CLI can pick up the entrypoint from your Dockerfile's `ENTRYPOINT` and `CMD` instructions. You would set this explicitly when you want to override whatever the Docker image defines, or when your setup does not use Docker.
+
+The `entrypoint` replaces the image's `ENTRYPOINT` and `CMD`. An application that talks to the rollup HTTP server (`ROLLUP_HTTP_SERVER_URL`), as the C++, Go, Python and Rust templates do, must be started through `rollup-init`, which starts the server and then runs your program, as the templates' Dockerfiles do with `ENTRYPOINT ["rollup-init"]`. Without it, the server is not running and the build fails when the application calls `/finish`.
 
 ### Boot Arguments
 
@@ -84,7 +92,7 @@ If you are building your root drive from a Docker image (which is the default), 
 boot_args = ["no4lvl", "quiet", "earlycon=sbi", "console=hvc0", "rootfstype=ext2", "root=/dev/pmem0", "rw", "init=/usr/sbin/cartesi-init"]
 ```
 
-These are the Linux kernel boot arguments passed to the machine when it starts. They control low level behavior like which console to use, what file system type the root drive is, and where to find the init process.
+These are Linux kernel boot arguments passed to the machine when it starts. They control low level behavior like which console to use, what file system type the root drive is, and where to find the init process. The CLI appends them to the default kernel command line of the machine; it does not replace it.
 
 For most applications, you will never need to touch this. The defaults work well for typical setups. This field exists for advanced use cases where you need fine grained control over the kernel's boot process, such as changing the root file system type or adjusting console output behavior.
 
@@ -106,22 +114,20 @@ Exact RAM requirements are unique for each application. A lightweight app that p
 ### Execution Limits
 
 ```toml
-max_mcycle = 2305843009213693952
+max_mcycle = 10000000000
 ```
 
-The `max_mcycle` field sets the maximum number of machine cycles the Cartesi Machine is allowed to execute. This acts as a computational budget. Once the machine reaches this limit, it stops.
+The `max_mcycle` field sets the maximum machine cycle of the run that `cartesi build` performs to boot the machine until it waits for its first input (the manual `rx-accepted` yield). Once the machine reaches this limit, it stops, and the build stores the machine in that state. Such a machine cannot process inputs, so combine `max_mcycle` with `assert_rolling_template = true` to make the build fail instead. The limit is not stored in the machine and does not bound the processing of inputs, which the node limits with its own execution parameters.
 
-A value of `2305843009213693952` is the default machine cycle the Cartesi machine operates. Setting a specific number is useful when you want to guarantee that computation stays within a certain bound, which can be important for on chain verification where predictable execution costs matter.
+When `max_mcycle` is omitted, the CLI sets no limit. The value must be an integer of at most `9007199254740991` (2^53 - 1): the CLI rejects larger TOML integers with `integer value cannot be represented losslessly`.
 
 ### Rollup Behavior
 
 ```toml
-assert_rolling_update = true
+assert_rolling_template = true
 ```
 
-Set this to `true` when you are building a standalone application that does not need to interact with the blockchain's input/output system. This is useful during early development or for tools that run inside the machine but do not need the rollup lifecycle.
-
-**`assert_rolling_update`** is related to rolling template assertions. When set to `true`, the CLI will verify that your machine is compatible with rolling updates. This is important for production deployments where you want to ensure your application can be updated without breaking the existing state.
+**`assert_rolling_template`** is related to rolling template assertions. When set to `true`, the build fails if the machine is not compatible with Rolling Cartesi Machine templates, that is, if it does not stop at a manual `rx-accepted` yield, the point where a rollups application waits for its first input. Use it to catch, at build time, an application that would not be able to process inputs.
 
 ### Docker Integration
 
@@ -141,17 +147,15 @@ These fields control how the CLI uses information from your Docker image when bu
 
 ### Final Hash
 
-```toml
-final_hash = true
-```
+`cartesi build` always stores the machine together with its final hash. This hash uniquely identifies the exact state of your Cartesi Machine, including all its drives, memory, and configuration.
 
-When `final_hash` is set to `true`, the CLI computes a hash of the machine after it finishes building. This hash uniquely identifies the exact state of your Cartesi Machine, including all its drives, memory, and configuration.
+This is important for on chain verification. The hash is what gets registered on the blockchain as the application's template hash, and it allows anyone to verify that the machine running off chain is exactly the same one that was agreed upon. When you deploy, `cartesi-rollups-cli deploy application` reads the template hash from the stored machine, and by default the node refuses to run a machine whose hash does not match the registered one. This applies to every deployment, whether on a local devnet, a testnet or mainnet.
 
-This is important for on chain verification. The hash is what gets registered on the blockchain, and it allows anyone to verify that the machine running off chain is exactly the same one that was agreed upon. If you are deploying to production, you will want this enabled.
+There is no `final_hash` option to set: it was removed in Cartesi CLI 2.0.0-alpha.16, and since 2.0.0-alpha.41 `cartesi build` fails on unknown keys such as `final_hash`. Remove it from older `cartesi.toml` files.
 
 ## Drives
 
-Drives are the file systems attached to your Cartesi Machine. Since the machine is a virtual computer, drives are its hard disks. Every machine has at least one drive (the root drive), and you can attach upto 6 different drives.
+Drives are the file systems attached to your Cartesi Machine. Since the machine is a virtual computer, drives are its hard disks. Every machine has at least one drive (the root drive), and it can have up to 8 drives in total, the root drive included.
 
 Each drive has a name and is defined under `[drives.<name>]`. The name is used as an identifier and, by default, determines where the drive is mounted inside the machine at `/mnt/<name>`.
 
@@ -233,7 +237,7 @@ The directory builder takes a folder from your local machine and packages it int
 
 **`directory`** is required and points to the local folder you want to package. The path is relative to your project root.
 
-**`extra_size`** adds breathing room beyond the actual size of the directory's contents. Optional, defaults to zero.
+**`extra_size`** adds breathing room beyond the actual size of the directory's contents. Optional, defaults to zero. With the `ext2` format, a drive built with no extra space can fail with `xgenext2fs: too few blocks`; set a small `extra_size` in that case.
 
 **`format`** works the same as with the Docker builder: `"ext2"` for read/write, `"sqfs"` for read only compressed.
 
@@ -282,7 +286,7 @@ A few options are shared across all builder types:
 
 **`mount`** controls where the drive is mounted inside the machine. It defaults to `/mnt/<name>`. You can set it to any absolute path. For example, `mount = "/var/lib/app"` makes the drive accessible at that path inside the machine.
 
-**`shared`** when set to `true`, maps the drive as a shared memory region, meaning the host and the machine access the same underlying memory rather than the data being copied in. This avoids the overhead of loading large drives into the machine's address space and is useful when you need to pass large amounts of data in and out of the machine efficiently. Defaults to `false`.
+**`shared`** when set to `true`, writes the changes the guest makes to the drive back to the drive's image file on the host, so they persist after the machine stops. When `false`, guest writes stay in the machine and the image file is left unchanged. Defaults to `false`.
 
 **`user`** sets the Linux user that owns the files inside the drive. This matters when your application runs as a non-root user and needs read or write access to the drive's contents. Defaults to the user defined in the Docker image, or root if unset.
 
@@ -296,11 +300,14 @@ Here is a realistic `cartesi.toml` for a Python application that processes uploa
 
 ```toml
 # Pin the SDK version for reproducible builds
-sdk = "cartesi/sdk:0.12.0"
+# (0.12.0-alpha.45 ships rollups-node v2.0.0-alpha.14 and emulator 0.22.0)
+sdk = "cartesi/sdk:0.12.0-alpha.45"
 
 [machine]
-# Run the Python application when the machine starts
-entrypoint = "/usr/local/bin/python3 /mnt/app/main.py"
+# Run the Python application when the machine starts, through rollup-init,
+# which starts the rollup HTTP server first. The Dockerfile copies the code
+# into the root drive, at /opt/cartesi/dapp as in the Python template.
+entrypoint = "rollup-init /usr/local/bin/python3 /opt/cartesi/dapp/dapp.py"
 
 # Give the machine 256 megabytes of RAM for document processing
 ram_length = "256Mi"
@@ -311,9 +318,6 @@ use_docker_workdir = true
 
 # Run as the default non root user
 user = "dapp"
-
-# Compute the final hash for on chain verification
-final_hash = true
 
 # The root drive contains the OS, Python runtime, and application code
 [drives.root]
@@ -347,23 +351,28 @@ The reference drive contains a pre built SquashFS image with static reference da
 
 | Field                   | Section      | Type             | Default                         | Description                                                     |
 | ----------------------- | ------------ | ---------------- | ------------------------------- | --------------------------------------------------------------- |
-| `sdk`                   | Top level    | String           | `"cartesi/sdk:0.12.0"`          | SDK image and version used for building                         |
+| `sdk`                   | Top level    | String           | Default SDK of the CLI release  | SDK image and version used for building                         |
 | `entrypoint`            | `[machine]`  | String           | From Docker image               | Path to the application binary                                  |
 | `boot_args`             | `[machine]`  | String array     | CLI defaults                    | Linux kernel boot arguments                                     |
 | `ram_length`            | `[machine]`  | String           | `"128Mi"`                       | Amount of RAM for the machine                                   |
 | `ram_image`             | `[machine]`  | String           | SDK default                     | Path to the Linux kernel binary                                 |
-| `max_mcycle`            | `[machine]`  | Number           | `2305843009213693952` (default) | Maximum machine cycles allowed                                  |
-| `assert_rolling_update` | `[machine]`  | Boolean          | —                               | Assert rolling update compatibility                             |
+| `max_mcycle`            | `[machine]`  | Number           | No limit                        | Maximum machine cycle of the boot run of `cartesi build`        |
+| `assert_rolling_template` | `[machine]` | Boolean        | —                               | Fail the build if the machine is not a rolling template         |
 | `use_docker_env`        | `[machine]`  | Boolean          | `true`                          | Inject Docker ENV into the machine                              |
 | `use_docker_workdir`    | `[machine]`  | Boolean          | `true`                          | Use Docker WORKDIR in the machine                               |
-| `user`                  | `[machine]`  | String           | —                               | User to run the application as                                  |
-| `final_hash`            | `[machine]`  | Boolean          | —                               | Compute machine hash after build                                |
+| `user`                  | `[machine]`  | String           | `"dapp"`                        | User to run the application as                                  |
 | `builder`               | `[drives.*]` | String           | `"docker"`                      | How to create the drive: docker, empty, directory, tar, or none |
 | `dockerfile`            | `[drives.*]` | String           | `"Dockerfile"`                  | Path to Dockerfile (docker builder)                             |
 | `target`                | `[drives.*]` | String           | Last stage                      | Docker multi stage build target                                 |
-| `format`                | `[drives.*]` | String           | `"ext2"`                        | File system format: ext2 or sqfs                                |
+| `format`                | `[drives.*]` | String           | `"ext2"`                        | File system format: ext2 or sqfs (raw for the empty builder)    |
 | `extra_size`            | `[drives.*]` | String           | `0`                             | Extra free space added to the drive                             |
 | `size`                  | `[drives.*]` | String or Number | —                               | Total drive size (empty builder only)                           |
 | `directory`             | `[drives.*]` | String           | —                               | Local directory to package (directory builder)                  |
 | `filename`              | `[drives.*]` | String           | —                               | Path to tar or existing image file                              |
 | `mount`                 | `[drives.*]` | String           | `/mnt/<name>`                   | Where the drive is mounted in the machine                       |
+| `shared`                | `[drives.*]` | Boolean          | `false`                         | Write guest changes back to the drive's image file              |
+| `user`                  | `[drives.*]` | String           | Docker image user               | Owner of the files inside the drive                             |
+| `accounts_drive`        | `[drives.*]` | Boolean          | `false`                         | Mark the drive as the emergency-withdrawal accounts drive       |
+| `accounts_drive_size`   | `[drives.*]` | String or Number | Whole drive                     | Size of the account tree inside the accounts drive              |
+
+The CLI also accepts keys that this page does not cover: `env` and `env_file` in `[machine]`; `build_args`, `context`, `image` and `tags` for the docker builder; `format = "raw"` for the empty builder; and the `[nvrams]`, `[withdrawal]` and `[prt]` tables. For `accounts_drive`, `accounts_drive_size`, `mount = false` and `[withdrawal]`, see [Testing emergency withdrawal locally](./emergency-withdrawal/local-testing.md#configure-the-accounts-drive).

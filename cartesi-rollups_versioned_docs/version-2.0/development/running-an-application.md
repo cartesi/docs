@@ -38,33 +38,9 @@ Response:
 
 This command runs your backend compiled to RISC-V and packages it as a Cartesi machine. It is therefore important that after every code update, the application needs to be rebuilt then the run command executed again, the Cartesi CLI makes this process very easy and all you need do is hit the `<b>` button on your keyboard to trigger a rebuild and run command.
 
-:::troubleshoot troubleshooting common errors
-
-#### Error: Depth Too High
-
-```shell
-Attaching to 2bd74695-prompt-1, 2bd74695-validator-1
-2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
-2bd74695-validator-1  | Error: DepthTooHigh { depth: 2, latest: 1 }
-```
-
-This indicates that the node is reading blocks too far behind the current blockchain state.
-
-#### Solution
-
-Create or modify a `.cartesi.env` file in your project directory and set:
-
-```shell
-TX_DEFAULT_CONFIRMATIONS=1
-```
-
-This adjustment should align the node's block reading with the blockchain's current state.
-
-:::
-
 ### Overview of Node Services
 
-The `cartesi run` command activates several services essential for node operation: some of these services are not activated by default and can be activated by adding them to the `--service` flag when starting your application. The below command starts your application with all available services:
+The `cartesi run` command activates several services essential for node operation: some of these services are not activated by default and can be activated by adding them to the `--services` flag when starting your application. The below command starts your application with all available services:
 
 ```shell
 cartesi run --services explorer,bundler,paymaster,passkey
@@ -73,6 +49,10 @@ cartesi run --services explorer,bundler,paymaster,passkey
 Each of these services runs independently and can be activated or deactivated at will by simply including or removing them from the list of services while running your application. Below is a breakdown of these services and their default URL's.
 
 - **Anvil Chain**: Runs a local blockchain available at `http://localhost:6751/anvil`.
+
+  :::caution Be careful with devnet account 0
+  The local node signs its claims with devnet account 0 (`0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`), the first account of the anvil mnemonic. Do not send your own transactions from it: they compete with the node's transactions for the same nonce and can be dropped, even when the command that sent them reports success. `cartesi send` and `cartesi deposit` use devnet account 8 (`0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f`) by default; with `--from`, `cast` or a wallet, use any account except account 0. See [Send inputs](./send-inputs-and-assets.md#initiate-an-advance-request).
+  :::
 
 - **Explorer**: Monitors Rollups application activity and manages transactions via `http://localhost:6751/explorer`.
 
@@ -83,7 +63,3 @@ Each of these services runs independently and can be activated or deactivated at
 - **Paymaster**: An account abstraction implementation that works hand in hand with the bundler to sponsor gas fees for transactions handled by the bundler, available at `http://localhost:6751/paymaster`.
 
 - **Passkey**: Runs a local passkey server, that enables account generation and interaction with application without a traditional wallet, available at `http://localhost:6751/passkey`
-
-:::note Testing tools
-[NoNodo](https://github.com/Calindra/nonodo) is a Cartesi Rollups testing tool that works with host machine applications, eliminating the need for Docker or RISC-V compilation.
-:::

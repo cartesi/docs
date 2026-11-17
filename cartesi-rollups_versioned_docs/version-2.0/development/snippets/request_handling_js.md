@@ -1,43 +1,24 @@
 ```javascript
-const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
-console.log("HTTP rollup_server url is " + rollup_server);
+import { Rollup } from "@cartesi/rollup";
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  return "accept";
-}
+const rollup = new Rollup();
 
-async function handle_inspect(data) {
-  console.log("Received inspect request data " + JSON.stringify(data));
-  return "accept";
-}
+await rollup.run({
+  advance(request) {
+    console.log(
+      `Received advance request from ${request.msgSender} with index ${request.index} and payload 0x${request.payload.toString("hex")}`,
+    );
 
-var handlers = {
-  advance_state: handle_advance,
-  inspect_state: handle_inspect,
-};
+    // emit outputs with rollup.emitNotice, rollup.emitVoucher or rollup.emitReport
+    // return false to reject the input
+    return true;
+  },
+  inspect(request) {
+    console.log(
+      `Received inspect request with payload 0x${request.payload.toString("hex")}`,
+    );
 
-var finish = { status: "accept" };
-
-(async () => {
-  while (true) {
-    const finish_req = await fetch(rollup_server + "/finish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status: "accept" }),
-    });
-
-    console.log("Received finish status " + finish_req.status);
-
-    if (finish_req.status == 202) {
-      console.log("No pending rollup request, trying again");
-    } else {
-      const rollup_req = await finish_req.json();
-      var handler = handlers[rollup_req["request_type"]];
-      finish["status"] = await handler(rollup_req["data"]);
-    }
-  }
-})();
+    // answer inspect requests with rollup.emitReport
+  },
+});
 ```

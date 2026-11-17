@@ -14,9 +14,11 @@ A voucher explicitly specifies the action that the dApp intends to execute on th
 
 For instance, in a DeFi application built on Cartesi, users may want to swap one token for another. The dApp generates a voucher that authorizes the on-chain smart contract to execute the swap on the user's behalf.
 
-The [`Application`](../contracts/application.md) contract is crucial in validating and executing the received voucher on the blockchain. This execution process occurs through the [`executeOutput()`](../../contracts/application/#executeoutput) function, which handles different types of outputs including vouchers and DELEGATECALL vouchers.
+The [`Application`](../contracts/application.md) contract is crucial in validating and executing the received voucher on the blockchain. This execution process occurs through the [`executeOutput()`](../contracts/application.md#executeoutput) function, which handles different types of outputs including vouchers and DELEGATECALL vouchers.
 
-The result of the voucher execution is recorded on the base layer. This recording typically involves submitting claims by a consensus contract, ensuring the integrity and transparency of the executed on-chain action.
+A voucher can be executed only after the claim for its epoch has been accepted by the application's consensus contract. The `Application` contract records each execution: it emits an [`OutputExecuted`](../contracts/application.md#outputexecuted) event and marks the output as executed, so [`wasOutputExecuted()`](../contracts/application.md#wasoutputexecuted) returns `true` and the voucher cannot be executed again.
+
+In JavaScript, the application emits a voucher with `rollup.emitVoucher()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3), passing the `destination`, the `value` in wei as a `bigint` and the `payload` (the encoded call). The example below encodes the call with [`viem`](https://viem.sh/); add it as described in [adding dependencies](../../development/creating-an-application.md#adding-dependencies-in-javascript-and-typescript).
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -26,44 +28,31 @@ import TabItem from '@theme/TabItem';
 <pre><code>
 
 ```javascript
-import { stringToHex, encodeFunctionData, erc20Abi, zeroHash } from "viem";
+import { Rollup } from "@cartesi/rollup";
+import { encodeFunctionData, erc20Abi } from "viem";
 
-async function handle_advance(data) {
-  console.log("Received advance request data " + JSON.stringify(data));
-  const sender = data["metadata"]["msg_sender"];
-  const erc20Token = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+const rollup = new Rollup();
+
+const erc20Token = "0x86EA17052C8e335Ad830B54EF566274EAB46B852"; // the CLI devnet's test ERC-20 token
+
+await rollup.run({
+  advance(request) {
+    console.log(`Received advance request from ${request.msgSender}`);
 
     const call = encodeFunctionData({
-    abi: erc20Abi,
-    functionName: "transfer",
-    args: [sender, BigInt(10)],
-  });
-
-  let voucher = {
-    destination: erc20Token,
-    payload: call,
-    value: zeroHash,
-  };
-
-  await emitVoucher(voucher);
-  return "accept";
-}
-
-
-const emitVoucher = async (voucher) => {
-  try {
-    await fetch(rollup_server + "/voucher", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(voucher),
+      abi: erc20Abi,
+      functionName: "transfer",
+      args: [request.msgSender, 10n],
     });
-  } catch (error) {
-    //Do something when there is an error
-  }
-};
 
+    rollup.emitVoucher({
+      destination: erc20Token,
+      value: 0n,
+      payload: call,
+    });
+    return true;
+  },
+});
 ```
 
 </code></pre>
@@ -73,12 +62,23 @@ const emitVoucher = async (voucher) => {
 <pre><code>
 
 ```python
+# Requirements (requirements.txt):
+#   eth-abi==5.2.0
+#   eth-utils==5.3.1
+#   pycryptodome==3.23.0  # keccak backend used by eth-utils
+# pycryptodome has no prebuilt riscv64 wheel, so `cartesi build` compiles it:
+# add build-essential to the apt-get install command in the template's Dockerfile.
+# Alternatively, add --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+# as the first line of requirements.txt to use prebuilt riscv64 wheels instead.
 # Voucher creation process
+import logging
 import requests
-import json
 from os import environ
 from eth_utils import function_signature_to_4byte_selector
 from eth_abi import decode, encode
+
+logging.basicConfig(level="INFO")
+logger = logging.getLogger(__name__)
 
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
 
@@ -93,7 +93,13 @@ def emit_voucher(function_signature, destination, types, values):
         logger.error(f"Failed to emit Voucher with data: {payload}. Status code: {response.status_code}")
 
 
-emit_voucher("mint(address)", "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", ["address"], [data["metadata"]["msg_sender"]])
+ERC20_TOKEN = "0x86EA17052C8e335Ad830B54EF566274EAB46B852"  # the CLI devnet's test ERC-20 token
+
+
+def handle_advance(data):
+    # Send 10 base units of the token to whoever sent the input.
+    emit_voucher("transfer(address,uint256)", ERC20_TOKEN, ["address", "uint256"], [data["metadata"]["msg_sender"], 10])
+    return "accept"
 ```
 
 </code></pre>
@@ -147,7 +153,7 @@ fn structure_voucher(
     let response = object! {
         "destination" => format!("{}", destination),
         "payload" => format!("{}", payload),
-        "value" => format!("0x{}", hex::encode(value.to_be_bytes())),
+        "value" => format!("0x{:064x}", value), // 32-byte hex
     };
 
     return response;
@@ -168,7 +174,7 @@ pub async fn handle_advance(
         .ok_or("Missing msg_sender in metadata")?
         .to_string();
 
-    let erc_20_token: &str = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+    let erc_20_token: &str = "0x86EA17052C8e335Ad830B54EF566274EAB46B852"; // the CLI devnet's test ERC-20 token
 
     let amount = 10;
 
@@ -202,9 +208,9 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 	callData := "0xa9059cbb0000000000000000000000001111111111111111111111111111111111111111000000000000000000000000000000000000000000000000000000000000000a"
 
 	voucher := rollups.VoucherRequest{
-		Destination: "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a", // sample ERC-20 token
+		Destination: "0x86EA17052C8e335Ad830B54EF566274EAB46B852", // the CLI devnet's test ERC-20 token
 		Payload:     callData,
-		Value:       "0x00",
+		Value:       "0x0000000000000000000000000000000000000000000000000000000000000000", // 32-byte zero value
 	}
 
 	if _, err := rollups.SendVoucher(&voucher); err != nil {
@@ -233,9 +239,9 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
         "000000000000000000000000000000000000000000000000000000000000000a";
 
     picojson::object voucher;
-    voucher["destination"] = picojson::value("0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a");
+    voucher["destination"] = picojson::value("0x86EA17052C8e335Ad830B54EF566274EAB46B852");
     voucher["payload"] = picojson::value(call_data);
-    voucher["value"] = picojson::value("0x00");
+    voucher["value"] = picojson::value("0x0000000000000000000000000000000000000000000000000000000000000000"); // 32-byte zero value
 
     auto response = cli.Post(
         "/voucher",
@@ -295,36 +301,37 @@ This mechanism, where the Application contract maintains the state and funds whi
 
 - **Ordered Vouchers**: Vouchers that must be executed in a specific sequence. For example, voucher A can only be executed after voucher B has been executed.
 
-The examples below emit a DELEGATECALL voucher by posting to `/delegate-call-voucher`.  
+The examples below emit a DELEGATECALL voucher by posting to `/delegate-call-voucher` (in JavaScript, with `rollup.emitDelegateCallVoucher()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3)).  
 In these snippets, `destination` is the contract that contains the logic to run, while `payload` is the ABI-encoded function call data (for example, `safeTransfer(address,address,uint256)`).
+
+The Cartesi Rollups contracts include a contract for exactly this call: [`SafeErc20Transfer`](https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/delegatecall/SafeErc20Transfer.sol) (interface `ISafeErc20Transfer`), whose `safeTransfer(IERC20 token, address to, uint256 value)` transfers ERC-20 tokens held by the application. It is deployed at `0xBB7c5367B74544542F5cE553Ed0DF4B3efAfEEdD` on every network of the [deployed contracts](../../deployment/self-hosted/standard.md#deployed-contracts) and on the CLI devnet. It is the destination the [`UsdWithdrawalOutputBuilder`](../contracts/withdrawal/usd-withdrawal-output-builder.md) uses for emergency withdrawals. Before rollups-contracts v3.0.0-alpha.7, it was named `SafeERC20Transfer` (interface `ISafeERC20Transfer`).
+
+:::note
+Since rollups-contracts v3.0.0-alpha.7, executing a DELEGATECALL voucher whose destination has no code reverts with `TargetHasNoCode(address target)`. Make sure the destination contract is deployed on the network where the voucher will be executed.
+:::
 
 <Tabs>
   <TabItem value="JavaScript" label="JavaScript" default>
 <pre><code>
 
 ```javascript
-import { encodeFunctionData } from "viem";
+import { encodeFunctionData, parseAbi } from "viem";
 
-const abi = [
-  "function safeTransfer(address,address,uint256)"
-];
+const abi = parseAbi([
+  "function safeTransfer(address,address,uint256)",
+]);
 
-async function emitSafeERC20Transfer(token, to, amount) {
+// `rollup` is the Rollup instance of your application
+function emitSafeErc20Transfer(rollup, token, to, amount) {
   const call = encodeFunctionData({
     abi,
     functionName: "safeTransfer",
     args: [token, to, amount],
   });
 
-  const voucher = {
-    destination: "0xfafafafafafafafafafafafafafafafafafafafa", // address of the contract containing the logic
+  rollup.emitDelegateCallVoucher({
+    destination: "0xBB7c5367B74544542F5cE553Ed0DF4B3efAfEEdD", // SafeErc20Transfer: the contract containing the logic
     payload: call,
-  };
-
-  await fetch(rollup_server + "/delegate-call-voucher", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(voucher),
   });
 }
 ```
@@ -336,16 +343,27 @@ async function emitSafeERC20Transfer(token, to, amount) {
 <pre><code>
 
 ```python
+# Requirements (requirements.txt):
+#   eth-abi==5.2.0
+#   eth-utils==5.3.1
+#   pycryptodome==3.23.0  # keccak backend used by eth-utils
+# pycryptodome has no prebuilt riscv64 wheel, so `cartesi build` compiles it:
+# add build-essential to the apt-get install command in the template's Dockerfile.
+# Alternatively, add --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+# as the first line of requirements.txt to use prebuilt riscv64 wheels instead.
+from os import environ
 from eth_utils import function_signature_to_4byte_selector, to_checksum_address
 from eth_abi import encode
 import requests
+
+rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
 
 def emit_safe_erc20_transfer(token, to, amount):
     selector = function_signature_to_4byte_selector("safeTransfer(address,address,uint256)")
     encoded_params = encode(["address", "address", "uint256"], [to_checksum_address(token), to_checksum_address(to), amount])
     payload = "0x" + (selector + encoded_params).hex()
     voucher = {
-        "destination": "0xfafafafafafafafafafafafafafafafafafafafa",  # address of the contract containing the logic
+        "destination": "0xBB7c5367B74544542F5cE553Ed0DF4B3efAfEEdD",  # SafeErc20Transfer: the contract containing the logic
         "payload": payload,
     }
     response = requests.post(rollup_server + "/delegate-call-voucher", json=voucher)
@@ -388,7 +406,7 @@ pub async fn emit_safe_erc20_transfer(
     ])?;
 
     let voucher = object! {
-        destination: "0xfafafafafafafafafafafafafafafafafafafafa", // address of the contract containing the logic
+        destination: "0xBB7c5367B74544542F5cE553Ed0DF4B3efAfEEdD", // SafeErc20Transfer: the contract containing the logic
         payload: format!("0x{}", hex::encode(payload_bytes)),
     };
 
@@ -412,17 +430,18 @@ pub async fn emit_safe_erc20_transfer(
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
+	"math/big"
 	"strings"
+
+	"dapp/rollups"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
+func emitSafeErc20Transfer(token, to common.Address, amount *big.Int) error {
 	abiJSON := `[{
 		"type":"function",
 		"name":"safeTransfer",
@@ -444,8 +463,8 @@ func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
 	}
 	
 	voucher := map[string]interface{}{
-		"destination": "0xfafafafafafafafafafafafafafafafafafafafa", // address of the contract containing the logic
-		"payload":     common.Bytes2Hex(payload),
+		"destination": "0xBB7c5367B74544542F5cE553Ed0DF4B3efAfEEdD", // SafeErc20Transfer: the contract containing the logic
+		"payload":     "0x" + common.Bytes2Hex(payload), // the rollup server expects a 0x prefix
 	}
 	
 	voucherJSON, err := json.Marshal(voucher)
@@ -453,7 +472,7 @@ func emitSafeERC20Transfer(token, to common.Address, amount *big.Int) error {
 		return fmt.Errorf("failed to marshal voucher: %w", err)
 	}
 	
-	_, err = http.Post(rollupServer+"/delegate-call-voucher", "application/json", bytes.NewBuffer(voucherJSON))
+	_, err = rollups.SendPost("delegate-call-voucher", voucherJSON)
 	if err != nil {
 		return fmt.Errorf("failed to send voucher: %w", err)
 	}
@@ -482,13 +501,13 @@ std::string emit_safe_erc20_transfer(
 )
 {
     // safeTransfer(address,address,uint256)
-    const std::string selector = "eb795549";
+    const std::string selector = "d1660f99";
     const std::string token_word = "000000000000000000000000" + token.substr(2);
     const std::string to_word = "000000000000000000000000" + to.substr(2);
     const std::string payload = "0x" + selector + token_word + to_word + amount_hex_32bytes;
 
     picojson::object voucher;
-    voucher["destination"] = picojson::value("0xfafafafafafafafafafafafafafafafafafafafa");
+    voucher["destination"] = picojson::value("0xBB7c5367B74544542F5cE553Ed0DF4B3efAfEEdD"); // SafeErc20Transfer
     voucher["payload"] = picojson::value(payload);
 
     auto response = cli.Post(
@@ -537,11 +556,11 @@ An epoch refers to a specific period during which a batch of updates is processe
 
 Epoch Length is the number of blocks that make up an epoch. It determines how long each epoch lasts in terms of block counts. For instance, if an epoch length is set to 7200 blocks, the epoch will end once 7200 blocks have been processed. This length directly influences how frequently updates are finalized and recorded on the blockchain.
 
-Vouchers and DELEGATECALL vouchers are executed on the blockchain upon the closure of the corresponding epoch. This ensures that all state changes and logic executions are properly validated and recorded in the blockchain.
+Vouchers and DELEGATECALL vouchers can be executed on the blockchain once the claim for the corresponding epoch has been accepted by the consensus, which is some time after the epoch closes (for example, after the claim staging period). This ensures that all state changes and logic executions are properly validated and recorded in the blockchain.
 
-One common use of vouchers in Cartesi dApps is to withdraw assets. Users initiate asset withdrawals by generating vouchers, which are then executed on the blockchain upon the closure of the corresponding epoch.
+One common use of vouchers in Cartesi dApps is to withdraw assets. Users initiate asset withdrawals by generating vouchers, which can then be executed on the blockchain once the claim for the corresponding epoch has been accepted.
 
-You can manually set the epoch length to facilitate quicker asset deposits and withdrawals.
+You can set the epoch length so that withdrawals (voucher execution) become possible sooner.
 
 :::note epoch duration
 [Refer to the documentation here](/get-started/cli-commands/#run) to manually configure epoch length during development.

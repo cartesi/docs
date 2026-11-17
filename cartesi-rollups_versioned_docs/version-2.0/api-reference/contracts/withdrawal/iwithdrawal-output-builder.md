@@ -2,9 +2,9 @@
 id: iwithdrawal-output-builder
 title: IWithdrawalOutputBuilder
 resources:
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IWithdrawalOutputBuilder.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IWithdrawalOutputBuilder.sol
     title: IWithdrawalOutputBuilder interface
-  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.6/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
+  - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/withdrawal/IWithdrawalOutputBuilderErrors.sol
     title: IWithdrawalOutputBuilderErrors
 ---
 
@@ -12,7 +12,7 @@ A **withdrawal output builder** turns an account (as encoded in the application'
 
 During [`withdraw()`](../application.md#withdraw), the Application **static-calls** the builder set in its [`WithdrawalConfig`](./withdrawal-config.md) and runs the returned output. Because the call is a `STATICCALL`, `buildWithdrawalOutput` must not change any state (it is `view`/`pure`). Any state change, such as contract creation, log emission, storage write, self-destruct, or Ether transfer, reverts the call and aborts the withdrawal.
 
-The account encoding is **application-specific**. See [UsdWithdrawalOutputBuilder](./usd-withdrawal-output-builder.md) for the single-ERC-20 implementation.
+The account encoding is **application-specific**, with one rule every builder must follow: the account must **end with the owner's address**, as its last 20 bytes (big-endian, the usual address encoding). This lets the node look up an account by its owner in the accounts drive. A builder must not assume the account is well formed: it should check the account's length (raising [`InvalidAccountSize`](#invalidaccountsize)) and its contents. See [UsdWithdrawalOutputBuilder](./usd-withdrawal-output-builder.md) for the single-ERC-20 implementation.
 
 ## Functions
 
@@ -42,17 +42,21 @@ Build an output that, when executed by the application contract, transfers the f
 
 ## Errors
 
-### `AccountTooShort()`
+### `InvalidAccountSize()`
 
 ```solidity
-error AccountTooShort(uint64 attemptedAccountSize, uint64 minAccountSize)
+error InvalidAccountSize(uint256 attemptedAccountSize, uint64 accountSize)
 ```
 
-Raised when the provided account is too short for the builder to decode on-chain.
+Raised when the provided account does not have the size the builder expects to decode on-chain. The size must match exactly.
 
 **Parameters**
 
 | Name | Type | Description |
 |------|------|-------------|
-| `attemptedAccountSize` | `uint64` | The attempted account size, in bytes |
-| `minAccountSize` | `uint64` | The minimum expected account size, in bytes |
+| `attemptedAccountSize` | `uint256` | The size of the account whose funds were attempted to be withdrawn, in bytes |
+| `accountSize` | `uint64` | The expected account size, in bytes |
+
+:::note
+Before rollups-contracts v3.0.0-alpha.7, this error was `AccountTooShort(uint64 attemptedAccountSize, uint64 minAccountSize)` and only enforced a minimum size.
+:::

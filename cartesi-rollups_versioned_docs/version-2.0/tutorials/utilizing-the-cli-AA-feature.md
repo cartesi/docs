@@ -2,11 +2,12 @@
 id: cli-account-abstraction-feature
 title: Utilizing the account abstraction feature of the CLI for Sponsored Transactions
 resources:
-  - url: https://github.com/Mugen-Builders/docs_examples/tree/main/account-abstraction-frontend-demo
+  - url: https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/account-abstraction-frontend-demo
     title: Account Abstraction frontend demo
 
-  - url: https://github.com/Mugen-Builders/docs_examples/tree/main/account-abstraction-demo
+  - url: https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/account-abstraction-script
     title: Account Abstraction Script demo
+unlisted: true
 ---
 
 This tutorial will guide you through utilizing the account abstraction (AA) feature of the CLI to interact with your application while testing locally.
@@ -42,7 +43,7 @@ We’ll be using React.js along with Wagmi to build this simple frontend applica
 To bootstrap a React project with Wagmi already configured, we’ll use the CLI command
 
 ```shell
-    npm create wagmi@latest
+    npm create wagmi@2.0.19
 ```
 
 This command would create a new React application with a simple UI and wallet connect by wagmi already integrated.
@@ -63,14 +64,14 @@ Congratulations on successfully bootstrapping a new frontend repo; next we’ll 
 import "dotenv/config"
 import { defineChain } from 'viem';
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { mainnet, sepolia, cannon } from 'wagmi/chains'
+import { mainnet, sepolia, anvil } from 'wagmi/chains'
 import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
 
 let APPRPC = "http://127.0.0.1:6751/anvil";
 
 
 export const cartesi = defineChain({
-  ...cannon,
+  ...anvil,
   rpcUrls: { default: { http: [APPRPC] } },
 });
 
@@ -212,8 +213,10 @@ import { useSmartAccountClient } from "./zerodev";
 
 
 export const useInputBoxAddInput = async (args: Hex, walletClient: any) => {
-    let INPUTBOXADDRESS = '0xc70074BDD26d8cF983Ca6A5b89b8db52D5850051' as Address;
-    let APPADDRESS = '0xa083af219355288722234c47d4c8469ca9af6605' as Address;
+    // InputBox entry of `cartesi address-book`
+    let INPUTBOXADDRESS = '0xEbE9f4Dfc04ae10bBeE663859c3dc5A23f94eA3C' as Address;
+    // Application entry of `cartesi address-book`
+    let APPADDRESS = '0xYOUR_APPLICATION_ADDRESS' as Address;
 
     const smartAccountClient = await useSmartAccountClient(walletClient);
     console.log("printing useSmartAccountClient");
@@ -245,7 +248,7 @@ export const useInputBoxAddInput = async (args: Hex, walletClient: any) => {
 ```
 
 :::note Inputbox and App Address
-The Inputbox and App address contained in the above code snippet are also for a local application instance, therefore if your application address on devnet is different, you should replace the code content as required, while for testnet or mainnet you replace the application address with that of your application and also update the inputbox address with the Cartesi inputbox address for your deployment chain.
+The Inputbox address in the above code snippet is the `InputBox` entry of `cartesi address-book` for a local application instance. Replace `0xYOUR_APPLICATION_ADDRESS` with the `Application` entry that `cartesi address-book` prints while your application is running, while for testnet or mainnet you replace the application address with that of your application. In every environment, use the input box your application was deployed with, which the application contract's `getInputBox()` function returns (in a local environment, it is the `InputBox` entry of `cartesi address-book`); inputs sent to any other input box are not delivered to your application.
 :::
 
 ### Set Up the Frontend UI
@@ -380,10 +383,10 @@ This section of the tutorial is focused on setting up a Cartesi application on a
 - Create a new project using the command:
   
 ```bash
-    cartesi create AA-on-CLI --template javascript
+    cartesi create aa-on-cli --template javascript
 ```
 
-- Cd into `AA-on-CLI`, then build the application by running the command
+- Cd into `aa-on-cli`, then build the application by running the command
   
 ```bash
   cartesi build
@@ -392,7 +395,7 @@ This section of the tutorial is focused on setting up a Cartesi application on a
 - Next, run the below command to start a local anvil node and deploy all necessary servers and contracts.
   
 ```bash
-  cartesi run --services bundler,explorer,graphql,paymaster,passkey
+  cartesi run --services bundler,explorer,paymaster,passkey
 ```
 
 - Finally, in a new terminal, navigate to our frontend repository and start the frontend by running the command.
@@ -409,4 +412,4 @@ To test out the application, we simply visit the page our frontend is running on
 
 We’ve been able to build our first sponsored transaction supporting application on Cartesi and that’s great. But it’s important to note that the above infrastructure we’ve setup is streamlined to localhost but can easily be configured to work with any network of your choice by simply replacing the bundler URL and also the paymaster URL with that provided by zerodev for the chain you intend to support. You can check the [zerodev documentation](https://docs.zerodev.app/) for more information on how to create an account and also obtain a bundler and paymaster URL.
 
-Access a complete codebase with the code blocks from the tutorial [here.](https://github.com/Mugen-Builders/docs_examples/tree/main/account-abstraction-frontend-demo)
+Access a complete codebase with the code blocks from the tutorial [here.](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/account-abstraction-frontend-demo)

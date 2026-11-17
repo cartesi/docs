@@ -5,9 +5,11 @@ import (
 	"dapp/rollups"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"math/big"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -29,7 +31,7 @@ type Marketplace struct {
 	AppAddress   string
 	ListPriceWei *big.Int
 
-	ListedTokens            map[string]bool
+	ListedTokens            []string // token IDs in decimal, in listing order
 	Erc721OwnerByTokenID    map[string]string
 	UserErc20BalanceByUser  map[string]*big.Int
 	UserOwnedTokenIDsByUser map[string][]string
@@ -37,14 +39,14 @@ type Marketplace struct {
 
 func newMarketplace() *Marketplace {
 	return &Marketplace{
-		ERC721Portal: "0x9E8851dadb2b77103928518846c4678d48b5e371",
-		ERC20Portal:  "0xACA6586A0Cf05bD831f2501E7B4aea550dA6562D",
-		ERC721Token:  "0x1c5AB37576Af4e6BEeCB66Fa6a9FdBc608F44B78",
-		ERC20Token:   "0x5138f529B77B4e0a7c84B77E79c4335D31938fed",
+		ERC721Portal: normAddr("0x397c352d18DFf47CC8a6143403142cf7afd5Ff7E"),
+		ERC20Portal:  normAddr("0x3332DE61a8BB9aC84893b2f552Fe81C9a6dC5419"),
+		ERC721Token:  normAddr("0x0761b8e3aB06F458632974393C48765E6Ddc61bB"),
+		ERC20Token:   normAddr("0x86EA17052C8e335Ad830B54EF566274EAB46B852"),
 		AppAddress:   zeroAddress,
-		ListPriceWei: big.NewInt(0).SetUint64(100_000_000_000_000_000), // 100 tokens (18 decimals)
+		ListPriceWei: new(big.Int).Mul(big.NewInt(100), new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)), // 100 tokens (18 decimals)
 
-		ListedTokens:            map[string]bool{},
+		ListedTokens:            []string{},
 		Erc721OwnerByTokenID:    map[string]string{},
 		UserErc20BalanceByUser:  map[string]*big.Int{},
 		UserOwnedTokenIDsByUser: map[string][]string{},
@@ -56,18 +58,34 @@ func normAddr(a string) string {
 }
 
 func parseDepositPayload(payloadHex string) (token string, receiver string, amount *big.Int, err error) {
+	// ERC-20 and ERC-721 deposits start with the same packed fields:
+	// token (20 bytes), sender (20 bytes), amount or token ID (32 bytes)
 	payloadHex = strings.TrimPrefix(payloadHex, "0x")
 	raw, err := hex.DecodeString(payloadHex)
 	if err != nil {
 		return "", "", nil, fmt.Errorf("invalid hex payload: %w", err)
 	}
 	if len(raw) < 72 {
-		return "", "", nil, fmt.Errorf("payload too short")
+		return "", "", nil, fmt.Errorf("payload too short: %d bytes", len(raw))
 	}
 	token = "0x" + hex.EncodeToString(raw[0:20])
 	receiver = "0x" + hex.EncodeToString(raw[20:40])
 	amount = new(big.Int).SetBytes(raw[40:72])
 	return token, receiver, amount, nil
+}
+
+// parseTokenID accepts a decimal or a 0x-prefixed hex string and returns the ID in decimal
+func parseTokenID(value string) (string, error) {
+	id, ok := new(big.Int), false
+	if strings.HasPrefix(value, "0x") || strings.HasPrefix(value, "0X") {
+		_, ok = id.SetString(value[2:], 16)
+	} else {
+		_, ok = id.SetString(value, 10)
+	}
+	if !ok || id.Sign() < 0 {
+		return "", fmt.Errorf("Cannot convert %s to an integer", value)
+	}
+	return id.String(), nil
 }
 
 func encodeTransferFrom(from, to, tokenID string) string {
@@ -80,6 +98,25 @@ func encodeTransferFrom(from, to, tokenID string) string {
 	return "0x" + selector + strings.ReplaceAll(fromWord, " ", "0") + strings.ReplaceAll(toWord, " ", "0") + idWord
 }
 
+func (m *Marketplace) isListed(tokenID string) bool {
+	for _, id := range m.ListedTokens {
+		if id == tokenID {
+			return true
+		}
+	}
+	return false
+}
+
+func (m *Marketplace) unlist(tokenID string) {
+	kept := []string{}
+	for _, id := range m.ListedTokens {
+		if id != tokenID {
+			kept = append(kept, id)
+		}
+	}
+	m.ListedTokens = kept
+}
+
 func (m *Marketplace) increaseUserBalance(user string, amount *big.Int) {
 	addr := normAddr(user)
 	if _, ok := m.UserErc20BalanceByUser[addr]; !ok {
@@ -88,143 +125,180 @@ func (m *Marketplace) increaseUserBalance(user string, amount *big.Int) {
 	m.UserErc20BalanceByUser[addr].Add(m.UserErc20BalanceByUser[addr], amount)
 }
 
-func (m *Marketplace) reduceUserBalance(user string, amount *big.Int) bool {
+func (m *Marketplace) reduceUserBalance(user string, amount *big.Int) error {
 	addr := normAddr(user)
 	bal, ok := m.UserErc20BalanceByUser[addr]
 	if !ok || bal.Cmp(amount) < 0 {
-		return false
+		return fmt.Errorf("User %s has insufficient balance", addr)
 	}
 	bal.Sub(bal, amount)
-	return true
+	return nil
 }
 
 func (m *Marketplace) depositErc721(user, tokenID string) {
 	addr := normAddr(user)
 	m.Erc721OwnerByTokenID[tokenID] = addr
 	m.UserOwnedTokenIDsByUser[addr] = append(m.UserOwnedTokenIDsByUser[addr], tokenID)
-	m.ListedTokens[tokenID] = true
+	if !m.isListed(tokenID) {
+		m.ListedTokens = append(m.ListedTokens, tokenID)
+	}
 }
 
 type UserCommand struct {
-	Method  string      `json:"method"`
-	TokenID json.Number `json:"token_id"`
+	Method  string `json:"method"`
+	TokenID any    `json:"token_id"`
 }
 
 var storage = newMarketplace()
 
+// checkOutput turns a failed /notice, /report or /voucher request into an error
+func checkOutput(res *http.Response, err error, kind string) error {
+	if err != nil {
+		return fmt.Errorf("Failed to generate %s: %w", kind, err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode >= 400 {
+		return fmt.Errorf("Failed to generate %s: HTTP %d", kind, res.StatusCode)
+	}
+	return nil
+}
+
+func sendNotice(text string) error {
+	res, err := rollups.SendNotice(&rollups.NoticeRequest{Payload: rollups.Str2Hex(text)})
+	return checkOutput(res, err, "notice")
+}
+
+func sendReport(text string) {
+	res, err := rollups.SendReport(&rollups.ReportRequest{Payload: rollups.Str2Hex(text)})
+	if err = checkOutput(res, err, "report"); err != nil {
+		errlog.Println(err)
+	}
+}
+
+func handlePurchaseToken(buyer string, cmd UserCommand) error {
+	idText, ok := cmd.TokenID.(string)
+	if !ok || strings.TrimSpace(idText) == "" {
+		return errors.New("Missing or invalid token_id field in payload")
+	}
+	tokenID, err := parseTokenID(strings.TrimSpace(idText))
+	if err != nil {
+		return err
+	}
+	if !storage.isListed(tokenID) {
+		return fmt.Errorf("Token %s with id %s is not for sale", storage.ERC721Token, tokenID)
+	}
+	seller, ok := storage.Erc721OwnerByTokenID[tokenID]
+	if !ok {
+		return fmt.Errorf("Token owner for token %s with id %s not found", storage.ERC721Token, tokenID)
+	}
+
+	if err := storage.reduceUserBalance(buyer, storage.ListPriceWei); err != nil {
+		return err
+	}
+	storage.increaseUserBalance(seller, storage.ListPriceWei)
+	// the NFT leaves the marketplace with the voucher below
+	storage.Erc721OwnerByTokenID[tokenID] = zeroAddress
+	storage.unlist(tokenID)
+	infolog.Println("Token purchased successfully")
+
+	// The application contract holds the deposited NFTs and executes the
+	// voucher, so it is the `from` address of the transfer
+	voucher := rollups.VoucherRequest{
+		Destination: storage.ERC721Token,
+		Payload:     encodeTransferFrom(storage.AppAddress, buyer, tokenID),
+		Value:       "0x" + strings.Repeat("0", 64), // 32-byte hex string: no Ether sent with the call
+	}
+	res, err := rollups.SendVoucher(&voucher)
+	if err = checkOutput(res, err, "voucher"); err != nil {
+		return err
+	}
+	infolog.Println("Voucher generation successful")
+	return nil
+}
+
 func HandleAdvance(data *rollups.AdvanceResponse) error {
 	infolog.Printf("Received advance request data %+v\n", data)
 	sender := normAddr(data.Metadata.MsgSender)
-	if normAddr(storage.AppAddress) == normAddr(zeroAddress) {
+	if storage.AppAddress == zeroAddress {
 		storage.AppAddress = normAddr(data.Metadata.AppContract)
 	}
 
-	if sender == normAddr(storage.ERC20Portal) {
+	if sender == storage.ERC20Portal {
 		token, receiver, amount, err := parseDepositPayload(data.Payload)
 		if err != nil {
-			return fmt.Errorf("HandleAdvance: parse ERC20 deposit failed: %w", err)
+			return err
 		}
-		if normAddr(token) != normAddr(storage.ERC20Token) {
-			return fmt.Errorf("HandleAdvance: unsupported ERC20 token")
+		if normAddr(token) != storage.ERC20Token {
+			return errors.New("Unsupported token deposited")
 		}
 		storage.increaseUserBalance(receiver, amount)
 		infolog.Println("Token deposit processed successfully")
 		return nil
 	}
 
-	if sender == normAddr(storage.ERC721Portal) {
-		token, receiver, amount, err := parseDepositPayload(data.Payload)
+	if sender == storage.ERC721Portal {
+		token, receiver, tokenID, err := parseDepositPayload(data.Payload)
 		if err != nil {
-			return fmt.Errorf("HandleAdvance: parse ERC721 deposit failed: %w", err)
+			return err
 		}
-		if normAddr(token) != normAddr(storage.ERC721Token) {
-			return fmt.Errorf("HandleAdvance: unsupported ERC721 token")
+		if normAddr(token) != storage.ERC721Token {
+			return errors.New("Unsupported token deposited")
 		}
-		storage.depositErc721(receiver, amount.String())
-		notice := rollups.NoticeRequest{Payload: rollups.Str2Hex("Token listed successfully")}
-		_, _ = rollups.SendNotice(&notice)
+		storage.depositErc721(receiver, tokenID.String())
 		infolog.Println("Token deposit and listing processed successfully")
-		return nil
+		return sendNotice(fmt.Sprintf("Token ID: %s Deposited by User: %s", tokenID.String(), receiver))
 	}
 
-	decoded, err := rollups.Hex2Str(data.Payload)
-	if err != nil {
-		return fmt.Errorf("HandleAdvance: invalid user payload: %w", err)
-	}
 	var cmd UserCommand
-	if err := json.Unmarshal([]byte(decoded), &cmd); err != nil {
-		return fmt.Errorf("HandleAdvance: invalid JSON payload: %w", err)
+	decoded, err := rollups.Hex2Str(data.Payload)
+	if err != nil || json.Unmarshal([]byte(decoded), &cmd) != nil {
+		return errors.New("Invalid payload JSON")
 	}
-
 	if cmd.Method != "purchase_token" {
-		return fmt.Errorf("HandleAdvance: unsupported method")
+		return errors.New("Unsupported method called!!")
 	}
-	tokenID := cmd.TokenID.String()
-	if !storage.ListedTokens[tokenID] {
-		return fmt.Errorf("HandleAdvance: token is not listed")
-	}
-	if !storage.reduceUserBalance(sender, storage.ListPriceWei) {
-		return fmt.Errorf("HandleAdvance: insufficient buyer balance")
-	}
-
-	seller := storage.Erc721OwnerByTokenID[tokenID]
-	storage.increaseUserBalance(seller, storage.ListPriceWei)
-	delete(storage.ListedTokens, tokenID)
-	storage.Erc721OwnerByTokenID[tokenID] = normAddr(sender)
-
-	voucher := rollups.VoucherRequest{
-		Destination: storage.ERC721Token,
-		Payload:     encodeTransferFrom(storage.AppAddress, sender, tokenID),
-		Value:       "0x00",
-	}
-	_, err = rollups.SendVoucher(&voucher)
-	if err != nil {
-		return fmt.Errorf("HandleAdvance: failed sending voucher: %w", err)
-	}
-	infolog.Println("Voucher generation successful")
-	infolog.Println("Token purchased and Withdrawn successfully")
-	return nil
+	return handlePurchaseToken(sender, cmd)
 }
 
 func HandleInspect(data *rollups.InspectResponse) error {
 	infolog.Printf("Received inspect request data %+v\n", data)
-	decoded, err := rollups.Hex2Str(data.Payload)
-	if err != nil {
-		return fmt.Errorf("HandleInspect: invalid inspect payload: %w", err)
+	decoded, _ := rollups.Hex2Str(data.Payload)
+
+	var cmd map[string]any
+	decoder := json.NewDecoder(strings.NewReader(decoded))
+	decoder.UseNumber() // keep numeric token IDs exact
+	if err := decoder.Decode(&cmd); err != nil {
+		sendReport("Invalid payload JSON")
+		return nil
 	}
 
-	var cmd map[string]string
-	if err := json.Unmarshal([]byte(decoded), &cmd); err != nil {
-		return fmt.Errorf("HandleInspect: invalid inspect JSON: %w", err)
-	}
-
-	method := cmd["method"]
-	var reportText string
+	method, _ := cmd["method"].(string)
 	switch method {
 	case "get_user_erc20_balance":
-		addr := normAddr(cmd["user_address"])
+		user, _ := cmd["user_address"].(string)
 		bal := big.NewInt(0)
-		if v, ok := storage.UserErc20BalanceByUser[addr]; ok {
+		if v, ok := storage.UserErc20BalanceByUser[normAddr(user)]; ok {
 			bal = v
 		}
-		reportText = fmt.Sprintf("User: %s Balance: %s", addr, bal.String())
+		sendReport(fmt.Sprintf("User: %s Balance: %s", user, bal.String()))
 	case "get_token_owner":
-		owner := storage.Erc721OwnerByTokenID[cmd["token_id"]]
-		if owner == "" {
+		// the token ID can be a JSON number or a string
+		tokenID, err := parseTokenID(fmt.Sprint(cmd["token_id"]))
+		if err != nil {
+			return err
+		}
+		owner, ok := storage.Erc721OwnerByTokenID[tokenID]
+		if !ok {
 			owner = "None"
 		}
-		reportText = fmt.Sprintf("Token_id: %s owner: %s", cmd["token_id"], owner)
+		sendReport(fmt.Sprintf("Token_id: %s owner: %s", tokenID, owner))
+	case "get_all_listed_tokens":
+		sendReport("All listed tokens are: " + strings.Join(storage.ListedTokens, ","))
 	default:
-		list := make([]string, 0, len(storage.ListedTokens))
-		for id := range storage.ListedTokens {
-			list = append(list, id)
-		}
-		reportText = fmt.Sprintf("All listed tokens are: %s", strings.Join(list, ","))
+		infolog.Println("Unsupported method called!!")
+		sendReport("Unsupported inspect method")
 	}
-
-	report := rollups.ReportRequest{Payload: rollups.Str2Hex(reportText)}
-	_, err = rollups.SendReport(&report)
-	return err
+	return nil
 }
 
 func main() {
@@ -242,26 +316,28 @@ func main() {
 			continue
 		}
 
-		response, err := rollups.ParseFinishResponse(res)
-		if err != nil {
+		var response rollups.FinishResponse
+		if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 			errlog.Panicln("Error parsing finish response:", err)
 		}
 
-		finish.Status = "accept"
+		var handlerErr error
 		if response.Type == "advance_state" {
 			data := new(rollups.AdvanceResponse)
 			_ = json.Unmarshal(response.Data, data)
-			if err = HandleAdvance(data); err != nil {
-				errlog.Println(err)
-				finish.Status = "reject"
-			}
+			handlerErr = HandleAdvance(data)
 		} else if response.Type == "inspect_state" {
 			data := new(rollups.InspectResponse)
 			_ = json.Unmarshal(response.Data, data)
-			if err = HandleInspect(data); err != nil {
-				errlog.Println(err)
-				finish.Status = "reject"
-			}
+			handlerErr = HandleInspect(data)
+		}
+
+		finish.Status = "accept"
+		if handlerErr != nil {
+			// invalid requests are rejected with a report: they never stop the application
+			errlog.Println(handlerErr)
+			sendReport(handlerErr.Error())
+			finish.Status = "reject"
 		}
 	}
 }
