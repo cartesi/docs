@@ -94,7 +94,7 @@ Check whether a validator is in favor of any claim in a given epoch.
 - `id` (uint256): The ID of the validator
 
 **Returns:**
-- (bool): Whether validator is in favor of any claim in the epoch
+- (bool): Whether the validator is in favor of any claim in the epoch
 
 **Note:** Assumes the provided ID is valid.
 
@@ -136,7 +136,7 @@ Check whether a validator is in favor of a claim.
 - `id` (uint256): The ID of the validator
 
 **Returns:**
-- (bool): Whether validator is in favor of claim
+- (bool): Whether the validator is in favor of claim
 
 **Note:** Assumes the provided ID is valid.
 

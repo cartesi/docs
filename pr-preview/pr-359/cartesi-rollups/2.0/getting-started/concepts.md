@@ -8,6 +8,7 @@ resources:
     title: Understanding Cartesi Rollups
   - url: https://github.com/cartesi/dave/tree/v3.0.0-alpha.6
     title: Dave
+unlisted: true
 ---
 
 Before diving deep into the architecture and mechanisms of rollups, it's important to understand the fundamental concepts behind these scalability solutions. Rollups play a crucial role in enhancing blockchain performance by moving computation off-chain while ensuring security through on-chain verification. This section covers the core principles of rollups, the different approaches to validating state updates, and how dispute resolution mechanisms function. These foundational ideas will help you better grasp the architecture and innovations introduced by Cartesi's rollup solutions, including the **Dave** fraud-proof system.
@@ -35,7 +36,7 @@ The answer depends on the rollup implementation, which falls within one of two c
 
 ### Zero-knowledge Rollups (ZK Rollups)
 
-In ZK rollups, which use validity proof schemes, every state update is accompanied by a cryptographic proof created off-chain, attesting to its validity. The update is only taken if the proof successfully passes verification on-chain. Validity proofs(ZK Rollups) bring the enormous benefit of instant finality—as soon as a state update appears on-chain, it can be fully trusted and acted upon.
+In ZK rollups, which use validity proof schemes, every state update is accompanied by a cryptographic proof created off-chain, attesting to its validity. The update is only taken if the proof successfully passes verification on-chain. Validity proofs (ZK Rollups) bring the enormous benefit of instant finality—as soon as a state update appears on-chain, it can be fully trusted and acted upon.
 
 The choice, however, also brings less than ideal properties: generating ZK proofs for general-purpose computations is, when possible, immensely expensive, and each on-chain state update must pay the extra gas fee for including and verifying a validity proof.
 
@@ -50,7 +51,7 @@ The assumption that state updates will likely be honest often gives solutions li
 This optimism is reinforced by financial incentives that reward honest behavior. Furthermore, any proposed false state will only be accepted if it remains undisputed for a prolonged period.
 
 
-The main advantage of Optimistic Rollups is that they are much cheaper than ZK Rollups. Posting a state update on-chain is minimal, and challenging a state update is also low.
+The main advantage of Optimistic Rollups is that they are much cheaper than ZK Rollups. Posting a state update on-chain is minimal, and so is the cost of challenging one.
 
 The main disadvantage is that state updates take time to finalize and are not entirely accepted immediately. During this period, they are considered "optimistic" and can be challenged.
 

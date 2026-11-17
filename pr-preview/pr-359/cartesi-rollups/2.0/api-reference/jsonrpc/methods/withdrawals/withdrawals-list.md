@@ -54,7 +54,7 @@ The `cartesi_listWithdrawals` method returns a paginated list of emergency withd
     ],
     "pagination": {
       "total_count": 1,
-      "limit": 50,
+      "limit": 10,
       "offset": 0
     }
   },

@@ -85,6 +85,17 @@ Foreclosure does not block this function: outputs validated against claims accep
 | `output` | `bytes` | The output |
 | `proof` | `OutputValidityProof` | The proof used to validate the output against a claim accepted to the current outputs Merkle root validator contract |
 
+The proof is an [`OutputValidityProof`](https://github.com/cartesi/rollups-contracts/blob/v3.0.0-alpha.10/src/common/OutputValidityProof.sol):
+
+```solidity
+struct OutputValidityProof {
+    uint64 outputIndex;
+    bytes32[] outputHashesSiblings;
+}
+```
+
+`outputIndex` is the output's index among all outputs of the application, and `outputHashesSiblings` are the siblings of the output's hash in the outputs Merkle tree. Take both from the node: they are the `index` and `output_hashes_siblings` fields that [`cartesi_getOutput`](../jsonrpc/methods/outputs/get.md) returns.
+
 **Errors**
 
 | Error | Condition |
@@ -134,7 +145,7 @@ Check whether an output has been executed.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `outputIndex` | `uint256` | The index of output |
+| `outputIndex` | `uint256` | The index of the output |
 
 **Return Values**
 
@@ -230,7 +241,7 @@ Each application chooses its own input box. Check that this function returns the
 function getDeploymentBlockNumber() external view override returns (uint256)
 ```
 
-Get number of block in which contract was deployed.
+Get the number of the block in which the contract was deployed.
 
 **Return Values**
 
@@ -417,7 +428,7 @@ Triggered when the application is foreclosed.
 
 After foreclosure, deposits made through the canonical portals whose inputs were not finalized can be returned to their original depositors. An input is finalized when the outputs Merkle root validator reports it so through [`wasInputFinalized()`](./consensus/ioutputs-merkle-root-validator.md#wasinputfinalized). For `Authority` and `Quorum`, that means the input was added in a block covered by an accepted claim.
 
-Refunds are built by the refund output builder (see [`getRefundOutputBuilder()`](#getrefundoutputbuilder)), which supports Ether, ERC-20, ERC-721, and single and batch ERC-1155 deposits made through the portals it knows. The refund is not automatic: anyone must call `issueRefund()` for each input.
+Refunds are built by the refund output builder (see [`getRefundOutputBuilder()`](#getrefundoutputbuilder)), which supports Ether, ERC-20, ERC-721, and single and batch ERC-1155 deposits made through the portals it knows. The refund is not automatic: someone must call `issueRefund()` for each input.
 
 ### `issueRefund()`
 

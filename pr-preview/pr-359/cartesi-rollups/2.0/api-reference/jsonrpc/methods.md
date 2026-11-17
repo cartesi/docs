@@ -197,7 +197,7 @@ Fetches the chain ID, the node version and the default block tag (finality level
 No parameters required.
 
 ### [cartesi_getChainId](./methods/node/chain-id.md) (deprecated)
-Fetches the chain ID that node is operating on. Use `cartesi_getNodeInfo` instead.
+Fetches the chain ID that the node is operating on. Use `cartesi_getNodeInfo` instead.
 
 No parameters required.
 

@@ -3,11 +3,11 @@
 ---
 id: register-exception
 title: "Register an exception"
-description: "The dApp should call this method when it cannot proceed with the request processing after an exception happens."
+description: "The backend calls this method when it cannot go on processing the current request. It must be the last call the backend makes: the call does not return."
 sidebar_label: "Register an exception"
 hide_title: true
 hide_table_of_contents: true
-api: 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
+api: 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
 sidebar_class_name: "post api-method"
 info_path: cartesi-rollups/_versioned_docs/version-2.0/api-reference/rollup/cartesi-rollup-http-api
 custom_edit_url: null
@@ -38,14 +38,12 @@ import Heading from "@theme/Heading";
 
 
 
-The dApp should call this method when it cannot proceed with the request processing after an exception happens.
-This method should be the last method ever called by the dApp backend while processing a request.
+The backend calls this method when it cannot go on processing the current request. It must be the last call the backend makes: the call does not return.
 
-When running in production mode, the Cartesi Server Manager pauses the Cartesi Machine and reverts the entire state of the machine to what it was before receiving the request.
-No HTTP status code will be sent or received.
+During an advance-state request, rollups-node v2.0.0-alpha.14 records the input with status `EXCEPTION` and sets the application status to `GUEST_EXCEPTION`. This status is terminal: the node processes no further inputs for the application, and inspect requests return HTTP 503.
+During an inspect-state request, the inspect response has status `Exception` and carries the payload in `exception_data`.
 
-When running in host mode, the Rollup HTTP Server returns the status code 200.
-In both cases, the input will be skipped with the reason EXCEPTION and the exception message will be forwarded.
+To refuse a single input and keep the application running, finish the request with status `reject` instead.
 
 
 <Heading
@@ -64,7 +62,7 @@ In both cases, the input will be skipped with the reason EXCEPTION and the excep
 
 <RequestSchema
   title={"Body"}
-  body={{"content":{"application/json":{"schema":{"type":"object","properties":{"payload":{"type":"string","description":"The payload is in the Ethereum hex binary format.\nThe first two characters are '0x' followed by pairs of hexadecimal numbers that correspond to one byte.\nFor instance, '0xdeadbeef' corresponds to a payload with length 4 and bytes 222, 173, 190, 175.\nAn empty payload is represented by the string '0x'.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Exception"}}}}}
+  body={{"content":{"application/json":{"schema":{"type":"object","required":["payload"],"properties":{"payload":{"type":"string","description":"Binary data in Ethereum hex format: `0x` followed by two hexadecimal digits per byte.\nFor instance, `0xdeadbeef` is a payload of 4 bytes: 222, 173, 190 and 239.\nAn empty payload is `0x`. The `0x` prefix is required.\n","example":"0xdeadbeef","title":"Payload"}},"title":"Exception"}}}}}
 >
   
 </RequestSchema>
@@ -72,7 +70,7 @@ In both cases, the input will be skipped with the reason EXCEPTION and the excep
 <StatusCodes
   id={undefined}
   label={undefined}
-  responses={{"200":{"description":"Accepted the exception throw."},"default":{"description":"Error response.","content":{"text/plain":{"schema":{"type":"string","description":"Detailed error message.","example":"The request could not be understood by the server due to malformed syntax","title":"Error"}}}}}}
+  responses={{"202":{"description":"Accepted the exception."},"400":{"description":"Invalid exception.","content":{"text/plain":{"schema":{"type":"string","description":"Error message.","example":"address not valid","title":"Error"}}}}}}
 >
   
 </StatusCodes>

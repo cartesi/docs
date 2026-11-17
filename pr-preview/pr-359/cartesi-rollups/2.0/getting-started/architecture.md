@@ -20,7 +20,7 @@ The Cartesi Rollups framework is designed to enable complex computations off-cha
 
 A decentralized application (dApp) built on Cartesi incorporates several key elements:
 
-- Cartesi Rollups: A set of _on-chain(rollups contracts)_ and _off-chain(rollups node)_ components that implement an Optimistic Rollup solution, providing the general framework for building dApps.
+- Cartesi Rollups: A set of _on-chain (rollups contracts)_ and _off-chain (rollups node)_ components that implement an Optimistic Rollup solution, providing the general framework for building dApps.
 
 - Cartesi Machine: A virtual machine (VM) that runs a complete Linux operating system, serving as the environment for executing the dApp's backend.
 
@@ -38,7 +38,7 @@ The base layer isn't burdened with executing all computations, allowing for more
 
 Transactions and computations occur off-chain, leading to more intricate logic within transactions; hence, applications leverage powerful virtual machines (VMs) on the execution layer for complex computations.
 
-Cartesi's architecture specializes in app-specific rollups(appchains). Each dApp has its dedicated rollup for off-chain computation, enhancing scalability and performance. 
+Cartesi's architecture specializes in app-specific rollups (appchains). Each dApp has its dedicated rollup for off-chain computation, enhancing scalability and performance. 
 
 
 ![img](../../../static/img/v1.5/architecture-overview.jpg)
@@ -80,10 +80,10 @@ The [ApplicationFactory](../api-reference/contracts/application-factory.md) cont
 Portal contracts facilitate the secure transfer of assets between the base layer and the Cartesi execution environment. Currently, Cartesi supports the following types of asset transfers:
 
 - [Ether (ETH)](../api-reference/contracts/portals/EtherPortal.md)
-- [ERC-20 (Fungible tokens)](../api-reference/contracts/portals/ERC20Portal.md)
-- [ERC-721 (Non-fungible tokens)](../api-reference/contracts/portals/ERC721Portal.md)
-- [ERC-1155 Single transfers](../api-reference/contracts/portals/ERC1155SinglePortal.md)
-- [ERC-1155 Batch transfers](../api-reference/contracts/portals/ERC1155BatchPortal.md)
+- [ERC-20 (Fungible tokens)](../api-reference/contracts/portals/Erc20Portal.md)
+- [ERC-721 (Non-fungible tokens)](../api-reference/contracts/portals/Erc721Portal.md)
+- [ERC-1155 Single transfers](../api-reference/contracts/portals/Erc1155SinglePortal.md)
+- [ERC-1155 Batch transfers](../api-reference/contracts/portals/Erc1155BatchPortal.md)
 
 These Portal contracts implement the logic to "teleport" assets safely between layers, maintaining their integrity and ownership throughout the transfer process.
  
@@ -128,7 +128,7 @@ The `advance-state` process changes the application state, and it involves the f
 
 - The Cartesi Machine processes the input and generates verifiable outputs ([vouchers](../api-reference/backend/vouchers.md), [notices](../api-reference/backend/notices.md), and [reports](../api-reference/backend/reports.md)).
 
-- The application frontend can query these outputs using the node's [JSON API](../api-reference/jsonrpc/overview.md).
+- The application frontend can query these outputs using the node's [JSON-RPC API](../api-reference/jsonrpc/overview.md).
 
 ### Inspect state
 
@@ -142,7 +142,7 @@ The `inspect-state` process allows for querying the application backend without 
 
 - The Cartesi Machine processes the input and generates a [report](../api-reference/backend/reports.md).
 
-- The node returns this report to the frontend via a [REST API](../api-reference/backend/introduction.md/#advance-and-inspect).
+- The node returns this report to the frontend via a [REST API](../api-reference/backend/introduction.md#advance-and-inspect).
 
 :::note Inspect requests
 It's important to note that `inspect-state` inputs do not produce vouchers or notices. The node handles inspect requests concurrently, each on a separate copy of the application's machine, up to a per-application limit set by the `max_concurrent_inspects` execution parameter (10 by default). Requests above that limit are rejected with HTTP 503 instead of waiting.

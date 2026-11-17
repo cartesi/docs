@@ -28,11 +28,11 @@ sudo apt-get install ./machine-emulator_${ARCH}.deb
 Install with Homebrew:
 
 ```sh
-brew tap cartesi/tap
-brew install cartesi-machine
+brew install cartesi/tap/cartesi-machine
+cartesi-machine --version
 ```
 
-The tap installs its current emulator release, not a fixed version. Check that `cartesi-machine --version` reports 0.22.x before you continue.
+Homebrew always installs the tap's current emulator release and cannot install an older version of this formula. The tap ships 0.22.0 since [this formula revision](https://github.com/cartesi/homebrew-tap/blob/aef3af203d5bb93a803402dfad0008bf9f96f00b/Formula/cartesi-machine.rb). If `cartesi-machine --version` reports a version other than 0.22.x, uninstall it (`brew uninstall cartesi-machine cartesi-machine-emulator`) and build v0.22.0 from source as described below.
 
 If a package is not available for your system, build the emulator from source following the [Cartesi Machine v0.22.0 build instructions](https://github.com/cartesi/machine-emulator/tree/v0.22.0#from-sources).
 

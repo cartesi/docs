@@ -141,7 +141,7 @@ Get the hash of an input in an application's input box.
 function getDeploymentBlockNumber() external view override returns (uint256)
 ```
 
-Get number of block in which contract was deployed.
+Get the number of the block in which the contract was deployed.
 
 **Return Values**
 

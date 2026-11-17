@@ -182,8 +182,13 @@ function handleAdvance(request) {
       const { token, receiver, amount } = tokenDepositParse(request.payload);
       handleERC721Deposit(receiver, amount, token);
     } else {
-      const userInput = JSON.parse(request.payload.toString("utf8"));
-      switch (userInput.method) {
+      let userInput;
+      try {
+        userInput = JSON.parse(request.payload.toString("utf8"));
+      } catch {
+        throw new Error("Invalid payload JSON");
+      }
+      switch (userInput?.method) {
         case "purchase_token":
           handlePurchaseToken(sender, userInput, request.appContract);
           break;
@@ -210,7 +215,7 @@ function handleInspect(request) {
     return;
   }
 
-  switch (userInput.method) {
+  switch (userInput?.method) {
     case "get_user_erc20_balance": {
       const user_address = userInput.user_address;
       const bal = storage.getUserERC20TokenBalance(user_address);

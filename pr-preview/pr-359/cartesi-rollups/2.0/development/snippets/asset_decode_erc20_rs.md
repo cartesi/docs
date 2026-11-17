@@ -1,6 +1,7 @@
 > For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
 
 ```rust
+// Cargo.toml: num-bigint = "=0.4.8"
 use num_bigint::BigUint;
 
 #[derive(Debug)]

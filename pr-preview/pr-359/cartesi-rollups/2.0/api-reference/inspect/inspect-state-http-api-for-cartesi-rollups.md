@@ -36,6 +36,7 @@ through a Cartesi Rollups node.
 
 This reference describes the inspect server of rollups-node v2.0.0-alpha.14.
 The node serves it on the address set by `CARTESI_INSPECT_ADDRESS` (default `:10012`).
+With `cartesi run`, the CLI devnet serves it at `http://127.0.0.1:6751/inspect/<application>`.
 CORS is disabled by default; to call the API from a browser, the node operator must list the
 allowed origins in `CARTESI_INSPECT_CORS_ALLOWED_ORIGINS`.
 

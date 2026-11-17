@@ -14,8 +14,10 @@ await rollup.run({
     const inputIndex = request.index;
     const payload = request.payload;
 
-    // Decode payload: first 20 bytes = original sender address
-    // (abi.encodePacked), remaining bytes = UTF-8 message.
+    // Decode payload: first 20 bytes = sender address, remaining bytes = UTF-8 message.
+    // The relayer forwards the payload unchanged, so this address is whatever the
+    // caller wrote into it: it is not authenticated. Use request.msgSender for
+    // anything that must be trusted.
     if (payload.length < 20) {
       console.error(
         "Payload too short to contain a 20-byte sender address, rejecting",

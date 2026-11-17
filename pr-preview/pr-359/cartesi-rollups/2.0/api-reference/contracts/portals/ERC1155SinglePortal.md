@@ -1,6 +1,8 @@
 > For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
 
 ---
+# Keeps the URL this page had before the contracts renamed the portal.
+slug: ERC1155SinglePortal
 title: Erc1155SinglePortal
 resources:
   - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/Erc1155SinglePortal.sol
@@ -15,7 +17,7 @@ The **Erc1155SinglePortal** allows anyone to perform single transfers of ERC-115
 Since rollups-contracts 3.0.0-alpha.7, this contract is named `Erc1155SinglePortal` (formerly `ERC1155SinglePortal`) and its deposit function is `depositSingleErc1155Token` (formerly `depositSingleERC1155Token`). The function selector changed, so calls encoded with the old name revert.
 :::
 
-### `depositSingleErc1155Token()`
+## `depositSingleErc1155Token()`
 
 ```solidity
 function depositSingleErc1155Token(IERC1155 token, address appContract, uint256 tokenId, uint256 value, bytes calldata baseLayerData, bytes calldata execLayerData) external;
@@ -55,7 +57,7 @@ If the application is foreclosed before the deposit input is finalized, anyone c
 
 Errors raised by the token contract during `safeTransferFrom` (for example, a missing approval) are propagated.
 
-### `version()`
+## `version()`
 
 ```solidity
 function version() external pure returns (uint64 major, uint64 minor, uint64 patch, string memory preRelease, string memory buildMetadata)

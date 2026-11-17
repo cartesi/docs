@@ -50,8 +50,10 @@ pub async fn handle_advance(
         .as_u64()
         .unwrap_or(0);
 
-    // Decode payload: first 20 bytes = original sender address (abi.encodePacked),
-    // remaining bytes = UTF-8 message.
+    // Decode payload: first 20 bytes = sender address, remaining bytes = UTF-8 message.
+    // The relayer forwards the payload unchanged, so this address is whatever the
+    // caller wrote into it: it is not authenticated. Use msg_sender for anything
+    // that must be trusted.
     let bytes = hex_decode(payload)?;
 
     if bytes.len() < 20 {
@@ -103,7 +105,7 @@ pub async fn handle_inspect(
             let mut arr = JsonValue::new_array();
             for msg in messages.iter() {
                 let _ = arr.push(object! {
-                    "input_index" => msg.input_index,
+                    "input_index" => msg.input_index.to_string(),
                     "relayer" => msg.relayer.clone(),
                     "original_sender" => msg.original_sender.clone(),
                     "message" => msg.message.clone(),
@@ -116,7 +118,7 @@ pub async fn handle_inspect(
             format!("{{\"count\":{}}}", count)
         }
         _ => {
-            format!("{{\"error\":\"unknown route\",\"route\":\"{}\"}}", route)
+            object! { "error" => "unknown route", "route" => route }.dump()
         }
     };
 

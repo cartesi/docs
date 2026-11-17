@@ -33,7 +33,7 @@ During a finish call, the next rollup request might not be immediately available
 Let's see how a Cartesi dApp's backend processes requests using the finish endpoint:
 
 :::note JavaScript and TypeScript
-In JavaScript and TypeScript, `rollup.finish({ accept })` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) accepts or rejects the previous request and returns the next one, with `type` set to `"advance"` or `"inspect"`. It talks directly to the Cartesi Machine and blocks until a request is available, so there is no `202` status to retry. The templates call `rollup.run()`, which runs this loop for you and accepts each request unless its handler returns `false`.
+In JavaScript and TypeScript, `rollup.finish({ accept })` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) accepts or rejects the previous request and returns the next one, with `type` set to `"advance"` or `"inspect"`. It talks directly to the Cartesi Machine and blocks until a request is available, so there is no `202` status to retry. The templates call `rollup.run()`, which runs this loop for you and accepts each request unless its handler returns `false`.
 :::
 
 import Tabs from '@theme/Tabs';
@@ -76,7 +76,7 @@ for (;;) {
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -121,7 +121,7 @@ while True:
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -197,7 +197,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```go
@@ -257,7 +257,7 @@ func main() {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```cpp

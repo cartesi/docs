@@ -9,7 +9,7 @@ This tutorial will guide you through creating a basic ERC20 token wallet for a C
 
 ## Setting up the project
 
-First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md/#cartesi-cli) and move into its directory:
+First, create a new TypeScript project using the [Cartesi CLI](../development/installation.md#cartesi-cli) and move into its directory:
 
 ```bash
 cartesi create erc-20-token-wallet --template typescript
@@ -236,10 +236,10 @@ The `withdrawErc20` method encodes `transfer(recipient, amount)` and returns a v
 
 Now, let's create a simple application at the entry point `src/index.ts` to test the wallet’s functionality.
 
-The [`Erc20Portal`](../api-reference/contracts/portals/ERC20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advance requests whose `msgSender` is the portal address.
+The [`Erc20Portal`](../api-reference/contracts/portals/Erc20Portal.md) contract moves ERC-20 tokens from the base layer into your application. Deposits arrive as advance requests whose `msgSender` is the portal address.
 
 :::note Erc20Portal address
-Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc20Portal` address for your network into `index.ts`. Do not hardcode portal addresses—they differ by CLI version and chain.
+Run [`cartesi address-book`](../development/send-inputs-and-assets.md) and copy the `Erc20Portal` address for your network into `index.ts`. For a given rollups-contracts release, each portal has the same address on every supported network and on the devnet, but the address changes between releases: take it from `cartesi address-book` rather than from an older sample.
 :::
 
 ```typescript
@@ -333,7 +333,7 @@ const handleInspect = (request: InspectRequest): void => {
 await rollup.run({ advance: handleAdvance, inspect: handleInspect });
 ```
 
-This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup), which the template already depends on: `rollup.run()` passes each request to `handleAdvance` or `handleInspect`, with the payload as a Node.js `Buffer`, and an advance handler rejects the input when it returns `false`.
+This code uses the `Rollup` class of [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3), which the template already depends on: `rollup.run()` passes each request to `handleAdvance` or `handleInspect`, with the payload as a Node.js `Buffer`, and an advance handler rejects the input when it returns `false`.
 
 Here is a breakdown of the wallet functionality:
 
@@ -384,8 +384,8 @@ The depositing account must hold the tokens. `TestToken` starts with a total sup
 Non-interactive alternative. Run from your **project root** (with `cartesi run` up). Resolve addresses from [`cartesi address-book`](../development/send-inputs-and-assets.md):
 
 ```bash
-TOKEN=$(cartesi address-book 2>&1 | grep -i TestToken | awk '{print $NF}')
-ERC20_PORTAL=$(cartesi address-book 2>&1 | grep -i Erc20Portal | awk '{print $NF}')
+TOKEN=$(cartesi address-book TestToken)
+ERC20_PORTAL=$(cartesi address-book Erc20Portal)
 
 cast send "$TOKEN" \
   "mint(uint256)" \
@@ -463,7 +463,7 @@ cartesi run --services explorer
 
 The local explorer is then available at `http://localhost:6751/explorer` (same port as the application node—see [running an application](../development/running-an-application.md)). The explorer is not started by plain `cartesi run`; you must pass `--services explorer`.
 
-You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md/#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
+You can execute your vouchers via the explorer to complete the withdrawal. A voucher becomes executable only after [its epoch](../api-reference/backend/vouchers.md#epoch-configuration) closes and the epoch's claim is accepted on-chain; until then, execution reverts.
 
 :::info Repo Link
    You can access the complete project implementation [here](https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/erc-20-token-wallet)!

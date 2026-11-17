@@ -11,10 +11,10 @@
 
 namespace voucher_config
 {
-// Sample values used to build the voucher payload.
+// devnet test ERC-20 token (TestToken)
 const std::string kVoucherTokenAddress = "0x86EA17052C8e335Ad830B54EF566274EAB46B852";
-const std::string kVoucherRecipientAddress = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
-const std::string kVoucherAmountWeiHex = "0de0b6b3a7640000";
+// 10 units of the token, as a 32-byte hex word
+const std::string kVoucherAmountWord = "000000000000000000000000000000000000000000000000000000000000000a";
 } // namespace voucher_config
 
 std::string get_input_payload(const picojson::value &data)
@@ -49,18 +49,17 @@ void post_payload(httplib::Client &cli, const std::string &endpoint, const std::
     }
 }
 
-void post_sample_erc20_transfer_voucher(httplib::Client &cli)
+// Voucher that transfers 10 units of the token to the recipient.
+void post_erc20_transfer_voucher(httplib::Client &cli, const std::string &recipient)
 {
-    const std::string recipient_padded =
-        "000000000000000000000000" + voucher_config::kVoucherRecipientAddress.substr(2);
-    const std::string amount_padded =
-        "000000000000000000000000000000000000000000000000" + voucher_config::kVoucherAmountWeiHex;
+    const std::string recipient_padded = "000000000000000000000000" + recipient.substr(2);
     // ERC-20 transfer(address,uint256) selector.
-    const std::string payload = "0xa9059cbb" + recipient_padded + amount_padded;
+    const std::string payload = "0xa9059cbb" + recipient_padded + voucher_config::kVoucherAmountWord;
 
     picojson::object body;
     body["destination"] = picojson::value(voucher_config::kVoucherTokenAddress);
     body["payload"] = picojson::value(payload);
+    body["value"] = picojson::value("0x" + std::string(64, '0')); // 32-byte hex string: no Ether sent
     auto res = cli.Post("/voucher", picojson::value(body).serialize(), "application/json");
     if (res)
     {
@@ -79,7 +78,8 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
     // Echo input payload to notice and report.
     post_payload(cli, "/notice", input_payload);
     post_payload(cli, "/report", input_payload);
-    post_sample_erc20_transfer_voucher(cli);
+    const std::string sender = data.get("metadata").get("msg_sender").get<std::string>();
+    post_erc20_transfer_voucher(cli, sender);
     return "accept";
 }
 

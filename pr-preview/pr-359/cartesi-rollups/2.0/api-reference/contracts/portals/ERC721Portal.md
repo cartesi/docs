@@ -1,6 +1,8 @@
 > For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
 
 ---
+# Keeps the URL this page had before the contracts renamed the portal.
+slug: ERC721Portal
 title: Erc721Portal
 resources:
   - url: https://github.com/cartesi/rollups-contracts/tree/v3.0.0-alpha.10/src/portals/Erc721Portal.sol

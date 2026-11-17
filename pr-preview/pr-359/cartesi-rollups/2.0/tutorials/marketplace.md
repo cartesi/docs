@@ -14,7 +14,7 @@ This Tutorial is built using an Object oriented approach and aims to cover, appl
 
 ## How the Marketplace Works
 
-Now that the basic setup is done, we can focus on how the marketplace application actually works.
+Before setting up the project, here is how the marketplace application works.
 This tutorial uses an Object-Oriented approach. This means we will create a main Marketplace object that stores the application state and provides methods to update or retrieve that state. Then we'll build other handler functions that utilizes other helper functions to decode user requests then call the appropriate method to update the marketplace object.
 
 For simplicity, our marketplace will support only:
@@ -39,10 +39,12 @@ For simplicity, our marketplace will support only:
 **3. Buying an NFT**
 
 - When a user decides to buy an NFT listed on the marketplace, the application checks:
-  - Does the user have enough deposited tokens?
   - Is the NFT still listed?
+  - Does the user have enough deposited tokens?
 
 - If the transaction is valid, the marketplace transfers the payment token to the seller then creates a voucher that sends the purchased NFT to the buyer.
+
+- If a check fails, the application emits a report with the reason and rejects the input.
 
 ### Inspect Requests
 
@@ -62,7 +64,7 @@ The Inspect route will support three simple read-only queries:
 
 **Input:** Token ID
 
-**Output:** Address of current token owner.
+**Output:** Address of current token owner. After a purchase the owner is the zero address: the NFT leaves the marketplace with the voucher.
 
 **3. `get_all_listed_tokens`**
 
@@ -73,6 +75,8 @@ The Inspect route will support three simple read-only queries:
 **Output:** Array of Token IDs currently listed for sale.
 
 ## Set up your environment
+
+You need the [Cartesi CLI](../development/installation.md) and Docker Desktop, plus the Rust toolchain (`cargo`) for the Rust version, which adds its dependencies on your machine before the build.
 
 To create a template for your project, we run the below command, based on your language of choice:
 
@@ -90,7 +94,7 @@ cartesi create marketplace --template javascript
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```shell
@@ -100,7 +104,7 @@ cartesi create marketplace --template python
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```shell
@@ -110,7 +114,7 @@ cartesi create marketplace --template rust
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```shell
@@ -120,7 +124,7 @@ cartesi create marketplace --template go
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```shell
@@ -163,7 +167,7 @@ export default defineConfig({
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```shell
@@ -198,7 +202,7 @@ Instead of compiling, you can install prebuilt riscv64 wheels from the community
 
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```shell
@@ -208,7 +212,7 @@ cargo add hex@=0.4.3 serde@=1.0.229 ethers-core@=2.0.14
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```shell
@@ -219,7 +223,7 @@ cargo add hex@=0.4.3 serde@=1.0.229 ethers-core@=2.0.14
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```shell
@@ -252,7 +256,7 @@ import MarketplaceCPP from './snippets/marketplace-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 <MarketplacePY />
@@ -260,7 +264,7 @@ import MarketplaceCPP from './snippets/marketplace-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 <MarketplaceRS />
@@ -268,7 +272,7 @@ import MarketplaceCPP from './snippets/marketplace-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <MarketplaceGO />
@@ -276,7 +280,7 @@ import MarketplaceCPP from './snippets/marketplace-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <MarketplaceCPP />
@@ -297,8 +301,6 @@ cartesi build
   
 ```shell
 user@user-MacBook-Pro marketplace % cartesi build
-(node:4460) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
 ✔ Build drives
   ✔ Build drive root
 
@@ -317,19 +319,18 @@ user@user-MacBook-Pro marketplace % cartesi build
 [INFO  actix_server::builder] starting 1 workers
 [INFO  actix_server::server] Actix runtime found; starting in Actix runtime
 [INFO  actix_server::server] starting service: "actix-web-service-127.0.0.1:5004", workers: 1, listening on: 127.0.0.1:5004
-[INFO  rollup_http_server::dapp_process] starting dapp: python3 dapp.py
-INFO:__main__:HTTP rollup_server url is http://127.0.0.1:5004
-INFO:__main__:Sending finish
+[INFO  rollup_http_server::dapp_process] starting dapp: dapp
+Sending finish
 
 Manual yield rx-accepted (1) (0x000020 data)
-Cycles: 8108719633
-8108719633: 107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
+Cycles: 76215164
+76215164: 0x6ba590729f9c35be09f4d005bc2838969fc4ec0b40bd80421c0167527119bce4
 Storing machine: please wait
 ```
 
 The build command compiles your application then builds a Cartesi machine that contains your application.
 
-This recently built machine alongside other necessary service, like an Anvil network, inspect service, etc. wound next be started by running the command:
+Next, start the newly built machine, along with the other services it needs (an Anvil network, the inspect service and so on), by running:
 
 ```bash
 cartesi run
@@ -339,26 +340,19 @@ If the `run` command is successful, you should see logs similar to this:
 
 ```bash
 user@user-MacBook-Pro marketplace % cartesi run
-(node:5404) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
-(Use `node --trace-warnings ...` to show where the warning was created)
 WARNING: default block is set to 'latest', production configuration will likely use 'finalized'
-[+] Pulling 4/0
- ✔ database Skipped - Image is already present locally  
- ✔ rollups-node Skipped - Image is already present locally 
- ✔ anvil Skipped - Image is already present locally  
- ✔ proxy Skipped - Image is already present locally                                                                                                                                                                                                                   
 ✔ marketplace starting at http://127.0.0.1:6751
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
 ✔ inspect service ready at http://127.0.0.1:6751/inspect/marketplace
-✔ marketplace machine hash is 0x107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
-✔ marketplace contract deployed at 0x94b32605a405d690934eb4ecc91856febfa747cc
+✔ marketplace machine hash is 0x6ba590729f9c35be09f4d005bc2838969fc4ec0b40bd80421c0167527119bce4
+✔ marketplace contract deployed at 0x1173736abe1b9fd5af86604089c8264826c94fcd
 (l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
 ## Interacting with your Marketplace Application
 
-Once your Marketplace application is up and running (via cartesi run), you can interact with it in two main ways — either by sending on-chain transactions through the local Anvil network (Advance requests) or by making HTTP requests directly to the Rollups HTTP server’s Inspect endpoint (Inspect requests).
+Once your Marketplace application is up and running (via cartesi run), you can interact with it in two main ways — either by sending on-chain transactions through the local Anvil network (Advance requests) or by making HTTP requests directly to the node's inspect endpoint (Inspect requests).
 
 In this section, we’ll focus on using the Cartesi CLI to send Advance requests, since it provides a much simpler and faster way to test your application locally.
 
@@ -406,17 +400,19 @@ cartesi deposit erc721
 ```
 
 The CLI will prompt you for the token ID (enter 1) and the token address (press Enter to use the default test token).
-Under the hood, the CLI transfers the NFT from your address to the ERC-721 portal, which then sends the deposit payload to your application.
+Under the hood, the CLI approves the portal for the token and calls `depositErc721Token`; the portal transfers the NFT from your address to the application contract and adds an input with the deposit details.
 
-Once the deposit succeeds, the terminal running your application should show logs similar to:
+Once the deposit succeeds, the terminal running your application should show logs similar to the following. The sample logs on this page come from the Rust implementation, which runs the rollup HTTP server; the other languages print their own messages:
 
 ```bash
-INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 751 "-" "-" 0.018688
+[INFO  rollup_http_server::http_service] received new request of type ADVANCE
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 750 "-" "-" 0.020416
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":675,"block_timestamp":1762948794,"prev_randao":"0x3d144a3d5bb3125c92a230e7597e04e82eb5d5acbea185db2b1eadda3530d5c7","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0x1173736abe1b9fd5af86604089c8264826c94fcd","msg_sender":"0x397c352d18dff47cc8a6143403142cf7afd5ff7e","block_number":38,"block_timestamp":1794920122,"prev_randao":"0xed9592734017a764b86b7e50541f4db382e676771985cce5ab423a7afb0aa486","input_index":0},"payload":"0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}
+Deposited and listed token: 0x0761b8e3ab06f458632974393c48765e6ddc61bb, Receiver: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Token ID: 1
 Token deposit and listing processed successfully
 [INFO  actix_web::middleware::logger] 127.0.0.1 "POST /notice HTTP/1.1" 201 11 "-" "-" 0.001088
+Notice generation successful
 Sending finish
 ```
 
@@ -434,14 +430,14 @@ curl -X POST http://127.0.0.1:6751/inspect/marketplace \
 This call returns a hex payload containing a list of all listed tokens on the marketplace.
 
 ```bash
-{"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a205b315d"}],"processed_input_count":6}
+{"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a2031"}],"processed_input_count":1}
 ```
 
-The payload hex `0x416c6...205b315d` when decoded, returns `All listed tokens are: [1]`. Thereby confirming that the token with `Id 1` has successfully been listed. The Python, JavaScript and Go versions print the list without brackets, `All listed tokens are: 1`.
+The payload hex `0x416c6...3a2031` when decoded, returns `All listed tokens are: 1`. Thereby confirming that the token with `Id 1` has successfully been listed.
 
 ### 4. Deposit ERC20 token for making purchases [advance request]
 
-With the NFT successfully listed for sale, it's time to attempt to purchase this token, but before we do that, we'll need first deposit the required amount of tokens to purchase the listed NFT. Since our marketplace lists all NFT's at the price of `100` `TestToken` tokens (FUN), we'll be minting 100 tokens to the new address we'll be using to purchase, before proceeding with the purchase. `TestToken` starts with no balance on a new devnet, and its `mint` function is public.
+With the NFT successfully listed for sale, it's time to attempt to purchase this token, but before we do that, we first need to deposit enough tokens to purchase the listed NFT. Since our marketplace lists all NFTs at the price of `100` `TestToken` tokens (FUN), we'll be minting 100 tokens to the new address we'll be using to purchase, before proceeding with the purchase. `TestToken` starts with no balance on a new devnet, and its `mint` function is public.
 
 - Mint the required tokens to the purchase address.
   
@@ -464,9 +460,9 @@ On a successful deposit our application should return logs that look like this:
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 496 "-" "-" 0.018176
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 494 "-" "-" 0.019008
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419","block_number":2272,"block_timestamp":1762951994,"prev_randao":"0x0992ab8380b23c1c98928a76ae9a79c501ae27625943a53b0fd57455f10e5164","input_index":1},"payload":"0x86ea17052c8e335ad830b54ef566274eab46b85270997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000"}}
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0x1173736abe1b9fd5af86604089c8264826c94fcd","msg_sender":"0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419","block_number":81,"block_timestamp":1794920208,"prev_randao":"0x4b9d05d49847fa57352b6fa9b22496e7dd0c7a74bb8ce84534d7c9084d448a2d","input_index":1},"payload":"0x86ea17052c8e335ad830b54ef566274eab46b85270997970c51812dc3a010c7d01b50e0d17dc79c80000000000000000000000000000000000000000000000056bc75e2d63100000"}}
 Deposited token: 0x86ea17052c8e335ad830b54ef566274eab46b852, Receiver: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8, Amount: 100000000000000000000
 Token deposit processed successfully
 Sending finish
@@ -480,19 +476,21 @@ Now that the buyer has deposited funds, we can proceed to purchase the NFT. Use 
 cartesi send --from 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
 ✔ Input String encoding
 ✔ Input (as string) {"method": "purchase_token", "token_id": "1"}
-✔ Input sent: 0x61dad3fb284470ab9e049fd45197062704376c797bdf020a5550f66d0dcec884
+✔ Input sent: 0x209f81a43a03ac57aa22a80ce87978c02fe7d02ec298714186f692af59af4cf9
 ```
 
-This sends a purchase request for token ID `1` from the buyer address. Pass `token_id` as a string, as above: the Python, Rust and JavaScript versions read it as a string and reject the purchase when it is a number. The marketplace validates the request (token listed and sufficient balance), executes the purchase, and emits the voucher to transfer the NFT to the buyer.
+This sends a purchase request for token ID `1` from the buyer address. Pass `token_id` as a string, as above: the application reads it as a string and rejects the purchase, with the report `Missing or invalid token_id field in payload`, when it is a number. The marketplace validates the request (token listed and sufficient balance), executes the purchase, and emits the voucher to transfer the NFT to the buyer.
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 426 "-" "-" 0.001792
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 440 "-" "-" 0.002624
 Received finish status 200 OK
-Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0xb86306660e0be8e228c0cd14b8a1c5d5eddb8d20","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":3576,"block_timestamp":1762954606,"prev_randao":"0xd29cd42cfd3c9ff4f31b39f497fc2f4d0a7add5a67da98be0d7841c37c7ad25f","input_index":2},"payload":"0x7b226d6574686f64223a202270757263686173655f746f6b656e222c2022746f6b656e5f6964223a202231227d"}}
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /voucher HTTP/1.1" 201 11 "-" "-" 0.015424
+Received advance request data {"request_type":"advance_state","data":{"metadata":{"chain_id":31337,"app_contract":"0x1173736abe1b9fd5af86604089c8264826c94fcd","msg_sender":"0x70997970c51812dc3a010c7d01b50e0d17dc79c8","block_number":88,"block_timestamp":1794920222,"prev_randao":"0x6566eb1f4a1fee4e613e0b3e112fdde41187675bbdf6c90dfbdfa3403763fa21","input_index":2},"payload":"0x7b226d6574686f64223a202270757263686173655f746f6b656e222c2022746f6b656e5f6964223a202231227d"}}
+Token purchased successfully
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /voucher HTTP/1.1" 201 11 "-" "-" 0.016704
 Voucher generation successful
 Token purchased and Withdrawn successfully
+Sending finish
 ```
 
 ### 6. Recheck NFTs Listed on the Marketplace [inspect request]
@@ -508,10 +506,10 @@ curl -X POST http://127.0.0.1:6751/inspect/marketplace \
 This call returns a hex payload like below:
 
 ```bash
-{"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a205b5d"}],"processed_input_count":7}
+{"status":"Accepted","reports":[{"payload":"0x416c6c206c697374656420746f6b656e73206172653a20"}],"processed_input_count":3}
 ```
 
-The payload hex `0x416c6...653a205b5d` when decoded, returns `All listed tokens are: []` (`All listed tokens are: ` in the Python, JavaScript and Go versions). Thereby verifying that the token with `Id 1` has successfully been sold and no longer listed for sale in the marketplace.
+The payload hex `0x416c6...653a20` when decoded, returns `All listed tokens are: ` (an empty list). Thereby verifying that the token with `Id 1` has successfully been sold and no longer listed for sale in the marketplace.
 
 ## Conclusion
 

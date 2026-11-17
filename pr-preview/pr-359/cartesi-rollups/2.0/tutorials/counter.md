@@ -38,7 +38,7 @@ cartesi create counter --template javascript
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```shell
@@ -48,7 +48,7 @@ cartesi create counter --template python
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```shell
@@ -58,7 +58,7 @@ cartesi create counter --template rust
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```shell
@@ -68,7 +68,7 @@ cartesi create counter --template go
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```shell
@@ -81,7 +81,7 @@ cartesi create counter --template cpp
 
 This command creates a directory called `counter` and, depending on your selected language, this directory contains the entry point file to start your application (for example: `dapp.py` for Python, `src/main.rs` for Rust, `src/index.js` for JavaScript, `src/dapp.go` for Go, and `dapp.cpp` for C++).
 
-This entry point file contains the default template for interacting with the Cartesi Rollups HTTP Server, it also makes available, two function namely `handle_advance()` and `handle_inspect()` which process "advance / write" and "inspect / read" requests to the application. In the JavaScript template, the entry point uses the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) package instead of the HTTP server, and the two functions are the `advance` and `inspect` handlers passed to `rollup.run()`. In the next section we would be updating these functions with the implementation for your application.
+This entry point file contains the default template for interacting with the Cartesi Rollups HTTP Server, it also makes available, two functions, namely `handle_advance()` and `handle_inspect()` which process "advance / write" and "inspect / read" requests to the application. In the JavaScript template, the entry point uses the [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) package instead of the HTTP server, and the two functions are the `advance` and `inspect` handlers passed to `rollup.run()`. In the next section we would be updating these functions with the implementation for your application.
 
 ## Implement the Application Logic
 
@@ -108,7 +108,7 @@ import CounterCPP from './snippets/counter-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 <CounterPY />
@@ -116,7 +116,7 @@ import CounterCPP from './snippets/counter-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 <CounterRS />
@@ -124,7 +124,7 @@ import CounterCPP from './snippets/counter-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 <CounterGO />
@@ -132,7 +132,7 @@ import CounterCPP from './snippets/counter-cpp.md';
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 <CounterCPP />
@@ -176,14 +176,14 @@ INFO:__main__:HTTP rollup_server url is http://127.0.0.1:5004
 INFO:__main__:Sending finish
 
 Manual yield rx-accepted (1) (0x000020 data)
-Cycles: 8108719633
-8108719633: 107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
+Cycles: 4100356181
+4100356181: 0xb68327c128474c4d782356865c214e57f2d8d370d6db790843c5f46d2fd4e6bb
 Storing machine: please wait
 ```
 
 The build command compiles your application then builds a Cartesi machine that contains your application.
 
-This recently built machine alongside other necessary service, like an Anvil network, inspect service, etc. would next be started by running the command:
+This recently built machine alongside other necessary services, like an Anvil network, inspect service, etc. would next be started by running the command:
 
 ```bash
 cartesi run
@@ -198,8 +198,8 @@ WARNING: default block is set to 'latest', production configuration will likely 
 ✔ anvil service ready at http://127.0.0.1:6751/anvil
 ✔ rpc service ready at http://127.0.0.1:6751/rpc
 ✔ inspect service ready at http://127.0.0.1:6751/inspect/counter
-✔ counter machine hash is 0x107174e04a294787e22b6864c61fedd845833e5c8bc9a244480f2996ddabb3c7
-✔ counter contract deployed at 0x94b32605a405d690934eb4ecc91856febfa747cc
+✔ counter machine hash is 0xb68327c128474c4d782356865c214e57f2d8d370d6db790843c5f46d2fd4e6bb
+✔ counter contract deployed at 0x0a1ea8479098f7355f6125db1b70e01b10c805a8
 (l) View logs   (b) Build and redeploy  (q) Quit
 ```
 
@@ -226,12 +226,12 @@ On success, we receive a confirmation response from the HTTP server, something s
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type INSPECT
 inspect_request.payload_length: 4
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 64 "-" "python-requests/2.31.0" 0.020096
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 64 "-" "python-requests/2.31.0" 0.020544
 INFO:__main__:Received finish status 200
 INFO:__main__:Received inspect request data {'payload': '0x7b22227d'}
 INFO:__main__:Current counter value: 0
 INFO:__main__:Sending finish
-2025-11-09T17:47:44.661 INF Request executed service=inspect status=Accepted application=counter
+2026-11-17T12:49:42.571 INF Request executed service=inspect request_id=25e4607b-5b62-4983-9134-848363f20fda status=Accepted application=counter
 ```
 
 As seen in the third to last line of our received log, we can see the `count value` returned to be `0`
@@ -251,10 +251,10 @@ Now that we've confirmed our count value to be zero (0), we would be sending an 
 cartesi send random_text
 ```
 
-The above command sends an advance request with the payload "random_text" to our application, which ignores this payload then proceeds to increase out count value by `one (1)`, if this command is successful and our application process this request graciously, we should get a log similar to what's presented below on the terminal running our application:
+The above command sends an advance request with the payload "random_text" to our application, which ignores this payload then proceeds to increase our count value by `one (1)`, if this command is successful and our application processes this request successfully, we should get a log similar to what's presented below on the terminal running our application:
 
 ```bash
-INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9d40cfc42bb386b531c5d4eb3ade360f4105c4a3', 'msg_sender': '0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f', 'block_number': 630, 'block_timestamp': 1762711409, 'prev_randao': '0x63a2bb3993d9f9c371624f995a10a6f493e33c2535e62b32fee565f812b4c4ab', 'input_index': 0}, 'payload': '0x72616e646f6d5f74657874'}
+INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x0a1ea8479098f7355f6125db1b70e01b10c805a8', 'msg_sender': '0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f', 'block_number': 33, 'block_timestamp': 1794919789, 'prev_randao': '0x7aa4a4572391598a47f1c1ac3b2af69425e5d936c824c6ab3b86e84b95c5c8b1', 'input_index': 0}, 'payload': '0x72616e646f6d5f74657874'}
 INFO:__main__:Counter increment requested, new count value: 1
 INFO:__main__:Sending finish
 ```
@@ -266,19 +266,19 @@ Received advance request from 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f with in
 Counter increment requested, new count value: 1
 ```
 
-The above logs prove that out application received the advance request, increased our count value, logs the updated count value then finishes that request successfully.
+The above logs prove that our application received the advance request, increased our count value, logs the updated count value then finishes that request successfully.
 
 As seen in the second to last line of the log, our count value has been increased from 0 to 1. To confirm this increase, we can run an inspect request once more to verify the current count value, and on running the same inspect command as last time, we obtain the updated logs below.
 
 ```shell
 [INFO  rollup_http_server::http_service] received new request of type INSPECT
 inspect_request.payload_length: 4
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 64 "-" "python-requests/2.31.0" 0.002048
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 64 "-" "python-requests/2.31.0" 0.002112
 INFO:__main__:Received finish status 200
 INFO:__main__:Received inspect request data {'payload': '0x7b22227d'}
 INFO:__main__:Current counter value: 1
 INFO:__main__:Sending finish
-2025-11-09T18:22:45.142 INF Request executed service=inspect status=Accepted application=counter
+2026-11-17T12:49:58.712 INF Request executed service=inspect request_id=f21f61c3-14f1-4fee-8b1f-d1da7d6df97f status=Accepted application=counter
 ```
 
 From the latest application logs, it's now clear that the application's count value has been increased from 0 to one, and subsequent advance calls would further increase the count value.

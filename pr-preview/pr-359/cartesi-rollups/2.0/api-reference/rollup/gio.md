@@ -1,0 +1,76 @@
+> For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
+
+---
+id: gio
+title: "Generic I/O request"
+description: "Sends a generic I/O (GIO) request to the host that runs the machine and returns its response. `domain` selects the kind of request; values below `0x10` are reserved."
+sidebar_label: "Generic I/O request"
+hide_title: true
+hide_table_of_contents: true
+api: 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
+sidebar_class_name: "post api-method"
+info_path: cartesi-rollups/_versioned_docs/version-2.0/api-reference/rollup/cartesi-rollup-http-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Generic I/O request"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/gio"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Sends a generic I/O (GIO) request to the host that runs the machine and returns its response. `domain` selects the kind of request; values below `0x10` are reserved.
+
+rollups-node v2.0.0-alpha.14 does not answer GIO requests: it treats one as an unexpected yield, records the input with status `UNEXPECTED_YIELD` and stops the application for good (application status `UNEXPECTED_YIELD`). Do not call this method in applications that run on this node.
+
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<ParamsDetails
+  parameters={undefined}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  title={"Body"}
+  body={{"content":{"application/json":{"schema":{"type":"object","required":["domain","id"],"properties":{"domain":{"type":"integer","format":"uint16","minimum":16,"description":"Kind of request. Values below `0x10` are reserved.","example":16},"id":{"type":"string","description":"Request data, in Ethereum hex format.","example":"0xdeadbeef"}},"title":"GioRequest"}}}}}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  id={undefined}
+  label={undefined}
+  responses={{"202":{"description":"The host answered the request.","content":{"application/json":{"schema":{"type":"object","properties":{"response_code":{"type":"integer","format":"uint16","description":"Response code set by the host.","example":0},"response":{"type":"string","description":"Response data, in Ethereum hex format.","example":"0x"}},"title":"GioResponse"}}}},"400":{"description":"Invalid request.","content":{"text/plain":{"schema":{"type":"string","description":"Error message.","example":"address not valid","title":"Error"}}}}}}
+>
+  
+</StatusCodes>
+
+
+      

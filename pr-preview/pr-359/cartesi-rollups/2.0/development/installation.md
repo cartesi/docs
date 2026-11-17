@@ -30,7 +30,7 @@ The primary requirements for building on Cartesi are:
 
 ## Docker Desktop
 
-Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building dApps Cartesi:
+Docker Desktop is a must-have requirement that comes pre-configured with two necessary plugins for building Cartesi dApps:
 
 - Docker Buildx
 - Docker Compose
@@ -92,5 +92,12 @@ Cartesi CLI doctor is a diagnostic tool that declares whether your system is rea
 
 ```shell
 $ cartesi doctor
-✔ Your system is ready for cartesi.
+✔ Docker Engine 27.5.1
+✔ Docker Compose 2.32.4-desktop.1
+✔ Docker Buildx 0.20.1
+✔ Docker RISC-V support linux/riscv64
+✔ Cartesi Machine 0.22.0
+✔ Your system is ready.
 ```
+
+The versions shown depend on your installation.

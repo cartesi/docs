@@ -5,180 +5,67 @@ id: community-tools
 title: Community tools
 ---
 
-Several tools created and maintained by the community streamline the dApp creation process on Cartesi Rollups.
+Community projects that help build Cartesi Rollups applications. These are maintained outside the core Cartesi repositories. Confirm compatibility with Rollups v2 (JSON-RPC node API, unified outputs) before adopting them. The links below point to the versions that were current when this page was written.
 
 ## Deroll
 
-Introducing Deroll, a powerful TypeScript framework designed to simplify the development of dApps on Cartesi.
+TypeScript framework for Cartesi dApps.
 
-- **Features**:
-	- Simplifies dApp development with intuitive methods.
-	- Handles advance and inspect requests easily.
-	- Comprehensive wallet functionality for ERC20, ERC721 and ERC-1155 token standards.
-	- Integrated router for complex routing logic.
+- Advance and inspect handlers
+- Wallet helpers for ERC-20, ERC-721, and ERC-1155
+- Router for application methods
 
-- **Getting Started**:
-	- Create a new Deroll project by running:
-		```bash
-		npm init @deroll/app
-		```
+```bash
+npm init @deroll/app@2.0.0-alpha.16
+```
 
-- **Resources**:
-	- [Deroll Documentation](https://deroll.dev)
-	- [Deroll GitHub Repository](https://github.com/tuler/deroll)
+Use the `2.0.0-alpha` line for Rollups 2.0. Without a version, npm installs Deroll 1.0.0 (the `latest` tag), which targets Rollups 1.x: it expects the `DAppAddressRelay` input and the v1 deposit and voucher formats.
+
+- [Documentation](https://deroll.dev)
+- [GitHub](https://github.com/tuler/deroll/tree/acbb3630f0c916bd0fe8ddb440afa7b0829e720a)
 
 ---
 
-## NoNodo
+## libcma (Cartesi Machine Assets)
 
-NoNodo is a cutting-edge development tool for Cartesi Rollups that allows applications to run directly on the host machine, bypassing Docker or RISC-V compilation.
+C++ library for parsing portal deposits and managing an in-machine asset ledger (Ether, ERC-20, ERC-721, ERC-1155). It is the basis for provable balances and [emergency withdrawal](../development/emergency-withdrawal/overview.md).
 
-- **Features**:
-	- Run applications directly on the host machine for faster performance.
-	- No Docker or RISC-V Required.
+- Core: [Mugen-Builders/machine-asset-tools `v0.1.0-alpha.11`](https://github.com/Mugen-Builders/machine-asset-tools/tree/v0.1.0-alpha.11)
+- Rust bindings: [Mugen-Builders/cma-rust-parser](https://github.com/Mugen-Builders/cma-rust-parser/tree/32dffc8bc0c63e60d78dc663e1fd921d6aec43c8)
+- Python bindings: [Mugen-Builders/libcma-binding-python](https://github.com/Mugen-Builders/libcma-binding-python/tree/c3dc999fa859c3646a4e3a7d34f806809abbea2b)
+- Node.js / TypeScript bindings: [riseandshaheen/libcma-binding-node](https://github.com/riseandshaheen/libcma-binding-node/tree/7e9a7a5437f9db4849203e646f7ad580a09be90e)
 
-- **Getting Started**:
-	- Install NoNodo by running:
-		```bash
-		npm install -g @nonodo/cli
-		```
-- **Resources**:
-	- [NoNodo GitHub Repository](https://github.com/Calindra/nonodo)
+Related: [libcmt bindings](https://github.com/Mugen-Builders/libcmt-bindings/tree/463c62ca6adfcff84a24034d86abfbf324aea6d7) expose the guest `libcmt` C API (rollup I/O, ABI, Merkle) without the HTTP rollup server.
 
 ---
 
-## Cartesify
+## Python-Cartesi
 
-Cartesify is a robust Web3 client designed for seamless interaction with the Cartesi Machine.
+Python framework with local testing helpers and control over inputs and outputs. Install it with one of the following, depending on the extras you need (`machine` and `machine-asset`). `--find-links` supplies pre-built RISC-V wheels.
 
-- **Features**:
-	- Send transactions to the Cartesi Machine.
-	- Query data efficiently.
-	- Engage with backend systems using a REST-like interface.
+```bash
+pip3 install "cartesi @ git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1" --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+```
 
-- **Resources**:
-	- [Cartesify GitHub Repository](https://github.com/Calindra/cartesify)
+```bash
+pip3 install "cartesi[machine] @ git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1" --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+```
 
----
+```bash
+pip3 install "cartesi[machine-asset] @ git+https://github.com/prototyp3-dev/python-cartesi@v0.2.1" --find-links https://prototyp3-dev.github.io/pip-wheels-riscv/wheels/
+```
 
-## Tikua
-
-Tikua is a versatile JS Cartesi package designed for seamless integration with any visual library, whether in browser or terminal environments.
-
-- **Features**:
-	- Integrates smoothly with any visual library on both Browser and Terminal.
-	- Supports any provider or network with extensive configurability.
-	- Handles multi-chain applications.
-	- Provides warnings for unsupported provider chains.
-	- Retrieve machine results.
-
-- **Resources**:
-
-	- [Tikua GitHub Repository](https://github.com/doiim/tikua)
-
+- [GitHub](https://github.com/prototyp3-dev/python-cartesi/tree/v0.2.1)
 
 ---
 
-## Rollmelette
+## Cartesapp
 
-Rollmelette is a high-level framework that simplifies building Cartesi applications using the Go programming language.
+Opinionated Python library and CLI for Cartesi Rollups apps: routed endpoints, host and machine tests, build/run/deploy, and auto-generated frontend libraries.
 
-- **Features**:
-	- Simplifies the development of Cartesi applications.
-	- Provides a high-level API for interacting with the Cartesi Machine.
-	- Simplifies sending inputs, retrieving outputs and asset handling 
-	- Supports the Go programming language.
+```bash
+pip3 install "cartesapp[dev] @ git+https://github.com/prototyp3-dev/cartesapp@v1.5.0a0"
+cartesapp create NAME
+```
 
-- **Resources**:
-	- [Rollmelette GitHub Repository](https://github.com/rollmelette/rollmelette)
-
----
-
-## Crabrolls
-
-Introducing Crabroll, a powerful Rust framework designed to simplify the development of rust applications on Cartesi.
-
-- **Features**:
-	- Simplifies dApp development with intuitive methods.
-	- Handles advance and inspect requests easily.
-	- Comprehensive wallet functionality for ERC20, ERC721 and ERC-1155 token standards.
-
-- **Getting Started**:
-	- Create a new crabrolls project by running:
-		```bash
-		git clone git@github.com:crabrolls-cartesi/template.git
-		```
-
-- **Resources**:
-	- [Crabrolls Documentation](https://crabrolls-cartesi.github.io/crabrolls/)
-	- [Crabrolls GitHub Repository](https://github.com/crabrolls-cartesi/crabrolls)
-
----
-
-## Python-Cartesi 
-
-Python-Cartesi is a high-level framework that simplifies the development of Cartesi applications using Python.
-
-- **Features**:
-	- Simplifies the development of Cartesi applications.
-	- Prioritizes testing, equipping developers with tools to write tests for DApps within a local Python environment.
-	- Allows full control over inputs and outputs for scenarios where high-level tools may be insufficient 
-	- Supports the Python programming language.
-
-- **Getting Started**:
-	- Install Python-Cartesi by running:
-		```bash
-		pip install python-cartesi
-		```
-- **Resources**:
-	- [Python-Cartesi GitHub Repository](https://github.com/prototyp3-dev/python-cartesi)
-
----
-
-## TypeScript-SQLite template
-
-A backend application built with TypeScript and SQLite, designed to complement a corresponding frontend project.
-
-- **Features**:
-	- TypeScript and SQLite for backend development.
-	- Integration with React for the frontend.
-	- Ethers.js for seamless blockchain interaction.
-	- Template designed for easy project initiation.
-
-- **Resources**:
-	- [TypeScript-SQLite GitHub Repository](https://github.com/doiim/cartesi-ts-sqlite)
-	- [Pre-deployed demo available on the Sepolia Network](https://doiim.github.io/cartesi-ts-react-sqlite/).
-
----
-
-## Python-Wallet
-
-A Python-based wallet implementation for Cartesi dApps designed to handle various types of assets.
-
-- **Features**:
-	- Simplifies asset handling for Cartesi dApps.
-	- Deposit assets into the dApp.
-	- Transfer assets within the dApp.
-	- Withdraw assets from the dApp.
-
-- **Resources**:
-	- [Python-Wallet GitHub Repository](https://github.com/jplgarcia/python-wallet/tree/baf392c40d793dd7a36d5946eb116d6b53bde5c0)
-	- [Full example](https://github.com/jplgarcia/python-wallet/blob/baf392c40d793dd7a36d5946eb116d6b53bde5c0/dapp.py)
----
-## CartDevKit
-
-CartDevKit is an all-in-one package for building on Cartesi.
-
-- **Features**:
-	- CLI tool for easy project setup.
-	- Templates for backend, frontend and Cartesify.
-
-- **Getting Started**:
-	- Create a new project:
-		```bash
-		npx cartdevkit@1.0.4 create mydapp
-		```
-
-- **Resources**:
-	- [CartDevKit GitHub Repository](https://github.com/gconnect/cartdev-kit)
-	- [CartDevKit Documentation](https://africlab.gitbook.io/cartdevkit)
+- [GitHub](https://github.com/prototyp3-dev/cartesapp/tree/v1.5.0a0)

@@ -5,7 +5,7 @@ id: snapshot
 title: Public snapshot
 ---
 
-A Cartesi snapshot is a compressed representation of your application's machine state that can be deployed to rollups nodes. This process involves:
+A Cartesi snapshot is a stored copy of your application's machine state that can be deployed to rollups nodes. This process involves:
 
 1. Building your application with the Cartesi CLI
 2. Creating a compressed snapshot archive
@@ -64,7 +64,7 @@ Before building snapshots, ensure you have:
 
 - Node and NPM: A JavaScript runtime needed to install Cartesi CLI and run various scripts. We recommend installing the LTS version to ensure best compatibility.
 
-For more details about the installation process for each of these tools, please refer to the [this section](../development/installation.md).
+For more details about the installation process for each of these tools, please refer to [this section](../development/installation.md).
 
 ## GitHub Actions Workflow
 
@@ -88,12 +88,6 @@ jobs:
 
     permissions:
       contents: read
-      packages: write
-      attestations: write
-      id-token: write
-
-    env:
-      REGISTRY: ghcr.io
 
     steps:
       - name: Checkout repository
@@ -114,14 +108,6 @@ jobs:
 
       - name: Install Cartesi CLI
         run: npm install -g @cartesi/cli@2.0.0-alpha.42
-
-      - name: Log in to GHCR
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: docker/login-action@v3.7.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image and Cartesi snapshot
         run: cartesi build

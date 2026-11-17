@@ -15,7 +15,7 @@ Crucially, the base layer conducts on-chain validation of these notices through 
 
 This validation process ensures the integrity and authenticity of the submitted notices, enabling the blockchain to verify and authenticate the declared off-chain events or conditions.
 
-Here are sample functions you can add to your application, then call to send a notice to the rollup server (in JavaScript, `rollup.emitNotice()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup) sends it directly to the Cartesi Machine):
+Here are sample functions you can add to your application, then call to send a notice to the rollup server (in JavaScript, `rollup.emitNotice()` from [`@cartesi/rollup`](https://www.npmjs.com/package/@cartesi/rollup/v/1.0.0-alpha.3) sends it directly to the Cartesi Machine):
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -42,7 +42,7 @@ await rollup.run({
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -68,7 +68,7 @@ def handle_advance(data):
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```rust
@@ -118,7 +118,7 @@ async fn emit_notice(payload: String) -> Option<bool> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Go" label="Go" default>
+<TabItem value="Go" label="Go">
 <pre><code>
 
 ```go
@@ -142,7 +142,7 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 </code></pre>
 </TabItem>
 
-<TabItem value="C++" label="C++" default>
+<TabItem value="C++" label="C++">
 <pre><code>
 
 ```cpp
@@ -177,5 +177,5 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
 </Tabs>
 
 :::note querying notices
-Frontend clients can query notices using a JSON RPC API exposed by Cartesi Nodes. [Refer to the documentation here](../../development/query-outputs.md#query-all-notices-and-vouchers) to query notices from the rollup server.
+Frontend clients query notices through the node's JSON-RPC API, not the rollup server. See [querying outputs](../../development/query-outputs.md#query-all-notices-and-vouchers).
 :::

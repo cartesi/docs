@@ -21,9 +21,8 @@ var (
 )
 
 const (
-	tokenAddress      = "0x1111111111111111111111111111111111111111"
-	transferReceiver  = "0x2222222222222222222222222222222222222222"
-	transferAmountWEI = "1000000000000000000"
+	tokenAddress   = "0x86EA17052C8e335Ad830B54EF566274EAB46B852" // devnet test ERC-20 token (TestToken)
+	transferAmount = "10"                                         // 10 units of the token
 )
 
 func leftPad64(hexValue string) string {
@@ -34,19 +33,19 @@ func leftPad64(hexValue string) string {
 }
 
 // encodeERC20Transfer creates calldata for transfer(address,uint256).
-func encodeERC20Transfer(receiver string, amountWei string) (string, error) {
+func encodeERC20Transfer(receiver string, amount string) (string, error) {
 	to := strings.ToLower(strings.TrimPrefix(receiver, "0x"))
 	if len(to) != 40 {
 		return "", fmt.Errorf("invalid receiver address: %s", receiver)
 	}
 
-	amount := new(big.Int)
-	if _, ok := amount.SetString(amountWei, 10); !ok || amount.Sign() < 0 {
-		return "", fmt.Errorf("invalid transfer amount: %s", amountWei)
+	value := new(big.Int)
+	if _, ok := value.SetString(amount, 10); !ok || value.Sign() < 0 {
+		return "", fmt.Errorf("invalid transfer amount: %s", amount)
 	}
 
 	// Function selector for transfer(address,uint256) is a9059cbb.
-	return "0xa9059cbb" + leftPad64(to) + leftPad64(amount.Text(16)), nil
+	return "0xa9059cbb" + leftPad64(to) + leftPad64(value.Text(16)), nil
 }
 
 func HandleAdvance(data *rollups.AdvanceResponse) error {
@@ -68,14 +67,14 @@ func HandleAdvance(data *rollups.AdvanceResponse) error {
 		return fmt.Errorf("HandleAdvance: failed sending report: %w", err)
 	}
 
-	// Build an ERC-20 transfer voucher.
-	voucherPayload, err := encodeERC20Transfer(transferReceiver, transferAmountWEI)
+	// Voucher that transfers 10 units of the token to the sender.
+	voucherPayload, err := encodeERC20Transfer(data.Metadata.MsgSender, transferAmount)
 	if err != nil {
 		return fmt.Errorf("HandleAdvance: failed building voucher payload: %w", err)
 	}
 	voucher := rollups.VoucherRequest{
 		Destination: tokenAddress,
-		Value:       "0x00",
+		Value:       "0x" + strings.Repeat("0", 64), // 32-byte hex string: no Ether sent
 		Payload:     voucherPayload,
 	}
 	if _, err = rollups.SendVoucher(&voucher); err != nil {

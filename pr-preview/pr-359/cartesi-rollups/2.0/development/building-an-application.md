@@ -13,7 +13,7 @@ Ensure you have Docker engine running, then navigate the directory to your appli
 cartesi build
 ```
 
-The successful execution of this step will log this in your terminal:
+The successful execution of this step logs output like the following, from a template that uses the rollup HTTP server (Python, Rust, Go or C++). The JavaScript and TypeScript templates do not start the rollup HTTP server, so their build log has no `rollup_http_server` lines:
 
 ```shell
 

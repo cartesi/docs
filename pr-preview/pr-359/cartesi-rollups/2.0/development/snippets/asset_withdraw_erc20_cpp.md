@@ -7,7 +7,7 @@
 #include "3rdparty/cpp-httplib/httplib.h"
 #include "3rdparty/picojson/picojson.h"
 
-static const std::string kErc20TokenAddress = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a";
+static const std::string kErc20TokenAddress = "0x86EA17052C8e335Ad830B54EF566274EAB46B852";
 
 std::string handle_advance(httplib::Client &cli, picojson::value data)
 {
@@ -22,7 +22,7 @@ std::string handle_advance(httplib::Client &cli, picojson::value data)
     picojson::object voucher;
     voucher["destination"] = picojson::value(kErc20TokenAddress);
     voucher["payload"] = picojson::value(call_data);
-    voucher["value"] = picojson::value("0x00");
+    voucher["value"] = picojson::value("0x" + std::string(64, '0')); // 32-byte hex string: no Ether sent
 
     auto response = cli.Post(
         "/voucher",

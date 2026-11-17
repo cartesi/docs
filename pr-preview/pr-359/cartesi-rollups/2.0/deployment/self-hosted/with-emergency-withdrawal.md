@@ -8,7 +8,7 @@ title: Self-hosted with Emergency Withdrawal
 This guide runs a self-hosted node and deploys an application that supports [emergency withdrawal](../../development/emergency-withdrawal/overview.md): a guardian can foreclose it, and users can then recover their funds directly from the contracts. It follows the same flow as the [standard deployment](./standard.md), with a few additions. Read the [Foreclosure & Emergency Withdrawal overview](../../development/emergency-withdrawal/overview.md) first for the concept.
 
 :::warning Production Warning
-Like the standard setup, this is for development and testing on **testnet**, not production.
+Like the standard setup, this is for development and testing on **testnet**, not production. Follow the [good practices](./standard.md#good-practices) of the standard deployment guide before the stack stays up, holds a funded key, or exposes APIs beyond localhost.
 :::
 
 ## Prerequisites
@@ -17,7 +17,9 @@ In addition to the [standard prerequisites](./standard.md#prerequisites) (Cartes
 
 - A **guardian** address. This account, and only this account, can foreclose the application.
 - A **withdrawal output builder** for your token. For a single ERC-20, deploy one with the [`UsdWithdrawalOutputBuilderFactory`](../../api-reference/contracts/withdrawal/usd-withdrawal-output-builder-factory.md), or reuse an existing one for the same token. Note its address.
-- An application whose guest maintains an **accounts drive** in a known layout. See [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md).
+- An application whose guest maintains an **accounts drive** in a known layout. A generic echo application cannot be withdrawal-enabled. See [Emergency Withdrawal (guest requirements)](../../api-reference/backend/emergency-withdrawal.md).
+
+Build the machine against the portal and token you will deposit on that chain: an application that only accepts deposits from a given portal and token rejects the others.
 
 ## Configure the machine and ledger (`cartesi.toml`)
 
@@ -49,10 +51,10 @@ CARTESI_CONTRACTS_SELF_HOSTED_APPLICATION_FACTORY_ADDRESS="<SelfHostedApplicatio
 | `AUTH_KIND`                        | Set to `private_key` for local development                           |
 | `CARTESI_AUTH_PRIVATE_KEY`         | A funded private key for the selected chain. It deploys the application and pays for every claim, so it must stay funded |
 | `CARTESI_BLOCKCHAIN_DEFAULT_BLOCK` | Use `finalized` (the node's default). See [Block policy](./standard.md#configuration) in the standard flow |
-| `CARTESI_CONTRACTS_*`              | Addresses of the rollups-contracts v3.0.0-alpha.10 contracts on your chain, see [Deployed Contracts](./standard.md#deployed-contracts) |
+| `CARTESI_CONTRACTS_*`              | Addresses of the rollups-contracts v3.0.0-alpha.10 contracts on your chain, see [Deployed contracts](./standard.md#deployed-contracts) |
 
 :::danger Security
-Follow best practices when handling private keys during local development and deployment.
+Do not commit private keys. The guardian key used later for foreclosure can differ from `CARTESI_AUTH_PRIVATE_KEY`; keep both out of source control.
 :::
 
 ## Prepare the withdrawal config
@@ -90,7 +92,7 @@ The recovery tool, `cartesi-rollups-machine-tool`, locates the accounts drive th
    curl -L https://raw.githubusercontent.com/Mugen-Builders/deployment-setup-v2.0/98847c19660b46cd9f1b1c8ff9f8cf7f88039f98/compose.local.yaml -o compose.local.yaml
    ```
 
-   This is the same compose file used by the standard flow. Update its image tags as described in the standard flow ([Setting up the local node](./standard.md#setting-up-the-local-node)) before you start it. The compose file has no separate service for the recovery tools; see the [Emergency Withdrawal Recovery Guide](../../development/emergency-withdrawal/recovery-guide.md) for what recovery needs.
+   This is the same compose file used by the standard flow. Update its image tags as described in the standard flow ([Setting up the local node](./standard.md#setting-up-the-local-node)) before you start it. The compose file has no separate service for the recovery tools: `cartesi-rollups-machine-tool` and `cartesi-rollups-cli` ship inside the `cartesi/rollups-runtime` image. Run them with `docker compose -f compose.local.yaml exec -w /tmp advancer`: the container's default directory is not writable, and the recovery steps write files to the current directory. See the [Emergency Withdrawal Recovery Guide](../../development/emergency-withdrawal/recovery-guide.md) for what recovery needs.
 
 2. **Build the application with the Cartesi CLI:**
 
@@ -111,9 +113,9 @@ The recovery tool, `cartesi-rollups-machine-tool`, locates the accounts drive th
    Make the config file readable inside the `advancer` container, then deploy with `--withdrawal-config-file`:
 
    ```shell
-   docker compose --project-name cartesi-rollups-node cp withdrawal.json advancer:/tmp/withdrawal.json
+   docker compose -f compose.local.yaml cp withdrawal.json advancer:/tmp/withdrawal.json
 
-   docker compose --project-name cartesi-rollups-node \
+   docker compose -f compose.local.yaml \
       exec advancer cartesi-rollups-cli deploy application <app-name> /var/lib/cartesi-rollups-node/snapshot \
       --epoch-length <epoch-length> \
       --claim-staging-period <claim-staging-period> \
@@ -122,9 +124,9 @@ The recovery tool, `cartesi-rollups-machine-tool`, locates the accounts drive th
       --register
    ```
 
-   Replace `<app-name>` with your application name and `<salt>` with a unique identifier (generate one with `cast keccak256 "your-unique-string"`). The CLI rejects the config if a key is missing, if the guardian or the withdrawal output builder is the zero address, or if the accounts drive does not fit the machine memory. It does not check that the config matches your machine (see the warning above). To deploy without emergency withdrawal, omit `--withdrawal-config-file`, as in the standard flow.
+   Replace `<app-name>` with your application name and `<salt>` with a unique identifier (generate one with `cast keccak "your-unique-string"`). The CLI rejects the config if a key is missing, if the guardian or the withdrawal output builder is the zero address, or if the accounts drive does not fit the machine memory. It does not check that the config matches your machine (see the warning above). To deploy without emergency withdrawal, omit `--withdrawal-config-file`, as in the standard flow.
 
-   `--claim-staging-period` is the number of blocks between a claim being staged and the earliest block it can be accepted, and it is the guardian's window to foreclose the application before a claim takes effect. Set it above the time your guardian needs to notice a problem and get the foreclosure transaction included. The default, 0, allows a claim to be accepted as soon as it is staged, which leaves the guardian no window. The value is fixed when the consensus is deployed. For `--epoch-length` and the effect of both values on when outputs become executable, see step 4 of the [standard flow](./standard.md#setting-up-the-local-node).
+   `--claim-staging-period` is the number of blocks between a claim being staged and the earliest block it can be accepted, and it is the guardian's window to foreclose the application before a claim takes effect. Set it above the time your guardian needs to notice a problem and get the foreclosure transaction included. The default, 0, allows a claim to be accepted as soon as it is staged, which leaves the guardian no window. The value is fixed when the consensus is deployed. For `--epoch-length` and the effect of both values on when outputs become executable, see [One-shot CLI](./standard.md#one-shot-cli-default) in the standard flow.
 
    After this, your application is deployed and registered, and a guardian can foreclose it when needed.
 

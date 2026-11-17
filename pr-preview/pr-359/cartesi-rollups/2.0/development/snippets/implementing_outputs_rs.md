@@ -1,12 +1,11 @@
 > For the complete documentation index, see [llms.txt](https://docs.cartesi.io/llms.txt)
 
-```rust 
+```rust
 use json::{object, JsonValue};
 use std::env;
 use ethers_core::abi::{encode, Token};
 use ethers_core::utils::id;
 use hex;
-use serde::Serialize;
 
 fn structure_voucher(
     function_signature: &str,
@@ -27,7 +26,8 @@ fn structure_voucher(
     let response = object! {
         "destination" => format!("{}", destination),
         "payload" => format!("{}", payload),
-        "value" => format!("0x{}", hex::encode(value.to_be_bytes())),
+        // 32-byte hex string
+        "value" => format!("0x{:064x}", value),
     };
 
     return response;
@@ -48,11 +48,13 @@ pub async fn handle_advance(
         .ok_or("Missing msg_sender in metadata")?
         .to_string();
 
-    const erc_20_token: &str = "0x784f0c076CC55EAD0a585a9A13e57c467c91Dc3a"; // Sample ERC20 token address
+    const ERC20_TOKEN: &str = "0x86EA17052C8e335Ad830B54EF566274EAB46B852"; // devnet test ERC-20 token (TestToken)
 
+    // notice and report with the input payload, already a 0x-prefixed hex string
     emit_notice(payload.to_string()).await;
     emit_report(payload.to_string()).await;
 
+    // voucher that transfers 10 units of the token to the sender
     let amount = 10;
 
     let args = vec![
@@ -61,7 +63,7 @@ pub async fn handle_advance(
     ];
     let function_sig = "transfer(address,uint256)";
 
-    let voucher = structure_voucher(function_sig, &erc_20_token, args, 0);
+    let voucher = structure_voucher(function_sig, ERC20_TOKEN, args, 0);
     emit_voucher(voucher).await;
 
     Ok("accept")
@@ -80,17 +82,13 @@ pub async fn handle_inspect(
     Ok("accept")
 }
 
-async fn emit_report( payload: String) -> Option<bool> {
-    let hex_string = {
-        let s = payload.strip_prefix("0x").unwrap_or(payload.as_str());
-        hex::encode(s.as_bytes())
-    };
-
+async fn emit_report(payload: String) -> Option<bool> {
     let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
     let client = hyper::Client::new();
 
+    // `payload` is already a 0x-prefixed hex string: post it unchanged
     let response = object! {
-        "payload" => format!("0x{}", hex_string),
+        "payload" => payload,
     };
     let request = hyper::Request::builder()
     .method(hyper::Method::POST)
@@ -112,17 +110,13 @@ async fn emit_report( payload: String) -> Option<bool> {
     }
 }
 
-async fn emit_notice( payload: String) -> Option<bool> {
-    let hex_string = {
-        let s = payload.strip_prefix("0x").unwrap_or(payload.as_str());
-        hex::encode(s.as_bytes())
-    };
-
+async fn emit_notice(payload: String) -> Option<bool> {
     let server_addr = env::var("ROLLUP_HTTP_SERVER_URL").expect("ROLLUP_HTTP_SERVER_URL not set");
     let client = hyper::Client::new();
 
+    // `payload` is already a 0x-prefixed hex string: post it unchanged
     let response = object! {
-        "payload" => format!("0x{}", hex_string),
+        "payload" => payload,
     };
     let request = hyper::Request::builder()
     .method(hyper::Method::POST)

@@ -82,7 +82,7 @@ cast send <testTokenContract address> "mint(uint256)" <token amount> --rpc-url <
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -117,7 +117,7 @@ cast send <testTokenContract address> "transfer(address,uint256)" <receivers add
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -130,7 +130,7 @@ cast send $TEST_TOKEN "transfer(address,uint256)" 0x70997970C51812dc3A010C7d01b5
 
 </Tabs>
 
-The above command calls the `transfer(address,uint256)` in the `TestToken` contract `0x86EA...B852`. The command passes the following argument to the function: `receivers address= 0x709979...c79C8`and `amount= 202000000000000000000` (202 FUN). While you can always change the amount argument to match what you intend to deposit to your application, the private key `0xdbda182...a67b97` must belong to the wallet that holds the tokens, here devnet account 8, which minted them in the previous step.
+The above command calls the `transfer(address,uint256)` in the `TestToken` contract `0x86EA...B852`. The command passes the following argument to the function: `receivers address= 0x709979...c79C8` and `amount= 202000000000000000000` (202 FUN). While you can always change the amount argument to match what you intend to deposit to your application, the private key `0xdbda182...a67b97` must belong to the wallet that holds the tokens, here devnet account 8, which minted them in the previous step.
 
 ### Depositing the ERC20 Test Token to your application
 
@@ -150,18 +150,18 @@ cartesi deposit
 
 - The next menu requests for a token address, but has the `TestToken` address filled but grayed out, hit the enter button to use the `TestToken`.
   
-- In the next menu, enter the amount to tokens, you intend to deposit then finally hit enter.
+- In the next menu, enter the amount of tokens, you intend to deposit then finally hit enter.
   
 - This would trigger the approval process, then deposit the tokens to your application.
 
-For a successful deposit process you should show logs similar to this:
+For a successful deposit process you should see logs similar to this:
 
 ```bash
 ✔ Select type of asset to deposit erc20
 ✔ Token address 0x86EA17052C8e335Ad830B54EF566274EAB46B852
 ✔ Amount (FUN) 202
 ✔ Approved 202 FUN
-✔ Deposited 202 FUN to 0x9ec96ddfacdb3144d729ae433c05f1ef774aafab
+✔ Deposited 202 FUN to 0x0ccbebba6996745ac60d9cd1c91eb3f8b2f62458
 ```
 
 The last address is the address of your application. You can also pass the amount and the token as arguments and skip the prompts, for example `cartesi deposit erc20 202 --token $(cartesi address-book TestToken)`. The CLI deposits from devnet account 8 by default; use the `--from <address>` option to deposit from another devnet account. If that address does not hold enough tokens, the command stops with `✖ Insufficient balance`, so mint tokens first as shown above.
@@ -184,7 +184,7 @@ cast send <testsTokenContract address> "approve(address,uint256)" <Erc20Portal a
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -214,7 +214,7 @@ cast send <Erc20Portal address> "depositErc20Tokens(address,address,uint256,byte
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -233,7 +233,7 @@ The next section covers implementations on your application to handle deposits.
 
 #### Handling Deposited ERC20 tokens
 
-One important part of the deposit workflow is the decoding of the inputs. It is an important and delicate process, requiring accurate decoding as errors in this section could lease to unaccounted deposits.
+One important part of the deposit workflow is the decoding of the inputs. It is an important and delicate process, requiring accurate decoding as errors in this section could lead to unaccounted deposits.
 
 While the previous example, help deposit tokens to your applications, without proper logic implementation, your application will be unable to record and track tokens deposited by users. The below code snippet is a simple application designed to receive deposit calls, decode, then finally log the data it received. You can test the application through the following steps:
 
@@ -248,7 +248,7 @@ cartesi create deposit-erc20 --template javascript
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 ```bash
 cartesi create deposit-erc20 --template rust
@@ -256,7 +256,7 @@ cartesi create deposit-erc20 --template rust
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 ```bash
 cartesi create deposit-erc20 --template python
@@ -274,7 +274,7 @@ import TabItem from '@theme/TabItem';
   <TabItem value="JavaScript" label="JavaScript" default>
 <pre><code>
 
-```JavaScript
+```javascript
 import { Rollup } from "@cartesi/rollup";
 
 // Erc20Portal address printed by `cartesi address-book`
@@ -322,10 +322,10 @@ await rollup.run({
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
-```Rust
+```rust
 use json::{object, JsonValue};
 use primitive_types::{H160, U256};
 use std::env;
@@ -463,7 +463,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -555,7 +555,7 @@ while True:
 
 </Tabs>
 
-- Install necessary dependencies for rust or javasctipt by running the command:
+- Install necessary dependencies for rust or JavaScript by running the command:
 
 <Tabs>
 
@@ -570,7 +570,7 @@ while True:
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```bash
@@ -591,7 +591,7 @@ cartesi build
 cartesi run
 ```
 
-- In a new terminal, ensure you're in the directory of your Cartesi application then run deposit command and follow though on the prompts to deposit an ERC20 token.
+- In a new terminal, ensure you're in the directory of your Cartesi application then run deposit command and follow through on the prompts to deposit an ERC20 token.
 
 ```bash
 cartesi deposit
@@ -602,9 +602,9 @@ On successful deposit your application should log an object containing the depos
 Sample Log
 
 ```bash
-Received advance request from 0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419 with payload 0x86ea17052c8e335ad830b54ef566274eab46b85223618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000c93a592cfb2a00000
+Received advance request from 0x3332de61a8bb9ac84893b2f552fe81c9a6dc5419 with payload 0x86ea17052c8e335ad830b54ef566274eab46b85223618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000af35029c214e80000
 Handling portal deposit
-Token: 0x86ea17052c8e335ad830b54ef566274eab46b852, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Amount: 232000000000000000000
+Token: 0x86ea17052c8e335ad830b54ef566274eab46b852, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Amount: 202000000000000000000
 ```
 
 ## ERC721 Test Tokens
@@ -629,7 +629,7 @@ cast send <testNFT address> "mint(address,uint256)" <receivers address> <token i
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -654,13 +654,13 @@ The above example calls the `mint` function in the `TestNFT` contract `0x0761b8.
 <pre><code>
 
 ```bash
-cast send <testNFT address> "transferFrom(address,address,uint256)" <senders address> <receivers address> <token id>--rpc-url http://127.0.0.1:6751/anvil --private-key <caller private key>
+cast send <testNFT address> "transferFrom(address,address,uint256)" <senders address> <receivers address> <token id> --rpc-url http://127.0.0.1:6751/anvil --private-key <caller private key>
 ```
 
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -702,7 +702,7 @@ For a successful deposit process you should get a log similar to this below:
 ✔ Token ID 2
 ✔ Token address 0x0761b8e3aB06F458632974393C48765E6Ddc61bB
 ✔ Approved undefined NFT
-✔ Deposited undefined NFT to 0x9ec96ddfacdb3144d729ae433c05f1ef774aafab
+✔ Deposited undefined NFT to 0x02926b7cc26ed3c3682aa63a6623c6ce39406b2e
 ```
 
 When you enter the token ID at the prompt, the CLI prints `undefined` in place of the token ID in the last two lines; the deposit itself is not affected. To get the full message and skip the prompts, pass the token ID and address as arguments, for example `cartesi deposit erc721 2 --token $(cartesi address-book TestNFT)`, which prints `✔ Approved 2 NFT` and `✔ Deposited 2 NFT to <application address>`.
@@ -725,7 +725,7 @@ cast send <testNFT address> "setApprovalForAll(address,bool)" <Erc721Portal addr
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -755,7 +755,7 @@ cast send <Erc721Portal address> "depositErc721Token(address,address,uint256,byt
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -785,7 +785,7 @@ cartesi create deposit-erc721 --template javascript
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 ```bash
 cartesi create deposit-erc721 --template rust
@@ -793,7 +793,7 @@ cartesi create deposit-erc721 --template rust
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 ```bash
 cartesi create deposit-erc721 --template python
@@ -860,10 +860,10 @@ await rollup.run({
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
-```Rust
+```rust
 use json::{object, JsonValue};
 use std::env;
 use hex::FromHex;
@@ -993,7 +993,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -1093,7 +1093,7 @@ while True:
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```bash
@@ -1113,7 +1113,7 @@ cartesi build
 cartesi run
 ```
 
-- In a new terminal, ensure you're in the directory of your Cartesi application then run deposit command and follow though on the prompts to deposit an ERC721 token.
+- In a new terminal, ensure you're in the directory of your Cartesi application then run deposit command and follow through on the prompts to deposit an ERC721 token.
 
 ```bash
 cartesi deposit
@@ -1124,9 +1124,9 @@ On successful deposit your application should log an object containing the depos
 Sample Log
 
 ```bash
-Received advance request from 0x397c352d18dff47cc8a6143403142cf7afd5ff7e with payload 0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000b0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+Received advance request from 0x397c352d18dff47cc8a6143403142cf7afd5ff7e with payload 0x0761b8e3ab06f458632974393c48765e6ddc61bb23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 Handling portal deposit
-Token: 0x0761b8e3ab06f458632974393c48765e6ddc61bb, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Token ID: 11
+Token: 0x0761b8e3ab06f458632974393c48765e6ddc61bb, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, Token ID: 2
 ```
 
 ## ERC1155 Tokens
@@ -1151,7 +1151,7 @@ cast send <TestMultiToken contract address> "mint(address,uint256,uint256)" <rec
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -1182,7 +1182,7 @@ cast send <TestMultiToken contract address> "safeTransferFrom(address,address,ui
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -1213,9 +1213,9 @@ cartesi deposit
   
 - Accept the pre-filled `TestMultiToken` address (or enter another ERC1155 token address).
   
-- Enter the ID of the token you intend to deposit, if multiple you can add all of their ID's separated by commas.
+- Enter the ID of the token you intend to deposit, if multiple you can add all of their IDs separated by commas.
 
-- In the next menu enter the amount of tokens you intend to deposit (separate them by comma's if multiple).
+- In the next menu enter the amount of tokens you intend to deposit (separate them by commas if multiple).
 
 - The CLI would automatically run the approval then the deposit process for the tokens. On successful deposit you should see logs similar to this:
 
@@ -1225,7 +1225,7 @@ cartesi deposit
 ✔ Token ID 5
 ✔ Amount of token ID 5 1
 ✔ Approved ERC1155Portal
-✔ Deposited 1 units of token id 5 to 0x9ec96ddfacdb3144d729ae433c05f1ef774aafab
+✔ Deposited 1 units of token id 5 to 0x3f38c4cf712b94bb733f5de123563f326234b255
 ```
 
 #### Using Cast
@@ -1244,7 +1244,7 @@ cast send <TestMultiToken contract address> "setApprovalForAll(address,bool)" <E
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -1272,7 +1272,7 @@ cast send <Erc1155SinglePortal Contract address> "depositSingleErc1155Token(addr
 </code></pre>
 </TabItem>
 
-<TabItem value="Sample" label="Sample" default>
+<TabItem value="Sample" label="Sample">
 <pre><code>
 
 ```bash
@@ -1300,7 +1300,7 @@ cartesi create deposit-erc1155 --template javascript
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 ```bash
 cartesi create deposit-erc1155 --template rust
@@ -1308,7 +1308,7 @@ cartesi create deposit-erc1155 --template rust
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 ```bash
 cartesi create deposit-erc1155 --template python
@@ -1323,7 +1323,7 @@ cartesi create deposit-erc1155 --template python
 <TabItem value="Javascript" label="Javascript" default>
 <pre><code>
 
-```Javascript
+```javascript
 import { Rollup } from "@cartesi/rollup";
 
 // Erc1155SinglePortal address printed by `cartesi address-book`
@@ -1381,10 +1381,10 @@ await rollup.run({
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
-```Rust
+```rust
 use json::{object, JsonValue};
 use primitive_types::{H160, U256};
 use std::env;
@@ -1515,7 +1515,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 </code></pre>
 </TabItem>
 
-<TabItem value="Python" label="Python" default>
+<TabItem value="Python" label="Python">
 <pre><code>
 
 ```python
@@ -1598,7 +1598,7 @@ while True:
 
 </Tabs>
 
-- Install necessary dependencies for rust or javasctipt by running the command:
+- Install necessary dependencies for rust or JavaScript by running the command:
 
 <Tabs>
 
@@ -1613,7 +1613,7 @@ while True:
 </code></pre>
 </TabItem>
 
-<TabItem value="Rust" label="Rust" default>
+<TabItem value="Rust" label="Rust">
 <pre><code>
 
 ```bash
@@ -1634,7 +1634,7 @@ cartesi build
 cartesi run
 ```
 
-- In a new terminal, ensure you're in the directory of your Cartesi application then run deposit command and follow though on the prompts to deposit an ERC1155 token.
+- In a new terminal, ensure you're in the directory of your Cartesi application then run deposit command and follow through on the prompts to deposit an ERC1155 token.
 
 ```bash
 cartesi deposit
@@ -1646,10 +1646,10 @@ Sample Log
 
 ```bash
 [INFO  rollup_http_server::http_service] received new request of type ADVANCE
-[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 814 "-" "python-requests/2.31.0" 0.020416
+[INFO  actix_web::middleware::logger] 127.0.0.1 "POST /finish HTTP/1.1" 200 814 "-" "python-requests/2.31.0" 0.020800
 INFO:__main__:Received finish status 200
-INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x9ec96ddfacdb3144d729ae433c05f1ef774aafab', 'msg_sender': '0x585f56351a66f131e176a345662215c772f80451', 'block_number': 21, 'block_timestamp': 1757624870, 'prev_randao': '0x45c3ecf672b0c35d25c822ccb22f145f633feec5451438436f57fd310366df44', 'input_index': 0}, 'payload': '0xaae893d28b7645b5e09bc16688dddd451ac89c1923618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'}
-INFO:__main__:Token: 0xaae893d28b7645b5e09bc16688dddd451ac89c19, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, token ID: 1 token_amount: 1
+INFO:__main__:Received advance request data {'metadata': {'chain_id': 31337, 'app_contract': '0x200e95c47ffa2fb8664c2ad4c80803fafdc84c41', 'msg_sender': '0x585f56351a66f131e176a345662215c772f80451', 'block_number': 31, 'block_timestamp': 1794920660, 'prev_randao': '0x313e855ed1d0895637f277934760bb75954184218aa2d3810196671d807765ec', 'input_index': 0}, 'payload': '0xaae893d28b7645b5e09bc16688dddd451ac89c1923618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'}
+INFO:__main__:Token: 0xaae893d28b7645b5e09bc16688dddd451ac89c19, Depositor: 0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f, token ID: 5 token_amount: 1
 INFO:__main__:Sending finish
 ```
 

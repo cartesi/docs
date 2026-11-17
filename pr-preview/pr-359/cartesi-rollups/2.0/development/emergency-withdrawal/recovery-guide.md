@@ -8,7 +8,7 @@ title: Emergency Withdrawal Recovery Guide
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide walks through foreclosing an application, withdrawing an account's funds directly from the base-layer contracts, and refunding deposits that were never finalized. For the concepts behind each step, see [Foreclosure & Emergency Withdrawal](./overview.md) and the [Claim & Foreclosure Lifecycle](./lifecycle.md). To try the whole flow on a local devnet first, with the Cartesi CLI's own `foreclose`, `withdraw` and `refund` commands, see [Testing emergency withdrawal locally with cartesi run](./local-testing.md).
+This guide walks through foreclosing an application, withdrawing an account's funds directly from the base-layer contracts, and refunding deposits that were never finalized. For the concepts behind each step, see the [emergency withdrawal overview](./overview.md) and the [Claim & Foreclosure Lifecycle](./lifecycle.md). To try the whole flow on a local devnet first, with the Cartesi CLI's own `foreclose`, `withdraw` and `refund` commands, see [Testing emergency withdrawal locally with cartesi run](./local-testing.md).
 
 ## Before you start
 
@@ -35,6 +35,7 @@ In the Cartesi CLI tabs, `cartesi-rollups-cli` sends to the RPC endpoint in `CAR
 - The default signer is a mnemonic: `CARTESI_AUTH_MNEMONIC`, with `CARTESI_AUTH_MNEMONIC_ACCOUNT_INDEX` to choose the account. To sign with a private key, set `CARTESI_AUTH_KIND=private_key` and `CARTESI_AUTH_PRIVATE_KEY`.
 - An application name, instead of an address, also needs `CARTESI_DATABASE_CONNECTION`.
 - Inside the node's containers these variables are already set to the node's signer. Override the signer there with the guardian's key for step 1, and with your own key for the other steps.
+- Inside the node's containers, run the tools from a writable directory, for example `docker compose -f compose.local.yaml exec -w /tmp advancer ...`. The default directory (`/`) is not writable by the user the tools run as, and `replay` writes the application's report files, the snapshot and the proof files relative to the current directory.
 - Each transaction command asks for confirmation before it sends. Without a terminal to answer it, the transaction is not sent, so add `--yes` when you run the command from a script.
 
 ## Step 1: Foreclose the application
@@ -63,7 +64,13 @@ After this, `isForeclosed()` returns `true` and the application is frozen at its
 
 ## Step 2: Reproduce the settled machine state
 
-Find the last accepted epoch, then replay the inputs from the node database into a machine snapshot up to that epoch:
+Find the last accepted epoch:
+
+```sh
+cartesi-rollups-cli read epochs <app-name-or-address> --status CLAIM_ACCEPTED --limit 1 --descending
+```
+
+Then replay the inputs from the node database into a machine snapshot up to that epoch. `--to-epoch` takes the epoch's `index` as printed (`0x`-prefixed hex) or its decimal value:
 
 ```sh
 cartesi-rollups-machine-tool replay \
