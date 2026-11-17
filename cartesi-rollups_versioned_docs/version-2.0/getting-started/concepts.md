@@ -6,6 +6,7 @@ resources:
     title: Understanding Cartesi Rollups
   - url: https://github.com/cartesi/dave/tree/v3.0.0-alpha.6
     title: Dave
+unlisted: true
 ---
 
 Before diving deep into the architecture and mechanisms of rollups, it's important to understand the fundamental concepts behind these scalability solutions. Rollups play a crucial role in enhancing blockchain performance by moving computation off-chain while ensuring security through on-chain verification. This section covers the core principles of rollups, the different approaches to validating state updates, and how dispute resolution mechanisms function. These foundational ideas will help you better grasp the architecture and innovations introduced by Cartesi's rollup solutions, including the **Dave** fraud-proof system.

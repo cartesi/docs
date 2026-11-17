@@ -7,6 +7,7 @@ resources:
 
   - url: https://github.com/Mugen-Builders/docs_examples/tree/af7e52df98999a28223283814bfde9a4f6f1add3/account-abstraction-script
     title: Account Abstraction Script demo
+unlisted: true
 ---
 
 This tutorial will guide you through utilizing the account abstraction (AA) feature of the CLI to interact with your application while testing locally.

@@ -1,6 +1,7 @@
 ---
 id: cartesi-machine
 title: Cartesi Machine    
+unlisted: true
 ---
 
 The [Cartesi Machine](/cartesi-machine) is a virtual machine that runs an entire Linux OS, in which a dApp's backend is executed. The Cartesi Machine is based on the [RISC-V ISA](https://riscv.org/), a set of instructions for processors. It runs in isolation, meaning it operates independently and is reproducible. 
